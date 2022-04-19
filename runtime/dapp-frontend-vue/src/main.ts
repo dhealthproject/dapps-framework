@@ -3,5 +3,12 @@ import App from "./App.vue";
 import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
+import { createMetaManager } from "vue-meta";
+import metaConfig from "../meta.config.json";
 
-createApp(App).use(store).use(router).mount("#app");
+createApp(App)
+  .use(router)
+  .use(store)
+  .use(createMetaManager())
+  .provide("metaConfig", metaConfig)
+  .mount("#app");

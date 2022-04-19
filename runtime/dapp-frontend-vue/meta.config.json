@@ -1,0 +1,23 @@
+{
+  "manifest": {
+    "name": "dapp-boilerplate-vue",
+    "short_name": "dh-dapp"
+  },
+  "App": {
+    "htmlAttrs": { "lang": "en", "amp": true },
+    "title": "test-meta-app",
+    "description": "description-meta-app",
+    "og:title": "open-graph-title",
+    "og:type": "open-graph-type",
+    "og:url": "open-graph-url",
+    "og:image": "open-graph-image"
+  },
+  "HomePage": {
+    "title": "test-meta-homepage",
+    "description": "description-meta-homepage"
+  },
+  "AboutPage": {
+    "title": "test-meta-aboutpage",
+    "description": "description-meta-aboutpage"
+  }
+}

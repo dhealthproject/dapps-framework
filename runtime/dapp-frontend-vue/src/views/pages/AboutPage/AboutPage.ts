@@ -1,4 +1,5 @@
-import { Options, Vue } from "vue-class-component";
+import { Options } from "vue-class-component";
+import { AbstractMetaView } from "@/views/AbstractMetaView";
 
 @Options({
   methods: {
@@ -7,4 +8,4 @@ import { Options, Vue } from "vue-class-component";
     },
   },
 })
-export default class AboutPage extends Vue {}
+export default class AboutPage extends AbstractMetaView {}

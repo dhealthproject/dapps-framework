@@ -1,4 +1,5 @@
 const webpack = require("webpack");
+const metaConfig = require("./meta.config.json");
 
 // vue.config.js
 module.exports = {
@@ -21,8 +22,8 @@ module.exports = {
   },
   pwa: {
     manifestOptions: {
-      name: "dhealth-bridge",
-      short_name: "dh-wpa",
+      name: metaConfig.manifest.name,
+      short_name: metaConfig.manifest.short_name,
       start_url: "./",
       display: "standalone",
       theme_color: "#000000",
