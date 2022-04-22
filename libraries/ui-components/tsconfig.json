@@ -1,0 +1,53 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "declaration": true,
+    "declarationDir": "./dist/@dhealth",
+    "outDir": "./dist/",
+    "types": [
+      "webpack-env",
+      "mocha",
+      "chai",
+      "node"
+    ],
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ],
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "node_modules/@types/node/globals.d.ts",
+    "node_modules/@types/node/globals.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "examples"
+  ]
+}
