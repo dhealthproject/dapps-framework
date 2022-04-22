@@ -1,0 +1,44 @@
+{
+  "name": "@dhealthdapps/framework",
+  "version": "1.0.0",
+  "homepage": "https://github.com/dhealthproject/dapps-framework#readme",
+  "description": "dHealth dApps Framework: Build dApps that scale.",
+  "author": "dHealth Network <devs@dhealth.foundation>",
+  "license": "LGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dhealthproject/dapps-framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dhealthproject/dapps-framework/issues"
+  },
+  "scripts": {
+    "build": "lerna run build",
+    "test": "lerna run test",
+    "test:unit": "lerna run test:unit",
+    "test:e2e": "lerna run test:e2e",
+    "docs": "lerna run docs",
+    "version": "echo $npm_package_version"
+  },
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  },
+  "contributors": [
+    {
+      "name": "Grégory Saive",
+      "email": "greg@evi.as"
+    },
+    {
+      "name": "Son Nguyen",
+      "email": "son@dhealth.foundation"
+    },
+    {
+      "name": "Komal Narwani",
+      "email": "kn@dhealth.foundation"
+    },
+    {
+      "name": "Paul Rieger",
+      "email": "paul@dhealth.foundation"
+    }
+  ]
+}
