@@ -1,19 +1,15 @@
-<!--
 /**
  * This file is part of dHealth dApps Framework shared under LGPL-3.0
  * Copyright (C) 2022-present dHealth Network, All rights reserved.
  *
  * @package     dHealth dApps Framework
- * @subpackage  Vue Frontend
+ * @subpackage  Config
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
--->
+const autoprefixer = require("autoprefixer");
+const tailwindcss = require("tailwindcss");
 
-<template>
-  <div class="home">
-    <HelloWorld msg="Welcome to your dApp with dHealth Network" />
-  </div>
-</template>
-
-<script lang="ts" src="./HomePage.ts"></script>
+module.exports = {
+  plugins: [tailwindcss, autoprefixer],
+};

@@ -1,0 +1,7 @@
+{
+  "items": [
+    { "to": "/", "text": "navmenu_home", "icon": "IconHome", "module": "home" },
+    { "to": "/accounts", "text": "navmenu_accounts", "icon": "IconHome", "module": "accounts" },
+    { "to": "/about", "text": "navmenu_about", "icon": "IconHome", "module": "about" }
+  ]
+}

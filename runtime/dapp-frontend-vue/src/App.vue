@@ -1,8 +1,20 @@
+<!--
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Vue Frontend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+-->
 <template>
   <metainfo>
-    <template v-slot:title="{ content }">{{
-      content ? `${content} | SITE_NAME` : `SITE_NAME`
-    }}</template>
+    <!-- sets a titleTemplate dynamically -->
+    <template v-slot:title="{ content }">
+      {{ content }}
+    </template>
   </metainfo>
   <header />
   <nav>

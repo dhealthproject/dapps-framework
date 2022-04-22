@@ -1,23 +1,39 @@
 {
-  "name": "@dhealthdapps/dapp-boilerplate-vue",
-  "version": "0.1.0",
-  "private": false,
+  "name": "@dhealthdapps/frontend",
+  "version": "1.0.0",
+  "homepage": "https://github.com/dhealthproject/dapp-frontend-vue#readme",
+  "description": "dHealth dApps Frontend with Vue",
+  "author": "dHealth Network <devs@dhealth.foundation>",
+  "license": "LGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dhealthproject/dapp-frontend-vue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dhealthproject/dapp-frontend-vue/issues"
+  },
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
-    "test:e2e": "vue-cli-service test:e2e",
-    "lint": "vue-cli-service lint && npm run prettier",
     "prettier": "prettier --check ./src ./tests",
-    "lint:fix": "prettier --write ./src ./tests"
+    "lint:fix": "prettier --write ./src ./tests",
+    "lint": "vue-cli-service lint && npm run prettier",
+    "docs": "typedoc --out \"ts-docs/$(npm run version --silent)\" src",
+    "prebuild": "npm run lint",
+    "build": "vue-cli-service build",
+    "build:watch": "vue-cli-service build --watch",
+    "pretest": "npm run build",
+    "test": "npm run test:unit",
+    "test:unit": "vue-cli-service test:unit",
+    "serve": "vue-cli-service serve"
   },
   "dependencies": {
     "crypto-browserify": "^3.12.0",
     "register-service-worker": "^1.7.2",
     "stream-browserify": "^3.0.0",
+    "tailwindcss": "^3.0.24",
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",
     "vue-meta": "^3.0.0-alpha.10",
+    "vue-property-decorator": "10.0.0-rc.3",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0"
   },
@@ -26,7 +42,6 @@
     "@types/mocha": "^8.2.1",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
-    "@vue/cli-plugin-e2e-webdriverio": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-pwa": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
@@ -37,20 +52,47 @@
     "@vue/eslint-config-typescript": "^9.1.0",
     "@vue/test-utils": "^2.0.0-0",
     "chai": "^4.2.0",
-    "chromedriver": "98",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^8.0.3",
-    "lint-staged": "^11.1.2",
     "prettier": "^2.4.1",
     "sass": "^1.32.7",
     "sass-loader": "^12.0.0",
     "ts-node": "^9.1.1",
+    "typedoc": "^0.22.15",
     "typescript": "~4.5.5",
-    "wdio-chromedriver-service": "^7.0.0"
+    "vue-cli-plugin-tailwind": "^3.0.0"
   },
-  "gitHooks": {
-    "pre-commit": "lint-staged"
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended",
+      "@vue/typescript/recommended",
+      "plugin:prettier/recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2020
+    },
+    "rules": {
+      "no-console": "off",
+      "no-debugger": "off",
+      "@typescript-eslint/no-explicit-any": "off"
+    },
+    "overrides": [
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)",
+          "**/tests/unit/**/*.spec.{j,t}s?(x)"
+        ],
+        "env": {
+          "mocha": true
+        }
+      }
+    ]
   }
 }
