@@ -11,5 +11,5 @@
       "npmClientArgs": ["--no-package-lock"]
     }
   },
-  "packages": ["libraries/*"]
+  "packages": ["libraries/*", "runtime/*"]
 }
