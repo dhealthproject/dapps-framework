@@ -8,6 +8,7 @@ dHealth dApps Framework for [dHealth Network][parent-url].
 
 - [Requirements](#requirements)
 - [Dependencies](#dependencies)
+- [Install notes](INSTALL.md)
 - [Developer notes](#developer-notes)
 - [Getting help](#getting-help)
 - [Contributing](#contributing)
@@ -28,22 +29,34 @@ This project is maintained with [**lerna**](https://lerna.js.org/) to permit joi
 
 As a developer, you *may* install `lerna` globally on your machine with: `npm install -g lerna` ; or you can also use this package's local lerna installation using `npx lerna`.
 
+Following command installs all sub-project dependencies:
+
 ```bash
 lerna bootstrap
 ```
 
-### Building all packages
+### Building packages
+
+Using lerna instead of npm, scripts will run directly inside *all* packages (use `--parallel` for parallel execution). If using npm or yarn, use the scripts as provided in package.json.
 
 ```bash
-lerna run build
+lerna run build --stream
+lerna run test --stream
+lerna run docs --stream
 ```
+
+Note that we recommend using the `--stream` flag to stream logs without delay.
 
 ### Running individual package scripts
 
 e.g. If you want to run the `serve` script inside the `package.json` of `@dhealthdapps/backend`, use the following command:
 
 ```bash
-npx lerna exec serve --scope @dhealthdapps/backend
+# run in one package
+npx lerna run serve --scope @dhealthdapps/backend
+
+# or run in all packages
+npx lerna run serve
 ```
 
 ## Getting help

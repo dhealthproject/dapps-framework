@@ -9,8 +9,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 - Adds base structure for dApps Framework
 - Uses `lerna` for package maintenance
-- Adds `@dhealth/components` subproject
-- Adds `@dhealthdapps/frontend` subproject
+- Adds `@dhealth/components` subproject in libraries/ui-components
+- Adds `@dhealthdapps/frontend` subproject in runtime/dapp-frontend-vue
 
 [0.1.0]: https://github.com/dhealthproject/dapps-framework/releases/tag/v0.1.0
 

@@ -16,8 +16,6 @@
 // **must** be exported in this file using a reference
 // to the TypeScript class for `typedoc` to succeed.
 
-import TokenAmount from './fields/TokenAmount/TokenAmount';
+import TokenAmount from "./fields/TokenAmount/TokenAmount";
 
-export {
-  TokenAmount,
-};
+export { TokenAmount };
