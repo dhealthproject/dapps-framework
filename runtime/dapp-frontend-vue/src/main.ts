@@ -15,7 +15,7 @@ import { createMetaManager /*, MetaConfig*/ } from "vue-meta";
 import App from "./App.vue";
 import "./registerServiceWorker";
 import router from "./router";
-import store from "./store";
+import store from "./state/store";
 
 // importing compiled tailwind styles
 // triggers a build when adding classes

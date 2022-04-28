@@ -10,3 +10,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/**
+ * Extends Tailwind utilities to enable `card` classes
+ * and design system built using cards that look alike
+ * no matter what type of layout is being used.
+ *
+ * This block of CSS classes uses Tailwind's `@apply`
+ * directive to apply Tailwind classes on elements.
+ *
+ * @link https://tailwindcss.com/docs/functions-and-directives#apply
+ */
+@layer utilities {
+  .card {
+    @apply max-w-sm rounded overflow-hidden shadow-lg;
+
+    .card-header {
+      @apply w-full;
+    }
+
+    .card-body {
+      @apply px-6 py-4;
+    }
+
+    .card-footer {
+      @apply px-6 pt-4 pb-2;
+    }
+  }
+}
