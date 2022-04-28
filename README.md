@@ -53,10 +53,10 @@ e.g. If you want to run the `serve` script inside the `package.json` of `@dhealt
 
 ```bash
 # run in one package
-npx lerna run serve --scope @dhealthdapps/backend
+lerna run serve --scope @dhealthdapps/frontend --stream
 
 # or run in all packages
-npx lerna run serve
+lerna run serve --stream
 ```
 
 ## Getting help

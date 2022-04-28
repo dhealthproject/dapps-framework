@@ -7,13 +7,15 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// layout
+export {
+  CustomLayout,
+  DefaultLayout,
+  FlexLayout,
+  GridLayout,
+  Layout,
+  Layouts,
+  LayoutType,
+  SingularLayout,
+} from './Layout';
 
-import { createStore } from "vuex";
-
-export default createStore({
-  state: {},
-  getters: {},
-  mutations: {},
-  actions: {},
-  modules: {},
-});
