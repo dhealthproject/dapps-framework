@@ -41,7 +41,7 @@ import translationsEn from "../../resources/i18n/en.json";
  *
  * @since v0.1.0
  */
-class Translations {
+export class Translations {
   /**
    * The default language to use if none was persisted
    * by the user before (defaults to "en").
@@ -49,7 +49,7 @@ class Translations {
    * @static
    * @var {string}
    */
-  public static defaultLanguage: string = 'en';
+  public static defaultLanguage = "en";
 
   /**
    * The default storage key as used by the persistence
@@ -58,7 +58,7 @@ class Translations {
    * @static
    * @var {string}
    */
-  public static storageKey: string = '@dhealthdapps/frontend::language';
+  public static storageKey = "@dhealthdapps/frontend::language";
 
   /**
    * The storage provider used for persistence of the
@@ -72,7 +72,8 @@ class Translations {
    *
    * @var {WindowLocalStorage | Storage | ((key: string) => string)}
    */
-  protected storageProvider: WindowLocalStorage
+  protected storageProvider:
+    | WindowLocalStorage
     | Storage
     | ((key: string) => string);
 
@@ -82,6 +83,13 @@ class Translations {
    * @var {string}
    */
   protected language: string;
+
+  /**
+   *
+   */
+  protected data = {
+    "en-US": translationsEn,
+  };
 
   /**
    * Constructs a translations module instance setting
@@ -99,9 +107,10 @@ class Translations {
    */
   public constructor(
     storageKey: string = Translations.storageKey,
-    provider: WindowLocalStorage
+    provider:
+      | WindowLocalStorage
       | Storage
-      | ((key: string) => string) = localStorage,
+      | ((key: string) => string) = localStorage
   ) {
     this.language = this.readFromStorage(storageKey);
     this.storageProvider = provider;
@@ -128,20 +137,23 @@ class Translations {
    * @access public
    * @returns {Translations}
    */
-  public $t(
-    translationKey: string,
-    language?: string | undefined,
-  ): string {
-    if (
-      language[key] !== null &&
-      language[key] !== void 0
-    )
-      return language[key];
-    else {
-      console.warn("I18n: Cannot find name for '" + key + "' in language '" + language.langName + "'");
-      return key;
-    }
-  }
+  // public $t(
+  //   translationKey: string,
+  //   language?: string | undefined,
+  // ): string {
+
+  //   if (translationKey )
+
+  //   if (
+  //     language[key] !== null &&
+  //     language[key] !== void 0
+  //   )
+  //     return language[key];
+  //   else {
+  //     console.warn("I18n: Cannot find name for '" + key + "' in language '" + language.langName + "'");
+  //     return key;
+  //   }
+  // }
 
   /**
    * Helper method to read one value from the linked
@@ -153,11 +165,9 @@ class Translations {
    * @access protected
    * @returns {Translations}
    */
-  protected readFromStorage(
-    storageKey: string,
-  ): string {
+  protected readFromStorage(storageKey: string): string {
     // by default, try using the localStorage flow
-    if ('getItem' in this.storageProvider) {
+    if ("getItem" in this.storageProvider) {
       const fromStorage = this.storageProvider.getItem(storageKey);
       return !!fromStorage && fromStorage.length
         ? fromStorage
@@ -166,55 +176,55 @@ class Translations {
 
     // otherwise, try forwarding to the arrow function
     const fromPredicate = (
-      this.storageProvider as ((key: string) => string)
+      this.storageProvider as (key: string) => string
     ).apply(this, [storageKey]);
 
     return !!fromPredicate && fromPredicate.length
-        ? fromPredicate
-        : Translations.defaultLanguage;
+      ? fromPredicate
+      : Translations.defaultLanguage;
   }
 }
 
-const languages = {
-	'en': translationsEn,
-};
+// const languages = {
+// 	'en': translationsEn,
+// };
 
-const DEFAULT_LANGUAGE = 'en';
+// const DEFAULT_LANGUAGE = 'en';
 
-const ;
+// const ;
 
-const setCurrentLanguage = (lang) => {
-	if (lang != null && languages[lang] != null) {
-		localStorage.setItem('userLanguage', lang);
-		location.reload();
-	}
-	else throw Error("I18n: Cannot set language '" + lang + "'");
-};
+// const setCurrentLanguage = (lang) => {
+// 	if (lang != null && languages[lang] != null) {
+// 		localStorage.setItem('userLanguage', lang);
+// 		location.reload();
+// 	}
+// 	else throw Error("I18n: Cannot set language '" + lang + "'");
+// };
 
-const getName = (language, key) => {
-	
-};
+// const getName = (language, key) => {
 
-class I18n {
-	constructor() {
-		this.language = getUserLanguage();
-		console.log('Language:', this.language.langName);
-	}
+// };
 
-	get languages() {
-		return Object.keys(languages);
-	}
+// class I18n {
+// 	constructor() {
+// 		this.language = getUserLanguage();
+// 		console.log('Language:', this.language.langName);
+// 	}
 
-	get currentLanguage() {
-		return getUserLanguage();
-	}
-	setCurrentLanguage(lang) {
-		return setCurrentLanguage(lang);
-	}
+// 	get languages() {
+// 		return Object.keys(languages);
+// 	}
 
-	getName(key) {
-		return getName(this.language, key);
-	}
-}
+// 	get currentLanguage() {
+// 		return getUserLanguage();
+// 	}
+// 	setCurrentLanguage(lang) {
+// 		return setCurrentLanguage(lang);
+// 	}
 
-export default new I18n();
+// 	getName(key) {
+// 		return getName(this.language, key);
+// 	}
+// }
+
+// export default new I18n();

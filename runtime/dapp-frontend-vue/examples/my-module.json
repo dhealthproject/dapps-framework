@@ -1,0 +1,11 @@
+
+{
+  "identifier": "my-module",
+  "dependencies": {
+    "waitFor": ["app/init"]
+  },
+  "routerConfig": {
+    "/": "my-module/home.json",
+    "/settings": "my-module/settings.json"
+  }
+}
