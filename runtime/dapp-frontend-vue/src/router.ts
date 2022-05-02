@@ -9,7 +9,7 @@
  */
 
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import HomePage from "../views/pages/HomePage/HomePage.vue";
+import HomePage from "./views/pages/HomePage/HomePage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -25,7 +25,7 @@ const routes: Array<RouteRecordRaw> = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(
-        /* webpackChunkName: "about" */ "../views/pages/AboutPage/AboutPage.vue"
+        /* webpackChunkName: "about" */ "./views/pages/AboutPage/AboutPage.vue"
       ),
   },
 ];

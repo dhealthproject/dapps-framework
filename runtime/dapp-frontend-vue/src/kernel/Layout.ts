@@ -116,9 +116,7 @@ export class Layout {
    * @param   {Template[]}      parts      The template parts that are assembled to build the layout.
    * @returns {Layout}
    */
-  public constructor(
-    parts: Template[] = [],
-  ) {
+  public constructor(parts: Template[] = []) {
     this.templates = parts;
   }
 }
@@ -144,7 +142,9 @@ export class Layout {
  */
 export class GridLayout extends Layout {
   public constructor() {
-    super([{ body: `
+    super([
+      {
+        body: `
 <div class="grid grid-cols-12">
   <template v-for="(item, index) in schema">
     <div :class="{
@@ -170,7 +170,9 @@ export class GridLayout extends Layout {
       <div class="card-footer"></div>
   </template>
 </div>
-`}]);
+`,
+      },
+    ]);
   }
 }
 
@@ -224,7 +226,9 @@ export class FlexLayout extends Layout {
     </div>
   </template>
 </div>
-`}]);
+`,
+      },
+    ]);
   }
 }
 
@@ -275,7 +279,9 @@ export class SingularLayout extends Layout {
     </div>
   </template>
 </div>
-`}]);
+`,
+      },
+    ]);
   }
 }
 
@@ -293,7 +299,7 @@ export class SingularLayout extends Layout {
  *
  * @since v0.1.0
  */
-export class DefaultLayout extends FlexLayout {};
+export class DefaultLayout extends FlexLayout {}
 
 /**
  * @class CustomLayout
@@ -310,7 +316,7 @@ export class DefaultLayout extends FlexLayout {};
  *
  * @since v0.1.0
  */
-export class CustomLayout extends Layout {};
+export class CustomLayout extends Layout {}
 
 /**
  * @type LayoutType
@@ -321,7 +327,7 @@ export class CustomLayout extends Layout {};
  *
  * @since v0.1.0
  */
-export type LayoutType = 'default' | 'custom' | 'grid' | 'flex' | 'singular';
+export type LayoutType = "default" | "custom" | "grid" | "flex" | "singular";
 
 /**
  * @var Layouts
@@ -331,9 +337,18 @@ export type LayoutType = 'default' | 'custom' | 'grid' | 'flex' | 'singular';
  * @since v0.1.0
  */
 export const Layouts = new Map<LayoutType, Layout>([
-  ['custom', new CustomLayout()],
-  ['default', new DefaultLayout()],
-  ['grid', new GridLayout()],
-  ['flex', new FlexLayout()],
-  ['singular', new SingularLayout()],
+  ["custom", new CustomLayout()],
+  ["default", new DefaultLayout()],
+  ["grid", new GridLayout()],
+  ["flex", new FlexLayout()],
+  ["singular", new SingularLayout()],
 ]);
+
+/**
+ * XXX
+ *
+ * @returns
+ */
+export const createLayout = (templates: Template[]): Layout => {
+  return new Layout(templates);
+};

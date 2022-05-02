@@ -7,22 +7,22 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-import { InjectionKey } from 'vue'
-import { createStore, Store } from 'vuex'
+import { InjectionKey } from "vue";
+import { createStore, Store } from "vuex";
 
 export interface AppState {
-  name: string,
-  version: number,
-  language: string,
+  name: string;
+  version: number;
+  language: string;
 }
 
-export const key: InjectionKey<Store<State>> = Symbol()
+export const key: InjectionKey<Store<AppState>> = Symbol();
 
-export const store = createStore<State>({
-  state: {
-    count: 0
-  }
-})
+// export const store = createStore<State>({
+//   state: {
+//     count: 0
+//   }
+// })
 
 export default createStore({
   /**

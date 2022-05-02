@@ -18,12 +18,7 @@
  *
  * @since v0.1.0
  */
-export type ScalarValueType = string
-  | number
-  | boolean
-  | null
-  | undefined
-  | Object;
+export type ScalarValueType = string | number | boolean | null | undefined;
 
 /**
  * @type DefinedScalarValueType
@@ -34,16 +29,13 @@ export type ScalarValueType = string
  * This type is used mostly to augment type-security
  * for data stored with this driver implementation.
  * <br /><br />
- * Note that it is not possible to store `undefined` 
+ * Note that it is not possible to store `undefined`
  * or `null` values using `window.localStorage` and
  * these are therefor ignored with this type.
  *
  * @since v0.1.0
  */
-export type DefinedScalarValueType = string
-  | number
-  | boolean
-  | Object;
+export type DefinedScalarValueType = string | number | boolean;
 
 /**
  * @class StorageDriver
@@ -87,7 +79,8 @@ export class StorageDriver {
    *
    * @var {WindowLocalStorage | Storage | ((key: string) => string)}
    */
-  protected storageProvider: WindowLocalStorage
+  protected storageProvider:
+    | WindowLocalStorage
     | Storage
     | ((key: string) => string);
 
@@ -101,9 +94,10 @@ export class StorageDriver {
    * @returns {StorageDriver}
    */
   public constructor(
-    provider: WindowLocalStorage
+    provider:
+      | WindowLocalStorage
       | Storage
-      | ((key: string) => string) = localStorage,
+      | ((key: string) => string) = localStorage
   ) {
     this.storageProvider = provider;
   }
@@ -122,9 +116,8 @@ export class StorageDriver {
    */
   public read(
     storageKey: string,
-    fallbackValue?: ScalarValueType,
+    fallbackValue?: ScalarValueType
   ): ScalarValueType {
-
     // when fallback is undefined, there is no
     // need to check the content and value type.
     // on the other hand, when we have a fallback
@@ -132,22 +125,26 @@ export class StorageDriver {
     // want to return the fallback.
 
     // by default, try using the localStorage flow
-    if ('getItem' in this.storageProvider) {
+    if ("getItem" in this.storageProvider) {
       const fromStorage = this.storageProvider.getItem(storageKey);
 
       return undefined === fallbackValue
         ? fromStorage
-        : (fromStorage === undefined ? fallbackValue : fromStorage);
+        : fromStorage === undefined
+        ? fallbackValue
+        : fromStorage;
     }
 
     // otherwise, try forwarding to the arrow function
     const fromPredicate = (
-      this.storageProvider as ((key: string) => string)
+      this.storageProvider as (key: string) => string
     ).apply(this, [storageKey]);
 
     return undefined === fallbackValue
       ? fromPredicate
-      : (fromPredicate === undefined ? fallbackValue : fromPredicate);
+      : fromPredicate === undefined
+      ? fallbackValue
+      : fromPredicate;
   }
 
   /**
@@ -165,15 +162,15 @@ export class StorageDriver {
    */
   public write(
     storageKey: string,
-    value: DefinedScalarValueType, // does not allow undefined
+    value: DefinedScalarValueType // does not allow undefined
   ): void {
     // use JSON format always (e.g. number 1 is '1')
     const jsonFormat = JSON.stringify(value);
 
     // by default, try using the localStorage flow
-    if ('setItem' in this.storageProvider) {
-      const fromStorage = this.storageProvider.setItem(storageKey, jsonFormat);
-      return ;
+    if ("setItem" in this.storageProvider) {
+      this.storageProvider.setItem(storageKey, jsonFormat);
+      return;
     }
 
     // persistence is not available if using arrow functions
