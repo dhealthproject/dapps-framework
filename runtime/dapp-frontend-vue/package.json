@@ -16,7 +16,7 @@
     "prettier": "prettier --check ./src ./tests",
     "lint:fix": "prettier --write ./src ./tests",
     "lint": "vue-cli-service lint && npm run prettier",
-    "docs": "typedoc --out \"ts-docs/$(npm run version --silent)\" src",
+    "docs": "typedoc --out \"ts-docs/$(npm run version --silent)\" src/kernel src/views/MetaView.ts src/views/Assembler/Assembler.ts",
     "prebuild": "npm run lint",
     "build": "vue-cli-service build",
     "build:watch": "vue-cli-service build --watch",
@@ -81,7 +81,8 @@
     "rules": {
       "no-console": "off",
       "no-debugger": "off",
-      "@typescript-eslint/no-explicit-any": "off"
+      "@typescript-eslint/no-explicit-any": "off",
+      "vue/multi-word-component-names": "off"
     },
     "overrides": [
       {

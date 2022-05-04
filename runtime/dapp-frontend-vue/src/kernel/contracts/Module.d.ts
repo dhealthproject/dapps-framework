@@ -11,16 +11,6 @@ import { State } from "./State";
 import { Page } from "./Page";
 
 /**
- *
- */
-export type PageFilesConfig = Record<string, string>;
-
-/**
- *
- */
-export type PageObjectsConfig = Record<string, Page>;
-
-/**
  * @interface Module
  * @description This interface represents individual dynamic
  * modules as loaded by the frontend. Per each module we then
@@ -45,9 +35,10 @@ export type PageObjectsConfig = Record<string, Page>;
  * <br /><br />
  * #### Properties
  *
- * @param   {string}                                  identifier      The module identifier, this is a kebab-case formatted name, e.g. "game-leaderboard".
- * @param   {PageFilesConfig|PageObjectsConfig}        routerConfig    The page schema(s) that are built to present the module at a end-user level, i.e. {@link Page}.
- * @param   {}
+ * @param   {string}    identifier      The module identifier, this is a kebab-case formatted name, e.g. "game-leaderboard". (Required)
+ * @param   {State}     dependencies    The state dependencies configuration. This defines a tear-up process using state discovery for all the pages that are in this module. (Optional)
+ * @param   {boolean}   namespaced      This property defines whether the router configuration must use a *namespace* prefix, i.e. the module identifier, in the URL for accessing specific pages.
+ * @param   {Record<string, Page>} routerConfig    The page schema(s) that are built to present the module at a end-user level, i.e. {@link Page}. (Required)
  *
  * @since v0.1.0
  */
@@ -83,9 +74,21 @@ export interface Module {
    * than one page or card in the same module need one identical
    * dataset or whenever data discovery must happen pre-render.
    *
-   * @var {State}
+   * @var {State|undefined}
    */
-  dependencies: State;
+  dependencies?: State;
+
+  /**
+   * This property defines whether the router configuration must
+   * use a *namespace* prefix, i.e. the module identifier, in the
+   * URL for accessing specific pages.
+   * <br /><br />
+   * Note that if you are using a namespaced module, **all pages**
+   * must be accessed using the *module identifier* prefix.
+   *
+   * @var {boolean|undefined}
+   */
+  namespaced?: boolean;
 
   /**
    * The vue-router paths definition, e.g. "/game-leaderboard".
@@ -108,16 +111,7 @@ export interface Module {
    * const path4 = "/accounts/:address/mosaics";
    * ```
    *
-   * @var {PageFilesConfig|PageObjectsConfig}
+   * @var {Record<string, Page>}
    */
-  routerConfig: PageFilesConfig | PageObjectsConfig;
+  routerConfig: Record<string, Page>;
 }
-
-/**
- * XXX
- *
- * @returns
- */
-export const createModule = (): Module => {
-  return {} as Module;
-};

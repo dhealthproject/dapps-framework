@@ -1,10 +1,9 @@
-
 {
-  "identifier": "my-other-module",
+  "identifier": "home",
   "dependencies": {
     "waitFor": ["app/init"]
   },
-  "namespaced": true,
+  "namespaced": false,
   "routerConfig": {
     "/": {
       "identifier": "home",
@@ -13,7 +12,7 @@
       "cards": [
         {
           "identifier": "title-message",
-          "component": "Card",
+          "component": "HelloWorld",
           "display": {
             "size": "full-width",
             "onEmpty": true,

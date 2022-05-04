@@ -13,6 +13,8 @@
     "url": "https://github.com/dhealthproject/dapps-framework/issues"
   },
   "scripts": {
+    "lint:fix": "lerna run lint:fix",
+    "lint": "lerna run lint",
     "build": "lerna run build",
     "test": "lerna run test",
     "test:unit": "lerna run test:unit",

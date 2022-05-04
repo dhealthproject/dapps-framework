@@ -60,11 +60,3 @@ export type FormattersConfig = Record<string, string>;
  *
  */
 export type FormatterFunctions = Record<string, Formatter>;
-
-/**
- *
- * @returns
- */
-export const createFormatter = (): Formatter => {
-  return {} as Formatter;
-};

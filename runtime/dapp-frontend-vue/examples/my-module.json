@@ -4,8 +4,48 @@
   "dependencies": {
     "waitFor": ["app/init"]
   },
+  "namespaced": false,
   "routerConfig": {
-    "/": "my-module/home.json",
-    "/settings": "my-module/settings.json"
+    "/": {
+      "identifier": "home",
+      "formatters": {},
+      "layout": "default",
+      "cards": [
+        {
+          "identifier": "title-message",
+          "component": "Card",
+          "display": {
+            "size": "full-width",
+            "onEmpty": true,
+            "onError": true,
+            "classes": [
+              "text-green-800",
+              "text-bold"
+            ]
+          },
+          "state": {
+            "getter": "app/getInfo",
+            "formatters": {
+              "address": "format-mini-address",
+              "balance": "format-absolute-amount"
+            }
+          }
+        }
+      ]
+    },
+    "/settings": {
+      "identifier": "settings",
+      "formatters": {},
+      "layout": "default",
+      "cards": [
+        {
+          "identifier": "title-message",
+          "component": "TableCard",
+          "state": {
+            "getter": "app/getSettings"
+          }
+        }
+      ]
+    }
   }
 }

@@ -21,9 +21,6 @@
     "outDir": "./dist/",
     "types": [
       "webpack-env",
-      "@wdio/mocha-framework",
-      "expect-webdriverio",
-      "webdriverio/sync",
       "mocha",
       "chai"
     ],

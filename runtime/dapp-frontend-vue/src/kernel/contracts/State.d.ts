@@ -81,11 +81,3 @@ export interface State {
    */
   formatters?: FormattersConfig;
 }
-
-/**
- *
- * @returns
- */
-export const createState = (): State => {
-  return {} as State;
-};

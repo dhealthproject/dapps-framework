@@ -48,9 +48,23 @@ import { State } from "./State";
  */
 export interface Page {
   /**
+   * A module identifier that refers to the parent module
+   * of this page instance. It is optional and automatically
+   * set with {@link AppKernel}.
+   *
+   * @var {string}
+   */
+  parent?: string;
+
+  /**
    * The page identifier, this is a kebab-case formatted
    * name, e.g. "leaderboard-statistics". This should be
    * unique across one module instance.
+   * <br /><br />
+   * The value of this property will also be used as the
+   * resulting route's *name*, i.e. it can be referred to
+   * by that name using `vue-router` instead of the full
+   * route path or "URI".
    *
    * @var {string}
    */
@@ -102,12 +116,3 @@ export interface Page {
    */
   cards: Card[];
 }
-
-/**
- * XXX
- *
- * @returns
- */
-export const createPage = (): Page => {
-  return {} as Page;
-};

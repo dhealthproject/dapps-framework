@@ -9,7 +9,7 @@
  */
 // external dependencies
 import { createApp } from "vue";
-import { createMetaManager /*, MetaConfig*/ } from "vue-meta";
+import { createMetaManager } from "vue-meta";
 
 // internal dependencies
 import App from "./App.vue";
@@ -21,7 +21,6 @@ import store from "./state/store";
 // triggers a build when adding classes
 import "../resources/scss/theme.scss";
 
-// internal configuration
 // eslint-disable-next-line
 const metaConfig = require("../config/meta.json");
 

@@ -15,8 +15,8 @@
  * Following values are possible:
  *   - `"default"`: Uses the default, client-side pagination mode.
  *   - `"client"`: Uses the client-side pagination mode.
- *   - `"server": Uses the server-side pagination mode (backend).
- *   - `"none": Does not permit navigating through pages.
+ *   - `"server"`: Uses the server-side pagination mode (backend).
+ *   - `"none"`: Does not permit navigating through pages.
  *
  * @since v0.1.0
  */

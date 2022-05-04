@@ -30,10 +30,19 @@ export type CardComponentType = "Card" | "TableCard";
  * This type serves internally to limit the keys available
  * with the {@link CardDisplayMode} interface's `size`
  * field.
+ * <br /><br />
+ * Currently the following values are available to be used
+ * in a card's `display.size` configuration:
+ *
+ * | Value | Description |
+ * | --- | --- |
+ * | `full-width` | The card will take up the full width of its parent node. |
+ * | `adapt-to-content` | The card will take as much room as as necessary to display its own content. |
+ * | `flex` | The card will take as much room as necessary to display its own content *and* will fill up some extra space if the parent node is not filled. |
  *
  * @since v0.1.0
  */
-export type CardWrapperSize = "full-width" | "adapt-to-content";
+export type CardWrapperSize = "full-width" | "adapt-to-content" | "flex";
 
 /**
  * @interface CardDisplayMode
@@ -216,11 +225,3 @@ export interface Card {
    */
   state?: State;
 }
-
-/**
- *
- * @returns
- */
-export const createCard = (): Card => {
-  return {} as Card;
-};
