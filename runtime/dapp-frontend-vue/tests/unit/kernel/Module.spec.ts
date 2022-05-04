@@ -12,7 +12,7 @@ import { expect } from "chai";
 import { Module } from "../../../src/kernel/index";
 
 // imports the module configuration
-import * as the_module from "../../../examples/my-module.json";
+import the_module from "../../../config/modules/home.json";
 
 describe("Module class -->", () => {
   it("should be castable to Module", () => {
@@ -20,6 +20,6 @@ describe("Module class -->", () => {
   });
 
   it("should be compatible with example JSON module", () => {
-    expect(the_module.identifier).to.equal("my-module");
+    expect(the_module.identifier).to.equal("home");
   });
 });

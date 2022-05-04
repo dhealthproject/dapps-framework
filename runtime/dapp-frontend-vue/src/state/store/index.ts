@@ -26,10 +26,12 @@ export const key: InjectionKey<Store<AppState>> = Symbol();
 
 export default createStore({
   /**
-   * Forces the Vuex store into strict mode
+   * Forces the Vuex store into non-strict mode because
+   * use-strict is not compatible with SDK listeners.
+   *
    * @link https://devdocs.io/vuex~4/api/index#strict
    */
-  strict: false, // Disable use-strict mode because it fails with SDK listeners.
+  strict: false,
 
   modules: {},
   state: {},

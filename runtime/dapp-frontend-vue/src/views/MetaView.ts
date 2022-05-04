@@ -15,6 +15,7 @@ import { useMeta } from "vue-meta";
 /**
  * @class MetaView
  *
+ * @description
  * This class encapsulates meta-tags configuration
  * and injects/sets up the meta for child components.
  *

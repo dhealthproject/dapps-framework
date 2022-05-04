@@ -22,5 +22,9 @@
   "AboutPage": {
     "title": "About | dHealth dApp",
     "description": "dHealth dApp is built with dHealth dApp Framework"
+  },
+  "Assembler": {
+    "title": "Assembled page | dHealth dApp",
+    "description": "dHealth dApp is built with dHealth dApp Framework. This page assembled dynamically."
   }
 }

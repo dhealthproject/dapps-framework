@@ -7,7 +7,6 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-export * from "./contracts";
-export * from "./i18n";
-export * from "./storage";
-export * from "./AppKernel";
+import home from "./home.json";
+
+export default [home];

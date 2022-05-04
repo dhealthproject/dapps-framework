@@ -119,6 +119,22 @@ export class Layout {
   public constructor(parts: Template[] = []) {
     this.templates = parts;
   }
+
+  /**
+   *
+   * @returns {string}
+   */
+  public render(): string {
+    return this.templates
+      .map((t) =>
+        t.body !== undefined
+          ? // uses template-as-string
+            t.body
+          : // uses template generator predicate
+            t.generator?.apply(this)
+      )
+      .join("");
+  }
 }
 
 /**
@@ -146,28 +162,15 @@ export class GridLayout extends Layout {
       {
         body: `
 <div class="grid grid-cols-12">
-  <template v-for="(item, index) in schema">
-    <div :class="{
-      "card": true,
-      "col-auto": !item.columnSpan || item.columnSpan <= 0,
-      "col-span-1": item.columnSpan === 2,
-      "col-span-2": item.columnSpan === 2,
-      "col-span-3": item.columnSpan === 3,
-      "col-span-4": item.columnSpan === 4,
-      "col-span-5": item.columnSpan === 5,
-      "col-span-6": item.columnSpan === 6,
-      "col-span-full": item.columnSpan >= 7,
-    }>
-      <div class="card-header"></div>
-      <div class="card-body">
-        <component
-          :is="item.component"
-          :style="item.customStyles"
-          v-bind="item"
-          :key="'col' + item.title + index"
-        />
-      </div>
-      <div class="card-footer"></div>
+  <template v-for="(card, index) in page.cards">
+    <component
+      :is="card.component"
+      :class="{
+        "card": true,
+      }"
+      v-bind="card"
+      :key="'col' + card.identifier + index"
+    />
   </template>
 </div>
 `,
@@ -200,30 +203,19 @@ export class FlexLayout extends Layout {
       {
         body: `
 <div class="flex">
-  <template v-for="(item, index) in schema">
-    <div :class="{
-      "card": true,
-      "w-full": item.fullWidth === true,
-      "flex-auto": !item.fullWidth && !item.disableFlex,
-      "flex-none": item.disableFlex,
-    }>
-      <div class="card-header"></div>
-      <div class="card-body">
-        <component
-          :is="item.component"
-          class="card-f"
-          :class="{
-            'card-f': true,
-            'card-full-width': item.displaySize === 'full-width',
-            'card-adaptive': item.displaySize === 'adaptive'
-          }"
-          :style="item.customStyles"
-          v-bind="item"
-          :key="'col' + item.title + index"
-        />
-      </div>
-      <div class="card-footer"></div>
-    </div>
+  <template v-for="(card, index) in page.cards">
+    <component
+      :is="card.component"
+      :class="{
+        "card": true,
+        'm-2.5': true,
+        "w-full": card.display.size === "full-width",
+        "flex-auto": card.display.size === "flex",
+        "flex-none": card.display.size === "adapt-to-content",
+      }"
+      v-bind="card"
+      :key="'col' + card.identifier + index"
+    />
   </template>
 </div>
 `,
@@ -256,27 +248,19 @@ export class SingularLayout extends Layout {
       {
         body: `
 <div class="place-content-center">
-  <template v-for="(item, index) in schema">
-    <div :class="{
-      "card": true,
-    }>
-      <div class="card-header"></div>
-      <div class="card-body">
-        <component
-          :is="item.component"
-          class="card-f"
-          :class="{
-            'card-f': true,
-            'card-full-width': item.displaySize === 'full-width',
-            'card-adaptive': item.displaySize === 'adaptive'
-          }"
-          :style="item.customStyles"
-          v-bind="item"
-          :key="'col' + item.title + index"
-        />
-      </div>
-      <div class="card-footer"></div>
-    </div>
+  <template v-for="(card, index) in page.cards">
+    <component
+      :is="card.component"
+      :class="{
+        "card": true,
+        "m-2.5": true,
+        "w-full": card.display.size === "full-width",
+        "flex-auto": card.display.size === "flex",
+        "flex-none": card.display.size === "adapt-to-content",
+      }"
+      v-bind="card"
+      :key="'col' + card.identifier + index"
+    />
   </template>
 </div>
 `,
@@ -336,19 +320,10 @@ export type LayoutType = "default" | "custom" | "grid" | "flex" | "singular";
  *
  * @since v0.1.0
  */
-export const Layouts = new Map<LayoutType, Layout>([
-  ["custom", new CustomLayout()],
-  ["default", new DefaultLayout()],
-  ["grid", new GridLayout()],
-  ["flex", new FlexLayout()],
-  ["singular", new SingularLayout()],
-]);
-
-/**
- * XXX
- *
- * @returns
- */
-export const createLayout = (templates: Template[]): Layout => {
-  return new Layout(templates);
+export const Layouts: Record<LayoutType, Layout> = {
+  custom: new CustomLayout(),
+  default: new DefaultLayout(),
+  grid: new GridLayout(),
+  flex: new FlexLayout(),
+  singular: new SingularLayout(),
 };
