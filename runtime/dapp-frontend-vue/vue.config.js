@@ -26,6 +26,9 @@ module.exports = {
   // inlines vue-meta
   transpileDependencies: ["vue-meta"],
 
+  // enables runtime compiler (dynamic templates)
+  runtimeCompiler: true,
+
   // configures polyfills
   configureWebpack: (config) => {
     config.plugins.push(

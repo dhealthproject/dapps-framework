@@ -21,6 +21,9 @@ export {
 
 export type {
   Card,
+  CardComponentData,
+  CardComponentDataType,
+  CardComponentScopedDataType,
   CardComponentType,
   CardWrapperSize,
   CardDisplayMode,

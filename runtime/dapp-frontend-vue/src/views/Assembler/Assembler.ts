@@ -9,172 +9,271 @@
  */
 // external dependencies
 import { h } from "vue";
-import type { PropType } from "vue";
 import { Options } from "vue-class-component";
+import { Prop } from "vue-property-decorator";
 
 // internal dependencies
-import { Layout, Layouts, LayoutType, Page } from "@/kernel";
+import {
+  Card,
+  CardComponentData,
+  CardDisplayMode,
+  Layout,
+  Layouts,
+  LayoutType,
+  Page,
+  State,
+} from "@/kernel";
 import { MetaView } from "@/views/MetaView";
 
+// child components
+import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+
+/**
+ * @class Assembler
+ * @description This component displays a dynamically built
+ * template from our meta-programming configuration that is
+ * available in `config/modules/`. This assembler class takes
+ * a {@link Page} property that consists of a set of cards and
+ * layout options combined to state discovery dependencies and
+ * possibly formatters.
+ * <br /><br />
+ * This component uses the {@link Layout} class and extending
+ * alternatives to render the template. TailWind classes are
+ * used to modify the positioning and flow of elements.
+ * <br /><br />
+ * Warning: This component serves as a base to display any page
+ * in the software. It does not currently implement a security
+ * or verification feature for module configuration files. Next
+ * iterations on this class may add these features or use them
+ * given they may be implemented in the kernel directly.
+ * <br /><br />
+ * @example Using the Assembler component
+ * ```html
+ *   <template>
+ *     <Assembler
+ *       :page="{...}"
+ *     />
+ *   </template>
+ * ```
+ *
+ * <br /><br />
+ * #### Parameters
+ *
+ * @param  {Page}     page           The page configuration object, i.e. should contain cards, layouts and state configuration.
+ *
+ * @since v0.1.0
+ */
 @Options({
-  props: {
-    page: {
-      type: Object as PropType<Page>,
-    },
-  },
+  components: { HelloWorld },
 })
 export default class Assembler extends MetaView {
   /**
+   * The page configuration object, i.e. should contain cards,
+   * layouts and state configuration. This property refers to
+   * the currently displayed (dynamic) module page.
    *
+   * @access protected
+   * @var {Page}
    */
-  protected page: Page = {} as Page;
+  @Prop({ default: {}, required: true }) protected page?: Page;
 
   /**
+   * The type of layout used to display the current page. Our
+   * kernel provides with multiple base layouts and templates
+   * that you can find in {@link Layout}.
    *
+   * @access protected
+   * @var {LayoutType}
    */
   protected layoutType: LayoutType = "default" as LayoutType;
 
   /**
+   * The layout instance being used. This property is used to
+   * determine the *template* that will be rendered and makes
+   * use of the {@link Layout} class instances as provided by
+   * the kernel.
    *
+   * @access protected
+   * @var {LayoutType}
    */
   protected layout: Layout = Layouts["default"];
 
   /**
-   * Hook called on mount of the Component (inject).
+   * Getter for the **required** page configuration object. This
+   * method uses the {@link Page} property and requires it to be
+   * set or fails.
+   * <br /><br />
+   * It is recommended to use this getter method for code related
+   * to the {@link Page} class property as it requires the prop to
+   * have a value.
    *
-   * @async
-   * @returns {void}
+   * @access protected
+   * @returns {Page}
    */
-  mounted() {
-    console.log("displaying page: ", this.page);
-    console.log("using layoutType: ", this.layoutType);
-
-    if (this.page) {
-      console.log("initialize", this.page.dependencies);
-    }
+  protected get currentPage(): Page {
+    return undefined === this.page ? ({} as Page) : this.page;
   }
 
-  created() {
-    this.layoutType = this.page.layout;
+  /**
+   * Hook called when rendering happens. This is the first
+   * step in the lifecycle of this component. This method
+   * should always returned a *pre-built* template and uses
+   * the {@link Layout} class' `render()` method to get the
+   * correct template markup.
+   * <br /><br />
+   * The component properties are passed into this template's
+   * scope, i.e. you can access the `page` object directly in
+   * the template.
+   *
+   * @access public
+   * @returns {VNode}
+   */
+  public render() {
+    console.log("Assembler rendering with page: ", this.page);
+    return h(
+      {
+        components: { HelloWorld },
+        template: this.layout.render(),
+        props: ["page"],
+        computed: {
+          currentPage() {
+            return undefined === this.page ? ({} as Page) : this.page;
+          },
+        },
+        methods: {
+          shouldDisplayCard: this.shouldDisplayCard,
+          getData: this.getData,
+        },
+      },
+      {
+        page: this.page,
+      }
+    );
+  }
+
+  /**
+   * Hook called upon component creation. This method is called
+   * after the {@link render} method and requires the `page`
+   * property to be set. It will use the `page` property to set
+   * the correct {@link LayoutType} and {@link Layout} instances.
+   * <br /><br />
+   * This step of the *rendering process* for this component is
+   * important to determine the shape and layout used for display
+   * of individual cards on the page.
+   *
+   * @access public
+   * @returns {void}
+   */
+  public created() {
+    console.log("Assembler created");
+
+    this.layoutType = this.currentPage.layout;
 
     // read the actual layout by type
     this.layout = !(this.layoutType in Layouts)
       ? (Layouts["default"] as Layout)
       : (Layouts[this.layoutType] as Layout);
+
+    console.log("displaying page: ", this.currentPage);
+    console.log("using layoutType: ", this.layoutType);
+
+    if (this.currentPage) {
+      console.log("initialize", this.currentPage.dependencies);
+    }
   }
 
   /**
+   * Hook called upon mounting the component on a Vue instance.
+   * This method is called after the {@link render} method and
+   * after the {@link created} method. It will use the `page`
+   * property to initialize state dependencies and formatters.
+   * <br /><br />
+   * This is the last step of a component's *setup process* and
+   * completion marks the end of the **rendering process** for
+   * this component. The process of mounting a component is where
+   * the virtual DOM is translated into the real DOM.
    *
-   * @returns
+   * @access public
+   * @return {void}
    */
-  render() {
-    console.log("rendering now");
-    return h(this.layout.render());
+  public mounted() {
+    console.log("mounted");
+    console.log(this.currentPage);
+  }
+
+  /**
+   * Forwards a getter call to the vuex store. This
+   * method is used internally to retrieve data for
+   * individual card components using their dynamic
+   * state discovery configuration.
+   * <br /><br />
+   * Retrieves a card component's data using the vuex
+   * store getter that is configured with `state.getter`
+   * configuration field.
+   *
+   * @access protected
+   * @param     {Card}    card    The card component that is being assessed.
+   * @returns   {CardComponentData}
+   */
+  protected getData(card: Card): CardComponentData {
+    // this method is used only if the card uses vuex
+    // store getters/mutations/actions.
+    if (undefined === card.state) {
+      return {};
+    }
+
+    // retrieves the data getter
+    const { getter } = card.state as State;
+
+    // avoids vuex store errors about unknown getter
+    if (undefined === getter || !getter.length) {
+      return {};
+    }
+
+    // forwards the getter call to vuex store
+    return this.$store.getters[getter] as CardComponentData;
+  }
+
+  /**
+   * This method determines whether a card component should
+   * be displayed or not with the current state. In case the
+   * data is already available, this method always returns
+   * `true`, whereas if the data is not yet available, it will
+   * only display the component when the card configuration
+   * field `display.onEmpty` is set to a truthy value.
+   * <br /><br />
+   * This is used internally to hide/display card components
+   * depending on the emptiness of their datasets and allows
+   * to display a message about the data being empty.
+   *
+   * @param card
+   */
+  protected shouldDisplayCard(card: Card): boolean {
+    // retrieves data using dynamic store getter
+    const data: any = this.getData(card);
+
+    // in cases where the card data is already
+    // loaded, we *always* display cards.
+    if (undefined !== data) {
+      return true;
+    }
+
+    // otherwise, when data is not yet loaded or
+    // when an error occured, we should only display
+    // the card according to the display configuration
+    if (undefined === card.display) {
+      // maps default card display if none is set
+      card.display = {
+        size: "adapt-to-content",
+        onEmpty: true,
+        onError: false,
+      } as CardDisplayMode;
+    }
+
+    // displays only according to card configuration
+    // this will only display the card if the card's
+    // display configuration has `onEmpty` set to a
+    // *truthy* value including `true` and `1`.
+    return !!card.display.onEmpty;
   }
 }
-
-// import CardTable from '@/components/containers/CardTable.vue';
-// import BaseInfoWidget from '@/components/widgets/BaseInfoWidget.vue';
-// import PriceChartWidget from '@/components/widgets/PriceChartWidget.vue';
-// import RecentBlocksWidget from '@/components/widgets/RecentBlocksWidget.vue';
-// import RecentTransactionsWidget from '@/components/widgets/RecentTransactionsWidget.vue';
-// import TransactionGraphicWidget from '@/components/widgets/TransactionGraphicWidget.vue';
-// import AccountBalanceWidget from '@/components/widgets/AccountBalanceWidget.vue';
-// import NodesMapWidget from '@/components/widgets/NodesMapWidget.vue';
-// import NodeStatsWidget from '@/components/widgets/NodeStatsWidget.vue';
-
-// export default {
-// 	components: {
-// 		CardTable,
-// 		BaseInfoWidget,
-// 		PriceChartWidget,
-// 		RecentBlocksWidget,
-// 		RecentTransactionsWidget,
-// 		TransactionGraphicWidget,
-// 		AccountBalanceWidget,
-// 		NodesMapWidget,
-// 		NodeStatsWidget
-// 	},
-
-// 	props: {
-// 		storeNamespaces: {
-// 			type: Array,
-// 			default: () => []
-// 		},
-// 		initActions: {
-// 			type: Array,
-// 			default: () => []
-// 		},
-// 		layout: {
-// 			type: String,
-// 			required: true,
-// 			default: 'flex'
-// 		},
-// 		layoutOptions: {
-// 			type: String,
-// 			default: ''
-// 		},
-// 		schema: {
-// 			type: Array,
-// 			required: true,
-// 			default: () => []
-// 		}
-// 	},
-
-// 	async mounted() {
-// 		console.log('initialize', this.storeNamespaces);
-// 		await this.$store.dispatch('initialize', this.$route);
-// 		if (this.storeNamespaces?.length) {
-// 			for (const namespace of this.storeNamespaces)
-// 				await this.$store.dispatch(namespace + '/initialize');
-// 		}
-// 		if (this.initActions?.length) {
-// 			for (const action of this.initActions)
-// 				await this.$store.dispatch(action, this.$route.params);
-// 		}
-// 	},
-
-// 	computed: {
-// 		prop() {
-// 			for (let key in this.$route.params)
-// 				return this.$route.params[key];
-// 			return null;
-// 		}
-// 	},
-
-// 	methods: {
-// 		getter(e) {
-// 			if (typeof e === 'string')
-// 				return this.$store.getters[e];
-// 		},
-
-// 		isItemShown(item) {
-// 			if (this.getter(item.hideDependOnGetter)?.error)
-// 				return false;
-
-// 			if (item.hideEmptyData && (
-// 				!this.getData(item) || (
-// 					Array.isArray(this.getData(item)) && !this.getData(item)?.length
-// 				)
-// 			)
-// 			)
-// 				return false;
-
-// 			if (item.hideOnError && this.getter(item.managerGetter)?.error)
-// 				return false;
-
-// 			return true;
-// 		},
-
-// 		getKeyName(e) {
-// 			return this.$store.getters['ui/getKeyName'](e);
-// 		},
-
-// 		getData(item) {
-// 			if (typeof item.dataGetter === 'string')
-// 				return this.getter(item.dataGetter);
-// 			else
-// 				return this.getter(item.managerGetter)?.data;
-// 		}
-// 	}
-// };
