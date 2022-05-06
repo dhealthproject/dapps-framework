@@ -28,6 +28,9 @@
               "address": "format-mini-address",
               "balance": "format-absolute-amount"
             }
+          },
+          "props": {
+            "msg": "Welcome to your dApp with dHealth Network"
           }
         }
       ]

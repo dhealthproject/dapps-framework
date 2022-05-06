@@ -27,5 +27,5 @@
 <script lang="ts" src="./App.ts"></script>
 
 <style lang="scss">
-@import "@/App.scss";
+@import "./App.scss";
 </style>

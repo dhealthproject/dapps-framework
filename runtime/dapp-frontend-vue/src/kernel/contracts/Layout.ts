@@ -162,16 +162,24 @@ export class GridLayout extends Layout {
       {
         body: `
 <div class="grid grid-cols-12">
-  <template v-for="(card, index) in page.cards">
-    <component
-      :is="card.component"
-      :class="{
-        "card": true,
-      }"
-      v-bind="card"
-      :key="'col' + card.identifier + index"
-    />
-  </template>
+  <div v-if="!!currentPage">
+    <template
+      v-for="(card, index) in currentPage.cards"
+      :key="'col-' + card.identifier + '-' + index">
+      <component
+        v-if="shouldDisplayCard(card)"
+        :is="card.component"
+        :class="{
+          'card': true,
+          'm-2.5': true,
+          'col-span-1': card.display.size !== 'full-width',
+          'col-span-6': card.display.size === 'full-width',
+        }"
+        v-bind="{ ...card.props }"
+      />
+    </template>
+  </div>
+  <div v-else>Loading grid cards...</div>
 </div>
 `,
       },
@@ -203,20 +211,25 @@ export class FlexLayout extends Layout {
       {
         body: `
 <div class="flex">
-  <template v-for="(card, index) in page.cards">
-    <component
-      :is="card.component"
-      :class="{
-        "card": true,
-        'm-2.5': true,
-        "w-full": card.display.size === "full-width",
-        "flex-auto": card.display.size === "flex",
-        "flex-none": card.display.size === "adapt-to-content",
-      }"
-      v-bind="card"
-      :key="'col' + card.identifier + index"
-    />
-  </template>
+  <div v-if="!!currentPage">
+    <template
+      v-for="(card, index) in currentPage.cards"
+      :key="'col-' + card.identifier + '-' + index">
+      <component
+        v-if="shouldDisplayCard(card)"
+        :is="card.component"
+        :class="{
+          'card': true,
+          'm-2.5': true,
+          'w-full': card.display.size === 'full-width',
+          'flex-auto': card.display.size === 'flex',
+          'flex-none': card.display.size === 'adapt-to-content',
+        }"
+        v-bind="{ ...card.props }"
+      />
+    </template>
+  </div>
+  <div v-else>Loading flexible cards...</div>
 </div>
 `,
       },
@@ -248,20 +261,25 @@ export class SingularLayout extends Layout {
       {
         body: `
 <div class="place-content-center">
-  <template v-for="(card, index) in page.cards">
-    <component
-      :is="card.component"
-      :class="{
-        "card": true,
-        "m-2.5": true,
-        "w-full": card.display.size === "full-width",
-        "flex-auto": card.display.size === "flex",
-        "flex-none": card.display.size === "adapt-to-content",
-      }"
-      v-bind="card"
-      :key="'col' + card.identifier + index"
-    />
-  </template>
+  <div v-if="!!currentPage">
+    <template 
+      v-for="(card, index) in currentPage.cards"
+      :key="'col-' + card.identifier + '-' + index">
+      <component
+        v-if="shouldDisplayCard(card)"
+        :is="card.component"
+        :class="{
+          'card': true,
+          'm-2.5': true,
+          'w-full': card.display.size === 'full-width',
+          'flex-auto': card.display.size === 'flex',
+          'flex-none': card.display.size === 'adapt-to-content',
+        }"
+        v-bind="{ ...card.props }"
+      />
+    </template>
+  </div>
+  <div v-else>Loading component card...</div>
 </div>
 `,
       },
@@ -308,6 +326,17 @@ export class CustomLayout extends Layout {}
  * that are available and pre-configured with this software.
  * <br /><br />
  * This type serves internally to limit the {@link Layouts} keys.
+ * <br /><br />
+ * Currently the following values are available to be used
+ * in a page's layout` configuration field:
+ *
+ * | Value | Description |
+ * | --- | --- |
+ * | `default` | Pages that use the default layout `flex`. |
+ * | `custom` | Pages that use a custom layout template that extends {@link Layout}. |
+ * | `grid` | Pages that use a *grid* layout using TailWind's `grid`. |
+ * | `flex` | Pages that use a *flexible* layout using TailWind's `flex`. |
+ * | `singular` | Pages that *center* the content around one single card component. |
  *
  * @since v0.1.0
  */

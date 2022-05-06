@@ -45,6 +45,59 @@ export type CardComponentType = "Card" | "TableCard";
 export type CardWrapperSize = "full-width" | "adapt-to-content" | "flex";
 
 /**
+ * @type CardComponentDataType
+ * @description This type defines a flexible value type for
+ * data, arrays of data and objects of data.
+ * <br /><br />
+ * This type serves internally to use a type-safe alternative
+ * to the `any` keyword when referring to card component's sets
+ * of data.
+ * <br /><br />
+ * Note that this type can be used recursively and accepts
+ * arrays of any of the listed native types or objects.
+ *
+ * @since v0.1.0
+ */
+export type CardComponentDataType =
+  | CardComponentDataType[]
+  | { [key: string]: any }
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | void;
+
+/**
+ * @type CardComponentScopedDataType
+ * @description This type defines a *scoped* value type for data,
+ * arrays of data and objects of data.
+ * <br /><br />
+ * This type serves internally to map vuex store results that are
+ * scoped in a `data` property, as is common with datasets that
+ * are the result of API requests.
+ *
+ * @since v0.1.0
+ */
+export type CardComponentScopedDataType = { data: CardComponentDataType };
+
+/**
+ * @type CardComponentData
+ * @description This type defines the actual type-safe format for
+ * a card component's data.
+ * <br /><br />
+ * This type can be used whenever you need to refer to the type of
+ * a card component's vuex store state and contains the actual data,
+ * either in a raw-, natively typed, format or in a scoped format
+ * as described by {@link CardComponentDataType} and {@link CardComponentScopedDataType}.
+ *
+ * @since v0.1.0
+ */
+export type CardComponentData =
+  | CardComponentDataType
+  | CardComponentScopedDataType;
+
+/**
  * @interface CardDisplayMode
  * @description This type defines the display mode settings
  * for an individual card component. Display modes are used
@@ -224,4 +277,15 @@ export interface Card {
    * @var {State}
    */
   state?: State;
+
+  /**
+   * An object that contains the properties that should be forwarded
+   * to the card component's `<component>` element.
+   * <br /><br />
+   * Note that these properties are set without any formatting being
+   * done on the value or the property name.
+   *
+   * @var {Record<string, unknown>}
+   */
+  props?: Record<string, unknown>;
 }
