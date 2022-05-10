@@ -20,7 +20,7 @@ import { Prop, Vue } from "vue-property-decorator";
  * are displayed and also adding a currency suffix.
  * <br /><br />
  * You can customize this component using custom HTML
- * attributes [as listed below](#attributes).
+ * attributes [as listed below](#parameters).
  * <br /><br />
  * Warning: This component serves as a base to **display** any
  * amount and does not currently implement a protection against
