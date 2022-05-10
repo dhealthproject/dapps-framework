@@ -1,0 +1,153 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth UI Components
+ * @subpackage  Components
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+/**
+ * dHealth Fonts
+ **/
+$themeFont: "noto-sans-regular";
+
+/**
+ * dHealth Color Palette
+ **/
+$royalBlue: #2970ff; // Royal Blue
+$turquoise: #41e3ce; // Turquoise
+$navy: #150867; // Navy
+$tangerine: #ff8f78; // Tangerine
+$violet: #583dff; // Violet
+$linen: #ffefda; // Linen
+$sand: #f0efec; // Sand
+$mint: #bdebe5; // Mint
+$white: #ffffff; // White
+
+/**
+ * Variants can be used to limit the necessary color
+ * annotations. Semantically, we use `primary` as the
+ * prevailing (or "most present") variant that is used
+ * for background colors or decoration colors.
+ **/
+$primary: $royalBlue;
+$secondary: $turquoise;
+$tertiary: $navy;
+$accentFirst: $tangerine;
+$accentSecond: $violet;
+$accentThird: $linen;
+$accentFourth: $sand;
+$accentFifth: $mint;
+
+/**
+ * Extends Tailwind utilities to enable custom color codes that
+ * use the above dHealth color palette.
+ *
+ * @link https://tailwindcss.com/docs/functions-and-directives#apply
+ */
+@layer utilities {
+  /* text-color re-use */
+  .text-primary {
+    @apply text-[#2970FF];
+  }
+  .text-secondary {
+    @apply text-[#41E3CE];
+  }
+  .text-tertiary {
+    @apply text-[#150867];
+  }
+  .text-accentFirst {
+    @apply text-[#FF8F78];
+  }
+  .text-accentSecond {
+    @apply text-[#583DFF];
+  }
+  .text-accentThird {
+    @apply text-[#FFEFDA];
+  }
+  .text-accentFourth {
+    @apply text-[#F0EFEC];
+  }
+  .text-accentFifth {
+    @apply text-[#BDEBE5];
+  }
+
+  /* bg-color re-use */
+  .bg-primary {
+    @apply bg-[#2970FF];
+  }
+  .bg-secondary {
+    @apply bg-[#41E3CE];
+  }
+  .bg-tertiary {
+    @apply bg-[#150867];
+  }
+  .bg-accentFirst {
+    @apply bg-[#FF8F78];
+  }
+  .bg-accentSecond {
+    @apply bg-[#583DFF];
+  }
+  .bg-accentThird {
+    @apply bg-[#FFEFDA];
+  }
+  .bg-accentFourth {
+    @apply bg-[#F0EFEC];
+  }
+  .bg-accentFifth {
+    @apply bg-[#BDEBE5];
+  }
+
+  /* border-color re-use */
+  .border-primary {
+    @apply border-[#2970FF];
+  }
+  .border-secondary {
+    @apply border-[#41E3CE];
+  }
+  .border-tertiary {
+    @apply border-[#150867];
+  }
+  .border-accentFirst {
+    @apply border-[#FF8F78];
+  }
+  .border-accentSecond {
+    @apply border-[#583DFF];
+  }
+  .border-accentThird {
+    @apply border-[#FFEFDA];
+  }
+  .border-accentFourth {
+    @apply border-[#F0EFEC];
+  }
+  .border-accentFifth {
+    @apply border-[#BDEBE5];
+  }
+
+  /* decoration-color re-use */
+  .decoration-primary {
+    @apply decoration-[#2970FF];
+  }
+  .decoration-secondary {
+    @apply decoration-[#41E3CE];
+  }
+  .decoration-tertiary {
+    @apply decoration-[#150867];
+  }
+  .decoration-accentFirst {
+    @apply decoration-[#FF8F78];
+  }
+  .decoration-accentSecond {
+    @apply decoration-[#583DFF];
+  }
+  .decoration-accentThird {
+    @apply decoration-[#FFEFDA];
+  }
+  .decoration-accentFourth {
+    @apply decoration-[#F0EFEC];
+  }
+  .decoration-accentFifth {
+    @apply decoration-[#BDEBE5];
+  }
+}

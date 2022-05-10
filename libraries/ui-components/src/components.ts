@@ -7,8 +7,22 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// This file is necessary to enable the installation of
+// the library using built-in Vue (>= v2) software. This
+// file makes sure that components are re-usable and are
+// exported using named exports.
+
+// Note: Any component released as part of this library
+// **must** be exported using this file. A reference to
+// the `.vue` file and the default export are imported.
+
 // importing components
 import TokenAmount from "./fields/TokenAmount/TokenAmount.vue";
+import ActionButton from "./controls/ActionButton/ActionButton.vue";
+
+// importing compiled tailwind styles
+// triggers a build when adding classes
+import "./theme.scss";
 
 // exports components as named-exports
-export { TokenAmount };
+export { ActionButton, TokenAmount };

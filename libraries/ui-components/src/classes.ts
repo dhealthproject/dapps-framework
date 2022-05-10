@@ -16,6 +16,15 @@
 // **must** be exported in this file using a reference
 // to the TypeScript class for `typedoc` to succeed.
 
+// library types
+import { BaseComponent } from "./BaseComponent";
+import type { Variant, VariantConfiguration } from "./types/Variant";
+import { useVariant } from "./types/Variant";
+
+// components
+import ActionButton from "./controls/ActionButton/ActionButton";
 import TokenAmount from "./fields/TokenAmount/TokenAmount";
 
-export { TokenAmount };
+// exports
+export type { Variant, VariantConfiguration };
+export { ActionButton, BaseComponent, TokenAmount, useVariant };

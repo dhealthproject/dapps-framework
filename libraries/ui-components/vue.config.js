@@ -8,6 +8,8 @@
  * @license     LGPL-3.0
  */
 module.exports = {
+  assetsDir: "@dhealth",
+
   // disables extract of CSS files
   css: { extract: false },
 

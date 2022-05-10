@@ -7,6 +7,15 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// This file is necessary to enable the installation of
+// the library using built-in Vue (>= v2) software. This
+// file makes sure that the library is recognized *and*
+// registered as a Vue plugin ("middleware").
+
+// Note: Any component released as part of this library
+// **must** be registered and exported using this file.
+
+import { ActionButton } from "./components";
 import { TokenAmount } from "./components";
 
 /**
@@ -31,6 +40,7 @@ import { TokenAmount } from "./components";
  * @since v0.1.0
  */
 const install = ($app: any) => {
+  $app.component(ActionButton);
   $app.component(TokenAmount);
 };
 
@@ -40,4 +50,4 @@ export default {
 };
 
 // exports the components classes as named-exports
-export { TokenAmount };
+export { ActionButton, TokenAmount };
