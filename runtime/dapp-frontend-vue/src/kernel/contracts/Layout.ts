@@ -172,8 +172,8 @@ export class GridLayout extends Layout {
         :class="{
           'card': true,
           'm-2.5': true,
-          'col-span-1': card.display.size !== 'full-width',
-          'col-span-6': card.display.size === 'full-width',
+          'col-span-1': getDisplayMode(card).size !== 'full-width',
+          'col-span-6': getDisplayMode(card).size === 'full-width',
         }"
         v-bind="{ ...card.props }"
       />
@@ -221,9 +221,9 @@ export class FlexLayout extends Layout {
         :class="{
           'card': true,
           'm-2.5': true,
-          'w-full': card.display.size === 'full-width',
-          'flex-auto': card.display.size === 'flex',
-          'flex-none': card.display.size === 'adapt-to-content',
+          'w-full': getDisplayMode(card).size === 'full-width',
+          'flex-auto': getDisplayMode(card).size === 'flex',
+          'flex-none': getDisplayMode(card).size === 'adapt-to-content',
         }"
         v-bind="{ ...card.props }"
       />
@@ -271,9 +271,9 @@ export class SingularLayout extends Layout {
         :class="{
           'card': true,
           'm-2.5': true,
-          'w-full': card.display.size === 'full-width',
-          'flex-auto': card.display.size === 'flex',
-          'flex-none': card.display.size === 'adapt-to-content',
+          'w-full': getDisplayMode(card).size === 'full-width',
+          'flex-auto': getDisplayMode(card).size === 'flex',
+          'flex-none': getDisplayMode(card).size === 'adapt-to-content',
         }"
         v-bind="{ ...card.props }"
       />

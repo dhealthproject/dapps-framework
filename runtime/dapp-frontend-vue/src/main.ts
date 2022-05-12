@@ -16,16 +16,19 @@ import App from "./App.vue";
 import "./registerServiceWorker";
 import router from "./router";
 import store from "./state/store";
+import internalComponentsInstaller from "@dhealth/components";
 
 // importing compiled tailwind styles
 // triggers a build when adding classes
 import "../resources/scss/theme.scss";
+import "@dhealth/components/dist/@dhealth/components.css";
 
 // eslint-disable-next-line
 const metaConfig = require("../config/meta.json");
 
 // create app instance
 const dapp = createApp(App)
+  .use(internalComponentsInstaller)
   .use(router)
   .use(store)
   .use(createMetaManager())
