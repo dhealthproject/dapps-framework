@@ -7,6 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+
+@tailwind utilities;
+
 /**
  * dHealth Fonts
  **/
@@ -15,15 +18,15 @@ $themeFont: "noto-sans-regular";
 /**
  * dHealth Color Palette
  **/
-$royalBlue: #2970ff; // Royal Blue
-$turquoise: #41e3ce; // Turquoise
-$navy: #150867; // Navy
-$tangerine: #ff8f78; // Tangerine
-$violet: #583dff; // Violet
-$linen: #ffefda; // Linen
-$sand: #f0efec; // Sand
-$mint: #bdebe5; // Mint
-$white: #ffffff; // White
+$royalBlue: #2970ff; /* Royal Blue */
+$turquoise: #41e3ce; /* Turquoise */
+$navy: #150867; /* Navy */
+$tangerine: #ff8f78; /* Tangerine */
+$violet: #583dff; /* Violet */
+$linen: #ffefda; /* Linen */
+$sand: #f0efec; /* Sand */
+$mint: #bdebe5; /* Mint */
+$white: #ffffff; /* White */
 
 /**
  * Variants can be used to limit the necessary color

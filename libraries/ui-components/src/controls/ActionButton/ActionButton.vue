@@ -17,7 +17,7 @@ including them in the compiled CSS that is attached with this library.
 -->
 <template>
   <button
-    @click="$emit('click', arguments)"
+    @click="$emit('click')"
     :class="{
       'bg-primary': designVariant.name === 'primary',
       'bg-secondary': designVariant.name === 'secondary',
@@ -44,6 +44,6 @@ including them in the compiled CSS that is attached with this library.
 
 <script lang="ts" src="./ActionButton.ts"></script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 @import "./ActionButton.scss";
 </style>

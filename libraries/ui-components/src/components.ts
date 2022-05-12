@@ -20,9 +20,5 @@
 import TokenAmount from "./fields/TokenAmount/TokenAmount.vue";
 import ActionButton from "./controls/ActionButton/ActionButton.vue";
 
-// importing compiled tailwind styles
-// triggers a build when adding classes
-import "./theme.scss";
-
 // exports components as named-exports
 export { ActionButton, TokenAmount };

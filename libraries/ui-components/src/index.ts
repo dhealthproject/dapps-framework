@@ -15,8 +15,13 @@
 // Note: Any component released as part of this library
 // **must** be registered and exported using this file.
 
+import { BaseComponent } from "./BaseComponent";
 import { ActionButton } from "./components";
 import { TokenAmount } from "./components";
+
+// importing compiled tailwind styles
+// triggers a build when adding classes
+import "./theme.scss";
 
 /**
  * Helper function to install the components library
@@ -50,4 +55,4 @@ export default {
 };
 
 // exports the components classes as named-exports
-export { ActionButton, TokenAmount };
+export { ActionButton, BaseComponent, TokenAmount };
