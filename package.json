@@ -13,14 +13,20 @@
     "url": "https://github.com/dhealthproject/dapps-framework/issues"
   },
   "scripts": {
-    "lint:fix": "lerna run lint:fix",
-    "lint": "lerna run lint",
-    "build": "lerna run build",
-    "test": "lerna run test",
-    "test:unit": "lerna run test:unit",
-    "test:e2e": "lerna run test:e2e",
-    "docs": "lerna run docs",
-    "version": "echo $npm_package_version"
+    "lint:fix": "lerna run lint:fix --stream",
+    "lint": "lerna run lint --stream",
+    "dev": "npm run build:lib ; npm run build:vue ; npm run serve",
+    "build": "lerna run build --stream",
+    "build:lib": "lerna run build --stream --scope @dhealth/components",
+    "build:vue": "lerna run build --stream --scope @dhealthdapps/frontend",
+    "test": "lerna run test --stream",
+    "test:lib": "lerna run test --stream --scope @dhealth/components",
+    "test:vue": "lerna run test --stream --scope @dhealthdapps/frontend",
+    "docs": "lerna run docs --stream",
+    "docs:lib": "lerna run docs --stream --scope @dhealth/components",
+    "docs:vue": "lerna run docs --stream --scope @dhealthdapps/frontend",
+    "version": "echo $npm_package_version",
+    "serve": "lerna run serve --stream --scope @dhealthdapps/frontend"
   },
   "devDependencies": {
     "lerna": "^4.0.0"
