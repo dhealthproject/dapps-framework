@@ -9,6 +9,7 @@
  */
 // external dependencies
 const webpack = require("webpack");
+const path = require("path");
 
 // internal dependencies
 // eslint-disable-next-line
@@ -55,6 +56,11 @@ module.exports = {
       args[0].title = metaConfig.manifest.name;
       return args;
     });
+
+    // forces re-use of singleton vue instance (always the same)
+    // this is necessary because we use the runtime compiler
+    config.resolve.symlinks(false);
+    config.resolve.alias.set("vue", path.resolve("./node_modules/vue"));
   },
 
   // configures SPA

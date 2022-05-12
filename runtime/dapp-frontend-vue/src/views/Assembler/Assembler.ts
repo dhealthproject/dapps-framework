@@ -26,7 +26,7 @@ import {
 import { MetaView } from "@/views/MetaView";
 
 // child components
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import { AppComponents, LibComponents } from "@/components";
 
 /**
  * @class Assembler
@@ -63,9 +63,7 @@ import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
  *
  * @since v0.1.0
  */
-@Options({
-  components: { HelloWorld },
-})
+@Options({})
 export default class Assembler extends MetaView {
   /**
    * The page configuration object, i.e. should contain cards,
@@ -115,45 +113,8 @@ export default class Assembler extends MetaView {
   }
 
   /**
-   * Hook called when rendering happens. This is the first
-   * step in the lifecycle of this component. This method
-   * should always returned a *pre-built* template and uses
-   * the {@link Layout} class' `render()` method to get the
-   * correct template markup.
-   * <br /><br />
-   * The component properties are passed into this template's
-   * scope, i.e. you can access the `page` object directly in
-   * the template.
-   *
-   * @access public
-   * @returns {VNode}
-   */
-  public render() {
-    console.log("Assembler rendering with page: ", this.page);
-    return h(
-      {
-        components: { HelloWorld },
-        template: this.layout.render(),
-        props: ["page"],
-        computed: {
-          currentPage() {
-            return undefined === this.page ? ({} as Page) : this.page;
-          },
-        },
-        methods: {
-          shouldDisplayCard: this.shouldDisplayCard,
-          getData: this.getData,
-        },
-      },
-      {
-        page: this.page,
-      }
-    );
-  }
-
-  /**
    * Hook called upon component creation. This method is called
-   * after the {@link render} method and requires the `page`
+   * first, before the {@link render} method and requires the `page`
    * property to be set. It will use the `page` property to set
    * the correct {@link LayoutType} and {@link Layout} instances.
    * <br /><br />
@@ -165,8 +126,6 @@ export default class Assembler extends MetaView {
    * @returns {void}
    */
   public created() {
-    console.log("Assembler created");
-
     this.layoutType = this.currentPage.layout;
 
     // read the actual layout by type
@@ -174,12 +133,52 @@ export default class Assembler extends MetaView {
       ? (Layouts["default"] as Layout)
       : (Layouts[this.layoutType] as Layout);
 
-    console.log("displaying page: ", this.currentPage);
-    console.log("using layoutType: ", this.layoutType);
+    console.log("[Assembler] displaying page: ", this.currentPage);
+    console.log("[Assembler] using layoutType: ", this.layoutType);
 
     if (this.currentPage) {
       console.log("initialize", this.currentPage.dependencies);
     }
+  }
+
+  /**
+   * Hook called when rendering happens. This is the second
+   * step in the lifecycle of this component. This method
+   * should always return a *pre-built* template and uses
+   * the {@link Layout} class' `render()` method to get the
+   * correct template markup.
+   * <br /><br />
+   * The component properties are passed into this template's
+   * scope, i.e. you can access the `page` object directly in
+   * the template.
+   *
+   * @access public
+   * @returns {VNode}
+   */
+  public render() {
+    return h(
+      {
+        components: {
+          ...AppComponents,
+          ...LibComponents,
+        },
+        template: this.layout.render(),
+        props: ["page"],
+        computed: {
+          currentPage() {
+            return undefined === this.page ? ({} as Page) : this.page;
+          },
+        },
+        methods: {
+          getDisplayMode: this.getDisplayMode,
+          shouldDisplayCard: this.shouldDisplayCard,
+          getData: this.getData,
+        },
+      },
+      {
+        page: this.page,
+      }
+    );
   }
 
   /**
@@ -232,6 +231,34 @@ export default class Assembler extends MetaView {
 
     // forwards the getter call to vuex store
     return this.$store.getters[getter] as CardComponentData;
+  }
+
+  /**
+   * Returns the display mode for the current page. Notably,
+   * the display mode is responsible for size configuration
+   * and lets developers add custom classes, or TailWind CSS
+   * classes to specific components.
+   * <br /><br />
+   * The boolean field values for `onEmpty` and `onError` as
+   * defined in {@link CardDisplayMode} lets developers configure
+   * the display/hiding of the component in case of empty
+   * datasets or errors.
+   *
+   * @param   {Card}  card    The card being displayed.
+   * @returns {CardDisplayMode}
+   */
+  protected getDisplayMode(card: Card): CardDisplayMode {
+    // returns default display mode
+    if (!("display" in card) || undefined === card.display) {
+      return {
+        size: "flex",
+        onEmpty: true,
+        onError: false,
+        classes: [],
+      } as CardDisplayMode;
+    }
+
+    return card.display;
   }
 
   /**
