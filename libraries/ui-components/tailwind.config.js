@@ -14,6 +14,23 @@ module.exports = {
   // finds TailWind classes in files with listed extensions
   content: ["./src/**/*.{vue,ts,scss}"],
   theme: {
+    // defines custom colors for dHealth Design System
+    colors: {
+      "royal-blue": "#2970ff",
+      "royal-blue-600": "#5d64ff",
+      "royal-blue-500": "#8085ff",
+      "royal-blue-100": "#f9f8ff",
+      turquoise: "#41e3ce",
+      navy: "#150867",
+      tangerine: "#ff8f78",
+      violet: "#583dff",
+      linen: "#ffefda",
+      sand: "#f0efec",
+      mint: "#bdebe5",
+      white: "#ffffff",
+      gray: "#e2e4e8",
+      "gray-600": "#525c76",
+    },
     // overwrites default border radius
     borderRadius: {
       DEFAULT: "40px",
