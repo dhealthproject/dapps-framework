@@ -14,6 +14,7 @@ module.exports = () => ({
     sourcesContent: true,
   },
   plugins: {
+    "tailwindcss/nesting": {},
     tailwindcss: {},
     autoprefixer: {
       cascade: false,
