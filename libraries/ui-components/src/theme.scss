@@ -7,7 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+@import "./fonts.scss";
 
+@tailwind base;
 @tailwind utilities;
 
 /**
@@ -27,6 +29,7 @@ $linen: #ffefda; /* Linen */
 $sand: #f0efec; /* Sand */
 $mint: #bdebe5; /* Mint */
 $white: #ffffff; /* White */
+$gray: #e2e4e8;
 
 /**
  * Variants can be used to limit the necessary color
@@ -34,14 +37,29 @@ $white: #ffffff; /* White */
  * prevailing (or "most present") variant that is used
  * for background colors or decoration colors.
  **/
-$primary: $royalBlue;
-$secondary: $turquoise;
-$tertiary: $navy;
+$primary: #5d64ff;
+$primaryHover: #8085ff;
+$secondary: #f9f8ff;
+$secondaryHover: #f9f8ff;
+$tertiary: $white;
 $accentFirst: $tangerine;
 $accentSecond: $violet;
 $accentThird: $linen;
 $accentFourth: $sand;
 $accentFifth: $mint;
+
+/**
+ * Extends Tailwind base styles to enable custom font as defined
+ * in dHealth Design System.
+ *
+ * @link https://tailwindcss.com/docs/font-family
+ */
+@layer base {
+  html,
+  #app {
+    font-family: "Plus Jakarta Sans";
+  }
+}
 
 /**
  * Extends Tailwind utilities to enable custom color codes that
@@ -52,7 +70,10 @@ $accentFifth: $mint;
 @layer utilities {
   /* text-color re-use */
   .text-primary {
-    @apply text-[#2970FF];
+    @apply text-[#5d64ff];
+  }
+  .text-primaryHover {
+    @apply text-[#8085ff];
   }
   .text-secondary {
     @apply text-[#41E3CE];
@@ -78,7 +99,10 @@ $accentFifth: $mint;
 
   /* bg-color re-use */
   .bg-primary {
-    @apply bg-[#2970FF];
+    @apply bg-[#5d64ff];
+  }
+  .bg-primaryHover {
+    @apply bg-[#8085ff];
   }
   .bg-secondary {
     @apply bg-[#41E3CE];
@@ -104,7 +128,10 @@ $accentFifth: $mint;
 
   /* border-color re-use */
   .border-primary {
-    @apply border-[#2970FF];
+    @apply border-[#5d64ff];
+  }
+  .border-primaryHover {
+    @apply border-[#8085ff];
   }
   .border-secondary {
     @apply border-[#41E3CE];
@@ -130,7 +157,10 @@ $accentFifth: $mint;
 
   /* decoration-color re-use */
   .decoration-primary {
-    @apply decoration-[#2970FF];
+    @apply decoration-[#5d64ff];
+  }
+  .decoration-primaryHover {
+    @apply decoration-[#8085ff];
   }
   .decoration-secondary {
     @apply decoration-[#41E3CE];
