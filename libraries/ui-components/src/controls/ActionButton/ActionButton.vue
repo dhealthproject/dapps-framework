@@ -18,14 +18,20 @@ including them in the compiled CSS that is attached with this library.
 <template>
   <button
     @click="$emit('click')"
+    class="rounded py-3 px-4 text-base cursor-pointer font-semibold"
     :class="{
-      'bg-primary': designVariant.name === 'primary',
-      'bg-secondary': designVariant.name === 'secondary',
-      'bg-tertiary': designVariant.name === 'tertiary',
-      'bg-accentFirst': designVariant.name === 'accentFirst',
-      'bg-accentSecond': designVariant.name === 'accentSecond',
-      'bg-accentThird': designVariant.name === 'accentThird',
-      'bg-accentFourth': designVariant.name === 'accentFourth',
+      'bg-primary hover:bg-primaryHover': designVariant.name === 'primary',
+      'bg-secondary hover:bg-secondaryHover':
+        designVariant.name === 'secondary',
+      'bg-tertiary hover:bg-tertiaryHover': designVariant.name === 'tertiary',
+      'bg-accentFirst hover:bg-accentFirstHover':
+        designVariant.name === 'accentFirst',
+      'bg-accentSecond hover:bg-accentSecondHover':
+        designVariant.name === 'accentSecond',
+      'bg-accentThird hover:bg-accentThirdHover':
+        designVariant.name === 'accentThird',
+      'bg-accentFourth hover:bg-accentFourthHover':
+        designVariant.name === 'accentFourth',
     }"
   >
     <div
@@ -41,7 +47,7 @@ including them in the compiled CSS that is attached with this library.
     </div>
   </button>
 </template>
-
+border: 1px solid #5D64FF; box-shadow: 0px 0px 5px #5D64FF;
 <script lang="ts" src="./ActionButton.ts"></script>
 
 <style lang="postcss" scoped>

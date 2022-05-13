@@ -11,7 +11,19 @@ module.exports = {
   future: {
     removeDeprecatedGapUtilities: true,
   },
+  // finds TailWind classes in files with listed extensions
   content: ["./src/**/*.{vue,ts,scss}"],
+  theme: {
+    // overwrites default border radius
+    borderRadius: {
+      DEFAULT: "40px",
+      lg: "40px",
+    },
+    // overwrites default fonts display
+    fontSize: {
+      base: ["14px", "21px"], // font-size, line-height
+    },
+  },
   variants: {},
   plugins: [],
 };
