@@ -7,4 +7,29 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-@import "@/theme.scss";
+.base {
+  @apply rounded py-3 px-4 text-base cursor-pointer font-semibold;
+}
+
+.style {
+  &-primary {
+    @apply bg-royal-blue;
+    @apply text-white;
+    @apply hover:bg-royal-blue-500;
+  }
+
+  &-secondary {
+    @apply bg-royal-blue-100 border border-royal-blue-600;
+    @apply text-royal-blue-600;
+    @apply hover:shadow-royal-blue-600;
+
+    /* sets arbitrary shadow drop size */
+    @apply hover:shadow-[0_0_5px_0];
+  }
+
+  &-tertiary {
+    @apply bg-white border border-gray-600;
+    @apply text-gray-600;
+    @apply hover:text-royal-blue-600 hover:border-royal-blue-600;
+  }
+}

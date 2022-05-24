@@ -8,8 +8,18 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Options } from "vue-class-component";
-import { Prop, Vue } from "vue-property-decorator";
+import { Vue } from "vue-class-component";
+
+/**
+ * @class ComponentProperties
+ * @internal
+ */
+class ComponentProperties {
+  value?: number;
+  decimals?: number;
+  currency?: string;
+  fadeDecimals?: boolean;
+}
 
 /**
  * @class TokenAmount
@@ -48,39 +58,7 @@ import { Prop, Vue } from "vue-property-decorator";
  *
  * @since v0.1.0
  */
-@Options({})
-export default class TokenAmount extends Vue {
-  /**
-   * The amount value (defaults to 0).
-   *
-   * @var {number|undefined}
-   */
-  @Prop({ default: 0 }) value: number | undefined;
-
-  /**
-   * The number of decimal places to display (defaults to 6).
-   *
-   * @var {number|undefined}
-   */
-  @Prop({ default: 6 }) decimals: number | undefined;
-
-  /**
-   * The currency symbol (defaults to empty string).
-   *
-   * @var {string|undefined}
-   */
-  @Prop({ default: "" }) currency: string | undefined;
-
-  /**
-   * The boolean value that determines whether display
-   * should differentiate between the integer part and
-   * the decimals part (defaults to false). Setting it
-   * to true will fade the decimals part of the number.
-   *
-   * @var {boolean|undefined}
-   */
-  @Prop({ default: false }) fadeDecimals: boolean | undefined;
-
+export default class TokenAmount extends Vue.with(ComponentProperties) {
   /**
    * Getter to retrieve the untouched token amount.
    *

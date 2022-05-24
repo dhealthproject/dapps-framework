@@ -8,12 +8,18 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Options } from "vue-class-component";
-import { Prop } from "vue-property-decorator";
+import { Vue } from "vue-class-component";
 
 // internal dependencies
 import type { Variant } from "@/types/Variant";
-import { BaseComponent } from "@/BaseComponent";
+
+/**
+ * @class ComponentProperties
+ * @internal
+ */
+class ComponentProperties {
+  variant?: Variant;
+}
 
 /**
  * @class ActionButton
@@ -52,15 +58,4 @@ import { BaseComponent } from "@/BaseComponent";
  *
  * @since v0.1.0
  */
-@Options({})
-export default class ActionButton extends BaseComponent {
-  /**
-   * The (optional) variant to use when styling this button.
-   * This property is *inherited* from {@link BaseComponent} but
-   * we add it here for clarity.
-   *
-   * @access protected
-   * @var {Page}
-   */
-  @Prop({ default: "primary" }) protected variant?: Variant = "primary";
-}
+export default class ActionButton extends Vue.with(ComponentProperties) {}
