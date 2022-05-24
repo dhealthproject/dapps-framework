@@ -17,14 +17,12 @@
 // to the TypeScript class for `typedoc` to succeed.
 
 // library types
-import { BaseComponent } from "./BaseComponent";
-import type { Variant, VariantConfiguration } from "./types/Variant";
-import { useVariant } from "./types/Variant";
+import type { Variant } from "./types/Variant";
 
 // components
 import ActionButton from "./controls/ActionButton/ActionButton";
 import TokenAmount from "./fields/TokenAmount/TokenAmount";
 
 // exports
-export type { Variant, VariantConfiguration };
-export { ActionButton, BaseComponent, TokenAmount, useVariant };
+export type { Variant };
+export { ActionButton, TokenAmount };

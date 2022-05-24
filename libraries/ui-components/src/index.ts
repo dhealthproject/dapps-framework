@@ -15,7 +15,6 @@
 // Note: Any component released as part of this library
 // **must** be registered and exported using this file.
 
-import { BaseComponent } from "./BaseComponent";
 import { ActionButton } from "./components";
 import { TokenAmount } from "./components";
 
@@ -55,4 +54,4 @@ export default {
 };
 
 // exports the components classes as named-exports
-export { ActionButton, BaseComponent, TokenAmount };
+export { ActionButton, TokenAmount };
