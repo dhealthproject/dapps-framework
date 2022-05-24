@@ -225,6 +225,7 @@ export class FlexLayout extends Layout {
           'flex-auto': getDisplayMode(card).size === 'flex',
           'flex-none': getDisplayMode(card).size === 'adapt-to-content',
         }"
+        :class="[ ...getDisplayMode(card).classes ]"
         v-bind="{ ...card.props }"
       />
     </template>

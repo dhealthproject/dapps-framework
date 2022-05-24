@@ -13,22 +13,6 @@
         {
           "identifier": "title-message",
           "component": "HelloWorld",
-          "display": {
-            "size": "full-width",
-            "onEmpty": true,
-            "onError": true,
-            "classes": [
-              "text-green-800",
-              "text-bold"
-            ]
-          },
-          "state": {
-            "getter": "app/getInfo",
-            "formatters": {
-              "address": "format-mini-address",
-              "balance": "format-absolute-amount"
-            }
-          },
           "props": {
             "msg": "Welcome to your dApp with dHealth Network"
           }
@@ -37,7 +21,7 @@
           "identifier": "hi-button",
           "component": "ActionButton",
           "props": {
-            "variant": "secondary"
+            "variant": "tertiary"
           }
         }
       ]
