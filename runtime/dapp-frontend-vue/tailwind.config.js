@@ -17,6 +17,7 @@ module.exports = {
     "./src/App.ts",
     "./src/App.vue",
     "./public/index.html",
+    "./config/modules/*.json", // enables "card.display.classes"
   ],
   theme: {
     fontFamily: {
