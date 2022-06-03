@@ -17,7 +17,7 @@ including them in the compiled CSS that is attached with this library.
 -->
 <template>
   <button
-    @click="$emit('click')"
+    @click="handleClick"
     :class="{
       base: true,
       'style-primary': variant == 'primary',
