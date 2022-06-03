@@ -43,7 +43,7 @@ export class SchedulerModule {
   static register(configs: ConfigDTO): DynamicModule {
     // print activation information of all cron modules.
     SchedulerModule.logger.debug(
-      `Enabled cronjobs: ${JSON.stringify(configs.schedulerModules, null, 2)}`,
+      `Enabled cronjobs: ${JSON.stringify(configs.scheduler, null, 2)}`,
     );
     // get imports dynamically based on configs values.
     const imports = Imports.getImports(configs, true);

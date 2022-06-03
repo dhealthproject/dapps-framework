@@ -17,6 +17,7 @@ import * as childProcess from 'child_process';
 import { AppModule } from './app.module';
 import { dappConfig, networkConfig } from '../config';
 import * as packageJson from '../package.json';
+import { ConfigDTO } from './common/models';
 
 /**
  * Main function to bootstrap the app.
@@ -27,7 +28,7 @@ import * as packageJson from '../package.json';
 async function bootstrap(): Promise<void> {
   // create app instance
   const app = await NestFactory.create(
-    AppModule.register({ ...dappConfig, ...networkConfig }),
+    AppModule.register({ ...dappConfig, ...networkConfig } as ConfigDTO),
   );
 
   // add secutity
@@ -46,7 +47,7 @@ async function bootstrap(): Promise<void> {
   SwaggerModule.setup('specs', app, document);
 
   // start the scheduler if exists in scopes
-  if (dappConfig.scopes.SchedulerModule) startScheduler();
+  if (dappConfig.scopes.includes('scheduler')) startScheduler();
 
   // start the app
   await app.listen(7903);

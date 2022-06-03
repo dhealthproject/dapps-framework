@@ -10,11 +10,7 @@
 // export all components in this directory
 export { AccountDTO, AccountQueryDTO } from './account.dto';
 export { Account, AccountSchema, AccountDocument } from './account.schema';
-export {
-  ConfigDTO,
-  ScopeConfigDTO,
-  SchedulerModulesConfigDTO,
-} from './config.dto';
+export { ConfigDTO, Scope, CronJob } from './config.dto';
 export {
   PaginationDto,
   PaginatedResutDto,

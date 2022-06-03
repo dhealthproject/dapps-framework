@@ -55,24 +55,13 @@ jest.mock(
 );
 
 import { Imports } from '.';
-import {
-  MongoConfigDTO,
-  SchedulerModulesConfigDTO,
-  ScopeConfigDTO,
-} from 'src/common/models/config.dto';
 
 describe('Imports', () => {
   describe('test on getImports()', () => {
     it('should return correct result for non-scheduler', () => {
       const configDto = {
-        mongo: new MongoConfigDTO(),
-        schedulerModules: new SchedulerModulesConfigDTO(),
-        scopes: {
-          DiscoveryModule: true,
-          PayoutModule: true,
-          ProcessorModule: true,
-          SchedulerModule: true,
-        },
+        scheduler: [],
+        scopes: ['discovery', 'payout', 'processor', 'scheduler'],
       };
       const expectedResult = [
         ConfigModuleMock,
@@ -86,14 +75,8 @@ describe('Imports', () => {
 
     it('should return correct result for non-scheduler with disabled modules', () => {
       const configDto = {
-        mongo: new MongoConfigDTO(),
-        schedulerModules: new SchedulerModulesConfigDTO(),
-        scopes: {
-          DiscoveryModule: true,
-          PayoutModule: false,
-          ProcessorModule: true,
-          SchedulerModule: true,
-        },
+        scheduler: [],
+        scopes: ['discovery', 'processor', 'scheduler'],
       };
       const expectedResult = [
         ConfigModuleMock,
@@ -106,11 +89,8 @@ describe('Imports', () => {
 
     it('should return correct result for scheduler', () => {
       const configDto = {
-        mongo: new MongoConfigDTO(),
-        schedulerModules: {
-          AddAccountsModule: true,
-        },
-        scopes: new ScopeConfigDTO(),
+        scheduler: ['addAccounts'],
+        scopes: ['scheduler'],
       };
       const expectedResult = [
         ConfigModuleMock,
@@ -125,9 +105,8 @@ describe('Imports', () => {
   describe('test on getConfigFunction()', () => {
     it('should return correct result', () => {
       const configDto = {
-        mongo: new MongoConfigDTO(),
-        schedulerModules: new SchedulerModulesConfigDTO(),
-        scopes: new ScopeConfigDTO(),
+        scheduler: ['addAccounts'],
+        scopes: ['discovery', 'payout', 'processor', 'scheduler'],
       };
       Imports.configDTO = configDto;
       const result = Imports.getConfigFunction();

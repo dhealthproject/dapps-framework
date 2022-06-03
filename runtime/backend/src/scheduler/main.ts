@@ -13,6 +13,7 @@ import { SchedulerModule } from './scheduler.module';
 
 // internal dependencies
 import { dappConfig, networkConfig } from '../../config';
+import { ConfigDTO } from 'src/common/models';
 
 /**
  * Function to bootstrap the scheduler of the app.
@@ -23,7 +24,7 @@ import { dappConfig, networkConfig } from '../../config';
 async function bootstrap(): Promise<void> {
   // create an instance of the scheduler with imported configs
   NestFactory.createApplicationContext(
-    SchedulerModule.register({ ...dappConfig, ...networkConfig }),
+    SchedulerModule.register({ ...dappConfig, ...networkConfig } as ConfigDTO),
   );
 }
 

@@ -22,10 +22,10 @@ import { AccountsModule } from 'src/common/modules/routes/accounts/accounts.modu
  *
  * E.g. imports scopes dynamically from app's module file:
  * ```js
- * const modules = configs.schedulerModules;
+ * const modules = configs.scheduler;
  *
- * for (const module in modules) {
- *   if (modules[module] && ModuleImports[module])
+ * for (const module of modules) {
+ *   if (ModuleImports[module])
  *     imports.push(ModuleImports[module]);
  * }
  * ```
@@ -34,11 +34,11 @@ import { AccountsModule } from 'src/common/modules/routes/accounts/accounts.modu
  */
 export const ModuleImports = {
   // infrastructure modules
-  MongooseModule: MongooseModule.forRoot(
+  mongoose: MongooseModule.forRoot(
     `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`,
   ),
   // route modules
-  AccountsModule: AccountsModule,
+  accounts: AccountsModule,
   // cron modules
-  AddAccountsModule: AddAccountsModule,
+  addAccounts: AddAccountsModule,
 };

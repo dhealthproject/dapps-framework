@@ -16,112 +16,36 @@
  */
 export class ConfigDTO {
   /**
-   * Instance of {@link ScopeConfigDTO}
+   * An array of {@link Scope}.
+   *
    * Specifies scopes config.
    *
-   * @var {ScopeConfigDTO}
+   * @var {Scope[]}
    */
-  scopes: ScopeConfigDTO;
+  scopes: Scope[];
 
   /**
-   * Instance of {@link SchedulerModulesConfigDTO}
+   * An array of {@link CronJob}
+   *
    * Specifies scheduler's cronjobs config.
    *
-   * @var {SchedulerModulesConfigDTO}
+   * @var {CronJob[]}
    */
-  schedulerModules: SchedulerModulesConfigDTO;
+  scheduler: CronJob[];
 }
 
 /**
- * @class MongoConfigDTO
- * @description Mongo config DTO.
+ * @type Scope
+ * @description A type that represents the dapp scopes config values.
  *
  * @since v0.1.0
  */
-export class MongoConfigDTO {
-  /**
-   * Mongo login username.
-   *
-   * @var {string}
-   */
-  user: string;
-
-  /**
-   * Mongo login password.
-   *
-   * @var {string}
-   */
-  pass: string;
-
-  /**
-   * Mongo host name.
-   *
-   * @var {string}
-   */
-  host: string;
-
-  /**
-   * Mongo port number.
-   *
-   * @var {number}
-   */
-  port: number;
-
-  /**
-   * Mongo database name.
-   *
-   * @var {string}
-   */
-  dbName: string;
-}
+export type Scope = string | 'discovery' | 'payout' | 'processor' | 'scheduler';
 
 /**
- * @class ScopeConfigDTO
- * @description A DTO class that represents the dapp scopes config values.
+ * @type CronJob
+ * @description A type that represents the dapp scheduler config values.
  *
  * @since v0.1.0
  */
-export class ScopeConfigDTO {
-  /**
-   * Specifies if `discovery` scope is enabled.
-   *
-   * @var {boolean}
-   */
-  DiscoveryModule: boolean;
-
-  /**
-   * Specifies if `payout` scope is enabled.
-   *
-   * @var {boolean}
-   */
-  PayoutModule: boolean;
-
-  /**
-   * Specifies if `processor` scope is enabled.
-   *
-   * @var {boolean}
-   */
-  ProcessorModule: boolean;
-
-  /**
-   * Specifies if `scheduler` scope is enabled.
-   *
-   * @var {boolean}
-   */
-  SchedulerModule: boolean;
-}
-
-/**
- * @class SchedulerModulesConfigDTO
- * @description A DTO class that represents the dapp scheduler config values.
- *
- * @since v0.1.0
- */
-export class SchedulerModulesConfigDTO {
-  /**
-   * Specifies if `AddAccounts` module is enabled.
-   *
-   * @var {boolean}
-   */
-  AddAccountsModule: boolean;
-}
+export type CronJob = string | 'addAccounts';

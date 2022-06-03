@@ -28,20 +28,18 @@ import { ProcessorModule } from 'src/processor/processor.module';
  *
  * E.g. imports scopes dynamically from app's module file:
  * ```js
- * import { ScopeImports } from 'src/common/infrastructures';
+ *  const scopes = configs.scopes;
  *
- * const scopes = configs.scopes;
- *   for (const scope in scopes) {
- *     if (scopes[scope] && ScopeImports[scope])
- *       imports.push(ScopeImports[scope]);
- *   }
- * }
+ *  for (const scope of scopes) {
+ *    if (ScopeImports[scope])
+ *      imports.push(ScopeImports[scope]);
+ *  }
  * ```
  *
  * @since v0.1.0
  */
 export const ScopeImports = {
-  DiscoveryModule: DiscoveryModule,
-  PayoutModule: PayoutModule,
-  ProcessorModule: ProcessorModule,
+  discovery: DiscoveryModule,
+  payout: PayoutModule,
+  processor: ProcessorModule,
 };

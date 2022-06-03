@@ -53,17 +53,15 @@ export class Imports {
     // If for scopes
     if (!scheduler) {
       const scopes = configs.scopes;
-      for (const scope in scopes) {
-        if (scopes[scope] && ScopeImports[scope])
-          imports.push(ScopeImports[scope]);
+      for (const scope of scopes) {
+        if (ScopeImports[scope]) imports.push(ScopeImports[scope]);
       }
-      // If for schedulers
+      // If for cronjobs
     } else {
-      imports.push(ModuleImports.MongooseModule);
-      const modules = configs.schedulerModules;
-      for (const module in modules) {
-        if (modules[module] && ModuleImports[module])
-          imports.push(ModuleImports[module]);
+      imports.push(ModuleImports.mongoose);
+      const modules = configs.scheduler;
+      for (const module of modules) {
+        if (ModuleImports[module]) imports.push(ModuleImports[module]);
       }
     }
     return imports;
