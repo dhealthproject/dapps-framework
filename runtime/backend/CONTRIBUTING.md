@@ -80,4 +80,4 @@ Then sit back and wait. There will probably be discussion about the pull request
 and [elasticsearch/CONTRIGUTING](https://github.com/elastic/elasticsearch/blob/master/CONTRIBUTING.md)
 
 [pull-request]:https://help.github.com/articles/about-pull-requests/
-[github-issues]:https://github.com/dhealthproject/dapp-backend/issues
+[github-issues]:https://github.com/dhealthproject/dapps-framework/issues
