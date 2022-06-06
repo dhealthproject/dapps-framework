@@ -40,11 +40,11 @@ createApp(App)
 // examples/UseInVueTemplates.ts
 
 // use in templates
-import { TokenAmount } from '@dhealth/components';
+import { DappTokenAmount } from '@dhealth/components';
 new Vue({
   el: '#app',
-  components: { TokenAmount },
-  template: '<TokenAmount />'
+  components: { DappTokenAmount },
+  template: '<DappTokenAmount />'
 });
 ```
 
@@ -63,11 +63,11 @@ Vue.use(window.dHealthComponents.default);
 // use in templates
 new Vue({
   el: '#app',
-  template: '<TokenAmount />',
+  template: '<DappTokenAmount />',
 });
 
 // or use programmatically
-console.log(window.dHealthComponents.TokenAmount);
+console.log(window.dHealthComponents.DappTokenAmount);
 ```
 
 ## Getting help
