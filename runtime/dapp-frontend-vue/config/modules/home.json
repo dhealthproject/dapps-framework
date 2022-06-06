@@ -19,7 +19,7 @@
         },
         {
           "identifier": "hi-button",
-          "component": "ActionButton",
+          "component": "DappButton",
           "props": {
             "variant": "tertiary"
           }
