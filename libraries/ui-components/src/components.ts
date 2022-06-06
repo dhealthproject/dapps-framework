@@ -18,7 +18,7 @@
 
 // importing components
 import DappButton from "./controls/DappButton/DappButton.vue";
-import TokenAmount from "./fields/TokenAmount/TokenAmount.vue";
+import DappTokenAmount from "./fields/DappTokenAmount/DappTokenAmount.vue";
 
 // exports components as named-exports
-export { DappButton, TokenAmount };
+export { DappButton, DappTokenAmount };

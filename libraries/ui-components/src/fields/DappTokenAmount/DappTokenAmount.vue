@@ -24,4 +24,4 @@
   </span>
 </template>
 
-<script lang="ts" src="./TokenAmount.ts"></script>
+<script lang="ts" src="./DappTokenAmount.ts"></script>
