@@ -22,7 +22,7 @@ class ComponentProperties {
 }
 
 /**
- * @class ActionButton
+ * @class DappButton
  * @description This component displays a clickable button
  * and uses the standard `<button>` tag to automatically
  * make `@click` and `@hover` compatible with browser events.
@@ -39,16 +39,16 @@ class ComponentProperties {
  * | `prefix` | Defines an optional prefix text or element on the left of the button text (e.g. caret icon). |
  * | `suffix` | Defines an optional suffix text or element on the right of the button text (e.g. caret icon). |
  * <br /><br />
- * @example Using the ActionButton component with variants
+ * @example Using the DappButton component with variants
  * Variants that are available with the components library
  * can take up values as defined in {@link Variant}.
  * <br /><br />
  * ```html
  *   <template>
- *     <ActionButton
+ *     <DappButton
  *       @click="() => console.log('clicked')"
  *       variant="primary"
- *     >My Action</ActionButton>
+ *     >My Action</DappButton>
  *   </template>
  * ```
  * <br /><br />
@@ -58,4 +58,4 @@ class ComponentProperties {
  *
  * @since v0.1.0
  */
-export default class ActionButton extends Vue.with(ComponentProperties) {}
+export default class DappButton extends Vue.with(ComponentProperties) {}

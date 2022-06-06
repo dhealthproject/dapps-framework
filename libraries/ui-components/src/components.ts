@@ -17,8 +17,8 @@
 // the `.vue` file and the default export are imported.
 
 // importing components
+import DappButton from "./controls/DappButton/DappButton.vue";
 import TokenAmount from "./fields/TokenAmount/TokenAmount.vue";
-import ActionButton from "./controls/ActionButton/ActionButton.vue";
 
 // exports components as named-exports
-export { ActionButton, TokenAmount };
+export { DappButton, TokenAmount };
