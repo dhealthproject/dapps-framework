@@ -32,8 +32,8 @@ including them in the compiled CSS that is attached with this library.
   </button>
 </template>
 
-<script lang="ts" src="./ActionButton.ts"></script>
+<script lang="ts" src="./DappButton.ts"></script>
 
 <style lang="postcss" scoped>
-@import "./ActionButton.scss";
+@import "./DappButton.scss";
 </style>

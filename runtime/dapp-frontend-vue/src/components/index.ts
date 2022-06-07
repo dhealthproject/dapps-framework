@@ -8,10 +8,10 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { ActionButton } from "@dhealth/components";
+import { DappButton } from "@dhealth/components";
 
 // internal dependencies
 import HelloWorld from "./HelloWorld.vue";
 
 export const AppComponents = { HelloWorld };
-export const LibComponents = { ActionButton };
+export const LibComponents = { DappButton };

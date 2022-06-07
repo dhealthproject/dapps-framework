@@ -9,12 +9,12 @@
  */
 import { expect } from "chai";
 import { mount, VueWrapper } from "@vue/test-utils";
-import TokenAmount from "../../../src/fields/TokenAmount/TokenAmount.vue";
+import DappTokenAmount from "@/fields/DappTokenAmount/DappTokenAmount.vue";
 
-describe("TokenAmount -->", () => {
+describe("DappTokenAmount -->", () => {
   let widget: VueWrapper;
   beforeEach(() => {
-    widget = mount(TokenAmount as any, {
+    widget = mount(DappTokenAmount as any, {
       props: { value: 0 },
     });
   });

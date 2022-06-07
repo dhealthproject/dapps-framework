@@ -22,7 +22,7 @@ class ComponentProperties {
 }
 
 /**
- * @class TokenAmount
+ * @class DappTokenAmount
  * @description This component displays a token amount
  * and permits to differentiate between the decimals
  * part of the amount, and the integer part as well as
@@ -37,10 +37,10 @@ class ComponentProperties {
  * big numbers overflow. A second iteration of this component
  * may implement these features and remove this comment.
  * <br /><br />
- * @example Using the TokenAmount component
+ * @example Using the DappTokenAmount component
  * ```html
  *   <template>
- *     <TokenAmount
+ *     <DappTokenAmount
  *       :decimals="2"
  *       :currency="DHP"
  *       :value="1.234"
@@ -58,7 +58,7 @@ class ComponentProperties {
  *
  * @since v0.1.0
  */
-export default class TokenAmount extends Vue.with(ComponentProperties) {
+export default class DappTokenAmount extends Vue.with(ComponentProperties) {
   /**
    * Getter to retrieve the untouched token amount.
    *

@@ -20,9 +20,9 @@
 import type { Variant } from "./types/Variant";
 
 // components
-import ActionButton from "./controls/ActionButton/ActionButton";
-import TokenAmount from "./fields/TokenAmount/TokenAmount";
+import DappButton from "./controls/DappButton/DappButton";
+import DappTokenAmount from "./fields/DappTokenAmount/DappTokenAmount";
 
 // exports
 export type { Variant };
-export { ActionButton, TokenAmount };
+export { DappButton, DappTokenAmount };
