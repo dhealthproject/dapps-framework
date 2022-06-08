@@ -19,6 +19,18 @@ module.exports = {
     optimization: {
       splitChunks: false,
     },
+
+    // Disables bundling of the listed modules so that they are
+    // requested at runtime from the environment.
+    externals: {
+      canvas: {},
+    },
+
+    // Disables performance hints (warnings) about entrypoint
+    // sizes such that no warnings are emitted for the library
+    performance: {
+      hints: false,
+    },
   },
 
   // enables templates in .vue files

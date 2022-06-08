@@ -8,18 +8,10 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Vue } from "vue-class-component";
+import { Component, Prop, Vue } from "vue-property-decorator";
 
-/**
- * @class ComponentProperties
- * @internal
- */
-class ComponentProperties {
-  value?: number;
-  decimals?: number;
-  currency?: string;
-  fadeDecimals?: boolean;
-}
+// internal dependencies
+import type { Variant } from "@/types/Variant";
 
 /**
  * @class DappTokenAmount
@@ -51,14 +43,63 @@ class ComponentProperties {
  * <br /><br />
  * #### Parameters
  *
- * @param  {number}     value           The amount value (defaults to 0).
+ * @param  {Variant}    variant         The optional design variant (defaults to `"primary"`).
+ * @param  {number}     value           The amount value as a number (defaults to 0).
  * @param  {decimals}   decimals        The number of decimal places to display (defaults to 6).
  * @param  {currency}   currency        The currency symbol (defaults to empty string).
  * @param  {boolean}    fade-decimals   Whether the decimal part should be faded or not (defaults to false).
  *
  * @since v0.1.0
  */
-export default class DappTokenAmount extends Vue.with(ComponentProperties) {
+@Component({})
+export default class DappTokenAmount extends Vue {
+  /**
+   * The optional design variant (defaults to `"primary"`).
+   *
+   * @access protected
+   * @var {Variant}
+   */
+  @Prop({ default: "primary" })
+  protected variant: Variant = "primary";
+
+  /**
+   * The amount value as a number (defaults to 0).
+   *
+   * @access protected
+   * @var {number}
+   */
+  @Prop({ default: 0, required: true })
+  protected value = 0;
+
+  /**
+   * The number of decimal places to display (defaults
+   * to 6).
+   *
+   * @access protected
+   * @var {number}
+   */
+  @Prop({ default: 6 })
+  protected decimals?: number;
+
+  /**
+   * The currency symbol (defaults to empty string).
+   *
+   * @access protected
+   * @var {string}
+   */
+  @Prop({ default: "" })
+  protected currency?: string;
+
+  /**
+   * Holds whether the decimal part should be faded
+   * or not (defaults to false).
+   *
+   * @access protected
+   * @var {boolean}
+   */
+  @Prop({ default: false })
+  fadeDecimals?: boolean;
+
   /**
    * Getter to retrieve the untouched token amount.
    *

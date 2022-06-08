@@ -17,13 +17,13 @@ including them in the compiled CSS that is attached with this library.
 -->
 <template>
   <button
-    @click="$emit('click')"
     :class="{
       base: true,
       'style-primary': variant == 'primary',
       'style-secondary': variant == 'secondary',
       'style-tertiary': variant == 'tertiary',
     }"
+    @click="$emit('click')"
   >
     <slot name="icon" />
     <slot name="prefix" />

@@ -42,5 +42,5 @@ module.exports = {
     },
   },
   variants: {},
-  plugins: [],
+  plugins: ["tailwindcss/nesting"],
 };

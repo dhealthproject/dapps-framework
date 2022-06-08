@@ -8,18 +8,10 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Vue } from "vue-class-component";
+import { Component, Prop, Vue } from "vue-property-decorator";
 
 // internal dependencies
 import type { Variant } from "@/types/Variant";
-
-/**
- * @class ComponentProperties
- * @internal
- */
-class ComponentProperties {
-  variant?: Variant;
-}
 
 /**
  * @class DappButton
@@ -58,4 +50,14 @@ class ComponentProperties {
  *
  * @since v0.1.0
  */
-export default class DappButton extends Vue.with(ComponentProperties) {}
+@Component({})
+export default class DappButton extends Vue {
+  /**
+   * The optional design variant (defaults to `"primary"`).
+   *
+   * @access protected
+   * @var {Variant}
+   */
+  @Prop({ default: "primary" })
+  protected variant: Variant = "primary";
+}

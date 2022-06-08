@@ -9,21 +9,21 @@
  */
 import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
-import DappTokenAmount from "@/fields/DappTokenAmount/DappTokenAmount.vue";
+import DappButton from "@/controls/DappButton/DappButton.vue";
 
+// creates local vue instance for tests
 const localVue = createLocalVue();
 const componentOptions = {
   localVue,
 };
 
-describe("DappTokenAmount -->", () => {
+describe("DappButton -->", () => {
   let widget: Wrapper<Vue>;
   beforeEach(() => {
-    widget = shallowMount(DappTokenAmount as any, componentOptions);
-    widget.setProps({ value: 0 });
+    widget = shallowMount(DappButton as any, componentOptions);
   });
 
-  it("should display 0 without decimals", () => {
-    expect(widget.text()).to.include("0");
+  it("should display default text", () => {
+    expect(widget.text()).to.include("Click this");
   });
 });
