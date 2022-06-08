@@ -22,7 +22,8 @@ import type { Variant } from "./types/Variant";
 // components
 import DappButton from "./controls/DappButton/DappButton";
 import DappTokenAmount from "./fields/DappTokenAmount/DappTokenAmount";
+import DappIcon from "./graphics/DappIcon/DappIcon";
 
 // exports
 export type { Variant };
-export { DappButton, DappTokenAmount };
+export { DappButton, DappTokenAmount, DappIcon };

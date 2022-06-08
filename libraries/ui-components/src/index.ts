@@ -15,7 +15,7 @@
 // Note: Any component released as part of this library
 // **must** be registered and exported using this file.
 
-import { DappButton, DappTokenAmount } from "./components";
+import { DappButton, DappTokenAmount, DappIcon } from "./components";
 
 // importing compiled tailwind styles
 // triggers a build when adding classes
@@ -45,6 +45,7 @@ import "./theme.scss";
 const install = ($app: any) => {
   $app.component(DappButton);
   $app.component(DappTokenAmount);
+  $app.component(DappIcon);
 };
 
 // exports the install helper alongside components
@@ -53,4 +54,4 @@ export default {
 };
 
 // exports the components classes as named-exports
-export { DappButton, DappTokenAmount };
+export { DappButton, DappTokenAmount, DappIcon };
