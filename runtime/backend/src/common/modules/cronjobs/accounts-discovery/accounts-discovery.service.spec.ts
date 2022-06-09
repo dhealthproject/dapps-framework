@@ -44,10 +44,12 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AccountDTO } from 'src/common/models';
 import { AccountsService } from '../../routes/accounts/accounts.service';
+import { NetworkService } from '../../services/network/network.service';
 import { QueriesService } from '../../services/queries/queries.service';
+import { StatesService } from '../../services/states/states.service';
 import { AccountsDiscoveryService } from './accounts-discovery.service';
 
-describe('AddAccountsService', () => {
+describe('AccountsDiscoveryService', () => {
   let service: AccountsDiscoveryService;
   let configService: ConfigService;
   let accountsService: AccountsService;
@@ -112,8 +114,14 @@ describe('AddAccountsService', () => {
         ConfigService,
         AccountsService,
         QueriesService,
+        StatesService,
+        NetworkService,
         {
           provide: getModelToken('Account'),
+          useValue: MockModel,
+        },
+        {
+          provide: getModelToken('State'),
           useValue: MockModel,
         },
         {

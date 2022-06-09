@@ -46,11 +46,11 @@ jest.mock('src/common/modules/routes/accounts/accounts.module', () => {
   return { AccountsModule: AccountsModuleMock };
 });
 
-const AddAccountsModuleMock = jest.fn();
+const AccountsDiscoveryModuleMock = jest.fn();
 jest.mock(
-  'src/common/modules/cronjobs/add-accounts/add-accounts.module',
+  'src/common/modules/cronjobs/accounts-discovery/accounts-discovery.module',
   () => {
-    return { AddAccountsModule: AddAccountsModuleMock };
+    return { AccountsDiscoveryModule: AccountsDiscoveryModuleMock };
   },
 );
 
@@ -89,13 +89,13 @@ describe('Imports', () => {
 
     it('should return correct result for scheduler', () => {
       const configDto = {
-        scheduler: ['addAccounts'],
+        scheduler: ['accountsDiscovery'],
         scopes: ['scheduler'],
       };
       const expectedResult = [
         ConfigModuleMock,
         MongooseModuleMock,
-        AddAccountsModuleMock,
+        AccountsDiscoveryModuleMock,
       ];
       const result = Imports.getImports(configDto, true);
       expect(result).toEqual(expectedResult);
@@ -105,7 +105,7 @@ describe('Imports', () => {
   describe('test on getConfigFunction()', () => {
     it('should return correct result', () => {
       const configDto = {
-        scheduler: ['addAccounts'],
+        scheduler: ['accountsDiscovery'],
         scopes: ['discovery', 'payout', 'processor', 'scheduler'],
       };
       Imports.configDTO = configDto;
