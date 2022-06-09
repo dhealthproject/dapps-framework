@@ -27,8 +27,7 @@ import "./theme.scss";
  * helper permits the installation using older Vue
  * versions as well as using Vue v3.
  *
- * @example Installing the library
- *
+ * @example Installing the library using Vue v3
  * ```typescript
  *  import { createApp } from "vue";
  *  import App from "./App.vue";
@@ -37,12 +36,20 @@ import "./theme.scss";
  *  createApp(App).use(plugin);
  * ```
  *
- * @param   {Vue}   $app    The Vue instance.
+ * @example Installing the library using Vue v2
+ * ```typescript
+ *  import Vue from "vue";
+ *  import App from "./App.vue";
+ *  import plugin from "@dhealth/components";
+ *
+ *  Vue.use(plugin);
+ * ```
+ *
  * @returns {void}
  *
  * @since v0.1.0
  */
-const install = ($app: Vue): void => {
+const install = (): void => {
   // vue v2 and v3 compatible
   Vue.component("DappButton", DappButton);
   Vue.component("DappQR", DappQR);
