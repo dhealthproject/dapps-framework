@@ -31,6 +31,18 @@ module.exports = {
     performance: {
       hints: false,
     },
+
+    module: {
+      rules: [
+        {
+          test: /\.s[ac]ss$/,
+          exclude: /node_modules/,
+          use: [
+            { loader: "sass-loader" }
+          ],
+        }
+      ]
+    },
   },
 
   // enables templates in .vue files
