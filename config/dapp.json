@@ -1,5 +1,5 @@
 {
-  "dappPublicKey": "395D0C395CFAE6EA5DC50342F658311C88C97E2AEFF62BC7CAE82DBB25672B46",
+  "dappPublicKey": "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE",
   "scopes": [
     "discovery",
     "payout",
@@ -7,6 +7,6 @@
     "scheduler"
   ],
   "scheduler": [
-    "addAccounts"
+    "accountsDiscovery"
   ]
 }

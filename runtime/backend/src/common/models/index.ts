@@ -16,3 +16,10 @@ export {
   PaginatedResutDto,
   PagePaginatedQueryDto,
 } from './paginated-result.dto';
+export {
+  StateDto,
+  StateQueryDto,
+  AccountDiscoveryState,
+  StateData,
+} from './state.dto';
+export { State, StateSchema, StateDocument } from './state.schema';

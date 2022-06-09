@@ -11,7 +11,7 @@
 import { MongooseModule } from '@nestjs/mongoose';
 
 // internal dependencies
-import { AddAccountsModule } from 'src/common/modules/cronjobs/add-accounts/add-accounts.module';
+import { AccountsDiscoveryModule } from 'src/common/modules/cronjobs/accounts-discovery/accounts-discovery.module';
 import { AccountsModule } from 'src/common/modules/routes/accounts/accounts.module';
 
 /**
@@ -40,5 +40,5 @@ export const ModuleImports = {
   // route modules
   accounts: AccountsModule,
   // cron modules
-  addAccounts: AddAccountsModule,
+  accountsDiscovery: AccountsDiscoveryModule,
 };
