@@ -60,7 +60,7 @@ export default class DappTokenAmount extends Vue {
    * @var {Variant}
    */
   @Prop({ default: "primary" })
-  protected variant: Variant = "primary";
+  protected variant?: Variant;
 
   /**
    * The amount value as a number (defaults to 0).
@@ -69,7 +69,7 @@ export default class DappTokenAmount extends Vue {
    * @var {number}
    */
   @Prop({ default: 0, required: true })
-  protected value = 0;
+  protected value?: number;
 
   /**
    * The number of decimal places to display (defaults

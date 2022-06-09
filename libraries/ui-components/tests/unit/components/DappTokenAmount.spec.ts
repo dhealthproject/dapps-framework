@@ -11,16 +11,19 @@ import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
 import DappTokenAmount from "@/fields/DappTokenAmount/DappTokenAmount.vue";
 
+// creates local vue instance for tests
 const localVue = createLocalVue();
 const componentOptions = {
   localVue,
+  propsData: {
+    value: 0,
+  },
 };
 
 describe("DappTokenAmount -->", () => {
   let widget: Wrapper<Vue>;
   beforeEach(() => {
     widget = shallowMount(DappTokenAmount as any, componentOptions);
-    widget.setProps({ value: 0 });
   });
 
   it("should display 0 without decimals", () => {

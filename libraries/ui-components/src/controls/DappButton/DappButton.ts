@@ -59,5 +59,5 @@ export default class DappButton extends Vue {
    * @var {Variant}
    */
   @Prop({ default: "primary" })
-  protected variant: Variant = "primary";
+  protected variant?: Variant;
 }

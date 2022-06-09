@@ -19,6 +19,9 @@
     "declaration": true,
     "declarationDir": "./dist/@dhealth",
     "outDir": "./dist/",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     "types": [
       "webpack-env",
       "mocha",
