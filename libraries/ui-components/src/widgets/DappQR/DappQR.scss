@@ -1,0 +1,28 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth UI Components
+ * @subpackage  Components
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+.base {
+  @apply bg-royal-blue-100 border border-royal-blue-600;
+  @apply rounded py-3 px-4 text-base cursor-pointer font-semibold;
+}
+
+.style {
+  &-primary {
+    @apply text-royal-blue;
+  }
+
+  &-secondary {
+    @apply text-royal-blue-600;
+  }
+
+  &-tertiary {
+    @apply bg-white border border-gray-600;
+    @apply text-gray-600;
+  }
+}

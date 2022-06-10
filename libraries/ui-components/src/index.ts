@@ -15,7 +15,7 @@
 // Note: Any component released as part of this library
 // **must** be registered and exported using this file.
 import Vue from "vue";
-import { DappButton, DappTokenAmount } from "./components";
+import { DappButton, DappQR, DappTokenAmount } from "./components";
 
 // importing compiled tailwind styles
 // triggers a build when adding classes
@@ -62,4 +62,4 @@ export default {
 };
 
 // exports the components classes as named-exports
-export { DappButton, DappTokenAmount };
+export { DappButton, DappQR, DappTokenAmount };

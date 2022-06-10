@@ -21,8 +21,9 @@ import type { Variant } from "./types/Variant";
 
 // components
 import DappButton from "./controls/DappButton/DappButton";
+import DappQR from "./widgets/DappQR/DappQR";
 import DappTokenAmount from "./fields/DappTokenAmount/DappTokenAmount";
 
 // exports
 export type { Variant };
-export { DappButton, DappTokenAmount };
+export { DappButton, DappQR, DappTokenAmount };

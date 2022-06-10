@@ -33,7 +33,6 @@
     "build:lib": "vue-cli-service build --target lib --name dHealthComponents --filename @dhealth/components src/index.ts",
     "build:ts": "tsc --emitDeclarationOnly",
     "build:css": "npx sass --style expanded --embed-source-map src/theme.scss dist/@dhealth/components.css ; npx postcss --config postcss.config.js --replace dist/@dhealth/components.css",
-    "pretest": "npm run lint:fix && npm run build",
     "test": "npm run test:unit",
     "test:unit": "vue-cli-service test:unit",
     "serve": "vue-cli-service serve"
@@ -67,6 +66,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^8.0.1",
+    "flush-promises": "^1.0.2",
     "mocha": "10.0.0",
     "postcss-cli": "^9.1.0",
     "postcss-import": "^14.0.0",
@@ -97,6 +97,7 @@
     "rules": {
       "no-console": "off",
       "no-debugger": "off",
+      "no-empty": "off",
       "@typescript-eslint/no-explicit-any": "off"
     },
     "overrides": [
