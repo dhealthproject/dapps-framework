@@ -8,8 +8,8 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { h } from "vue";
-import { Options } from "vue-class-component";
+// import { h } from "vue";
+// import { Options } from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 
 // internal dependencies
@@ -63,7 +63,8 @@ import { AppComponents, LibComponents } from "@/components";
  *
  * @since v0.1.0
  */
-@Options({})
+// @Options({})
+
 export default class Assembler extends MetaView {
   /**
    * The page configuration object, i.e. should contain cards,
@@ -165,7 +166,7 @@ export default class Assembler extends MetaView {
         template: this.layout.render(),
         props: ["page"],
         computed: {
-          currentPage() {
+          currentPage(): Page {
             return undefined === this.page ? ({} as Page) : this.page;
           },
         },

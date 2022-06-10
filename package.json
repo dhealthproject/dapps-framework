@@ -51,5 +51,8 @@
       "name": "Paul Rieger",
       "email": "paul@dhealth.foundation"
     }
-  ]
+  ],
+  "dependencies": {
+    "vue": "^2.6.14"
+  }
 }

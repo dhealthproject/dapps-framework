@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { createRouter, createWebHistory } from "vue-router";
+import VueRouter from "vue-router";
 
 // setup a dynamic modules application kernel
 import { AppKernel } from "./kernel";
@@ -18,9 +18,12 @@ const appKernel = AppKernel.getInstance();
 const dynamicRoutes = appKernel.getRoutes();
 
 // configures the `vue-router` routes
-const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+// const router = createRouter({
+//   history: createWebHistory(process.env.BASE_URL),
+//   routes: dynamicRoutes,
+// });
+
+const router = new VueRouter({
   routes: dynamicRoutes,
 });
-
 export default router;

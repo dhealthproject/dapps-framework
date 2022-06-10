@@ -7,11 +7,12 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-import { RouteRecordRaw } from "vue-router";
+import { RouteConfig } from "vue-router";
 import { Module, Page } from "./contracts";
 
 // internal kernel configuration
 import MODULES from "../../config/modules";
+import Assembler from "@/views/Assembler/Assembler";
 
 /**
  * @class AppKernel
@@ -192,23 +193,23 @@ export class AppKernel {
    * set to the page's identifier.
    *
    * @access public
-   * @returns {RouteRecordRaw[]}    An array of `vue-router` compatible route objects that map to a specific component.
+   * @returns {RouteConfig[]}    An array of `vue-router` compatible route objects that map to a specific component.
    */
-  public getRoutes(): RouteRecordRaw[] {
+  public getRoutes(): RouteConfig[] {
     const paths: string[] = Object.keys(this.routes);
 
     if (!paths.length) {
       return [];
     }
 
-    const routes: RouteRecordRaw[] = [];
+    const routes: RouteConfig[] = [];
     for (const path in this.routes) {
       const page: Page = this.routes[path];
 
       routes.push({
         path,
         name: page.identifier,
-        component: () => import("@/views/Assembler/Assembler.vue"),
+        component: Assembler,
         props: {
           page,
         },

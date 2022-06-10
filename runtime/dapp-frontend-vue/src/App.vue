@@ -10,18 +10,20 @@
  */
 -->
 <template>
-  <metainfo>
-    <!-- sets a titleTemplate dynamically -->
-    <template v-slot:title="{ content }">
-      {{ content }}
-    </template>
-  </metainfo>
-  <header />
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view />
+  <div>
+    <metainfo>
+      <!-- sets a titleTemplate dynamically -->
+      <template v-slot:title="{ content }">
+        {{ content }}
+      </template>
+    </metainfo>
+    <header />
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </nav>
+    <router-view />
+  </div>
 </template>
 
 <script lang="ts" src="./App.ts"></script>
