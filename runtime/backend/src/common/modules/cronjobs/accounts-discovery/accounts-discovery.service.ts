@@ -106,19 +106,15 @@ export class AccountsDiscoveryService
   /**
    * Method to synchronize this service's state.
    *
-   * Retrieve from the database a {@link State} instance with this service's class name.
-   * If none existing, return.
+   * Retrieve from the database a {@link State} instance with this service's class name and assign to local instance.
    *
    * @async
    * @returns {Promise<void>}
    */
   async syncState(): Promise<void> {
-    const state = await this.statesService.findOne({
+    this.state = await this.statesService.findOne({
       name: AccountsDiscoveryService.name,
     });
-    if (state) {
-      this.state = state;
-    }
   }
 
   /**

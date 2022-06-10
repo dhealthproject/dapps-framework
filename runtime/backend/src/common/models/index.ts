@@ -19,7 +19,7 @@ export {
 export {
   StateDto,
   StateQueryDto,
-  AccountDiscoveryState,
+  AccountsDiscoveryState,
   StateData,
 } from './state.dto';
 export { State, StateSchema, StateDocument } from './state.schema';

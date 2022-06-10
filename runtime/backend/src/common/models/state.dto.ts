@@ -16,7 +16,7 @@ import { PagePaginatedQueryDto } from './paginated-result.dto';
  *
  * @since v0.1.0
  */
-export class AccountDiscoveryState {
+export class AccountsDiscoveryState {
   currentTxPage: number;
   latestTxHash: string;
 }
@@ -27,7 +27,7 @@ export class AccountDiscoveryState {
  *
  * @since v0.1.0
  */
-export type StateData = Record<string, never> | AccountDiscoveryState;
+export type StateData = Record<string, never> | AccountsDiscoveryState;
 
 /**
  * @class StateDto
