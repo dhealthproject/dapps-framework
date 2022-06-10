@@ -7,8 +7,8 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-import { InjectionKey } from "vue";
-import { createStore, Store } from "vuex";
+import InjectionKey from "vue";
+import Store from "vuex";
 
 export interface AppState {
   name: string;
@@ -24,7 +24,7 @@ export const key: InjectionKey<Store<AppState>> = Symbol();
 //   }
 // })
 
-export default createStore({
+const store = new Store({
   /**
    * Forces the Vuex store into non-strict mode because
    * use-strict is not compatible with SDK listeners.
@@ -39,3 +39,5 @@ export default createStore({
   mutations: {},
   actions: {},
 });
+
+export default store;

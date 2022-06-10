@@ -9,7 +9,7 @@
  */
 // external dependencies
 // import { h } from "vue";
-// import { Options } from "vue-class-component";
+import { Component } from "vue-property-decorator";
 import { Prop } from "vue-property-decorator";
 
 // internal dependencies
@@ -63,8 +63,7 @@ import { AppComponents, LibComponents } from "@/components";
  *
  * @since v0.1.0
  */
-// @Options({})
-
+@Component({})
 export default class Assembler extends MetaView {
   /**
    * The page configuration object, i.e. should contain cards,

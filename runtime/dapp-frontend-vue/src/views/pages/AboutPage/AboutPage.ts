@@ -8,12 +8,12 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Options } from "vue-class-component";
+import { Component } from "vue-property-decorator";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 
-@Options({
+@Component({
   methods: {
     pageName() {
       return "About";

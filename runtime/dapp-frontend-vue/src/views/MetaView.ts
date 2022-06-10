@@ -8,9 +8,8 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { computed, inject } from "vue";
-import { Vue, setup } from "vue-class-component";
-import { useMeta } from "vue-meta";
+import Vue from "vue";
+import useMeta from "vue-meta";
 
 /**
  * @class MetaView

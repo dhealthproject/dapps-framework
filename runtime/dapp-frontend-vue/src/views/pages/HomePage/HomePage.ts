@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Options } from "vue-class-component";
+import { Component } from "vue-property-decorator";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
@@ -16,7 +16,7 @@ import { MetaView } from "@/views/MetaView";
 // child components
 import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 
-@Options({
+@Component({
   components: {
     HelloWorld,
   },

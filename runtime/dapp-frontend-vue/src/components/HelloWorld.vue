@@ -40,21 +40,19 @@
 </template>
 
 <script lang="ts">
-import { Prop, Vue } from "vue-property-decorator";
+import { Prop, Vue, Component } from "vue-property-decorator";
 //import { TokenAmount } from "@dhealth/components";
 
-// @Options({
-//   // components: {
-//   //   TokenAmount,
-//   // },
-//   props: {
-//     msg: String,
-//   },
-// })
-
+@Component({
+  // components: {
+  //   TokenAmount,
+  // },
+  props: {
+    msg: String,
+  },
+})
 export default class HelloWorld extends Vue {
-  @Prop() readonly msg!: string;
-  // msg!: string;
+  msg!: string;
 }
 </script>
 

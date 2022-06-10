@@ -8,8 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { createApp } from "vue";
-import { createMetaManager } from "vue-meta";
+import Vue from "vue";
 
 // internal dependencies
 import App from "./App.vue";
@@ -26,13 +25,15 @@ import "@dhealth/components/dist/@dhealth/components.css";
 // eslint-disable-next-line
 const metaConfig = require("../config/meta.json");
 
+Vue.use(internalComponentsInstaller);
+// .provide("metaConfig", metaConfig)
+
 // create app instance
-const dapp = createApp(App)
-  .use(internalComponentsInstaller)
-  .use(router)
-  .use(store)
-  .use(createMetaManager())
-  .provide("metaConfig", metaConfig);
+const dapp = new Vue({
+  router,
+  store,
+  render: (h) => h(App),
+});
 
 // start the app
-dapp.mount("#app");
+dapp.$mount("#app");
