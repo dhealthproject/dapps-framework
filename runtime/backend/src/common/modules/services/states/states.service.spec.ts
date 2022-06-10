@@ -9,56 +9,17 @@
  */
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { StateDto } from 'src/common/models';
 import { StatesService } from './states.service';
 
 describe('StatesService', () => {
   let service: StatesService;
 
-  let data, saveFn, initializeUnorderedBulkOpFn;
-  const aggregateFn = jest.fn((param) => {
-    return {
-      param: () => param,
-      exec: () =>
-        Promise.resolve([
-          {
-            data: [{}],
-            metadata: [{ total: 1 }],
-          },
-        ]),
-    };
-  });
+  const findOneCall = jest.fn(() => ({ exec: () => ({}) }));
+  const saveOneCall = jest.fn(() => ({ exec: () => ({}) }));
   class MockModel {
-    constructor(dto?: any) {
-      data = dto;
-    }
-    save() {
-      saveFn = jest.fn(() => data);
-      return saveFn();
-    }
-    find() {
-      return {
-        exec: () => data,
-      };
-    }
-    aggregate(param: any) {
-      return aggregateFn(param);
-    }
-    static collection = {
-      initializeUnorderedBulkOp: () => {
-        initializeUnorderedBulkOpFn = jest.fn(() => {
-          return {
-            find: () => initializeUnorderedBulkOpFn(),
-            update: () => initializeUnorderedBulkOpFn(),
-            upsert: () => initializeUnorderedBulkOpFn(),
-            execute: () => Promise.resolve({}),
-          };
-        });
-        return initializeUnorderedBulkOpFn();
-      },
-    };
-    static aggregate(param) {
-      return aggregateFn(param);
-    }
+    static findOne = findOneCall;
+    static findOneAndUpdate = saveOneCall;
   }
 
   beforeEach(async () => {
@@ -77,5 +38,27 @@ describe('StatesService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('test on findOne()', () => {
+    it('should call findOne() from model with correct param', async () => {
+      const query = {};
+      await service.findOne(query);
+      expect(findOneCall).toBeCalledWith(query);
+    });
+  });
+
+  describe('test on updateOne()', () => {
+    it('should call updateOne() from model with correct param', async () => {
+      const stateDto: StateDto = {
+        name: 'test',
+        data: {},
+      };
+      const expectedQuery = { name: stateDto.name };
+      await service.updateOne(stateDto);
+      expect(saveOneCall).toBeCalledWith(expectedQuery, stateDto, {
+        upsert: true,
+      });
+    });
   });
 });
