@@ -20,10 +20,10 @@ import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
   components: {
     HelloWorld,
   },
-  props: {
-    metaInfo: {
-      meta: [{ name: "title", content: "Home of ..." }],
-    },
-  },
+  // props: {
+  //   metaInfo: {
+  //     meta: [{ name: "title", content: "Home of ..." }],
+  //   },
+  // },
 })
 export default class HomePage extends MetaView {}

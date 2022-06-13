@@ -9,7 +9,10 @@
  */
 // external dependencies
 import Vue from "vue";
-import useMeta from "vue-meta";
+import { Inject } from "vue-property-decorator";
+import Meta from "vue-meta";
+
+Vue.use(Meta);
 
 /**
  * @class MetaView
@@ -27,7 +30,7 @@ export abstract class MetaView extends Vue {
    * @access public
    * @var {Object}
    */
-  public metaConfig: any = inject("metaConfig");
+  @Inject("metaConfig") public metaConfig: any;
 
   /**
    * The current page meta tags configuration.
@@ -35,7 +38,9 @@ export abstract class MetaView extends Vue {
    * @access public
    * @var {Object}
    */
-  public meta = setup(() =>
-    useMeta(computed(() => this.metaConfig[this.constructor.name]))
-  );
+  // public meta = setup(() => useMeta(this.metaConfigByName));
+
+  get metaConfigByName() {
+    return this.metaConfig[this.constructor.name];
+  }
 }

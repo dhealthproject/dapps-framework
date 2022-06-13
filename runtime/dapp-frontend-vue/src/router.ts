@@ -9,6 +9,7 @@
  */
 // external dependencies
 import VueRouter from "vue-router";
+import Vue from "vue";
 
 // setup a dynamic modules application kernel
 import { AppKernel } from "./kernel";
@@ -23,7 +24,10 @@ const dynamicRoutes = appKernel.getRoutes();
 //   routes: dynamicRoutes,
 // });
 
+Vue.use(VueRouter);
+
 const router = new VueRouter({
   routes: dynamicRoutes,
 });
+
 export default router;

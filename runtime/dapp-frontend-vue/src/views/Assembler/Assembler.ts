@@ -155,7 +155,9 @@ export default class Assembler extends MetaView {
    * @access public
    * @returns {VNode}
    */
-  public render() {
+
+  // used any type temporary
+  public render(h: any) {
     return h(
       {
         components: {
@@ -166,7 +168,8 @@ export default class Assembler extends MetaView {
         props: ["page"],
         computed: {
           currentPage(): Page {
-            return undefined === this.page ? ({} as Page) : this.page;
+            // return undefined === this.page ? ({} as Page) : this.page;
+            return {} as Page;
           },
         },
         methods: {
