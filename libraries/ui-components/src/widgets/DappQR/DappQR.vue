@@ -27,7 +27,7 @@
 
     <slot name="download">
       <DappButton v-if="!!withDownload" variant="secondary">
-        <a :href="qrCodeBase64$" :download="downloadName">Download</a>
+        <a :href="qrCodeBase64$" :download="getFilename()">Download</a>
       </DappButton>
     </slot>
   </div>

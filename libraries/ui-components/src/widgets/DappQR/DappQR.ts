@@ -10,7 +10,8 @@
 // external dependencies
 import { QRCode } from "@dhealth/qr-library";
 import { Component, Prop, Vue } from "vue-property-decorator";
-import _ from "lodash";
+// import flushPromises from "flush-promises";
+// import _ from "lodash";
 
 // internal dependencies
 import type { Variant } from "@/types/Variant";
@@ -124,16 +125,6 @@ export default class DappQR extends Vue {
   protected qrCodeBase64$ = "Unknown";
 
   /**
-   * Internal helper that is used to debounce calls to the
-   * {@link getBase64} method. This is necessary to wait a
-   * minimal amount of time before re-generating the QR Code.
-   *
-   * @access protected
-   * @var {function}
-   */
-  protected debouncedFnGetBase64: any = undefined;
-
-  /**
    * The component creation hook.  It creates a debounced
    * function pointer to {@link getBase64} such that updates
    * are delayed for 200 milliseconds.
@@ -142,31 +133,24 @@ export default class DappQR extends Vue {
    * @access public
    */
   public async created(): Promise<void> {
-    this.debouncedFnGetBase64 = _.debounce(this.getBase64, 200);
-
-    // configure content watch
-    this.$watch("qrCode", () => {
-      this.debouncedFnGetBase64();
-    });
-
     // initialize base64 content
     try {
-      await this.debouncedFnGetBase64();
+      await this.getBase64();
     } catch (e) {}
-
-    // fixes download name extension
-    if (
-      this.downloadName !== undefined &&
-      null == this.downloadName?.match(/\.png$/)
-    ) {
-      this.downloadName = `${this.downloadName}.png`;
-    }
   }
 
-  public dumpJSON(): void {
-    console.log(this.safeQrCode.toJSON());
-  }
-
+  /**
+   * Computed property that returns a `QRCode`
+   * instance from `@dhealth/qr-library`. Note that
+   * this method creates an *empty* instance given
+   * an invalid QRCode property.
+   * <br /><br />
+   * This computed property only implements a getter
+   * and should be set using the {@link qrCode} property.
+   *
+   * @access protected
+   * @returns {QRCode}
+   */
   protected get safeQrCode(): QRCode {
     return undefined === this.qrCode ? ({} as QRCode) : this.qrCode;
   }
@@ -190,5 +174,38 @@ export default class DappQR extends Vue {
       .catch((err: any) => {
         throw new Error(err);
       });
+  }
+
+  /**
+   * Getter method for the downloaded filename. This value
+   * is used in the `download` attribute of the `<a>` that
+   * is created inside the Download button.
+   *
+   * @access public
+   * @returns {string}
+   */
+  public getFilename(): string {
+    // get from properties
+    let filename: string = this.downloadName
+      ? this.downloadName
+      : "dhealth_dapp_qrcode.png";
+
+    // fixes download name extension
+    if (filename !== undefined && null == filename?.match(/\.png$/)) {
+      filename = `${filename}.png`;
+    }
+
+    return filename;
+  }
+
+  /**
+   * Testing helper method to display the QRCode
+   * content which is JSON formatted.
+   *
+   * @access public
+   * @returns {void}
+   */
+  public dumpJSON(): void {
+    console.log(this.safeQrCode.toJSON());
   }
 }

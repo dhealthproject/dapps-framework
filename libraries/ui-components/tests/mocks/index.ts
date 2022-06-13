@@ -8,4 +8,4 @@
  * @license     LGPL-3.0
  */
 
-export { mockObjectQR } from "./QRCode";
+export * from "./QRCode";
