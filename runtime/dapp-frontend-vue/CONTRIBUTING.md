@@ -76,6 +76,89 @@ Once your changes and tests are ready to submit for review:
     
 Then sit back and wait. There will probably be discussion about the pull request and, if any changes are needed, we would love to work with you to get your pull request merged into @dhealthdapps/frontend.
 
+## <a name="rules"></a> Coding guidelines
+
+To ensure consistency throughout the source code, keep these rules in mind as you are working:
+
+* All features or bug fixes **must be tested** by one or more specs (unit-tests).
+* All public API methods **must be documented**.
+
+### <a name="commit"></a> Commit Message Guidelines
+
+We have very precise rules over how our git commit messages can be formatted.  This leads to **more
+readable messages** that are easy to follow when looking through the **project history**.  But also,
+we use the git commit messages to **generate the @dhealthdapps/frontend change log**.
+
+#### Commit Message Format
+
+Each commit message consists of a **package**, a **type**, a **scope** and a **subject**:
+
+```
+[<package>] <type>(<scope>): <subject>
+```
+
+The **package**, the **type** and the **subject** are mandatory. The **scope** of the header is optional.
+
+Optimally, the **subject** should contain a [closing reference to an issue](https://help.github.com/articles/closing-issues-via-commit-messages/) if any.
+
+Samples:
+```
+[@dhealthdapps/frontend] docs(changelog): update changelog to v1.0.0-beta7
+```
+```
+[@dhealthdapps/frontend] feat(config): add config field "generationHash"
+```
+
+#### Revert
+
+If the commit reverts a previous commit, it should begin with `revert: `, followed by the header of the reverted commit.
+
+#### <a name="commit-types"></a> Type
+
+Must be one of the following:
+
+* **build**: Changes that affect the build system or external dependencies (example scopes: webpack, postcss, tailwind, vue)
+* **chore**: Changes that affect the general software package maintenance processes (example scopes: package, build, config)
+* **ci**: Changes to our CI configuration files and scripts (example scopes: travis, jenkins)
+* **docs**: Documentation only changes
+* **feat**: A new feature
+* **fix**: A bug fix
+* **perf**: A code change that improves performance
+* **refactor**: A code change that neither fixes a bug nor adds a feature
+* **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+* **test**: Adding missing tests or correcting existing tests
+
+#### <a name="commit-scopes"></a> Scope
+
+The scope should be the name of the module affected.
+
+The following is the list of supported scopes:
+
+* **api**
+* **app**
+* **base**
+* **build**
+* **common**
+* **config**
+* **controls**
+* **elements**
+* **env**
+* **examples**
+* **fields**
+* **fonts**
+* **i18n**
+* **kernel**
+* **package**
+* **widgets**
+
+#### Subject
+
+The subject contains a succinct description of the change(s):
+
+* preferrably, use the imperative, present tense: "change" not "changed"
+* don't capitalize the first letter
+* no dot (.) at the end
+
 *CONTRIBUTING.md is based on [CONTRIBUTING-template.md](https://github.com/nayafia/contributing-template/blob/master/CONTRIBUTING-template.md)* 
 and [elasticsearch/CONTRIGUTING](https://github.com/elastic/elasticsearch/blob/master/CONTRIBUTING.md)
 
