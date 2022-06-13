@@ -16,6 +16,7 @@ import "./registerServiceWorker";
 import router from "./router";
 import store from "./state/store";
 import internalComponentsInstaller from "@dhealth/components";
+import Meta from "vue-meta";
 
 // importing compiled tailwind styles
 // triggers a build when adding classes
@@ -26,12 +27,13 @@ import "@dhealth/components/dist/@dhealth/components.css";
 const metaConfig = require("../config/meta.json");
 
 Vue.use(internalComponentsInstaller);
-// .provide("metaConfig", metaConfig)
+Vue.use(Meta, metaConfig);
 
 // create app instance
 const dapp = new Vue({
   router,
   store,
+  provide: () => ({ metaConfig }),
   render: (h) => h(App),
 });
 

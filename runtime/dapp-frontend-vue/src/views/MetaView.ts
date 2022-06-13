@@ -10,9 +10,6 @@
 // external dependencies
 import Vue from "vue";
 import { Inject } from "vue-property-decorator";
-import Meta from "vue-meta";
-
-Vue.use(Meta);
 
 /**
  * @class MetaView
@@ -40,7 +37,7 @@ export abstract class MetaView extends Vue {
    */
   // public meta = setup(() => useMeta(this.metaConfigByName));
 
-  get metaConfigByName() {
-    return this.metaConfig[this.constructor.name];
-  }
+  // get metaConfigByName() {
+  //   return this.metaConfig[this.constructor.name];
+  // }
 }
