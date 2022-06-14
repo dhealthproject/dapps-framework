@@ -47,6 +47,7 @@ import type { Variant } from "@/types/Variant";
  * #### Parameters
  *
  * @param  {Variant}     variant           The optional design variant (defaults to `"primary"`).
+ * @param {string} href The optional href url.
  *
  * @since v0.1.0
  */
@@ -60,4 +61,31 @@ export default class DappButton extends Vue {
    */
   @Prop({ default: "primary" })
   protected variant?: Variant;
+
+  /**
+   * The optional button's href url.
+   *
+   * @access protected
+   * @var {string}
+   */
+  @Prop()
+  protected href?: string;
+
+  /**
+   * Method to generically handle `@click` event of this component.
+   *
+   * This generally will handle either:
+   *  1. A href (route/url)
+   *  2. A closure (onClick)
+   *
+   * This method handle button onClick event based on the availability of the `href` prop.
+   *  - If href is available, assign `location.href` to it.
+   *  - In case `href` is not registered as a prop, call `this.$emit("click")`.
+   *
+   * @access protected
+   * @returns {void}
+   */
+  protected handleClick(): void {
+    this.href ? (window.location.href = this.href) : this.$emit("click");
+  }
 }
