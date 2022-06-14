@@ -65,4 +65,26 @@ describe("DappButton -->", () => {
       expect(actual.length).to.be.equal(1);
     }
   });
+
+  it("should change location.href given user click interaction and href prop exists", async () => {
+    // prepare
+    const url = "http://dummy.com";
+    Object.defineProperty(window, "location", {
+      value: {
+        href: url,
+      },
+      writable: true,
+    });
+
+    const href = "'http://localhost:8000/";
+    widget = shallowMount(DappButton as any, {
+      ...componentOptions,
+      propsData: { href },
+    });
+    const button = widget.find("button");
+    await button.trigger("click"); // triggers a click DOM event
+
+    // assert
+    expect(window.location.href).to.equals(href);
+  });
 });
