@@ -23,7 +23,7 @@ including them in the compiled CSS that is attached with this library.
       'style-secondary': variant == 'secondary',
       'style-tertiary': variant == 'tertiary',
     }"
-    @click="$emit('click')"
+    @click="handleClick"
   >
     <slot name="icon" />
     <slot name="prefix" />
