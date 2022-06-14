@@ -8,7 +8,34 @@ dHealth dApps Framework for [dHealth Network][parent-url].
 
 ## Getting started
 
-Placeholder
+### Dependencies
+
+This project is maintained with [**lerna**](https://lerna.js.org/) to permit joining multiple sub-projects together in one codebase. 
+
+```
+  - node v12+
+  - lerna v4
+```
+
+You can install lerna globally using `npm install -g lerna@4.0.0`.
+
+### Install
+
+Following command installs the **dapp-framework**:
+
+```bash
+lerna bootstrap
+```
+
+### Deployment
+
+You can use the attached `Dockerfile` to run the configured runtime(s).
+
+Also, running a development server can be done using the following command:
+
+```bash
+lerna run serve --stream --scope @dhealthdapps/frontend
+```
 
 ## Getting help
 

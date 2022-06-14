@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 import { QRCodeGenerator } from "@dhealth/qr-library";
-import { createLocalVue, mount, Wrapper } from "@vue/test-utils";
+import { createLocalVue, mount } from "@vue/test-utils";
 import { expect } from "chai";
 import flushPromises from "flush-promises";
 

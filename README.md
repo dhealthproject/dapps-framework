@@ -29,7 +29,7 @@ This project is maintained with [**lerna**](https://lerna.js.org/) to permit joi
 
 As a developer, you *may* install `lerna` globally on your machine with: `npm install -g lerna` ; or you can also use this package's local lerna installation using `npx lerna`.
 
-Following command installs all sub-project dependencies:
+Following command installs all sub-project dependencies (local and remote):
 
 ```bash
 lerna bootstrap

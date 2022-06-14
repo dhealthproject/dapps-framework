@@ -30,7 +30,7 @@
     "serve": "vue-cli-service serve"
   },
   "dependencies": {
-    "@dhealth/components": "file://../../libraries/ui-components",
+    "@dhealth/components": "^0.1.0-RC",
     "crypto-browserify": "^3.12.0",
     "register-service-worker": "^1.7.2",
     "stream-browserify": "^3.0.0",
