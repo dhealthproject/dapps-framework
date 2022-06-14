@@ -1,17 +1,21 @@
 {
   "name": "@dhealthdapps/frontend",
-  "version": "1.0.0",
-  "homepage": "https://github.com/dhealthproject/dapp-frontend-vue#readme",
+  "version": "1.0.0-alpha-6-20220614",
+  "homepage": "https://github.com/dhealthproject/dapps-framework/tree/main/runtime/dapp-frontend-vue#readme",
   "description": "dHealth dApps Frontend with Vue",
   "author": "dHealth Network <devs@dhealth.foundation>",
   "license": "LGPL-3.0-only",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dhealthproject/dapp-frontend-vue.git"
-  },
   "bugs": {
-    "url": "https://github.com/dhealthproject/dapp-frontend-vue/issues"
+    "url": "https://github.com/dhealthproject/dapps-framework/issues"
   },
+  "files": [
+    "dist/*",
+    "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "package.json"
+  ],
   "scripts": {
     "prettier": "prettier --check ./src ./tests",
     "lint:fix": "prettier --write ./src ./tests",
@@ -95,5 +99,27 @@
         }
       }
     ]
-  }
+  },
+  "contributors": [
+    {
+      "name": "Grégory Saive",
+      "email": "greg@evi.as"
+    },
+    {
+      "name": "Son Nguyen",
+      "email": "son@dhealth.foundation"
+    },
+    {
+      "name": "Komal Narwani",
+      "email": "kn@dhealth.foundation"
+    },
+    {
+      "name": "Paul Rieger",
+      "email": "paul@dhealth.foundation"
+    },
+    {
+      "name": "Vitaliy Kravchenko",
+      "email": "vitaliy@dhealth.foundation"
+    }
+  ]
 }

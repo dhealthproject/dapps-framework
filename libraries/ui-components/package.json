@@ -5,10 +5,6 @@
   "description": "Components Library for dApps Development with dHealth Network",
   "author": "dHealth Network <devs@dhealth.foundation>",
   "license": "LGPL-3.0-only",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dhealthproject/dapps-framework.git"
-  },
   "bugs": {
     "url": "https://github.com/dhealthproject/dapps-framework/issues"
   },
@@ -113,5 +109,27 @@
         }
       }
     ]
-  }
+  },
+  "contributors": [
+    {
+      "name": "Grégory Saive",
+      "email": "greg@evi.as"
+    },
+    {
+      "name": "Son Nguyen",
+      "email": "son@dhealth.foundation"
+    },
+    {
+      "name": "Komal Narwani",
+      "email": "kn@dhealth.foundation"
+    },
+    {
+      "name": "Paul Rieger",
+      "email": "paul@dhealth.foundation"
+    },
+    {
+      "name": "Vitaliy Kravchenko",
+      "email": "vitaliy@dhealth.foundation"
+    }
+  ]
 }
