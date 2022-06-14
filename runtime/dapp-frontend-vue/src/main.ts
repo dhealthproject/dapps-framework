@@ -13,15 +13,8 @@ import VueMeta from "vue-meta";
 import VueRouter from "vue-router";
 
 // internal dependencies
-import App from "./App.vue";
 import "./registerServiceWorker";
 import internalComponentsInstaller from "@dhealth/components";
-
-// initializes router
-import router from "./router";
-
-// initializes state
-import store from "./state/store";
 
 // importing compiled tailwind styles
 // triggers a build when adding classes
@@ -35,12 +28,18 @@ Vue.use(internalComponentsInstaller);
 Vue.use(VueMeta, { keyName: "metaInfo" });
 Vue.use(VueRouter);
 
+// initializes router
+import router from "./router";
+
+// initializes state
+import store from "./state/store";
+
+// defines App component
+import App from "./App.vue";
+
 // create app instance
-const dapp = new Vue({
+new Vue({
   router,
   store,
   render: (h) => h(App),
-});
-
-// start the app
-dapp.$mount("#app");
+}).$mount("#app");

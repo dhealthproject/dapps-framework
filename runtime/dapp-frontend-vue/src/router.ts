@@ -17,8 +17,6 @@ import { AppKernel } from "./kernel";
 const appKernel = AppKernel.getInstance();
 const dynamicRoutes = appKernel.getRoutes();
 
-console.log("Router got: ", dynamicRoutes);
-
 // configures the `vue-router` routes
 const router = new VueRouter({
   mode: "history",

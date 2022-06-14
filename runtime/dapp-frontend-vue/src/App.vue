@@ -10,13 +10,21 @@
  */
 -->
 <template>
-  <div>
+  <div id="app">
     <header />
-    <nav>
+    <nav class="block">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </nav>
-    <router-view />
+
+    <div class="block w-screen mx-auto">
+      <transition name="view">
+        <router-view :key="$route.fullPath"></router-view>
+      </transition>
+    </div>
+    <footer class="fixed bottom-4 right-4">
+      <div class="text-xs">v{{ version }}</div>
+    </footer>
   </div>
 </template>
 

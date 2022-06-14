@@ -164,8 +164,7 @@ export class GridLayout extends Layout {
 <div class="grid grid-cols-12">
   <div v-if="!!currentPage">
     <template
-      v-for="(card, index) in currentPage.cards"
-      :key="'col-' + card.identifier + '-' + index">
+      v-for="(card, index) in currentPage.cards">
       <component
         v-if="shouldDisplayCard(card)"
         :is="card.component"
@@ -174,8 +173,10 @@ export class GridLayout extends Layout {
           'm-2.5': true,
           'col-span-1': getDisplayMode(card).size !== 'full-width',
           'col-span-6': getDisplayMode(card).size === 'full-width',
+          ...getDisplayMode(card).classes,
         }"
         v-bind="{ ...card.props }"
+        :key="'col-' + card.identifier + '-' + index"
       />
     </template>
   </div>
@@ -213,8 +214,7 @@ export class FlexLayout extends Layout {
 <div class="flex">
   <div v-if="!!currentPage">
     <template
-      v-for="(card, index) in currentPage.cards"
-      :key="'col-' + card.identifier + '-' + index">
+      v-for="(card, index) in currentPage.cards">
       <component
         v-if="shouldDisplayCard(card)"
         :is="card.component"
@@ -224,9 +224,10 @@ export class FlexLayout extends Layout {
           'w-full': getDisplayMode(card).size === 'full-width',
           'flex-auto': getDisplayMode(card).size === 'flex',
           'flex-none': getDisplayMode(card).size === 'adapt-to-content',
+          ...getDisplayMode(card).classes,
         }"
-        :class="[ ...getDisplayMode(card).classes ]"
         v-bind="{ ...card.props }"
+        :key="'col-' + card.identifier + '-' + index"
       />
     </template>
   </div>
@@ -264,8 +265,7 @@ export class SingularLayout extends Layout {
 <div class="place-content-center">
   <div v-if="!!currentPage">
     <template 
-      v-for="(card, index) in currentPage.cards"
-      :key="'col-' + card.identifier + '-' + index">
+      v-for="(card, index) in currentPage.cards">
       <component
         v-if="shouldDisplayCard(card)"
         :is="card.component"
@@ -275,8 +275,10 @@ export class SingularLayout extends Layout {
           'w-full': getDisplayMode(card).size === 'full-width',
           'flex-auto': getDisplayMode(card).size === 'flex',
           'flex-none': getDisplayMode(card).size === 'adapt-to-content',
+          ...getDisplayMode(card).classes,
         }"
         v-bind="{ ...card.props }"
+        :key="'col-' + card.identifier + '-' + index"
       />
     </template>
   </div>

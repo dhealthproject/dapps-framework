@@ -8,7 +8,12 @@
  * @license     LGPL-3.0
  */
 import { RouteConfig } from "vue-router";
+
+// internal dependencies
 import { Module, Page } from "./contracts";
+
+// child components
+import Assembler from "@/views/Assembler/Assembler.vue";
 
 // internal kernel configuration
 import MODULES from "../../config/modules";
@@ -208,10 +213,8 @@ export class AppKernel {
       routes.push({
         path,
         name: page.identifier,
-        component: () => import("@/views/Assembler/Assembler.vue"),
-        props: {
-          page,
-        },
+        component: Assembler,
+        props: { page },
       });
     }
 

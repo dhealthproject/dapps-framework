@@ -9,7 +9,7 @@
  */
 // external dependencies
 import { Component } from "vue-property-decorator";
-import { Prop, Vue } from "vue-property-decorator";
+import { Prop } from "vue-property-decorator";
 
 // internal dependencies
 import {
@@ -62,7 +62,12 @@ import { AppComponents, LibComponents } from "@/components";
  *
  * @since v0.1.0
  */
-@Component({})
+@Component({
+  components: {
+    ...AppComponents,
+    ...LibComponents,
+  },
+})
 export default class Assembler extends MetaView {
   /**
    * The page configuration object, i.e. should contain cards,
@@ -134,10 +139,6 @@ export default class Assembler extends MetaView {
 
     console.log("[Assembler] displaying page: ", this.currentPage);
     console.log("[Assembler] using layoutType: ", this.layoutType);
-
-    if (this.currentPage) {
-      console.log("initialize", this.currentPage.dependencies);
-    }
   }
 
   /**
@@ -154,29 +155,30 @@ export default class Assembler extends MetaView {
    * @access public
    * @returns {VNode}
    */
-  public render() {
-    return new Vue({
-      parent: this,
-      components: {
-        ...AppComponents,
-        ...LibComponents,
-      },
-      template: this.layout.render(),
-      props: ["page"],
-      computed: {
-        currentPage(): Page {
-          return undefined === this.page ? ({} as Page) : this.page;
+  public render(h: any) {
+    const assembledPage = this.currentPage; // hoisted
+    return h(
+      {
+        parent: this,
+        components: {
+          ...AppComponents,
+          ...LibComponents,
+        },
+        template: this.layout.render(),
+        props: ["page"],
+        computed: {
+          currentPage(): Page {
+            return assembledPage;
+          },
+        },
+        methods: {
+          getDisplayMode: this.getDisplayMode,
+          shouldDisplayCard: this.shouldDisplayCard,
+          getData: this.getData,
         },
       },
-      methods: {
-        getDisplayMode: this.getDisplayMode,
-        shouldDisplayCard: this.shouldDisplayCard,
-        getData: this.getData,
-      },
-      propsData: {
-        page: this.page,
-      },
-    }).$mount();
+      { page: this.page }
+    );
   }
 
   /**
@@ -194,8 +196,7 @@ export default class Assembler extends MetaView {
    * @return {void}
    */
   public mounted() {
-    console.log("mounted");
-    console.log(this.currentPage);
+    console.log("[Assembler] mounted");
   }
 
   /**
