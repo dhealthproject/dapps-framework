@@ -9,31 +9,36 @@
  */
 // external dependencies
 import Vue from "vue";
+import VueMeta from "vue-meta";
+import VueRouter from "vue-router";
 
 // internal dependencies
 import App from "./App.vue";
 import "./registerServiceWorker";
-import router from "./router";
-import store from "./state/store";
 import internalComponentsInstaller from "@dhealth/components";
-import Meta from "vue-meta";
+
+// initializes router
+import router from "./router";
+
+// initializes state
+import store from "./state/store";
 
 // importing compiled tailwind styles
 // triggers a build when adding classes
 import "../resources/scss/theme.scss";
 import "@dhealth/components/dist/@dhealth/components.css";
 
-// eslint-disable-next-line
-const metaConfig = require("../config/meta.json");
-
+// importing @dhealth/components
 Vue.use(internalComponentsInstaller);
-Vue.use(Meta, metaConfig);
+
+// importing Vue plugins
+Vue.use(VueMeta, { keyName: "metaInfo" });
+Vue.use(VueRouter);
 
 // create app instance
 const dapp = new Vue({
   router,
   store,
-  provide: () => ({ metaConfig }),
   render: (h) => h(App),
 });
 

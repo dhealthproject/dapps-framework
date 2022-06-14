@@ -9,7 +9,6 @@
  */
 // external dependencies
 import VueRouter from "vue-router";
-import Vue from "vue";
 
 // setup a dynamic modules application kernel
 import { AppKernel } from "./kernel";
@@ -18,15 +17,12 @@ import { AppKernel } from "./kernel";
 const appKernel = AppKernel.getInstance();
 const dynamicRoutes = appKernel.getRoutes();
 
+console.log("Router got: ", dynamicRoutes);
+
 // configures the `vue-router` routes
-// const router = createRouter({
-//   history: createWebHistory(process.env.BASE_URL),
-//   routes: dynamicRoutes,
-// });
-
-Vue.use(VueRouter);
-
 const router = new VueRouter({
+  mode: "history",
+  base: process.env.BASE_URL,
   routes: dynamicRoutes,
 });
 

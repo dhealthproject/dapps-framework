@@ -12,7 +12,6 @@ import { Module, Page } from "./contracts";
 
 // internal kernel configuration
 import MODULES from "../../config/modules";
-import Assembler from "@/views/Assembler/Assembler";
 
 /**
  * @class AppKernel
@@ -209,7 +208,7 @@ export class AppKernel {
       routes.push({
         path,
         name: page.identifier,
-        component: Assembler,
+        component: () => import("@/views/Assembler/Assembler.vue"),
         props: {
           page,
         },

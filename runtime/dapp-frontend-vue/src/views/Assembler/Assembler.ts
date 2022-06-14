@@ -8,9 +8,8 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-// import { h } from "vue";
 import { Component } from "vue-property-decorator";
-import { Prop } from "vue-property-decorator";
+import { Prop, Vue } from "vue-property-decorator";
 
 // internal dependencies
 import {
@@ -155,33 +154,29 @@ export default class Assembler extends MetaView {
    * @access public
    * @returns {VNode}
    */
-
-  // used any type temporary
-  public render(h: any) {
-    return h(
-      {
-        components: {
-          ...AppComponents,
-          ...LibComponents,
-        },
-        template: this.layout.render(),
-        props: ["page"],
-        computed: {
-          currentPage(): Page {
-            // return undefined === this.page ? ({} as Page) : this.page;
-            return {} as Page;
-          },
-        },
-        methods: {
-          getDisplayMode: this.getDisplayMode,
-          shouldDisplayCard: this.shouldDisplayCard,
-          getData: this.getData,
+  public render() {
+    return new Vue({
+      parent: this,
+      components: {
+        ...AppComponents,
+        ...LibComponents,
+      },
+      template: this.layout.render(),
+      props: ["page"],
+      computed: {
+        currentPage(): Page {
+          return undefined === this.page ? ({} as Page) : this.page;
         },
       },
-      {
+      methods: {
+        getDisplayMode: this.getDisplayMode,
+        shouldDisplayCard: this.shouldDisplayCard,
+        getData: this.getData,
+      },
+      propsData: {
         page: this.page,
-      }
-    );
+      },
+    }).$mount();
   }
 
   /**

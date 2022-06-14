@@ -8,8 +8,10 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import Vue from "vue";
-import { Inject } from "vue-property-decorator";
+import { Vue } from "vue-property-decorator";
+
+// eslint-disable-next-line
+const metaConfig = require("../../config/meta.json");
 
 /**
  * @class MetaView
@@ -27,7 +29,7 @@ export abstract class MetaView extends Vue {
    * @access public
    * @var {Object}
    */
-  @Inject("metaConfig") public metaConfig: any;
+  public metaConfig: any = metaConfig;
 
   /**
    * The current page meta tags configuration.
@@ -35,9 +37,17 @@ export abstract class MetaView extends Vue {
    * @access public
    * @var {Object}
    */
-  // public meta = setup(() => useMeta(this.metaConfigByName));
+  public metaInfo = this.metaConfigByName;
 
-  // get metaConfigByName() {
-  //   return this.metaConfig[this.constructor.name];
-  // }
+  /**
+   * Helper method to read the meta information
+   * depending on the current instance's class
+   * name.
+   *
+   * @access private
+   * @returns {string | undefined}
+   */
+  private get metaConfigByName() {
+    return this.metaConfig[this.constructor.name];
+  }
 }

@@ -11,12 +11,6 @@
 -->
 <template>
   <div>
-    <metainfo>
-      <!-- sets a titleTemplate dynamically -->
-      <template v-slot:title="{ content }">
-        {{ content }}
-      </template>
-    </metainfo>
     <header />
     <nav>
       <router-link to="/">Home</router-link> |
