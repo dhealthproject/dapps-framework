@@ -20,6 +20,7 @@
 import DappButton from "./controls/DappButton/DappButton.vue";
 import DappQR from "./widgets/DappQR/DappQR";
 import DappTokenAmount from "./fields/DappTokenAmount/DappTokenAmount.vue";
+import DappTitle from "./texts/DappTitle/DappTitle.vue";
 
 // exports components as named-exports
-export { DappButton, DappQR, DappTokenAmount };
+export { DappButton, DappQR, DappTokenAmount, DappTitle };
