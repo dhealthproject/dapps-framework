@@ -8,6 +8,6 @@
  * @license     LGPL-3.0
  */
 // export all components in this directory
-export { Imports } from './get-imports';
-export { ModuleImports } from './module-imports';
-export { ScopeImports } from './scope-imports';
+export { ImportsFactory } from './ImportsFactory';
+export { ScopeImports } from './ScopeImports';
+export { SharedImports } from './SharedImports';

@@ -13,7 +13,7 @@ import { DynamicModule, Logger, Module } from '@nestjs/common';
 // internal dependencies
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Imports } from './common/infrastructures';
+import { ImportsFactory } from './common/infrastructures';
 import { ConfigDTO } from './common/models';
 
 /**
@@ -47,7 +47,7 @@ export class AppModule {
       `Enabled scopes: ${JSON.stringify(configs.scopes, null, 2)}`,
     );
     // get imports dynamically based on configs values.
-    const imports = Imports.getImports(configs);
+    const imports = ImportsFactory.create(configs).getScopedImports();
     return {
       module: AppModule,
       imports,

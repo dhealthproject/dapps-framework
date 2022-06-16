@@ -6,8 +6,6 @@
 
 dHealth dApps Framework for [dHealth Network][parent-url].
 
-- [Requirements](#requirements)
-- [Dependencies](#dependencies)
 - [Install notes](INSTALL.md)
 - [Developer notes](#developer-notes)
 - [Getting help](#getting-help)
@@ -15,15 +13,6 @@ dHealth dApps Framework for [dHealth Network][parent-url].
 - [License](#license)
 
 **NOTE**: The author(s) and contributor(s) of this package cannot be held responsible for any loss of money or for any malintentioned usage forms of this package. Please use this package with caution.
-
-## Dependencies
-
-This project is maintained with [**lerna**](https://lerna.js.org/) to permit joining multiple sub-projects together in one codebase. 
-
-```
-  - node v12+
-  - lerna v4
-```
 
 ## Developer notes
 

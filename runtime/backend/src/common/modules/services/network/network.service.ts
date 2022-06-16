@@ -10,7 +10,12 @@
 // external dependencies
 import {
   BlockRepository,
+  Currency,
+  MosaicId,
+  NamespaceId,
+  NetworkCurrencies,
   RepositoryFactoryHttp,
+  RepositoryFactoryConfig,
   TransactionRepository,
   UInt64,
 } from '@dhealth/sdk';
@@ -59,8 +64,32 @@ export class NetworkService {
    * @param {ConfigService} configService
    */
   constructor(private readonly configService: ConfigService) {
+    // prepares the connection parameters
     const defaultNode = this.configService.get<string>('defaultNode');
-    this.repositoryFactoryHttp = new RepositoryFactoryHttp(defaultNode);
+    const generationHash = this.configService.get<string>('network.generationHash');
+    const epochAdjustment = this.configService.get<number>('network.epochAdjustment');
+    const networkIdentifier = this.configService.get<number>('network.networkIdentifier');
+    const currencyMosaicId = this.configService.get<string>('network.mosaicId');
+    const currencyNamespaceId = this.configService.get<string>('network.namespaceId');
+    const tokenDivisibility = this.configService.get<number>('network.divisibility');
+    const networkCurrency = new Currency({
+      mosaicId: new MosaicId(currencyMosaicId),
+      namespaceId: new NamespaceId(currencyNamespaceId),
+      divisibility: tokenDivisibility,
+      transferable: true,
+      supplyMutable: false,
+      restrictable: false,
+    });
+
+    // initializes a repository factory and passes connection
+    // information to avoid extra node requests.
+    this.repositoryFactoryHttp = new RepositoryFactoryHttp(defaultNode, {
+      generationHash: generationHash,
+      epochAdjustment: epochAdjustment,
+      networkType: networkIdentifier,
+      networkCurrencies: new NetworkCurrencies(networkCurrency, networkCurrency),
+      nodePublicKey: 'FakeUnauthorizedPublicKey',
+    } as RepositoryFactoryConfig);
     this.transactionRepository =
       this.repositoryFactoryHttp.createTransactionRepository();
     this.blockRepository = this.repositoryFactoryHttp.createBlockRepository();

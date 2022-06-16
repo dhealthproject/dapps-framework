@@ -28,7 +28,8 @@
     "docs:lib": "lerna run docs --stream --scope @dhealth/components",
     "docs:vue": "lerna run docs --stream --scope @dhealthdapps/frontend",
     "version": "echo $npm_package_version",
-    "serve": "lerna run serve --stream --scope @dhealthdapps/frontend"
+    "serve:app": "lerna run serve --stream --scope @dhealthdapps/frontend",
+    "serve:api": "lerna run serve --stream --scope @dhealthdapps/backend"
   },
   "devDependencies": {
     "lerna": "^4.0.0"

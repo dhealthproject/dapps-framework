@@ -12,7 +12,7 @@ import { DynamicModule, Logger, Module } from '@nestjs/common';
 
 // internal dependencies
 import { ConfigDTO } from 'src/common/models';
-import { Imports } from 'src/common/infrastructures';
+import { ImportsFactory } from 'src/common/infrastructures';
 
 /**
  * @class SchedulerModule
@@ -43,10 +43,10 @@ export class SchedulerModule {
   static register(configs: ConfigDTO): DynamicModule {
     // print activation information of all cron modules.
     SchedulerModule.logger.debug(
-      `Enabled cronjobs: ${JSON.stringify(configs.scheduler, null, 2)}`,
+      `Enabled cronjobs: ${JSON.stringify(configs.schedulers, null, 2)}`,
     );
     // get imports dynamically based on configs values.
-    const imports = Imports.getImports(configs, true);
+    const imports = ImportsFactory.create(configs).getSchedulerImports();
     return {
       module: SchedulerModule,
       imports,

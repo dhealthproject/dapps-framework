@@ -9,44 +9,44 @@
  */
 jest.mock('@dhealth/sdk');
 
-const forRootCall = jest.fn(() => ConfigModuleMock);
-const ConfigModuleMock = { forRoot: forRootCall };
+const forRootCall: any = jest.fn(() => ConfigModuleMock);
+const ConfigModuleMock: any = { forRoot: forRootCall };
 jest.mock('@nestjs/config', () => {
   return { ConfigModule: ConfigModuleMock };
 });
 
-const DiscoveryModuleMock = jest.fn();
+const DiscoveryModuleMock: any = jest.fn();
 jest.mock('src/discovery/discovery.module', () => {
   return { DiscoveryModule: DiscoveryModuleMock };
 });
 
-const PayoutModuleMock = jest.fn();
+const PayoutModuleMock: any = jest.fn();
 jest.mock('src/payout/payout.module', () => {
   return { PayoutModule: PayoutModuleMock };
 });
 
-const ProcessorModuleMock = jest.fn();
+const ProcessorModuleMock: any = jest.fn();
 jest.mock('src/processor/processor.module', () => {
   return { ProcessorModule: ProcessorModuleMock };
 });
 
-const SchedulerModuleMock = jest.fn();
+const SchedulerModuleMock: any = jest.fn();
 jest.mock('src/scheduler/scheduler.module', () => {
   return { SchedulerModule: SchedulerModuleMock };
 });
 
-const mongooseForRootCall = jest.fn(() => MongooseModuleMock);
-const MongooseModuleMock = { forRoot: mongooseForRootCall };
+const mongooseForRootCall: any = jest.fn(() => MongooseModuleMock);
+const MongooseModuleMock: any = { forRoot: mongooseForRootCall };
 jest.mock('@nestjs/mongoose', () => {
   return { MongooseModule: MongooseModuleMock };
 });
 
-const AccountsModuleMock = jest.fn();
+const AccountsModuleMock: any = jest.fn();
 jest.mock('src/common/modules/routes/accounts/accounts.module', () => {
   return { AccountsModule: AccountsModuleMock };
 });
 
-const AccountsDiscoveryModuleMock = jest.fn();
+const AccountsDiscoveryModuleMock: any = jest.fn();
 jest.mock(
   'src/common/modules/cronjobs/accounts-discovery/accounts-discovery.module',
   () => {
@@ -54,14 +54,25 @@ jest.mock(
   },
 );
 
-import { Imports } from '.';
+import { ImportsFactory } from './ImportsFactory';
+
+// Mock the imports factory to re-create class instances
+// everytime a new test is running. This mock mimics the
+// creation of separate ImportsFactory instances.
+class MockFactory extends ImportsFactory {
+  protected static $_INSTANCE: MockFactory = null;
+
+  static create(configDTO: any): MockFactory {
+    return new MockFactory(configDTO);
+  }
+}
 
 describe('Imports', () => {
   describe('test on getImports()', () => {
     it('should return correct result for non-scheduler', () => {
-      const configDto = {
-        scheduler: [],
-        scopes: ['discovery', 'payout', 'processor', 'scheduler'],
+      const configDto: any = {
+        schedulers: [],
+        scopes: ['discovery', 'payout', 'processor'],
       };
       const expectedResult = [
         ConfigModuleMock,
@@ -69,27 +80,27 @@ describe('Imports', () => {
         PayoutModuleMock,
         ProcessorModuleMock,
       ];
-      const result = Imports.getImports(configDto);
+      const result = MockFactory.create(configDto).getScopedImports();
       expect(result).toEqual(expectedResult);
     });
 
     it('should return correct result for non-scheduler with disabled modules', () => {
-      const configDto = {
-        scheduler: [],
-        scopes: ['discovery', 'processor', 'scheduler'],
+      const configDto: any = {
+        schedulers: [],
+        scopes: ['discovery', 'processor'],
       };
       const expectedResult = [
         ConfigModuleMock,
         DiscoveryModuleMock,
         ProcessorModuleMock,
       ];
-      const result = Imports.getImports(configDto);
+      const result = MockFactory.create(configDto).getScopedImports();
       expect(result).toEqual(expectedResult);
     });
 
     it('should return correct result for scheduler', () => {
-      const configDto = {
-        scheduler: ['accountsDiscovery'],
+      const configDto: any = {
+        schedulers: ['accountsDiscovery'],
         scopes: ['scheduler'],
       };
       const expectedResult = [
@@ -97,20 +108,8 @@ describe('Imports', () => {
         MongooseModuleMock,
         AccountsDiscoveryModuleMock,
       ];
-      const result = Imports.getImports(configDto, true);
+      const result = MockFactory.create(configDto).getSchedulerImports();
       expect(result).toEqual(expectedResult);
-    });
-  });
-
-  describe('test on getConfigFunction()', () => {
-    it('should return correct result', () => {
-      const configDto = {
-        scheduler: ['accountsDiscovery'],
-        scopes: ['discovery', 'payout', 'processor', 'scheduler'],
-      };
-      Imports.configDTO = configDto;
-      const result = Imports.getConfigFunction();
-      expect(result).toEqual(configDto);
     });
   });
 });

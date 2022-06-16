@@ -12,11 +12,20 @@ import { Model } from 'mongoose';
 import { Account, AccountQueryDTO, PaginatedResutDto } from '../../../models';
 import { QueriesService } from './queries.service';
 
+// Mock the query service to enable *testing* of protected
+// methods such as `typecastField`.
+class MockQueryService extends QueriesService {
+  public sanitizeSearchQuery(searchQuery: any): any {
+    return super.sanitizeSearchQuery(searchQuery);
+  }
+}
+
 describe('QueriesService', () => {
-  let service: QueriesService;
+  let service: MockQueryService;
   let testModel: Model<any>;
 
-  let data, saveFn, initializeUnorderedBulkOpFn;
+  let data: any, saveFn: any, initializeUnorderedBulkOpFn: any;
+  //XXX extract to mocks concern
   let aggregateFn = jest.fn((param) => {
     return {
       param: () => param,
@@ -29,6 +38,7 @@ describe('QueriesService', () => {
         ]),
     };
   });
+  //XXX extract to mocks concern
   class MockModel {
     constructor(dto?: any) {
       data = dto;
@@ -58,10 +68,11 @@ describe('QueriesService', () => {
         return initializeUnorderedBulkOpFn();
       },
     };
-    static aggregate(param) {
+    static aggregate(param: any) {
       return aggregateFn(param);
     }
   }
+  //XXX extract to mocks concern
   let mockDate: Date;
   beforeEach(async () => {
     mockDate = new Date(1212, 1, 1);
@@ -69,10 +80,10 @@ describe('QueriesService', () => {
     jest.setSystemTime(mockDate);
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [QueriesService],
+      providers: [MockQueryService],
     }).compile();
 
-    service = module.get<QueriesService>(QueriesService);
+    service = module.get<MockQueryService>(MockQueryService);
     testModel = new MockModel() as any;
   });
 
@@ -195,7 +206,7 @@ describe('QueriesService', () => {
     });
   });
 
-  describe('test on validifyFindQuery()', () => {
+  describe('test on typecastField()', () => {
     it('should return correct result', () => {
       const testInput = {
         testString: 'abc',
@@ -203,7 +214,7 @@ describe('QueriesService', () => {
         testBoolean: 'true',
         testArray: ['abc', '2', 'true'],
       };
-      const result = service.validifyFindQuery(testInput);
+      const result = service.sanitizeSearchQuery(testInput);
       expect(result).toStrictEqual({
         testString: 'abc',
         testNumber: { $in: [123, '123'] },

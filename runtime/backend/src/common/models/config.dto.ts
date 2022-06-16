@@ -31,7 +31,7 @@ export class ConfigDTO {
    *
    * @var {CronJob[]}
    */
-  scheduler: CronJob[];
+  schedulers: CronJob[];
 }
 
 /**
@@ -48,4 +48,4 @@ export type Scope = string | 'discovery' | 'payout' | 'processor' | 'scheduler';
  *
  * @since v0.1.0
  */
-export type CronJob = string | 'addAccounts';
+export type CronJob = string | 'addAccounts' | 'accountsDiscovery';

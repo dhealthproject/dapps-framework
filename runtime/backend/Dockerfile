@@ -1,5 +1,5 @@
 # Development
-FROM node:12.19.0-alpine3.9 AS development
+FROM node:16.13.1-alpine3.15 AS development
 
 WORKDIR /usr/src/app
 
@@ -14,7 +14,7 @@ COPY . .
 RUN npm run build
 
 # Production main
-FROM node:12.19.0-alpine3.9 as production-app
+FROM node:16.13.1-alpine3.15 as production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
@@ -29,4 +29,4 @@ COPY . .
 
 COPY --from=development /usr/src/app/dist ./dist
 
-CMD ["node", "dist/main"]
+CMD ["npm", "run", "start:prod"]

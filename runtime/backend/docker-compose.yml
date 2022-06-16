@@ -5,7 +5,7 @@ services:
     container_name: dapp-backend-app
     build:
       context: .
-      target: production-app
+      target: production
     ports:
       - ${PROD_APP_PORT}:7903
     environment:
