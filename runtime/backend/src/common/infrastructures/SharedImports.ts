@@ -22,9 +22,9 @@ import { AccountsModule } from '../modules/routes/accounts/accounts.module';
  * Shared modules *cannot* be disabled as of the first draft release of
  * this software package.
  * <br /<br />
- * XXX define class AbstractScopeModule + extend in DiscoveryModule, PayoutModule, etc.
- * XXX SharedImports should at least use a custom type with the above abstraction.
  *
+ * @todo define class `AbstractAppModule` and use in `AccountsModule`, etc.
+ * @todo The object `SharedImports` should **at least** use a custom type (not `any`).
  * @var {object}
  * @since v0.1.0
  */

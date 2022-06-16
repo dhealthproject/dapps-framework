@@ -152,7 +152,7 @@ export class AccountsDiscoveryService
     let pageNumber = this.state ? this.state.data.currentTxPage : 1;
     const pageSize = 100;
     for (let i = 0; i < 10; i++) {
-      const result = await this.networkService.transactionRepository
+      const result = await this.networkService.getTransactionRepository()
         .search({
           signerPublicKey: this.discoverySource,
           group: TransactionGroup.Confirmed,

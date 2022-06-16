@@ -29,10 +29,11 @@ import { ProcessorModule } from '../../processor/processor.module';
  * this one executes in a *parallel* process and thereby should not be
  * imported here.
  * <br /<br />
- * XXX define class AbstractScopeModule + extend in DiscoveryModule, PayoutModule, etc.
- * XXX ScopeImports should at least use a custom type with the above abstraction.
  *
  * @var {object}
+ *
+ * @todo define class `AbstractAppModule` and use in `DiscoveryModule`, `PayoutModule`, etc.
+ * @todo The object `ScopeImports` should **at least** use a custom type (not `any`).
  * @since v0.1.0
  */
 export const ScopeImports: { [key: string]: any } = {

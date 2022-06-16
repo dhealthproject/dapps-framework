@@ -18,7 +18,7 @@ describe('AccountsController', () => {
   let controller: AccountsController;
   let accountsService: AccountsService;
 
-  let data, saveFn, initializeUnorderedBulkOpFn;
+  let data: any, saveFn: any, initializeUnorderedBulkOpFn: any;
   const aggregateFn = jest.fn((param) => {
     return {
       param: () => param,
@@ -60,7 +60,7 @@ describe('AccountsController', () => {
         return initializeUnorderedBulkOpFn();
       },
     };
-    static aggregate(param) {
+    static aggregate(param: any) {
       return aggregateFn(param);
     }
   }

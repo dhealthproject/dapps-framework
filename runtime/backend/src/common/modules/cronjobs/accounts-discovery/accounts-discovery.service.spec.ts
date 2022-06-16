@@ -11,14 +11,33 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { TransferTransaction } from "@dhealth/sdk";
 import { AccountDTO, AccountsDiscoveryState, State } from 'src/common/models';
 import { AccountsService } from '../../routes/accounts/accounts.service';
-import { NetworkService } from '../../services/network/network.service';
+import { NetworkService, NodeConnectionPayload } from '../../services/network/network.service';
 import { QueriesService } from '../../services/queries/queries.service';
 import { StatesService } from '../../services/states/states.service';
 import { AccountsDiscoveryService } from './accounts-discovery.service';
 
-//XXX extract to mocks concern
+// Mocks the full `js-sha3` dependency to avoid
+// calls to actual SHA3/Keccak algorithms.
+jest.mock("js-sha3", () => ({
+  sha3_256: {
+    update: jest.fn().mockReturnThis(),
+    create: jest.fn().mockReturnThis(),
+    arrayBuffer: jest.fn(),
+  }
+}));
+
+jest.mock("@dhealth/sdk", () => ({
+  TransferTransaction: {
+    transactionInfo: {
+      hash: 'hash3',
+      aggregateHash: 'hash3',
+    }
+  }
+}));
+
 const createTransactionRepositoryCall: any = jest.fn(
   (url) => () => `transactionRepository-${url}`,
 );
@@ -30,28 +49,22 @@ const RepositoryFactoryHttpMock: any = jest.fn((url) => ({
   createBlockRepository: createBlockRepositoryCall(url),
 }));
 
-class TransactionOverwrite {}
-
-class TransferTransaction extends TransactionOverwrite {
-  address: string;
-  hash = 'test-hash';
-  aggregateHash = false;
-  recipientAddress: any;
-  transactionInfo: any;
-  constructor(address: string, hash?: string, aggregateHash?: boolean) {
-    super();
-    this.address = address;
-    this.hash = hash;
-    this.aggregateHash = aggregateHash;
-    this.recipientAddress = { plain: () => this.address };
-    this.transactionInfo = {
-      height: { compact: () => 1 },
-      hash: this.aggregateHash ? null : this.hash,
-      aggregateHash: this.aggregateHash ? this.hash : null,
-    };
+// Mocks the network service's connection adapter
+// to avoid actual calls to the nodes and creates
+// fake repositories to mimic an established connection
+class MockNetworkService extends NetworkService {
+  protected connectToNode(nodeUrl: string, connectionPayload: NodeConnectionPayload): MockNetworkService {
+    this.repositoryFactoryHttp = RepositoryFactoryHttpMock('fake-node');
+    this.transactionRepository = this.repositoryFactoryHttp.createTransactionRepository();
+    this.blockRepository = this.repositoryFactoryHttp.createBlockRepository();
+    return this;
   }
 }
 
+/**
+ * @todo extract mocks to mocks concern
+ * @todo re-write tests to use **way** less `any` typings
+ */
 describe('AccountsDiscoveryService', () => {
   let service: AccountsDiscoveryService;
   let configService: ConfigService;
@@ -61,7 +74,6 @@ describe('AccountsDiscoveryService', () => {
   let logger: Logger;
 
   let data: any, saveFn: any, initializeUnorderedBulkOpFn: any;
-  //XXX extract to mocks concern
   const aggregateFn = jest.fn((param) => {
     return {
       param: () => param,
@@ -74,7 +86,6 @@ describe('AccountsDiscoveryService', () => {
         ]),
     };
   });
-  //XXX extract to mocks concern
   class MockModel {
     constructor(dto?: any) {
       data = dto;
@@ -108,22 +119,7 @@ describe('AccountsDiscoveryService', () => {
       return aggregateFn(param);
     }
   }
-  //XXX extract to mocks concern
   let mockDate: Date;
-
-  //XXX extract to mocks concern
-  beforeAll(() => {
-    //XXX extract to mocks concern
-    jest.mock('@dhealth/sdk', () => ({
-      RepositoryFactoryHttp: RepositoryFactoryHttpMock,
-      TransactionGroup: { Confirmed: 1 },
-      Order: { Asc: 1 },
-      Transaction: TransactionOverwrite,
-      TransferTransaction: TransferTransaction,
-      UInt64: { fromUint: (num: number) => num },
-    }));
-  });
-
   beforeEach(async () => {
     mockDate = new Date(1212, 1, 1);
     jest.useFakeTimers('modern');
@@ -185,75 +181,84 @@ describe('AccountsDiscoveryService', () => {
     });
   });
 
-  // describe('test on discover()', () => {
-  //   it('should have correct flow and initialized result', async () => {
-  //     (service as any).logger = logger;
-  //     const syncStateCall = jest
-  //       .spyOn(service, 'syncState')
-  //       .mockResolvedValue();
-  //     const runDiscoveryCall = jest
-  //       .spyOn(service, 'runDiscovery')
-  //       .mockResolvedValue();
-  //     await service.discover();
-  //     expect(logger.log).toBeCalledWith('Service starting...');
-  //     expect(logger.log).toBeCalledWith('Syncing states...');
-  //     expect(syncStateCall).toBeCalledTimes(1);
-  //     expect(runDiscoveryCall).toBeCalledTimes(1);
-  //     expect(logger.debug).toBeCalledWith('Runtime duration: 0s');
-  //     expect((service as any).accountsMap).toEqual(
-  //       new Map<string, AccountDTO>(),
-  //     );
-  //   });
-  // });
+  describe('test on discover()', () => {
+    it('should have correct flow and initialized result', async () => {
+      (service as any).logger = logger;
+      const syncStateCall = jest
+        .spyOn(service, 'syncState')
+        .mockResolvedValue();
+      const runDiscoveryCall = jest
+        .spyOn(service, 'runDiscovery')
+        .mockResolvedValue();
+      await service.discover();
+      expect(logger.log).toBeCalledWith('Service starting...');
+      expect(logger.log).toBeCalledWith('Syncing states...');
+      expect(syncStateCall).toBeCalledTimes(1);
+      expect(runDiscoveryCall).toBeCalledTimes(1);
+      expect(logger.debug).toBeCalledWith('Runtime duration: 0s');
+      expect((service as any).accountsMap).toEqual(
+        new Map<string, AccountDTO>(),
+      );
+    });
+  });
 
-  // describe('test on syncState()', () => {
-  //   it('should have correct flow and result', async () => {
-  //     const state: State = {
-  //       name: AccountsDiscoveryService.name,
-  //       data: {
-  //         currentTxPage: 1,
-  //         latestTxHash: 'test-hash',
-  //       },
-  //     };
-  //     const findOneCall = jest
-  //       .spyOn(statesService, 'findOne')
-  //       .mockResolvedValue(state);
-  //     await service.syncState();
-  //     expect(findOneCall).toHaveBeenCalledWith({
-  //       name: AccountsDiscoveryService.name,
-  //     });
-  //     expect((service as any).state).toEqual(state);
-  //   });
-  // });
+  describe('test on syncState()', () => {
+    it('should have correct flow and result', async () => {
+      const state: State = {
+        name: AccountsDiscoveryService.name,
+        data: {
+          currentTxPage: 1,
+          latestTxHash: 'test-hash',
+        },
+      };
+      const findOneCall = jest
+        .spyOn(statesService, 'findOne')
+        .mockResolvedValue(state);
+      await service.syncState();
+      expect(findOneCall).toHaveBeenCalledWith({
+        name: AccountsDiscoveryService.name,
+      });
+      expect((service as any).state).toEqual(state);
+    });
+  });
 
-  // describe('test on runDiscovery()', () => {
-  //   it('should have correct flow', async () => {
-  //     (service as any).logger = logger;
-  //     (service as any).accountsMap = new Map();
-  //     const discoverAccountsCall = jest
-  //       .spyOn(service, 'discoverAccounts')
-  //       .mockResolvedValue();
-  //     const updateFirstTransactionsTimeCall = jest
-  //       .spyOn(service, 'updateFirstTransactionsTime')
-  //       .mockResolvedValue();
-  //     const saveAccountsCall = jest
-  //       .spyOn(service, 'saveAccounts')
-  //       .mockResolvedValue();
-  //     await service.runDiscovery();
-  //     expect(logger.log).toBeCalledWith('Discovering accounts...');
-  //     expect(discoverAccountsCall).toBeCalledTimes(1);
-  //     expect(logger.log).toBeCalledWith('Updating first transaction time...');
-  //     expect(updateFirstTransactionsTimeCall).toBeCalledTimes(1);
-  //     expect(logger.log).toBeCalledWith('Updating accounts...');
-  //     expect(saveAccountsCall).toBeCalledTimes(1);
-  //   });
-  // });
+  describe('test on runDiscovery()', () => {
+    it('should have correct flow', async () => {
+      (service as any).logger = logger;
+      (service as any).accountsMap = new Map();
+      const discoverAccountsCall = jest
+        .spyOn(service, 'discoverAccounts')
+        .mockResolvedValue();
+      const updateFirstTransactionsTimeCall = jest
+        .spyOn(service, 'updateFirstTransactionsTime')
+        .mockResolvedValue();
+      const saveAccountsCall = jest
+        .spyOn(service, 'saveAccounts')
+        .mockResolvedValue();
+      await service.runDiscovery();
+      expect(logger.log).toBeCalledWith('Discovering accounts...');
+      expect(discoverAccountsCall).toBeCalledTimes(1);
+      expect(logger.log).toBeCalledWith('Updating first transaction time...');
+      expect(updateFirstTransactionsTimeCall).toBeCalledTimes(1);
+      expect(logger.log).toBeCalledWith('Updating accounts...');
+      expect(saveAccountsCall).toBeCalledTimes(1);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // CAUTION HERE
+  // tests currently disabled due to `NetworkService` mock incompatibility
+  // next iteration *must* fix these tests with a *correct* `TransferTransaction`
+  // **instance mock** rather than class mock ; Objects of this class do not
+  // need specific stubs or method mocks.
+  //
+  // -------------------------------------------------------------------------
 
   // describe('test on discoverAccounts()', () => {
   //   it('should have correct flow with no state & isLastPage = true', async () => {
   //     (networkService as any).transactionRepository = { search: () => ({}) };
   //     const searchCall = jest
-  //       .spyOn(networkService.transactionRepository, 'search')
+  //       .spyOn(networkService.getTransactionRepository(), 'search')
   //       .mockReturnValue({
   //         toPromise: () =>
   //           Promise.resolve({
@@ -284,7 +289,7 @@ describe('AccountsDiscoveryService', () => {
   //     (service as any).state = state;
   //     (networkService as any).transactionRepository = { search: () => ({}) };
   //     const searchCall = jest
-  //       .spyOn(networkService.transactionRepository, 'search')
+  //       .spyOn(networkService.getTransactionRepository(), 'search')
   //       .mockReturnValue({
   //         toPromise: () =>
   //           Promise.resolve({

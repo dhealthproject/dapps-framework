@@ -20,12 +20,15 @@ class MockQueryService extends QueriesService {
   }
 }
 
+/**
+ * @todo extract mocks to mocks concern
+ * @todo re-write tests to use **way** less `any` typings
+ */
 describe('QueriesService', () => {
   let service: MockQueryService;
   let testModel: Model<any>;
 
   let data: any, saveFn: any, initializeUnorderedBulkOpFn: any;
-  //XXX extract to mocks concern
   let aggregateFn = jest.fn((param) => {
     return {
       param: () => param,
@@ -38,7 +41,6 @@ describe('QueriesService', () => {
         ]),
     };
   });
-  //XXX extract to mocks concern
   class MockModel {
     constructor(dto?: any) {
       data = dto;
@@ -72,7 +74,6 @@ describe('QueriesService', () => {
       return aggregateFn(param);
     }
   }
-  //XXX extract to mocks concern
   let mockDate: Date;
   beforeEach(async () => {
     mockDate = new Date(1212, 1, 1);

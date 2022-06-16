@@ -68,8 +68,13 @@ export type SearchQuery = {
  * Also, arrays are *always* passed to the `$in` routine, currently no
  * other operations are possible with array and objects.
  * <br /><br />
- * XXX add example and rename to QueryService + update locations
  *
+ * @todo add example in class documentation
+ * @todo rename class to `QueryService` and add handler logic
+ * @todo update `QueryService` source location to `src/common/services`
+ * @todo Method `typecastField` does not permit *simple* arithmetical operations like `<><==>` on numbers.
+ * @todo Method `typecastField` is most likely incompatible with complex class objects, must be handled.
+ * @todo Method `typecastField` *mixes* functionalities by defining the `$in` routines as a type-cast result.
  * @since v0.1.0
  */
 @Injectable()
@@ -216,12 +221,10 @@ export class QueriesService {
       return (value === "true") as boolean;
     }
     // (2) number
-    // XXX this means it's not possible to "<><=>=" number fields
     else if (!isNaN(value)) {
       return { $in: [+value, value] } as MongoQueryRoutine;
     }
     // (3) array
-    // XXX may be incompatible with deep object array
     else if (Array.isArray(value)) {
       // recursive call to typecast values inside the
       // array to the most primitive types. After the
@@ -249,7 +252,6 @@ export class QueriesService {
       // the condition value is a $in routine
       return { $in: newValues.flat() } as MongoQueryRoutine;
     }
-    //XXX else if (typeof value === 'object')...
 
     // otherwise return without changes
     return value;

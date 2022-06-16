@@ -9,49 +9,51 @@
  */
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { NetworkService, NodeConnectionPayload } from './network.service';
 
-const createTransactionRepositoryCall = jest.fn(
+// Mocks the full `js-sha3` dependency to avoid
+// calls to actual SHA3/Keccak algorithms.
+jest.mock("js-sha3", () => ({
+  sha3_256: {
+    update: jest.fn().mockReturnThis(),
+    create: jest.fn().mockReturnThis(),
+    arrayBuffer: jest.fn(),
+  }
+}));
+
+const createTransactionRepositoryCall: any = jest.fn(
   (url) => () => `transactionRepository-${url}`,
 );
-const createBlockRepositoryCall = jest.fn(
+const createBlockRepositoryCall: any = jest.fn(
   (url) => () => `blockRepository-${url}`,
 );
-const RepositoryFactoryHttpMock = jest.fn((url) => ({
+const RepositoryFactoryHttpMock: any = jest.fn((url) => ({
   createTransactionRepository: createTransactionRepositoryCall(url),
   createBlockRepository: createBlockRepositoryCall(url),
 }));
-class Transaction {}
 
-class TransferTransaction extends Transaction {
-  address: string;
-  constructor(address: string) {
-    super();
-    this.address = address;
+// Mocks the network service's connection adapter
+// to avoid actual calls to the nodes and creates
+// fake repositories to mimic an established connection
+class MockNetworkService extends NetworkService {
+  protected connectToNode(nodeUrl: string, connectionPayload: NodeConnectionPayload): MockNetworkService {
+    this.repositoryFactoryHttp = RepositoryFactoryHttpMock('fake-node');
+    this.transactionRepository = this.repositoryFactoryHttp.createTransactionRepository();
+    this.blockRepository = this.repositoryFactoryHttp.createBlockRepository();
+    return this;
   }
-  recipientAddress = { plain: () => this.address };
-  transactionInfo = { height: { compact: () => 1 } };
 }
-jest.mock('@dhealth/sdk', () => ({
-  RepositoryFactoryHttp: RepositoryFactoryHttpMock,
-  TransactionGroup: { Confirmed: 1 },
-  Order: { Asc: 1 },
-  Tranasction: Transaction,
-  TransferTransaction: TransferTransaction,
-  UInt64: { fromUint: (num: number) => num },
-}));
-
-import { NetworkService } from './network.service';
 
 describe('NetworkService', () => {
-  let service: NetworkService;
+  let service: MockNetworkService;
   let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [NetworkService, ConfigService],
+      providers: [MockNetworkService, ConfigService],
     }).compile();
 
-    service = module.get<NetworkService>(NetworkService);
+    service = module.get<MockNetworkService>(MockNetworkService);
     configService = module.get<ConfigService>(ConfigService);
   });
 
