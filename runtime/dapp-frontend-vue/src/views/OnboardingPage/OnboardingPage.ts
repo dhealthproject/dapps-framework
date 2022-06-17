@@ -15,26 +15,22 @@ import { MetaView } from "@/views/MetaView";
 
 import Header from "@/components/Header/Header.vue";
 import Footer from "@/components/Footer/Footer.vue";
-import { DappQR } from "@dhealth/components";
+import { DappTokenAmount } from "@dhealth/components";
 import {
   TransferTransaction,
   Deadline,
   Address,
   PlainMessage,
   NetworkType,
-  Transaction,
-  Mosaic,
-  NamespaceId,
-  UInt64,
 } from "@dhealth/sdk";
 
-import { QRCodeGenerator } from "@dhealth/qr-library";
+import QRCodeGenerator from "@dhealth/qr-library";
 
 @Component({
   components: {
     Header,
     Footer,
-    DappQR,
+    DappTokenAmount,
   },
 })
 export default class OnboardingPage extends MetaView {
@@ -47,39 +43,16 @@ export default class OnboardingPage extends MetaView {
     ];
   }
 
-  // get getQR() {
-  //   return QRCodeGenerator;
-  // }
-
-  // get networkType() {
-  //   return NetworkType.MAIN_NET;
-  // }
-
-  // protected createLoginContract() {
-  //   return TransferTransaction.create(
-  //     Deadline.create(1616978397),
-  //     Address.createFromRawAddress("NDEVUP43ATEX2BM6XDFKVELVGQF66HOTZTIMJ6I"),
-  //     [],
-  //     PlainMessage.create("I am leaving dHealth Tech Chat #4"),
-  //     NetworkType.MAIN_NET
-  //   );
-  // }
-
-  protected createLoginContract(): any {
-    console.log(this.getTransactionRequest());
-    return QRCodeGenerator.createTransactionRequest(
-      this.getTransactionRequest(),
-      NetworkType.MAIN_NET,
-      "ED5761EA890A096C50D3F50B7C2F0CCB4B84AFC9EA870F381E84DDE36D04EF16"
-    );
+  get getQR() {
+    return QRCodeGenerator;
   }
 
-  protected getTransactionRequest(): Transaction {
+  protected createLoginContract() {
     return TransferTransaction.create(
       Deadline.create(1616978397),
       Address.createFromRawAddress("NDEVUP43ATEX2BM6XDFKVELVGQF66HOTZTIMJ6I"),
-      [new Mosaic(new NamespaceId("dhealth.dhp"), UInt64.fromUint(0))],
-      PlainMessage.create("I am leaving dHealth Tech Chat #4"),
+      [],
+      PlainMessage.create("I am joining dHealth Tech Chat #4"),
       NetworkType.MAIN_NET
     );
   }
