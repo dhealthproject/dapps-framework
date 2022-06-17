@@ -8,7 +8,7 @@
     "/": {
       "identifier": "home",
       "formatters": {},
-      "layout": "default",
+      "layout": "singular",
       "cards": [
         {
           "identifier": "title-message",

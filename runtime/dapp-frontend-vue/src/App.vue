@@ -13,8 +13,9 @@
   <div id="app">
     <header />
     <nav class="block">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link :to="{ name: 'home' }">Home</router-link> |
+      <router-link :to="{ name: 'about' }">About</router-link> |
+      <router-link :to="{ name: 'onboarding' }">Onboarding</router-link>
     </nav>
 
     <div class="block w-screen mx-auto">
