@@ -13,7 +13,7 @@
 <template>
   <div class="onboarding">
     <Header :links="dummyLinks" />
-    <DappQR :qrCode="getQR.createExportTransaction(createLoginContract())" />
+    <DappQR :qrCode="createLoginContract()" />
     <Footer :links="dummyLinks" />
   </div>
 </template>
