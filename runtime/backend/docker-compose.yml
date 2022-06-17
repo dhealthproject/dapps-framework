@@ -22,7 +22,7 @@ services:
 
   mongodb:
     container_name: dapp-backend-db
-    image: mongo
+    image: mongo:latest
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: $DB_USER
