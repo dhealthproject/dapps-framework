@@ -21,7 +21,19 @@ const dynamicRoutes = appKernel.getRoutes();
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
-  routes: dynamicRoutes,
+  routes: [
+    ...dynamicRoutes,
+    {
+      path: "/about",
+      name: "about",
+      component: () => import("./views/pages/AboutPage/AboutPage.vue"),
+    },
+    {
+      path: "/onboarding",
+      name: "onboarding",
+      component: () => import("./views/OnboardingPage/OnboardingPage.vue"),
+    },
+  ],
 });
 
 export default router;

@@ -7,12 +7,19 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// external dependencies
-import { DappButton } from "@dhealth/components";
-import Header from "./Header/Header.vue";
-import Footer from "./Footer/Footer.vue";
-// internal dependencies
-import HelloWorld from "./HelloWorld.vue";
 
-export const AppComponents = { HelloWorld, Header, Footer };
-export const LibComponents = { DappButton };
+// external dependencies
+import { Component, Prop } from "vue-property-decorator";
+// internal dependencies
+import { MetaView } from "@/views/MetaView";
+
+interface FooterLink {
+  path: string;
+  text: string;
+  icon: string;
+}
+
+@Component({})
+export default class Footer extends MetaView {
+  @Prop({ default: () => [], required: true }) protected links?: FooterLink[];
+}
