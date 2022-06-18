@@ -7,7 +7,18 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-import { Module } from "@nestjs/common";
-
-@Module({})
-export class PayoutModule {}
+/**
+ * @interface Countable
+ * @description This concern requires the presence of fields that
+ * consist in delivering *counted* information.
+ *
+ * @since v0.1.0
+ */
+export interface Countable {
+  /**
+   * The total number of results.
+   *
+   * @var {number}
+   */
+  total: number;
+}

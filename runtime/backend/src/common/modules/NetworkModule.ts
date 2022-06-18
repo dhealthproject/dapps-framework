@@ -7,7 +7,20 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
 import { Module } from "@nestjs/common";
 
-@Module({})
-export class PayoutModule {}
+// internal dependencies
+import { NetworkService } from "../services/NetworkService";
+
+/**
+ * @class NetworkModule
+ * @description The main definition for the Network module.
+ *
+ * @since v0.1.0
+ */
+@Module({
+  providers: [NetworkService],
+  exports: [NetworkService],
+})
+export class NetworkModule {}

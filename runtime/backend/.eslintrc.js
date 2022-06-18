@@ -19,5 +19,7 @@ module.exports = {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    // "1" is "warn about".. "single"
+    'quotes': [1, "double", { avoidEscape: true, allowTemplateLiterals: true }],
   },
 };

@@ -23,7 +23,7 @@
       "jest"
     ],
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
     "incremental": true,
     "emitDecoratorMetadata": true,

@@ -7,7 +7,11 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-import { Module } from "@nestjs/common";
-
-@Module({})
-export class PayoutModule {}
+/**
+ * @type StateData
+ * @description A type that represents data about the
+ * state of a module or scheduler.
+ *
+ * @since v0.1.0
+ */
+export type StateData = Record<string, any>;

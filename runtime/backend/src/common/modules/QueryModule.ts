@@ -7,7 +7,20 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
 import { Module } from "@nestjs/common";
 
-@Module({})
-export class PayoutModule {}
+// internal dependencies
+import { QueryService } from "../services/QueryService";
+
+/**
+ * @class QueryModule
+ * @description The main definition for the Queries module.
+ *
+ * @since v0.1.0
+ */
+@Module({
+  providers: [QueryService],
+  exports: [QueryService],
+})
+export class QueryModule {}

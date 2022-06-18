@@ -8,16 +8,16 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import helmet from 'helmet';
-import * as childProcess from 'child_process';
+import { NestFactory } from "@nestjs/core";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+import helmet from "helmet";
+import * as childProcess from "child_process";
 
 // internal dependencies
-import { AppModule } from './app.module';
-import { dappConfig, networkConfig } from '../config';
-import * as packageJson from '../package.json';
-import { ConfigDTO } from './common/models';
+import { AppModule } from "./AppModule";
+import { dappConfig, networkConfig } from "../config";
+import * as packageJson from "../package.json";
+import { DappConfig } from "./common/models/DappConfig";
 
 /**
  * Main function to bootstrap the app.
@@ -28,7 +28,7 @@ import { ConfigDTO } from './common/models';
 async function bootstrap(): Promise<void> {
   // create app instance
   const app = await NestFactory.create(
-    AppModule.register({ ...dappConfig, ...networkConfig } as ConfigDTO),
+    AppModule.register({ ...dappConfig, ...networkConfig } as DappConfig),
   );
 
   // add secutity
@@ -41,13 +41,13 @@ async function bootstrap(): Promise<void> {
     .setDescription(packageJson.description)
     .setVersion(packageJson.version)
     .addTag(`${packageJson.name} v${packageJson.version}`)
-    .addServer('http://localhost:7903', 'Your running instance')
+    .addServer("http://localhost:7903", "Your running instance")
     .build();
   const document = SwaggerModule.createDocument(app, docConfig);
-  SwaggerModule.setup('specs', app, document);
+  SwaggerModule.setup("specs", app, document);
 
   // start the scheduler if exists in scopes
-  if (dappConfig.scopes.includes('scheduler')) startScheduler();
+  startWorkerProcess();
 
   // start the app
   await app.listen(7903);
@@ -58,25 +58,25 @@ async function bootstrap(): Promise<void> {
  *
  * @returns {void}
  */
-function startScheduler(): void {
+function startWorkerProcess(): void {
   // keep track of whether callback has been invoked to prevent multiple invocations
   let invoked = false;
 
   // start a new process with the Scheduler module
-  const process = childProcess.fork(__dirname + '/scheduler/main');
+  const process = childProcess.fork(`${__dirname}/worker/main`);
 
   // listen for errors as they may prevent the exit event from firing
-  process.on('error', function (err) {
+  process.on("error", function (err) {
     if (invoked) return;
     invoked = true;
     console.log(err);
   });
 
   // execute the callback once the process has finished running
-  process.on('exit', function (code) {
+  process.on("exit", function (code) {
     if (invoked) return;
     invoked = true;
-    const err = code === 0 ? null : new Error('exit code ' + code);
+    const err = code === 0 ? null : new Error(`exit code ${code}`);
     console.log(err);
   });
 }
