@@ -106,7 +106,7 @@ Samples:
 [@dhealth/components] docs(changelog): update changelog to v1.0.0-beta7
 ```
 ```
-[@dhealth/components] feat(components): add new component DappButton
+[@dhealth/components] feat(elements): add new component DappButton
 ```
 
 #### Revert
@@ -115,7 +115,7 @@ If the commit reverts a previous commit, it should begin with `revert: `, follow
 
 #### <a name="commit-types"></a> Type
 
-Must be one of the following:
+Must be one of the following (order is: alphabetically):
 
 * **build**: Changes that affect the build system or external dependencies (example scopes: webpack, postcss, tailwind, vue)
 * **chore**: Changes that affect the general software package maintenance processes (example scopes: package, build, config)
@@ -125,6 +125,8 @@ Must be one of the following:
 * **fix**: A bug fix
 * **perf**: A code change that improves performance
 * **refactor**: A code change that neither fixes a bug nor adds a feature
+* **release**: Changes that are bundled in a new *version release* for the repository. A version release maps to a git tag being created.
+* **review**: Changes that are *requested* from a pull request reviewer.
 * **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
 * **test**: Adding missing tests or correcting existing tests
 
@@ -134,22 +136,46 @@ The scope should be the name of the module affected.
 
 The following is the list of supported scopes:
 
-* **api**
-* **app**
-* **base**
-* **build**
-* **common**
-* **config**
-* **controls**
-* **elements**
-* **env**
-* **examples**
-* **fields**
-* **fonts**
-* **i18n**
-* **kernel**
-* **package**
-* **widgets**
+##### <a name="commit-scopes-common"></a> Common scopes
+
+These commit scopes can be used for *any* of the software repositories:
+
+* **api**: Changes that affect the application programming interface of a software package
+* **base**: Changes that affect the base implementation layer of a software package
+* **build**: Changes that affect the build process of a software package
+* **changelog**: Change that affect *only* the CHANGELOG.md files in subprojects of a software package
+* **config**: Changes that affect the configuration of a software package
+* **deps**: Changes that affect the dependencies list (requirements) of a software package
+* **env**: Changes that affect the environment (or deploy thereof) of a software package
+* **examples**: Changes that affect the examples produced inside of a software package
+* **i18n**: Changes that affect the *internationalization* of a software package
+* **package**: Changes that affect the general files and folders structure of a software package
+
+##### <a name="commit-scopes-components"></a> Valid scopes for **@dhealth/components**
+
+* **style**: Changes that affect *only* styles (SCSS/CSS) of the components library
+* **theme**: Changes that affect the *theme configuration* of the components library
+* **elements**: Changes that affect the exported *elements* (a.k.a. "components") of the components library
+* **fonts**: Changes that affect the *fonts* used in the components library
+
+##### <a name="commit-scopes-frontend"></a> Valid scopes for **@dhealthdapps/frontend**
+
+* **app**: Changes that affect the general *application architecture* of the VueJS frontend
+* **kernel**: Changes that affect the *dynamic modules kernel* of the VueJS frontend
+* **routes**: Changes that affect the *routing mechanism* of the VueJS frontend (URIs, etc.)
+* **screens**: Changes that affect the exported *screens* (user interfaces) of the VueJS frontend
+* **state**: Changes that affect the *vuex Store* (state) of the VueJS frontend
+* **widgets**: Changes that affect the exported *widgets* (components) of the VueJS frontend
+
+##### <a name="commit-scopes-backend"></a> Valid scopes for **@dhealthdapps/backend**
+
+* **common**: Changes that affect the *common* (a.k.a. "shared") interface of the NestJS backend
+* **database**: Changes that affect the *database architecture* of the NestJS backend
+* **routes**: Changes that affect the *routing mechanism* of the NestJS backend
+* **scopes**: Changes that affect the *configurable scopes* of the NestJS backend
+* **schedulers**: Changes that affect the *schedulers* (cronjobs) of the NestJS backend
+* **services**: Changes that affect *injectable services* of the NestJS backend
+* **swagger**: Changes that affect the *auto-documentation process* (Swagger) of the NestJS backend
 
 #### Subject
 
@@ -158,6 +184,7 @@ The subject contains a succinct description of the change(s):
 * preferrably, use the imperative, present tense: "change" not "changed"
 * don't capitalize the first letter
 * no dot (.) at the end
+* mention a Github issue number if necessary (e.g. `[...] ...: ... (fixes #123)`)
 
 *CONTRIBUTING.md is based on [CONTRIBUTING-template.md](https://github.com/nayafia/contributing-template/blob/master/CONTRIBUTING-template.md)* 
 and [elasticsearch/CONTRIGUTING](https://github.com/elastic/elasticsearch/blob/master/CONTRIBUTING.md)

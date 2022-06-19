@@ -97,5 +97,27 @@
       "jestGlobalMocks.ts",
       "index.ts"
     ]
-  }
+  },
+  "contributors": [
+    {
+      "name": "Grégory Saive",
+      "email": "greg@evi.as"
+    },
+    {
+      "name": "Son Nguyen",
+      "email": "son@dhealth.foundation"
+    },
+    {
+      "name": "Komal Narwani",
+      "email": "kn@dhealth.foundation"
+    },
+    {
+      "name": "Paul Rieger",
+      "email": "paul@dhealth.foundation"
+    },
+    {
+      "name": "Vitaliy Kravchenko",
+      "email": "vitaliy@dhealth.foundation"
+    }
+  ]
 }

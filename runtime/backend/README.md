@@ -6,51 +6,29 @@
 
 dHealth dApps Backend with NestJS for [dHealth Network][parent-url].
 
-- [Dependencies](#dependencies)
-- [Developer notes](#developer-notes)
+- [Install notes](#install-notes)
 - [Getting help](#getting-help)
 - [Contributing](#contributing)
 - [License](#license)
 
 **NOTE**: The author(s) and contributor(s) of this package cannot be held responsible for any loss of money or for any malintentioned usage forms of this package. Please use this package with caution.
 
-## Dependencies
+## Install notes
 
-- [`@dhealth/sdk@^1.0.3-alpha-202201201200`](https://www.npmjs.com/package/@dhealth/sdk)
-- [`@nestjs/core@^8.0.0`](https://www.npmjs.com/package/@nestjs/core)
-
-
-## Developer notes
-### Installation
+This software can be installed and deployed using **lerna**. Following commands are available:
 
 ```bash
-$ npm install
-```
+# install all dependencies
+lerna bootstrap
 
-### Running the app
+# build the vue software
+lerna run build --stream --scope @dhealthdapps/backend
 
-```bash
-# development
-$ npm run start
+# test the vue software
+lerna run test --stream --scope @dhealthdapps/backend
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-### Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# serve/deploy the vue software
+lerna run serve --stream --scope @dhealthdapps/backend
 ```
 
 ## Getting help

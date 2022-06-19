@@ -24,6 +24,8 @@ Following command installs all sub-project dependencies (local and remote):
 lerna bootstrap
 ```
 
+Please read the [INSTALL NOTES](INSTALL.md) to find out more about how to run this software in development and production environments.
+
 ### Building packages
 
 Using lerna instead of npm, scripts will run directly inside *all* packages (use `--parallel` for parallel execution). If using npm or yarn, use the scripts as provided in package.json.
@@ -42,7 +44,7 @@ e.g. If you want to run the `serve` script inside the `package.json` of `@dhealt
 
 ```bash
 # run in one package
-lerna run serve --scope @dhealthdapps/frontend --stream
+lerna run serve --scope @dhealthdapps/backend --stream
 
 # or run in all packages
 lerna run serve --stream
