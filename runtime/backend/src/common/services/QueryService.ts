@@ -83,7 +83,7 @@ export type SearchQuery = {
  * @since v0.1.0
  */
 @Injectable()
-export class QueryService {
+export class QueryService<TEntity> {
   /**
    * Create a generic *search query* that is compatible with Mongo. The
    * returned {@link PaginatedResultDto} contains a `data` field and a
@@ -101,7 +101,7 @@ export class QueryService {
   public async find(
     query: Queryable,
     model: Model<any>,
-  ): Promise<PaginatedResultDTO<any>> {
+  ): Promise<PaginatedResultDTO<TEntity>> {
     // wrap pagination+query to be mongo-compatible
     const { queryCursor, querySorter, searchQuery } =
       this.getQueryConfig(query);
@@ -130,8 +130,8 @@ export class QueryService {
       total: metadata.length > 0 ? metadata[0].total : 0,
     };
 
-    // returns
-    return { data, pagination };
+    // returns wrapped entity page
+    return { data: data.map((d: any) => d as TEntity), pagination };
   }
 
   /**

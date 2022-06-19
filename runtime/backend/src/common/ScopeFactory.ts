@@ -10,12 +10,12 @@
 // external dependencies
 import { ConfigModule } from "@nestjs/config";
 import { DynamicModule } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import type { Scope } from "./models/Scope";
 import { DappConfig } from "./models/DappConfig";
 import { Scopes } from "./Scopes";
+import { Schedulers } from "./Schedulers";
 
 /**
  * @class ScopeFactory
@@ -108,7 +108,7 @@ export class ScopeFactory {
    * modules.
    *
    * @static
-   * @returns {DynamicModule[]}   A list of dynamic modules that are *enabled*.
+   * @returns {DynamicModule[]}   A list of dynamic modules that are *enabled* as modules.
    */
   public getModules(): DynamicModule[] {
     // reads *enabled* scopes (opt-in)
@@ -116,8 +116,52 @@ export class ScopeFactory {
 
     // concatenates `Scopes` that are *enabled* (opt-in)
     // through the dApp configuration's `scopes` field.
+    // Note: does **not** modify {@link baseImports}.
     return this.baseImports.concat(
       scopes.filter((s) => s in Scopes).map((s) => Scopes[s]),
     );
+  }
+
+  /**
+   * Returns an array of nest `DynamicModule` that are enabled
+   * (opt-in) through the dApp configuration with the field
+   * named `scopes` (config/dapp.json). This method returns all
+   * **cronjobs** (schedulers / commands) that must be registered
+   * for a given scope.
+   * <br /><br />
+   * i.e. if you *enable* the `discovery` scope by setting
+   * `"scopes": ["discovery"]` in your config/dapp.json, this
+   * method will register the {@link AccountsModule} and the
+   * {@link DiscoverAccountsCommand}.
+   * <br /><br />
+   * Note that this method returns only {@link Schedulers}
+   * modules.
+   *
+   * @static
+   * @returns {DynamicModule[]}   A list of dynamic modules that are *enabled* as schedulers.
+   */
+  public getSchedulers(): DynamicModule[] {
+    // reads *enabled* scopes (opt-in)
+    const scopes: Scope[] = this.dappConfig.scopes;
+
+    // in **cronjobs** the database is always added
+    // in addition to the configuration module.
+    // Note: does **not** modify {@link baseImports}.
+    const requiredImports = this.baseImports.concat(
+      Schedulers["database"],
+    );
+
+    // reads *all* enabled schedulers, note here that
+    // each scope may define an *array* of schedulers
+    const schedulerImports = scopes.filter(
+      (s) => s !== "database" && s in Schedulers,
+    ).map((s) => Schedulers[s]);
+
+    // concatenates `Schedulers` that are *enabled* (opt-in)
+    // through the dApp configuration's `scopes` field.
+    return requiredImports.concat(schedulerImports.reduce(
+      (prev, cur) => prev.concat([...cur]),
+      []
+    ));
   }
 }

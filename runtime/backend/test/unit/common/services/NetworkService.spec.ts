@@ -71,7 +71,7 @@ describe("common/NetworkService", () => {
     expect(service).toBeDefined();
   });
 
-  describe("test on getBlockTimestamp()", () => {
+  describe("getBlockTimestamp() -->", () => {
     it("should have correct flow and result when response is not empty", async () => {
       const getBlockByHeightCall = jest.fn(() => ({
         toPromise: () => Promise.resolve({}),
@@ -106,7 +106,7 @@ describe("common/NetworkService", () => {
     });
   });
 
-  describe("test on getNetworkTimestampFromUInt64()", () => {
+  describe("getNetworkTimestampFromUInt64() -->", () => {
     it("should have correct flow and result", () => {
       const timestamp = { compact: () => 1000 };
       const configGetCall = jest.spyOn(configService, "get").mockReturnValue(1);

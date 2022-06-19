@@ -46,4 +46,15 @@ export interface DappConfig {
    * @var {Scope[]}
    */
   scopes: Scope[];
+
+  /**
+   * The default network node to connect to for gathering
+   * information on the blockchain network. If the default
+   * node does not respond, the software will use {@link apiNodes}
+   * instead.
+   *
+   * @access public
+   * @var {string|undefined}
+   */
+  defaultNode?: string;
 }

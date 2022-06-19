@@ -9,9 +9,7 @@
  */
 // external dependencies
 import { Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
 import { AccountsModule } from "./modules/AccountsModule";
-import { DiscoverAccountsCommand } from "./schedulers/DiscoverAccounts/DiscoverAccountsCommand";
 
 /**
  * @class DiscoveryModule
@@ -21,22 +19,17 @@ import { DiscoverAccountsCommand } from "./schedulers/DiscoverAccounts/DiscoverA
  * <br /><br />
  * This scoped module currently features:
  * - A {@link AccountsModule} that maps to `/accounts` route endpoints and DTOs.
+ * <br /><br />
+ * Note also that in {@link Schedulers}, we map the following **schedulers**
+ * to this module:
  * - A {@link DiscoverAccounts} *scheduler* that discovers accounts in the background.
  *
  * @since v0.1.0
  */
 @Module({
   imports: [
-    // connects to mongo service
-    MongooseModule.forRoot(
-      `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`,
-    ),
-
     // imports routes and DTOs
     AccountsModule,
-
-    // imports schedulers (cronjobs)
-    DiscoverAccountsCommand,
   ],
 })
 export class DiscoveryModule {}

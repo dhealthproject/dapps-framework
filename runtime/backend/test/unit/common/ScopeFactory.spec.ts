@@ -7,29 +7,54 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// internal dependencies
-import { ScopeFactory } from "../../../src/common/ScopeFactory";
-import { DappConfig } from "../../../src/common/models/DappConfig";
-
-// exeternal dependency mocks
+// These external dependencies mocks *must* be defined
+// **before** internal class imports such that the mocks
+// are correctly used in other source code files.
 jest.mock("@dhealth/sdk");
 
-const forRootCall: any = jest.fn(() => ConfigModuleMock);
-const ConfigModuleMock: any = { forRoot: forRootCall };
+const configForRootCall: any = jest.fn(() => ConfigModuleMock);
+const ConfigModuleMock: any = { forRoot: configForRootCall };
 jest.mock("@nestjs/config", () => {
   return { ConfigModule: ConfigModuleMock };
 });
 
 const mongooseForRootCall: any = jest.fn(() => MongooseModuleMock);
-const MongooseModuleMock: any = { forRoot: mongooseForRootCall };
+const mongooseForFeatCall: any = jest.fn(() => MongooseModuleMock);
+const MongooseModuleMock: any = { forRoot: mongooseForRootCall, forFeature: mongooseForFeatCall };
 jest.mock("@nestjs/mongoose", () => {
   return { MongooseModule: MongooseModuleMock };
 });
 
+const scheduleForRootCall: any = jest.fn(() => ScheduleModuleMock);
+const ScheduleModuleMock: any = { forRoot: scheduleForRootCall };
+jest.mock("@nestjs/schedule", () => {
+  return { ScheduleModule: ScheduleModuleMock };
+});
+
 // internal dependency mocks
+const AccountsModuleMock: any = jest.fn();
+jest.mock("../../../src/discovery/modules/AccountsModule", () => {
+  return { AccountsModule: AccountsModuleMock };
+});
+
 const DiscoveryModuleMock: any = jest.fn();
 jest.mock("../../../src/discovery/DiscoveryModule", () => {
   return { DiscoveryModule: DiscoveryModuleMock };
+});
+
+const StateModuleMock: any = jest.fn();
+jest.mock("../../../src/common/modules/StateModule", () => {
+  return { StateModule: StateModuleMock };
+});
+
+const NetworkModuleMock: any = jest.fn();
+jest.mock("../../../src/common/modules/NetworkModule", () => {
+  return { NetworkModule: NetworkModuleMock };
+});
+
+const DiscoverAccountsCommandMock: any = jest.fn();
+jest.mock("../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand", () => {
+  return { DiscoverAccountsCommand: DiscoverAccountsCommandMock };
 });
 
 const PayoutModuleMock: any = jest.fn();
@@ -41,6 +66,10 @@ const ProcessorModuleMock: any = jest.fn();
 jest.mock("../../../src/processor/ProcessorModule", () => {
   return { ProcessorModule: ProcessorModuleMock };
 });
+
+// internal dependencies
+import { ScopeFactory } from "../../../src/common/ScopeFactory";
+import { DappConfig } from "../../../src/common/models/DappConfig";
 
 // Mock the imports factory to re-create class instances
 // everytime a new test is running. This mock mimics the
@@ -123,5 +152,69 @@ describe("common/ScopeFactory", () => {
       // assert
       expect(result).toEqual([ConfigModuleMock, MongooseModuleMock]);
     });
+  });
+
+  describe("getSchedulers() -->", () => {
+    it("should always include configuration and database modules", () => {
+      // prepare
+      const baseConfig = {
+        dappPublicKey: "FakePublicKeyOfAdApp",
+      };
+
+      const configDto1: DappConfig = { ...baseConfig, scopes: [] };
+      const configDto2: DappConfig = { ...baseConfig, scopes: ["database"] };
+      const configDto3: DappConfig = { ...baseConfig, scopes: ["discovery"] };
+
+      // act
+      const result1 = MockFactory.create(configDto1).getSchedulers();
+      const result2 = MockFactory.create(configDto2).getSchedulers();
+      const result3 = MockFactory.create(configDto3).getSchedulers();
+
+      // assert
+      expect(result1).toEqual([ConfigModuleMock, MongooseModuleMock]);
+      expect(result2).toEqual([ConfigModuleMock, MongooseModuleMock]);
+      expect(result3).toEqual([
+        ConfigModuleMock,
+        MongooseModuleMock,
+        AccountsModuleMock,
+        DiscoverAccountsCommandMock,
+      ]);
+    });
+  });
+
+  it("should return correct list of enabled schedulers", () => {
+    // prepare
+    const configDto: DappConfig = {
+      dappPublicKey: "FakePublicKeyOfAdApp",
+      scopes: ["discovery"],
+    };
+
+    // act
+    const result = MockFactory.create(configDto).getSchedulers();
+
+    // assert
+    expect(result).toEqual([
+      ConfigModuleMock,
+      MongooseModuleMock,
+      AccountsModuleMock,
+      DiscoverAccountsCommandMock,
+    ]);
+  });
+
+  it("should return correct empty list of enabled schedulers", () => {
+    // prepare
+    const configDto: DappConfig = {
+      dappPublicKey: "FakePublicKeyOfAdApp",
+      scopes: [],
+    };
+
+    // act
+    const result = MockFactory.create(configDto).getSchedulers();
+
+    // assert
+    expect(result).toEqual([
+      ConfigModuleMock,
+      MongooseModuleMock,
+    ]);
   });
 });

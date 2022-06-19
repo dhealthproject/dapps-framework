@@ -39,6 +39,8 @@ jest.mock("js-sha3", () => ({
   },
 }));
 
+// Mocks a subset of "@dhealth/sdk" such as classes:
+// - TransferTransaction to define fixed transactionInfo
 jest.mock("@dhealth/sdk", () => ({
   TransferTransaction: {
     transactionInfo: {
@@ -178,7 +180,7 @@ describe("discovery/DiscoverAccounts", () => {
     expect(service).toBeDefined();
   });
 
-  describe("test on onModuleInit()", () => {
+  describe("onModuleInit() -->", () => {
     it("should have correct flow and initialized result", async () => {
       const expectedLogger = new Logger("[Cron] " + DiscoverAccounts.name);
       const getCall = jest
@@ -193,7 +195,7 @@ describe("discovery/DiscoverAccounts", () => {
     });
   });
 
-  describe("test on discover()", () => {
+  describe("discover() -->", () => {
     it("should have correct flow and initialized result", async () => {
       (service as any).logger = logger;
       const syncStateCall = jest
@@ -214,7 +216,7 @@ describe("discovery/DiscoverAccounts", () => {
     });
   });
 
-  describe("test on syncState()", () => {
+  describe("syncState() -->", () => {
     it("should have correct flow and result", async () => {
       const state: State = new State();
       (state.name = "discovery:DiscoverAccounts"),
@@ -232,7 +234,7 @@ describe("discovery/DiscoverAccounts", () => {
     });
   });
 
-  describe("test on runDiscovery()", () => {
+  describe("runDiscovery() -->", () => {
     it("should have correct flow", async () => {
       (service as any).logger = logger;
       (service as any).accountsMap = new Map();

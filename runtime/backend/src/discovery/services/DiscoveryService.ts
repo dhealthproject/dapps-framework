@@ -9,7 +9,6 @@
  */
 // internal dependencies
 import { StatefulModule } from "../../common/concerns/StatefulModule";
-import { StateQuery } from "../../common/models/StateSchema";
 
 /**
  * @class DiscoveryService

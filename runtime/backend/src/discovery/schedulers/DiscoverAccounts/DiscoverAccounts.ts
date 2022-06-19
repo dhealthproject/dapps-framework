@@ -164,7 +164,7 @@ export class DiscoverAccounts extends DiscoveryService implements OnModuleInit {
    * @returns {Promise<void>}
    */
   async discoverAccounts(): Promise<void> {
-    let pageNumber = this.state ? this.state.data.currentTxPage : 1;
+    let pageNumber = this.state && this.state.data ? this.state.data.currentTxPage : 1;
     const pageSize = 100;
     for (let i = 0; i < 10; i++) {
       const result = await this.networkService
@@ -199,7 +199,7 @@ export class DiscoverAccounts extends DiscoveryService implements OnModuleInit {
    * @returns {Promise<void>}
    */
   async handleTransactions(transactions: Transaction[]): Promise<void> {
-    if (this.state) {
+    if (this.state && this.state.data) {
       const latestTxHash = this.state.data.latestTxHash;
       const hashIndex = transactions.map((tx: Transaction) =>
         tx.transactionInfo.hash

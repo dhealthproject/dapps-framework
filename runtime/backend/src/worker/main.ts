@@ -9,9 +9,9 @@
  */
 // external dependencies
 import { NestFactory } from "@nestjs/core";
-import { WorkerModule } from "./WorkerModule";
 
 // internal dependencies
+import { WorkerModule } from "./WorkerModule";
 import { dappConfig, networkConfig } from "../../config";
 import { DappConfig } from "../common/models/DappConfig";
 

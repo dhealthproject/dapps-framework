@@ -9,6 +9,7 @@
  */
 // external dependencies
 import { NestFactory } from "@nestjs/core";
+import { Logger } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import helmet from "helmet";
 import * as childProcess from "child_process";
@@ -31,6 +32,10 @@ async function bootstrap(): Promise<void> {
     AppModule.register({ ...dappConfig, ...networkConfig } as DappConfig),
   );
 
+  // create a logger instance
+  const logger = new Logger("dHealth dApp");
+  logger.debug(`Starting ${packageJson.name} at v${packageJson.version}`);
+
   // add secutity
   app.enableCors();
   app.use(helmet());
@@ -46,11 +51,18 @@ async function bootstrap(): Promise<void> {
   const document = SwaggerModule.createDocument(app, docConfig);
   SwaggerModule.setup("specs", app, document);
 
-  // start the scheduler if exists in scopes
+  // start the worker
+  logger.debug(`Now starting the worker process...`);
   startWorkerProcess();
 
+  // configures the request listener (HTTP server)
+  const appPort: string = process.env.NODE_ENV === "production"
+    ? process.env.PROD_APP_PORT
+    : process.env.DEV_APP_PORT;
+
   // start the app
-  await app.listen(7903);
+  logger.debug(`Now listening for requests on port ${appPort}`);
+  await app.listen(appPort);
 }
 
 /**

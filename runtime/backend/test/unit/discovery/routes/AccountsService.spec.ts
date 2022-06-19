@@ -22,7 +22,7 @@ import { AccountDTO } from "../../../../src/discovery/models/AccountDTO";
 
 describe("discovery/AccountsService", () => {
   let service: AccountsService;
-  let queriesService: QueryService;
+  let queriesService: QueryService<Account>;
 
   let data: any, saveFn: any, initializeUnorderedBulkOpFn: any;
   const aggregateFn = jest.fn((param) => {
@@ -31,7 +31,7 @@ describe("discovery/AccountsService", () => {
       exec: () =>
         Promise.resolve([
           {
-            data: [{}],
+            data: [new Account()],
             metadata: [{ total: 1 }],
           },
         ]),
@@ -89,18 +89,17 @@ describe("discovery/AccountsService", () => {
     }).compile();
 
     service = module.get<AccountsService>(AccountsService);
-    queriesService = module.get<QueryService>(QueryService);
+    queriesService = module.get<QueryService<Account>>(QueryService);
   });
 
   it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  describe("test on find()", () => {
+  describe("find() -->", () => {
     it("should call correct method", async () => {
-      const expectedQuery = {};
       const expectedResult = {
-        data: [{} as Account],
+        data: [new Account()],
         pagination: {
           pageNumber: 1,
           pageSize: 20,
@@ -116,7 +115,7 @@ describe("discovery/AccountsService", () => {
     });
   });
 
-  describe("test on updateBatch()", () => {
+  describe("updateBatch() -->", () => {
     it("should call collection.initializeUnorderedBulkOp() from model", async () => {
       const updateAccountDtos = {
         address: "test-address",

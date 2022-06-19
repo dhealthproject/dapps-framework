@@ -44,7 +44,7 @@ describe("common/StateService", () => {
     expect(service).toBeDefined();
   });
 
-  describe("test on findOne()", () => {
+  describe("findOne() -->", () => {
     it("should call findOne() from model with correct param", async () => {
       const query = new StateQuery();
       await service.findOne(new StateQuery());
@@ -52,7 +52,7 @@ describe("common/StateService", () => {
     });
   });
 
-  describe("test on updateOne()", () => {
+  describe("updateOne() -->", () => {
     it("should call updateOne() from model with correct param", async () => {
       await service.updateOne(
         new StateQuery(undefined, "test"),

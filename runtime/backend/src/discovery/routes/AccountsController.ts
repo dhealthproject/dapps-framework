@@ -77,7 +77,7 @@ export class AccountsController {
     return this.accountsService.find(query).then((result) => ({
       data:
         result.data.length > 0
-          ? result.data.map((d) => d.toDTO() as AccountDTO)
+          ? result.data.map((d: Account) => d as AccountDTO)
           : [],
       pagination: result.pagination,
     }));

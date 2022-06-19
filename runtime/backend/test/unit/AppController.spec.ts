@@ -28,7 +28,7 @@ describe("AppController", () => {
     configService = app.get<ConfigService>(ConfigService);
   });
 
-  describe("root", () => {
+  describe("getHello() -->", () => {
     it('should return "Hello World!"', () => {
       expect(appController.getHello()).toBe("Hello World!");
     });

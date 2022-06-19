@@ -13,6 +13,7 @@ import { DynamicModule, Logger, Module } from "@nestjs/common";
 // internal dependencies
 import { DappConfig } from "../common/models/DappConfig";
 import { ScopeFactory } from "../common/ScopeFactory";
+import { Schedulers } from "../common/Schedulers";
 
 /**
  * @class WorkerModule
@@ -41,17 +42,20 @@ export class WorkerModule {
    * @returns {DynamicModule} instance of this module
    */
   static register(configs: DappConfig): DynamicModule {
-    // print activation information of all scopes.
-    WorkerModule.logger.debug(
-      `Registering schedulers from scopes: ${JSON.stringify(
-        configs.scopes,
-        null,
-        2,
-      )}`,
+    // filters out scopes that do not have schedulers registered
+    // the `database` scope is ignored due to lack of schedulers
+    const actualScopes = configs.scopes.filter(
+      s => s !== "database" && s in Schedulers && Schedulers[s].length > 0
     );
 
-    // get imports dynamically based on configs values.
-    const modules = ScopeFactory.create(configs).getModules();
+    // print activation information of all scopes
+    const scopesJSON = JSON.stringify(actualScopes, null, 2);
+    WorkerModule.logger.debug(
+      `Found schedulers to be registered in scopes: ${scopesJSON}`,
+    );
+
+    // get imports dynamically based on enabled scoped in the configuration
+    const modules = ScopeFactory.create(configs).getSchedulers();
     return {
       module: WorkerModule,
       imports: modules,

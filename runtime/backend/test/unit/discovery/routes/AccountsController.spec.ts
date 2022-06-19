@@ -99,7 +99,7 @@ describe("discovery/AccountsController", () => {
     expect(controller).toBeDefined();
   });
 
-  describe("test on find()", () => {
+  describe("find() -->", () => {
     it("should call correct method and respond with DTO", async () => {
       const expectedResult = new PaginatedResultDTO<Account>();
       expectedResult.data = [new Account()];

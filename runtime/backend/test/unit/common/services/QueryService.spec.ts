@@ -21,7 +21,7 @@ import {
 
 // Mock the query service to enable *testing* of protected
 // methods such as `typecastField`.
-class MockQueryService extends QueryService {
+class MockQueryService extends QueryService<Account> {
   public sanitizeSearchQuery(searchQuery: any): any {
     return super.sanitizeSearchQuery(searchQuery);
   }
@@ -42,7 +42,7 @@ describe("common/QueryService", () => {
       exec: () =>
         Promise.resolve([
           {
-            data: [{}],
+            data: [new Account()],
             metadata: [{ total: 1 }],
           },
         ]),
@@ -99,15 +99,15 @@ describe("common/QueryService", () => {
     expect(service).toBeDefined();
   });
 
-  describe("test on find()", () => {
+  describe("find() -->", () => {
     it("should call aggregate() from model", async () => {
       await service.find(new AccountQuery("non-existing"), testModel);
       expect(aggregateFn).toHaveBeenCalled();
     });
 
     it("should have correct result", async () => {
-      const expectedResult: PaginatedResultDTO<any> = {
-        data: [{}],
+      const expectedResult: PaginatedResultDTO<Account> = {
+        data: [new Account()],
         pagination: {
           pageNumber: 1,
           pageSize: 20,
@@ -119,6 +119,26 @@ describe("common/QueryService", () => {
         testModel,
       );
       expect(result).toStrictEqual(expectedResult);
+    });
+
+    it("should type resulting entities correctly", async () => {
+      const expectedResult: PaginatedResultDTO<Account> = {
+        data: [new Account()],
+        pagination: {
+          pageNumber: 1,
+          pageSize: 20,
+          total: 1,
+        },
+      };
+      const result = await service.find(
+        new AccountQuery("non-existing"),
+        testModel,
+      );
+      expect(result).toStrictEqual(expectedResult);
+      expect(result.data).toBeDefined();
+      expect(result.data.length).toBeDefined();
+      expect(result.data.length).toStrictEqual(1);
+      expect(result.data[0]).toBeInstanceOf(Account);
     });
 
     it("should have correct result when metadata is empty", async () => {
@@ -136,7 +156,7 @@ describe("common/QueryService", () => {
           exec: () =>
             Promise.resolve([
               {
-                data: [],
+                data: [], // <-- WARNING: empties the data array
                 metadata: [],
               },
             ]),
@@ -149,14 +169,17 @@ describe("common/QueryService", () => {
       expect(result).toStrictEqual(expectedResult);
     });
 
-    // intermitent testing bug because of above test
+// CAUTION
+// intermitent testing bug because of above in-test overwrite of `aggregateFn`.
+// @todo This should use the `jest.fn`'s process to *reset* a stub in the beforeEach().
+// CAUTION
     aggregateFn = jest.fn((param) => {
       return {
         param: () => param,
         exec: () =>
           Promise.resolve([
             {
-              data: [{}],
+              data: [new Account()],
               metadata: [{ total: 1 }],
             },
           ]),
@@ -240,7 +263,7 @@ describe("common/QueryService", () => {
     });
   });
 
-  describe("test on typecastField()", () => {
+  describe("typecastField() -->", () => {
     it("should return correct result", () => {
       const testInput = {
         testString: "abc",

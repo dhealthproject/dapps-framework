@@ -42,12 +42,12 @@ export class AppModule {
    * @returns {DynamicModule} instance of this module
    */
   static register(configs: DappConfig): DynamicModule {
-    // print activation information of all scopes.
+    // print activation information of all scopes
     AppModule.logger.debug(
       `Enabled scopes: ${JSON.stringify(configs.scopes, null, 2)}`,
     );
 
-    // get imports dynamically based on configs values.
+    // get imports dynamically based on enabled scopes in the configuration
     const modules = ScopeFactory.create(configs).getModules();
     return {
       module: AppModule,

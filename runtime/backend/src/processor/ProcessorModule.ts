@@ -7,7 +7,8 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
 import { Module } from "@nestjs/common";
 
 @Module({})
-export class PayoutModule {}
+export class ProcessorModule {}

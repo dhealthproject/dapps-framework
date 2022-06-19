@@ -12,8 +12,8 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import { DiscoveryModule } from "../discovery/DiscoveryModule";
-import { PayoutModule } from "../payout/payout.module";
-import { ProcessorModule } from "../processor/processor.module";
+import { PayoutModule } from "../payout/PayoutModule";
+import { ProcessorModule } from "../processor/ProcessorModule";
 
 /**
  * @description This exported constant enumerates all available **scoped**
@@ -24,6 +24,7 @@ import { ProcessorModule } from "../processor/processor.module";
  * information table:
  * | Scope | Reference | Description |
  * | --- | --- | --- |
+ * | `database` | {@link MongooseModule} | A database scope that consists in a connection adapter for the mongo database background process. |
  * | `discovery` | {@link DiscoveryModule} | A state discovery scope that consists in caching data and reading operations using network nodes. |
  * | `payout`| {@link PayoutModule} | A payout scope that encapsulates payout mechanisms that are executed in background processes. |
  * | `processor` | {@link ProcessorModule} | A processing scope that consists in detecting invoice updates and processing payments. |

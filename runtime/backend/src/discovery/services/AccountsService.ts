@@ -42,7 +42,7 @@ export class AccountsService {
    */
   constructor(
     @InjectModel(Account.name) private readonly model: Model<AccountDocument>,
-    private readonly queriesService: QueryService,
+    private readonly queriesService: QueryService<Account>,
   ) {}
 
   /**
