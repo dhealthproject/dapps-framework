@@ -11,14 +11,14 @@
 -->
 
 <template>
-  <div class="dapp-screen-footer flex row justify-around">
-    <span class="dapp-screen-footer__copy">&copy; dHealth dApps Framework</span>
+  <div class="header flex row justify-around">
+    &copy; dHealth dApps Framework
     <nav class="text-right">
       <ul>
         <li
           v-for="(link, index) in links"
           :key="index"
-          class="dapp-screen-footer__link inline-block mx-8"
+          class="inline-block mx-8"
         >
           <router-link :to="link.path" v-html="link.text" />
         </li>

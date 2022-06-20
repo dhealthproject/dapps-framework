@@ -11,14 +11,14 @@
 -->
 
 <template>
-  <div class="dapp-screen-header flex row justify-around">
+  <div class="header flex row justify-around">
     <div class="logo py-10 font-bold text-2xl">Elevate</div>
     <nav class="text-right">
       <ul>
         <li
           v-for="(link, index) in links"
           :key="index"
-          class="dapp-screen-header__link inline-block mx-8"
+          class="inline-block mx-8"
         >
           <router-link :to="link.path" v-html="link.text" />
         </li>

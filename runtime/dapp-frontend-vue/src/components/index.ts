@@ -9,10 +9,10 @@
  */
 // external dependencies
 import { DappButton } from "@dhealth/components";
-// internal dependencies
-import HelloWorld from "./HelloWorld.vue";
 import Header from "./Header/Header.vue";
 import Footer from "./Footer/Footer.vue";
+// internal dependencies
+import HelloWorld from "./HelloWorld.vue";
 
 export const AppComponents = { HelloWorld, Header, Footer };
 export const LibComponents = { DappButton };

@@ -11,7 +11,7 @@
 -->
 
 <template>
-  <div class="dapp-screen-onboarding">
+  <div class="onboarding">
     <Header :links="dummyLinks" />
     <DappQR :qrCode="createLoginContract()" />
     <Footer :links="dummyLinks" />
