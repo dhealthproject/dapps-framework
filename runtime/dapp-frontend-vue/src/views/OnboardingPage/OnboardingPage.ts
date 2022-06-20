@@ -23,6 +23,9 @@ import {
   PlainMessage,
   NetworkType,
   Transaction,
+  Mosaic,
+  NamespaceId,
+  UInt64,
 } from "@dhealth/sdk";
 
 import { QRCodeGenerator } from "@dhealth/qr-library";
@@ -75,7 +78,7 @@ export default class OnboardingPage extends MetaView {
     return TransferTransaction.create(
       Deadline.create(1616978397),
       Address.createFromRawAddress("NDEVUP43ATEX2BM6XDFKVELVGQF66HOTZTIMJ6I"),
-      [],
+      [new Mosaic(new NamespaceId("dhealth.dhp"), UInt64.fromUint(0))],
       PlainMessage.create("I am leaving dHealth Tech Chat #4"),
       NetworkType.MAIN_NET
     );
