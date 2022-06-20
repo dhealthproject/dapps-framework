@@ -15,6 +15,12 @@ dHealth dApps Backend with NestJS for [dHealth Network][parent-url].
 
 ## Install notes
 
+First make sure to setup your environment by copying the `.env-sample` file into a production equivalent `.env` file.
+
+```bash
+cp runtime/backend/.env-sample runtime/backend/.env
+```
+
 This software can be installed and deployed using **lerna**. Following commands are available:
 
 ```bash

@@ -28,6 +28,8 @@
     "incremental": true,
     "emitDecoratorMetadata": true,
     "strictBindCallApply": false,
-    "strictNullChecks": false,
-  }
+    "strictNullChecks": false
+  },
+  "include": ["src/", "config/"],
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }

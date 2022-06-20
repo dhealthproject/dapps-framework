@@ -16,9 +16,12 @@ import * as childProcess from "child_process";
 
 // internal dependencies
 import { AppModule } from "./AppModule";
-import { dappConfig, networkConfig } from "../config";
 import * as packageJson from "../package.json";
 import { DappConfig } from "./common/models/DappConfig";
+
+// configuration resources
+import dappConfigLoader from "../config/dapp";
+import networkConfigLoader from "../config/network";
 
 /**
  * Main function to bootstrap the app.
@@ -29,11 +32,14 @@ import { DappConfig } from "./common/models/DappConfig";
 async function bootstrap(): Promise<void> {
   // create app instance
   const app = await NestFactory.create(
-    AppModule.register({ ...dappConfig, ...networkConfig } as DappConfig),
+    AppModule.register({
+      ...(dappConfigLoader()),
+      ...(networkConfigLoader()),
+    } as DappConfig),
   );
 
   // create a logger instance
-  const logger = new Logger("dHealth dApp");
+  const logger = new Logger(dappConfigLoader().dappName);
   logger.debug(`Starting ${packageJson.name} at v${packageJson.version}`);
 
   // add secutity

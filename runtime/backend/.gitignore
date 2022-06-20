@@ -37,5 +37,5 @@ lerna-debug.log*
 # Docker data
 data
 
-# Allow .env file
-!.env
+# Do not checkin .env file
+.env

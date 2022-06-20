@@ -24,6 +24,15 @@ import type { Scope } from "./Scope";
  */
 export interface DappConfig {
   /**
+   * A public name for the dApp. This name is used across module
+   * implementations to describe the currently configured dApp.
+   *
+   * @access public
+   * @var {string}
+   */
+  dappName: string;
+
+  /**
    * A public key that identifies the dApp's main account. This
    * account *may* be used in scoped modules. It is recommended
    * that a dApp's public key refers to an account that is *not*

@@ -17,6 +17,10 @@ import { DappConfig } from "./models/DappConfig";
 import { Scopes } from "./Scopes";
 import { Schedulers } from "./Schedulers";
 
+// configuration resources
+import dappConfigLoader from "../../config/dapp";
+import networkConfigLoader from "../../config/network";
+
 /**
  * @class ScopeFactory
  * @description Singleton class that serves as a helper to aggregate
@@ -68,8 +72,10 @@ export class ScopeFactory {
     // configure the base imports with a `DappConfig`
     this.baseImports = [
       ConfigModule.forRoot({
-        load: [(): DappConfig => this.dappConfig],
+        //load: [(): DappConfig => this.dappConfig],
+        load: [dappConfigLoader, networkConfigLoader],
         isGlobal: true,
+        envFilePath: ['.env', '.env-sample'],
       }),
     ];
   }

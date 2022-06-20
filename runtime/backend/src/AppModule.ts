@@ -11,10 +11,14 @@
 import { DynamicModule, Logger, Module } from "@nestjs/common";
 
 // internal dependencies
+import { AuthModule } from "./common/modules/AuthModule";
 import { AppController } from "./AppController";
 import { AppService } from "./AppService";
 import { ScopeFactory } from "./common/ScopeFactory";
 import { DappConfig } from "./common/models/DappConfig";
+
+// configuration resources
+import dappConfigLoader from "../config/dapp";
 
 /**
  * @class AppModule
@@ -22,7 +26,11 @@ import { DappConfig } from "./common/models/DappConfig";
  *
  * @since v0.1.0
  */
-@Module({})
+@Module({
+  imports: [
+    AuthModule
+  ]
+})
 export class AppModule {
   /**
    * {@link Logger} instance for this class.
@@ -31,7 +39,7 @@ export class AppModule {
    * @static
    * @readonly
    */
-  private static readonly logger = new Logger(AppModule.name);
+  private static readonly logger = new Logger(dappConfigLoader().dappName);
 
   /**
    * The main method to take config input, initialize and return an instance of the module.

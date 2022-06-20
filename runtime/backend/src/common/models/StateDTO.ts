@@ -14,7 +14,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import type { StateData } from "./StateData";
 
 /**
- * @class StateDto
+ * @class StateDTO
  * @description A DTO class that consists of a **module** `name`
  * and a `data` field that may contain custom fields in the form
  * of an object.

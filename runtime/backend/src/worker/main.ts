@@ -12,8 +12,11 @@ import { NestFactory } from "@nestjs/core";
 
 // internal dependencies
 import { WorkerModule } from "./WorkerModule";
-import { dappConfig, networkConfig } from "../../config";
 import { DappConfig } from "../common/models/DappConfig";
+
+// configuration resources
+import dappConfigLoader from "../../config/dapp";
+import networkConfigLoader from "../../config/network";
 
 /**
  * Function to bootstrap the scheduler of the app.
@@ -24,7 +27,10 @@ import { DappConfig } from "../common/models/DappConfig";
 async function bootstrap(): Promise<void> {
   // create an instance of the scheduler with imported configs
   NestFactory.createApplicationContext(
-    WorkerModule.register({ ...dappConfig, ...networkConfig } as DappConfig),
+    WorkerModule.register({
+      ...(dappConfigLoader()),
+      ...(networkConfigLoader()),
+    } as DappConfig),
   );
 }
 

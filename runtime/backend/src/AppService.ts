@@ -12,9 +12,6 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { /*NetworkType,*/ PublicAccount } from "@dhealth/sdk";
 
-// internal dependencies
-//import type { Scope } from "@/common/models/config.dto";
-
 /**
  * @class AppService
  * @description This class is used to initialize the software
@@ -107,22 +104,12 @@ export class AppService {
     );
 
     // read a public key to start with
-    const dappPublicKey = this.configService.get<string>("dappPublicKey");
+    //const dappPublicKey = this.configService.get<string>("dappPublicKey");
 
     // interprets the dApp public information
     // this.dappPublicAccount = PublicAccount.createFromPublicKey(
     //   dappPublicKey,
     //   this.networkType as NetworkType
     // );
-  }
-
-  /**
-   * A dummy request response to showcase entry point(s) of the software.
-   *
-   * @access protected
-   * @returns {string}
-   */
-  public getHello(): string {
-    return "Hello World!";
   }
 }

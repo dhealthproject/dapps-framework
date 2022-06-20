@@ -12,7 +12,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
 
 // internal dependencies
-import { Transferable } from "../../common/concerns/Transferable";
+import { Transferable } from "../../common/traits/Transferable";
 import { Queryable } from "../../common/concerns/Queryable";
 import { AccountDTO } from "../models/AccountDTO";
 

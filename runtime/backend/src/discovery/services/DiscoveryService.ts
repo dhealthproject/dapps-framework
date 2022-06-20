@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
-import { StatefulModule } from "../../common/concerns/StatefulModule";
+import { StatefulModule } from "../../common/traits/StatefulModule";
 
 /**
  * @class DiscoveryService

@@ -87,6 +87,7 @@ describe("common/ScopeFactory", () => {
     it("should always include configuration module", () => {
       // prepare
       const baseConfig = {
+        dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
       };
 
@@ -105,6 +106,7 @@ describe("common/ScopeFactory", () => {
     it("should return correct list of enabled scopes", () => {
       // prepare
       const configDto: DappConfig = {
+        dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
         scopes: ["discovery", "payout", "processor"],
       };
@@ -124,6 +126,7 @@ describe("common/ScopeFactory", () => {
     it("should return correct list of alternative scopes", () => {
       // prepare
       const configDto: DappConfig = {
+        dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
         scopes: ["discovery", "processor"],
       };
@@ -142,6 +145,7 @@ describe("common/ScopeFactory", () => {
     it("should return correct result for database scope", () => {
       // prepare
       const configDto: DappConfig = {
+        dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
         scopes: ["database"],
       };
@@ -158,6 +162,7 @@ describe("common/ScopeFactory", () => {
     it("should always include configuration and database modules", () => {
       // prepare
       const baseConfig = {
+        dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
       };
 
@@ -185,6 +190,7 @@ describe("common/ScopeFactory", () => {
   it("should return correct list of enabled schedulers", () => {
     // prepare
     const configDto: DappConfig = {
+      dappName: "Fake dApp",
       dappPublicKey: "FakePublicKeyOfAdApp",
       scopes: ["discovery"],
     };
@@ -204,6 +210,7 @@ describe("common/ScopeFactory", () => {
   it("should return correct empty list of enabled schedulers", () => {
     // prepare
     const configDto: DappConfig = {
+      dappName: "Fake dApp",
       dappPublicKey: "FakePublicKeyOfAdApp",
       scopes: [],
     };

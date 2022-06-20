@@ -93,6 +93,8 @@ lerna run serve --stream --scope @dhealthdapps/frontend
 
 # Stating a NestJS backend development server
 # Note that the following needs a running mongo server (locally)
+# Note also that you must create a `.env` file in the root folder
+cp runtime/backend/.env-sample runtime/backend/.env
 lerna run serve --stream --scope @dhealthdapps/backend
 ```
 
@@ -112,6 +114,7 @@ lerna run build --stream --scope @dhealthdapps/frontend
 lerna run test --stream --scope @dhealthdapps/frontend
 
 # Compiling and testing the NestJS backend
+cp runtime/backend/.env-sample runtime/backend/.env
 lerna run build --stream --scope @dhealthdapps/backend
 lerna run test --stream --scope @dhealthdapps/backend
 ```

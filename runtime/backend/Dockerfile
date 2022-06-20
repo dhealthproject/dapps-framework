@@ -11,6 +11,9 @@ RUN npm install --only=development
 
 COPY . .
 
+# development uses basic environment settings
+COPY .env-sample .env
+
 RUN npm run build
 
 # Production main
@@ -26,6 +29,11 @@ COPY package*.json ./
 RUN npm install --only=production
 
 COPY . .
+
+# Note on production
+# production build does not include an overwrite of .env with .env-sample
+# this step must instead be execute manually such that *before* the build
+# is executed, a `.env` file is present in the root folder of the software.
 
 COPY --from=development /usr/src/app/dist ./dist
 
