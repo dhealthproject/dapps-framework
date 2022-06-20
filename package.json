@@ -1,6 +1,6 @@
 {
   "name": "@dhealthdapps/framework",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "homepage": "https://github.com/dhealthproject/dapps-framework#readme",
   "description": "dHealth dApps Framework: Build dApps that scale.",
   "author": "dHealth Network <devs@dhealth.foundation>",
@@ -19,14 +19,17 @@
     "build": "lerna run build --stream",
     "build:lib": "lerna run build --stream --scope @dhealth/components",
     "build:vue": "lerna run build --stream --scope @dhealthdapps/frontend",
+    "build:backend": "lerna run build --stream --scope @dhealthdapps/backend",
     "test": "lerna run test --stream",
     "test:lib": "lerna run test --stream --scope @dhealth/components",
     "test:vue": "lerna run test --stream --scope @dhealthdapps/frontend",
+    "test:backend": "lerna run test --stream --scope @dhealthdapps/backend",
     "docs": "lerna run docs --stream",
     "docs:lib": "lerna run docs --stream --scope @dhealth/components",
     "docs:vue": "lerna run docs --stream --scope @dhealthdapps/frontend",
     "version": "echo $npm_package_version",
-    "serve": "lerna run serve --stream --scope @dhealthdapps/frontend"
+    "serve:app": "lerna run serve --stream --scope @dhealthdapps/frontend",
+    "serve:api": "lerna run serve --stream --scope @dhealthdapps/backend"
   },
   "devDependencies": {
     "lerna": "^4.0.0"

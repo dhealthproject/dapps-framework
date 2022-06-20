@@ -1,6 +1,6 @@
 {
   "name": "@dhealthdapps/frontend",
-  "version": "1.0.0-alpha-6-20220614",
+  "version": "0.1.0",
   "homepage": "https://github.com/dhealthproject/dapps-framework/tree/main/runtime/dapp-frontend-vue#readme",
   "description": "dHealth dApps Frontend with Vue",
   "author": "dHealth Network <devs@dhealth.foundation>",
@@ -30,7 +30,7 @@
     "serve": "vue-cli-service serve"
   },
   "dependencies": {
-    "@dhealth/components": "^0.1.0-RC",
+    "@dhealth/components": "^0.1.0",
     "crypto-browserify": "^3.12.0",
     "register-service-worker": "^1.7.2",
     "stream-browserify": "^3.0.0",

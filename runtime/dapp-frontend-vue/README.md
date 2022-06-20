@@ -6,36 +6,29 @@
 
 dHealth dApps Frontend with Vue for [dHealth Network][parent-url].
 
-- [Dependencies](#dependencies)
-- [Developer notes](#developer-notes)
+- [Install notes](#install-notes)
 - [Getting help](#getting-help)
 - [Contributing](#contributing)
 - [License](#license)
 
 **NOTE**: The author(s) and contributor(s) of this package cannot be held responsible for any loss of money or for any malintentioned usage forms of this package. Please use this package with caution.
 
-## Dependencies
+## Install notes
 
-- [`vue@^3.2.x`](https://www.npmjs.com/package/vue)
-- [`vuex@^4.0.x`](https://www.npmjs.com/package/vuex)
-
-## Developer notes
-
-Following scripts are available for development:
+This software can be installed and deployed using **lerna**. Following commands are available:
 
 ```bash
-npm install
-npm run build
-npm run serve
-npm run lint
-npm run lint:fix
-```
+# install all dependencies
+lerna bootstrap
 
-Tests can be run with the following commands:
+# build the vue software
+lerna run build --stream --scope @dhealthdapps/frontend
 
-```bash
-npm run test:unit
-npm run test:e2e
+# test the vue software
+lerna run test --stream --scope @dhealthdapps/frontend
+
+# serve/deploy the vue software
+lerna run serve --stream --scope @dhealthdapps/frontend
 ```
 
 ## Getting help
