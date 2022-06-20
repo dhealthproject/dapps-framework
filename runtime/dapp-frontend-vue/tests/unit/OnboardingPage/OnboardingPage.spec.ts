@@ -8,43 +8,24 @@
  * @license     LGPL-3.0
  */
 import { expect } from "chai";
-import { mount, createLocalVue } from "@vue/test-utils";
+import { mount, Wrapper, createLocalVue } from "@vue/test-utils";
 import OnboardingPage from "@/views/OnboardingPage/OnboardingPage.vue";
 import { Transaction } from "@dhealth/sdk";
-
 // creates local vue instance for tests
 const localVue = createLocalVue();
 const componentOptions = {
   localVue,
   stubs: ["router-link"],
 };
-// jest.mock("@dhealth/sdk", () => ({ Deadline: jest.fn() }));
 
-describe("OnboardingPage -->", async () => {
+describe("OnboardingPage -->", () => {
   let widget: any;
-  beforeEach(async () => {
+  beforeEach(() => {
     widget = mount(OnboardingPage as any, componentOptions);
   });
 
-  it("should display header", () => {
-    expect(widget.find(".dapp-screen-header").exists()).to.be.true;
-  });
-
-  it("should display qr code", () => {
-    expect(widget.find(".base img").exists()).to.be.true;
-  });
-
-  it("should display footer", () => {
-    expect(widget.find(".dapp-screen-footer").exists()).to.be.true;
-  });
-
-  it("should return transaction", async () => {
-    await widget.vm.$nextTick();
-    expect(
-      widget.vm.getTransactionRequest(
-        widget.vm.transactionRequestConfig
-      ) instanceof Transaction
-    ).to.be.true;
+  it("should return transaction", () => {
+    expect(widget.vm.getTransactionRequest() instanceof Transaction).to.be.true;
   });
 
   it("should create Login Contract", () => {
