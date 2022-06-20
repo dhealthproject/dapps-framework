@@ -24,7 +24,7 @@ import {
   NetworkType,
   Transaction,
   Mosaic,
-  MosaicId,
+  NamespaceId,
   UInt64,
 } from "@dhealth/sdk";
 
@@ -47,7 +47,26 @@ export default class OnboardingPage extends MetaView {
     ];
   }
 
+  // get getQR() {
+  //   return QRCodeGenerator;
+  // }
+
+  // get networkType() {
+  //   return NetworkType.MAIN_NET;
+  // }
+
+  // protected createLoginContract() {
+  //   return TransferTransaction.create(
+  //     Deadline.create(1616978397),
+  //     Address.createFromRawAddress("NDEVUP43ATEX2BM6XDFKVELVGQF66HOTZTIMJ6I"),
+  //     [],
+  //     PlainMessage.create("I am leaving dHealth Tech Chat #4"),
+  //     NetworkType.MAIN_NET
+  //   );
+  // }
+
   protected createLoginContract(): any {
+    console.log(this.getTransactionRequest());
     return QRCodeGenerator.createTransactionRequest(
       this.getTransactionRequest(),
       NetworkType.MAIN_NET,
@@ -59,10 +78,9 @@ export default class OnboardingPage extends MetaView {
     return TransferTransaction.create(
       Deadline.create(1616978397),
       Address.createFromRawAddress("NDEVUP43ATEX2BM6XDFKVELVGQF66HOTZTIMJ6I"),
-      [new Mosaic(new MosaicId("39E0C49FA322A459"), UInt64.fromUint(0))],
-      PlainMessage.create("I am leaving dHealth Tech Chat #5"),
-      NetworkType.MAIN_NET,
-      UInt64.fromUint(0)
+      [new Mosaic(new NamespaceId("dhealth.dhp"), UInt64.fromUint(0))],
+      PlainMessage.create("I am leaving dHealth Tech Chat #4"),
+      NetworkType.MAIN_NET
     );
   }
 }
