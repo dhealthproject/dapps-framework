@@ -23,6 +23,7 @@ const componentOptions = {
       { path: "#3", text: "Wellness", icon: "" },
     ],
   },
+  stubs: ["router-link"],
 };
 
 describe("Header -->", () => {
@@ -33,9 +34,5 @@ describe("Header -->", () => {
 
   it("should display header", () => {
     expect(widget.find("div").classes()).to.include("header");
-  });
-
-  it("should have header", () => {
-    expect(true);
   });
 });
