@@ -25,8 +25,9 @@ import DappQR from "./widgets/DappQR/DappQR";
 import DappTokenAmount from "./fields/DappTokenAmount/DappTokenAmount";
 import DappIcon from "./graphics/DappIcon/DappIcon";
 import DappTitle from "./texts/DappTitle/DappTitle";
+import DappDate from "./fields/DappDate/DappDate";
 
 // exports
 export type { Variant };
-export { DappButton, DappIcon, DappQR, DappTokenAmount, DappTitle };
+export { DappButton, DappDate, DappIcon, DappQR, DappTitle, DappTokenAmount };
 
