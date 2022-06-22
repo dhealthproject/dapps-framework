@@ -47,6 +47,9 @@ module.exports = {
         },
       },
     };
+    config.externals = {
+      canvas: {},
+    };
   },
 
   // configures htmlWebpackPlugin
