@@ -15,6 +15,7 @@ import { Transaction } from "@dhealth/sdk";
 const localVue = createLocalVue();
 const componentOptions = {
   localVue,
+  stubs: ["router-link"],
 };
 
 describe("OnboardingPage -->", () => {
@@ -23,11 +24,11 @@ describe("OnboardingPage -->", () => {
     widget = mount(OnboardingPage as any, componentOptions);
   });
 
-  it("should get TransactionRequest", () => {
-    expect(widget.vm.getTransactionRequest());
+  it("should return transaction", () => {
+    expect(widget.vm.getTransactionRequest() instanceof Transaction).to.be.true;
   });
 
-  it("should have header", () => {
-    expect(true);
+  it("should create Login Contract", () => {
+    expect(widget.vm.createLoginContract()).to.not.be.undefined;
   });
 });

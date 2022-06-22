@@ -13,7 +13,7 @@ import { Component, Prop } from "vue-property-decorator";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 
-interface FooterLink {
+export interface FooterLink {
   path: string;
   text: string;
   icon: string;
