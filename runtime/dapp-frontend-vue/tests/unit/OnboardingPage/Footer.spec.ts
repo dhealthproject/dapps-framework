@@ -9,7 +9,7 @@
  */
 import { expect } from "chai";
 import { mount, Wrapper, createLocalVue } from "@vue/test-utils";
-import Header from "@/components/Header/Header.vue";
+import Footer from "@/components/Footer/Footer.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
@@ -26,17 +26,19 @@ const componentOptions = {
   stubs: ["router-link"],
 };
 
-describe("Header -->", () => {
+describe("Footer -->", () => {
   let widget: Wrapper<Vue>;
   beforeEach(() => {
-    widget = mount(Header as any, componentOptions);
+    widget = mount(Footer as any, componentOptions);
   });
 
-  it("should display title", () => {
-    expect(widget.text()).to.include("Elevate");
+  it("should display copyright", () => {
+    expect(widget.find("span").classes()).to.include(
+      "dapp-screen-footer__copy"
+    );
   });
 
-  it("should display header links", () => {
-    expect(widget.find("li").classes()).to.include("dapp-screen-header__link");
+  it("should display footer links", () => {
+    expect(widget.find("li").classes()).to.include("dapp-screen-footer__link");
   });
 });

@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 import { expect } from "chai";
-import { mount, Wrapper, createLocalVue } from "@vue/test-utils";
+import { shallowMount, Wrapper, createLocalVue } from "@vue/test-utils";
 import OnboardingPage from "@/views/OnboardingPage/OnboardingPage.vue";
 import { Transaction } from "@dhealth/sdk";
 // creates local vue instance for tests
@@ -21,7 +21,15 @@ const componentOptions = {
 describe("OnboardingPage -->", () => {
   let widget: any;
   beforeEach(() => {
-    widget = mount(OnboardingPage as any, componentOptions);
+    widget = shallowMount(OnboardingPage as any, componentOptions);
+  });
+
+  it("should display footer", () => {
+    expect(widget.find("div").classes()).to.include("dapp-screen-footer");
+  });
+
+  it("should display header", () => {
+    expect(widget.find("div").classes()).to.include("dapp-screen-header");
   });
 
   it("should return transaction", () => {
