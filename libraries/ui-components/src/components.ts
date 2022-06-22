@@ -23,7 +23,8 @@ import DappTokenAmount from "./fields/DappTokenAmount/DappTokenAmount.vue";
 import DappIcon from "./graphics/DappIcon/DappIcon.vue";
 import DappTitle from "./texts/DappTitle/DappTitle.vue";
 import DappDate from "./fields/DappDate/DappDate.vue";
+import DappMessage from "./fields/DappMessage/DappMessage.vue";
 
 // exports components as named-exports
-export { DappButton, DappDate, DappIcon, DappQR, DappTitle, DappTokenAmount };
+export { DappButton, DappDate, DappIcon, DappMessage, DappQR, DappTitle, DappTokenAmount };
 
