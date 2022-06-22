@@ -19,9 +19,9 @@ including them in the compiled CSS that is attached with this library.
     :src="src"
     :alt="alt"
     :class="{
-      'style-small': size == 'small',
-      'style-medium': size == 'medium',
-      'style-large': size == 'large',
+      'dapp-icon-style-small': size == 'small',
+      'dapp-icon-style-medium': size == 'medium',
+      'dapp-icon-style-large': size == 'large',
     }"
   />
 </template>

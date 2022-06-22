@@ -25,23 +25,23 @@ describe("DappIcon -->", () => {
 
   it("should have correct properties", () => {
     [
-      {name: "src", value: "test/src/image.png"},
-      {name: "alt", value: "test-alt"},
-    ].forEach((prop: {name: string, value: string}) => {
+      { name: "src", value: "test/src/image.png" },
+      { name: "alt", value: "test-alt" },
+    ].forEach((prop: { name: string; value: string }) => {
       const propsData: any = {};
       propsData[prop.name] = prop.value;
       widget = shallowMount(DappIcon as any, {
         ...componentOptions,
         propsData,
       });
-  
+
       // assert
-      expect(widget.find("img").attributes()[prop.name]).to.eq(prop.value);  
+      expect(widget.find("img").attributes()[prop.name]).to.eq(prop.value);
     });
   });
 
-  it("should add style-medium CSS class given default size", () => {
-    expect(widget.find("img").classes()).to.contain("style-medium");
+  it("should add dapp-icon-style-medium CSS class given default size", () => {
+    expect(widget.find("img").classes()).to.contain("dapp-icon-style-medium");
   });
 
   it("should add correct CSS class given different sizes", () => {
@@ -54,7 +54,9 @@ describe("DappIcon -->", () => {
       });
 
       // assert
-      expect(widget.find("img").classes()).to.contain(`style-${size}`);
+      expect(widget.find("img").classes()).to.contain(
+        `dapp-icon-style-${size}`
+      );
     });
   });
 });
