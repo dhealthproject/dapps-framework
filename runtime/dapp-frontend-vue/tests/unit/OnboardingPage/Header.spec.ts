@@ -32,7 +32,11 @@ describe("Header -->", () => {
     widget = mount(Header as any, componentOptions);
   });
 
-  it("should display header", () => {
-    expect(widget.find("div").classes()).to.include("header");
+  it("should display title", () => {
+    expect(widget.text()).to.include("Elevate");
+  });
+
+  it("should display header links", () => {
+    expect(widget.find("li").classes()).to.include("dapp-screen-header__link");
   });
 });
