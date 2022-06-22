@@ -72,6 +72,25 @@ const install = (): void => {
   Vue.component("DappAccountCard", DappAccountCard);
 };
 
+import wrap from "../libs/dhealth-web-component-wrapper";
+import * as allComponents from "./components";
+
+const styles = document.styleSheets;
+let styleStr = "";
+[...styles].forEach((style) => {
+  [...style.cssRules].forEach((rule) => {
+    styleStr += rule.cssText;
+  });
+});
+const styleEl = document.createElement("style");
+styleEl.innerHTML = styleStr;
+
+Object.entries(allComponents).forEach(([name, component]) => {
+  const elName = "dapp-" + name.split("Dapp")[1].toLowerCase();
+  const wrappedElement: any = wrap(Vue, component, styleEl);
+  window.customElements.define(elName, wrappedElement as any);
+});
+
 // exports the install helper alongside components
 export default {
   install,

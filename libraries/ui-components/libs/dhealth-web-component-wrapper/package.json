@@ -1,0 +1,11 @@
+{
+  "name": "dhealth-web-component-wrapper",
+  "version": "1.0.0",
+  "description": "wrap a vue component as a web component.",
+  "main": "dist/vue-wc-wrapper.js",
+  "types": "types/index.d.ts",
+  "files": [
+    "dist",
+    "types/*.d.ts"
+  ]
+}

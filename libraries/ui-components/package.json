@@ -29,7 +29,7 @@
     "docs": "typedoc --out \"ts-docs/$(npm run version --silent)\" src/classes.ts",
     "prebuild": "npm run lint",
     "build": "npm run build:lib && npm run build:ts && npm run build:css",
-    "build:lib": "vue-cli-service build --target lib --name dHealthComponents --filename @dhealth/components src/index.ts",
+    "build:lib": "vue-cli-service build --target lib --inline-vue --name dHealthComponents --filename @dhealth/components src/index.ts",
     "build:ts": "tsc --emitDeclarationOnly",
     "build:css": "npx sass --style expanded --embed-source-map src/theme.scss dist/@dhealth/components.css ; npx postcss --config postcss.config.js --replace dist/@dhealth/components.css",
     "test": "npm run test:unit",

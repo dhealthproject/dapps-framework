@@ -47,7 +47,14 @@ module.exports = {
           test: /\.s[ac]ss$/,
           exclude: /node_modules/,
           use: [
-            { loader: "sass-loader" }
+            {
+              loader: "sass-loader",
+              options: {
+                sassOptions: {
+                  shadowMode: true,
+                },
+              },
+            }
           ],
         }
       ]
