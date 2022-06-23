@@ -75,7 +75,7 @@ export default class OnboardingPage extends MetaView {
       mosaic: [
         new Mosaic(new MosaicId("39E0C49FA322A459"), UInt64.fromUint(0)),
       ],
-      message: PlainMessage.create("I am joining dHealth Tech Chat #6"),
+      message: PlainMessage.create("I am leaving dHealth Tech Chat #6"),
       network: NetworkType.MAIN_NET,
       uiInt: UInt64.fromUint(0),
     };
