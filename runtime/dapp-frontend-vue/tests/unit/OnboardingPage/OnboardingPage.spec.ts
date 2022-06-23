@@ -20,9 +20,9 @@ const componentOptions = {
 };
 // jest.mock("@dhealth/sdk", () => ({ Deadline: jest.fn() }));
 
-describe("OnboardingPage -->", () => {
+describe("OnboardingPage -->", async () => {
   let widget: any;
-  beforeEach(() => {
+  beforeEach(async () => {
     widget = mount(OnboardingPage as any, componentOptions);
   });
 
@@ -40,7 +40,11 @@ describe("OnboardingPage -->", () => {
 
   it("should return transaction", async () => {
     await widget.vm.$nextTick();
-    expect(widget.vm.getTransactionRequest() instanceof Transaction).to.be.true;
+    expect(
+      widget.vm.getTransactionRequest(
+        widget.vm.transactionRequestConfig
+      ) instanceof Transaction
+    ).to.be.true;
   });
 
   it("should create Login Contract", () => {
