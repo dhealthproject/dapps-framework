@@ -9,9 +9,9 @@
  */
 // external dependencies
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
 
 // internal dependencies
+import { Documentable } from "../../common/concerns/Documentable";
 import { Transferable } from "../../common/traits/Transferable";
 import { Queryable } from "../../common/concerns/Queryable";
 import { AccountDTO } from "../models/AccountDTO";
@@ -121,7 +121,7 @@ export class Account extends Transferable<AccountDTO> {
  *
  * @since v0.1.0
  */
-export type AccountDocument = Account & Document;
+export type AccountDocument = Account & Documentable;
 
 /**
  * @class AccountQuery

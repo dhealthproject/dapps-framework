@@ -12,12 +12,13 @@ import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
 
 // internal dependencies
-import type { StateData } from "../../../../src/common/models/StateData";
+import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
-import { StateQuery } from "../../../../src/common/models/StateSchema";
+import { StateDocument, StateQuery } from "../../../../src/common/models/StateSchema";
 
 describe("common/StateService", () => {
   let service: StateService;
+  let queryService: QueryService<StateDocument>;
 
   const findOneCall = jest.fn(() => ({ exec: () => ({}) }));
   const saveOneCall = jest.fn(() => ({ exec: () => ({}) }));
@@ -29,6 +30,7 @@ describe("common/StateService", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        QueryService,
         StateService,
         {
           provide: getModelToken("State"),
@@ -38,6 +40,7 @@ describe("common/StateService", () => {
     }).compile();
 
     service = module.get<StateService>(StateService);
+    queryService = module.get<QueryService<StateDocument>>(QueryService);
   });
 
   it("should be defined", () => {
@@ -45,27 +48,26 @@ describe("common/StateService", () => {
   });
 
   describe("findOne() -->", () => {
-    it("should call findOne() from model with correct param", async () => {
-      const query = new StateQuery();
-      await service.findOne(new StateQuery());
-      expect(findOneCall).toBeCalledWith(query);
+    it("should call findOne() from queryService with correct param", async () => {
+      const expectedResult = {} as StateDocument;
+      const findMock = jest
+        .spyOn(queryService, "findOne")
+        .mockResolvedValue(expectedResult);
+      const result = await service.findOne(new StateQuery());
+      expect(findMock).toBeCalledWith(new StateQuery(), MockModel);
+      expect(result).toEqual(expectedResult);
     });
   });
 
   describe("updateOne() -->", () => {
-    it("should call updateOne() from model with correct param", async () => {
-      await service.updateOne(
-        new StateQuery(undefined, "test"),
-        {} as StateData,
-      );
-
-      expect(saveOneCall).toBeCalledWith(
-        { name: "test" },
-        {},
-        {
-          upsert: true,
-        },
-      );
+    it("should call updateOne() from queryService with correct param", async () => {
+      const expectedResult = {} as StateDocument;
+      const findMock = jest
+        .spyOn(queryService, "createOrUpdate")
+        .mockResolvedValue(expectedResult);
+      const result = await service.updateOne(new StateQuery(), {});
+      expect(findMock).toBeCalledWith(new StateQuery(), MockModel, {});
+      expect(result).toEqual(expectedResult);
     });
   });
 });

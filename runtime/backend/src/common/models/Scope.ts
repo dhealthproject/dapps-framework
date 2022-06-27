@@ -16,4 +16,4 @@
  *
  * @since v0.1.0
  */
-export type Scope = string | "database" | "discovery" | "payout" | "processor";
+export type Scope = string | "database" | "discovery" | "payout" | "processor" | "worker";

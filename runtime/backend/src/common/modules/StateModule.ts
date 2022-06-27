@@ -12,6 +12,7 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
+import { QueryModule } from "./QueryModule";
 import { State, StateSchema } from "../models/StateSchema";
 import { StateService } from "../services/StateService";
 
@@ -25,6 +26,7 @@ import { StateService } from "../services/StateService";
   providers: [StateService],
   imports: [
     MongooseModule.forFeature([{ name: State.name, schema: StateSchema }]),
+    QueryModule,
   ],
   exports: [StateService],
 })

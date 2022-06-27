@@ -10,7 +10,7 @@
 import type { StateData } from "../../common/models/StateData";
 
 /**
- * @class DiscoveryState
+ * @class AccountDiscoveryStateData
  * @description A type that represents data about the
  * state of the **discovery** module. Note that we
  * implement the {@link StateData} type to permit more
@@ -22,7 +22,7 @@ import type { StateData } from "../../common/models/StateData";
  * @see DiscoverAccounts
  * @since v0.1.0
  */
-export class DiscoveryState implements StateData {
+export class AccountDiscoveryStateData implements StateData {
   /**
    * The transactions page that should be read during the
    * discovery process(es). This field is used to keep
@@ -31,7 +31,7 @@ export class DiscoveryState implements StateData {
    * @access public
    * @var {number}
    */
-  public currentTxPage: number;
+  public latestTxPage: number;
 
   /**
    * The latest transaction hash that was *discovered* by

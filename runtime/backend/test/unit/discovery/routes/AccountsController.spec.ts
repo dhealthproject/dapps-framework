@@ -18,7 +18,7 @@ import { AccountsService } from "../../../../src/discovery/services/AccountsServ
 import { AccountsController } from "../../../../src/discovery/routes/AccountsController";
 import { AccountDTO } from "../../../../src/discovery/models/AccountDTO";
 import {
-  Account,
+  AccountDocument,
   AccountQuery,
 } from "../../../../src/discovery/models/AccountSchema";
 
@@ -101,8 +101,8 @@ describe("discovery/AccountsController", () => {
 
   describe("find() -->", () => {
     it("should call correct method and respond with DTO", async () => {
-      const expectedResult = new PaginatedResultDTO<Account>();
-      expectedResult.data = [new Account()];
+      const expectedResult = new PaginatedResultDTO<AccountDocument>();
+      expectedResult.data = [{} as AccountDocument];
       expectedResult.pagination = {
         pageNumber: 1,
         pageSize: 20,

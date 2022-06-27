@@ -44,6 +44,20 @@ export interface DappConfig {
   dappPublicKey: string;
 
   /**
+   * An **address** that identifies the dApp's authentication
+   * authority account. This account receives transactions when
+   * someone logs in to a dApp.
+   * <br /><br />
+   * Note that this authority *will be deprecated* in later
+   * iterations given that the dHealth Signer software will
+   * permit to call a *webhook* upon signatures creation.
+   *
+   * @access public
+   * @var {string}
+   */
+  authAuthority: string;
+
+  /**
    * An array of {@link Scope} that represents the enabled
    * scopes for the runtime. Each scope may execute several
    * modules, services and schedulers.
@@ -56,14 +70,4 @@ export interface DappConfig {
    */
   scopes: Scope[];
 
-  /**
-   * The default network node to connect to for gathering
-   * information on the blockchain network. If the default
-   * node does not respond, the software will use {@link apiNodes}
-   * instead.
-   *
-   * @access public
-   * @var {string|undefined}
-   */
-  defaultNode?: string;
 }

@@ -8,11 +8,20 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
+import {
+  Address,
+  Order,
+  Transaction,
+  TransactionGroup,
+  TransactionType,
+  TransferTransaction,
+} from "@dhealth/sdk";
 
 // internal dependencies
+import { NetworkService } from "../services/NetworkService";
 import { User } from "../models/User";
 
 /**
@@ -53,31 +62,84 @@ export class AuthService {
    */
   public constructor(
     private readonly configService: ConfigService,
+    private readonly networkService: NetworkService,
     private jwtService: JwtService,
-  ) {
-    //const defaultNode = this.configService.get<string>("defaultNode");
+  ) {}
+
+  protected getTransactionQuery(): any {
+    // get the account address from config
+    const authAuthority = this.configService.get<string>("authAuthority");
+
+    // returns a REST-compatible query
+    return {
+      recipientAddress: Address.createFromRawAddress(authAuthority),
+      type: [TransactionType.TRANSFER],
+      embedded: false,
+      order: Order.Desc,
+      pageNumber: 1,
+      pageSize: 100,
+    }
   }
 
   /**
    * 
    * @param address 
    * @returns {Promise<User|null>}
+   * @throws {HttpException}
    */
   public async validate(
     address: string,
     authCode: string,
-  ): Promise<User | null> {
-    //XXX should read transaction from node
-    //XXX if no authentication transaction found => return null
-    //XXX returns transactionHash if valid
+  ): Promise<User> {
 
-    console.log("got login request: ", { address, authCode });
+    // initialize a connection to the node
+    const nodeRequests = this.networkService.getTransactionRepository();
 
-    //XXX obviously remove dummy data
-    return {
-      id: "NCYJOGGKJUOPFJXJPSXBVMMSWEYX4HW3KGJUTTA",
-      name: "NCYJOGGKJUOPFJXJPSXBVMMSWEYX4HW3KGJUTTA"
-    } as User;
+    // query latest 100 transactions
+    // Caution: this is not SPAM-safe, a later iteration of this should
+    // use the Discovery scope to discover authentication codes seamlessly
+    const transactionPages = await Promise.all([
+      nodeRequests.search({
+        ...this.getTransactionQuery(),
+        group: TransactionGroup.Unconfirmed,
+      }).toPromise(),
+      nodeRequests.search({
+        ...this.getTransactionQuery(),
+        group: TransactionGroup.Confirmed,
+      }).toPromise(),
+    ]);
+
+    // reduces the returned transaction pages to one
+    // flat array of **transfer** transactions
+    let transactions: TransferTransaction[] = [];
+    transactions = transactionPages.reduce(
+      (prev, cur) => transactions.concat(
+        cur.data.map(t => t as TransferTransaction)
+      ), []);
+
+    // responds with error if no transactions could be found at all
+    // 401: Unauthorized
+    if (! transactions.length) {
+      throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+    }
+
+    // searches the `authCode` in transfer message ("on-chain")
+    // @todo make compatible with encrypted messages (decrypt with authority privkey)
+    const authTransaction: TransferTransaction = transactions.find(
+      (t: TransferTransaction) => t.message.payload === authCode
+    );
+
+    // responds with error if the `authCode` could **not** be found
+    // 401: Unauthorized
+    if (authTransaction === undefined) {
+      throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+    }
+
+    // @todo invalidate authCode after max 30 minutes? ("refresh QR?")
+    // @todo store copy of accessToken + authCode?
+
+    // returns the authorized user details
+    return { id: address, name: address } as User;
   }
 
   /**

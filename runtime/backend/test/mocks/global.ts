@@ -7,14 +7,8 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-export default () => ({
-  dappName: "dHealth Universe",
-  dappPublicKey: "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE",
-  authAuthority: "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY",
-  scopes: [
-    "database",
-    "discovery",
-    "payout",
-    "processor"
-  ]
-});
+// Currently unused/undefined **global** pre-test routines.
+// This file *should* contain **mocks** that are exported
+// for re-use in different testing modules. Note that there
+// is currently *no* imports that are global to the testing
+// modules, this may change in the near-future.

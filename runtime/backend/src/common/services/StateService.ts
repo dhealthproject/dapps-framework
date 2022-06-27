@@ -15,6 +15,7 @@ import { Model } from "mongoose";
 // internal dependencies
 import { State, StateDocument, StateQuery } from "../models/StateSchema";
 import type { StateData } from "../models/StateData";
+import { QueryService } from "./QueryService";
 
 /**
  * @class StateService
@@ -33,41 +34,42 @@ export class StateService {
    */
   constructor(
     @InjectModel(State.name) private readonly model: Model<StateDocument>,
+    private readonly queryService: QueryService<StateDocument>,
   ) {}
 
   /**
-   * Find one {@link State} instance in db based on the query object.
-   *
-   * e.g.
-   * ```js
-   * findOne({ name: 'some-name' });
-   * ```
-   *
+   * Find one `TDocument` instance in the database and use
+   * a query based on the {@link Queryable} class.
+   * <br /><br />
+   * 
+   * @access public
    * @async
-   * @param   {StateQuery} query
-   * @returns {Promise<State>}
+   * @param   {StateQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @returns {Promise<StateDocument>}  The resulting `states` document.
    */
-  async findOne(query: StateQuery): Promise<State> {
-    return this.model.findOne(query).exec();
+  async findOne(query: StateQuery): Promise<StateDocument> {
+    return this.queryService.findOne(query, this.model);
   }
 
   /**
-   * Update a {@link State} instance in database.
-   * If no instance exists, insert object to database as a new instance.
+   * This method updates *exactly one document* in a collection. The
+   * query is build using {@link getQueryConfig} and can thereby use
+   * any columns of the document.
+   * <br /><br />
    *
-   * @todo The brackets with `name` should be a **query** from parameters
    * @async
-   * @param   {StateQuery} stateQuery
-   * @returns {Promise<State>}
+   * @param   {StateQuery}          query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {StateData}           data    The fields or data that has to be updated (will be added to `$set: {}`).
+   * @returns {Promise<StateDocument>}  The *updated* `states` document.
    */
   async updateOne(
-    stateQuery: StateQuery,
-    stateData: StateData,
-  ): Promise<State> {
-    return this.model
-      .findOneAndUpdate({ name: stateQuery.name }, stateData, {
-        upsert: true,
-      })
-      .exec();
+    query: StateQuery,
+    data: StateData,
+  ): Promise<StateDocument> {
+    return this.queryService.createOrUpdate(
+      query,
+      this.model,
+      data,
+    );
   }
 }

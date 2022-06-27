@@ -12,28 +12,21 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 // internal dependencies
 import { Documentable } from "../concerns/Documentable";
-import { Transferable } from "../traits/Transferable";
 import { Queryable } from "../concerns/Queryable";
-import { StateDTO } from "../models/StateDTO";
-import type { StateData } from "./StateData";
 
 /**
- * @class State
+ * @class AuthToken
  * @description This class defines the **exact** fields that are
  * stored in the corresponding MongoDB documents. It should be
  * used whenever database *documents* are being handled or read
- * for the `states` collection.
- * <br /><br />
- * Note that this class uses the generic {@link Transferable} trait to
- * enable a `toDTO()` method on the model.
+ * for the `authTokens` collection.
  *
- * @todo The {@link State} model does not need fields to be **public**.
- * @since v0.1.0
+ * @since v0.2.0
  */
 @Schema({
   timestamps: true,
 })
-export class State extends Transferable<StateDTO> {
+export class AuthToken /* not transferable */ {
   /**
    * The document identifier. This field is automatically populated
    * if it does not exist (mongoose) and **cannot be updated**.
@@ -44,16 +37,14 @@ export class State extends Transferable<StateDTO> {
   public _id?: string;
 
   /**
-   * The state cache document's **name**. Note that this field must
-   * contain dynamic module names, e.g. `"discovery"` or `"payout",
-   * such that state cache for each individual module can be tracked
-   * accordingly.
+   * The authentication code that is randomly generated for users
+   * to use during authentication.
    *
    * @access public
    * @var {string}
    */
   @Prop({ required: true })
-  public name: string;
+  public authCode: string;
 
   /**
    * The state cache document's actual **data**. Note that this field
@@ -63,24 +54,24 @@ export class State extends Transferable<StateDTO> {
    * would be updated to a strictly typed alternative.
    *
    * @access public
-   * @var {StateData}
+   * @var {number}
    */
-  @Prop({ required: true, type: Object })
-  public data: StateData;
+  @Prop({ required: true })
+  public usedAt: number;
 }
 
 /**
- * @type StateDocument
+ * @type AuthTokenDocument
  * @description This type merges the mongoose base `Document` object with
- * specialized state document objects such that this document can be used
- * directly in `mongoose` queries for `states` documents.
+ * specialized authentication token objects such that this document can be
+ * used directly in `mongoose` queries for `authTokens` documents.
  *
  * @since v0.1.0
  */
-export type StateDocument = State & Documentable;
+export type AuthTokenDocument = AuthToken & Documentable;
 
 /**
- * @class StateQuery
+ * @class AuthTokenQuery
  * @description This class augments {@link Queryable} objects enabling
  * *state cache documents* to be queried **by `name`**.
  * <br /><br />
@@ -89,23 +80,23 @@ export type StateDocument = State & Documentable;
  *
  * @since v0.1.0
  */
-export class StateQuery extends Queryable {
+export class AuthTokenQuery extends Queryable {
   /**
-   * This field can be used to query documents in the `states` mongo
-   * collection by their `name` field value.
+   * This field can be used to query documents in the `authTokens` mongo
+   * collection by their `authCode` field value.
    *
    * @access public
    * @var {string}
    */
-  public name?: string;
+  public authCode?: string;
 
   /**
-   * Copy constructor for pageable queries in `states`collection.
-   * The `StateQuery` parameter that is optionally passed to this
+   * Copy constructor for pageable queries in `authTokens` collection.
+   * The `AuthTokenQuery` parameter that is optionally passed to this
    * method is then destructured to mimic a copy construction logic.
    *
-   * @param   {string|undefined}    identifier   The *document* identifier (value of the field "_id").
-   * @param   {string|undefined}    name         The query's `name` field value (optional).
+   * @param   {string|undefined}    identifier   The *document* identifier, this is the value of the field "_id" (optional).
+   * @param   {string|undefined}    authCode     The query's `authCode` field value (optional).
    * @param   {number|undefined}    pageNumber   The page number of the query (defaults to `1`).
    * @param   {number|undefined}    pageSize     The number of entities/documents in one page (defaults to `20`).
    * @param   {string|undefined}    sort         The field used for sorting (defaults to `"_id"`).
@@ -113,7 +104,7 @@ export class StateQuery extends Queryable {
    */
   public constructor(
     id?: string,
-    name?: string,
+    authCode?: string,
     pageNumber?: number,
     pageSize?: number,
     sort?: string,
@@ -121,16 +112,16 @@ export class StateQuery extends Queryable {
   ) {
     super(id, pageNumber, pageSize, sort, order);
 
-    if (undefined !== name) this.name = name;
+    if (undefined !== authCode) this.authCode = authCode;
   }
 }
 
 /**
- * @export StateSchema
+ * @export AuthTokenSchema
  * @description This export creates a mongoose schema using the custom
- * {@link State} class and should be used mainly when *inferring* the
+ * {@link AuthToken} class and should be used mainly when *inferring* the
  * type of fields in a document for the corresponding collection.
  *
  * @since v0.1.0
  */
-export const StateSchema = SchemaFactory.createForClass(State);
+export const AuthTokenSchema = SchemaFactory.createForClass(AuthToken);

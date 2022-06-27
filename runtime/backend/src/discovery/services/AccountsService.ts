@@ -29,6 +29,7 @@ import { QueryService } from "../../common/services/QueryService";
  * @description The main service of the Accounts module.
  *
  * @todo The updateBatch method should accept a **query** not a list of DTOs.
+ * @todo This class should not handle *DTOs* as it does not **transfer** data, it should handle only **models** and queries (repository pattern).
  * @since v0.1.0
  */
 @Injectable()
@@ -42,8 +43,22 @@ export class AccountsService {
    */
   constructor(
     @InjectModel(Account.name) private readonly model: Model<AccountDocument>,
-    private readonly queriesService: QueryService<Account>,
+    private readonly queriesService: QueryService<AccountDocument>,
   ) {}
+
+  /**
+   * Find one `AccountDocument` instance in the database and use
+   * a query based on the {@link Queryable} class.
+   * <br /><br />
+   * 
+   * @access public
+   * @async
+   * @param   {StateQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @returns {Promise<StateDocument>}  The resulting `states` document.
+   */
+  async findOne(query: AccountQuery): Promise<AccountDocument> {
+    return this.queriesService.findOne(query, this.model);
+  }
 
   /**
    * Method to query accounts based on query and returns as paginated result.
@@ -52,8 +67,28 @@ export class AccountsService {
    * @param   {AccountQuery} query
    * @returns {Promise<PaginatedResultDTO<Account>>}
    */
-  async find(query: AccountQuery): Promise<PaginatedResultDTO<Account>> {
+  async find(query: AccountQuery): Promise<PaginatedResultDTO<AccountDocument>> {
     return this.queriesService.find(query, this.model);
+  }
+
+  /**
+   * This method updates *exactly one document* in a collection.
+   * <br /><br />
+   *
+   * @async
+   * @param   {AccountQuery}          query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {StateData}           data    The fields or data that has to be updated (will be added to `$set: {}`).
+   * @returns {Promise<StateDocument>}  The *updated* `states` document.
+   */
+  async updateOne(
+    query: AccountQuery,
+    data: AccountDocument,
+  ): Promise<AccountDocument> {
+    return this.queriesService.createOrUpdate(
+      query,
+      this.model,
+      data,
+    );
   }
 
   /**
@@ -63,10 +98,10 @@ export class AccountsService {
    * @param   {AccountDTO} createAccountDtos
    * @returns {Promise<BulkWriteResult>}
    */
-  async updateBatch(createAccountDtos: AccountDTO[]): Promise<BulkWriteResult> {
+  async updateBatch(createAccountDtos: AccountDocument[]): Promise<BulkWriteResult> {
     const bulk: UnorderedBulkOperation =
       this.model.collection.initializeUnorderedBulkOp();
-    createAccountDtos.map((createAccountDto: AccountDTO) => {
+    createAccountDtos.map((createAccountDto: AccountDocument) => {
       bulk
         .find({ address: createAccountDto.address })
         .upsert()

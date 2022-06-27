@@ -16,6 +16,7 @@ import type { Scope } from "./models/Scope";
 import { DappConfig } from "./models/DappConfig";
 import { Scopes } from "./Scopes";
 import { Schedulers } from "./Schedulers";
+import { Commands } from "./Commands";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -166,6 +167,48 @@ export class ScopeFactory {
     // concatenates `Schedulers` that are *enabled* (opt-in)
     // through the dApp configuration's `scopes` field.
     return requiredImports.concat(schedulerImports.reduce(
+      (prev, cur) => prev.concat([...cur]),
+      []
+    ));
+  }
+
+  /**
+   * Returns an array of nest `DynamicModule` that are enabled
+   * (opt-in) through the dApp configuration with the field
+   * named `scopes` (config/dapp.json). This method returns all
+   * **commands** that must be registered for a given scope.
+   * <br /><br />
+   * i.e. if you *enable* the `discovery` scope by setting
+   * `"scopes": ["discovery"]` in your config/dapp.json, this
+   * method will register the {@link DiscoverTransactionsCommand}
+   * command.
+   * <br /><br />
+   * Note that this method returns only {@link Commands}
+   * modules.
+   *
+   * @static
+   * @returns {DynamicModule[]}   A list of dynamic modules that are *enabled* as commands (CLI).
+   */
+  public getCommands(): DynamicModule[] {
+    // reads *enabled* scopes (opt-in)
+    const scopes: Scope[] = this.dappConfig.scopes;
+
+    // in **commands** the database is always added
+    // in addition to the configuration module.
+    // Note: does **not** modify {@link baseImports}.
+    const requiredImports = this.baseImports.concat(
+      Commands["database"],
+    );
+
+    // reads *all* enabled commands, note here that
+    // each scope may define an *array* of schedulers
+    const commandImports = scopes.filter(
+      (c) => c !== "database" && c in Commands,
+    ).map((c) => Commands[c]);
+
+    // concatenates `Commands` that are *enabled* (opt-in)
+    // through the dApp configuration's `scopes` field.
+    return requiredImports.concat(commandImports.reduce(
       (prev, cur) => prev.concat([...cur]),
       []
     ));

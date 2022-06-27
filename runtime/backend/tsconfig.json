@@ -22,6 +22,7 @@
       "node",
       "jest"
     ],
+    "typeRoots": ["node_modules/@types"],
     "paths": {
       "@/*": ["./src/*"]
     },
@@ -30,6 +31,6 @@
     "strictBindCallApply": false,
     "strictNullChecks": false
   },
-  "include": ["src/", "config/"],
-  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+  "include": ["src/", "config/", "test"],
+  "exclude": ["node_modules", "dist"]
 }

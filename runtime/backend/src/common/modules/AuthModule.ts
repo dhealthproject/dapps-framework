@@ -13,8 +13,10 @@ import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
 
 // internal dependencies
+import { NetworkModule } from "../modules/NetworkModule";
 import { AuthService } from "../services/AuthService";
 import { AuthStrategy } from '../traits/AuthStrategy';
+import { AuthController } from "../routes/AuthController";
 
 /**
  * @class AuthModule
@@ -25,6 +27,7 @@ import { AuthStrategy } from '../traits/AuthStrategy';
  */
 @Module({
   imports: [
+    NetworkModule,
     PassportModule,
     JwtModule.register({
       // defines the secret token for *verifying* JwT tokens
@@ -33,6 +36,7 @@ import { AuthStrategy } from '../traits/AuthStrategy';
       signOptions: { expiresIn: "60s"},
     }),
   ],
+  controllers: [AuthController],
   providers: [AuthService, AuthStrategy],
   exports: [AuthService],
 })

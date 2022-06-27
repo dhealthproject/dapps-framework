@@ -12,6 +12,16 @@
 // are correctly used in other source code files.
 jest.mock("@dhealth/sdk");
 
+// Mocks the full `js-sha3` dependency to avoid
+// calls to actual SHA3/Keccak algorithms.
+jest.mock("js-sha3", () => ({
+  sha3_256: {
+    update: jest.fn().mockReturnThis(),
+    create: jest.fn().mockReturnThis(),
+    arrayBuffer: jest.fn(),
+  },
+}));
+
 const configForRootCall: any = jest.fn(() => ConfigModuleMock);
 const ConfigModuleMock: any = { forRoot: configForRootCall };
 jest.mock("@nestjs/config", () => {
@@ -57,6 +67,11 @@ jest.mock("../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCo
   return { DiscoverAccountsCommand: DiscoverAccountsCommandMock };
 });
 
+const DiscoverTransactionsCommandMock: any = jest.fn();
+jest.mock("../../../src/discovery/schedulers/DiscoverTransactions/DiscoverTransactionsCommand", () => {
+  return { DiscoverTransactionsCommand: DiscoverTransactionsCommandMock };
+});
+
 const PayoutModuleMock: any = jest.fn();
 jest.mock("../../../src/payout/PayoutModule", () => {
   return { PayoutModule: PayoutModuleMock };
@@ -89,6 +104,7 @@ describe("common/ScopeFactory", () => {
       const baseConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
+        authAuthority: "NonExistingAuthority",
       };
 
       const configDto1: DappConfig = { ...baseConfig, scopes: [] };
@@ -108,6 +124,7 @@ describe("common/ScopeFactory", () => {
       const configDto: DappConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
+        authAuthority: "NonExistingAuthority",
         scopes: ["discovery", "payout", "processor"],
       };
 
@@ -128,6 +145,7 @@ describe("common/ScopeFactory", () => {
       const configDto: DappConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
+        authAuthority: "NonExistingAuthority",
         scopes: ["discovery", "processor"],
       };
 
@@ -147,6 +165,7 @@ describe("common/ScopeFactory", () => {
       const configDto: DappConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
+        authAuthority: "NonExistingAuthority",
         scopes: ["database"],
       };
 
@@ -164,6 +183,7 @@ describe("common/ScopeFactory", () => {
       const baseConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
+        authAuthority: "NonExistingAuthority",
       };
 
       const configDto1: DappConfig = { ...baseConfig, scopes: [] };
@@ -185,43 +205,113 @@ describe("common/ScopeFactory", () => {
         DiscoverAccountsCommandMock,
       ]);
     });
+
+    it("should return correct list of enabled schedulers", () => {
+      // prepare
+      const configDto: DappConfig = {
+        dappName: "Fake dApp",
+        dappPublicKey: "FakePublicKeyOfAdApp",
+        authAuthority: "NonExistingAuthority",
+        scopes: ["discovery"],
+      };
+
+      // act
+      const result = MockFactory.create(configDto).getSchedulers();
+
+      // assert
+      expect(result).toEqual([
+        ConfigModuleMock,
+        MongooseModuleMock,
+        AccountsModuleMock,
+        DiscoverAccountsCommandMock,
+      ]);
+    });
+
+    it("should return correct empty list of enabled schedulers", () => {
+      // prepare
+      const configDto: DappConfig = {
+        dappName: "Fake dApp",
+        dappPublicKey: "FakePublicKeyOfAdApp",
+        authAuthority: "NonExistingAuthority",
+        scopes: [],
+      };
+
+      // act
+      const result = MockFactory.create(configDto).getSchedulers();
+
+      // assert
+      expect(result).toEqual([
+        ConfigModuleMock,
+        MongooseModuleMock,
+      ]);
+    });
   });
 
-  it("should return correct list of enabled schedulers", () => {
-    // prepare
-    const configDto: DappConfig = {
-      dappName: "Fake dApp",
-      dappPublicKey: "FakePublicKeyOfAdApp",
-      scopes: ["discovery"],
-    };
+  describe("getCommands() -->", () => {
+    it("should always include configuration and database modules", () => {
+      // prepare
+      const baseConfig = {
+        dappName: "Fake dApp",
+        dappPublicKey: "FakePublicKeyOfAdApp",
+        authAuthority: "NonExistingAuthority",
+      };
 
-    // act
-    const result = MockFactory.create(configDto).getSchedulers();
+      const configDto1: DappConfig = { ...baseConfig, scopes: [] };
+      const configDto2: DappConfig = { ...baseConfig, scopes: ["database"] };
+      const configDto3: DappConfig = { ...baseConfig, scopes: ["discovery"] };
 
-    // assert
-    expect(result).toEqual([
-      ConfigModuleMock,
-      MongooseModuleMock,
-      AccountsModuleMock,
-      DiscoverAccountsCommandMock,
-    ]);
-  });
+      // act
+      const result1 = MockFactory.create(configDto1).getCommands();
+      const result2 = MockFactory.create(configDto2).getCommands();
+      const result3 = MockFactory.create(configDto3).getCommands();
 
-  it("should return correct empty list of enabled schedulers", () => {
-    // prepare
-    const configDto: DappConfig = {
-      dappName: "Fake dApp",
-      dappPublicKey: "FakePublicKeyOfAdApp",
-      scopes: [],
-    };
+      // assert
+      expect(result1).toEqual([ConfigModuleMock, MongooseModuleMock]);
+      expect(result2).toEqual([ConfigModuleMock, MongooseModuleMock]);
+      expect(result3).toEqual([
+        ConfigModuleMock,
+        MongooseModuleMock,
+        DiscoverTransactionsCommandMock,
+      ]);
+    });
 
-    // act
-    const result = MockFactory.create(configDto).getSchedulers();
+    it("should return correct list of enabled commands", () => {
+      // prepare
+      const configDto: DappConfig = {
+        dappName: "Fake dApp",
+        dappPublicKey: "FakePublicKeyOfAdApp",
+        authAuthority: "NonExistingAuthority",
+        scopes: ["discovery"],
+      };
 
-    // assert
-    expect(result).toEqual([
-      ConfigModuleMock,
-      MongooseModuleMock,
-    ]);
+      // act
+      const result = MockFactory.create(configDto).getCommands();
+
+      // assert
+      expect(result).toEqual([
+        ConfigModuleMock,
+        MongooseModuleMock,
+        DiscoverTransactionsCommandMock,
+      ]);
+    });
+
+    it("should return correct empty list of enabled commands", () => {
+      // prepare
+      const configDto: DappConfig = {
+        dappName: "Fake dApp",
+        dappPublicKey: "FakePublicKeyOfAdApp",
+        authAuthority: "NonExistingAuthority",
+        scopes: [],
+      };
+
+      // act
+      const result = MockFactory.create(configDto).getCommands();
+
+      // assert
+      expect(result).toEqual([
+        ConfigModuleMock,
+        MongooseModuleMock,
+      ]);
+    });
   });
 });

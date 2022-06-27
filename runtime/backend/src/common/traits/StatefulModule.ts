@@ -11,6 +11,7 @@
 import { Logger } from "@nestjs/common";
 
 // internal dependencies
+import { StateService } from "../services/StateService";
 import { State, StateQuery } from "../models/StateSchema";
 
 /**
@@ -44,6 +45,19 @@ export abstract class StatefulModule {
   protected logger: Logger;
 
   /**
+   * Constructs a stateful module. This naming refers to a *nest* injectable
+   * service *that is populated with state data* at runtime.
+   * <br /><br />
+   * The {@link StateService} is used internally to execute mongo database
+   * queries against the `states` collection.
+   *
+   * @param   {StateService}    stateService
+   */
+  public constructor(
+    protected readonly stateService: StateService,
+  ) {}
+
+  /**
    * Creates a **state query** for this discovery service. Each
    * discovery service shall set its own {@link stateIdentifier}
    * which is considered the identifier of the discovery module's
@@ -52,7 +66,38 @@ export abstract class StatefulModule {
    * @returns {StateQuery}
    */
   protected getStateQuery(): StateQuery {
-    return new StateQuery(undefined, this.identifier);
+    return new StateQuery(undefined, this.stateIdentifier);
+  }
+
+  /**
+   * This method uses the {@link logger} to print debug messages.
+   *
+   * @param   {string}              message
+   * @param   {string|undefined}    context
+   * @returns {void}
+   */
+  protected debugLog(
+    message: string,
+    context?: string,
+  ): void {
+    return this.logger.debug(message, context);
+  }
+
+  /**
+   * This method uses the {@link logger} to print error messages.
+   * Optionally, a `stack` can be passed to print a stack trace.
+   *
+   * @param   {string}              message
+   * @param   {string|undefined}    stack
+   * @param   {string|undefined}    context
+   * @returns {void}
+   */
+  protected errorLog(
+    message: string,
+    stack?: string,
+    context?: string,
+  ): void {
+    return this.logger.error(message, stack, context);
   }
 
   /**
@@ -68,5 +113,5 @@ export abstract class StatefulModule {
    * @access protected
    * @var {string}
    */
-  public abstract get identifier(): string;
+  public abstract get stateIdentifier(): string;
 }

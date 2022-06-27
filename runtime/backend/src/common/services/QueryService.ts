@@ -10,8 +10,10 @@
 // external dependencies
 import { Injectable } from "@nestjs/common";
 import { Model } from "mongoose";
+import { BulkWriteResult, UnorderedBulkOperation } from "mongodb";
 
 // internal dependencies
+import { Documentable } from "../concerns/Documentable";
 import { Queryable } from "src/common/concerns/Queryable";
 import { PaginatedResultDTO } from "src/common/models/PaginatedResultDTO";
 
@@ -74,6 +76,8 @@ export type SearchQuery = {
  * Also, arrays are *always* passed to the `$in` routine, currently no
  * other operations are possible with array and objects.
  * <br /><br />
+ * Note that you must pass a *document class* to the generic `TDocument`
+ * template of this class, e.g. QueryService<StateDocument>.
  *
  * @todo add example in class documentation
  * @todo add handler abstraction logic
@@ -83,7 +87,7 @@ export type SearchQuery = {
  * @since v0.1.0
  */
 @Injectable()
-export class QueryService<TEntity> {
+export class QueryService<TDocument extends Documentable> {
   /**
    * Create a generic *search query* that is compatible with Mongo. The
    * returned {@link PaginatedResultDto} contains a `data` field and a
@@ -94,14 +98,14 @@ export class QueryService<TEntity> {
    *
    * @access public
    * @async
-   * @param   {Queryable} query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @param   {Model<any>}            model     The model *class instance* used for resulting documents.
-   * @returns {Promise<PaginatedResultDTO<any>>} The matching documents after execution of the query.
+   * @param   {Queryable}         query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {Model<TDocument>}  model     The model *class instance* used for resulting documents.
+   * @returns {Promise<PaginatedResultDTO<TDocument>>} The matching documents after execution of the query.
    */
   public async find(
     query: Queryable,
-    model: Model<any>,
-  ): Promise<PaginatedResultDTO<TEntity>> {
+    model: Model<TDocument>,
+  ): Promise<PaginatedResultDTO<TDocument>> {
     // wrap pagination+query to be mongo-compatible
     const { queryCursor, querySorter, searchQuery } =
       this.getQueryConfig(query);
@@ -131,7 +135,97 @@ export class QueryService<TEntity> {
     };
 
     // returns wrapped entity page
-    return { data: data.map((d: any) => d as TEntity), pagination };
+    return { data: data.map((d: any) => d as TDocument), pagination };
+  }
+
+  /**
+   * Find one `TDocument` instance in the database and use
+   * a query based on the {@link Queryable} class.
+   * <br /><br />
+   * 
+   * @access public
+   * @async
+   * @param   {Queryable}         query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {Model<TDocument>}  model     The model *class instance* used for the resulting document.
+   * @returns {Promise<TDocument>}  The resulting document.
+   */
+  public async findOne(
+    query: Queryable,
+    model: Model<TDocument>,
+  ): Promise<TDocument> {
+    // wrap pagination+query to be mongo-compatible
+    const { searchQuery } = this.getQueryConfig(query);
+
+    // execute query and return a single document
+    return model.findOne({ $match: searchQuery }).exec();
+  }
+
+  /**
+   * This method updates *exactly one document* in a collection. The
+   * query is build using {@link getQueryConfig} and can thereby use
+   * any columns of the document.
+   * <br /><br />
+   *
+   * @async
+   * @param   {Queryable}             query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {Model<TDocument>}      model   The model *class instance* used for the resulting document.
+   * @param   {Record<string, any>}   data    The fields or data that has to be updated (will be added to `$set: {}`).
+   * @returns {Promise<TDocument>}
+   */
+  public async createOrUpdate(
+    query: Queryable,
+    model: Model<TDocument>,
+    data: Record<string, any>,
+  ): Promise<TDocument> {
+    // wrap pagination+query to be mongo-compatible
+    const { searchQuery } = this.getQueryConfig(query);
+
+    // destructures query **fields** for the update query (no-sort, etc.)
+    const { sort, order, pageNumber, pageSize, ...updateQuery } = searchQuery;
+
+    // execute query and return a single document
+    // Note that 
+    return model.findOneAndUpdate(
+      updateQuery as any, data, { upsert: true, returnOriginal: false }
+    ).exec();
+  }
+
+  /**
+   * Method to update a batch of documents in one collection. The
+   * query built here uses a document's `_id` field value and
+   * updates *all* fields present in the `TDocument` generic class.
+   * <br /><br />
+   * Note that the {@link Documentable} concern is used as a
+   * requirement of `TDocument` to make sure that the `_id` field
+   * is indeed present and populated.
+   * <br /><br />
+   * Note also that this method automatically sets the value of
+   * a field `updatedAt` to the time of execution of the query.
+   *
+   * @todo Currently the `$set` parameters use `new Date()`, probably a mongo/mongoose routine for "now" is more adequate.
+   * @async
+   * @param   {Model<any>}  model       
+   * @param   {TDocument[]}   documents
+   * @returns {Promise<BulkWriteResult>}
+   */
+  public async updateBatch(
+    model: Model<TDocument>,
+    documents: TDocument[],
+  ): Promise<BulkWriteResult> {
+    const bulk: UnorderedBulkOperation =
+      model.collection.initializeUnorderedBulkOp();
+
+    documents.map((document: TDocument) => bulk.find({ id: document.id })
+      .upsert()
+      .update({
+        $set: {
+          ...document,
+          updatedAt: new Date().valueOf(),
+        },
+      })
+    );
+
+    return bulk.execute();
   }
 
   /**

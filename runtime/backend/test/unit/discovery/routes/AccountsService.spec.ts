@@ -16,13 +16,13 @@ import { QueryService } from "../../../../src/common/services/QueryService";
 import { AccountsService } from "../../../../src/discovery/services/AccountsService";
 import {
   Account,
+  AccountDocument,
   AccountQuery,
 } from "../../../../src/discovery/models/AccountSchema";
-import { AccountDTO } from "../../../../src/discovery/models/AccountDTO";
 
 describe("discovery/AccountsService", () => {
   let service: AccountsService;
-  let queriesService: QueryService<Account>;
+  let queriesService: QueryService<AccountDocument>;
 
   let data: any, saveFn: any, initializeUnorderedBulkOpFn: any;
   const aggregateFn = jest.fn((param) => {
@@ -89,7 +89,7 @@ describe("discovery/AccountsService", () => {
     }).compile();
 
     service = module.get<AccountsService>(AccountsService);
-    queriesService = module.get<QueryService<Account>>(QueryService);
+    queriesService = module.get<QueryService<AccountDocument>>(QueryService);
   });
 
   it("should be defined", () => {
@@ -99,7 +99,7 @@ describe("discovery/AccountsService", () => {
   describe("find() -->", () => {
     it("should call correct method", async () => {
       const expectedResult = {
-        data: [new Account()],
+        data: [{} as AccountDocument],
         pagination: {
           pageNumber: 1,
           pageSize: 20,
@@ -117,16 +117,17 @@ describe("discovery/AccountsService", () => {
 
   describe("updateBatch() -->", () => {
     it("should call collection.initializeUnorderedBulkOp() from model", async () => {
-      const updateAccountDtos = {
+      const accountDoc = {
         address: "test-address",
-      };
-      await service.updateBatch([updateAccountDtos]);
+        transactionsCount: 1,
+      } as AccountDocument;
+      await service.updateBatch([accountDoc]);
       expect(initializeUnorderedBulkOpFn).toHaveBeenCalled();
     });
 
     it("should have correct result", async () => {
       const expectedResult: any = {};
-      const result = await service.updateBatch([new AccountDTO()]);
+      const result = await service.updateBatch([{} as AccountDocument]);
       expect(result).toEqual(expectedResult);
     });
   });

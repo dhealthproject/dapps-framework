@@ -11,37 +11,33 @@
 import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
-import { AccountsModule } from "../discovery/modules/AccountsModule";
-import { DiscoverAccountsCommand } from "../discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand";
 import { DiscoverTransactionsCommand } from "../discovery/schedulers/DiscoverTransactions/DiscoverTransactionsCommand";
 
 /**
- * @description This exported constant enumerates all available **scheduler**
- * modules. Schedulers are opt-in through the **scopes** field value of a
- * dApp's configuration files (config/dapp.json). Schedulers always belong to
+ * @description This exported constant enumerates all available **commands**
+ * modules. Commands are opt-in through the **scopes** field value of a
+ * dApp's configuration files (config/dapp.json). Commands always belong to
  * and are registered through a *scoped module*, i.e. "discovery" defines some
- * schedulers and "payout" may define more schedulers.
+ * commands and "payout" may define more commands.
  * <br /><br />
- * Schedulers that are currently available are represented in the following
+ * Commands that are currently available are represented in the following
  * information table:
  * | Scope | Scheduler | Description |
  * | --- | --- | --- |
- * | `discovery` | {@link DiscoverAccounts} | A discovery command that retrieves accounts information from the network using the incoming transaction of the dApp's main account. |
  * | `discovery` | {@link DiscoverTransactions} | A discovery command that retrieves transactions information from the network. |
  * <br /><br />
  *
  * @var {[key: string]: any[]}
  *
- * @todo The object `Schedulers` should **at least** use a custom type (not `any`).
+ * @todo The object `Commands` should **at least** use a custom type (not `any`).
  * @since v0.1.0
  */
-export const Schedulers: { [key: string]: any[] } = {
+export const Commands: { [key: string]: any[] } = {
   database: [MongooseModule.forRoot(
     `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`,
   )],
   discovery: [
-    AccountsModule,
-    DiscoverAccountsCommand,
+    DiscoverTransactionsCommand,
   ],
   payout: [],
   processor: [],

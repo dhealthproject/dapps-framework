@@ -8,16 +8,11 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Body, Controller, Ip, Get, Post, Request, UseGuards } from "@nestjs/common";
+import { Controller, Get } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 // internal dependencies
 import { AppService } from "./AppService";
-import { AuthService } from "./common/services/AuthService";
-import { ChainGuard } from "./common/traits/ChainGuard";
-import { AuthGuard } from "./common/traits/AuthGuard";
-import { User } from "./common/models/User";
-import { TokenRequestDTO } from "./common/models/TokenRequestDTO";
 
 // configuration resources
 import dappConfigLoader from "../config/dapp";
@@ -50,7 +45,6 @@ export class AppController {
   constructor(
     private readonly configService: ConfigService,
     private readonly appService: AppService,
-    private readonly authService: AuthService,
   ) {
     // read from configuration fields
     this.dappName = dappConfigLoader().dappName;
@@ -66,39 +60,5 @@ export class AppController {
   @Get('hello')
   protected getHello(): string {
     return `Hello, world of ${this.dappName}!`;
-  }
-
-  /**
-   * 
-   * @param req 
-   * @param ip 
-   * @param body 
-   * @returns 
-   */
-  @Post('auth/token')
-  protected async getToken(
-    @Request() req: any,
-    @Ip() ip: string,
-    @Body() body: TokenRequestDTO
-  ) {
-    const user: User = await this.authService.validate(
-      body.address,
-      body.authCode,
-    );
-
-    if (null !== user) {
-      return this.authService.getAccessToken(user);
-    }
-  }
-
-  /**
-   * 
-   * @param req 
-   * @returns 
-   */
-  @UseGuards(AuthGuard)
-  @Get('me')
-  protected getProfile(@Request() req: any) {
-    return req.user;
   }
 }

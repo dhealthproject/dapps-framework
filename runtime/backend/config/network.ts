@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
  export default () => ({
-  defaultNode: "http://dual-01.dhealth.cloud:3000",
+  defaultNode: "http://dual-02.dhealth.cloud:3000",
   apiNodes: [
     { "url": "http://dual-01.dhealth.cloud:3000", "port": 3000 },
     { "url": "http://dual-02.dhealth.cloud:3000", "port": 3000 },

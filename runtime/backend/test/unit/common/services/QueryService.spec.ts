@@ -15,13 +15,13 @@ import { Model } from "mongoose";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 import {
-  Account,
+  AccountDocument,
   AccountQuery,
 } from "../../../../src/discovery/models/AccountSchema";
 
 // Mock the query service to enable *testing* of protected
 // methods such as `typecastField`.
-class MockQueryService extends QueryService<Account> {
+class MockQueryService extends QueryService<AccountDocument> {
   public sanitizeSearchQuery(searchQuery: any): any {
     return super.sanitizeSearchQuery(searchQuery);
   }
@@ -42,7 +42,7 @@ describe("common/QueryService", () => {
       exec: () =>
         Promise.resolve([
           {
-            data: [new Account()],
+            data: [{} as AccountDocument],
             metadata: [{ total: 1 }],
           },
         ]),
@@ -106,8 +106,8 @@ describe("common/QueryService", () => {
     });
 
     it("should have correct result", async () => {
-      const expectedResult: PaginatedResultDTO<Account> = {
-        data: [new Account()],
+      const expectedResult: PaginatedResultDTO<AccountDocument> = {
+        data: [{} as AccountDocument],
         pagination: {
           pageNumber: 1,
           pageSize: 20,
@@ -122,8 +122,8 @@ describe("common/QueryService", () => {
     });
 
     it("should type resulting entities correctly", async () => {
-      const expectedResult: PaginatedResultDTO<Account> = {
-        data: [new Account()],
+      const expectedResult: PaginatedResultDTO<AccountDocument> = {
+        data: [{} as AccountDocument],
         pagination: {
           pageNumber: 1,
           pageSize: 20,
@@ -138,11 +138,11 @@ describe("common/QueryService", () => {
       expect(result.data).toBeDefined();
       expect(result.data.length).toBeDefined();
       expect(result.data.length).toStrictEqual(1);
-      expect(result.data[0]).toBeInstanceOf(Account);
+      expect(result.data[0]).toBeDefined();
     });
 
     it("should have correct result when metadata is empty", async () => {
-      const expectedResult: PaginatedResultDTO<Account> = {
+      const expectedResult: PaginatedResultDTO<AccountDocument> = {
         data: [],
         pagination: {
           pageNumber: 1,
@@ -179,7 +179,7 @@ describe("common/QueryService", () => {
         exec: () =>
           Promise.resolve([
             {
-              data: [new Account()],
+              data: [{} as AccountDocument],
               metadata: [{ total: 1 }],
             },
           ]),
