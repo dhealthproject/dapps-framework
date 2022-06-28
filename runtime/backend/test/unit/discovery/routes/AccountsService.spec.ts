@@ -12,66 +12,17 @@ import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
 
 // internal dependencies
+import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { AccountsService } from "../../../../src/discovery/services/AccountsService";
-import {
-  Account,
-  AccountDocument,
-  AccountQuery,
-} from "../../../../src/discovery/models/AccountSchema";
+import { AccountDocument, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
 
 describe("discovery/AccountsService", () => {
   let service: AccountsService;
   let queriesService: QueryService<AccountDocument>;
-
-  let data: any, saveFn: any, initializeUnorderedBulkOpFn: any;
-  const aggregateFn = jest.fn((param) => {
-    return {
-      param: () => param,
-      exec: () =>
-        Promise.resolve([
-          {
-            data: [new Account()],
-            metadata: [{ total: 1 }],
-          },
-        ]),
-    };
-  });
-  class MockModel {
-    constructor(dto?: any) {
-      data = dto;
-    }
-    save() {
-      saveFn = jest.fn(() => data);
-      return saveFn();
-    }
-    find() {
-      return {
-        exec: () => data,
-      };
-    }
-    aggregate(param: any) {
-      return aggregateFn(param);
-    }
-    static collection = {
-      initializeUnorderedBulkOp: () => {
-        initializeUnorderedBulkOpFn = jest.fn(() => {
-          return {
-            find: () => initializeUnorderedBulkOpFn(),
-            update: () => initializeUnorderedBulkOpFn(),
-            upsert: () => initializeUnorderedBulkOpFn(),
-            execute: () => Promise.resolve({}),
-          };
-        });
-        return initializeUnorderedBulkOpFn();
-      },
-    };
-    static aggregate(param: any) {
-      return aggregateFn(param);
-    }
-  }
   let mockDate: Date;
 
+  // for each AccountService test we create a testing module
   beforeEach(async () => {
     mockDate = new Date(1212, 1, 1);
     jest.useFakeTimers("modern");
@@ -97,7 +48,8 @@ describe("discovery/AccountsService", () => {
   });
 
   describe("find() -->", () => {
-    it("should call correct method", async () => {
+    it("should use QueryService.find() method with correct query", async () => {
+      // prepare
       const expectedResult = {
         data: [{} as AccountDocument],
         pagination: {
@@ -109,26 +61,89 @@ describe("discovery/AccountsService", () => {
       const findMock = jest
         .spyOn(queriesService, "find")
         .mockResolvedValue(expectedResult);
+      
+      // act
       const result = await service.find(new AccountQuery());
+
+      // assert
       expect(findMock).toBeCalledWith(new AccountQuery(), MockModel);
       expect(result).toEqual(expectedResult);
     });
   });
 
   describe("updateBatch() -->", () => {
+
+    // for each updateBatch() test we overwrite the
+    // bulk operations functions from mongoose plugin
+    let bulkMocks: any,
+        finderMock: any,
+        upsertMock: any;
+    beforeEach(async () => {
+      upsertMock = { update: jest.fn() };
+      finderMock = { upsert: jest.fn().mockReturnValue(upsertMock) };
+      bulkMocks = {
+        find: jest.fn().mockReturnValue(finderMock),
+        execute: () => Promise.resolve({}),
+      };
+
+      // overwrites the internal bulk operation
+      (service as any).model.collection = {
+        initializeUnorderedBulkOp: () => bulkMocks,
+      };
+    });
+
     it("should call collection.initializeUnorderedBulkOp() from model", async () => {
+      // prepare
       const accountDoc = {
         address: "test-address",
         transactionsCount: 1,
       } as AccountDocument;
+
+      // act
       await service.updateBatch([accountDoc]);
-      expect(initializeUnorderedBulkOpFn).toHaveBeenCalled();
+
+      // assert
+      expect(bulkMocks.find).toHaveBeenCalled();
     });
 
-    it("should have correct result", async () => {
-      const expectedResult: any = {};
-      const result = await service.updateBatch([{} as AccountDocument]);
-      expect(result).toEqual(expectedResult);
+    it("should call finder and pass correct query by address", async () => {
+      // prepare
+      const accountDoc = {
+        address: "test-address",
+        transactionsCount: 1,
+      } as AccountDocument;
+
+      // act
+      await service.updateBatch([accountDoc]);
+
+      // assert
+      expect(bulkMocks.find).toHaveBeenCalled();
+      expect(bulkMocks.find).toHaveBeenCalledWith(
+        { address: accountDoc.address },
+      );
+    });
+
+    it("should modify updatedAt field in $set routine", async () => {
+      // prepare
+      const accountDoc = {
+        address: "test-address",
+        transactionsCount: 1,
+      } as AccountDocument;
+
+      // act
+      await service.updateBatch([accountDoc]);
+
+      // assert
+      expect(upsertMock.update).toHaveBeenCalled();
+      expect(upsertMock.update).toHaveBeenCalledWith({
+        $set: {
+          ...accountDoc,
+          updatedAt: mockDate,
+        },
+      });
     });
   });
+
+  // @todo Missing tests for method `AccountsService.findOne()`
+  // @todo Missing tests for method `AccountsService.updateOne()`
 });

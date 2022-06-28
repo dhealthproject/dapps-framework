@@ -12,66 +12,17 @@ import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
 
 // internal dependencies
+import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 import { AccountsService } from "../../../../src/discovery/services/AccountsService";
 import { AccountsController } from "../../../../src/discovery/routes/AccountsController";
 import { AccountDTO } from "../../../../src/discovery/models/AccountDTO";
-import {
-  AccountDocument,
-  AccountQuery,
-} from "../../../../src/discovery/models/AccountSchema";
+import { AccountDocument, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
 
 describe("discovery/AccountsController", () => {
   let controller: AccountsController;
   let accountsService: AccountsService;
-
-  let data: any, saveFn: any, initializeUnorderedBulkOpFn: any;
-  const aggregateFn = jest.fn((param) => {
-    return {
-      param: () => param,
-      exec: () =>
-        Promise.resolve([
-          {
-            data: [{} as AccountDTO],
-            metadata: [{ total: 1 }],
-          },
-        ]),
-    };
-  });
-  class MockModel {
-    constructor(dto?: any) {
-      data = dto;
-    }
-    save() {
-      saveFn = jest.fn(() => data);
-      return saveFn();
-    }
-    find() {
-      return {
-        exec: () => data,
-      };
-    }
-    aggregate(param: any) {
-      return aggregateFn(param);
-    }
-    static collection = {
-      initializeUnorderedBulkOp: () => {
-        initializeUnorderedBulkOpFn = jest.fn(() => {
-          return {
-            find: () => initializeUnorderedBulkOpFn(),
-            update: () => initializeUnorderedBulkOpFn(),
-            upsert: () => initializeUnorderedBulkOpFn(),
-            execute: () => Promise.resolve({}),
-          };
-        });
-        return initializeUnorderedBulkOpFn();
-      },
-    };
-    static aggregate(param: any) {
-      return aggregateFn(param);
-    }
-  }
   let mockDate: Date;
 
   beforeEach(async () => {

@@ -143,7 +143,7 @@ export abstract class DiscoveryCommand extends BaseCommand {
    */
   @Option({
     flags: '-s, --source <source>',
-    description: 'Defines the discovery source for this command',
+    description: 'Defines the discovery source for this command, i.e. a public key or an address.',
     required: true,
   })
   protected parseSource(sourceOption: string): Address {
@@ -160,7 +160,15 @@ export abstract class DiscoveryCommand extends BaseCommand {
     }
 
     // otherwise *assume* we have an address (and remove hyphens if any)
-    return Address.createFromRawAddress(sourceOption.replace(/\-/g, ''));
+    const sourceAddress: string = sourceOption.replace(/\-/g, '');
+
+    // source input is **not** a valid address, return fallback
+    if (sourceAddress.length !== 39) {
+      return this.parseSource(this.dappConfig.dappPublicKey);
+    }
+
+    // source input **is a valid address format** 
+    return Address.createFromRawAddress(sourceAddress);
   }
 
   /**

@@ -7,21 +7,6 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// These external dependencies mocks *must* be defined
-// **before** internal class imports such that the mocks
-// are correctly used in other source code files.
-jest.mock("@dhealth/sdk");
-
-// Mocks the full `js-sha3` dependency to avoid
-// calls to actual SHA3/Keccak algorithms.
-jest.mock("js-sha3", () => ({
-  sha3_256: {
-    update: jest.fn().mockReturnThis(),
-    create: jest.fn().mockReturnThis(),
-    arrayBuffer: jest.fn(),
-  },
-}));
-
 const configForRootCall: any = jest.fn(() => ConfigModuleMock);
 const ConfigModuleMock: any = { forRoot: configForRootCall };
 jest.mock("@nestjs/config", () => {

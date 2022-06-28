@@ -18,12 +18,10 @@ import {
   TransactionInfo,
   TransferTransaction,
   Order,
-  PublicAccount,
   TransactionType,
 } from "@dhealth/sdk";
 
 // internal dependencies
-import { StateDocument } from "../../../common/models/StateSchema";
 import { StateService } from "../../../common/services/StateService";
 import { NetworkService } from "../../../common/services/NetworkService";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
@@ -40,7 +38,7 @@ import { AccountDiscoveryStateData } from "../../models/AccountDiscoveryStateDat
  *
  * @since v0.1.0
  */
- @Command({
+@Command({
   name: "discovery:accounts",
   options: { isDefault: false },
 })
@@ -52,29 +50,29 @@ export class DiscoverAccounts
    * Memory store of addresses that have been discovered as recipient
    * of transfer transactions issued from the dApp's main account.
    *
-   * @access private
+   * @access protected
    * @var {string[]}
    */
-  private discoveredAddresses: string[] = [];
+  protected discoveredAddresses: string[] = [];
 
   /**
    * Memory store of transactions by addresses to faciliate the count
    * process and filtering capabilities by already processed transfers.
    *
-   * @access private
+   * @access protected
    * @var {string[]}
    */
-  private transactionsByAddress: Map<string, string[]> = new Map<string, string[]>();
+  protected transactionsByAddress: Map<string, string[]> = new Map<string, string[]>();
 
   /**
    * Memory store for *all* transactions processed in one run of this
    * command. Note that it contains **only transfer** transactions as
    * those are the only relevant to this discovery command.
    *
-   * @access private
+   * @access protected
    * @var {TransferTransaction[]}
    */
-  private transactions: TransferTransaction[] = [];
+  protected transactions: TransferTransaction[] = [];
 
   /**
    * The constructor of this class.
@@ -86,10 +84,10 @@ export class DiscoverAccounts
    * @param {AccountsService} accountsService
    */
   constructor(
-    private readonly configService: ConfigService,
-    private readonly statesService: StateService,
-    private readonly networkService: NetworkService,
-    private readonly accountsService: AccountsService,
+    protected readonly configService: ConfigService,
+    protected readonly statesService: StateService,
+    protected readonly networkService: NetworkService,
+    protected readonly accountsService: AccountsService,
   ) {
     // required super call
     super(statesService);
@@ -107,7 +105,7 @@ export class DiscoverAccounts
    * @returns {string}
    */
   protected get command(): string {
-    return `${this.scope}:accounts`;
+    return `DiscoverAccounts`;
   }
 
   /**
@@ -191,7 +189,7 @@ export class DiscoverAccounts
   public async discover(options?: DiscoveryCommandOptions): Promise<void> {
     // display starting moment information in debug mode
     if (options.debug && !options.quiet) {
-      this.logger.debug(`Starting discovery with "${this.command}"`);
+      this.debugLog(`Starting discovery with "${this.command}"`);
     }
 
     // starts the account discovery process
@@ -201,7 +199,7 @@ export class DiscoverAccounts
 
     // display debug information about configuration
     if (options.debug && !options.quiet) {
-      this.logger.debug(`Discovery is tracking the account: "${
+      this.debugLog(`Discovery is tracking the account: "${
         this.discoverySource.plain()
       }"`);
     }
@@ -216,7 +214,7 @@ export class DiscoverAccounts
 
     // display debug information about pagination
     if (options.debug && !options.quiet) {
-      this.logger.debug(`Now reading 5 pages including page ${lastPageNumber}`);
+      this.debugLog(`Now reading 5 pages including page ${lastPageNumber}`);
     }
 
     // (1) each round queries 1 page of transactions from REST gateway
@@ -235,10 +233,12 @@ export class DiscoverAccounts
 
       // display debug information about result
       if (options.debug && !options.quiet) {
-        this.logger.debug(`Found transaction page with ${result.data.length} transactions.`);
+        this.debugLog(`Found transaction page with ${result.data.length} transactions.`);
       }
 
       // retrieves the account address from transactions
+      // @todo Ordering must be passed here to determine
+      //       if "last" or "first" has "current" attribute.
       lastTransactionHash = this.processTransactionsPage(
         lastTransactionHash,
         result.data,
@@ -268,7 +268,7 @@ export class DiscoverAccounts
 
     // display debug information database operation
     if (options.debug && !options.quiet) {
-      this.logger.debug(`Updating ${accounts.length} accounts documents in database`);
+      this.debugLog(`Updating ${accounts.length} accounts documents in database`);
     }
 
     // (3) updates `accounts` entries in batch operation
@@ -282,12 +282,17 @@ export class DiscoverAccounts
   }
 
   /**
-   * 
+   * This method builds an index of transaction hashes and processes
+   * them individually such that transactions are mapped by addresses.
+   * It returns the *last* transaction hash that is found in the
+   * `transactions` parameter. No sorting or ordering is done on the
+   * input transactions before the hash index is built.
    * <br /><br />
-   * Note that this method *modifes* the {@link discoveredAddress} class
+   * Note that this method *modifies* the {@link discoveredAddress} class
    * property as well as the {@link transactionsByAddress} and also saves
    * a copy of all *transfer* transactions processed in {@link transactions}.
    *
+   * @todo Add ordering parameter and determine "current" using "last" or "first" accordingly.
    * @access protected
    * @async
    * @param {Transaction[]} transactions
@@ -298,7 +303,7 @@ export class DiscoverAccounts
     transactions: Transaction[],
   ): string {
     // helps keeping track of transactions already processed
-    const hashIndex = transactions.map(
+    const hashIndex: string[] = transactions.map(
       (tx: Transaction) => this.extractTransactionHash(tx)
     );
 
@@ -347,12 +352,20 @@ export class DiscoverAccounts
   }
 
   /**
-   * 
+   * This method uses the {@link accountsService} to fetch a
+   * document *by address* and updates the number of processed
+   * transactions depending on the {@link transactionsByAddress}
+   * records for said recipient.
+   * <br /><br />
+   * Additionally, if an address is not found in the database,
+   * the first transaction will be queried to determine the
+   * block height at which the transaction got confirmed.
    *
    * @access protected
    * @async
-   * @param   {TransferTransaction} transaction
-   * @returns {Promise<AccountDTO>}
+   * @param   {string} recipient              The address of the account being searched for.
+   * @param   {string} firstTransactionHash   The first transaction hash, if any. (optional)
+   * @returns {Promise<Account>}    An instance of {@link Account}, either created JiT or updated.
    */
   protected async createOrFindAccount(
     recipient: string,
@@ -367,7 +380,7 @@ export class DiscoverAccounts
     );
 
     // if the document exists, we must update `transactionsCount`
-    if (document !== null) {
+    if (!! document) {
       const countOlderTxes = document.transactionsCount ?? 0;
 
       // increments the number of transactions
@@ -401,55 +414,4 @@ export class DiscoverAccounts
       ? (transaction.transactionInfo as TransactionInfo).hash
       : (transaction.transactionInfo as AggregateTransactionInfo).aggregateHash
   }
-
-  // protected extractRecipient(
-  //   transaction: TransferTransaction,
-  // ): string {
-  //   // prepares model creation
-  //   const recipient: string = ;
-  //   return recipient;
-
-    // if (
-    //   transaction instanceof TransferTransaction &&
-    //   transaction.recipientAddress
-    // ) {
-    //   const address = transaction.recipientAddress.plain();
-    //   const cachedRecipient = this.accountsMap.get(address);
-    //   if (cachedRecipient) {
-    //     cachedRecipient.transactionsCount++;
-    //     return;
-    //   }
-    //   const accountDto = await this.createAccountDTO(transaction);
-    //   this.accountsMap.set(transaction.recipientAddress.plain(), accountDto);
-    // }
-  // }
-
-  // protected async updateFirstTransactionsTime(): Promise<void> {
-  //   for (const key of this.accountsMap.keys()) {
-  //     const account = this.accountsMap.get(key);
-  //     if (account.firstTransactionAt) continue; 
-  //   }
-  // }
-
-  // protected async saveAccounts(createAccountDtos: AccountDocument[]): Promise<void> {
-  //   if (createAccountDtos && createAccountDtos.length > 0)
-  //     await this.accountsService.updateBatch(createAccountDtos);
-  // }
-
-  // protected async saveState(
-  //   latestTxPage: number,
-  //   result: Page<Transaction>,
-  // ): Promise<StateDocument> {
-  //   if (result.data.length === 0) return;
-  //   const latestTx = result.data[result.data.length - 1];
-  //   const latestTxHash = latestTx.transactionInfo.hash
-  //     ? latestTx.transactionInfo.hash
-  //     : (latestTx.transactionInfo as any).aggregateHash;
-
-  //   // updates in mongo database
-  //   return await this.statesService.updateOne(this.getStateQuery(), {
-  //     latestTxPage,
-  //     latestTxHash,
-  //   });
-  // }
 }
