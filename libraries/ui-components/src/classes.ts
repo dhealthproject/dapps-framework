@@ -23,7 +23,15 @@ import type { Variant } from "./types/Variant";
 import DappButton from "./controls/DappButton/DappButton";
 import DappQR from "./widgets/DappQR/DappQR";
 import DappTokenAmount from "./fields/DappTokenAmount/DappTokenAmount";
+import DappAccountAvatar from "./graphics/DappAccountAvatar/DappAccountAvatar";
+import DappAccountCard from "./widgets/DappAccountCard/DappAccountCard";
 
 // exports
 export type { Variant };
-export { DappButton, DappQR, DappTokenAmount };
+export {
+  DappButton,
+  DappQR,
+  DappTokenAmount,
+  DappAccountAvatar,
+  DappAccountCard,
+};

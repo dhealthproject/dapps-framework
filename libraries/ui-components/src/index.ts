@@ -15,7 +15,13 @@
 // Note: Any component released as part of this library
 // **must** be registered and exported using this file.
 import Vue from "vue";
-import { DappButton, DappQR, DappTokenAmount } from "./components";
+import {
+  DappAccountAvatar,
+  DappButton,
+  DappQR,
+  DappTokenAmount,
+  DappAccountCard,
+} from "./components";
 
 // importing compiled tailwind styles
 // triggers a build when adding classes
@@ -54,6 +60,8 @@ const install = (): void => {
   Vue.component("DappButton", DappButton);
   Vue.component("DappQR", DappQR);
   Vue.component("DappTokenAmount", DappTokenAmount);
+  Vue.component("DappAccountAvatar", DappAccountAvatar);
+  Vue.component("DappAccountCard", DappAccountCard);
 };
 
 // exports the install helper alongside components
@@ -62,4 +70,10 @@ export default {
 };
 
 // exports the components classes as named-exports
-export { DappButton, DappQR, DappTokenAmount };
+export {
+  DappButton,
+  DappQR,
+  DappTokenAmount,
+  DappAccountAvatar,
+  DappAccountCard,
+};
