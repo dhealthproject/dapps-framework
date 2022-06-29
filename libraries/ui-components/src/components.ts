@@ -24,7 +24,20 @@ import DappIcon from "./graphics/DappIcon/DappIcon.vue";
 import DappTitle from "./texts/DappTitle/DappTitle.vue";
 import DappDate from "./fields/DappDate/DappDate.vue";
 import DappMessage from "./fields/DappMessage/DappMessage.vue";
+import DappAccountAvatar from "./graphics/DappAccountAvatar/DappAccountAvatar.vue";
+import DappAccountCard from "./widgets/DappAccountCard/DappAccountCard.vue";
+
 
 // exports components as named-exports
-export { DappButton, DappDate, DappIcon, DappMessage, DappQR, DappTitle, DappTokenAmount };
+export {
+  DappAccountAvatar,
+  DappAccountCard,
+  DappButton,
+  DappDate,
+  DappIcon,
+  DappMessage,
+  DappQR,
+  DappTitle,
+  DappTokenAmount,
+};
 

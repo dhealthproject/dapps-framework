@@ -34,11 +34,16 @@ module.exports = {
     // overwrites default border radius
     borderRadius: {
       DEFAULT: "40px",
+      md: "5px",
+      "3xl": "20px",
       lg: "40px",
     },
     // overwrites default fonts display
     fontSize: {
       base: ["14px", "21px"], // font-size, line-height
+      lg: ["1rem", "1.75rem"], // 16px, 28px
+      "3xl": ["1.5rem", "2.25rem"],
+      "5xl": ["2.5rem", "3.25rem"],
     },
   },
   variants: {},

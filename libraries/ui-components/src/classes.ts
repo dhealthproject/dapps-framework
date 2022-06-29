@@ -27,8 +27,20 @@ import DappIcon from "./graphics/DappIcon/DappIcon";
 import DappTitle from "./texts/DappTitle/DappTitle";
 import DappDate from "./fields/DappDate/DappDate";
 import DappMessage from "./fields/DappMessage/DappMessage";
+import DappAccountAvatar from "./graphics/DappAccountAvatar/DappAccountAvatar";
+import DappAccountCard from "./widgets/DappAccountCard/DappAccountCard";
 
 // exports
 export type { Variant };
-export { DappButton, DappDate, DappIcon, DappMessage, DappQR, DappTitle, DappTokenAmount };
+export {
+  DappAccountAvatar,
+  DappAccountCard,
+  DappButton,
+  DappDate,
+  DappIcon,
+  DappMessage,
+  DappQR,
+  DappTitle,
+  DappTokenAmount,
+};
 

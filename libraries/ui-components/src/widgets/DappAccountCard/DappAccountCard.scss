@@ -1,0 +1,71 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth UI Components
+ * @subpackage  Components
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+.dapp-account-card-icon-copy {
+  @apply -mt-0.5 ml-1.5 opacity-50 cursor-pointer;
+}
+
+.dapp-account-card-body-wrapper {
+  @apply flex justify-center items-center text-left font-sans;
+
+  .dapp-account-card-body {
+    @apply bg-gradient-to-r from-navy to-royal-blue;
+    @apply text-white relative inline-block p-10 rounded-md;
+
+    .dapp-account-card-section {
+      @apply flex flex-row justify-between;
+
+      .dapp-account-card-account-icon {
+        @apply mr-5 bg-white p-2.5 rounded-3xl;
+      }
+
+      .dapp-account-card-address {
+        @apply mx-0 mb-8 mt-0 max-w-full text-lg;
+
+        .dapp-account-card-sub-address {
+          @apply flex items-center justify-center;
+
+          .dapp-account-card-noselect {
+            @apply select-none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            outline: 0;
+          }
+        }
+      }
+
+      .dapp-account-card-icon {
+        @apply absolute bottom-0 right-0 h-full pointer-events-none;
+      }
+    }
+
+    .dapp-account-card-mosaic {
+      @apply text-3xl;
+    }
+
+    .dapp-account-card-balance {
+      @apply text-5xl;
+
+      .text-black-600\/75 {
+        @apply opacity-50;
+      }
+    }
+  }
+
+  .inline-amount {
+    @apply flex items-center justify-start;
+
+    .dapp-account-card-account-icon {
+      @apply mr-5 bg-white p-2.5 rounded-3xl;
+    }
+  }
+}
