@@ -32,7 +32,6 @@ jest.mock("js-sha3", () => ({
 // Mocks a **model** class for nestjs internal
 // mongoose integration with FIND, CREATE, UPDATE
 // and AGGREGATE logic mocked out and spied on.
-// @todo Remove/Minimize the usage of `any` here.
 export class MockModel {
   public data: Record<string, any>;
   constructor(dto?: any) {

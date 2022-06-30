@@ -16,6 +16,7 @@ import type { Scope } from "../../../src/common/models/Scope";
 import { QueryService } from "../../../src/common/services/QueryService";
 import { StateService } from "../../../src/common/services/StateService";
 import { StateDocument, StateQuery } from "../../../src/common/models/StateSchema";
+import { StateData } from "../../../src/common/models/StateData";
 import { BaseCommand, BaseCommandOptions } from "../../../src/worker/BaseCommand";
 
 // Mocks a base command **child** class to implement
@@ -29,13 +30,14 @@ class MockBaseCommand extends BaseCommand {
   ): Promise<void> {}
 
   // mocks the internal StateService
-  protected stateService: any = { findOne: jest.fn() };
+  protected stateService: any = { findOne: jest.fn(), updateOne: jest.fn() };
 
   // mocks a fake method to test arguments storage
   public getArgv(): string[] { return this.argv; }
 
-  // mocks the internal getStateQuery method for access
+  // mocks the internal getState(Query|Data) methods for access
   public getStateQuery(): StateQuery { return super.getStateQuery(); }
+  public getStateData(): StateData { return super.getStateData(); }
 }
 
 // Mocks another base command **child** class to test
@@ -174,6 +176,17 @@ describe("worker/BaseCommand -->", () => {
       expect((fakeCommand as any).runWithOptions).toHaveBeenCalled();
       expect((fakeCommand as any).runWithOptions).toHaveBeenCalledWith(
         { debug: true }
+      );
+    });
+
+    it("should call stateService.updateOne to update current state", async () => {
+      // act
+      await fakeCommand.run([], {});
+      // assert
+      expect((fakeCommand as any).stateService.updateOne).toHaveBeenCalled();
+      expect((fakeCommand as any).stateService.updateOne).toHaveBeenCalledWith(
+        fakeCommand.getStateQuery(),
+        fakeCommand.getStateData(),
       );
     });
   });

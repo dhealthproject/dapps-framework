@@ -11,7 +11,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-
 import { BulkWriteResult, UnorderedBulkOperation } from "mongodb";
 
 // internal dependencies
@@ -21,7 +20,6 @@ import {
   AccountDocument,
   AccountQuery,
 } from "../models/AccountSchema";
-import { AccountDTO } from "../models/AccountDTO";
 import { QueryService } from "../../common/services/QueryService";
 
 /**
@@ -95,7 +93,7 @@ export class AccountsService {
    * Method to update a batch of accounts.
    *
    * @async
-   * @param   {AccountDTO} createAccountDtos
+   * @param   {AccountDocument} createAccountDtos
    * @returns {Promise<BulkWriteResult>}
    */
   async updateBatch(createAccountDtos: AccountDocument[]): Promise<BulkWriteResult> {

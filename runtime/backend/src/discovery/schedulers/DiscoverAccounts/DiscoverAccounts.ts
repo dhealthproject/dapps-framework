@@ -75,6 +75,25 @@ export class DiscoverAccounts
   protected transactions: TransferTransaction[] = [];
 
   /**
+   * Memory store for the last page number being read. This is used
+   * in {@link getStateData} to update the latest execution state.
+   *
+   * @access private
+   * @var {number}
+   */
+  private lastPageNumber: number;
+
+  /**
+   * Memory store for the last processed transaction hash. This is
+   * used in {@link getStateData} to update the latest execution
+   * state.
+   *
+   * @access private
+   * @var {string}
+   */
+  private lastTransactionHash: string;
+
+  /**
    * The constructor of this class.
    * Params will be automatically injected upon called.
    *
@@ -91,6 +110,10 @@ export class DiscoverAccounts
   ) {
     // required super call
     super(statesService);
+
+    // sets default state data
+    this.lastPageNumber = 1;
+    this.lastTransactionHash = undefined;
   }
 
   /**
@@ -125,20 +148,22 @@ export class DiscoverAccounts
   }
 
   /**
-   * Getter for the discovery state identifier, e.g.
-   * "discovery.accounts", "discovery.transactions",
-   * "payout.outputs" etc.
+   * This helper method should return the latest execution state
+   * such that it can be saved.
    * <br /><br />
-   * This method must be implemented by extended classes
-   * to create the correct state query for this discovery
-   * service.
+   * Execution states refer to one module's required state data,
+   * potentially necessary during execution, and which is fetched
+   * in {@link run} before execution and updated in {@link run}
+   * after execution.
    *
-   * @see StatefulModule
    * @access protected
-   * @var {string}
+   * @returns {StateData}
    */
-  public get stateIdentifier(): string {
-    return "discovery:accounts";
+  protected getStateData(): AccountDiscoveryStateData {
+    return {
+      latestTxPage: this.lastPageNumber,
+      latestTxHash: this.lastTransactionHash,
+    } as AccountDiscoveryStateData
   }
 
   /**
@@ -179,7 +204,6 @@ export class DiscoverAccounts
    * - Step 1: Reads the dApp's main account outgoing transactions
    * - Step 2: Updates accounts' transaction time if necessary
    * - Step 3: Updates the accounts documents in a batch operation
-   * - Step 4: Updates the discovery state document for next runs
    *
    * @access public
    * @async
@@ -204,22 +228,22 @@ export class DiscoverAccounts
       }"`);
     }
 
-    // reads the latest execution state, fields will be modified later ("let")
-    let lastPageNumber: number = 1;
-    let lastTransactionHash: string = undefined;
+    // reads the latest execution state
     if (this.state && this.state.data) {
-      lastPageNumber = this.state.data.latestTxPage;
-      lastTransactionHash = this.state.data.latestTxHash;
+      this.lastPageNumber = this.state.data.latestTxPage;
+      this.lastTransactionHash = this.state.data.latestTxHash;
     }
 
     // display debug information about pagination
     if (options.debug && !options.quiet) {
-      this.debugLog(`Now reading 5 pages including page ${lastPageNumber}`);
+      this.debugLog(`Now reading 5 pages including page ${this.lastPageNumber}`);
     }
 
     // (1) each round queries 1 page of transactions from REST gateway
     // after the 10th [and last] round we update the `states` document
-    for (let i = lastPageNumber, max = lastPageNumber+5; i < max; i++, lastPageNumber++) {
+    for (let i = this.lastPageNumber, max = this.lastPageNumber+5;
+      i < max;
+      i++, this.lastPageNumber++) {
       // fetches *confirmed* transaction from node, in *ascending* order
       // @todo this may fail due to intermittent connection problems
       const result = await repository.search({
@@ -239,8 +263,8 @@ export class DiscoverAccounts
       // retrieves the account address from transactions
       // @todo Ordering must be passed here to determine
       //       if "last" or "first" has "current" attribute.
-      lastTransactionHash = this.processTransactionsPage(
-        lastTransactionHash,
+      this.lastTransactionHash = this.processTransactionsPage(
+        this.lastTransactionHash,
         result.data,
       );
 
@@ -258,7 +282,7 @@ export class DiscoverAccounts
       const fstHash: string = this.transactionsByAddress.get(address)[0];
 
       // create account models or find already existing ones
-      const account: Account = await this.createOrFindAccount(
+      const account: Account = await this.findOrCreateAccount(
         address,
         fstHash
       );
@@ -273,12 +297,6 @@ export class DiscoverAccounts
 
     // (3) updates `accounts` entries in batch operation
     this.accountsService.updateBatch(accounts.map(a => a as AccountDocument));
-
-    // (4) updates state with this round's information
-    this.state = await this.statesService.updateOne(this.getStateQuery(), {
-      latestTxPage: lastPageNumber,
-      latestTxHash: lastTransactionHash,
-    } as AccountDiscoveryStateData);
   }
 
   /**
@@ -367,7 +385,7 @@ export class DiscoverAccounts
    * @param   {string} firstTransactionHash   The first transaction hash, if any. (optional)
    * @returns {Promise<Account>}    An instance of {@link Account}, either created JiT or updated.
    */
-  protected async createOrFindAccount(
+  protected async findOrCreateAccount(
     recipient: string,
     firstTransactionHash: string,
   ): Promise<Account> {

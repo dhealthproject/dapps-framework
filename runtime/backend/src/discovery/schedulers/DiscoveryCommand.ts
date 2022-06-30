@@ -37,24 +37,6 @@ import { BaseCommand, BaseCommandOptions } from "../../worker/BaseCommand";
    * @var {string}
    */
   source: string;
-
-  /**
-   * Defines whether *unconfirmed* transactions must be included in
-   * the resulting transaction page(s).
-   *
-   * @access public
-   * @var {boolean}
-   */
-  includeUnconfirmed?: boolean;
-
-  /**
-   * Defines whether *partial* transactions must be included in
-   * the resulting transaction page(s).
-   *
-   * @access public
-   * @var {boolean}
-   */
-  includePartial?: boolean
 }
 
 /**
@@ -169,36 +151,6 @@ export abstract class DiscoveryCommand extends BaseCommand {
 
     // source input **is a valid address format** 
     return Address.createFromRawAddress(sourceAddress);
-  }
-
-  /**
-   * This helper method serves as a *parser* for the `-u`
-   * or `--include-unconfirmed` option of this command.
-   *
-   * @param     {string}  unconfirmedOption     The unconfirmedOption as passed in the terminal.
-   * @returns   {boolean}   A boolean value that determines if unconfirmed transactions are included or not.
-   */
-  @Option({
-    flags: '-u, --include-unconfirmed',
-    description: 'Defines whether the discovery should include unconfirmed transactions'
-  })
-  protected parseUnconfirmedFlag(unconfirmedOption: string): boolean {
-    return !!unconfirmedOption;
-  }
-
-  /**
-   * This helper method serves as a *parser* for the `-p`
-   * or `--include-partial` option of this command.
-   *
-   * @param     {string}  partialOption     The partialOption as passed in the terminal.
-   * @returns   {boolean}   A boolean value that determines if unconfirmed transactions are included or not.
-   */
-  @Option({
-    flags: '-p, --include-partial',
-    description: 'Defines whether the discovery should include partial transactions (aggregate bonded)'
-  })
-  protected parsePartialFlag(partialOption: string): boolean {
-    return !!partialOption;
   }
 
   /**

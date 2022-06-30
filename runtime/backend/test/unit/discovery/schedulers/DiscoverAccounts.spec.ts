@@ -52,11 +52,12 @@ import { State } from "../../../../src/common/models/StateSchema";
 import { AccountsService } from "../../../../src/discovery/services/AccountsService";
 import { Account, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
 import { DiscoverAccounts } from "../../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccounts";
+import { AccountDiscoveryStateData } from "../../../../src/discovery/models/AccountDiscoveryStateData";
 
 // configuration resources
 import dappConfigLoader from "../../../../config/dapp";
 
-// Mocks the actual discovery:accounts command to
+// Mocks the actual discovery:DiscoverAccounts command to
 // allow testing of the `runWithOptions` method.
 class MockDiscoverAccounts extends DiscoverAccounts {
   public realRunWithOptions(options?: any) {
@@ -68,7 +69,7 @@ class MockDiscoverAccounts extends DiscoverAccounts {
 
   // mocks the internal StateService
   protected accountsService: any = { updateBatch: jest.fn(), findOne: jest.fn() };
-  
+
   // mocks **getters** for protected properties
   // being filled in processTransactionsPage()
   public getDiscoveredAddresses(): string[] { return this.discoveredAddresses; }
@@ -132,6 +133,34 @@ describe("discovery/DiscoverAccounts", () => {
 
   it("should be defined", () => {
     expect(service).toBeDefined();
+  });
+
+  describe("getStateData() -->", () => {
+    it("should use correct account discovery state values", () => {
+      // act
+      const data: AccountDiscoveryStateData = (service as any).getStateData();
+
+      // assert
+      expect("latestTxPage" in data).toBe(true);
+      expect("latestTxHash" in data).toBe(true);
+      expect(data.latestTxPage).toBe(1);
+      expect(data.latestTxHash).toBeUndefined();
+    });
+
+    it("should watch state values update", () => {
+      // prepare
+      (service as any).lastPageNumber = 39;
+      (service as any).lastTransactionHash = "fakeHash1";
+
+      // act
+      const data: AccountDiscoveryStateData = (service as any).getStateData();
+
+      // assert
+      expect("latestTxPage" in data).toBe(true);
+      expect("latestTxHash" in data).toBe(true);
+      expect(data.latestTxPage).toBe(39);
+      expect(data.latestTxHash).toBe("fakeHash1");
+    });
   });
 
   describe("processTransactionsPage() -->", () => {
@@ -224,8 +253,8 @@ describe("discovery/DiscoverAccounts", () => {
     });
   });
 
-  describe("createOrFindAccount() -->", () => {
-    // for each createOrFindAccount() test, we mock a *fake*
+  describe("findOrCreateAccount() -->", () => {
+    // for each findOrCreateAccount() test, we mock a *fake*
     // list of processed transactions to test that the correct
     // functions are called with correct queries to database
     beforeEach(() => {
@@ -240,7 +269,7 @@ describe("discovery/DiscoverAccounts", () => {
 
     it("should use AccountsService to findOne document by address", async () => {
       // act
-      await (service as any).createOrFindAccount(
+      await (service as any).findOrCreateAccount(
         "address A",
         "fakeHash1",
       );
@@ -254,7 +283,7 @@ describe("discovery/DiscoverAccounts", () => {
 
     it("should read transaction confirmation height for created document", async () => {
       // act
-      await (service as any).createOrFindAccount(
+      await (service as any).findOrCreateAccount(
         "address A",
         "fakeHash1",
       );
@@ -265,7 +294,7 @@ describe("discovery/DiscoverAccounts", () => {
 
     it("should use correct values for newly created document", async () => {
       // act
-      const actualResult: Account = await (service as any).createOrFindAccount(
+      const actualResult: Account = await (service as any).findOrCreateAccount(
         "address A",
         "fakeHash1",
       );
@@ -283,7 +312,7 @@ describe("discovery/DiscoverAccounts", () => {
       }) };
 
       // act
-      const actualResult: Account = await (service as any).createOrFindAccount(
+      const actualResult: Account = await (service as any).findOrCreateAccount(
         "address A",
         "fakeHash1",
       );

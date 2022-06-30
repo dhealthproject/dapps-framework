@@ -126,7 +126,7 @@ export type AccountDocument = Account & Documentable;
 /**
  * @class AccountQuery
  * @description This class augments {@link Queryable} objects enabling
- * *accounts* to be queried **by `address`** and **by `transactionsCount`.
+ * *accounts* to be queried **by `address`** and **by `transactionsCount`.**
  * <br /><br />
  * The main purpose of this class shall be to perform queries against
  * the `accounts` collection.

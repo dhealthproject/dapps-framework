@@ -172,6 +172,12 @@ export abstract class BaseCommand
    * where this method is called with parameters that are
    * respectively the *raw arguments* and the *parsed arguments*
    * to this command call.
+   * <br /><br />
+   * This method uses the {@link stateService} to *fetch* the
+   * current execution and also uses it to *update* the state.
+   * <br /><br />
+   * Note that the {@link runWithOptions} method is called inside
+   * a try-catch block to force the error handling process.
    *
    * @access public
    * @param   {string[]}            passedParams  
@@ -215,6 +221,12 @@ export abstract class BaseCommand
       // delegate method execution to child classes
       // note that this operation may be blocking
       await this.runWithOptions(options);
+
+      // updates state with this round's information
+      this.state = await this.stateService.updateOne(
+        this.getStateQuery(), 
+        this.getStateData(), 
+      );
     }
     catch (e: any) {
       // @todo Should provide failures stacktrace + database copy

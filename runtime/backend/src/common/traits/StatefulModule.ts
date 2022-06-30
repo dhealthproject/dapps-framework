@@ -13,6 +13,7 @@ import { Logger } from "@nestjs/common";
 // internal dependencies
 import { StateService } from "../services/StateService";
 import { State, StateQuery } from "../models/StateSchema";
+import { StateData } from "../models/StateData";
 
 /**
  * @abstract
@@ -67,6 +68,22 @@ export abstract class StatefulModule {
    */
   protected getStateQuery(): StateQuery {
     return new StateQuery(undefined, this.stateIdentifier);
+  }
+
+  /**
+   * This helper method should return the latest execution state
+   * such that it can be saved.
+   * <br /><br />
+   * Execution states refer to one module's required state data,
+   * potentially necessary during execution, and which is fetched
+   * in {@link run} before execution and updated in {@link run}
+   * after execution.
+   *
+   * @access protected
+   * @returns {StateData}
+   */
+  protected getStateData(): StateData {
+    return {} as StateData
   }
 
   /**

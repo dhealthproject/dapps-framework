@@ -10,6 +10,7 @@
 // external dependencies
 import { Module } from "@nestjs/common";
 import { AccountsModule } from "./modules/AccountsModule";
+import { TransactionsModule } from "./modules/TransactionsModule";
 
 /**
  * @class DiscoveryModule
@@ -30,6 +31,7 @@ import { AccountsModule } from "./modules/AccountsModule";
   imports: [
     // imports routes and DTOs
     AccountsModule,
+    TransactionsModule,
   ],
 })
 export class DiscoveryModule {}

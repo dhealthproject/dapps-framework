@@ -184,7 +184,8 @@ export class QueryService<TDocument extends Documentable> {
     const { sort, order, pageNumber, pageSize, ...updateQuery } = searchQuery;
 
     // execute query and return a single document
-    // Note that 
+    // note that this method uses the `upsert` option
+    // to execute an INSERT for inexisting document
     return model.findOneAndUpdate(
       updateQuery as any, data, { upsert: true, returnOriginal: false }
     ).exec();

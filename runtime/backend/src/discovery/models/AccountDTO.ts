@@ -11,7 +11,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
- * @class StateDto
+ * @class AccountDTO
  * @description A DTO class that consists of an account's **address**,
  * an optional transactions count, a first transaction timestamp and
  * a first transaction block height.
