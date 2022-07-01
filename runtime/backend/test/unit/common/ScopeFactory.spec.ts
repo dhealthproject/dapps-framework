@@ -90,6 +90,7 @@ describe("common/ScopeFactory", () => {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
+        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
       };
 
       const configDto1: DappConfig = { ...baseConfig, scopes: [] };
@@ -111,6 +112,7 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
         scopes: ["discovery", "payout", "processor"],
+        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
       };
 
       // act
@@ -132,6 +134,7 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
         scopes: ["discovery", "processor"],
+        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
       };
 
       // act
@@ -152,6 +155,7 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
         scopes: ["database"],
+        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
       };
 
       // act
@@ -169,6 +173,7 @@ describe("common/ScopeFactory", () => {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
+        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
       };
 
       const configDto1: DappConfig = { ...baseConfig, scopes: [] };
@@ -198,6 +203,7 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
         scopes: ["discovery"],
+        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
       };
 
       // act
@@ -219,6 +225,7 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
         scopes: [],
+        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
       };
 
       // act
@@ -239,6 +246,7 @@ describe("common/ScopeFactory", () => {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
+        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
       };
 
       const configDto1: DappConfig = { ...baseConfig, scopes: [] };
@@ -267,6 +275,7 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
         scopes: ["discovery"],
+        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
       };
 
       // act
@@ -287,6 +296,7 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
         scopes: [],
+        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
       };
 
       // act

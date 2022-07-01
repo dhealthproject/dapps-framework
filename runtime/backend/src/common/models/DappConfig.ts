@@ -9,6 +9,7 @@
  */
 // internal dependencies
 import type { Scope } from "./Scope";
+import { DatabaseConfig } from "./DatabaseConfig";
 
 /**
  * @interface DappConfig
@@ -70,4 +71,15 @@ export interface DappConfig {
    */
   scopes: Scope[];
 
+  /**
+   * A database configuration object as defined in {@link DatabaseConfig}.
+   * <br /><br />
+   * Note that modifying the content of this configuration field
+   * *changes* the database connection and may thereby affect the
+   * data loaded by the backend runtime.
+   *
+   * @access public
+   * @var {DatabaseConfig}
+   */
+  database: DatabaseConfig;
 }

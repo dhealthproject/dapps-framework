@@ -17,7 +17,6 @@ import { DappConfig } from "../common/models/DappConfig";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
-import networkConfigLoader from "../../config/network";
 
 /**
  * Function to bootstrap the CLI of the app.
@@ -30,7 +29,6 @@ async function bootstrap(): Promise<void> {
   await CommandFactory.run(
     CLIModule.register({
       ...(dappConfigLoader()),
-      ...(networkConfigLoader()),
     } as DappConfig) as any, // nest-commander CommandFactory accepts only Type<any>
     ["warn", "error"],
   );

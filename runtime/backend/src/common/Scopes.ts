@@ -15,6 +15,10 @@ import { DiscoveryModule } from "../discovery/DiscoveryModule";
 import { PayoutModule } from "../payout/PayoutModule";
 import { ProcessorModule } from "../processor/ProcessorModule";
 
+// configuration resources
+import dappConfigLoader from "../../config/dapp";
+const db = dappConfigLoader().database;
+
 /**
  * @description This exported constant enumerates all available **scoped**
  * modules. Scopes are opt-in and only enabled if they are present in a
@@ -42,7 +46,7 @@ import { ProcessorModule } from "../processor/ProcessorModule";
  */
 export const Scopes: { [key: string]: any } = {
   database: MongooseModule.forRoot(
-    `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`,
+    `mongodb://${db.user}:${process.env.DB_PASS}@${db.host}:${db.port}/${db.name}?authSource=admin`,
   ),
   discovery: DiscoveryModule,
   payout: PayoutModule,

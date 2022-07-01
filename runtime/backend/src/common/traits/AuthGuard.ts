@@ -19,5 +19,5 @@ import { AuthGuard as NestGuard } from "@nestjs/passport";
  * @todo Investigate whether a PEM-encoded public key makes more sense for *signing tokens* in production environments.
  * @since v0.2.0
  */
- @Injectable()
+@Injectable()
 export class AuthGuard extends NestGuard("jwt") {}

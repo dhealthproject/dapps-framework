@@ -31,6 +31,6 @@
     "strictBindCallApply": false,
     "strictNullChecks": false
   },
-  "include": ["src/", "config/", "test"],
+  "include": ["src/", "config/", "migrations/", "test/"],
   "exclude": ["node_modules", "dist"]
 }

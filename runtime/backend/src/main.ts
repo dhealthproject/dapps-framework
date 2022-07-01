@@ -12,7 +12,8 @@ import { NestFactory } from "@nestjs/core";
 import { Logger } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import helmet from "helmet";
-import * as childProcess from "child_process";
+import childProcess from "child_process";
+import cookieParser from "cookie-parser";
 
 // internal dependencies
 import { AppModule } from "./AppModule";
@@ -34,7 +35,6 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(
     AppModule.register({
       ...(dappConfigLoader()),
-      ...(networkConfigLoader()),
     } as DappConfig),
   );
 
@@ -45,6 +45,7 @@ async function bootstrap(): Promise<void> {
   // add secutity
   app.enableCors();
   app.use(helmet());
+  app.use(cookieParser(process.env.AUTH_TOKEN_SECRET));
 
   // init OpenAPI documentation with information from package.json
   const docConfig = new DocumentBuilder()

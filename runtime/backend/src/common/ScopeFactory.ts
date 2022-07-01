@@ -21,6 +21,7 @@ import { Commands } from "./Commands";
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
 import networkConfigLoader from "../../config/network";
+import securityConfigLoader from "../../config/security";
 
 /**
  * @class ScopeFactory
@@ -74,7 +75,7 @@ export class ScopeFactory {
     this.baseImports = [
       ConfigModule.forRoot({
         //load: [(): DappConfig => this.dappConfig],
-        load: [dappConfigLoader, networkConfigLoader],
+        load: [dappConfigLoader, networkConfigLoader, securityConfigLoader],
         isGlobal: true,
         envFilePath: ['.env', '.env-sample'],
       }),

@@ -37,6 +37,12 @@ lerna run test --stream --scope @dhealthdapps/backend
 lerna run serve --stream --scope @dhealthdapps/backend
 ```
 
+## Database management
+
+```bash
+npx typeorm migration:create migrations/StateUpdate
+```
+
 ## Getting help
 
 Use the following available resources to get help:

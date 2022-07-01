@@ -104,7 +104,7 @@ export abstract class BaseCommand
    * and the **enabled scopes** of the backend runtime.
    *
    * @access protected
-   * @var {NetworkConfig}
+   * @var {DappConfig}
    */
   protected dappConfig: DappConfig;
 
@@ -199,7 +199,7 @@ export abstract class BaseCommand
         `Arguments received: ["${passedParams.join("\", \"")}"]`
       );
       if (options !== undefined) this.debugLog(
-        `Options received: ${JSON.stringify(options, null, 2)}`
+        `Options received: ${JSON.stringify(options, undefined, 2)}`
       );
     }
 
@@ -215,7 +215,7 @@ export abstract class BaseCommand
 
       // displays state debug information
       if (options.debug && !options.quiet) {
-        this.debugLog(`Current state: ${JSON.stringify(this.state, null, 2)}`);
+        this.debugLog(`Current state: ${JSON.stringify(this.state, undefined, 2)}`);
       }
 
       // delegate method execution to child classes

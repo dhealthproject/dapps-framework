@@ -16,7 +16,6 @@ import { DappConfig } from "../common/models/DappConfig";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
-import networkConfigLoader from "../../config/network";
 
 /**
  * Function to bootstrap the scheduler of the app.
@@ -29,7 +28,6 @@ async function bootstrap(): Promise<void> {
   NestFactory.createApplicationContext(
     WorkerModule.register({
       ...(dappConfigLoader()),
-      ...(networkConfigLoader()),
     } as DappConfig),
   );
 }

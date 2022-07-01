@@ -8,7 +8,17 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Body, Controller, HttpException, Ip, Get, Post, Request, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Ip,
+  Get,
+  Post,
+  Request as NestRequest,
+  Res as NestResponse,
+  UseGuards,
+} from "@nestjs/common";
+import { Request, Response } from "express";
 
 // internal dependencies
 import { AuthenticationToken, AuthService } from "../services/AuthService";
@@ -38,6 +48,40 @@ export class AuthController {
   ) {}
 
   /**
+   * 
+   * <br /><br />
+   * The `passthrough` flag in `NestResponse()` operator permits
+   * to instruct *nest* to pass on the response cookie onto the
+   * express `Response` object.
+   *
+   * @param req 
+   * @returns 
+   */
+  @Get("auth/challenge")
+  protected async getAuthCode(
+    @NestRequest() request: Request,
+    @NestResponse({ passthrough: true }) response: Response,
+  ): Promise<string> {
+    // generates cookie configuration (depends on dApp)
+    const authCookie = this.authService.getCookie();
+
+    // generates a *random* authentication challenge
+    const authChallenge = this.authService.getChallenge();
+
+    // set authentication challenge as the value of the
+    // cookie. This will be replaced by the accessToken
+    // and refreshToken when authentication is successful.
+    response.cookie(authCookie.name, authChallenge, {
+      httpOnly: true,
+      domain: authCookie.domain,
+      signed: true,
+    });
+
+    // serves the authentication challenge
+    return authChallenge;
+  }
+
+  /**
    * Creates a JSON Web Token for the `address` that is
    * specified in the request body. Note that a token will
    * only be returned if an `authCode` is present in the
@@ -52,13 +96,13 @@ export class AuthController {
    */
   @Post('auth/token')
   protected async getAccessToken(
-    @Request() req: any,
+    @NestRequest() req: Request,
     @Ip() ip: string,
     @Body() body: TokenRequestDTO
   ): Promise<AuthenticationToken> {
     try {
       const user: User = await this.authService.validate(
-        body.address,
+        body.address, // <<<------ XXX address is still UNKNOWN HERE!!!! doesnt work.
         body.authCode,
       );
 
@@ -84,7 +128,7 @@ export class AuthController {
    */
   @UseGuards(AuthGuard)
   @Get('me')
-  protected getProfile(@Request() req: any) {
+  protected getProfile(@NestRequest() req: Request) {
     return req.user;
   }
 }

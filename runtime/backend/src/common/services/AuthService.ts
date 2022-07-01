@@ -8,6 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
+import { Request } from "express";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
@@ -23,6 +24,15 @@ import {
 // internal dependencies
 import { NetworkService } from "../services/NetworkService";
 import { User } from "../models/User";
+
+/**
+ * 
+ */
+export interface CookiePayload {
+  name: string;
+  domain: string;
+  secret: string;
+}
 
 /**
  * 
@@ -51,6 +61,10 @@ export interface AuthenticationToken {
  */
 @Injectable()
 export class AuthService {
+
+  protected cookie: CookiePayload;
+  protected challengeSize: number;
+
   /**
    * Constructs an instance of the network service and connects
    * to the **configured** `defaultNode` (config/network.json). Note
@@ -64,21 +78,33 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly networkService: NetworkService,
     private jwtService: JwtService,
-  ) {}
+  ) {
+    const name = this.configService.get<string>("cookie.name");
+    const domain = this.configService.get<string>("cookie.domain");
+    const secret = this.configService.get<string>("auth.secret");
 
-  protected getTransactionQuery(): any {
-    // get the account address from config
-    const authAuthority = this.configService.get<string>("authAuthority");
+    // configures cookie(s) creation
+    this.cookie = { name, domain, secret } as CookiePayload;
+    this.challengeSize = this.configService.get<number>("auth.challengeSize");
+  }
 
-    // returns a REST-compatible query
-    return {
-      recipientAddress: Address.createFromRawAddress(authAuthority),
-      type: [TransactionType.TRANSFER],
-      embedded: false,
-      order: Order.Desc,
-      pageNumber: 1,
-      pageSize: 100,
-    }
+  /**
+   * 
+   * @param request 
+   */
+  public getCookie(): CookiePayload {
+    return this.cookie;
+  }
+
+  /**
+   * 
+   * @param request 
+   */
+  public getChallenge(): string {
+    // generates random number using greatest radix (36)
+    // which serves numbers's representation in ASCII
+    const size: number = this.challengeSize;
+    return Math.random().toString(36).slice(-(size));
   }
 
   /**
@@ -157,5 +183,24 @@ export class AuthService {
       secret: process.env.AUTH_TOKEN_SECRET,
       expiresIn: "1h"
     }) } as AuthenticationToken;
+  }
+
+  /**
+   * 
+   * @returns 
+   */
+  protected getTransactionQuery(): any {
+    // get the account address from config
+    const authAuthority = this.configService.get<string>("authAuthority");
+
+    // returns a REST-compatible query
+    return {
+      recipientAddress: Address.createFromRawAddress(authAuthority),
+      type: [TransactionType.TRANSFER],
+      embedded: false,
+      order: Order.Desc,
+      pageNumber: 1,
+      pageSize: 100,
+    }
   }
 }
