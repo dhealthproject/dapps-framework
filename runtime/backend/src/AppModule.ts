@@ -52,7 +52,7 @@ export class AppModule {
   static register(configs: DappConfig): DynamicModule {
     // print activation information of all scopes
     AppModule.logger.debug(
-      `Enabled scopes: ${JSON.stringify(configs.scopes, null, 2)}`,
+      `Enabled scopes: ${JSON.stringify(configs.scopes, undefined, 2)}`,
     );
 
     // get imports dynamically based on enabled scopes in the configuration

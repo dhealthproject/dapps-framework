@@ -18,6 +18,7 @@ import {
   AccountDocument,
   AccountQuery,
 } from "../../../../src/discovery/models/AccountSchema";
+import { QueryParameters } from "@/common/concerns/Queryable";
 
 // Mock the query service to enable *testing* of protected
 // methods such as `typecastField`.
@@ -101,7 +102,7 @@ describe("common/QueryService", () => {
 
   describe("find() -->", () => {
     it("should call aggregate() from model", async () => {
-      await service.find(new AccountQuery("non-existing"), testModel);
+      await service.find(new AccountQuery({ id: "non-existing" } as AccountDocument), testModel);
       expect(aggregateFn).toHaveBeenCalled();
     });
 
@@ -115,7 +116,7 @@ describe("common/QueryService", () => {
         },
       };
       const result = await service.find(
-        new AccountQuery("non-existing"),
+        new AccountQuery({ id: "non-existing" } as AccountDocument),
         testModel,
       );
       expect(result).toStrictEqual(expectedResult);
@@ -131,7 +132,7 @@ describe("common/QueryService", () => {
         },
       };
       const result = await service.find(
-        new AccountQuery("non-existing"),
+        new AccountQuery({ id: "non-existing" } as AccountDocument),
         testModel,
       );
       expect(result).toStrictEqual(expectedResult);
@@ -163,7 +164,7 @@ describe("common/QueryService", () => {
         };
       });
       const result = await service.find(
-        new AccountQuery("non-existing"),
+        new AccountQuery({ id: "non-existing" } as AccountDocument),
         testModel,
       );
       expect(result).toStrictEqual(expectedResult);
@@ -189,12 +190,8 @@ describe("common/QueryService", () => {
     it("should have correct sort: address", async () => {
       await service.find(
         new AccountQuery(
-          "non-existing",
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          "address",
+          { id: "non-existing" } as AccountDocument,
+          { sort: "address" } as QueryParameters,
         ),
         testModel,
       );
@@ -210,7 +207,7 @@ describe("common/QueryService", () => {
     });
 
     it("should have correct order: asc", async () => {
-      await service.find(new AccountQuery("non-existing"), testModel);
+      await service.find(new AccountQuery({ id: "non-existing" } as AccountDocument), testModel);
       expect(aggregateFn).toHaveBeenCalledWith([
         { $match: { id: "non-existing" } },
         {
@@ -225,13 +222,8 @@ describe("common/QueryService", () => {
     it("should have correct order: desc", async () => {
       await service.find(
         new AccountQuery(
-          "non-existing",
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          "desc",
+          { id: "non-existing" } as AccountDocument,
+          { order: "desc" } as QueryParameters,
         ),
         testModel,
       );
@@ -248,7 +240,10 @@ describe("common/QueryService", () => {
 
     it("should permit overwrite of pageNumber and pageSize", async () => {
       await service.find(
-        new AccountQuery("non-existing", undefined, undefined, 2, 17),
+        new AccountQuery(
+          { id: "non-existing" } as AccountDocument,
+          { pageNumber: 2, pageSize: 17 } as QueryParameters,
+        ),
         testModel,
       );
       expect(aggregateFn).toHaveBeenCalledWith([

@@ -10,7 +10,6 @@
 // external dependencies
 import { Injectable } from "@nestjs/common";
 import { Model } from "mongoose";
-import { BulkWriteResult, UnorderedBulkOperation } from "mongodb";
 
 // internal dependencies
 import { Documentable } from "../concerns/Documentable";
@@ -98,12 +97,12 @@ export class QueryService<TDocument extends Documentable> {
    *
    * @access public
    * @async
-   * @param   {Queryable}         query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {Queryable<TDocument>}         query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @param   {Model<TDocument>}  model     The model *class instance* used for resulting documents.
    * @returns {Promise<PaginatedResultDTO<TDocument>>} The matching documents after execution of the query.
    */
   public async find(
-    query: Queryable,
+    query: Queryable<TDocument>,
     model: Model<TDocument>,
   ): Promise<PaginatedResultDTO<TDocument>> {
     // wrap pagination+query to be mongo-compatible
@@ -145,12 +144,12 @@ export class QueryService<TDocument extends Documentable> {
    * 
    * @access public
    * @async
-   * @param   {Queryable}         query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {Queryable<TDocument>}         query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @param   {Model<TDocument>}  model     The model *class instance* used for the resulting document.
    * @returns {Promise<TDocument>}  The resulting document.
    */
   public async findOne(
-    query: Queryable,
+    query: Queryable<TDocument>,
     model: Model<TDocument>,
   ): Promise<TDocument> {
     // wrap pagination+query to be mongo-compatible
@@ -167,13 +166,13 @@ export class QueryService<TDocument extends Documentable> {
    * <br /><br />
    *
    * @async
-   * @param   {Queryable}             query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {Queryable<TDocument>}             query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @param   {Model<TDocument>}      model   The model *class instance* used for the resulting document.
    * @param   {Record<string, any>}   data    The fields or data that has to be updated (will be added to `$set: {}`).
    * @returns {Promise<TDocument>}
    */
   public async createOrUpdate(
-    query: Queryable,
+    query: Queryable<TDocument>,
     model: Model<TDocument>,
     data: Record<string, any>,
   ): Promise<TDocument> {
@@ -205,28 +204,40 @@ export class QueryService<TDocument extends Documentable> {
    *
    * @todo Currently the `$set` parameters use `new Date()`, probably a mongo/mongoose routine for "now" is more adequate.
    * @async
-   * @param   {Model<any>}  model       
-   * @param   {TDocument[]}   documents
-   * @returns {Promise<BulkWriteResult>}
+   * @param   {Model<TDocument>}    model       
+   * @param   {TDocument[]}         documents
+   * @returns {Promise<number>}   The number of documents **affected** by the update queries.
    */
   public async updateBatch(
     model: Model<TDocument>,
     documents: TDocument[],
-  ): Promise<BulkWriteResult> {
-    const bulk: UnorderedBulkOperation =
-      model.collection.initializeUnorderedBulkOp();
+  ): Promise<number> {
+    // creates a bulk operation handler
+    const bulk: any = model.collection.initializeUnorderedBulkOp();
 
-    documents.map((document: TDocument) => bulk.find({ id: document.id })
+    // each document is updated in one query
+    // all queries a batched together with bulk handler
+    // note that an **upsert** is used for new documents
+    documents.map((document: TDocument) => bulk.find(document.toQuery())
       .upsert()
       .update({
         $set: {
           ...document,
-          updatedAt: new Date().valueOf(),
+          updatedAt: new Date(),
         },
       })
     );
 
-    return bulk.execute();
+    // execute the bulk operation
+    let result: any;
+    if (! (result = await bulk.execute())) {
+      return 0;
+    }
+
+    // sum number of inserted, updated and upserted
+    return ("nInserted" in result ? result.nInserted : 0)
+      + ("nModified" in result ? result.nModified : 0)
+      + ("nUpserted" in result ? result.nUpserted : 0)
   }
 
   /**
@@ -239,16 +250,16 @@ export class QueryService<TDocument extends Documentable> {
    * `pageNumber=1`, `pageSize=20`.
    *
    * @access protected
-   * @param   {Queryable}   query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {Queryable<TDocument>}   query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @returns {SearchQuery}   The configured {@link SearchQuery} with pagination parameters and sanitized Mongo query.
    */
-  protected getQueryConfig(query: Queryable): SearchQuery {
+  protected getQueryConfig(query: Queryable<TDocument>): SearchQuery {
     // destructures query parameters
     const { sort, order, pageNumber, pageSize } = query;
 
     // wrap search query and validate/fix query fields
-    const { searchQuery } = (({ sort, order, pageNumber, pageSize, ...o }) => ({
-      searchQuery: this.sanitizeSearchQuery(o),
+    const { searchQuery } = (({ sort, order, pageNumber, pageSize, document }) => ({
+      searchQuery: this.sanitizeSearchQuery({...document}), // destructuring
     }))(query);
 
     // defaults to sortField being "_id"

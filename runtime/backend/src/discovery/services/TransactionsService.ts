@@ -95,34 +95,14 @@ export class TransactionsService {
    *
    * @async
    * @param   {TransactionDocument[]} documents
-   * @returns {Promise<TransactionDocument[]>}
+   * @returns {Promise<number>}
    */
   async updateBatch(
     documents: TransactionDocument[],
-  ): Promise<TransactionDocument[]> {
-    // get the bulk operation handler
-    const bulk: UnorderedBulkOperation =
-      this.model.collection.initializeUnorderedBulkOp();
-
-    // prepares create/update query for each
-    for (let i = 0, max = documents.length; i < max; i++) {
-      const document = documents[i];
-      const query = {
-        signerAddress: document.signerAddress,
-        transactionHash: document.transactionHash,
-      };
-
-      // adds query to bulk operation
-      bulk.find(query).upsert().update({
-        $set: {
-          ...document,
-          updatedAt: new Date(),
-        },
-      });
-    }
-
-    // execute bulk operation
-    bulk.execute();
-    return documents;
+  ): Promise<number> {
+    return this.queriesService.updateBatch(
+      this.model,
+      documents,
+    );
   }
 }

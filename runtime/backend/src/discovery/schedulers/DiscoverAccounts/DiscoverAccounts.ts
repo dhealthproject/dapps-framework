@@ -394,7 +394,7 @@ export class DiscoverAccounts
 
     // queries the database to find account by address
     const document = await this.accountsService.findOne(
-      new AccountQuery(undefined, recipient),
+      new AccountQuery({ address: recipient } as AccountDocument),
     );
 
     // if the document exists, we must update `transactionsCount`

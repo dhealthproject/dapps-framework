@@ -13,7 +13,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 // internal dependencies
 import { Documentable } from "../../common/concerns/Documentable";
 import { Transferable } from "../../common/traits/Transferable";
-import { Queryable } from "../../common/concerns/Queryable";
+import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
 import { TransactionDTO } from "../models/TransactionDTO";
 
 /**
@@ -98,6 +98,25 @@ export class Transaction extends Transferable<TransactionDTO> {
    */
   @Prop()
   public discoveredAt?: Date;
+
+  /**
+   * This method implements a specialized query format to query items
+   * individually, as documents, in the collection: `transactions`.
+   *
+   * @access public
+   * @returns {Record<string, any>}    The individual document data that is used in a query.
+   */
+  public toQuery(): Record<string, any> {
+    let query: Record<string, any> = {};
+
+    if (undefined !== this.signerAddress)
+      query["signerAddress"] = this.signerAddress;
+
+    if (undefined !== this.transactionHash)
+      query["transactionHash"] = this.transactionHash;
+
+    return query;
+  }
 }
 
 /**
@@ -105,10 +124,14 @@ export class Transaction extends Transferable<TransactionDTO> {
  * @description This type merges the mongoose base `Document` object with
  * specialized state document objects such that this document can be used
  * directly in `mongoose` queries for `Transactions` documents.
+ * <br /><br />
+ * Due to the implementation of `toQuery` in {@link Account}, the order
+ * of creation of this mixin is important such that the implementation of
+ * the method inside `Account` overwrites that of `Documentable`.
  *
  * @since v0.2.0
  */
-export type TransactionDocument = Transaction & Documentable;
+export type TransactionDocument = Documentable & Transaction;
 
 /**
  * @class TransactionQuery
@@ -120,52 +143,19 @@ export type TransactionDocument = Transaction & Documentable;
  *
  * @since v0.2.0
  */
-export class TransactionQuery extends Queryable {
+export class TransactionQuery extends Queryable<TransactionDocument> {
   /**
-   * This field can be used to query documents in the `Transactions` mongo
-   * collection by their `signerAddress` field value.
+   * Copy constructor for pageable queries in `transactions` collection.
    *
-   * @access public
-   * @var {string}
+   * @see Queryable
+   * @param   {TransactionDocument|undefined} document          The *document* instance (defaults to `undefined`) (optional).
+   * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
-  public signerAddress?: string;
-
-  /**
-   * This field can be used to query documents in the `Transactions` mongo
-   * collection by their `transactionHash` field value.
-   *
-   * @access public
-   * @var {string}
-   */
-  public transactionHash?: string;
-
-  /**
-   * Copy constructor for pageable queries in `states`collection.
-   * The `StateQuery` parameter that is optionally passed to this
-   * method is then destructured to mimic a copy construction logic.
-   *
-   * @param   {string|undefined}    identifier        The *document* identifier (value of the field "_id").
-   * @param   {string|undefined}    signerAddress     The query's `signerAddress` field value (optional).
-   * @param   {string|undefined}    transactionHash   The query's `transactionHash` field value (optional).
-   * @param   {number|undefined}    pageNumber        The page number of the query (defaults to `1`).
-   * @param   {number|undefined}    pageSize          The number of entities/documents in one page (defaults to `20`).
-   * @param   {string|undefined}    sort              The field used for sorting (defaults to `"_id"`).
-   * @param   {string|undefined}    order             The sorting direction, must be one of `"asc"` and `"desc"` (defaults to `"asc"`)
-   */
-  public constructor(
-    id?: string,
-    signerAddress?: string,
-    transactionHash?: string,
-    pageNumber?: number,
-    pageSize?: number,
-    sort?: string,
-    order?: string,
+   public constructor(
+    document?: TransactionDocument,
+    queryParams: QueryParameters = undefined,
   ) {
-    super(id, pageNumber, pageSize, sort, order);
-
-    if (undefined !== signerAddress) this.signerAddress = signerAddress;
-    if (undefined !== transactionHash)
-      this.transactionHash = transactionHash;
+    super(document, queryParams);
   }
 }
 

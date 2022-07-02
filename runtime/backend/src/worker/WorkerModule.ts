@@ -49,7 +49,7 @@ export class WorkerModule {
     );
 
     // print activation information of all scopes
-    const scopesJSON = JSON.stringify(actualScopes, null, 2);
+    const scopesJSON = JSON.stringify(actualScopes, undefined, 2);
     WorkerModule.logger.debug(
       `Found schedulers to be registered in scopes: ${scopesJSON}`,
     );

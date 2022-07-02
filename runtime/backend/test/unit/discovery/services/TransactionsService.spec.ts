@@ -15,9 +15,9 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
-import { TransactionDocument, TransactionQuery } from "../../../../src/discovery/models/TransactionSchema";
+import { Transaction, TransactionDocument, TransactionQuery } from "../../../../src/discovery/models/TransactionSchema";
 
-describe("discovery/AccountsService", () => {
+describe("discovery/TransactionsService", () => {
   let service: TransactionsService;
   let queriesService: QueryService<TransactionDocument>;
   let mockDate: Date;
@@ -94,13 +94,12 @@ describe("discovery/AccountsService", () => {
 
     it("should call collection.initializeUnorderedBulkOp() from model", async () => {
       // prepare
-      const transactionDoc = {
-        signerAddress: "test-address",
-        transactionHash: "fakeHash1",
-      } as TransactionDocument;
+      const transactionDoc = new Transaction();
+      transactionDoc.signerAddress = "test-address";
+      transactionDoc.transactionHash = "fakeHash1";
 
       // act
-      await service.updateBatch([transactionDoc]);
+      await service.updateBatch([transactionDoc as TransactionDocument]);
 
       // assert
       expect(bulkMocks.find).toHaveBeenCalled();
@@ -108,13 +107,12 @@ describe("discovery/AccountsService", () => {
 
     it("should call finder and pass correct query by signer and hash", async () => {
       // prepare
-      const transactionDoc = {
-        signerAddress: "test-address",
-        transactionHash: "fakeHash1",
-      } as TransactionDocument;
+      const transactionDoc = new Transaction();
+      transactionDoc.signerAddress = "test-address";
+      transactionDoc.transactionHash = "fakeHash1";
 
       // act
-      await service.updateBatch([transactionDoc]);
+      await service.updateBatch([transactionDoc as TransactionDocument]);
 
       // assert
       expect(bulkMocks.find).toHaveBeenCalled();
@@ -128,13 +126,12 @@ describe("discovery/AccountsService", () => {
 
     it("should modify updatedAt field in $set routine", async () => {
       // prepare
-      const transactionDoc = {
-        signerAddress: "test-address",
-        transactionHash: "fakeHash1",
-      } as TransactionDocument;
+      const transactionDoc = new Transaction();
+      transactionDoc.signerAddress = "test-address";
+      transactionDoc.transactionHash = "fakeHash1";
 
       // act
-      await service.updateBatch([transactionDoc]);
+      await service.updateBatch([transactionDoc as TransactionDocument]);
 
       // assert
       expect(upsertMock.update).toHaveBeenCalled();

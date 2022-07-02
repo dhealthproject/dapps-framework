@@ -48,7 +48,7 @@ export class CLIModule {
     );
 
     // print activation information of all scopes
-    const scopesJSON = JSON.stringify(actualScopes, null, 2);
+    const scopesJSON = JSON.stringify(actualScopes, undefined, 2);
     CLIModule.logger.debug(
       `Found commands to be registered in scopes: ${scopesJSON}`,
     );

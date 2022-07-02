@@ -12,30 +12,20 @@
  * @description This concern requires the presence of fields that
  * consist in delivering *paginated* information.
  *
- * @since v0.1.0
+ * @since v0.2.0
  */
 export interface Pageable {
   /**
-   * Page number query.
-   * Determine which page number the result should be returned from.
-   *
-   * E.g.
-   * ```js
-   *  pageNumber: 3
-   * ```
+   * A query's page number. This determines the *offset* of search
+   * results.
    *
    * @var {number}
    */
   pageNumber: number;
 
   /**
-   * Page size query.
-   * Determine which page size the result should be returned as.
-   *
-   * E.g.
-   * ```js
-   *  pageSize: 100
-   * ```
+   * A query's page size. This determines the *number of items* a
+   * search result will contain.
    *
    * @var {number}
    */

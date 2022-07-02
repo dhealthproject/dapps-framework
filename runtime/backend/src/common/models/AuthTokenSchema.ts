@@ -12,7 +12,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 // internal dependencies
 import { Documentable } from "../concerns/Documentable";
-import { Queryable } from "../concerns/Queryable";
+import { Queryable, QueryParameters } from "../concerns/Queryable";
 
 /**
  * @class AuthToken
@@ -47,17 +47,36 @@ export class AuthToken /* not transferable */ {
   public authCode: string;
 
   /**
-   * The state cache document's actual **data**. Note that this field
-   * is *poorly* typed and can contain any *object*, the reason for
-   * this is to be flexible about state caches for the beginning, in a
-   * later iteration of the framework it is possible that this field
-   * would be updated to a strictly typed alternative.
+   * The *address* of the user that used this authentication token.
    *
    * @access public
-   * @var {number}
+   * @var {string}
+   */
+   @Prop({ required: true })
+   public usedBy: string;
+
+  /**
+   * The timestamp at which this authentication token was used, this
+   * may be referred to as the *time of consumption* of a token.
+   *
+   * @access public
+   * @var {Date}
    */
   @Prop({ required: true })
-  public usedAt: number;
+  public usedAt: Date;
+
+  /**
+   * This method implements a specialized query format to query items
+   * individually, as documents, in the collection: `authTokens`.
+   *
+   * @access public
+   * @returns {Record<string, any>}    The individual document data that is used in a query.
+   */
+  public toQuery(): Record<string, any> {
+    return {
+      authCode: this.authCode,
+    };
+  }
 }
 
 /**
@@ -65,10 +84,14 @@ export class AuthToken /* not transferable */ {
  * @description This type merges the mongoose base `Document` object with
  * specialized authentication token objects such that this document can be
  * used directly in `mongoose` queries for `authTokens` documents.
+ * <br /><br />
+ * Due to the implementation of `toQuery` in {@link AuthToken}, the order
+ * of creation of this mixin is important such that the implementation of
+ * the method inside `AuthToken` overwrites that of `Documentable`.
  *
- * @since v0.1.0
+ * @since v0.2.0
  */
-export type AuthTokenDocument = AuthToken & Documentable;
+export type AuthTokenDocument = Documentable & AuthToken;
 
 /**
  * @class AuthTokenQuery
@@ -78,41 +101,21 @@ export type AuthTokenDocument = AuthToken & Documentable;
  * The main purpose of this class shall be to perform queries against
  * the `states` collection.
  *
- * @since v0.1.0
+ * @since v0.2.0
  */
-export class AuthTokenQuery extends Queryable {
-  /**
-   * This field can be used to query documents in the `authTokens` mongo
-   * collection by their `authCode` field value.
-   *
-   * @access public
-   * @var {string}
-   */
-  public authCode?: string;
-
+export class AuthTokenQuery extends Queryable<AuthTokenDocument> {
   /**
    * Copy constructor for pageable queries in `authTokens` collection.
-   * The `AuthTokenQuery` parameter that is optionally passed to this
-   * method is then destructured to mimic a copy construction logic.
    *
-   * @param   {string|undefined}    identifier   The *document* identifier, this is the value of the field "_id" (optional).
-   * @param   {string|undefined}    authCode     The query's `authCode` field value (optional).
-   * @param   {number|undefined}    pageNumber   The page number of the query (defaults to `1`).
-   * @param   {number|undefined}    pageSize     The number of entities/documents in one page (defaults to `20`).
-   * @param   {string|undefined}    sort         The field used for sorting (defaults to `"_id"`).
-   * @param   {string|undefined}    order        The sorting direction, must be one of `"asc"` and `"desc"` (defaults to `"asc"`)
+   * @see Queryable
+   * @param   {AuthTokenDocument|undefined}   document          The *document* instance (defaults to `undefined`) (optional).
+   * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
   public constructor(
-    id?: string,
-    authCode?: string,
-    pageNumber?: number,
-    pageSize?: number,
-    sort?: string,
-    order?: string,
+    document?: AuthTokenDocument,
+    queryParams: QueryParameters = undefined,
   ) {
-    super(id, pageNumber, pageSize, sort, order);
-
-    if (undefined !== authCode) this.authCode = authCode;
+    super(document, queryParams);
   }
 }
 
@@ -122,6 +125,6 @@ export class AuthTokenQuery extends Queryable {
  * {@link AuthToken} class and should be used mainly when *inferring* the
  * type of fields in a document for the corresponding collection.
  *
- * @since v0.1.0
+ * @since v0.2.0
  */
 export const AuthTokenSchema = SchemaFactory.createForClass(AuthToken);

@@ -13,7 +13,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 // internal dependencies
 import { Documentable } from "../../common/concerns/Documentable";
 import { Transferable } from "../../common/traits/Transferable";
-import { Queryable } from "../../common/concerns/Queryable";
+import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
 import { AccountDTO } from "../models/AccountDTO";
 
 /**
@@ -28,7 +28,7 @@ import { AccountDTO } from "../models/AccountDTO";
  *
  * @todo The {@link Account} model does not need fields to be **public**.
  * @todo Timestamp fields should be **numbers** to avoid timezone issues.
- * @since v0.1.0
+ * @since v0.2.0
  */
 @Schema({
   timestamps: true,
@@ -111,6 +111,19 @@ export class Account extends Transferable<AccountDTO> {
    */
   @Prop()
   public updatedAt?: Date;
+
+  /**
+   * This method implements a specialized query format to query items
+   * individually, as documents, in the collection: `accounts`.
+   *
+   * @access public
+   * @returns {Record<string, any>}    The individual document data that is used in a query.
+   */
+  public toQuery(): Record<string, any> {
+    return {
+      address: this.address,
+    };
+  }
 }
 
 /**
@@ -118,10 +131,14 @@ export class Account extends Transferable<AccountDTO> {
  * @description This type merges the mongoose base `Document` object with
  * specialized state document objects such that this document can be used
  * directly in `mongoose` queries for `accounts` documents.
+ * <br /><br />
+ * Due to the implementation of `toQuery` in {@link Account}, the order
+ * of creation of this mixin is important such that the implementation of
+ * the method inside `Account` overwrites that of `Documentable`.
  *
- * @since v0.1.0
+ * @since v0.2.0
  */
-export type AccountDocument = Account & Documentable;
+export type AccountDocument = Documentable & Account;
 
 /**
  * @class AccountQuery
@@ -131,54 +148,21 @@ export type AccountDocument = Account & Documentable;
  * The main purpose of this class shall be to perform queries against
  * the `accounts` collection.
  *
- * @since v0.1.0
+ * @since v0.2.0
  */
-export class AccountQuery extends Queryable {
+export class AccountQuery extends Queryable<AccountDocument> {
   /**
-   * This field can be used to query documents in the `accounts` mongo
-   * collection by their `address` field value.
+   * Copy constructor for pageable queries in `accounts` collection.
    *
-   * @access public
-   * @var {string}
-   */
-  public address?: string;
-
-  /**
-   * This field can be used to query documents in the `accounts` mongo
-   * collection by their `transactionsCount` field value.
-   *
-   * @access public
-   * @var {number}
-   */
-  public transactionsCount?: number;
-
-  /**
-   * Copy constructor for pageable queries in `states`collection.
-   * The `StateQuery` parameter that is optionally passed to this
-   * method is then destructured to mimic a copy construction logic.
-   *
-   * @param   {string|undefined}    identifier   The *document* identifier (value of the field "_id").
-   * @param   {string|undefined}    address         The query's `address` field value (optional).
-   * @param   {number|undefined}    transactionsCount  The query's `transactionsCount` field value (optional).
-   * @param   {number|undefined}    pageNumber   The page number of the query (defaults to `1`).
-   * @param   {number|undefined}    pageSize     The number of entities/documents in one page (defaults to `20`).
-   * @param   {string|undefined}    sort         The field used for sorting (defaults to `"_id"`).
-   * @param   {string|undefined}    order        The sorting direction, must be one of `"asc"` and `"desc"` (defaults to `"asc"`)
+   * @see Queryable
+   * @param   {AccountDocument|undefined}     document          The *document* instance (defaults to `undefined`) (optional).
+   * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
   public constructor(
-    id?: string,
-    address?: string,
-    transactionsCount?: number,
-    pageNumber?: number,
-    pageSize?: number,
-    sort?: string,
-    order?: string,
+    document?: AccountDocument,
+    queryParams: QueryParameters = undefined,
   ) {
-    super(id, pageNumber, pageSize, sort, order);
-
-    if (undefined !== address) this.address = address;
-    if (undefined !== transactionsCount)
-      this.transactionsCount = transactionsCount;
+    super(document, queryParams);
   }
 }
 
@@ -188,6 +172,6 @@ export class AccountQuery extends Queryable {
  * {@link Account} class and should be used mainly when *inferring* the
  * type of fields in a document for the corresponding collection.
  *
- * @since v0.1.0
+ * @since v0.2.0
  */
 export const AccountSchema = SchemaFactory.createForClass(Account);

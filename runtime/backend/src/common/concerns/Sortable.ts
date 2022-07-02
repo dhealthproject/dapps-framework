@@ -12,34 +12,22 @@
  * @description This concern requires the presence of fields that
  * consist in delivering *sorted* information.
  *
- * @since v0.1.0
+ * @since v0.2.0
  */
 export interface Sortable {
   /**
-   * Sort query.
-   * Determine which field of the result should be sorted by.
+   * A query's sort *column*. This determines which column of a
+   * document is used to *sort* search results.
    *
-   * E.g.
-   * ```js
-   *  sort: 'address'
-   * ```
-   *
-   * @var {string}
+   * @var {number}
    */
   sort: string;
 
   /**
-   * Order query.
-   * Determine which direction the result should be sorted by.
+   * A query's order mode. This determines the *direction* of
+   * sorting for search results.
    *
-   * Values are `asc` and `desc`.
-   *
-   * E.g.
-   * ```js
-   *  order: 'asc'
-   * ```
-   *
-   * @var {string}
+   * @var {number}
    */
   order: string;
 }

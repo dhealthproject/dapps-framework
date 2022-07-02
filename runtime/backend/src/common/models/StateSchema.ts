@@ -13,7 +13,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 // internal dependencies
 import { Documentable } from "../concerns/Documentable";
 import { Transferable } from "../traits/Transferable";
-import { Queryable } from "../concerns/Queryable";
+import { Queryable, QueryParameters } from "../concerns/Queryable";
 import { StateDTO } from "../models/StateDTO";
 import type { StateData } from "./StateData";
 
@@ -28,7 +28,7 @@ import type { StateData } from "./StateData";
  * enable a `toDTO()` method on the model.
  *
  * @todo The {@link State} model does not need fields to be **public**.
- * @since v0.1.0
+ * @since v0.2.0
  */
 @Schema({
   timestamps: true,
@@ -67,6 +67,19 @@ export class State extends Transferable<StateDTO> {
    */
   @Prop({ required: true, type: Object })
   public data: StateData;
+
+  /**
+   * This method implements a specialized query format to query items
+   * individually, as documents, in the collection: `states`.
+   *
+   * @access public
+   * @returns {Record<string, any>}    The individual document data that is used in a query.
+   */
+  public toQuery(): Record<string, any> {
+    return {
+      name: this.name,
+    };
+  }
 }
 
 /**
@@ -74,10 +87,14 @@ export class State extends Transferable<StateDTO> {
  * @description This type merges the mongoose base `Document` object with
  * specialized state document objects such that this document can be used
  * directly in `mongoose` queries for `states` documents.
+ * <br /><br />
+ * Due to the implementation of `toQuery` in {@link State}, the order
+ * of creation of this mixin is important such that the implementation of
+ * the method inside `State` overwrites that of `Documentable`.
  *
- * @since v0.1.0
+ * @since v0.2.0
  */
-export type StateDocument = State & Documentable;
+export type StateDocument = Documentable & State;
 
 /**
  * @class StateQuery
@@ -87,41 +104,21 @@ export type StateDocument = State & Documentable;
  * The main purpose of this class shall be to perform queries against
  * the `states` collection.
  *
- * @since v0.1.0
+ * @since v0.2.0
  */
-export class StateQuery extends Queryable {
+export class StateQuery extends Queryable<StateDocument> {
   /**
-   * This field can be used to query documents in the `states` mongo
-   * collection by their `name` field value.
+   * Copy constructor for pageable queries in `authTokens` collection.
    *
-   * @access public
-   * @var {string}
-   */
-  public name?: string;
-
-  /**
-   * Copy constructor for pageable queries in `states`collection.
-   * The `StateQuery` parameter that is optionally passed to this
-   * method is then destructured to mimic a copy construction logic.
-   *
-   * @param   {string|undefined}    identifier   The *document* identifier (value of the field "_id").
-   * @param   {string|undefined}    name         The query's `name` field value (optional).
-   * @param   {number|undefined}    pageNumber   The page number of the query (defaults to `1`).
-   * @param   {number|undefined}    pageSize     The number of entities/documents in one page (defaults to `20`).
-   * @param   {string|undefined}    sort         The field used for sorting (defaults to `"_id"`).
-   * @param   {string|undefined}    order        The sorting direction, must be one of `"asc"` and `"desc"` (defaults to `"asc"`)
+   * @see Queryable
+   * @param   {StateDocument|undefined}       document          The *document* instance (defaults to `undefined`) (optional).
+   * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
   public constructor(
-    id?: string,
-    name?: string,
-    pageNumber?: number,
-    pageSize?: number,
-    sort?: string,
-    order?: string,
+    document?: StateDocument,
+    queryParams: QueryParameters = undefined,
   ) {
-    super(id, pageNumber, pageSize, sort, order);
-
-    if (undefined !== name) this.name = name;
+    super(document, queryParams);
   }
 }
 
@@ -131,6 +128,6 @@ export class StateQuery extends Queryable {
  * {@link State} class and should be used mainly when *inferring* the
  * type of fields in a document for the corresponding collection.
  *
- * @since v0.1.0
+ * @since v0.2.0
  */
 export const StateSchema = SchemaFactory.createForClass(State);

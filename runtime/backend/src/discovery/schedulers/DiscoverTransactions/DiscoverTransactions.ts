@@ -312,11 +312,10 @@ export class DiscoverTransactions
     const transactionHash: string = this.extractTransactionHash(transaction);
     
     // queries the database to find transaction by signerAddress and hash
-    const databaseQuery = new TransactionQuery(
-      undefined,
+    const databaseQuery = new TransactionQuery({
       signerAddress,
       transactionHash,
-    );
+    } as TransactionDocument);
 
     let document: Transaction;
     if (! (document = await this.transactionsService.findOne(databaseQuery))) {

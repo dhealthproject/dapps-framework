@@ -22,7 +22,6 @@ import { DappConfig } from "./common/models/DappConfig";
 
 // configuration resources
 import dappConfigLoader from "../config/dapp";
-import networkConfigLoader from "../config/network";
 
 /**
  * Main function to bootstrap the app.

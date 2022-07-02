@@ -11,7 +11,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { BulkWriteResult, UnorderedBulkOperation } from "mongodb";
 
 // internal dependencies
 import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
@@ -93,23 +92,13 @@ export class AccountsService {
    * Method to update a batch of accounts.
    *
    * @async
-   * @param   {AccountDocument} createAccountDtos
-   * @returns {Promise<BulkWriteResult>}
+   * @param   {AccountDocument[]} accountDocuments
+   * @returns {Promise<number>}
    */
-  async updateBatch(createAccountDtos: AccountDocument[]): Promise<BulkWriteResult> {
-    const bulk: UnorderedBulkOperation =
-      this.model.collection.initializeUnorderedBulkOp();
-    createAccountDtos.map((createAccountDto: AccountDocument) => {
-      bulk
-        .find({ address: createAccountDto.address })
-        .upsert()
-        .update({
-          $set: {
-            ...createAccountDto,
-            updatedAt: new Date(),
-          },
-        });
-    });
-    return bulk.execute();
+  async updateBatch(accountDocuments: AccountDocument[]): Promise<number> {
+    return this.queriesService.updateBatch(
+      this.model,
+      accountDocuments,
+    );
   }
 }

@@ -22,4 +22,21 @@ import { Document } from "mongoose";
  *
  * @since v0.2.0
  */
-export class Documentable extends Document {}
+export class Documentable extends Document {
+  /**
+   * This method must return an object that can be used as the value
+   * for the mongodb `find` operations. Typically, this method returns
+   * an object where keys are *primary key(s)* of the entity and values
+   * are those of the document represented by the current instance.
+   * <br /><br />
+   * If not overloaded in child classes, we use the default auto-generated
+   * `id` column as it is always present with mongodb.
+   *
+   * @returns {Record<string, any>}    The individual document data that is used in a query.
+   */
+  public toQuery(): Record<string, any> {
+    return {
+      id: this._id,
+    };
+  }
+}

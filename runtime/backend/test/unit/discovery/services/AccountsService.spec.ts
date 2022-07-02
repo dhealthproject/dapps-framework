@@ -15,7 +15,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { AccountsService } from "../../../../src/discovery/services/AccountsService";
-import { AccountDocument, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
+import { Account, AccountDocument, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
 
 describe("discovery/AccountsService", () => {
   let service: AccountsService;
@@ -94,13 +94,12 @@ describe("discovery/AccountsService", () => {
 
     it("should call collection.initializeUnorderedBulkOp() from model", async () => {
       // prepare
-      const accountDoc = {
-        address: "test-address",
-        transactionsCount: 1,
-      } as AccountDocument;
+      const accountDoc = new Account();
+      accountDoc.address = "test-address";
+      accountDoc.transactionsCount = 1;
 
       // act
-      await service.updateBatch([accountDoc]);
+      await service.updateBatch([accountDoc as AccountDocument]);
 
       // assert
       expect(bulkMocks.find).toHaveBeenCalled();
@@ -108,13 +107,12 @@ describe("discovery/AccountsService", () => {
 
     it("should call finder and pass correct query by address", async () => {
       // prepare
-      const accountDoc = {
-        address: "test-address",
-        transactionsCount: 1,
-      } as AccountDocument;
+      const accountDoc = new Account();
+      accountDoc.address = "test-address";
+      accountDoc.transactionsCount = 1;
 
       // act
-      await service.updateBatch([accountDoc]);
+      await service.updateBatch([accountDoc as AccountDocument]);
 
       // assert
       expect(bulkMocks.find).toHaveBeenCalled();
@@ -125,13 +123,12 @@ describe("discovery/AccountsService", () => {
 
     it("should modify updatedAt field in $set routine", async () => {
       // prepare
-      const accountDoc = {
-        address: "test-address",
-        transactionsCount: 1,
-      } as AccountDocument;
+      const accountDoc = new Account();
+      accountDoc.address = "test-address";
+      accountDoc.transactionsCount = 1;
 
       // act
-      await service.updateBatch([accountDoc]);
+      await service.updateBatch([accountDoc as AccountDocument]);
 
       // assert
       expect(upsertMock.update).toHaveBeenCalled();

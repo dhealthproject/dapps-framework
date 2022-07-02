@@ -50,7 +50,7 @@ import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
 import { State } from "../../../../src/common/models/StateSchema";
 import { AccountsService } from "../../../../src/discovery/services/AccountsService";
-import { Account, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
+import { Account, AccountDocument, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
 import { DiscoverAccounts } from "../../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccounts";
 import { AccountDiscoveryStateData } from "../../../../src/discovery/models/AccountDiscoveryStateData";
 
@@ -277,7 +277,7 @@ describe("discovery/DiscoverAccounts", () => {
       // assert
       expect((service as any).accountsService.findOne).toHaveBeenCalled();
       expect((service as any).accountsService.findOne).toHaveBeenCalledWith(
-        new AccountQuery(undefined, "address A"),
+        new AccountQuery({ address: "address A" } as AccountDocument),
       );
     });
 

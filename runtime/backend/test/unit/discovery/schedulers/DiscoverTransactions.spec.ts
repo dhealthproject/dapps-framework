@@ -48,7 +48,7 @@ import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
 import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
-import { Transaction, TransactionQuery } from "../../../../src/discovery/models/TransactionSchema";
+import { Transaction, TransactionDocument, TransactionQuery } from "../../../../src/discovery/models/TransactionSchema";
 import { DiscoverTransactions } from "../../../../src/discovery/schedulers/DiscoverTransactions/DiscoverTransactions";
 
 // configuration resources
@@ -203,7 +203,10 @@ describe("discovery/DiscoverTransactions", () => {
       expect((service as any).extractTransactionHash).toHaveBeenCalled();
       expect((service as any).transactionsService.findOne).toHaveBeenCalled();
       expect((service as any).transactionsService.findOne).toHaveBeenCalledWith(
-        new TransactionQuery(undefined, "address A", "fakeHash1"),
+        new TransactionQuery({
+          signerAddress: "address A",
+          transactionHash: "fakeHash1",
+        } as TransactionDocument),
       );
     });
 
