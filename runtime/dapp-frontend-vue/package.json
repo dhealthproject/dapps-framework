@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@dhealth/components": "^0.1.0",
+    "axios": "^0.27.2",
     "crypto-browserify": "^3.12.0",
     "register-service-worker": "^1.7.2",
     "stream-browserify": "^3.0.0",
