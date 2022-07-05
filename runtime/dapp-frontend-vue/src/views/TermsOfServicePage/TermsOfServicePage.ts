@@ -12,6 +12,14 @@
 import { Component } from "vue-property-decorator";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
+import { BackendService } from "../OnboardingPage/OnboardingPage";
+
+const service = new BackendService();
 
 @Component({})
-export default class TermsOfServicePage extends MetaView {}
+export default class TermsOfServicePage extends MetaView {
+  async mounted() {
+    const me = await service.getMe();
+    console.log({ me });
+  }
+}

@@ -62,7 +62,7 @@ class HttpRequestHandler {
   }
 }
 
-class BackendService {
+export class BackendService {
   protected baseUrl = "http://localhost:7903";
   protected handler: HttpRequestHandler = new HttpRequestHandler();
 
@@ -89,6 +89,18 @@ class BackendService {
       address,
     });
     return res;
+  }
+
+  public async getMe(): Promise<any> {
+    const authHeader = localStorage.getItem("auth");
+    if (authHeader) {
+      const response = await this.handler.call("GET", this.getUrl("me"), {
+        headers: {
+          authorization: `Bearer ${authHeader}`,
+        },
+      });
+      return response;
+    }
   }
 }
 
