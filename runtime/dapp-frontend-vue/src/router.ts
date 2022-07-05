@@ -8,6 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
+import Cookies from "js-cookie";
 import VueRouter from "vue-router";
 
 // setup a dynamic modules application kernel
@@ -33,7 +34,28 @@ const router = new VueRouter({
       name: "onboarding",
       component: () => import("./views/OnboardingPage/OnboardingPage.vue"),
     },
+    {
+      path: "/termsofservice",
+      name: "termsofservice",
+      meta: {
+        protected: true,
+      },
+      component: () =>
+        import("./views/TermsOfServicePage/TermsOfServicePage.vue"),
+    },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = Cookies.get("accessToken");
+  console.log({ isAuthenticated });
+  if (to?.meta?.protected && !isAuthenticated) {
+    next({
+      path: "/onboarding",
+    });
+  }
+
+  next();
 });
 
 export default router;

@@ -9,8 +9,9 @@
  */
 
 // external dependencies
-import { Component } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 import axios from "axios";
+import Cookies from "js-cookie";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import Header from "@/components/Header/Header.vue";
@@ -50,11 +51,30 @@ class HttpRequestHandler {
       return axios.get(url, options);
     }
     // POST
-    // PATCH
+    if (method === "POST") {
+      return axios({
+        method: method.toLowerCase(),
+        url,
+        data: {
+          ...options,
+        },
+      });
+    }
   }
 }
+export class BackendService {
+  private static instance: BackendService;
 
-class BackendService {
+  private constructor() {
+    return;
+  }
+
+  public static getInstance() {
+    if (!BackendService.instance) {
+      this.instance = new BackendService();
+    }
+    return this.instance;
+  }
   protected baseUrl = "http://localhost:7903";
   protected handler: HttpRequestHandler = new HttpRequestHandler();
 
@@ -63,8 +83,36 @@ class BackendService {
   }
 
   public async getAuthChallenge(): Promise<any> {
-    const res = await this.handler.call("GET", this.getUrl("auth/code"), {});
+    const res = await this.handler.call(
+      "GET",
+      this.getUrl("auth/challenge"),
+      {}
+    );
     return res;
+  }
+
+  public async login(config: {
+    authCode: string;
+    address: string;
+  }): Promise<any> {
+    const { authCode, address } = config;
+    const res = await this.handler.call("POST", this.getUrl("auth/token"), {
+      authCode,
+      address,
+    });
+    return res;
+  }
+
+  public async getMe(): Promise<any> {
+    const authHeader = Cookies.get("accessToken");
+    if (authHeader) {
+      const response = await this.handler.call("GET", this.getUrl("me"), {
+        headers: {
+          authorization: `Bearer ${authHeader}`,
+        },
+      });
+      return response;
+    }
   }
 }
 
@@ -77,12 +125,24 @@ class BackendService {
   },
 })
 export default class OnboardingPage extends MetaView {
+  @Prop({
+    type: Object,
+    required: false,
+    default: BackendService.getInstance,
+  })
+  service?: BackendService;
   /**
    * loading state property
    */
   loading = false;
 
   authMessage = "";
+
+  interval: undefined | number = undefined;
+
+  globalIntervalTimer: undefined | number = undefined;
+
+  reqBodyTimer: undefined | number = undefined;
 
   /**
    * Draft computed for generating
@@ -135,6 +195,51 @@ export default class OnboardingPage extends MetaView {
     );
   }
   /**
+   * Helper method to run authentication process
+   */
+  protected getToken(): void {
+    const isAuth = Cookies.get("accessToken");
+
+    if (!isAuth) {
+      const reqBody = {
+        address: "",
+        authCode: "not",
+      };
+      let tokenResponse = null;
+
+      // Example interval where we run GET auth/token each 5 seconds
+      this.interval = setInterval(async () => {
+        tokenResponse = await this.service?.login(reqBody);
+      }, 5000);
+
+      // For the demo: at random moment (after 8s) change auth code for valid value
+      this.reqBodyTimer = setTimeout(() => {
+        clearInterval(this.interval);
+        reqBody.authCode = "not test";
+
+        this.interval = setInterval(async () => {
+          tokenResponse = await this.service?.login(reqBody);
+
+          if (tokenResponse) {
+            clearInterval(this.interval);
+            // replace secure: false for the development purposes, should be true
+            Cookies.set("accessToken", tokenResponse.data.accessToken, {
+              secure: false,
+              sameSite: "strict",
+              domain: "localhost",
+            });
+            this.$router.push({ name: "termsofservice" });
+          }
+        }, 5000);
+      }, 8000);
+
+      // Clear interval after 5 minutes if received 401
+      this.globalIntervalTimer = setTimeout(() => {
+        clearInterval(this.interval);
+      }, 300000);
+    }
+  }
+  /**
    * Helper method that generates
    * transaction request config
    *
@@ -159,14 +264,21 @@ export default class OnboardingPage extends MetaView {
   async mounted() {
     try {
       this.loading = true;
-      const service = new BackendService();
-      const resp = await service.getAuthChallenge();
-      console.log({ resp });
-      this.authMessage = resp.data.message;
+
+      const resp = await this.service?.getAuthChallenge();
+      this.authMessage = resp.data;
+
+      this.getToken();
     } catch (err) {
       console.error(err);
     } finally {
       this.loading = false;
     }
+  }
+
+  beforeDestroyed() {
+    clearInterval(this.interval);
+    clearTimeout(this.globalIntervalTimer);
+    clearTimeout(this.reqBodyTimer);
   }
 }
