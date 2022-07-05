@@ -50,7 +50,15 @@ class HttpRequestHandler {
       return axios.get(url, options);
     }
     // POST
-    // PATCH
+    if (method === "POST") {
+      return axios({
+        method: method.toLowerCase(),
+        url,
+        data: {
+          ...options,
+        },
+      });
+    }
   }
 }
 
@@ -63,10 +71,28 @@ class BackendService {
   }
 
   public async getAuthChallenge(): Promise<any> {
-    const res = await this.handler.call("GET", this.getUrl("auth/code"), {});
+    const res = await this.handler.call(
+      "GET",
+      this.getUrl("auth/challenge"),
+      {}
+    );
+    return res;
+  }
+
+  public async getAuthToken(config: {
+    authCode: string;
+    address: string;
+  }): Promise<any> {
+    const { authCode, address } = config;
+    const res = await this.handler.call("POST", this.getUrl("auth/token"), {
+      authCode,
+      address,
+    });
     return res;
   }
 }
+
+const service = new BackendService();
 
 @Component({
   components: {
@@ -83,6 +109,12 @@ export default class OnboardingPage extends MetaView {
   loading = false;
 
   authMessage = "";
+
+  interval: undefined | number = undefined;
+
+  globalIntervalTimer: undefined | number = undefined;
+
+  reqBodyTimer: undefined | number = undefined;
 
   /**
    * Draft computed for generating
@@ -135,6 +167,47 @@ export default class OnboardingPage extends MetaView {
     );
   }
   /**
+   * Helper method to run authentication process
+   */
+  protected getToken(): void {
+    const isAuth = localStorage.getItem("auth");
+
+    if (!isAuth) {
+      const reqBody = {
+        address: "",
+        authCode: "not",
+      };
+      let tokenResponse = null;
+
+      // Example interval where we run GET auth/token each 5 seconds
+      this.interval = setInterval(async () => {
+        tokenResponse = await service.getAuthToken(reqBody);
+      }, 5000);
+
+      // For the demo: at random moment (after 8s) change auth code for valid value
+      this.reqBodyTimer = setTimeout(() => {
+        clearInterval(this.interval);
+        reqBody.authCode = "not test";
+
+        this.interval = setInterval(async () => {
+          tokenResponse = await service.getAuthToken(reqBody);
+
+          if (tokenResponse) {
+            clearInterval(this.interval);
+            // Temporary token is getting set to the localstorage
+            localStorage.setItem("auth", tokenResponse.data.accessToken);
+            this.$router.push({ name: "termsofservice" });
+          }
+        }, 5000);
+      }, 8000);
+
+      // Clear interval after 5 minutes if received 401
+      this.globalIntervalTimer = setTimeout(() => {
+        clearInterval(this.interval);
+      }, 300000);
+    }
+  }
+  /**
    * Helper method that generates
    * transaction request config
    *
@@ -159,14 +232,21 @@ export default class OnboardingPage extends MetaView {
   async mounted() {
     try {
       this.loading = true;
-      const service = new BackendService();
+
       const resp = await service.getAuthChallenge();
-      console.log({ resp });
-      this.authMessage = resp.data.message;
+      this.authMessage = resp.data;
+
+      this.getToken();
     } catch (err) {
       console.error(err);
     } finally {
       this.loading = false;
     }
+  }
+
+  beforeDestroyed() {
+    clearInterval(this.interval);
+    clearTimeout(this.globalIntervalTimer);
+    clearTimeout(this.reqBodyTimer);
   }
 }
