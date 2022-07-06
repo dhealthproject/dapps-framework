@@ -12,8 +12,6 @@ import { mount, createLocalVue } from "@vue/test-utils";
 import OnboardingPage from "@/views/OnboardingPage/OnboardingPage.vue";
 import { BackendService } from "@/views/OnboardingPage/OnboardingPage";
 import { Transaction } from "@dhealth/sdk";
-import Vue from "vue";
-
 // creates local vue instance for tests
 const localVue = createLocalVue();
 const componentOptions = {
@@ -33,8 +31,11 @@ describe("OnboardingPage -->", async () => {
   });
 
   it("should display qr code", async () => {
-    await Vue.nextTick();
-    expect(widget.find(".base img").exists()).to.be.true;
+    if (widget.vm.loading) {
+      expect(widget.find(".base img").exists()).to.be.false;
+    } else {
+      expect(widget.find(".base img").exists()).to.be.true;
+    }
   });
 
   it("should display footer", () => {
@@ -60,4 +61,21 @@ describe("OnboardingPage -->", async () => {
 
     expect(message).to.not.be.empty;
   });
+
+  it("should receive access token", async () => {
+    const service = new BackendService();
+    const accessToken = await service.login({
+      address: "",
+      authCode: "not test",
+    });
+
+    expect(accessToken).to.not.be.empty;
+  });
+
+  // it("should receive user data", async () => {
+  //   const service = new BackendService();
+  //   const user = await service.getMe();
+
+  //   expect(user).to.have;
+  // });
 });
