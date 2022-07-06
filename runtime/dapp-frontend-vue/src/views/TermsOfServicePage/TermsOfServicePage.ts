@@ -19,7 +19,11 @@ const service = new BackendService();
 @Component({})
 export default class TermsOfServicePage extends MetaView {
   async mounted() {
-    const me = await service.getMe();
-    console.log({ me });
+    try {
+      const me = await service.getMe();
+      console.log({ me });
+    } catch (err) {
+      console.log("Terms of use page: ", err);
+    }
   }
 }

@@ -10,7 +10,9 @@
 import { expect } from "chai";
 import { mount, createLocalVue } from "@vue/test-utils";
 import OnboardingPage from "@/views/OnboardingPage/OnboardingPage.vue";
+import { BackendService } from "@/views/OnboardingPage/OnboardingPage";
 import { Transaction } from "@dhealth/sdk";
+import Vue from "vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
@@ -23,14 +25,15 @@ const componentOptions = {
 describe("OnboardingPage -->", async () => {
   let widget: any;
   beforeEach(async () => {
-    widget = mount(OnboardingPage as any, componentOptions);
+    widget = await mount(OnboardingPage as any, componentOptions);
   });
 
   it("should display header", () => {
     expect(widget.find(".dapp-screen-header").exists()).to.be.true;
   });
 
-  it("should display qr code", () => {
+  it("should display qr code", async () => {
+    await Vue.nextTick();
     expect(widget.find(".base img").exists()).to.be.true;
   });
 
@@ -49,5 +52,12 @@ describe("OnboardingPage -->", async () => {
 
   it("should create Login Contract", () => {
     expect(widget.vm.createLoginContract()).to.not.be.undefined;
+  });
+
+  it("should contain message", async () => {
+    const service = new BackendService();
+    const message = await service.getAuthChallenge();
+
+    expect(message).to.not.be.empty;
   });
 });

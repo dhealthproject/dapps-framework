@@ -11,6 +11,7 @@
 // external dependencies
 import { Component } from "vue-property-decorator";
 import axios from "axios";
+import Cookies from "js-cookie";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import Header from "@/components/Header/Header.vue";
@@ -79,7 +80,7 @@ export class BackendService {
     return res;
   }
 
-  public async getAuthToken(config: {
+  public async login(config: {
     authCode: string;
     address: string;
   }): Promise<any> {
@@ -92,7 +93,7 @@ export class BackendService {
   }
 
   public async getMe(): Promise<any> {
-    const authHeader = localStorage.getItem("auth");
+    const authHeader = Cookies.get("accessToken");
     if (authHeader) {
       const response = await this.handler.call("GET", this.getUrl("me"), {
         headers: {
@@ -182,7 +183,7 @@ export default class OnboardingPage extends MetaView {
    * Helper method to run authentication process
    */
   protected getToken(): void {
-    const isAuth = localStorage.getItem("auth");
+    const isAuth = Cookies.get("accessToken");
 
     if (!isAuth) {
       const reqBody = {
@@ -193,7 +194,7 @@ export default class OnboardingPage extends MetaView {
 
       // Example interval where we run GET auth/token each 5 seconds
       this.interval = setInterval(async () => {
-        tokenResponse = await service.getAuthToken(reqBody);
+        tokenResponse = await service.login(reqBody);
       }, 5000);
 
       // For the demo: at random moment (after 8s) change auth code for valid value
@@ -202,12 +203,16 @@ export default class OnboardingPage extends MetaView {
         reqBody.authCode = "not test";
 
         this.interval = setInterval(async () => {
-          tokenResponse = await service.getAuthToken(reqBody);
+          tokenResponse = await service.login(reqBody);
 
           if (tokenResponse) {
             clearInterval(this.interval);
-            // Temporary token is getting set to the localstorage
-            localStorage.setItem("auth", tokenResponse.data.accessToken);
+            // replace secure: false for the development purposes, should be true
+            Cookies.set("accessToken", tokenResponse.data.accessToken, {
+              secure: false,
+              sameSite: "strict",
+              domain: "localhost",
+            });
             this.$router.push({ name: "termsofservice" });
           }
         }, 5000);
