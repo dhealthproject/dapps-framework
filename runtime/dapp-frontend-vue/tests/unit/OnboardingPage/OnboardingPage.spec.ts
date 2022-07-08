@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 import { expect } from "chai";
-import { shallowMount, createLocalVue } from "@vue/test-utils";
+import { mount, createLocalVue } from "@vue/test-utils";
 import OnboardingPage from "@/views/OnboardingPage/OnboardingPage.vue";
 import { BackendService } from "@/views/OnboardingPage/OnboardingPage";
 import { Transaction } from "@dhealth/sdk";
@@ -46,7 +46,7 @@ const componentOptions = {
 describe("OnboardingPage -->", async () => {
   let widget: any;
   beforeEach(async () => {
-    widget = await shallowMount(OnboardingPage as any, componentOptions);
+    widget = await mount(OnboardingPage as any, componentOptions);
   });
 
   it("should display header", () => {

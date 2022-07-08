@@ -116,8 +116,6 @@ export class BackendService {
   }
 }
 
-const service = BackendService.getInstance();
-
 @Component({
   components: {
     Header,
@@ -132,6 +130,7 @@ export default class OnboardingPage extends MetaView {
     required: false,
     default: BackendService,
   })
+  service?: BackendService;
   /**
    * loading state property
    */
@@ -210,7 +209,7 @@ export default class OnboardingPage extends MetaView {
 
       // Example interval where we run GET auth/token each 5 seconds
       this.interval = setInterval(async () => {
-        tokenResponse = await service.login(reqBody);
+        tokenResponse = await this.service?.login(reqBody);
       }, 5000);
 
       // For the demo: at random moment (after 8s) change auth code for valid value
@@ -219,7 +218,7 @@ export default class OnboardingPage extends MetaView {
         reqBody.authCode = "not test";
 
         this.interval = setInterval(async () => {
-          tokenResponse = await service.login(reqBody);
+          tokenResponse = await this.service?.login(reqBody);
 
           if (tokenResponse) {
             clearInterval(this.interval);
@@ -266,7 +265,7 @@ export default class OnboardingPage extends MetaView {
     try {
       this.loading = true;
 
-      const resp = await service.getAuthChallenge();
+      const resp = await this.service?.getAuthChallenge();
       this.authMessage = resp.data;
 
       this.getToken();
