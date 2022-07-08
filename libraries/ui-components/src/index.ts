@@ -25,6 +25,13 @@ import {
   DappQR,
   DappTitle,
   DappTokenAmount,
+  DappMessageCircle,
+  DappMosaicCircle,
+  DappTransactionArrow,
+  DappTransferGraphic,
+  DappUnknownTransactionGraphic,
+  DappAbstractTransactionGraphic,
+  DappTransactionGraphic,
 } from "./components";
 
 // importing compiled tailwind styles
@@ -70,6 +77,16 @@ const install = (): void => {
   Vue.component("DappMessage", DappMessage);
   Vue.component("DappAccountAvatar", DappAccountAvatar);
   Vue.component("DappAccountCard", DappAccountCard);
+  Vue.component("DappMessageCircle", DappMessageCircle);
+  Vue.component("DappMosaicCircle", DappMosaicCircle);
+  Vue.component("DappTransactionArrow", DappTransactionArrow);
+  Vue.component("DappTransferGraphic", DappTransferGraphic);
+  Vue.component("DappUnknownTransactionGraphic", DappUnknownTransactionGraphic);
+  Vue.component(
+    "DappAbstractTransactionGraphic",
+    DappAbstractTransactionGraphic
+  );
+  Vue.component("DappTransactionGraphic", DappTransactionGraphic);
 };
 
 // exports the install helper alongside components
@@ -88,4 +105,11 @@ export {
   DappQR,
   DappTitle,
   DappTokenAmount,
+  DappMessageCircle,
+  DappMosaicCircle,
+  DappTransactionArrow,
+  DappTransferGraphic,
+  DappUnknownTransactionGraphic,
+  DappAbstractTransactionGraphic,
+  DappTransactionGraphic,
 };
