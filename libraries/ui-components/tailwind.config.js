@@ -35,16 +35,23 @@ module.exports = {
     borderRadius: {
       DEFAULT: "40px",
       md: "5px",
+      ml: "10px",
       "3xl": "20px",
       lg: "40px",
     },
     // overwrites default fonts display
     fontSize: {
       base: ["14px", "21px"], // font-size, line-height
+      message: ["13px"],
       lg: ["1rem", "1.75rem"], // 16px, 28px
+      xl: ["1.25rem"],	
       "3xl": ["1.5rem", "2.25rem"],
       "5xl": ["2.5rem", "3.25rem"],
     },
+    maxWidth: {
+      "3xl": "700px",
+      full: "100%"
+    }
   },
   variants: {},
   plugins: ["tailwindcss/nesting"],
