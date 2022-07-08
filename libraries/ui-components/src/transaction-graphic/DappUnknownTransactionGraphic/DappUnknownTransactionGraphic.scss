@@ -1,0 +1,30 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth UI Components
+ * @subpackage  Components
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+.dappUnknownTransactionGraphic-item {
+  @apply cursor-pointer;
+}
+.dappUnknownTransactionGraphic-field-name {
+  @apply text-royal-blue;
+}
+.dappUnknownTransactionGraphic-bold {
+  @apply font-bold;
+}
+
+.dappUnknownTransactionGraphic-non-overflown {
+  @apply w-full overflow-hidden text-ellipsis whitespace-nowrap;
+}
+
+li {
+  @apply list-none;
+
+  ul {
+    @apply pl-4;
+  }
+}

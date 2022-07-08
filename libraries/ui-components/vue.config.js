@@ -26,6 +26,18 @@ module.exports = {
       canvas: {},
     },
 
+    // Configures polyfills. Those are necessary because of the usage
+    // of transaction messages with `@dhealth/sdk`. Note that using
+    // polyfills here permits to provide a fallback implementation for
+    // environments that do not have the necessary features available.
+    resolve: {
+      fallback: {
+        crypto: require.resolve("crypto-browserify"),
+        stream: require.resolve("stream-browserify"),
+        buffer: require.resolve("buffer")
+      },
+    },
+
     // Disables performance hints (warnings) about entrypoint
     // sizes such that no warnings are emitted for the library
     performance: {
