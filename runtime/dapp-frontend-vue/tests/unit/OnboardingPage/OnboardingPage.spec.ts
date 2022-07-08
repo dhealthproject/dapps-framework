@@ -8,22 +8,45 @@
  * @license     LGPL-3.0
  */
 import { expect } from "chai";
-import { mount, createLocalVue } from "@vue/test-utils";
+import { shallowMount, createLocalVue } from "@vue/test-utils";
 import OnboardingPage from "@/views/OnboardingPage/OnboardingPage.vue";
 import { BackendService } from "@/views/OnboardingPage/OnboardingPage";
 import { Transaction } from "@dhealth/sdk";
+import sinon from "sinon";
+
+const stubRequestHandler = {
+  call: () => this,
+};
+const stubService = {
+  baseUrl: "http://localhost:7903",
+  handler: stubRequestHandler,
+  getUrl: () => "this",
+  getAuthChallenge: () => this,
+  login: () => this,
+  getMe: () => this,
+};
+
+sinon.stub(stubService, "getAuthChallenge").resolves({ data: "test" });
+sinon.stub(stubService, "getUrl").returns("test-url");
+sinon.stub(stubService, "login").resolves("test-login");
+sinon.stub(stubService, "getMe").resolves("test-getMe");
+sinon.stub(BackendService, "getInstance").returns(stubService as any);
+
 // creates local vue instance for tests
 const localVue = createLocalVue();
 const componentOptions = {
   localVue,
   stubs: ["router-link"],
+  propsData: {
+    service: stubService,
+  },
 };
 // jest.mock("@dhealth/sdk", () => ({ Deadline: jest.fn() }));
 
 describe("OnboardingPage -->", async () => {
   let widget: any;
   beforeEach(async () => {
-    widget = await mount(OnboardingPage as any, componentOptions);
+    widget = await shallowMount(OnboardingPage as any, componentOptions);
   });
 
   it("should display header", () => {
@@ -56,14 +79,15 @@ describe("OnboardingPage -->", async () => {
   });
 
   it("should contain message", async () => {
-    const service = new BackendService();
+    const service = BackendService.getInstance();
+    sinon.stub(service, "getAuthChallenge").resolves("test");
     const message = await service.getAuthChallenge();
-
     expect(message).to.not.be.empty;
   });
 
   it("should receive access token", async () => {
-    const service = new BackendService();
+    const service = BackendService.getInstance();
+    sinon.stub(service, "login").resolves("test");
     const accessToken = await service.login({
       address: "",
       authCode: "not test",
@@ -72,10 +96,10 @@ describe("OnboardingPage -->", async () => {
     expect(accessToken).to.not.be.empty;
   });
 
-  // it("should receive user data", async () => {
-  //   const service = new BackendService();
-  //   const user = await service.getMe();
+  it("should receive user data", async () => {
+    const service = BackendService.getInstance();
+    const user = await service.getMe();
 
-  //   expect(user).to.have;
-  // });
+    expect(user).to.have;
+  });
 });

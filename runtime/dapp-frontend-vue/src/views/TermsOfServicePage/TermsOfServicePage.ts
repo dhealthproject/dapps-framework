@@ -14,7 +14,7 @@ import { Component } from "vue-property-decorator";
 import { MetaView } from "@/views/MetaView";
 import { BackendService } from "../OnboardingPage/OnboardingPage";
 
-const service = new BackendService();
+const service = BackendService.getInstance();
 
 @Component({})
 export default class TermsOfServicePage extends MetaView {

@@ -9,7 +9,7 @@
  */
 
 // external dependencies
-import { Component } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 import axios from "axios";
 import Cookies from "js-cookie";
 // internal dependencies
@@ -62,8 +62,19 @@ class HttpRequestHandler {
     }
   }
 }
-
 export class BackendService {
+  private static instance: BackendService;
+
+  private constructor() {
+    return;
+  }
+
+  public static getInstance() {
+    if (!BackendService.instance) {
+      this.instance = new BackendService();
+    }
+    return this.instance;
+  }
   protected baseUrl = "http://localhost:7903";
   protected handler: HttpRequestHandler = new HttpRequestHandler();
 
@@ -105,7 +116,7 @@ export class BackendService {
   }
 }
 
-const service = new BackendService();
+const service = BackendService.getInstance();
 
 @Component({
   components: {
@@ -116,6 +127,11 @@ const service = new BackendService();
   },
 })
 export default class OnboardingPage extends MetaView {
+  @Prop({
+    type: Object,
+    required: false,
+    default: BackendService,
+  })
   /**
    * loading state property
    */
