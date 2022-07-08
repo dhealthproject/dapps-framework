@@ -268,7 +268,7 @@ export default class DappAccountAvatar extends Vue {
     if (typeof str === "string") {
       if (str.length > strLen * 2)
         return `${str.substring(0, strLen)}...${str.substring(
-          str.length - strLen,
+          str.length - strLen + 1,
           str.length
         )}`;
       return str;
