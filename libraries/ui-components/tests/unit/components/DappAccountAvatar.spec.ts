@@ -67,7 +67,7 @@ describe("DappAccountAvatar -->", () => {
   });
 
   it("should display address in truncate form in `text` element", () => {
-    expect(widget.find("text").text()).to.equals("test...ress");
+    expect(widget.find("text").text()).to.equals("test...ess");
   });
 
   it("should display address in full form in `title` element", () => {
