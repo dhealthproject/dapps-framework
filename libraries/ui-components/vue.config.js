@@ -28,7 +28,10 @@ module.exports = {
       "bufferutil": {},
     },
 
-    // configures polyfills
+    // Configures polyfills. Those are necessary because of the usage
+    // of transaction messages with `@dhealth/sdk`. Note that using
+    // polyfills here permits to provide a fallback implementation for
+    // environments that do not have the necessary features available.
     resolve: {
       fallback: {
         crypto: require.resolve("crypto-browserify"),
