@@ -31,12 +31,17 @@ import DappTitle from "./texts/DappTitle/DappTitle";
 import DappDate from "./fields/DappDate/DappDate";
 import DappMessage from "./fields/DappMessage/DappMessage";
 import DappMosaic from "./fields/DappMosaic/DappMosaic";
+import DappMessageCircle from "./graphics/DappMessageCircle/DappMessageCircle";
+import DappMosaicCircle from "./graphics/DappMosaicCircle/DappMosaicCircle";
+import DappTransactionArrow from "./graphics/DappTransactionArrow/DappTransactionArrow";
+import DappTransferGraphic from "./transaction-graphic/DappTransferGraphic/DappTransferGraphic";
+import DappUnknownTransactionGraphic from "./transaction-graphic/DappUnknownTransactionGraphic/DappUnknownTransactionGraphic";
+import DappAbstractTransactionGraphic from "./transaction-graphic/DappAbstractTransactionGraphic/DappAbstractTransactionGraphic";
+import DappTransactionGraphic from "./widgets/DappTransactionGraphic/DappTransactionGraphic";
 
 // exports
 export type { Variant };
 export {
-  DappAccountAvatar,
-  DappAccountCard,
   DappButton,
   DappDate,
   DappIcon,
@@ -46,4 +51,13 @@ export {
   DappQR,
   DappTitle,
   DappTokenAmount,
+  DappAccountAvatar,
+  DappAccountCard,
+  DappMessageCircle,
+  DappMosaicCircle,
+  DappTransactionArrow,
+  DappTransferGraphic,
+  DappUnknownTransactionGraphic,
+  DappAbstractTransactionGraphic,
+  DappTransactionGraphic,
 };

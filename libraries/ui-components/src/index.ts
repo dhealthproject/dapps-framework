@@ -27,6 +27,13 @@ import {
   DappQR,
   DappTitle,
   DappTokenAmount,
+  DappMessageCircle,
+  DappMosaicCircle,
+  DappTransactionArrow,
+  DappTransferGraphic,
+  DappUnknownTransactionGraphic,
+  DappAbstractTransactionGraphic,
+  DappTransactionGraphic,
 } from "./components";
 
 // use the web component wrapper to extend components
@@ -77,6 +84,16 @@ const install = (): void => {
   Vue.component("DappQR", DappQR);
   Vue.component("DappTitle", DappTitle);
   Vue.component("DappTokenAmount", DappTokenAmount);
+  Vue.component("DappMessageCircle", DappMessageCircle);
+  Vue.component("DappMosaicCircle", DappMosaicCircle);
+  Vue.component("DappTransactionArrow", DappTransactionArrow);
+  Vue.component("DappTransferGraphic", DappTransferGraphic);
+  Vue.component("DappUnknownTransactionGraphic", DappUnknownTransactionGraphic);
+  Vue.component(
+    "DappAbstractTransactionGraphic",
+    DappAbstractTransactionGraphic
+  );
+  Vue.component("DappTransactionGraphic", DappTransactionGraphic);
 };
 
 // exporting web components requires adding style
@@ -95,6 +112,13 @@ const allComponents = [
   DappQR,
   DappTitle,
   DappTokenAmount,
+  DappMessageCircle,
+  DappMosaicCircle,
+  DappTransactionArrow,
+  DappTransferGraphic,
+  DappUnknownTransactionGraphic,
+  DappAbstractTransactionGraphic,
+  DappTransactionGraphic,
 ];
 
 // prepare <style> tags
@@ -133,4 +157,11 @@ export {
   DappQR,
   DappTitle,
   DappTokenAmount,
+  DappMessageCircle,
+  DappMosaicCircle,
+  DappTransactionArrow,
+  DappTransferGraphic,
+  DappUnknownTransactionGraphic,
+  DappAbstractTransactionGraphic,
+  DappTransactionGraphic,
 };

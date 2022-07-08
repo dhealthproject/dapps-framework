@@ -28,11 +28,16 @@ import DappTitle from "./texts/DappTitle/DappTitle.vue";
 import DappDate from "./fields/DappDate/DappDate.vue";
 import DappMessage from "./fields/DappMessage/DappMessage.vue";
 import DappMosaic from "./fields/DappMosaic/DappMosaic.vue";
+import DappMessageCircle from "./graphics/DappMessageCircle/DappMessageCircle.vue";
+import DappMosaicCircle from "./graphics/DappMosaicCircle/DappMosaicCircle.vue";
+import DappTransactionArrow from "./graphics/DappTransactionArrow/DappTransactionArrow.vue";
+import DappTransferGraphic from "./transaction-graphic/DappTransferGraphic/DappTransferGraphic.vue";
+import DappUnknownTransactionGraphic from "./transaction-graphic/DappUnknownTransactionGraphic/DappUnknownTransactionGraphic.vue";
+import DappAbstractTransactionGraphic from "./transaction-graphic/DappAbstractTransactionGraphic/DappAbstractTransactionGraphic.vue";
+import DappTransactionGraphic from "./widgets/DappTransactionGraphic/DappTransactionGraphic.vue";
 
 // exports components as named-exports
 export {
-  DappAccountAvatar,
-  DappAccountCard,
   DappButton,
   DappDate,
   DappIcon,
@@ -42,4 +47,13 @@ export {
   DappQR,
   DappTitle,
   DappTokenAmount,
+  DappAccountAvatar,
+  DappAccountCard,
+  DappMessageCircle,
+  DappMosaicCircle,
+  DappTransactionArrow,
+  DappTransferGraphic,
+  DappUnknownTransactionGraphic,
+  DappAbstractTransactionGraphic,
+  DappTransactionGraphic,
 };
