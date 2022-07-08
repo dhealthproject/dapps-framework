@@ -1,0 +1,51 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth UI Components
+ * @subpackage  Components
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+.dappTransactionGraphic-body {
+  @apply flex justify-center;
+
+  .dappTransactionGraphic-aggregate-container {
+    .dappTransactionGraphic-signers-section-wrapper {
+      @apply w-full flex justify-start flex-row flex-1;
+
+      .dappTransactionGraphic-signers-section {
+        @apply mx-5 mt-10 relative flex w-auto max-w-3xl bg-royal-blue-100 px-2.5 py-5 rounded;
+
+        .dappTransactionGraphic-signature-icon {
+          @apply absolute h-10 -top-2.5 right-0;
+        }
+      }
+    }
+
+    .dappTransactionGraphic-aggregate-inner {
+      @apply relative pt-0 pr-10;
+
+      .dappTransactionGraphic-aggregate-inner-index {
+        @apply absolute left-10 text-xl font-bold text-tangerine;
+        top: 43%;
+      }
+    }
+  }
+
+  .dappTransactionGraphic-aggregate-container-mobile {
+    .aggregate-title {
+      @apply w-full text-center font-bold text-tangerine;
+    }
+
+    .dappTransactionGraphic-signers-section-wrapper {
+      @apply hidden;
+    }
+
+    .dappTransactionGraphic-aggregate-inner {
+      .dappTransactionGraphic-aggregate-inner-index {
+        @apply hidden;
+      }
+    }
+  }
+}
