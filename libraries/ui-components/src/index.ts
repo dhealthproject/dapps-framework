@@ -28,9 +28,9 @@ import {
   DappMessageCircle,
   DappMosaicCircle,
   DappTransactionArrow,
-  DappTransferGraphic,
-  DappUnknownTransactionGraphic,
-  DappAbstractTransactionGraphic,
+  DappTransferTransaction,
+  DappUnknownTransaction,
+  DappAbstractTransaction,
   DappTransactionGraphic,
 } from "./components";
 
@@ -80,12 +80,9 @@ const install = (): void => {
   Vue.component("DappMessageCircle", DappMessageCircle);
   Vue.component("DappMosaicCircle", DappMosaicCircle);
   Vue.component("DappTransactionArrow", DappTransactionArrow);
-  Vue.component("DappTransferGraphic", DappTransferGraphic);
-  Vue.component("DappUnknownTransactionGraphic", DappUnknownTransactionGraphic);
-  Vue.component(
-    "DappAbstractTransactionGraphic",
-    DappAbstractTransactionGraphic
-  );
+  Vue.component("DappTransferTransaction", DappTransferTransaction);
+  Vue.component("DappUnknownTransaction", DappUnknownTransaction);
+  Vue.component("DappAbstractTransaction", DappAbstractTransaction);
   Vue.component("DappTransactionGraphic", DappTransactionGraphic);
 };
 
@@ -108,8 +105,8 @@ export {
   DappMessageCircle,
   DappMosaicCircle,
   DappTransactionArrow,
-  DappTransferGraphic,
-  DappUnknownTransactionGraphic,
-  DappAbstractTransactionGraphic,
+  DappTransferTransaction,
+  DappUnknownTransaction,
+  DappAbstractTransaction,
   DappTransactionGraphic,
 };

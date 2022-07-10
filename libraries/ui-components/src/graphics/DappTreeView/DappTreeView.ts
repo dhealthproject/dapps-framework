@@ -8,13 +8,13 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 import { MessageType, NetworkType, TransactionType } from "@dhealth/sdk";
+import DappGraphicComponent from "../DappGraphicComponent/DappGraphicComponent";
 
 /**
- * @class DappUnknownTransactionGraphic
- * @description This component display a generic transaction graphic for any transactions that are
- * not currently supported by {@link DappAbstractTransactionGraphic}.
+ * @class DappTreeView
+ * @description This component display a generic tree items graphic for any object/array/value.
  * <br /><br />
  * You can customize this component using custom HTML
  * attributes [as listed below](#parameters).
@@ -22,9 +22,9 @@ import { MessageType, NetworkType, TransactionType } from "@dhealth/sdk";
  * @example Using the DappAbstractTransactionGraphic component
  * ```html
  *   <template>
- *     <DappUnknownTransactionGraphic
- *      :item="someTransactionInstance"
+ *     <DappTreeView
  *      name="someName"
+ *      :item="someValue"
  *     />
  *   </template>
  * ```
@@ -32,13 +32,13 @@ import { MessageType, NetworkType, TransactionType } from "@dhealth/sdk";
  * <br /><br />
  * #### Parameters
  *
- * @param  {any}            item         An object/array/value instance to be displayed.
  * @param  {string}         name         The field name of the item to be displayed.
+ * @param  {any}            item         An object/array/value instance to be displayed.
  *
  * @since v0.1.0
  */
 @Component({})
-export default class DappUnknownTransactionGraphic extends Vue {
+export default class DappTreeView extends DappGraphicComponent {
   /**
    * An object/array/value instance to be displayed.
    *
@@ -79,9 +79,9 @@ export default class DappUnknownTransactionGraphic extends Vue {
    * and hence to be displayed recursively.
    *
    * @access protected
-   * @returns {boollean}
+   * @returns {boolean}
    */
-  protected get isExpandable() {
+  protected get isExpandable(): boolean {
     return this.formatItem instanceof Object || this.item instanceof Array;
   }
 
