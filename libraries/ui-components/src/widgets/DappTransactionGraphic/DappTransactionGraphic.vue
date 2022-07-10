@@ -44,10 +44,10 @@
         >
           {{ index + 1 }}
         </div>
-        <DappAbstractTransactionGraphic :transaction="innerTransactionData" />
+        <DappAbstractTransaction :transaction="innerTransactionData" />
       </div>
     </div>
-    <DappAbstractTransactionGraphic v-else :transaction="transaction" />
+    <DappAbstractTransaction v-else :transaction="transaction" />
   </div>
 </template>
 

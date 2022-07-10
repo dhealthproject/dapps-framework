@@ -34,9 +34,9 @@ import DappMosaic from "./fields/DappMosaic/DappMosaic";
 import DappMessageCircle from "./graphics/DappMessageCircle/DappMessageCircle";
 import DappMosaicCircle from "./graphics/DappMosaicCircle/DappMosaicCircle";
 import DappTransactionArrow from "./graphics/DappTransactionArrow/DappTransactionArrow";
-import DappTransferGraphic from "./transaction-graphic/DappTransferGraphic/DappTransferGraphic";
-import DappUnknownTransactionGraphic from "./transaction-graphic/DappUnknownTransactionGraphic/DappUnknownTransactionGraphic";
-import DappAbstractTransactionGraphic from "./transaction-graphic/DappAbstractTransactionGraphic/DappAbstractTransactionGraphic";
+import DappTransferTransaction from "./transaction-graphics/DappTransferTransaction/DappTransferTransaction";
+import DappUnknownTransaction from "./transaction-graphics/DappUnknownTransaction/DappUnknownTransaction";
+import DappAbstractTransaction from "./transaction-graphics/DappAbstractTransaction/DappAbstractTransaction";
 import DappTransactionGraphic from "./widgets/DappTransactionGraphic/DappTransactionGraphic";
 
 // exports
@@ -56,8 +56,8 @@ export {
   DappMessageCircle,
   DappMosaicCircle,
   DappTransactionArrow,
-  DappTransferGraphic,
-  DappUnknownTransactionGraphic,
-  DappAbstractTransactionGraphic,
+  DappTransferTransaction,
+  DappUnknownTransaction,
+  DappAbstractTransaction,
   DappTransactionGraphic,
 };

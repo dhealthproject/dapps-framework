@@ -1,3 +1,4 @@
+<!--
 /**
  * This file is part of dHealth dApps Framework shared under LGPL-3.0
  * Copyright (C) 2022-present dHealth Network, All rights reserved.
@@ -7,6 +8,11 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-.dappAbstractTransactionGraphic-unknown-tx-view {
-  @apply w-96 h-96 overflow-auto border-2 border-solid border-navy text-left p-1.5;
-}
+-->
+<template>
+  <div>
+    <component :is="graphicComponent" :transaction="transaction" />
+  </div>
+</template>
+
+<script lang="ts" src="./DappAbstractTransaction.ts"></script>

@@ -9,9 +9,9 @@
  */
 import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
-import DappAbstractTransactionGraphic from "@/transaction-graphic/DappAbstractTransactionGraphic/DappAbstractTransactionGraphic.vue";
+import DappAbstractTransaction from "@/transaction-graphics/DappAbstractTransaction/DappAbstractTransaction.vue";
 import { TransactionType } from "@dhealth/sdk";
-import DappTransferGraphic from "@/transaction-graphic/DappTransferGraphic/DappTransferGraphic.vue";
+import DappTransferTransaction from "@/transaction-graphics/DappTransferTransaction/DappTransferTransaction.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
@@ -59,13 +59,10 @@ const componentOptions = {
   },
 };
 
-describe("DappAbstractTransactionGraphic -->", () => {
+describe("DappAbstractTransaction -->", () => {
   let widget: Wrapper<Vue>;
   beforeEach(() => {
-    widget = shallowMount(
-      DappAbstractTransactionGraphic as any,
-      componentOptions
-    );
+    widget = shallowMount(DappAbstractTransaction as any, componentOptions);
   });
 
   it("should have correct prop", () => {
@@ -75,7 +72,7 @@ describe("DappAbstractTransactionGraphic -->", () => {
   it("should display correct element", () => {
     const divEl = widget.find("div");
     expect(divEl.exists()).to.be.true;
-    const transferEl = divEl.findComponent(DappTransferGraphic);
+    const transferEl = divEl.findComponent(DappTransferTransaction);
     expect(transferEl.exists()).to.be.true;
   });
 });

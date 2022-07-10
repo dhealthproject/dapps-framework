@@ -12,21 +12,21 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { Transaction, TransactionType } from "@dhealth/sdk";
 
 // internal dependencies
-import DappTransferGraphic from "@/transaction-graphic/DappTransferGraphic/DappTransferGraphic.vue";
-import DappUnknownTransactionGraphic from "../DappUnknownTransactionGraphic/DappUnknownTransactionGraphic.vue";
+import DappTransferTransaction from "@/transaction-graphics/DappTransferTransaction/DappTransferTransaction.vue";
+import DappUnknownTransaction from "../DappUnknownTransaction/DappUnknownTransaction.vue";
 
 /**
- * @class DappAbstractTransactionGraphic
+ * @class DappAbstractTransaction
  * @description This component display a transaction graphic and depending on
  * the transaction type it will render the according transaction graphic component.
  * <br /><br />
  * You can customize this component using custom HTML
  * attributes [as listed below](#parameters).
  * <br /><br />
- * @example Using the DappAbstractTransactionGraphic component
+ * @example Using the DappAbstractTransaction component
  * ```html
  *   <template>
- *     <DappAbstractTransactionGraphic
+ *     <DappAbstractTransaction
  *      :transaction="someTransactionInstance"
  *     />
  *   </template>
@@ -41,11 +41,11 @@ import DappUnknownTransactionGraphic from "../DappUnknownTransactionGraphic/Dapp
  */
 @Component({
   components: {
-    DappTransferGraphic,
-    DappUnknownTransactionGraphic,
+    DappTransferTransaction,
+    DappUnknownTransaction,
   },
 })
-export default class DappAbstractTransactionGraphic extends Vue {
+export default class DappAbstractTransaction extends Vue {
   /**
    * The {@link Transaction} instance to be displayed.
    *
@@ -71,7 +71,9 @@ export default class DappAbstractTransactionGraphic extends Vue {
   /**
    * Getter method to return the transaction graphic component's
    * tag name depending on the {@link TransactionType}.
-   * If no component is available for the type, it'll return `"unknown"`.
+   * If no component is available for the type, it'll return `"DappUnknownTransaction"`.
+   * <br /><br />
+   * Note this is the default component to display non-identified-type transactions.
    *
    * @access protected
    * @returns {string}
@@ -79,8 +81,8 @@ export default class DappAbstractTransactionGraphic extends Vue {
   protected get graphicComponent(): string {
     switch (this.transaction?.type) {
       case TransactionType.TRANSFER:
-        return "DappTransferGraphic";
+        return "DappTransferTransaction";
     }
-    return "unknown";
+    return "DappUnknownTransaction";
   }
 }
