@@ -17,7 +17,7 @@ import {
 import { Component, Prop } from "vue-property-decorator";
 
 // internal dependencies
-import DappAbstractTransactionGraphic from "@/transaction-graphic/DappAbstractTransactionGraphic/DappAbstractTransactionGraphic.vue";
+import DappAbstractTransaction from "@/transaction-graphics/DappAbstractTransaction/DappAbstractTransaction.vue";
 import DappGraphicComponent from "@/graphics/DappGraphicComponent/DappGraphicComponent";
 import SignatureIcon from "@/assets/img/signature.png";
 
@@ -50,7 +50,7 @@ import SignatureIcon from "@/assets/img/signature.png";
  * @since v0.1.0
  */
 @Component({
-  components: { DappAbstractTransactionGraphic },
+  components: { DappAbstractTransaction },
 })
 export default class DappTransactionGraphic extends DappGraphicComponent {
   /**
@@ -62,7 +62,6 @@ export default class DappTransactionGraphic extends DappGraphicComponent {
   @Prop({
     type: Object,
     required: true,
-    default: {},
   })
   protected transaction?: Transaction;
 

@@ -7,6 +7,24 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-.dappTransferGraphic-message {
-  @apply text-message font-bold fill-navy;
+.dappTreeView-item {
+  @apply cursor-pointer;
+}
+.dappTreeView-field-name {
+  @apply text-royal-blue;
+}
+.dappTreeView-bold {
+  @apply font-bold;
+}
+
+.dappTreeView-non-overflown {
+  @apply w-full overflow-hidden text-ellipsis whitespace-nowrap;
+}
+
+li {
+  @apply list-none;
+
+  ul {
+    @apply pl-4;
+  }
 }

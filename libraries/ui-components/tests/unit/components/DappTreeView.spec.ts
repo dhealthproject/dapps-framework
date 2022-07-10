@@ -8,7 +8,6 @@
  * @license     LGPL-3.0
  */
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
-import DappUnknownTransactionGraphic from "@/transaction-graphic/DappUnknownTransactionGraphic/DappUnknownTransactionGraphic.vue";
 import {
   Address,
   Deadline,
@@ -19,6 +18,7 @@ import {
   UInt64,
 } from "@dhealth/sdk";
 import { expect } from "chai";
+import DappTreeView from "@/graphics/DappTreeView/DappTreeView.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
@@ -63,13 +63,10 @@ const componentOptions = {
   },
 };
 
-describe("DappUnknownTransactionGraphic -->", () => {
+describe("DappTreeView -->", () => {
   let widget: Wrapper<Vue>;
   beforeEach(() => {
-    widget = shallowMount(
-      DappUnknownTransactionGraphic as any,
-      componentOptions
-    );
+    widget = shallowMount(DappTreeView as any, componentOptions);
   });
 
   it("should have correct props", () => {
@@ -78,55 +75,33 @@ describe("DappUnknownTransactionGraphic -->", () => {
   });
 
   it("should render recursively correct number of times", () => {
-    expect(
-      widget.findAllComponents(DappUnknownTransactionGraphic).length
-    ).to.equals(13);
+    expect(widget.findAllComponents(DappTreeView).length).to.equals(13);
   });
 
   it("should have correct css classes for expandable items", () => {
     const liElement = widget.find("li");
     const mainDivElement = liElement.find("div");
     const spanElements = mainDivElement.findAll("span");
-    expect(liElement.classes()).to.include(
-      "dappUnknownTransactionGraphic-item"
-    );
-    expect(mainDivElement.classes()).to.include(
-      "dappUnknownTransactionGraphic-non-overflown"
-    );
-    expect(spanElements.at(0).classes()).to.include(
-      "dappUnknownTransactionGraphic-field-name"
-    );
-    expect(spanElements.at(0).classes()).to.include(
-      "dappUnknownTransactionGraphic-bold"
-    );
-    expect(spanElements.at(1).classes()).to.include(
-      "dappUnknownTransactionGraphic-field-name"
-    );
-    expect(spanElements.at(1).classes()).to.include(
-      "dappUnknownTransactionGraphic-bold"
-    );
+    expect(liElement.classes()).to.include("dappTreeView-item");
+    expect(mainDivElement.classes()).to.include("dappTreeView-non-overflown");
+    expect(spanElements.at(0).classes()).to.include("dappTreeView-field-name");
+    expect(spanElements.at(0).classes()).to.include("dappTreeView-bold");
+    expect(spanElements.at(1).classes()).to.include("dappTreeView-field-name");
+    expect(spanElements.at(1).classes()).to.include("dappTreeView-bold");
   });
 
   it("should have correct css classes for non-expandable items", () => {
-    widget = shallowMount(DappUnknownTransactionGraphic as any, {
+    widget = shallowMount(DappTreeView as any, {
       ...componentOptions,
       propsData: { name: "testString", item: "test-string" },
     });
     const liElement = widget.find("li");
     const mainDivElement = liElement.find("div");
     const spanElements = mainDivElement.findAll("span");
-    expect(liElement.classes()).to.include(
-      "dappUnknownTransactionGraphic-item"
-    );
-    expect(mainDivElement.classes()).to.include(
-      "dappUnknownTransactionGraphic-non-overflown"
-    );
-    expect(spanElements.at(0).classes()).to.include(
-      "dappUnknownTransactionGraphic-field-name"
-    );
-    expect(spanElements.at(0).classes()).to.not.include(
-      "dappUnknownTransactionGraphic-bold"
-    );
+    expect(liElement.classes()).to.include("dappTreeView-item");
+    expect(mainDivElement.classes()).to.include("dappTreeView-non-overflown");
+    expect(spanElements.at(0).classes()).to.include("dappTreeView-field-name");
+    expect(spanElements.at(0).classes()).to.not.include("dappTreeView-bold");
     expect(spanElements.at(1).classes()).to.be.empty;
   });
 
@@ -158,7 +133,7 @@ describe("DappUnknownTransactionGraphic -->", () => {
       "type:  PlainMessage",
     ];
     propList.forEach((props, index) => {
-      widget = shallowMount(DappUnknownTransactionGraphic as any, {
+      widget = shallowMount(DappTreeView as any, {
         ...componentOptions,
         propsData: props,
       });

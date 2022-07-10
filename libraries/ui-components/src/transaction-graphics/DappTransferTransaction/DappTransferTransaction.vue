@@ -61,7 +61,7 @@
         :x="transactionTypeTextPositionX"
         :y="transactionTypeTextPositionY"
         text-anchor="middle"
-        class="dappTransferGraphic-message"
+        class="dappTransferTransaction-message"
       >
         {{ transactionType }}
         <title>{{ transactionType }}</title>
@@ -70,8 +70,8 @@
   </div>
 </template>
 
-<script lang="ts" src="./DappTransferGraphic.ts"></script>
+<script lang="ts" src="./DappTransferTransaction.ts"></script>
 
 <style lang="postcss" scoped>
-@import "./DappTransferGraphic.scss";
+@import "./DappTransferTransaction.scss";
 </style>

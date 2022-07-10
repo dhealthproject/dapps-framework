@@ -24,17 +24,17 @@ import DappMosaicCircle from "@/graphics/DappMosaicCircle/DappMosaicCircle.vue";
 import DappTransactionArrow from "@/graphics/DappTransactionArrow/DappTransactionArrow.vue";
 
 /**
- * @class DappTransferGraphic
+ * @class DappTransferTransaction
  * @description This component display a transaction graphic that represents
  * a {@link TransferTransaction} instance.
  * <br /><br />
  * You can customize this component using custom HTML
  * attributes [as listed below](#parameters).
  * <br /><br />
- * @example Using the DappTransferGraphic component
+ * @example Using the DappTransferTransaction component
  * ```html
  *   <template>
- *     <DappTransferGraphic
+ *     <DappTransferTransaction
  *      :transaction="someTransferTransactionInstance"
  *     />
  *   </template>
@@ -55,7 +55,7 @@ import DappTransactionArrow from "@/graphics/DappTransactionArrow/DappTransactio
     DappTransactionArrow,
   },
 })
-export default class DappTransferGraphic extends DappGraphicComponent {
+export default class DappTransferTransaction extends DappGraphicComponent {
   /**
    * The {@link TransferTransaction} instance to be displayed.
    *

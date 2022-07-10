@@ -9,10 +9,10 @@
  */
 import { expect } from "chai";
 import { createLocalVue, mount, shallowMount, Wrapper } from "@vue/test-utils";
-import DappTransactionGraphic from "@/widgets/DappTransactionGraphic/DappTransactionGraphic.vue";
 import { TransactionType } from "@dhealth/sdk";
-import DappAbstractTransactionGraphic from "@/transaction-graphic/DappAbstractTransactionGraphic/DappAbstractTransactionGraphic.vue";
-import DappTransferGraphic from "@/transaction-graphic/DappTransferGraphic/DappTransferGraphic.vue";
+import DappTransactionGraphic from "@/widgets/DappTransactionGraphic/DappTransactionGraphic.vue";
+import DappTransferTransaction from "@/transaction-graphics/DappTransferTransaction/DappTransferTransaction.vue";
+import DappAbstractTransaction from "@/transaction-graphics/DappAbstractTransaction/DappAbstractTransaction.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
@@ -147,7 +147,7 @@ describe("DappTransactionGraphic -->", () => {
 
   it("should display correct type of transaction graphic", () => {
     widget = mount(DappTransactionGraphic as any, componentOptions);
-    expect(widget.findComponent(DappTransferGraphic).exists()).to.be.true;
+    expect(widget.findComponent(DappTransferTransaction).exists()).to.be.true;
   });
 
   it("should display correct elements when transaction is not aggregate", () => {
@@ -177,7 +177,7 @@ describe("DappTransactionGraphic -->", () => {
       ".dappTransactionGraphic-aggregate-inner-index"
     );
     const dappAbstractTransactionGraphicEl = aggregateInnerEl.findComponent(
-      DappAbstractTransactionGraphic
+      DappAbstractTransaction
     );
     expect(bodyDivEl.exists()).to.be.true;
     expect(aggregateContainerDivEl.exists()).to.be.true;

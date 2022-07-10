@@ -9,12 +9,12 @@
  */
 import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
-import DappTransferGraphic from "@/transaction-graphic/DappTransferGraphic/DappTransferGraphic.vue";
 import { TransactionType } from "@dhealth/sdk";
 import DappAccountAvatar from "@/graphics/DappAccountAvatar/DappAccountAvatar.vue";
 import DappTransactionArrow from "@/graphics/DappTransactionArrow/DappTransactionArrow.vue";
 import DappMessageCircle from "@/graphics/DappMessageCircle/DappMessageCircle.vue";
 import DappMosaicCircle from "@/graphics/DappMosaicCircle/DappMosaicCircle.vue";
+import DappTransferTransaction from "@/transaction-graphics/DappTransferTransaction/DappTransferTransaction.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
@@ -62,10 +62,10 @@ const componentOptions = {
   },
 };
 
-describe("DappTransferGraphic -->", () => {
+describe("DappTransferTransaction -->", () => {
   let widget: Wrapper<Vue>;
   beforeEach(() => {
-    widget = shallowMount(DappTransferGraphic as any, componentOptions);
+    widget = shallowMount(DappTransferTransaction as any, componentOptions);
   });
 
   it("should have correct prop", () => {
@@ -95,6 +95,6 @@ describe("DappTransferGraphic -->", () => {
     const divEl = widget.find("div");
     const svgEl = divEl.find("svg");
     const textEl = svgEl.find("text");
-    expect(textEl.classes()).to.include("dappTransferGraphic-message");
+    expect(textEl.classes()).to.include("dappTransferTransaction-message");
   });
 });
