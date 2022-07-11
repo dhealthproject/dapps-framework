@@ -75,7 +75,7 @@ describe("DappUnknownTransaction -->", () => {
   it("should render correct elements with correct css classes", () => {
     const divEl = widget.find("div");
     const ulEl = divEl.find("ul");
-    const dappTreeViewEl = widget.find(DappTreeView);
+    const dappTreeViewEl = widget.findComponent(DappTreeView);
     expect(divEl.exists()).to.be.true;
     expect(ulEl.exists()).to.be.true;
     expect(dappTreeViewEl.exists()).to.be.true;

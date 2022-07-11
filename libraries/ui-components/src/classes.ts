@@ -31,11 +31,14 @@ import DappAccountAvatar from "./graphics/DappAccountAvatar/DappAccountAvatar";
 import DappAccountCard from "./widgets/DappAccountCard/DappAccountCard";
 import DappMessageCircle from "./graphics/DappMessageCircle/DappMessageCircle";
 import DappMosaicCircle from "./graphics/DappMosaicCircle/DappMosaicCircle";
+import DappNamespaceCircle from "./graphics/DappNamespaceCircle/DappNamespaceCircle";
+import DappNamespaceUnlinkCircle from "./graphics/DappNamespaceUnlinkCircle/DappNamespaceUnlinkCircle";
 import DappTransactionArrow from "./graphics/DappTransactionArrow/DappTransactionArrow";
 import DappTransferTransaction from "./transaction-graphics/DappTransferTransaction/DappTransferTransaction";
 import DappUnknownTransaction from "./transaction-graphics/DappUnknownTransaction/DappUnknownTransaction";
 import DappAbstractTransaction from "./transaction-graphics/DappAbstractTransaction/DappAbstractTransaction";
 import DappTransactionGraphic from "./widgets/DappTransactionGraphic/DappTransactionGraphic";
+import DappAddressAliasTransaction from "./transaction-graphics/DappAddressAliasTransaction/DappAddressAliasTransaction";
 
 // exports
 export type { Variant };
@@ -51,9 +54,12 @@ export {
   DappAccountCard,
   DappMessageCircle,
   DappMosaicCircle,
+  DappNamespaceCircle,
+  DappNamespaceUnlinkCircle,
   DappTransactionArrow,
   DappTransferTransaction,
   DappUnknownTransaction,
   DappAbstractTransaction,
   DappTransactionGraphic,
+  DappAddressAliasTransaction,
 };

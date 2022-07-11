@@ -82,6 +82,8 @@ export default class DappAbstractTransaction extends Vue {
     switch (this.transaction?.type) {
       case TransactionType.TRANSFER:
         return "DappTransferTransaction";
+      case TransactionType.ADDRESS_ALIAS:
+        return "DappAddressAliasTransaction";
     }
     return "DappUnknownTransaction";
   }
