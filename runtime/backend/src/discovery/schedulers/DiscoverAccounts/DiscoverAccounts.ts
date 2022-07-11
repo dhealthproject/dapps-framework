@@ -10,6 +10,7 @@
 // external dependencies
 import { Command, CommandRunner } from "nest-commander";
 import { ConfigService } from "@nestjs/config";
+import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
 import {
   AggregateTransactionInfo,
@@ -26,7 +27,7 @@ import { StateService } from "../../../common/services/StateService";
 import { NetworkService } from "../../../common/services/NetworkService";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
 import { AccountsService } from "../../services/AccountsService";
-import { Account, AccountDocument, AccountQuery } from "../../models/AccountSchema";
+import { Account, AccountModel, AccountQuery } from "../../models/AccountSchema";
 import { AccountDiscoveryStateData } from "../../models/AccountDiscoveryStateData";
 
 /**
@@ -103,6 +104,7 @@ export class DiscoverAccounts
    * @param {AccountsService} accountsService
    */
   constructor(
+    @InjectModel(Account.name) private readonly model: AccountModel,
     protected readonly configService: ConfigService,
     protected readonly statesService: StateService,
     protected readonly networkService: NetworkService,
@@ -191,7 +193,7 @@ export class DiscoverAccounts
     const dappPubKey = this.configService.get<string>("dappPublicKey");
 
     // executes the actual command logic (this will call discover())
-    super.run([], { source: dappPubKey, debug: true } as DiscoveryCommandOptions);
+    await super.run([], { source: dappPubKey, debug: true } as DiscoveryCommandOptions);
   }
 
  /**
@@ -230,7 +232,7 @@ export class DiscoverAccounts
 
     // reads the latest execution state
     if (this.state && this.state.data) {
-      this.lastPageNumber = this.state.data.latestTxPage;
+      this.lastPageNumber = this.state.data.latestTxPage ?? 1;
       this.lastTransactionHash = this.state.data.latestTxHash;
     }
 
@@ -290,13 +292,15 @@ export class DiscoverAccounts
       accounts.push(account);
     }
 
-    // display debug information database operation
-    if (options.debug && !options.quiet) {
-      this.debugLog(`Updating ${accounts.length} accounts documents in database`);
-    }
-
     // (3) updates `accounts` entries in batch operation
-    this.accountsService.updateBatch(accounts.map(a => a as AccountDocument));
+    if (accounts.length > 0) {
+      // display debug information about database operation
+      if (options.debug && !options.quiet) {
+        this.debugLog(`Updating ${accounts.length} accounts documents in database`);
+      }
+
+      this.accountsService.updateBatch(accounts);
+    }
   }
 
   /**
@@ -392,31 +396,24 @@ export class DiscoverAccounts
     // shortcut for the number of processed transactions
     const countProcessed = this.transactionsByAddress.get(recipient).length;
 
-    // queries the database to find account by address
-    const document = await this.accountsService.findOne(
-      new AccountQuery({ address: recipient } as AccountDocument),
-    );
-
-    // if the document exists, we must update `transactionsCount`
-    if (!! document) {
-      const countOlderTxes = document.transactionsCount ?? 0;
-
-      // increments the number of transactions
-      document.transactionsCount = countOlderTxes + countProcessed;
-      return document;
-    }
-
     // gets the first transfer object (used to read "height")
     const firstTransfer: TransferTransaction = this.transactions.find(
       t => firstTransactionHash === this.extractTransactionHash(t)
-    )
+    );
 
-    // unknown account that is processed for the first time
-    const account = new Account();
-    account.address = recipient;
-    account.transactionsCount = countProcessed;
-    account.firstTransactionAtBlock = firstTransfer.transactionInfo.height.compact();
-    return account;
+    // prepares a fetch query for `accounts`
+    const databaseQuery = new AccountQuery({
+      address: recipient,
+    } as Account);
+
+    // prepares custom db operations ("increment")
+    const operations = { $inc: { transactionsCount: countProcessed } };
+
+    // queries the database to create or update account by address
+    return await this.accountsService.createOrUpdate(databaseQuery, this.model.create({
+      address: recipient,
+      firstTransactionAtBlock: firstTransfer.transactionInfo.height.compact(),
+    } as Account), operations);
   }
 
   /**

@@ -9,10 +9,10 @@
  */
 // external dependencies
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 
 // internal dependencies
-import { Documentable } from "../../common/concerns/Documentable";
-import { Transferable } from "../../common/traits/Transferable";
+import { Transferable } from "../../common/concerns/Transferable";
 import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
 import { AccountDTO } from "../models/AccountDTO";
 
@@ -33,16 +33,7 @@ import { AccountDTO } from "../models/AccountDTO";
 @Schema({
   timestamps: true,
 })
-export class Account extends Transferable<AccountDTO> {
-  /**
-   * The document identifier. This field is automatically populated
-   * if it does not exist (mongoose) and **cannot be updated**.
-   *
-   * @access public
-   * @var {string}
-   */
-  public _id: string;
-
+export class Account extends Transferable<AccountDTO> /* extends Documentable */ {
   /**
    * The account's **address**. An address typically refers to a
    * human-readable series of 39 characters, starting either with
@@ -119,26 +110,57 @@ export class Account extends Transferable<AccountDTO> {
    * @access public
    * @returns {Record<string, any>}    The individual document data that is used in a query.
    */
-  public toQuery(): Record<string, any> {
+  public get toQuery(): Record<string, any> {
     return {
       address: this.address,
     };
   }
+
+  /**
+   * This method implements the document columns list as defined
+   * for the collection `accounts`.
+   *
+   * @returns {Record<string, any>}    The individual data fields that belong to the document.
+   */
+  public get toDocument(): Record<string, any> {
+    return {
+      id: this._id,
+      address: this.address,
+      transactionsCount: this.transactionsCount,
+      firstTransactionAt: this.firstTransactionAt,
+      firstTransactionAtBlock: this.firstTransactionAtBlock,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    }
+  }
 }
 
 /**
- * @type AccountDocument
- * @description This type merges the mongoose base `Document` object with
- * specialized state document objects such that this document can be used
- * directly in `mongoose` queries for `accounts` documents.
+ * @class AccountModel
+ * @description This class defines the **model** or individual
+ * **document** for one collection ("schema"). This class can
+ * be *automatically* injected in services using the `@InjectModel`
+ * decorator of `nestjs/mongoose`.
  * <br /><br />
- * Due to the implementation of `toQuery` in {@link Account}, the order
- * of creation of this mixin is important such that the implementation of
- * the method inside `Account` overwrites that of `Documentable`.
+ * @example Injecting and using the `AccountModel`
+ * ```typescript
+ *   import { InjectModel } from "@nestjs/mongoose";
+ *   import { Account, AccountModel } from "./AccountSchema";
+ *
+ *   class MyAccountService {
+ *     public constructor(
+ *       @InjectModel(Account.name) private readonly model: AccountModel
+ *     )
+ * 
+ *     public addEntry(data: Record<string, any>) {
+ *       return this.model.create(data);
+ *     }
+ *   }
+ * ```
  *
  * @since v0.2.0
  */
-export type AccountDocument = Documentable & Account;
+export class AccountModel extends Model<Account> {}
 
 /**
  * @class AccountQuery
@@ -150,16 +172,16 @@ export type AccountDocument = Documentable & Account;
  *
  * @since v0.2.0
  */
-export class AccountQuery extends Queryable<AccountDocument> {
+export class AccountQuery extends Queryable<Account> {
   /**
    * Copy constructor for pageable queries in `accounts` collection.
    *
    * @see Queryable
-   * @param   {AccountDocument|undefined}     document          The *document* instance (defaults to `undefined`) (optional).
+   * @param   {Account|undefined}     document          The *document* instance (defaults to `undefined`) (optional).
    * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
   public constructor(
-    document?: AccountDocument,
+    document?: Account,
     queryParams: QueryParameters = undefined,
   ) {
     super(document, queryParams);
@@ -175,3 +197,8 @@ export class AccountQuery extends Queryable<AccountDocument> {
  * @since v0.2.0
  */
 export const AccountSchema = SchemaFactory.createForClass(Account);
+
+// This call to **loadClass** on the schema object enables instance
+// methods on the {@link Account} class to be called when the model gets
+// instanciated by `mongoose` directly, e.g. as the result of a query.
+AccountSchema.loadClass(Account, true);

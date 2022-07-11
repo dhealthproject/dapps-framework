@@ -32,6 +32,8 @@ services:
       - ./data:/data/db
     networks:
       - dapp-net
+    ports:
+      - "127.0.0.1:27017:27017"
 
 networks:
   dapp-net:

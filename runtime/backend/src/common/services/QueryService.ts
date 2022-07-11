@@ -86,7 +86,10 @@ export type SearchQuery = {
  * @since v0.1.0
  */
 @Injectable()
-export class QueryService<TDocument extends Documentable> {
+export class QueryService<
+  TDocument extends Documentable,
+  TModel extends Model<TDocument, {}, {}, {}> = Model<TDocument>,
+> {
   /**
    * Create a generic *search query* that is compatible with Mongo. The
    * returned {@link PaginatedResultDto} contains a `data` field and a
@@ -98,12 +101,12 @@ export class QueryService<TDocument extends Documentable> {
    * @access public
    * @async
    * @param   {Queryable<TDocument>}         query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @param   {Model<TDocument>}  model     The model *class instance* used for resulting documents.
+   * @param   {TModel}  model     The model *class instance* used for resulting documents.
    * @returns {Promise<PaginatedResultDTO<TDocument>>} The matching documents after execution of the query.
    */
   public async find(
     query: Queryable<TDocument>,
-    model: Model<TDocument>,
+    model: TModel,
   ): Promise<PaginatedResultDTO<TDocument>> {
     // wrap pagination+query to be mongo-compatible
     const { queryCursor, querySorter, searchQuery } =
@@ -145,18 +148,18 @@ export class QueryService<TDocument extends Documentable> {
    * @access public
    * @async
    * @param   {Queryable<TDocument>}         query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @param   {Model<TDocument>}  model     The model *class instance* used for the resulting document.
+   * @param   {TModel}  model     The model *class instance* used for the resulting document.
    * @returns {Promise<TDocument>}  The resulting document.
    */
   public async findOne(
     query: Queryable<TDocument>,
-    model: Model<TDocument>,
+    model: TModel,
   ): Promise<TDocument> {
     // wrap pagination+query to be mongo-compatible
     const { searchQuery } = this.getQueryConfig(query);
 
     // execute query and return a single document
-    return model.findOne({ $match: searchQuery }).exec();
+    return await model.findOne({ $match: searchQuery }).exec();
   }
 
   /**
@@ -167,14 +170,16 @@ export class QueryService<TDocument extends Documentable> {
    *
    * @async
    * @param   {Queryable<TDocument>}             query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @param   {Model<TDocument>}      model   The model *class instance* used for the resulting document.
+   * @param   {TModel}      model   The model *class instance* used for the resulting document.
    * @param   {Record<string, any>}   data    The fields or data that has to be updated (will be added to `$set: {}`).
+   * @param   {Record<string, any>}   ops    The operations that must be run additionally (e.g. `$inc: {}`) (optional).
    * @returns {Promise<TDocument>}
    */
   public async createOrUpdate(
     query: Queryable<TDocument>,
-    model: Model<TDocument>,
+    model: TModel,
     data: Record<string, any>,
+    ops: Record<string, any> = {},
   ): Promise<TDocument> {
     // wrap pagination+query to be mongo-compatible
     const { searchQuery } = this.getQueryConfig(query);
@@ -182,11 +187,18 @@ export class QueryService<TDocument extends Documentable> {
     // destructures query **fields** for the update query (no-sort, etc.)
     const { sort, order, pageNumber, pageSize, ...updateQuery } = searchQuery;
 
+    // adds *operations* to updated data, only for custom queries
+    // this covers the use of: "$inc", "$dec", "$set", etc.
+    const operations: Record<string, any> = {
+      ...data,
+      ...ops,
+    };
+
     // execute query and return a single document
     // note that this method uses the `upsert` option
     // to execute an INSERT for inexisting document
-    return model.findOneAndUpdate(
-      updateQuery as any, data, { upsert: true, returnOriginal: false }
+    return await model.findOneAndUpdate(
+      updateQuery as any, operations, { upsert: true, returnOriginal: false }
     ).exec();
   }
 
@@ -204,12 +216,12 @@ export class QueryService<TDocument extends Documentable> {
    *
    * @todo Currently the `$set` parameters use `new Date()`, probably a mongo/mongoose routine for "now" is more adequate.
    * @async
-   * @param   {Model<TDocument>}    model       
+   * @param   {TModel}    model       
    * @param   {TDocument[]}         documents
    * @returns {Promise<number>}   The number of documents **affected** by the update queries.
    */
   public async updateBatch(
-    model: Model<TDocument>,
+    model: TModel,
     documents: TDocument[],
   ): Promise<number> {
     // creates a bulk operation handler
@@ -218,11 +230,11 @@ export class QueryService<TDocument extends Documentable> {
     // each document is updated in one query
     // all queries a batched together with bulk handler
     // note that an **upsert** is used for new documents
-    documents.map((document: TDocument) => bulk.find(document.toQuery())
+    documents.map((document: TDocument) => bulk.find(document.toQuery)
       .upsert()
       .update({
         $set: {
-          ...document,
+          ...(document.toDocument),
           updatedAt: new Date(),
         },
       })

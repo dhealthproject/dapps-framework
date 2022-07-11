@@ -12,7 +12,7 @@ import { Logger } from "@nestjs/common";
 
 // internal dependencies
 import { StateService } from "../services/StateService";
-import {State, StateDocument, StateQuery } from "../models/StateSchema";
+import { State, StateQuery } from "../models/StateSchema";
 import { StateData } from "../models/StateData";
 
 /**
@@ -68,7 +68,7 @@ export abstract class StatefulModule {
    */
   protected getStateQuery(): StateQuery {
     return new StateQuery(
-      { name: this.stateIdentifier } as StateDocument,
+      { name: this.stateIdentifier } as State,
     );
   }
 
@@ -79,7 +79,7 @@ export abstract class StatefulModule {
    * Execution states refer to one module's required state data,
    * potentially necessary during execution, and which is fetched
    * in {@link run} before execution and updated in {@link run}
-   * after execution.
+   * after execution (using the `name` as an identifier).
    *
    * @access protected
    * @returns {StateData}
@@ -99,7 +99,10 @@ export abstract class StatefulModule {
     message: string,
     context?: string,
   ): void {
-    return this.logger.debug(message, context);
+    if (!!context) {
+      this.logger.debug(message, context);
+    }
+    else this.logger.debug(message);
   }
 
   /**
@@ -116,7 +119,7 @@ export abstract class StatefulModule {
     stack?: string,
     context?: string,
   ): void {
-    return this.logger.error(message, stack, context);
+    this.logger.error(message, stack, context);
   }
 
   /**

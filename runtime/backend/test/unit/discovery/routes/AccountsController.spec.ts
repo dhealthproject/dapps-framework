@@ -18,7 +18,7 @@ import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResul
 import { AccountsService } from "../../../../src/discovery/services/AccountsService";
 import { AccountsController } from "../../../../src/discovery/routes/AccountsController";
 import { AccountDTO } from "../../../../src/discovery/models/AccountDTO";
-import { AccountDocument, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
+import { Account, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
 
 describe("discovery/AccountsController", () => {
   let controller: AccountsController;
@@ -52,8 +52,8 @@ describe("discovery/AccountsController", () => {
 
   describe("find() -->", () => {
     it("should call correct method and respond with DTO", async () => {
-      const expectedResult = new PaginatedResultDTO<AccountDocument>();
-      expectedResult.data = [{} as AccountDocument];
+      const expectedResult = new PaginatedResultDTO<Account>();
+      expectedResult.data = [{} as Account];
       expectedResult.pagination = {
         pageNumber: 1,
         pageSize: 20,

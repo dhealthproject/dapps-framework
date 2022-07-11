@@ -14,15 +14,12 @@ import { Model } from "mongoose";
 // internal dependencies
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
-import {
-  AccountDocument,
-  AccountQuery,
-} from "../../../../src/discovery/models/AccountSchema";
+import { Account, AccountModel, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
 import { QueryParameters } from "@/common/concerns/Queryable";
 
 // Mock the query service to enable *testing* of protected
 // methods such as `typecastField`.
-class MockQueryService extends QueryService<AccountDocument> {
+class MockQueryService extends QueryService<Account, AccountModel> {
   public sanitizeSearchQuery(searchQuery: any): any {
     return super.sanitizeSearchQuery(searchQuery);
   }
@@ -43,7 +40,7 @@ describe("common/QueryService", () => {
       exec: () =>
         Promise.resolve([
           {
-            data: [{} as AccountDocument],
+            data: [{} as Account],
             metadata: [{ total: 1 }],
           },
         ]),
@@ -102,13 +99,13 @@ describe("common/QueryService", () => {
 
   describe("find() -->", () => {
     it("should call aggregate() from model", async () => {
-      await service.find(new AccountQuery({ id: "non-existing" } as AccountDocument), testModel);
+      await service.find(new AccountQuery({ id: "non-existing" } as Account), testModel);
       expect(aggregateFn).toHaveBeenCalled();
     });
 
     it("should have correct result", async () => {
-      const expectedResult: PaginatedResultDTO<AccountDocument> = {
-        data: [{} as AccountDocument],
+      const expectedResult: PaginatedResultDTO<Account> = {
+        data: [{} as Account],
         pagination: {
           pageNumber: 1,
           pageSize: 20,
@@ -116,15 +113,15 @@ describe("common/QueryService", () => {
         },
       };
       const result = await service.find(
-        new AccountQuery({ id: "non-existing" } as AccountDocument),
+        new AccountQuery({ id: "non-existing" } as Account),
         testModel,
       );
       expect(result).toStrictEqual(expectedResult);
     });
 
     it("should type resulting entities correctly", async () => {
-      const expectedResult: PaginatedResultDTO<AccountDocument> = {
-        data: [{} as AccountDocument],
+      const expectedResult: PaginatedResultDTO<Account> = {
+        data: [{} as Account],
         pagination: {
           pageNumber: 1,
           pageSize: 20,
@@ -132,7 +129,7 @@ describe("common/QueryService", () => {
         },
       };
       const result = await service.find(
-        new AccountQuery({ id: "non-existing" } as AccountDocument),
+        new AccountQuery({ id: "non-existing" } as Account),
         testModel,
       );
       expect(result).toStrictEqual(expectedResult);
@@ -143,7 +140,7 @@ describe("common/QueryService", () => {
     });
 
     it("should have correct result when metadata is empty", async () => {
-      const expectedResult: PaginatedResultDTO<AccountDocument> = {
+      const expectedResult: PaginatedResultDTO<Account> = {
         data: [],
         pagination: {
           pageNumber: 1,
@@ -164,7 +161,7 @@ describe("common/QueryService", () => {
         };
       });
       const result = await service.find(
-        new AccountQuery({ id: "non-existing" } as AccountDocument),
+        new AccountQuery({ id: "non-existing" } as Account),
         testModel,
       );
       expect(result).toStrictEqual(expectedResult);
@@ -180,7 +177,7 @@ describe("common/QueryService", () => {
         exec: () =>
           Promise.resolve([
             {
-              data: [{} as AccountDocument],
+              data: [{} as Account],
               metadata: [{ total: 1 }],
             },
           ]),
@@ -190,7 +187,7 @@ describe("common/QueryService", () => {
     it("should have correct sort: address", async () => {
       await service.find(
         new AccountQuery(
-          { id: "non-existing" } as AccountDocument,
+          { id: "non-existing" } as Account,
           { sort: "address" } as QueryParameters,
         ),
         testModel,
@@ -207,7 +204,7 @@ describe("common/QueryService", () => {
     });
 
     it("should have correct order: asc", async () => {
-      await service.find(new AccountQuery({ id: "non-existing" } as AccountDocument), testModel);
+      await service.find(new AccountQuery({ id: "non-existing" } as Account), testModel);
       expect(aggregateFn).toHaveBeenCalledWith([
         { $match: { id: "non-existing" } },
         {
@@ -222,7 +219,7 @@ describe("common/QueryService", () => {
     it("should have correct order: desc", async () => {
       await service.find(
         new AccountQuery(
-          { id: "non-existing" } as AccountDocument,
+          { id: "non-existing" } as Account,
           { order: "desc" } as QueryParameters,
         ),
         testModel,
@@ -241,7 +238,7 @@ describe("common/QueryService", () => {
     it("should permit overwrite of pageNumber and pageSize", async () => {
       await service.find(
         new AccountQuery(
-          { id: "non-existing" } as AccountDocument,
+          { id: "non-existing" } as Account,
           { pageNumber: 2, pageSize: 17 } as QueryParameters,
         ),
         testModel,

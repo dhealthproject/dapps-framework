@@ -37,6 +37,9 @@ export class MockModel {
   constructor(dto?: any) {
     this.data = dto;
   }
+  create() {
+    return jest.fn(() => this.data);
+  }
   save() {
     return jest.fn(() => this.data).call(this);
   }

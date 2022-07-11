@@ -10,11 +10,13 @@
 // external dependencies
 import { Module } from "@nestjs/common";
 import { ScheduleModule } from "@nestjs/schedule";
+import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import { NetworkModule } from "../../../common/modules/NetworkModule";
 import { StateModule } from "../../../common/modules/StateModule";
 import { AccountsModule } from "../../modules/AccountsModule";
+import { Account, AccountSchema } from "../../models/AccountSchema";
 
 // private implementation
 import { DiscoverAccounts } from "./DiscoverAccounts";
@@ -31,6 +33,7 @@ import { DiscoverAccounts } from "./DiscoverAccounts";
     StateModule,
     NetworkModule,
     AccountsModule,
+    MongooseModule.forFeature([{ name: Account.name, schema: AccountSchema }]),
   ],
   providers: [DiscoverAccounts],
   exports: [DiscoverAccounts],

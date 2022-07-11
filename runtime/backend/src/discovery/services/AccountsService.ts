@@ -10,15 +10,10 @@
 // external dependencies
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
 
 // internal dependencies
 import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
-import {
-  Account,
-  AccountDocument,
-  AccountQuery,
-} from "../models/AccountSchema";
+import { Account, AccountModel, AccountQuery } from "../models/AccountSchema";
 import { QueryService } from "../../common/services/QueryService";
 
 /**
@@ -35,12 +30,12 @@ export class AccountsService {
    * The constructor of the service.
    *
    * @constructor
-   * @param {Model<AccountDocument>} model
+   * @param {AccountModel} model
    * @param {QueriesService} queriesService
    */
   constructor(
-    @InjectModel(Account.name) private readonly model: Model<AccountDocument>,
-    private readonly queriesService: QueryService<AccountDocument>,
+    @InjectModel(Account.name) private readonly model: AccountModel,
+    private readonly queriesService: QueryService<Account, AccountModel>,
   ) {}
 
   /**
@@ -50,11 +45,11 @@ export class AccountsService {
    * 
    * @access public
    * @async
-   * @param   {StateQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {AccountQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @returns {Promise<StateDocument>}  The resulting `states` document.
    */
-  async findOne(query: AccountQuery): Promise<AccountDocument> {
-    return this.queriesService.findOne(query, this.model);
+  async findOne(query: AccountQuery): Promise<Account> {
+    return await this.queriesService.findOne(query, this.model);
   }
 
   /**
@@ -64,8 +59,8 @@ export class AccountsService {
    * @param   {AccountQuery} query
    * @returns {Promise<PaginatedResultDTO<Account>>}
    */
-  async find(query: AccountQuery): Promise<PaginatedResultDTO<AccountDocument>> {
-    return this.queriesService.find(query, this.model);
+  async find(query: AccountQuery): Promise<PaginatedResultDTO<Account>> {
+    return await this.queriesService.find(query, this.model);
   }
 
   /**
@@ -74,17 +69,20 @@ export class AccountsService {
    *
    * @async
    * @param   {AccountQuery}          query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @param   {StateData}           data    The fields or data that has to be updated (will be added to `$set: {}`).
-   * @returns {Promise<StateDocument>}  The *updated* `states` document.
+   * @param   {AccountModel}           data    The fields or data that has to be updated (will be added to `$set: {}`).
+   * @param   {Record<string, any>}   ops    The operations that must be run additionally (e.g. `$inc: {}`) (optional).
+   * @returns {Promise<Account>}  The *updated* `states` document.
    */
-  async updateOne(
+  async createOrUpdate(
     query: AccountQuery,
-    data: AccountDocument,
-  ): Promise<AccountDocument> {
-    return this.queriesService.createOrUpdate(
+    data: AccountModel,
+    ops: Record<string, any> = {},
+  ): Promise<Account> {
+    return await this.queriesService.createOrUpdate(
       query,
       this.model,
       data,
+      ops,
     );
   }
 
@@ -92,11 +90,11 @@ export class AccountsService {
    * Method to update a batch of accounts.
    *
    * @async
-   * @param   {AccountDocument[]} accountDocuments
+   * @param   {AccountModel[]} accountDocuments
    * @returns {Promise<number>}
    */
-  async updateBatch(accountDocuments: AccountDocument[]): Promise<number> {
-    return this.queriesService.updateBatch(
+  async updateBatch(accountDocuments: AccountModel[]): Promise<number> {
+    return await this.queriesService.updateBatch(
       this.model,
       accountDocuments,
     );

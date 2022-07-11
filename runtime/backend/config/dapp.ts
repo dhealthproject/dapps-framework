@@ -3,7 +3,7 @@
  * Copyright (C) 2022-present dHealth Network, All rights reserved.
  *
  * @package     dHealth dApps Framework
- * @subpackage  Backend
+ * @subpackage  Backend Configuration
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */

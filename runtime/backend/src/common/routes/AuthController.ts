@@ -102,7 +102,6 @@ export class AuthController {
   ): Promise<AuthenticationToken> {
     try {
       const user: User = await this.authService.validate(
-        body.address, // <<<------ XXX address is still UNKNOWN HERE!!!! doesnt work.
         body.authCode,
       );
 

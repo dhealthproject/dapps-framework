@@ -15,7 +15,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import type { Scope } from "../../../src/common/models/Scope";
 import { QueryService } from "../../../src/common/services/QueryService";
 import { StateService } from "../../../src/common/services/StateService";
-import { StateDocument, StateQuery } from "../../../src/common/models/StateSchema";
+import { State, StateModel, StateQuery } from "../../../src/common/models/StateSchema";
 import { StateData } from "../../../src/common/models/StateData";
 import { BaseCommand, BaseCommandOptions } from "../../../src/worker/BaseCommand";
 
@@ -61,7 +61,7 @@ describe("worker/BaseCommand -->", () => {
   // global injectable service setup
   let fakeCommand: MockBaseCommand;
   let stateService: StateService;
-  let queryService: QueryService<StateDocument>;
+  let queryService: QueryService<State, StateModel>;
 
   // each test gets its own TestingModule (injectable)
   beforeEach(async () => {
@@ -79,7 +79,7 @@ describe("worker/BaseCommand -->", () => {
 
     fakeCommand = module.get<MockBaseCommand>(MockBaseCommand);
     stateService = module.get<StateService>(StateService);
-    queryService = module.get<QueryService<StateDocument>>(QueryService);
+    queryService = module.get<QueryService<State, StateModel>>(QueryService);
   });
 
   // testing internals

@@ -9,11 +9,14 @@
  */
 // external dependencies
 import { Module } from "@nestjs/common";
+import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import { NetworkModule } from "../../../common/modules/NetworkModule";
 import { QueryModule } from "../../../common/modules/QueryModule";
 import { StateModule } from "../../../common/modules/StateModule";
+import { TransactionsModule } from "../../modules/TransactionsModule";
+import { Transaction, TransactionSchema } from "../../models/TransactionSchema";
 
 // private implementation
 import { DiscoverTransactions } from "./DiscoverTransactions";
@@ -29,6 +32,8 @@ import { DiscoverTransactions } from "./DiscoverTransactions";
     QueryModule,
     StateModule,
     NetworkModule,
+    TransactionsModule,
+    MongooseModule.forFeature([{ name: Transaction.name, schema: TransactionSchema }]),
   ],
   providers: [DiscoverTransactions],
   exports: [DiscoverTransactions],

@@ -189,7 +189,7 @@ export abstract class BaseCommand
     options?: BaseCommandOptions,
   ): Promise<void> {
     // prepares execution logger and arguments
-    this.logger = new Logger(`${this.command}`);
+    this.logger = new Logger(`${this.scope}/${this.command}`);
     this.argv = passedParams;
 
     // display debug info about arguments and options
@@ -205,6 +205,10 @@ export abstract class BaseCommand
 
     // tracks starting moment
     const startTime = new Date().getTime();
+
+    if (options.debug && !options.quiet) {
+      this.debugLog(`Start time: ${new Date(startTime).toISOString()}`);
+    }
 
     // this try-catch block makes sure that no exception can happen
     // on production as the consequence of running a command, that

@@ -9,6 +9,7 @@
  */
 // external dependencies
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 
 // internal dependencies
 import { Documentable } from "../concerns/Documentable";
@@ -26,16 +27,7 @@ import { Queryable, QueryParameters } from "../concerns/Queryable";
 @Schema({
   timestamps: true,
 })
-export class AuthToken /* not transferable */ {
-  /**
-   * The document identifier. This field is automatically populated
-   * if it does not exist (mongoose) and **cannot be updated**.
-   *
-   * @access public
-   * @var {string}
-   */
-  public _id?: string;
-
+export class AuthToken extends Documentable /* not transferable */ {
   /**
    * The authentication code that is randomly generated for users
    * to use during authentication.
@@ -72,26 +64,54 @@ export class AuthToken /* not transferable */ {
    * @access public
    * @returns {Record<string, any>}    The individual document data that is used in a query.
    */
-  public toQuery(): Record<string, any> {
+  public get toQuery(): Record<string, any> {
     return {
       authCode: this.authCode,
     };
   }
+
+  /**
+   * This method implements the document columns list as defined
+   * for the collection `authTokens`.
+   *
+   * @returns {Record<string, any>}    The individual data fields that belong to the document.
+   */
+  public get toDocument(): Record<string, any> {
+    return {
+      id: this._id,
+      authCode: this.authCode,
+      usedBy: this.usedBy,
+      usedAt: this.usedAt,
+    }
+  }
 }
 
 /**
- * @type AuthTokenDocument
- * @description This type merges the mongoose base `Document` object with
- * specialized authentication token objects such that this document can be
- * used directly in `mongoose` queries for `authTokens` documents.
+ * @class AuthTokenModel
+ * @description This class defines the **model** or individual
+ * **document** for one collection ("schema"). This class can
+ * be *automatically* injected in services using the `@InjectModel`
+ * decorator of `nestjs/mongoose`.
  * <br /><br />
- * Due to the implementation of `toQuery` in {@link AuthToken}, the order
- * of creation of this mixin is important such that the implementation of
- * the method inside `AuthToken` overwrites that of `Documentable`.
+ * @example Injecting and using the `AuthTokenModel`
+ * ```typescript
+ *   import { InjectModel } from "@nestjs/mongoose";
+ *   import { AuthToken, AuthTokenModel } from "./AuthTokenSchema";
+ *
+ *   class MyAuthTokenService {
+ *     public constructor(
+ *       @InjectModel(AuthToken.name) private readonly model: AuthTokenModel
+ *     )
+ * 
+ *     public addEntry(data: Record<string, any>) {
+ *       return this.model.create(data);
+ *     }
+ *   }
+ * ```
  *
  * @since v0.2.0
  */
-export type AuthTokenDocument = Documentable & AuthToken;
+export class AuthTokenModel extends Model<AuthToken> {}
 
 /**
  * @class AuthTokenQuery
@@ -103,16 +123,16 @@ export type AuthTokenDocument = Documentable & AuthToken;
  *
  * @since v0.2.0
  */
-export class AuthTokenQuery extends Queryable<AuthTokenDocument> {
+export class AuthTokenQuery extends Queryable<AuthToken> {
   /**
    * Copy constructor for pageable queries in `authTokens` collection.
    *
    * @see Queryable
-   * @param   {AuthTokenDocument|undefined}   document          The *document* instance (defaults to `undefined`) (optional).
+   * @param   {AuthToken|undefined}   document          The *document* instance (defaults to `undefined`) (optional).
    * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
   public constructor(
-    document?: AuthTokenDocument,
+    document?: AuthToken,
     queryParams: QueryParameters = undefined,
   ) {
     super(document, queryParams);
@@ -128,3 +148,8 @@ export class AuthTokenQuery extends Queryable<AuthTokenDocument> {
  * @since v0.2.0
  */
 export const AuthTokenSchema = SchemaFactory.createForClass(AuthToken);
+
+// This call to **loadClass** on the schema object enables instance
+// methods on the {@link AuthToken} class to be called when the model gets
+// instanciated by `mongoose` directly, e.g. as the result of a query.
+AuthTokenSchema.loadClass(AuthToken, true);

@@ -10,16 +10,10 @@
 // external dependencies
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { BulkWriteResult, UnorderedBulkOperation } from "mongodb";
 
 // internal dependencies
 import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
-import {
-  Transaction,
-  TransactionDocument,
-  TransactionQuery,
-} from "../models/TransactionSchema";
+import { Transaction, TransactionModel, TransactionQuery } from "../models/TransactionSchema";
 import { QueryService } from "../../common/services/QueryService";
 
 /**
@@ -34,12 +28,12 @@ export class TransactionsService {
    * The constructor of the service.
    *
    * @constructor
-   * @param {Model<TransactionDocument>} model
+   * @param {TransactionModel} model
    * @param {QueriesService} queriesService
    */
   constructor(
-    @InjectModel(Transaction.name) private readonly model: Model<TransactionDocument>,
-    private readonly queriesService: QueryService<TransactionDocument>,
+    @InjectModel(Transaction.name) private readonly model: TransactionModel,
+    private readonly queriesService: QueryService<Transaction, TransactionModel>,
   ) {}
 
   /**
@@ -50,8 +44,8 @@ export class TransactionsService {
    * @param   {TransactionQuery} query
    * @returns {Promise<PaginatedResultDTO<Transaction>>}
    */
-  async find(query: TransactionQuery): Promise<PaginatedResultDTO<TransactionDocument>> {
-    return this.queriesService.find(query, this.model);
+  async find(query: TransactionQuery): Promise<PaginatedResultDTO<Transaction>> {
+    return await this.queriesService.find(query, this.model);
   }
 
   /**
@@ -61,11 +55,11 @@ export class TransactionsService {
    * 
    * @access public
    * @async
-   * @param   {StateQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @returns {Promise<StateDocument>}  The resulting `states` document.
+   * @param   {TransactionQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @returns {Promise<Transaction>}  The resulting `states` document.
    */
-  async findOne(query: TransactionQuery): Promise<TransactionDocument> {
-    return this.queriesService.findOne(query, this.model);
+  async findOne(query: TransactionQuery): Promise<Transaction> {
+    return await this.queriesService.findOne(query, this.model);
   }
 
   /**
@@ -75,17 +69,20 @@ export class TransactionsService {
    *
    * @async
    * @param   {TransactionQuery}          query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @param   {TransactionDocument}           data    The fields or data that has to be updated (will be added to `$set: {}`).
+   * @param   {TransactionModel}           data    The fields or data that has to be updated (will be added to `$set: {}`).
+   * @param   {Record<string, any>}   ops    The operations that must be run additionally (e.g. `$inc: {}`) (optional).
    * @returns {Promise<StateDocument>}  The *updated* `states` document.
    */
   async createOrUpdate(
     query: TransactionQuery,
-    data: TransactionDocument,
-  ): Promise<TransactionDocument> {
-    return this.queriesService.createOrUpdate(
+    data: TransactionModel,
+    ops: Record<string, any> = {},
+  ): Promise<Transaction> {
+    return await this.queriesService.createOrUpdate(
       query,
       this.model,
       data,
+      ops,
     );
   }
 
@@ -94,13 +91,13 @@ export class TransactionsService {
    * `transactions` collection.
    *
    * @async
-   * @param   {TransactionDocument[]} documents
+   * @param   {TransactionModel[]} documents
    * @returns {Promise<number>}
    */
   async updateBatch(
-    documents: TransactionDocument[],
+    documents: TransactionModel[],
   ): Promise<number> {
-    return this.queriesService.updateBatch(
+    return await this.queriesService.updateBatch(
       this.model,
       documents,
     );

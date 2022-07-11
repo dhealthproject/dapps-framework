@@ -9,10 +9,10 @@
  */
 // external dependencies
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 
 // internal dependencies
-import { Documentable } from "../../common/concerns/Documentable";
-import { Transferable } from "../../common/traits/Transferable";
+import { Transferable } from "../../common/concerns/Transferable";
 import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
 import { TransactionDTO } from "../models/TransactionDTO";
 
@@ -33,16 +33,7 @@ import { TransactionDTO } from "../models/TransactionDTO";
 @Schema({
   timestamps: false,
 })
-export class Transaction extends Transferable<TransactionDTO> {
-  /**
-   * The document identifier. This field is automatically populated
-   * if it does not exist (mongoose) and **cannot be updated**.
-   *
-   * @access public
-   * @var {string}
-   */
-  public _id: string;
-
+export class Transaction extends Transferable<TransactionDTO> /* extends Documentable */ {
   /**
    * XXX
    *
@@ -106,7 +97,7 @@ export class Transaction extends Transferable<TransactionDTO> {
    * @access public
    * @returns {Record<string, any>}    The individual document data that is used in a query.
    */
-  public toQuery(): Record<string, any> {
+  public get toQuery(): Record<string, any> {
     let query: Record<string, any> = {};
 
     if (undefined !== this.signerAddress)
@@ -117,21 +108,52 @@ export class Transaction extends Transferable<TransactionDTO> {
 
     return query;
   }
+
+  /**
+   * This method implements the document columns list as defined
+   * for the collection `transactions`.
+   *
+   * @returns {Record<string, any>}    The individual data fields that belong to the document.
+   */
+  public get toDocument(): Record<string, any> {
+    return {
+      id: this._id,
+      signerAddress: this.signerAddress,
+      transactionType: this.transactionType,
+      transactionHash: this.transactionHash,
+      signature: this.signature,
+      encodedBody: this.encodedBody,
+      discoveredAt: this.discoveredAt,
+    }
+  }
 }
 
 /**
- * @type TransactionDocument
- * @description This type merges the mongoose base `Document` object with
- * specialized state document objects such that this document can be used
- * directly in `mongoose` queries for `Transactions` documents.
+ * @class TransactionModel
+ * @description This class defines the **model** or individual
+ * **document** for one collection ("schema"). This class can
+ * be *automatically* injected in services using the `@InjectModel`
+ * decorator of `nestjs/mongoose`.
  * <br /><br />
- * Due to the implementation of `toQuery` in {@link Account}, the order
- * of creation of this mixin is important such that the implementation of
- * the method inside `Account` overwrites that of `Documentable`.
+ * @example Injecting and using the `TransactionModel`
+ * ```typescript
+ *   import { InjectModel } from "@nestjs/mongoose";
+ *   import { Transaction, TransactionModel } from "./TransactionSchema";
+ *
+ *   class MyTransactionService {
+ *     public constructor(
+ *       @InjectModel(Transaction.name) private readonly model: TransactionModel
+ *     )
+ * 
+ *     public addEntry(data: Record<string, any>) {
+ *       return this.model.create(data);
+ *     }
+ *   }
+ * ```
  *
  * @since v0.2.0
  */
-export type TransactionDocument = Documentable & Transaction;
+export class TransactionModel extends Model<Transaction> {}
 
 /**
  * @class TransactionQuery
@@ -143,16 +165,16 @@ export type TransactionDocument = Documentable & Transaction;
  *
  * @since v0.2.0
  */
-export class TransactionQuery extends Queryable<TransactionDocument> {
+export class TransactionQuery extends Queryable<Transaction> {
   /**
    * Copy constructor for pageable queries in `transactions` collection.
    *
    * @see Queryable
-   * @param   {TransactionDocument|undefined} document          The *document* instance (defaults to `undefined`) (optional).
+   * @param   {Transaction|undefined} document          The *document* instance (defaults to `undefined`) (optional).
    * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
    public constructor(
-    document?: TransactionDocument,
+    document?: Transaction,
     queryParams: QueryParameters = undefined,
   ) {
     super(document, queryParams);
@@ -169,3 +191,8 @@ export class TransactionQuery extends Queryable<TransactionDocument> {
  * @since v0.2.0
  */
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);
+
+// This call to **loadClass** on the schema object enables instance
+// methods on the {@link Transaction} class to be called when the model gets
+// instanciated by `mongoose` directly, e.g. as the result of a query.
+TransactionSchema.loadClass(Transaction, true);

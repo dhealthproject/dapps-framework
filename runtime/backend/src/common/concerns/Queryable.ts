@@ -181,6 +181,6 @@ export class Queryable<TDocument extends Documentable>
    * @returns {Record<string, any>}    The individual document data that is used in a query.
    */
   public forDocument(): Record<string, any> {
-    return this.document.toQuery();
+    return this.document.toQuery;
   }
 }

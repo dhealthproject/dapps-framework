@@ -75,6 +75,7 @@ export class AuthService {
    * @param {ConfigService} configService
    */
   public constructor(
+    //XXX AuthToken schema
     private readonly configService: ConfigService,
     private readonly networkService: NetworkService,
     private jwtService: JwtService,
@@ -109,12 +110,11 @@ export class AuthService {
 
   /**
    * 
-   * @param address 
+   * @param authCode 
    * @returns {Promise<User|null>}
    * @throws {HttpException}
    */
   public async validate(
-    address: string,
     authCode: string,
   ): Promise<User> {
 
@@ -164,8 +164,15 @@ export class AuthService {
     // @todo invalidate authCode after max 30 minutes? ("refresh QR?")
     // @todo store copy of accessToken + authCode?
 
+    // gets authorized user details from transaction
+    const authorizedAddr: Address = authTransaction.signer.address;
+    const authorizedUser: User = {
+      id: authorizedAddr.plain(),
+      name: authorizedAddr.pretty(),
+    } as User;
+
     // returns the authorized user details
-    return { id: address, name: address } as User;
+    return authorizedUser;
   }
 
   /**

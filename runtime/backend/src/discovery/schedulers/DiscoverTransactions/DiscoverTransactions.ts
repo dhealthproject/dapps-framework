@@ -10,6 +10,7 @@
 // external dependencies
 import { Command, CommandRunner, Option } from "nest-commander";
 import { ConfigService } from "@nestjs/config";
+import { InjectModel } from "@nestjs/mongoose";
 import {
   AggregateTransactionInfo,
   Transaction as SdkTransaction,
@@ -26,11 +27,7 @@ import { StateData } from "../../../common/models/StateData";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
 import { TransactionsService } from "../../../discovery/services/TransactionsService";
 import { getTransactionType } from "../../../discovery/models/TransactionTypes";
-import {
-  Transaction,
-  TransactionDocument,
-  TransactionQuery,
-} from "../../models/TransactionSchema";
+import { Transaction, TransactionModel, TransactionQuery } from "../../models/TransactionSchema";
 
 /**
  * @interface DiscoverTransactionsCommandOptions
@@ -115,6 +112,7 @@ export class DiscoverTransactions
    * @param {TransactionsService}  transactionsService
    */
   constructor(
+    @InjectModel(Transaction.name) private readonly model: TransactionModel,
     protected readonly configService: ConfigService,
     protected readonly stateService: StateService,
     protected readonly networkService: NetworkService,
@@ -288,15 +286,22 @@ export class DiscoverTransactions
     // each transaction that is read from the network is cached
     // in our `transactions` collection using the *signer address*
     // and the *transaction hash* as primary keys.
-    const documents: TransactionDocument[] = [];
+    const documents: Transaction[] = [];
     for (let i = 0, max = this.transactions.length; i < max; i++) {
       // uses a mongoose query to find transaction
       const model = await this.findOrCreateTransaction(this.transactions[i])
-      documents.push(model as TransactionDocument);
+      documents.push(model);
     }
 
     // updates documents in database collection `transactions`
-    this.transactionsService.updateBatch(documents);
+    if (documents.length > 0) {
+      // display debug information about database operation
+      if (options.debug && !options.quiet) {
+        this.debugLog(`Updating ${documents.length} transactions documents in database`);
+      }
+
+      this.transactionsService.updateBatch(documents);
+    }
   }
 
   /**
@@ -315,20 +320,17 @@ export class DiscoverTransactions
     const databaseQuery = new TransactionQuery({
       signerAddress,
       transactionHash,
-    } as TransactionDocument);
+    } as Transaction);
 
-    let document: Transaction;
-    if (! (document = await this.transactionsService.findOne(databaseQuery))) {
-      document = new Transaction();
-      document.signerAddress = signerAddress;
-      document.transactionHash = transactionHash;
-      document.transactionType = this.extractTransactionType(transaction);
-      document.signature = transaction.signature;
-      document.encodedBody = this.extractTransactionBody(transaction);
-      document.discoveredAt = new Date();
-    }
-
-    return document;
+    // queries the database to find account by address
+    return await this.transactionsService.createOrUpdate(databaseQuery, this.model.create({
+      signerAddress: signerAddress,
+      transactionHash: transactionHash,
+      transactionType: this.extractTransactionType(transaction),
+      signature: transaction.signature,
+      encodedBody: this.extractTransactionBody(transaction),
+      discoveredAt: new Date(),
+    } as Transaction), {}); // empty operations
   }
 
   /**

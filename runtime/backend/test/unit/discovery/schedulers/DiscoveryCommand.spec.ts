@@ -26,7 +26,7 @@ import { Address } from "@dhealth/sdk";
 import type { Scope } from "../../../../src/common/models/Scope";
 import { DappConfig } from "../../../../src/common/models/DappConfig";
 import { NetworkConfig } from "../../../../src/common/models/NetworkConfig";
-import { StateDocument } from "../../../../src/common/models/StateSchema";
+import { State, StateModel } from "../../../../src/common/models/StateSchema";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../../../../src/discovery/schedulers/DiscoveryCommand";
@@ -66,7 +66,7 @@ describe("discovery/DiscoveryCommand -->", () => {
   // global injectable service setup
   let fakeCommand: MockDiscoveryCommand;
   let stateService: StateService;
-  let queryService: QueryService<StateDocument>;
+  let queryService: QueryService<State, StateModel>;
   let expectedNetworkConfig: NetworkConfig = networkConfigLoader();
   let expectedDappConfig: DappConfig = dappConfigLoader();
 
@@ -86,7 +86,7 @@ describe("discovery/DiscoveryCommand -->", () => {
 
     fakeCommand = module.get<MockDiscoveryCommand>(MockDiscoveryCommand);
     stateService = module.get<StateService>(StateService);
-    queryService = module.get<QueryService<StateDocument>>(QueryService);
+    queryService = module.get<QueryService<State, StateModel>>(QueryService);
 
     // clears mocks calls
     MockPublicAccount.mockClear();

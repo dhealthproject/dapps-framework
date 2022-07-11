@@ -9,10 +9,10 @@
  */
 // external dependencies
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 
 // internal dependencies
-import { Documentable } from "../concerns/Documentable";
-import { Transferable } from "../traits/Transferable";
+import { Transferable } from "../concerns/Transferable";
 import { Queryable, QueryParameters } from "../concerns/Queryable";
 import { StateDTO } from "../models/StateDTO";
 import type { StateData } from "./StateData";
@@ -33,16 +33,7 @@ import type { StateData } from "./StateData";
 @Schema({
   timestamps: true,
 })
-export class State extends Transferable<StateDTO> {
-  /**
-   * The document identifier. This field is automatically populated
-   * if it does not exist (mongoose) and **cannot be updated**.
-   *
-   * @access public
-   * @var {string}
-   */
-  public _id?: string;
-
+export class State extends Transferable<StateDTO> /* extends Documentable */ {
   /**
    * The state cache document's **name**. Note that this field must
    * contain dynamic module names, e.g. `"discovery"` or `"payout",
@@ -75,26 +66,53 @@ export class State extends Transferable<StateDTO> {
    * @access public
    * @returns {Record<string, any>}    The individual document data that is used in a query.
    */
-  public toQuery(): Record<string, any> {
+  public get toQuery(): Record<string, any> {
     return {
       name: this.name,
-    };
+    }
+  }
+
+  /**
+   * This method implements the document columns list as defined
+   * for the collection `states`.
+   *
+   * @returns {Record<string, any>}    The individual data fields that belong to the document.
+   */
+  public get toDocument(): Record<string, any> {
+    return {
+      id: this._id,
+      name: this.name,
+      data: this.data,
+    }
   }
 }
 
 /**
- * @type StateDocument
- * @description This type merges the mongoose base `Document` object with
- * specialized state document objects such that this document can be used
- * directly in `mongoose` queries for `states` documents.
+ * @class StateModel
+ * @description This class defines the **model** or individual
+ * **document** for one collection ("schema"). This class can
+ * be *automatically* injected in services using the `@InjectModel`
+ * decorator of `nestjs/mongoose`.
  * <br /><br />
- * Due to the implementation of `toQuery` in {@link State}, the order
- * of creation of this mixin is important such that the implementation of
- * the method inside `State` overwrites that of `Documentable`.
+ * @example Injecting and using the `StateModel`
+ * ```typescript
+ *   import { InjectModel } from "@nestjs/mongoose";
+ *   import { State, StateModel } from "./StateSchema";
+ *
+ *   class MyStateService {
+ *     public constructor(
+ *       @InjectModel(State.name) private readonly model: StateModel
+ *     )
+ * 
+ *     public addEntry(data: Record<string, any>) {
+ *       return this.model.create(data);
+ *     }
+ *   }
+ * ```
  *
  * @since v0.2.0
  */
-export type StateDocument = Documentable & State;
+export class StateModel extends Model<State> {}
 
 /**
  * @class StateQuery
@@ -106,16 +124,16 @@ export type StateDocument = Documentable & State;
  *
  * @since v0.2.0
  */
-export class StateQuery extends Queryable<StateDocument> {
+export class StateQuery extends Queryable<State> {
   /**
    * Copy constructor for pageable queries in `authTokens` collection.
    *
    * @see Queryable
-   * @param   {StateDocument|undefined}       document          The *document* instance (defaults to `undefined`) (optional).
+   * @param   {State|undefined}       document          The *document* instance (defaults to `undefined`) (optional).
    * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
   public constructor(
-    document?: StateDocument,
+    document?: State,
     queryParams: QueryParameters = undefined,
   ) {
     super(document, queryParams);
@@ -131,3 +149,8 @@ export class StateQuery extends Queryable<StateDocument> {
  * @since v0.2.0
  */
 export const StateSchema = SchemaFactory.createForClass(State);
+
+// This call to **loadClass** on the schema object enables instance
+// methods on the {@link State} class to be called when the model gets
+// instanciated by `mongoose` directly, e.g. as the result of a query.
+StateSchema.loadClass(State, true);

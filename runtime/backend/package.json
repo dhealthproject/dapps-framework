@@ -31,7 +31,11 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "db:migration:show": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:show -d config/migrations.ts",
+    "db:migration:add": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate -d config/migrations.ts",
+    "db:migration:up": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:run -d config/migrations.ts",
+    "db:migration:down": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert -d config/migrations.ts"
   },
   "dependencies": {
     "@dhealth/sdk": "^1.0.3-alpha-202201201200",
@@ -65,7 +69,6 @@
     "@types/cookie-parser": "^1.4.3",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.5.2",
-    "@types/mongodb": "^4.0.7",
     "@types/node": "^16.0.0",
     "@types/passport-jwt": "^3.0.6",
     "@types/supertest": "^2.0.11",

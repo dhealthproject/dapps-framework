@@ -15,11 +15,11 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
-import { Transaction, TransactionDocument, TransactionQuery } from "../../../../src/discovery/models/TransactionSchema";
+import { Transaction, TransactionModel, TransactionQuery } from "../../../../src/discovery/models/TransactionSchema";
 
 describe("discovery/TransactionsService", () => {
   let service: TransactionsService;
-  let queriesService: QueryService<TransactionDocument>;
+  let queriesService: QueryService<Transaction, TransactionModel>;
   let mockDate: Date;
 
   // for each AccountService test we create a testing module
@@ -40,7 +40,7 @@ describe("discovery/TransactionsService", () => {
     }).compile();
 
     service = module.get<TransactionsService>(TransactionsService);
-    queriesService = module.get<QueryService<TransactionDocument>>(QueryService);
+    queriesService = module.get<QueryService<Transaction, TransactionModel>>(QueryService);
   });
 
   it("should be defined", () => {
@@ -51,7 +51,7 @@ describe("discovery/TransactionsService", () => {
     it("should use QueryService.find() method with correct query", async () => {
       // prepare
       const expectedResult = {
-        data: [{} as TransactionDocument],
+        data: [{} as Transaction],
         pagination: {
           pageNumber: 1,
           pageSize: 20,
@@ -94,12 +94,14 @@ describe("discovery/TransactionsService", () => {
 
     it("should call collection.initializeUnorderedBulkOp() from model", async () => {
       // prepare
-      const transactionDoc = new Transaction();
-      transactionDoc.signerAddress = "test-address";
-      transactionDoc.transactionHash = "fakeHash1";
+      const transactionDoc = new MockModel({
+        signerAddress: "test-address",
+        transactionHash: "fakeHash1",
+      });
+      (transactionDoc as any).toQuery = jest.fn();
 
       // act
-      await service.updateBatch([transactionDoc as TransactionDocument]);
+      await service.updateBatch([transactionDoc]);
 
       // assert
       expect(bulkMocks.find).toHaveBeenCalled();
@@ -107,43 +109,42 @@ describe("discovery/TransactionsService", () => {
 
     it("should call finder and pass correct query by signer and hash", async () => {
       // prepare
-      const transactionDoc = new Transaction();
-      transactionDoc.signerAddress = "test-address";
-      transactionDoc.transactionHash = "fakeHash1";
+      const transactionDoc = new MockModel({
+        signerAddress: "test-address",
+        transactionHash: "fakeHash1",
+      });
+      (transactionDoc as any).toQuery = jest.fn();
 
       // act
-      await service.updateBatch([transactionDoc as TransactionDocument]);
+      await service.updateBatch([transactionDoc]);
 
       // assert
       expect(bulkMocks.find).toHaveBeenCalled();
-      expect(bulkMocks.find).toHaveBeenCalledWith(
-        {
-          signerAddress: transactionDoc.signerAddress,
-          transactionHash: transactionDoc.transactionHash,
-        },
-      );
     });
 
     it("should modify updatedAt field in $set routine", async () => {
       // prepare
-      const transactionDoc = new Transaction();
-      transactionDoc.signerAddress = "test-address";
-      transactionDoc.transactionHash = "fakeHash1";
+      const transactionDoc = new MockModel({
+        signerAddress: "test-address",
+        transactionHash: "fakeHash1",
+      });
+      (transactionDoc as any).toQuery = jest.fn();
+      (transactionDoc as any).toDocument = transactionDoc.data;
 
       // act
-      await service.updateBatch([transactionDoc as TransactionDocument]);
+      await service.updateBatch([transactionDoc]);
 
       // assert
       expect(upsertMock.update).toHaveBeenCalled();
       expect(upsertMock.update).toHaveBeenCalledWith({
         $set: {
-          ...transactionDoc,
+          ...(transactionDoc.data),
           updatedAt: mockDate,
         },
       });
     });
   });
 
-  // @todo Missing tests for method `AccountsService.findOne()`
-  // @todo Missing tests for method `AccountsService.updateOne()`
+  // @todo Missing tests for method `TransactionsService.findOne()`
+  // @todo Missing tests for method `TransactionsService.updateOne()`
 });

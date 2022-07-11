@@ -34,9 +34,19 @@ export class Documentable extends Document {
    *
    * @returns {Record<string, any>}    The individual document data that is used in a query.
    */
-  public toQuery(): Record<string, any> {
+  public get toQuery(): Record<string, any> {
     return {
       id: this._id,
     };
+  }
+
+  /**
+   * This method returns an object that can be used as containing the
+   * values of a document using the hereby implemented schema.
+   *
+   * @returns {Record<string, any>}    The individual data fields that belong to the document.
+   */
+  public get toDocument(): Record<string, any> {
+    return this.toQuery;
   }
 }

@@ -13,7 +13,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 
 // internal dependencies
-import { State, StateDocument, StateQuery } from "../models/StateSchema";
+import { State, StateModel, StateQuery } from "../models/StateSchema";
 import type { StateData } from "../models/StateData";
 import { QueryService } from "./QueryService";
 
@@ -30,11 +30,11 @@ export class StateService {
   /**
    * The constructor of this class.
    *
-   * @param {Model<StateDocument>} model
+   * @param {StateModel} model
    */
   constructor(
-    @InjectModel(State.name) private readonly model: Model<StateDocument>,
-    private readonly queryService: QueryService<StateDocument>,
+    @InjectModel(State.name) private readonly model: StateModel,
+    private readonly queryService: QueryService<State, StateModel>,
   ) {}
 
   /**
@@ -45,10 +45,10 @@ export class StateService {
    * @access public
    * @async
    * @param   {StateQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @returns {Promise<StateDocument>}  The resulting `states` document.
+   * @returns {Promise<State>}  The resulting `states` document.
    */
-  async findOne(query: StateQuery): Promise<StateDocument> {
-    return this.queryService.findOne(query, this.model);
+  async findOne(query: StateQuery): Promise<State> {
+    return await this.queryService.findOne(query, this.model);
   }
 
   /**
@@ -60,16 +60,16 @@ export class StateService {
    * @async
    * @param   {StateQuery}          query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @param   {StateData}           data    The fields or data that has to be updated (will be added to `$set: {}`).
-   * @returns {Promise<StateDocument>}  The *updated* `states` document.
+   * @returns {Promise<State>}  The *updated* `states` document.
    */
   async updateOne(
     query: StateQuery,
     data: StateData,
-  ): Promise<StateDocument> {
-    return this.queryService.createOrUpdate(
+  ): Promise<State> {
+    return await this.queryService.createOrUpdate(
       query,
       this.model,
-      data,
+      { data }, // updates only "data" field
     );
   }
 }

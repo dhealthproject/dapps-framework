@@ -7,6 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// internal dependencies
+import { Documentable } from "./Documentable";
+
 /**
  * @class Transferable
  * @description This concern requires the presence of fields that
@@ -21,9 +24,10 @@
  * standardize the retrieval and formatting of DTOs from their
  * origin database documents.
  *
- * @since v0.1.0
+ * @todo Obviously remove the hacky `toDTO()` with some formatting/encoding/validation logic.
+ * @since v0.2.0
  */
-export class Transferable<TDTOType> {
+export class Transferable<TDTOType> extends Documentable {
   /**
    * Returns the data transfer object related to an individual
    * entity and thereby we consider it to be **transferable**.
@@ -34,7 +38,7 @@ export class Transferable<TDTOType> {
    * @access public
    * @returns {TDTOType}
    */
-  public toDTO(): TDTOType {
+  public get toDTO(): TDTOType {
     // magic typescript trickery that returns only a subset
     // of fields if types are compatible or an empty object
     // if types are incompatible. There is no protection of
