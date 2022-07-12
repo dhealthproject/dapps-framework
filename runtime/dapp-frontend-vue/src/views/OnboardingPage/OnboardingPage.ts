@@ -29,7 +29,7 @@ import {
 
 import { QRCodeGenerator } from "@dhealth/qr-library";
 
-export interface transactionRequestConfig {
+export interface TransactionRequestConfig {
   deadline: Deadline;
   address: Address;
   mosaic: Array<any>;
