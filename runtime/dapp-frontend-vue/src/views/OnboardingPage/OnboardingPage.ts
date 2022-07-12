@@ -128,7 +128,7 @@ export default class OnboardingPage extends MetaView {
   @Prop({
     type: Object,
     required: false,
-    default: BackendService,
+    default: BackendService.getInstance,
   })
   service?: BackendService;
   /**
