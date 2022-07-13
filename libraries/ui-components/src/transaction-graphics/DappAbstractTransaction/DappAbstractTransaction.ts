@@ -12,8 +12,9 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { Transaction, TransactionType } from "@dhealth/sdk";
 
 // internal dependencies
-import DappTransferTransaction from "@/transaction-graphics/DappTransferTransaction/DappTransferTransaction.vue";
+import DappTransferTransaction from "../DappTransferTransaction/DappTransferTransaction.vue";
 import DappUnknownTransaction from "../DappUnknownTransaction/DappUnknownTransaction.vue";
+import DappMosaicAliasTransaction from "../DappMosaicAliasTransaction/DappMosaicAliasTransaction.vue";
 
 /**
  * @class DappAbstractTransaction
@@ -43,6 +44,7 @@ import DappUnknownTransaction from "../DappUnknownTransaction/DappUnknownTransac
   components: {
     DappTransferTransaction,
     DappUnknownTransaction,
+    DappMosaicAliasTransaction,
   },
 })
 export default class DappAbstractTransaction extends Vue {
@@ -84,6 +86,8 @@ export default class DappAbstractTransaction extends Vue {
         return "DappTransferTransaction";
       case TransactionType.ADDRESS_ALIAS:
         return "DappAddressAliasTransaction";
+      case TransactionType.MOSAIC_ALIAS:
+        return "DappMosaicAliasTransaction";
     }
     return "DappUnknownTransaction";
   }
