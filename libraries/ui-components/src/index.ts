@@ -32,11 +32,13 @@ import {
   DappNamespaceCircle,
   DappNamespaceUnlinkCircle,
   DappTransactionArrow,
+  DappMosaicIcon,
   DappTransferTransaction,
   DappUnknownTransaction,
   DappAbstractTransaction,
   DappTransactionGraphic,
   DappAddressAliasTransaction,
+  DappMosaicAliasTransaction,
 } from "./components";
 
 // use the web component wrapper to extend components
@@ -92,11 +94,13 @@ const install = (): void => {
   Vue.component("DappNamespaceCircle", DappNamespaceCircle);
   Vue.component("DappNamespaceUnlinkCircle", DappNamespaceUnlinkCircle);
   Vue.component("DappTransactionArrow", DappTransactionArrow);
+  Vue.component("DappMosaicIcon", DappMosaicIcon);
   Vue.component("DappTransferTransaction", DappTransferTransaction);
   Vue.component("DappUnknownTransaction", DappUnknownTransaction);
   Vue.component("DappAbstractTransaction", DappAbstractTransaction);
   Vue.component("DappTransactionGraphic", DappTransactionGraphic);
   Vue.component("DappAddressAliasTransaction", DappAddressAliasTransaction);
+  Vue.component("DappMosaicAliasTransaction", DappMosaicAliasTransaction);
 };
 
 // exporting web components requires adding style
@@ -168,9 +172,11 @@ export {
   DappNamespaceCircle,
   DappNamespaceUnlinkCircle,
   DappTransactionArrow,
+  DappMosaicIcon,
   DappTransferTransaction,
   DappUnknownTransaction,
   DappAbstractTransaction,
   DappTransactionGraphic,
   DappAddressAliasTransaction,
+  DappMosaicAliasTransaction,
 };

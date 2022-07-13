@@ -41,6 +41,8 @@ import DappUnknownTransaction from "./graphics/transactions/DappUnknownTransacti
 import DappAbstractTransaction from "./graphics/transactions/DappAbstractTransaction/DappAbstractTransaction";
 import DappTransactionGraphic from "./widgets/DappTransactionGraphic/DappTransactionGraphic";
 import DappAddressAliasTransaction from "./graphics/transactions/DappAddressAliasTransaction/DappAddressAliasTransaction";
+import DappMosaicIcon from "./graphics/DappMosaicIcon/DappMosaicIcon";
+import DappMosaicAliasTransaction from "./graphics/transactions/DappMosaicAliasTransaction/DappMosaicAliasTransaction";
 
 // exports
 export type { Variant };
@@ -61,9 +63,11 @@ export {
   DappNamespaceCircle,
   DappNamespaceUnlinkCircle,
   DappTransactionArrow,
+  DappMosaicIcon,
   DappTransferTransaction,
   DappUnknownTransaction,
   DappAbstractTransaction,
   DappTransactionGraphic,
   DappAddressAliasTransaction,
+  DappMosaicAliasTransaction,
 };

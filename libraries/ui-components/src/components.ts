@@ -38,6 +38,8 @@ import DappUnknownTransaction from "./graphics/transactions/DappUnknownTransacti
 import DappAbstractTransaction from "./graphics/transactions/DappAbstractTransaction/DappAbstractTransaction.vue";
 import DappTransactionGraphic from "./widgets/DappTransactionGraphic/DappTransactionGraphic.vue";
 import DappAddressAliasTransaction from "./graphics/transactions/DappAddressAliasTransaction/DappAddressAliasTransaction.vue";
+import DappMosaicIcon from "./graphics/DappMosaicIcon/DappMosaicIcon.vue";
+import DappMosaicAliasTransaction from "./graphics/transactions/DappMosaicAliasTransaction/DappMosaicAliasTransaction.vue";
 
 // exports components as named-exports
 export {
@@ -57,9 +59,11 @@ export {
   DappNamespaceCircle,
   DappNamespaceUnlinkCircle,
   DappTransactionArrow,
+  DappMosaicIcon,
   DappTransferTransaction,
   DappUnknownTransaction,
   DappAbstractTransaction,
   DappTransactionGraphic,
   DappAddressAliasTransaction,
+  DappMosaicAliasTransaction,
 };

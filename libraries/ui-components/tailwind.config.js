@@ -44,6 +44,7 @@ module.exports = {
       base: ["14px", "21px"], // font-size, line-height
       message: ["13px"],
       lg: ["1rem", "1.75rem"], // 16px, 28px
+      l: ["18px"], // 18px
       xl: ["1.25rem"],	
       "3xl": ["1.5rem", "2.25rem"],
       "5xl": ["2.5rem", "3.25rem"],
