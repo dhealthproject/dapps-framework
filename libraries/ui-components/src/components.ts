@@ -27,7 +27,6 @@ import DappMessage from "./fields/DappMessage/DappMessage.vue";
 import DappAccountAvatar from "./graphics/DappAccountAvatar/DappAccountAvatar.vue";
 import DappAccountCard from "./widgets/DappAccountCard/DappAccountCard.vue";
 
-
 // exports components as named-exports
 export {
   DappAccountAvatar,
@@ -40,4 +39,3 @@ export {
   DappTitle,
   DappTokenAmount,
 };
-

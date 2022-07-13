@@ -78,7 +78,7 @@ export default {
 };
 
 // exports the components classes as named-exports
-export { 
+export {
   DappAccountAvatar,
   DappAccountCard,
   DappButton,
@@ -89,4 +89,3 @@ export {
   DappTitle,
   DappTokenAmount,
 };
-

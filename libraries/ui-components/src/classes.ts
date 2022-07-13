@@ -43,4 +43,3 @@ export {
   DappTitle,
   DappTokenAmount,
 };
-
