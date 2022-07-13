@@ -14,6 +14,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 // internal dependencies
 import { TransactionTypeTitle } from "@/types/TransactionTypeTitle";
 import { TransactionType } from "@dhealth/sdk";
+import { Helper } from "@/common/Helper";
 
 /**
  * @class DappGraphicComponent
@@ -282,13 +283,29 @@ export default class DappGraphicComponent extends Vue {
     return this.getPixels(this.y);
   }
 
-  // protected get _height() {
-  // 	return this.getPixels(this.height || '0');
-  // }
+  /**
+   * Getter of this component's height.
+   * Result is in format `"{height}px"`.
+   * If height is not defined returns "0".
+   *
+   * @access protected
+   * @returns {string}
+   */
+  protected get _height(): string {
+    return this.getPixels((this as any).height || "0");
+  }
 
-  // protected get _width() {
-  // 	return this.getPixels(this.width || '0');
-  // }
+  /**
+   * Getter of this component's width.
+   * Result is in format `"{width}px"`.
+   * If width is not defined returns "0".
+   *
+   * @access protected
+   * @returns {string}
+   */
+  protected get _width(): string {
+    return this.getPixels((this as any).width || "0");
+  }
 
   /**
    * Method to returns number of circles to display in this component.
@@ -318,21 +335,42 @@ export default class DappGraphicComponent extends Vue {
     return value + "px";
   }
 
-  // protected getIconColor(str: string) {
-  // 	const color = helper.getColorFromHash(str, false);
+  /**
+   * Method to return an RGB color string from a normal string value.
+   *
+   * @access protected
+   * @param {string} str
+   * @returns {string}
+   */
+  protected getIconColor(str: string): string {
+    const color = Helper.getColorFromHash(str, false);
 
-  // 	return `RGB(${color.R},${color.G},${color.B})`;
-  // }
+    return `RGB(${color.R},${color.G},${color.B})`;
+  }
 
-  // protected getIconColorFromHex(str) {
-  // 	const color = helper.getColorFromHash(str, true);
+  /**
+   * Method to return an RGB color string from a hex string value.
+   *
+   * @access protected
+   * @param {string} str
+   * @returns {string}
+   */
+  protected getIconColorFromHex(str: string): string {
+    const color = Helper.getColorFromHash(str, true);
+    return `RGB(${color.R},${color.G},${color.B})`;
+  }
 
-  // 	return `RGB(${color.R},${color.G},${color.B})`;
-  // }
-
-  // protected truncString(str, strLen) {
-  // 	return helper.truncString(str, strLen);
-  // }
+  /**
+   * Method to return a truncated string from the origial input string.
+   *
+   * @access protected
+   * @param {string} str
+   * @param {number} strLen
+   * @returns {string}
+   */
+  protected truncString(str: string, strLen?: number) {
+    return Helper.truncString(str, strLen);
+  }
 
   /**
    * Method to generate and return id for this component.
@@ -396,7 +434,7 @@ export default class DappGraphicComponent extends Vue {
    * @param address
    * @returns {string}
    */
-  protected getAddressTitle(address: string) {
+  protected getAddressTitle(address: string): string {
     return `Account: ${address}`;
   }
 
