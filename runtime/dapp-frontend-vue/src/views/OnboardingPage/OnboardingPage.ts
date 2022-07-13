@@ -64,9 +64,9 @@ export default class OnboardingPage extends MetaView {
    * Helper computed which defines transaction request field
    * moved to computed so it could be available in template
    *
-   * @returns {transactionRequestConfig}
+   * @returns {TransactionRequestConfig}
    */
-  get transactionRequestConfig(): transactionRequestConfig {
+  get transactionRequestConfig(): TransactionRequestConfig {
     return {
       deadline: Deadline.create(1616978397),
       address: Address.createFromRawAddress(
@@ -104,7 +104,7 @@ export default class OnboardingPage extends MetaView {
    * @returns Transaction
    */
   protected getTransactionRequest(
-    config: transactionRequestConfig
+    config: TransactionRequestConfig
   ): Transaction {
     const { deadline, address, mosaic, message, network, uiInt } = config;
 
