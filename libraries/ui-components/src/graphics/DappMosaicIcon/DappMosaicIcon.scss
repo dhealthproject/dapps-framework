@@ -7,10 +7,14 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-.dapp-account-avatar-account {
+.dappMosaicIcon-connector {
   @apply cursor-pointer;
 }
 
-.dapp-account-avatar-account-text {
+.dappMosaicIcon-connector-body {
+  @apply text-l font-bold;
+}
+
+.dappMosaicIcon-mosaic-text {
   @apply text-l font-bold;
 }
