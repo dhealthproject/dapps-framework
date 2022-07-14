@@ -56,10 +56,10 @@ import DappTransactionArrow from "@/graphics/DappTransactionArrow/DappTransactio
 })
 export default class DappAddressAliasTransaction extends DappGraphicComponent {
   /**
-   * The {@link TransferTransaction} instance to be displayed.
+   * The {@link AddressAliasTransaction} instance to be displayed.
    *
    * @access protected
-   * @var {TransferTransaction}
+   * @var {AddressAliasTransaction}
    */
   @Prop({
     type: Object,

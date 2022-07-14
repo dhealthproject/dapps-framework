@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 import { Transaction } from "@dhealth/sdk";
 import DappTreeView from "@/graphics/DappTreeView/DappTreeView.vue";
 import DappGraphicComponent from "@/graphics/DappGraphicComponent/DappGraphicComponent";
