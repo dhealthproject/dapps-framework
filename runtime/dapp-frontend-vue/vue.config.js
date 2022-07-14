@@ -30,26 +30,40 @@ module.exports = {
   // enables runtime compiler (dynamic templates)
   runtimeCompiler: true,
 
-  // configures polyfills
-  configureWebpack: (config) => {
-    config.plugins.push(
+  configureWebpack: {
+    // Disables module splitting to export the library as one package
+    // that includes all components when imported.
+    optimization: {
+      splitChunks: false,
+    },
+
+    // Disables bundling of the listed modules so that they are
+    // requested at runtime from the environment.
+    externals: {
+      canvas: {},
+    },
+
+    // configures a custom polyfill for Buffer
+    plugins: [
       new webpack.ProvidePlugin({
         Buffer: ["buffer", "Buffer"],
-      })
-    );
-    config.resolve = {
-      ...config.resolve,
-      ...{
-        fallback: {
-          crypto: require.resolve("crypto-browserify"),
-          stream: require.resolve("stream-browserify"),
-          buffer: require.resolve("buffer"),
-        },
+      }),
+    ],
+
+    // configures polyfills
+    resolve: {
+      fallback: {
+        crypto: require.resolve("crypto-browserify"),
+        stream: require.resolve("stream-browserify"),
+        buffer: require.resolve("buffer"),
       },
-    };
-    config.externals = {
-      canvas: {},
-    };
+    },
+
+    // Disables performance hints (warnings) about entrypoint
+    // sizes such that no warnings are emitted for the library
+    performance: {
+      hints: false,
+    },
   },
 
   // configures htmlWebpackPlugin
