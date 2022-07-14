@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 import { expect } from "chai";
-import { createLocalVue, mount, shallowMount, Wrapper } from "@vue/test-utils";
+import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
 import DappTransactionArrow from "@/graphics/DappTransactionArrow/DappTransactionArrow.vue";
 
 // creates local vue instance for tests
