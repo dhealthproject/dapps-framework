@@ -3,6 +3,21 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.0][0.2.0] - 13-Jul-2022
+
+#### Added
+
+- [@dhealth/components] feat(widgets): Add DappAccountCard as a widget component
+- [@dhealth/components] feat(graphics): Add DappAccountAvatar as a graphic component
+- [@dhealth/components] feat(fields): Add DappMessage as a field component
+- [@dhealth/components] feat(fields): Add DappDate as a field component
+- [@dhealth/components] feat(texts): Add DappTitle as a texts component
+- [@dhealth/components] test(controls): Add unit test for @click handler to DappButton
+- [@dhealth/components] feat(controls): Add @click handler to DappButton
+- [@dhealth/components] refactor(graphics): Update style names to be unique for DappIcon component
+- [@dhealth/components] test(graphics): Add unit tests for DappIcon
+- [@dhealth/components] feat(graphics): Add DappIcon as a graphics component
+
 ## [0.1.0][0.1.0] - 19-Jun-2022
 
 #### Added
@@ -19,4 +34,5 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealth/components] feat(widgets): add implementation for DappQR base component
 
 
+[0.2.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.1.0..v0.2.0
 [0.1.0]: https://github.com/dhealthproject/dapps-framework/releases/tag/v0.1.0
