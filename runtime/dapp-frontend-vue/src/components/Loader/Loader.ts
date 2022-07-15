@@ -14,4 +14,4 @@ import { Component } from "vue-property-decorator";
 import { MetaView } from "@/views/MetaView";
 
 @Component({})
-export default class Preloader extends MetaView {}
+export default class Loader extends MetaView {}

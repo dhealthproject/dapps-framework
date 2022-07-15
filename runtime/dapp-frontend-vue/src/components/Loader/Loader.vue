@@ -11,7 +11,7 @@
 -->
 
 <template>
-  <div class="dapp-preloader flex items-center justify-center py-3">
+  <div class="dapp-loader flex items-center justify-center py-3">
     <svg
       role="status"
       class="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
@@ -31,4 +31,4 @@
   </div>
 </template>
 
-<script lang="ts" src="./Preloader.ts"></script>
+<script lang="ts" src="./Loader.ts"></script>

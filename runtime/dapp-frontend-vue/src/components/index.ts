@@ -13,7 +13,7 @@ import { DappButton } from "@dhealth/components";
 import HelloWorld from "./HelloWorld.vue";
 import Header from "./Header/Header.vue";
 import Footer from "./Footer/Footer.vue";
-import Preloader from "./Preloader/Preloader.vue";
+import Loader from "./Loader/Loader.vue";
 
-export const AppComponents = { HelloWorld, Header, Footer, Preloader };
+export const AppComponents = { HelloWorld, Header, Footer, Loader };
 export const LibComponents = { DappButton };
