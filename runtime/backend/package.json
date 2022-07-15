@@ -1,16 +1,12 @@
 {
   "name": "@dhealthdapps/backend",
-  "version": "0.1.0",
-  "homepage": "https://github.com/dhealthproject/dapp-backend#readme",
+  "version": "0.2.0",
+  "homepage": "https://github.com/dhealthproject/dapps-framework/tree/main/runtime/backend#readme",
   "description": "dHealth dApps Backend with NestJS",
   "author": "dHealth Network <devs@dhealth.foundation>",
-  "license": "LGPL-3.0",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dhealthproject/dapp-backend.git"
-  },
+  "license": "LGPL-3.0-only",
   "bugs": {
-    "url": "https://github.com/dhealthproject/dapp-backend/issues"
+    "url": "https://github.com/dhealthproject/dapps-framework/issues"
   },
   "bin": {
     "dapp-cli": "dist/src/cli/main",
@@ -91,19 +87,19 @@
   "jest": {
     "rootDir": "./",
     "roots": [
-      "<rootDir>/test"
+      "<rootDir>/tests"
     ],
     "moduleFileExtensions": [
       "ts",
       "js",
       "json"
     ],
-    "testRegex": "test/.*\\.spec\\.ts$",
+    "testRegex": "tests/.*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "setupFiles": [
-      "<rootDir>/test/mocks/global.ts"
+      "<rootDir>/tests/mocks/global.ts"
     ],
     "collectCoverageFrom": [
       "**/*.(t|j)s"
