@@ -11,6 +11,7 @@ import { expect } from "chai";
 import { mount, createLocalVue } from "@vue/test-utils";
 import OnboardingPage from "@/views/OnboardingPage/OnboardingPage.vue";
 import { Auth } from "@/modules/Auth/Auth";
+import { Profile } from "@/modules/Profile/Profile";
 import { Transaction } from "@dhealth/sdk";
 import sinon from "sinon";
 
@@ -45,8 +46,16 @@ const componentOptions = {
 
 describe("OnboardingPage -->", async () => {
   let widget: any;
+  let mockedResponse: any;
   beforeEach(async () => {
     widget = await mount(OnboardingPage as any, componentOptions);
+    mockedResponse = {
+      data: "test",
+      status: 200,
+      statusText: "OK",
+      config: {},
+      headers: {},
+    };
   });
 
   it("should display header", () => {
@@ -78,28 +87,28 @@ describe("OnboardingPage -->", async () => {
     expect(widget.vm.createLoginContract()).to.not.be.undefined;
   });
 
-  // it("should contain message", async () => {
-  //   const service = Auth.getInstance();
-  //   sinon.stub(service, "getAuthChallenge").resolves("test");
-  //   const message = await service.getAuthChallenge();
-  //   expect(message).to.not.be.empty;
-  // });
+  it("should contain message", async () => {
+    const service = new Auth();
+    sinon.stub(service, "getAuthChallenge").resolves(mockedResponse);
+    const message = await service.getAuthChallenge();
+    expect(message).to.not.be.empty;
+  });
 
-  // it("should receive access token", async () => {
-  //   const service = Auth.getInstance();
-  //   sinon.stub(service, "login").resolves("test");
-  //   const accessToken = await service.login({
-  //     address: "",
-  //     authCode: "not test",
-  //   });
+  it("should receive access token", async () => {
+    const service = new Auth();
+    sinon.stub(service, "login").resolves(mockedResponse);
+    const accessToken = await service.login({
+      address: "",
+      authCode: "not test",
+    });
 
-  //   expect(accessToken).to.not.be.empty;
-  // });
+    expect(accessToken).to.not.be.empty;
+  });
 
-  // it("should receive user data", async () => {
-  //   const service = Auth.getInstance();
-  //   const user = await service.getMe();
+  it("should receive user data", async () => {
+    const service = new Profile();
+    const user = await service.getMe();
 
-  //   expect(user).to.have;
-  // });
+    expect(user).to.have;
+  });
 });

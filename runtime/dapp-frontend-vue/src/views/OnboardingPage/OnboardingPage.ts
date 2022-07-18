@@ -58,16 +58,53 @@ export default class OnboardingPage extends MetaView {
       return new Auth();
     },
   })
-  service?: Auth;
+
   /**
-   * loading state property
+   * This property is used for
+   * calling related API endpoints
+   *
+   * @access public
+   * @var {service}
+   */
+  service?: Auth;
+
+  /**
+   * This property is used to
+   * see if any API call is being processed
+   *
+   * @access public
+   * @var {loading}
    */
   loading = false;
 
+  /**
+   * This property is used for storing
+   * received message from GET auth/challenge
+   *
+   * @access public
+   * @var {authMessage}
+   */
   authMessage = "";
 
+  /**
+   * This property is used
+   * for storing pointer to
+   * interval for getting auth token
+   *
+   * @access public
+   * @var {interval}
+   */
   interval: undefined | number = undefined;
 
+  /**
+   * This property is used
+   * for storing pointer to
+   * the timeout which stops
+   * calling auth request after 5 minutes
+   *
+   * @access public
+   * @var {globalIntervalTimer}
+   */
   globalIntervalTimer: undefined | number = undefined;
 
   /**
@@ -120,8 +157,12 @@ export default class OnboardingPage extends MetaView {
       "ED5761EA890A096C50D3F50B7C2F0CCB4B84AFC9EA870F381E84DDE36D04EF16"
     );
   }
+
   /**
    * Helper method to run authentication process
+   *
+   * @access protected
+   * @returns void
    */
   protected getToken(): void {
     const isAuth = Cookies.get("accessToken");
@@ -140,11 +181,13 @@ export default class OnboardingPage extends MetaView {
         if (tokenResponse) {
           clearInterval(this.interval);
           // replace secure: false for the development purposes, should be true
-          Cookies.set("accessToken", tokenResponse.data.accessToken, {
-            secure: false,
-            sameSite: "strict",
-            domain: "localhost",
-          });
+          // Cookies.set("accessToken", tokenResponse.data.accessToken, {
+          //   secure: false,
+          //   sameSite: "strict",
+          //   domain: "localhost",
+          // });
+          this.service?.setAuthCookie(tokenResponse.data.accessToken);
+
           this.$router.push({ name: "termsofservice" });
         }
       }, 5000);
