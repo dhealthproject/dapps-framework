@@ -53,5 +53,5 @@ Licensed under the [LGPL v3.0](LICENSE)
 [license]: https://opensource.org/licenses/LGPL-3.0
 [parent-url]: https://dhealth.network
 [docs]: https://docs.dhealth.com
-[issues]: https://github.com/dhealthproject/dapp-frontend-vue/issues
+[issues]: https://github.com/dhealthproject/dapps-framework/issues
 [discord]: https://discord.gg/P57WHbmZjk

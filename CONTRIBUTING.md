@@ -158,6 +158,11 @@ These commit scopes can be used for *any* of the software repositories:
 * **elements**: Changes that affect the exported *elements* (a.k.a. "components") of the components library
 * **fonts**: Changes that affect the *fonts* used in the components library
 
+##### <a name="commit-scopes-components"></a> Valid scopes for **@dhealth/contracts**
+
+* **types**: Changes that affect exported types of the contracts library
+* **buffer**: Changes that affect the contract buffers and binary payload of the contracts library
+
 ##### <a name="commit-scopes-frontend"></a> Valid scopes for **@dhealthdapps/frontend**
 
 * **app**: Changes that affect the general *application architecture* of the VueJS frontend
