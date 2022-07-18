@@ -1,13 +1,24 @@
 version: '3.7'
 
 services:
-  main:
-    container_name: dapp-backend-app
+  frontend:
+    container_name: dapp-frontend
     build:
-      context: .
+      context: runtime/dapp-frontend-vue
       target: production
     ports:
-      - ${PROD_APP_PORT}:7903
+      - ${FRONTEND_PORT}:8080
+    command: npm run serve
+    networks:
+      - dapp-net
+
+  backend:
+    container_name: dapp-backend
+    build:
+      context: runtime/backend
+      target: production
+    ports:
+      - ${BACKEND_PORT}:7903
     environment:
       DB_USER: $DB_USER
       DB_PASS: $DB_PASS
@@ -15,6 +26,8 @@ services:
       DB_PORT: $DB_PORT
       DB_NAME: $DB_NAME
     command: npm run start:prod
+    env_file:
+      - .env
     networks:
       - dapp-net
     depends_on:
@@ -29,7 +42,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: $DB_PASS
       MONGO_INITDB_DATABASE: $DB_NAME
     volumes:
-      - ./data:/data/db
+      - ./runtime/backend/data:/data/db
     networks:
       - dapp-net
     ports:

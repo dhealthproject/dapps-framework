@@ -46,25 +46,24 @@ async function bootstrap(): Promise<void> {
   app.use(helmet());
   app.use(cookieParser(process.env.AUTH_TOKEN_SECRET));
 
+  // configures the request listener (HTTP server)
+  const appPort: string = process.env.BACKEND_PORT;
+  const appUrl: string = process.env.BACKEND_DOMAIN;
+
   // init OpenAPI documentation with information from package.json
   const docConfig = new DocumentBuilder()
     .setTitle(packageJson.name)
     .setDescription(packageJson.description)
     .setVersion(packageJson.version)
     .addTag(`${packageJson.name} v${packageJson.version}`)
-    .addServer("http://localhost:7903", "Your running instance")
+    .addServer(`http://${appUrl}:${appPort}`, "dHealth dApp Backend")
     .build();
   const document = SwaggerModule.createDocument(app, docConfig);
   SwaggerModule.setup("specs", app, document);
 
   // start the worker
-  logger.debug(`Now starting the worker process...`);
+  logger.debug(`Starting the worker process...`);
   startWorkerProcess();
-
-  // configures the request listener (HTTP server)
-  const appPort: string = process.env.NODE_ENV === "production"
-    ? process.env.PROD_APP_PORT
-    : process.env.DEV_APP_PORT;
 
   // start the app
   logger.debug(`Now listening for requests on port ${appPort}`);

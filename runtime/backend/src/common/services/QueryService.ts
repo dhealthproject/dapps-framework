@@ -228,7 +228,7 @@ export class QueryService<
     const bulk: any = model.collection.initializeUnorderedBulkOp();
 
     // each document is updated in one query
-    // all queries a batched together with bulk handler
+    // all queries are batched together with bulk handler
     // note that an **upsert** is used for new documents
     documents.map((document: TDocument) => bulk.find(document.toQuery)
       .upsert()
