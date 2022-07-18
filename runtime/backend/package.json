@@ -12,6 +12,9 @@
     "dapp-cli": "dist/src/cli/main",
     "dapp": "dist/src/main"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build --path tsconfig.json",

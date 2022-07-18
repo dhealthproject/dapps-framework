@@ -19,6 +19,9 @@
     "LICENSE",
     "package.json"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prettier": "prettier --check ./src ./tests",
     "lint:fix": "prettier --write ./src ./tests",
