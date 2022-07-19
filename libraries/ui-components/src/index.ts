@@ -72,7 +72,7 @@ const install = (): void => {
   Vue.component("DappAccountCard", DappAccountCard);
 };
 
-import wrap from "../libs/dhealth-web-component-wrapper";
+import { webComponentWrap } from "./libraries/";
 import * as allComponents from "./components";
 
 const styles = document.styleSheets;
@@ -87,7 +87,7 @@ styleEl.innerHTML = styleStr;
 
 Object.entries(allComponents).forEach(([name, component]) => {
   const elName = "dapp-" + name.split("Dapp")[1].toLowerCase();
-  const wrappedElement: any = wrap(Vue, component, styleEl);
+  const wrappedElement: any = webComponentWrap(Vue, component, styleEl);
   window.customElements.define(elName, wrappedElement as any);
 });
 
