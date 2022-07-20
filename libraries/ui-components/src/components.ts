@@ -26,6 +26,8 @@ import DappDate from "./fields/DappDate/DappDate.vue";
 import DappMessage from "./fields/DappMessage/DappMessage.vue";
 import DappAccountAvatar from "./graphics/DappAccountAvatar/DappAccountAvatar.vue";
 import DappAccountCard from "./widgets/DappAccountCard/DappAccountCard.vue";
+import DappInput from "./fields/DappInput/DappInput.vue";
+import DappMosaic from "./fields/DappMosaic/DappMosaic.vue";
 
 // exports components as named-exports
 export {
@@ -38,4 +40,6 @@ export {
   DappQR,
   DappTitle,
   DappTokenAmount,
+  DappInput,
+  DappMosaic,
 };
