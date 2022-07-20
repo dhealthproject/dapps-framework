@@ -1,0 +1,43 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth UI Components
+ * @subpackage  Components
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+.dappInput-mainDiv,
+.dappInput-inputDiv {
+  @apply flex items-center justify-center relative;
+}
+
+.dappInput-inputDiv {
+  min-width: 280px;
+}
+
+.dappInput-icon-left {
+  position: absolute;
+  left: 5%;
+}
+
+.dappInput-icon-right {
+  position: absolute;
+  right: 5%;
+}
+
+.dappInput-input {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 18px 20% !important;
+  gap: 8px;
+  /* position: relative; */
+  min-width: 280px;
+  height: 48px;
+  background: #ffffff;
+  border: 1px solid #7f888e;
+  box-shadow: 0px 1px 1px rgb(25 22 59 / 6%);
+  border-radius: 8px;
+}

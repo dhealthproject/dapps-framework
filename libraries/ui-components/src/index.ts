@@ -25,6 +25,8 @@ import {
   DappQR,
   DappTitle,
   DappTokenAmount,
+  DappInput,
+  DappMosaic,
 } from "./components";
 
 // use the web component wrapper to extend components
@@ -73,6 +75,8 @@ const install = (): void => {
   Vue.component("DappMessage", DappMessage);
   Vue.component("DappAccountAvatar", DappAccountAvatar);
   Vue.component("DappAccountCard", DappAccountCard);
+  Vue.component("DappInput", DappInput);
+  Vue.component("DappMosaic", DappMosaic);
 };
 
 // exporting web components requires adding style
@@ -125,4 +129,6 @@ export {
   DappQR,
   DappTitle,
   DappTokenAmount,
+  DappInput,
+  DappMosaic,
 };
