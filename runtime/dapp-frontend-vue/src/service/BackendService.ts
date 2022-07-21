@@ -8,19 +8,32 @@
  * @license     LGPL-3.0
  */
 
-// External dependencies
+// external dependencies
 import Cookies from "js-cookie";
 
+// internal dependencies
 import { HttpRequestHandler } from "@/handlers/HttpRequestHandler";
 
+/**
+ * @interface RequestHandler
+ * @description This interface defines obligatory methods to be added
+ * to implementing classes that can be used as request handlers in the
+ * below {@link BackendService}.
+ * <br /><br />
+ * A request handler is typically used to *delegate* the execution of
+ * *remote* requests (to the backend, the network-api, etc.).
+ *
+ * @since v0.3.0
+ */
 export interface RequestHandler {
   call(method: string, url: string, options: any): Record<string, any>;
 }
 
 /**
  * @class BackendService
- * @description This class handles running HTTP requests(with using of HttpRequestHandler),
- * getting/setting authentication token with cookies
+ * @description This class handles the execution of HTTP requests using
+ * a running backend runtime. 
+ * <br /><br />
  * @example Using the BackendService class
  * ```typescript
  *   const app = BackendService.getInstance();
@@ -30,35 +43,41 @@ export interface RequestHandler {
  * <br /><br />
  * #### Properties
  *
- * @param   {Record<string, BackendService>}    instance      Generated instance of the BackendService
- * @param   {Record<string>}                    baseUrl       Base URL that will be used for all api calls
+ * @param   {Record<string>}                      baseUrl       Base URL that will be used for all api calls
  * @param   {Record<string, HttpRequestHandler>}  handler       Generated instance of the HttpRequestHandler
  *
- * @since v0.2.0
+ * @since v0.3.0
  */
 export class BackendService {
-  private static instance: BackendService;
   /**
-   * This property is used
-   * for defining of base URL
-   * which is going to be used in
-   * each HTTP request
-   * example: {baseUrl}/{your_endpoint}
+   * The singleton instance of the backend service.
+   *
+   * @static
+   * @access private
+   * @var {BackendService}
+   */
+  private static instance: BackendService;
+
+  /**
+   * This property is used to define the base URL which
+   * is queried with each HTTP request executed using this
+   * backend service.
+   *
+   * @example: `"{baseUrl}/{your_endpoint}"`
    *
    * @access protected
-   * @var {baseUrl}
+   * @var {string}
    */
   protected baseUrl = "http://localhost:7903";
 
   /**
-   * This property is used
-   * for initializing HTTP request handler(used for running api calls)
+   * This property is used to handle HTTP requests.
    *
    * @access protected
-   * @var {handler}
+   * @var {HttpRequestHandler}
    */
   protected handler: HttpRequestHandler = new HttpRequestHandler(
-    this.getAuthCookie()
+    this.getAuthCookie(),
   );
 
   /**
@@ -81,6 +100,7 @@ export class BackendService {
     }
     return this.instance;
   }
+
   /**
    * Generate URL for .call() method
    *
@@ -106,7 +126,7 @@ export class BackendService {
    * @returns void
    */
   setAuthCookie(token: string) {
-    // replace secure: false for the development purposes, should be true
+    // @todo replace secure: false for the development purposes, should be true
     Cookies.set("accessToken", token, {
       secure: false,
       sameSite: "strict",

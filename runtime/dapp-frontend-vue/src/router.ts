@@ -50,6 +50,14 @@ const router = new VueRouter({
       component: () =>
         import("./views/TermsOfServicePage/TermsOfServicePage.vue"),
     },
+    {
+      path: "/login",
+      name: "login",
+      meta: {
+        layout: "fullscreen",
+      },
+      component: () => import("./views/LoginScreen/LoginScreen.vue"),
+    },
   ],
 });
 

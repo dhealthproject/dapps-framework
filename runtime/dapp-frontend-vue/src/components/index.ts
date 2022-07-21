@@ -9,11 +9,22 @@
  */
 // external dependencies
 import { DappButton } from "@dhealth/components";
+
 // internal dependencies
 import HelloWorld from "./HelloWorld.vue";
 import Header from "./Header/Header.vue";
 import Footer from "./Footer/Footer.vue";
-import Preloader from "./Preloader/Preloader.vue";
+import Loader from "./Loader/Loader.vue";
+import ElevateLogo from "./ElevateLogo/ElevateLogo.vue";
 
-export const AppComponents = { HelloWorld, Header, Footer, Preloader };
+// scoped export of application-level components
+export const AppComponents = {
+  HelloWorld,
+  Header,
+  Footer,
+  Loader,
+  ElevateLogo,
+};
+
+// scoped export of library-level components 
 export const LibComponents = { DappButton };

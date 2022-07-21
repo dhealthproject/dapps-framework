@@ -11,21 +11,26 @@
 -->
 <template>
   <div id="app">
-    <header />
-    <nav class="block">
-      <router-link :to="{ name: 'home' }">Home</router-link> |
-      <router-link :to="{ name: 'about' }">About</router-link> |
-      <router-link :to="{ name: 'onboarding' }">Onboarding</router-link>
-    </nav>
-
-    <div class="block w-screen mx-auto">
-      <transition name="view">
-        <router-view :key="$route.fullPath"></router-view>
-      </transition>
+    <div v-if="$route.meta.layout === 'fullscreen'" class="layout-fullscreen">
+      <router-view :key="$route.fullPath"></router-view>
     </div>
-    <footer class="fixed bottom-4 right-4">
-      <div class="text-xs">v{{ version }}</div>
-    </footer>
+    <div v-else class="layout-default">
+      <header />
+      <nav class="block">
+        <router-link :to="{ name: 'home' }">Home</router-link> |
+        <router-link :to="{ name: 'about' }">About</router-link> |
+        <router-link :to="{ name: 'onboarding' }">Onboarding</router-link>
+      </nav>
+
+      <div class="block w-screen mx-auto">
+        <transition name="view">
+          <router-view :key="$route.fullPath"></router-view>
+        </transition>
+      </div>
+      <footer class="fixed bottom-4 right-4">
+        <div class="text-xs">v{{ version }}</div>
+      </footer>
+    </div>
   </div>
 </template>
 

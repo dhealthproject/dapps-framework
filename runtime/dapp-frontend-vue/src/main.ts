@@ -16,6 +16,9 @@ import VueRouter from "vue-router";
 import "./registerServiceWorker";
 import internalComponentsInstaller from "@dhealth/components";
 
+// internal plugins
+import imageUrl from "@/plugins/imageUrl";
+
 // importing compiled tailwind styles
 // triggers a build when adding classes
 import "../resources/scss/theme.scss";
@@ -27,6 +30,9 @@ Vue.use(internalComponentsInstaller);
 // importing Vue plugins
 Vue.use(VueMeta, { keyName: "metaInfo" });
 Vue.use(VueRouter);
+
+// importing internal Vue plugins
+Vue.use(imageUrl);
 
 // initializes router
 import router from "./router";
