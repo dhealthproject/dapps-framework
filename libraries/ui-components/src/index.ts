@@ -29,6 +29,7 @@ import {
   DappMosaicCircle,
   DappNamespaceCircle,
   DappNamespaceUnlinkCircle,
+  DappAddCircle,
   DappTransactionArrow,
   DappMosaicIcon,
   DappTransferTransaction,
@@ -37,6 +38,7 @@ import {
   DappTransactionGraphic,
   DappAddressAliasTransaction,
   DappMosaicAliasTransaction,
+  DappMosaicDefinitionTransaction,
 } from "./components";
 
 // importing compiled tailwind styles
@@ -86,6 +88,7 @@ const install = (): void => {
   Vue.component("DappMosaicCircle", DappMosaicCircle);
   Vue.component("DappNamespaceCircle", DappNamespaceCircle);
   Vue.component("DappNamespaceUnlinkCircle", DappNamespaceUnlinkCircle);
+  Vue.component("DappAddCircle", DappAddCircle);
   Vue.component("DappTransactionArrow", DappTransactionArrow);
   Vue.component("DappMosaicIcon", DappMosaicIcon);
   Vue.component("DappTransferTransaction", DappTransferTransaction);
@@ -94,6 +97,10 @@ const install = (): void => {
   Vue.component("DappTransactionGraphic", DappTransactionGraphic);
   Vue.component("DappAddressAliasTransaction", DappAddressAliasTransaction);
   Vue.component("DappMosaicAliasTransaction", DappMosaicAliasTransaction);
+  Vue.component(
+    "DappMosaicDefinitionTransaction",
+    DappMosaicDefinitionTransaction
+  );
 };
 
 // exports the install helper alongside components
@@ -114,6 +121,9 @@ export {
   DappTokenAmount,
   DappMessageCircle,
   DappMosaicCircle,
+  DappNamespaceCircle,
+  DappNamespaceUnlinkCircle,
+  DappAddCircle,
   DappTransactionArrow,
   DappMosaicIcon,
   DappTransferTransaction,
@@ -122,4 +132,5 @@ export {
   DappTransactionGraphic,
   DappAddressAliasTransaction,
   DappMosaicAliasTransaction,
+  DappMosaicDefinitionTransaction,
 };

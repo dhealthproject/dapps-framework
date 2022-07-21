@@ -15,6 +15,7 @@ import { Transaction, TransactionType } from "@dhealth/sdk";
 import DappTransferTransaction from "../DappTransferTransaction/DappTransferTransaction.vue";
 import DappUnknownTransaction from "../DappUnknownTransaction/DappUnknownTransaction.vue";
 import DappMosaicAliasTransaction from "../DappMosaicAliasTransaction/DappMosaicAliasTransaction.vue";
+import DappMosaicDefinitionTransaction from "../DappMosaicDefinitionTransaction/DappMosaicDefinitionTransaction.vue";
 
 /**
  * @class DappAbstractTransaction
@@ -45,6 +46,7 @@ import DappMosaicAliasTransaction from "../DappMosaicAliasTransaction/DappMosaic
     DappTransferTransaction,
     DappUnknownTransaction,
     DappMosaicAliasTransaction,
+    DappMosaicDefinitionTransaction,
   },
 })
 export default class DappAbstractTransaction extends Vue {
@@ -88,6 +90,8 @@ export default class DappAbstractTransaction extends Vue {
         return "DappAddressAliasTransaction";
       case TransactionType.MOSAIC_ALIAS:
         return "DappMosaicAliasTransaction";
+      case TransactionType.MOSAIC_DEFINITION:
+        return "DappMosaicDefinitionTransaction";
     }
     return "DappUnknownTransaction";
   }
