@@ -158,7 +158,8 @@ export default class DappMosaicIcon extends DappGraphicComponent {
   protected get iconColor(): string {
     let mosaicId;
     if (this.mosaicId) mosaicId = this.mosaicId;
-    else if (this.mosaic && this.mosaic.mosaicId) mosaicId = this.mosaic.mosaicId;
+    else if (this.mosaic && this.mosaic.mosaicId)
+      mosaicId = this.mosaic.mosaicId;
     else return "RGB(0, 0, 0)";
     return this.getIconColorFromHex(mosaicId);
   }
