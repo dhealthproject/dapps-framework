@@ -32,6 +32,7 @@ import DappMessageCircle from "./graphics/DappMessageCircle/DappMessageCircle.vu
 import DappMosaicCircle from "./graphics/DappMosaicCircle/DappMosaicCircle.vue";
 import DappNamespaceCircle from "./graphics/DappNamespaceCircle/DappNamespaceCircle.vue";
 import DappNamespaceUnlinkCircle from "./graphics/DappNamespaceUnlinkCircle/DappNamespaceUnlinkCircle.vue";
+import DappAddCircle from "./graphics/DappAddCircle/DappAddCircle.vue";
 import DappTransactionArrow from "./graphics/DappTransactionArrow/DappTransactionArrow.vue";
 import DappTransferTransaction from "./graphics/transactions/DappTransferTransaction/DappTransferTransaction.vue";
 import DappUnknownTransaction from "./graphics/transactions/DappUnknownTransaction/DappUnknownTransaction.vue";
@@ -40,6 +41,7 @@ import DappTransactionGraphic from "./widgets/DappTransactionGraphic/DappTransac
 import DappAddressAliasTransaction from "./graphics/transactions/DappAddressAliasTransaction/DappAddressAliasTransaction.vue";
 import DappMosaicIcon from "./graphics/DappMosaicIcon/DappMosaicIcon.vue";
 import DappMosaicAliasTransaction from "./graphics/transactions/DappMosaicAliasTransaction/DappMosaicAliasTransaction.vue";
+import DappMosaicDefinitionTransaction from "./graphics/transactions/DappMosaicDefinitionTransaction/DappMosaicDefinitionTransaction.vue";
 
 // exports components as named-exports
 export {
@@ -58,6 +60,7 @@ export {
   DappMosaicCircle,
   DappNamespaceCircle,
   DappNamespaceUnlinkCircle,
+  DappAddCircle,
   DappTransactionArrow,
   DappMosaicIcon,
   DappTransferTransaction,
@@ -66,4 +69,5 @@ export {
   DappTransactionGraphic,
   DappAddressAliasTransaction,
   DappMosaicAliasTransaction,
+  DappMosaicDefinitionTransaction,
 };
