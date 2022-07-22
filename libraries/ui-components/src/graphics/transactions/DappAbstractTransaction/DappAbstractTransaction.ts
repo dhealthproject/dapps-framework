@@ -16,6 +16,7 @@ import DappTransferTransaction from "../DappTransferTransaction/DappTransferTran
 import DappUnknownTransaction from "../DappUnknownTransaction/DappUnknownTransaction.vue";
 import DappMosaicAliasTransaction from "../DappMosaicAliasTransaction/DappMosaicAliasTransaction.vue";
 import DappMosaicDefinitionTransaction from "../DappMosaicDefinitionTransaction/DappMosaicDefinitionTransaction.vue";
+import DappMosaicSupplyChangeTransaction from "../DappMosaicSupplyChangeTransaction/DappMosaicSupplyChangeTransaction.vue";
 
 /**
  * @class DappAbstractTransaction
@@ -47,6 +48,7 @@ import DappMosaicDefinitionTransaction from "../DappMosaicDefinitionTransaction/
     DappUnknownTransaction,
     DappMosaicAliasTransaction,
     DappMosaicDefinitionTransaction,
+    DappMosaicSupplyChangeTransaction,
   },
 })
 export default class DappAbstractTransaction extends Vue {
@@ -92,6 +94,8 @@ export default class DappAbstractTransaction extends Vue {
         return "DappMosaicAliasTransaction";
       case TransactionType.MOSAIC_DEFINITION:
         return "DappMosaicDefinitionTransaction";
+      case TransactionType.MOSAIC_SUPPLY_CHANGE:
+        return "DappMosaicSupplyChangeTransaction";
     }
     return "DappUnknownTransaction";
   }

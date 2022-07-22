@@ -10,7 +10,7 @@
 import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
 import DappEditCircle from "@/graphics/DappEditCircle/DappEditCircle.vue";
- 
+
 // creates local vue instance for tests
 const localVue = createLocalVue();
 const content = { key: "value" };

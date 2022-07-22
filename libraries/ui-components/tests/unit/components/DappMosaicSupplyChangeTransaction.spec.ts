@@ -9,36 +9,36 @@
  */
 import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
-import DappMosaicDefinitionTransaction from "@/transaction-graphics/DappMosaicDefinitionTransaction/DappMosaicDefinitionTransaction.vue";
 import {
-  MosaicFlags,
   MosaicId,
+  MosaicSupplyChangeAction,
   NetworkType,
   PublicAccount,
+  TransactionType,
+  UInt64,
 } from "@dhealth/sdk";
+import DappMosaicSupplyChangeTransaction from "@/transaction-graphics/DappMosaicSupplyChangeTransaction/DappMosaicSupplyChangeTransaction.vue";
 import DappAccountAvatar from "@/graphics/DappAccountAvatar/DappAccountAvatar.vue";
 import DappMosaicIcon from "@/graphics/DappMosaicIcon/DappMosaicIcon.vue";
 import DappTransactionArrow from "@/graphics/DappTransactionArrow/DappTransactionArrow.vue";
-import DappAddCircle from "@/graphics/DappAddCircle/DappAddCircle.vue";
+import DappEditCircle from "@/graphics/DappEditCircle/DappEditCircle.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
 const transaction = {
-  type: 16717,
+  type: TransactionType.MOSAIC_SUPPLY_CHANGE,
   network: NetworkType.MAIN_NET,
   version: 1,
-  maxFee: "15000",
+  maxFee: "2000000",
   deadline: "37737763657",
   signature: "test-signature",
   signer: PublicAccount.createFromPublicKey(
-    "6AD87A56356C1F774B0AB2F0B9D33CA92027981360DD96AF37028D7D1362B96D",
+    "0E37A5626FBE6FC2B5180D06E11F1214D6C10CB0D1AFA85EA8D4C54D9CD03A4A",
     104
   ),
-  nonce: 3585839868,
-  mosaicId: new MosaicId("3EEB6CB369BC02A3"),
-  flags: MosaicFlags.create(true, true, false),
-  divisibility: 0,
-  duration: "10000",
+  mosaicId: new MosaicId("7EF96C58B9A32C7F"),
+  delta: UInt64.fromUint(100000),
+  action: MosaicSupplyChangeAction.Increase,
 };
 const componentOptions = {
   localVue,
@@ -47,11 +47,11 @@ const componentOptions = {
   },
 };
 
-describe("DappMosaicDefinitionTransaction -->", () => {
+describe("DappMosaicSupplyChangeTransaction -->", () => {
   let widget: Wrapper<Vue>;
   beforeEach(() => {
     widget = shallowMount(
-      DappMosaicDefinitionTransaction as any,
+      DappMosaicSupplyChangeTransaction as any,
       componentOptions
     );
   });
@@ -68,7 +68,7 @@ describe("DappMosaicDefinitionTransaction -->", () => {
     const dappMosaicIconElement = svgElement.findComponent(DappMosaicIcon);
     const dappTransactionArrowElement =
       svgElement.findComponent(DappTransactionArrow);
-    const dappAddCircleElement = svgElement.findComponent(DappAddCircle);
+    const dappAddCircleElement = svgElement.findComponent(DappEditCircle);
     const textElement = svgElement.find("text");
     const titleElement = textElement.find("title");
     expect(mainDivElement.exists()).to.be.true;
@@ -92,7 +92,7 @@ describe("DappMosaicDefinitionTransaction -->", () => {
     expect(dappAccountAvatarElement.attributes().width).to.equals("261.333");
     expect(dappAccountAvatarElement.attributes().height).to.equals("131.313");
     expect(dappAccountAvatarElement.attributes().address).to.equals(
-      "NDXB7NNXCHXEMQRUSCDGKDYZB2X5EDUM5GDDOMY"
+      "NAYDANHJJZBDPCUOG46JZOI653NRV4CEZJM4ZXY"
     );
     expect(dappMosaicIconElement.exists()).to.be.true;
     expect(dappMosaicIconElement.attributes().x).to.equals("614");
@@ -111,17 +111,14 @@ describe("DappMosaicDefinitionTransaction -->", () => {
     expect(dappAddCircleElement.attributes().content).to.equals(
       "[object Object]"
     );
-    expect(dappAddCircleElement.attributes().title).to.equals(
-      "Mosaic Definition"
-    );
     expect(textElement.exists()).to.be.true;
     expect(textElement.attributes().x).to.equals("485");
     expect(textElement.attributes().y).to.equals("361.9268");
     expect(textElement.attributes()["text-anchor"]).to.equals("middle");
     expect(textElement.classes()).to.include(
-      "dappMosaicDefinitionTransaction-message"
+      "dappMosaicSupplyChangeTransaction-message"
     );
     expect(titleElement.exists()).to.be.true;
-    expect(titleElement.text()).to.equals("Mosaic Definition");
+    expect(titleElement.text()).to.equals("Mosaic Supply Change");
   });
 });
