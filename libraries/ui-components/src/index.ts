@@ -30,6 +30,7 @@ import {
   DappNamespaceCircle,
   DappNamespaceUnlinkCircle,
   DappAddCircle,
+  DappEditCircle,
   DappTransactionArrow,
   DappMosaicIcon,
   DappTransferTransaction,
@@ -39,6 +40,7 @@ import {
   DappAddressAliasTransaction,
   DappMosaicAliasTransaction,
   DappMosaicDefinitionTransaction,
+  DappMosaicSupplyChangeTransaction,
 } from "./components";
 
 // importing compiled tailwind styles
@@ -89,6 +91,7 @@ const install = (): void => {
   Vue.component("DappNamespaceCircle", DappNamespaceCircle);
   Vue.component("DappNamespaceUnlinkCircle", DappNamespaceUnlinkCircle);
   Vue.component("DappAddCircle", DappAddCircle);
+  Vue.component("DappEditCircle", DappEditCircle);
   Vue.component("DappTransactionArrow", DappTransactionArrow);
   Vue.component("DappMosaicIcon", DappMosaicIcon);
   Vue.component("DappTransferTransaction", DappTransferTransaction);
@@ -100,6 +103,10 @@ const install = (): void => {
   Vue.component(
     "DappMosaicDefinitionTransaction",
     DappMosaicDefinitionTransaction
+  );
+  Vue.component(
+    "DappMosaicSupplyChangeTransaction",
+    DappMosaicSupplyChangeTransaction
   );
 };
 
@@ -124,6 +131,7 @@ export {
   DappNamespaceCircle,
   DappNamespaceUnlinkCircle,
   DappAddCircle,
+  DappEditCircle,
   DappTransactionArrow,
   DappMosaicIcon,
   DappTransferTransaction,
@@ -133,4 +141,5 @@ export {
   DappAddressAliasTransaction,
   DappMosaicAliasTransaction,
   DappMosaicDefinitionTransaction,
+  DappMosaicSupplyChangeTransaction,
 };
