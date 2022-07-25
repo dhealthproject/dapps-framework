@@ -10,8 +10,11 @@
 
 // external dependencies
 import { Component, Prop } from "vue-property-decorator";
+import InlineSvg from "vue-inline-svg";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
+import ElevateLogo from "../ElevateLogo/ElevateLogo.vue";
+import { DappButton } from "@dhealth/components";
 
 export interface HeaderLink {
   path: string;
@@ -19,7 +22,14 @@ export interface HeaderLink {
   icon: string;
 }
 
-@Component({})
+@Component({
+  components: {
+    ElevateLogo,
+    InlineSvg,
+    DappButton,
+  },
+})
 export default class Header extends MetaView {
   @Prop({ default: () => [], required: true }) protected links?: HeaderLink[];
+  @Prop({ default: true }) protected showIcons?: boolean;
 }

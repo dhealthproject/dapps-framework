@@ -11,20 +11,41 @@
 -->
 
 <template>
-  <div class="dapp-screen-header flex row justify-around">
-    <div class="logo py-10 font-bold text-2xl">Elevate</div>
+  <div class="dapp-screen-header flex row justify-around items-center">
+    <div class="logo py-10 font-bold text-2xl">
+      <ElevateLogo :width="167" theme="dark" />
+    </div>
     <nav class="text-right">
-      <ul>
+      <ul class="dapp-screen-header__navigation">
         <li
           v-for="(link, index) in links"
           :key="index"
-          class="dapp-screen-header__link inline-block mx-8"
+          class="dapp-screen-header__link mx-3.5 inline-flex justify-center flex-row px-4 py-2 rounded-xl"
         >
+          <inline-svg
+            :src="getImageUrl(link.icon)"
+            :width="17"
+            class="dapp-screen-header__menu-icon inline-block mr-2 mt-0.5"
+          />
+          <!-- <img :src="getImageUrl(link.icon)" alt="" class="inline-block mr-2" /> -->
           <router-link :to="link.path" v-html="link.text" />
         </li>
       </ul>
     </nav>
+    <div>
+      <DappButton
+        >Disconnect Wallet
+        <inline-svg
+          :src="getImageUrl('icons/Plus-sign.svg')"
+          :width="17"
+          class="dapp-screen-header__button-icon inline-block"
+      /></DappButton>
+    </div>
   </div>
 </template>
 
 <script lang="ts" src="./Header.ts"></script>
+
+<style lang="scss">
+@import "./Header.scss";
+</style>

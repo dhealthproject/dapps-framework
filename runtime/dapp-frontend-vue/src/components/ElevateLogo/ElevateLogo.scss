@@ -1,0 +1,11 @@
+.dapp-logo__image {
+  &.dark {
+    * {
+      fill: #000;
+    }
+  }
+
+  * {
+    fill: #fff;
+  }
+}

@@ -115,10 +115,10 @@ export default class OnboardingPage extends MetaView {
    */
   get dummyLinks() {
     return [
-      { path: "#", text: "Home", icon: "" },
-      { path: "#1", text: "Fitness", icon: "" },
-      { path: "#2", text: "Mindfulness", icon: "" },
-      { path: "#3", text: "Wellness", icon: "" },
+      { path: "#", text: "Home", icon: "icons/Home.svg" },
+      { path: "#1", text: "Fitness", icon: "icons/Running.svg" },
+      { path: "#2", text: "Mindfulness", icon: "icons/Yoga.svg" },
+      { path: "#3", text: "Wellness", icon: "icons/Apple.svg" },
     ];
   }
   /**

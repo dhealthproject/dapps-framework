@@ -1,0 +1,21 @@
+.dapp-screen-header {
+  &__navigation {
+    li {
+      a {
+        color: #616262;
+        font-weight: 400;
+
+        &.router-link-exact-active {
+          font-weight: 600;
+          color: #000;
+        }
+      }
+
+      svg {
+        path {
+          fill: #616262;
+        }
+      }
+    }
+  }
+}

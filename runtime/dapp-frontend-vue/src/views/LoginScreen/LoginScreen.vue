@@ -11,7 +11,7 @@
 -->
 
 <template>
-  <div class="dapp-login-screen">
+  <div class="dapp-login-screen bg-[#f5f5f5]">
     <div class="flex flex-row md:flex-column">
       <div class="dapp-login-screen__column hero">
         <ElevateLogo :width="212" />

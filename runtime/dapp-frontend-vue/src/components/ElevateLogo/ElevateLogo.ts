@@ -10,14 +10,26 @@
 
 // external dependencies
 import { Component, Prop } from "vue-property-decorator";
+import InlineSvg from "vue-inline-svg";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 
-@Component({})
+@Component({
+  components: { InlineSvg },
+})
 export default class ElevateLogo extends MetaView {
   @Prop({
     default: 0,
   })
   readonly width!: number;
+
+  @Prop({
+    default: "",
+  })
+  readonly theme: string | undefined;
+
+  get fillColor(): string {
+    return this.theme === "dark" ? "#000000" : "#ffffff";
+  }
 }
