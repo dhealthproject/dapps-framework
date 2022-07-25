@@ -12,48 +12,55 @@
 
 <template>
   <div class="dapp-login-screen bg-[#f5f5f5]">
-    <div class="flex flex-row md:flex-column">
-      <div class="dapp-login-screen__column hero">
-        <ElevateLogo :width="212" />
-        <div class="dapp-login-screen__column__carousel">
-          <div
-            v-for="(item, index) in carouselItems"
-            :key="item + index"
-            class="carousel-item"
-          >
-            <h2 v-if="index === selectedIndex" class="carousel-item__title">
-              {{ item }}
-            </h2>
-          </div>
-          <div class="carousel-controls">
+    <DividedScreen>
+      <template v-slot:left>
+        <div class="hero">
+          <ElevateLogo :width="212" />
+          <div class="dapp-login-screen__carousel">
             <div
-              v-for="n in carouselItems.length"
-              :key="n"
-              :class="{ active: n - 1 === selectedIndex }"
-              @click="selectedIndex = n - 1"
-              class="carousel-controls__item"
-            />
+              v-for="(item, index) in carouselItems"
+              :key="item + index"
+              class="carousel-item"
+            >
+              <h2 v-if="index === selectedIndex" class="carousel-item__title">
+                {{ item }}
+              </h2>
+            </div>
+            <div class="carousel-controls">
+              <div
+                v-for="n in carouselItems.length"
+                :key="n"
+                :class="{ active: n - 1 === selectedIndex }"
+                @click="selectedIndex = n - 1"
+                class="carousel-controls__item"
+              />
+            </div>
           </div>
         </div>
-      </div>
-      <div class="dapp-login-screen__column flex flex-column justify-center">
-        <DappQR :qrCode="createLoginContract()" />
-        <ul class="steps">
-          <li v-for="(tutorialItem, index) in tutorialItems" :key="index">
-            <span class="number">{{ index + 1 }}</span> {{ tutorialItem }}
-          </li>
-        </ul>
-        <DappButton>Watch a video tutorial</DappButton>
-        <footer>
-          © {{ new Date().getFullYear() }} dHealth. All Rights Reserved
-        </footer>
-      </div>
-    </div>
+      </template>
+
+      <template v-slot:right>
+        <div class="dapp-login-screen__qr flex flex-column justify-center">
+          <DappQR :qrCode="createLoginContract()" />
+          <ul class="steps">
+            <li v-for="(tutorialItem, index) in tutorialItems" :key="index">
+              <span class="number">{{ index + 1 }}</span> {{ tutorialItem }}
+            </li>
+          </ul>
+          <DappButton class="dapp-login-screen__button"
+            >Watch a video tutorial</DappButton
+          >
+          <footer>
+            © {{ new Date().getFullYear() }} dHealth. All Rights Reserved
+          </footer>
+        </div>
+      </template>
+    </DividedScreen>
   </div>
 </template>
 
 <script lang="ts" src="./LoginScreen.ts"></script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import "./LoginScreen.scss";
 </style>

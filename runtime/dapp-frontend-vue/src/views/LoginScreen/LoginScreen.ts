@@ -14,6 +14,7 @@ import { Component } from "vue-property-decorator";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import ElevateLogo from "@/components/ElevateLogo/ElevateLogo.vue";
+import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
 
 import { DappQR } from "@dhealth/components";
 import {
@@ -45,6 +46,7 @@ export interface TransactionRequestConfig {
     ElevateLogo,
     DappQR,
     DappButton,
+    DividedScreen,
   },
 })
 export default class LoginScreen extends MetaView {

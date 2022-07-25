@@ -1,0 +1,18 @@
+.dapp-divided-screen {
+  &__columns {
+    display: flex;
+    flex-direction: row;
+
+    @media screen and (max-width: 1024px) {
+      flex-direction: column;
+    }
+
+    &__column {
+      width: 50%;
+
+      @media screen and (max-width: 1024px) {
+        width: 100%;
+      }
+    }
+  }
+}
