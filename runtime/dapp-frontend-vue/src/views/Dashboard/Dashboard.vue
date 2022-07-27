@@ -22,37 +22,7 @@
           </Card>
           <Card title="Leaderboard">
             <template v-slot:content>
-              <div class="dapp-screen-dashboard__board">
-                <div
-                  v-for="(item, index) in boardItems"
-                  class="board-item"
-                  :key="index"
-                >
-                  <div class="board-item__left">
-                    <span class="number">#{{ index + 1 }}</span>
-                    <div class="avatar">
-                      <img
-                        v-if="item.avatar"
-                        :src="getImageUrl(item.avatar)"
-                        :alt="item.nickname"
-                      />
-                      <div
-                        v-else
-                        class="colored-avatar"
-                        :style="{ 'background-color': item.color }"
-                      />
-                    </div>
-                    <div class="text-data">
-                      <div>
-                        <span class="nickname">{{ item.nickname }}</span>
-                        <DirectionTriangle :direction="item.direction" />
-                      </div>
-                      <span class="hash">{{ item.hash }}</span>
-                    </div>
-                  </div>
-                  <div class="board-item__right">{{ item.amount }} $FIT</div>
-                </div>
-              </div>
+              <LeaderBoard :items="boardItems" />
             </template>
             <template v-slot:button>
               <DappButton
@@ -68,41 +38,22 @@
         <template v-slot:right>
           <Card title="Your Stats" class="dapp-screen-dashboard__stats">
             <template v-slot:content>
+              <Tabs :tab-list="tabs">
+                <template v-slot:tabContent="props">
+                  <div class="dapp-screen-dashboard__section">
+                    <QuickStats :stats-config="props.tabData.quickStats" />
+                  </div>
+                  <div class="dapp-screen-dashboard__section">
+                    <Medals :medals-list="props.tabData.medals" />
+                  </div>
+                  <div class="dapp-screen-dashboard__section">
+                    <FriendsList :friends="props.tabData.friends" />
+                  </div>
+                  <!-- <pre>{{ props }}</pre> -->
+                </template>
+              </Tabs>
               <div class="tabs">
-                <button
-                  v-for="(tab, index) in tabs"
-                  @click="selectedTab = index"
-                  class="tab"
-                  :class="{ active: selectedTab === index }"
-                  :key="index"
-                >
-                  {{ tab }}
-                </button>
-                <div v-if="selectedTab === 0" class="tab-content">
-                  <section class="dapp-screen-dashboard__stats__section">
-                    <h2 class="title">Quick Stats</h2>
-                    <div class="quick-stats">
-                      <div
-                        v-for="(item, index) in quickStats"
-                        :key="index"
-                        class="quick-stats__item"
-                      >
-                        <div class="flex items-center">
-                          <div class="number">{{ item.amount }}</div>
-                          <DirectionTriangle :direction="item.direction" />
-                        </div>
-                        <div class="title">{{ item.title }}</div>
-                      </div>
-                    </div>
-                  </section>
-                  <section class="dapp-screen-dashboard__stats__section">
-                    <h2 class="title">Your Medals</h2>
-                    <div class="medals">
-                      <img :src="getImageUrl('medal1.svg')" alt="Medal 1" />
-                      <img :src="getImageUrl('medal2.svg')" alt="Medal 2" />
-                      <img :src="getImageUrl('medal3.svg')" alt="Medal 3" />
-                    </div>
-                  </section>
+                <!-- <div v-if="selectedTab === 0" class="tab-content">
                   <section class="dapp-screen-dashboard__stats__section">
                     <h2 class="title">Your Friends</h2>
                     <div class="friends-list">
@@ -153,7 +104,7 @@
                       </div>
                     </div>
                   </section>
-                </div>
+                </div> -->
               </div>
             </template></Card
           >

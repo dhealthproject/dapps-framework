@@ -1,0 +1,32 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Vue Frontend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+
+.dapp-quick-stats {
+  .quick-stats {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &__item {
+      .number {
+        font-weight: 700;
+        display: inline-block;
+        padding-right: 4px;
+        font-size: 44px;
+        line-height: 66px;
+      }
+
+      .title {
+        font-size: 14px;
+        font-weight: 500;
+      }
+    }
+  }
+}

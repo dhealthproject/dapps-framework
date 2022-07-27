@@ -10,8 +10,6 @@
 
 // external dependencies
 import { Component } from "vue-property-decorator";
-import { VueperSlides, VueperSlide } from "vueperslides";
-import "vueperslides/dist/vueperslides.css";
 import InlineSvg from "vue-inline-svg";
 
 // internal dependencies
@@ -22,6 +20,12 @@ import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
 import { CarouselItem, CarouselConfig } from "./components/EventsCarousel";
 import EventsCarousel from "./components/EventsCarousel.vue";
+import { BoardItem } from "./components/LeaderBoard";
+import LeaderBoard from "./components/LeaderBoard.vue";
+import Tabs from "@/components/Tabs/Tabs.vue";
+import QuickStats from "./components/QuickStats.vue";
+import Medals from "./components/Medals.vue";
+import FriendsList from "./components/FriendsList.vue";
 
 @Component({
   components: {
@@ -29,15 +33,16 @@ import EventsCarousel from "./components/EventsCarousel.vue";
     DividedScreen,
     DappButton,
     InlineSvg,
-    VueperSlides,
-    VueperSlide,
     DirectionTriangle,
     EventsCarousel,
+    LeaderBoard,
+    Tabs,
+    QuickStats,
+    Medals,
+    FriendsList,
   },
 })
 export default class Dasboard extends MetaView {
-  selectedTab = 0;
-
   get sliderConfig(): CarouselConfig {
     return {
       arrows: false,
@@ -81,7 +86,7 @@ export default class Dasboard extends MetaView {
     ];
   }
 
-  get boardItems() {
+  get boardItems(): BoardItem[] {
     return [
       {
         avatar: "avatar1.png",
@@ -120,57 +125,80 @@ export default class Dasboard extends MetaView {
       },
     ];
   }
-
+  // "Today"
   get tabs() {
-    return ["All time", "Today"];
-  }
-
-  get quickStats() {
     return [
       {
-        title: "Minutes Exercised",
-        amount: 3099,
-        direction: "up",
+        title: "All time",
+        quickStats: [
+          {
+            title: "Minutes Exercised",
+            amount: 3099,
+            direction: "up",
+          },
+          {
+            title: "$FIT earned",
+            amount: 560,
+            direction: "down",
+          },
+          {
+            title: "Calories Burnt",
+            amount: 1094,
+            direction: "down",
+          },
+          {
+            title: "Friends Referred",
+            amount: 5,
+            direction: "down",
+          },
+        ],
+        medals: ["medal1.svg", "medal2.svg", "medal3.svg"],
+        friends: [
+          {
+            avatar: "friend1.png",
+            name: "Yoga Maestro",
+          },
+          {
+            avatar: "friend2.png",
+            name: "Terminator",
+          },
+        ],
       },
       {
-        title: "$FIT earned",
-        amount: 560,
-        direction: "down",
-      },
-      {
-        title: "Calories Burnt",
-        amount: 1094,
-        direction: "down",
-      },
-      {
-        title: "Friends Referred",
-        amount: 5,
-        direction: "down",
-      },
-    ];
-  }
-
-  get quickStatsDaily() {
-    return [
-      {
-        title: "Minutes Exercised",
-        amount: 10,
-        direction: "up",
-      },
-      {
-        title: "$FIT earned",
-        amount: 620,
-        direction: "up",
-      },
-      {
-        title: "Calories Burnt",
-        amount: 10,
-        direction: "down",
-      },
-      {
-        title: "Friends Referred",
-        amount: 5,
-        direction: "down",
+        title: "Today",
+        quickStats: [
+          {
+            title: "Minutes Exercised",
+            amount: 520,
+            direction: "down",
+          },
+          {
+            title: "$FIT earned",
+            amount: 350,
+            direction: "down",
+          },
+          {
+            title: "Calories Burnt",
+            amount: 2035,
+            direction: "up",
+          },
+          {
+            title: "Friends Referred",
+            amount: 5,
+            direction: "down",
+          },
+        ],
+        medals: ["medal1.svg"],
+        friends: [
+          {
+            avatar: "friend1.png",
+            name: "Yoga Maestro",
+          },
+          {
+            avatar: "friend2.png",
+            name: "Terminator",
+          },
+        ],
       },
     ];
   }

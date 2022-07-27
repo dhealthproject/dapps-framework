@@ -1,0 +1,63 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Vue Frontend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+
+.dapp-leaderboard-table {
+  .board-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+
+    &__left {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .number,
+      .avatar {
+        font-size: 16px;
+        font-weight: 700;
+        color: #000;
+        display: inline-block;
+        padding-right: 8px;
+      }
+
+      .colored-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        padding-right: 8px;
+      }
+
+      .text-data {
+        display: flex;
+        flex-direction: column;
+
+        .nickname {
+          font-size: 14px;
+          font-weight: 500;
+          display: inline-block;
+          margin-right: 8px;
+        }
+
+        .hash {
+          font-size: 12px;
+        }
+      }
+    }
+
+    &__right {
+      font-weight: 700;
+      font-size: 24px;
+    }
+  }
+}

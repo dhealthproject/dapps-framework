@@ -1,0 +1,29 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Vue Frontend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+
+.dapp-tabs {
+  .tab-content {
+    padding-top: 18px;
+  }
+
+  .tab {
+    display: inline-block;
+    padding: 4px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 5px;
+    border-radius: 50px;
+
+    &.active {
+      background-color: #f2f4f5;
+    }
+  }
+}
