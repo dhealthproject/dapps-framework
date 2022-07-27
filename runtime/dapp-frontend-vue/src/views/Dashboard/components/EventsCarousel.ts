@@ -20,7 +20,8 @@ import { DappButton } from "@dhealth/components";
 
 // eslint-disable-next-line prettier/prettier
 export interface CarouselItem {
-  background: string;
+  gradient: string;
+  image: string;
   header?: {
     icon: string;
     text: string;

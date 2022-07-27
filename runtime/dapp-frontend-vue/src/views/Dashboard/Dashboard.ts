@@ -56,8 +56,9 @@ export default class Dasboard extends MetaView {
   get carouselItems(): CarouselItem[] {
     return [
       {
-        background:
-          "url('../../assets/footbalbg.jpg'), linear-gradient(360deg, rgba(32, 89, 234, 0.7) 0%, rgba(32, 94, 255, 0) 106.16%)",
+        image: "footbalbg.jpg",
+        gradient:
+          "linear-gradient(360deg, rgba(32, 89, 234, 0.7) 0%, rgba(32, 94, 255, 0) 106.16%)",
         footer: {
           title: "24/7 HIIT",
           participants: "29,988",
@@ -68,16 +69,18 @@ export default class Dasboard extends MetaView {
           icon: "provided.svg",
           text: "Powered by lululemon®",
         },
-        background:
-          "url('../../assets/runningbg.jpg'), linear-gradient(0deg, rgba(0, 117, 89, 0.6) 7.64%, rgba(9, 129, 107, 0) 119.21%)",
+        image: "runningbg.jpg",
+        gradient:
+          "linear-gradient(0deg, rgba(0, 117, 89, 0.6) 7.64%, rgba(9, 129, 107, 0) 119.21%)",
         footer: {
           title: "Yoga Mind",
           participants: "10,102",
         },
       },
       {
-        background:
-          "url('../../assets/footbalbg.jpg'), linear-gradient(360deg, rgba(32, 89, 234, 0.7) 0%, rgba(32, 94, 255, 0) 106.16%)",
+        image: "footbalbg.jpg",
+        gradient:
+          "linear-gradient(360deg, rgba(32, 89, 234, 0.7) 0%, rgba(32, 94, 255, 0) 106.16%)",
         footer: {
           title: "24/7 HIIT",
           participants: "29,988",

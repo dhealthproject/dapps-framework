@@ -22,32 +22,44 @@
     >
       <vueper-slide v-for="(carouselItem, index) in items" :key="index">
         <template #content>
-          <div class="item" :style="{ background: carouselItem.background }">
-            <div v-if="carouselItem.header" class="item__header">
-              <img
-                :src="getImageUrl(carouselItem.header.icon)"
-                :alt="carouselItem.header.text"
-              />
-              <span class="item__header__provided">{{
-                carouselItem.header.text
-              }}</span>
-            </div>
-            <div class="item__footer">
-              <div class="item__footer__text">
-                <span class="item__footer__text__title">{{
-                  carouselItem.footer.title
+          <div class="item">
+            <img
+              :src="getImageUrl(carouselItem.image)"
+              :alt="carouselItem.footer.title"
+              class="image"
+            />
+            <div
+              class="text-data"
+              :style="{ background: carouselItem.gradient }"
+            >
+              <div v-if="carouselItem.header" class="item__header">
+                <img
+                  :src="getImageUrl(carouselItem.header.icon)"
+                  :alt="carouselItem.header.text"
+                />
+                <span class="item__header__provided">{{
+                  carouselItem.header.text
                 }}</span>
-                <br />
-                <span>{{ carouselItem.footer.participants }} participants</span>
               </div>
-              <div class="item__footer__cta">
-                <DappButton
-                  >Join
-                  <inline-svg
-                    :src="getImageUrl('icons/Plus-sign.svg')"
-                    :width="17"
-                    class="dapp-screen-header__button-icon inline-block"
-                /></DappButton>
+              <div class="item__footer">
+                <div class="item__footer__text">
+                  <span class="item__footer__text__title">{{
+                    carouselItem.footer.title
+                  }}</span>
+                  <br />
+                  <span
+                    >{{ carouselItem.footer.participants }} participants</span
+                  >
+                </div>
+                <div class="item__footer__cta">
+                  <DappButton
+                    >Join
+                    <inline-svg
+                      :src="getImageUrl('icons/Plus-sign.svg')"
+                      :width="17"
+                      class="dapp-screen-header__button-icon inline-block"
+                  /></DappButton>
+                </div>
               </div>
             </div>
           </div>
