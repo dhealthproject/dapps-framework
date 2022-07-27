@@ -14,6 +14,13 @@
     <div v-if="$route.meta.layout === 'fullscreen'" class="layout-fullscreen">
       <router-view :key="$route.fullPath"></router-view>
     </div>
+    <div
+      v-else-if="$route.meta.layout === 'authenticated'"
+      class="layout-authenticated"
+    >
+      <Header :links="headerLinks" />
+      <router-view :key="$route.fullPath"></router-view>
+    </div>
     <div v-else class="layout-default">
       <header />
       <nav class="block">

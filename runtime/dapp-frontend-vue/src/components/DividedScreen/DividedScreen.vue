@@ -13,7 +13,10 @@
 <template>
   <div class="dapp-divided-screen">
     <div class="dapp-divided-screen__columns">
-      <div class="dapp-divided-screen__columns__column">
+      <div
+        :style="{ paddingRight: `${gap}px` }"
+        class="dapp-divided-screen__columns__column"
+      >
         <slot name="left"></slot>
       </div>
       <div class="dapp-divided-screen__columns__column">

@@ -16,6 +16,12 @@ import { MetaView } from "@/views/MetaView";
 import ElevateLogo from "../ElevateLogo/ElevateLogo.vue";
 import { DappButton } from "@dhealth/components";
 
+// meny svgs
+// import Apple from "../../assets/icons/Apple.svg";
+// import Home from "../../assets/icons/Apple.svg";
+// import Running from "../../assets/icons/Running.svg";
+// import Yoga from "../../assets/icons/Yoga.svg";
+
 export interface HeaderLink {
   path: string;
   text: string;

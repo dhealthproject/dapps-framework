@@ -15,6 +15,6 @@ import { Component, Prop } from "vue-property-decorator";
 import { MetaView } from "@/views/MetaView";
 
 @Component({})
-export default class DividedScreen extends MetaView {
-  @Prop({ default: 20 }) readonly gap?: number;
+export default class Card extends MetaView {
+  @Prop({ default: "" }) readonly title?: string;
 }

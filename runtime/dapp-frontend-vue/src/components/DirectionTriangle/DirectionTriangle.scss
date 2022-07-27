@@ -1,0 +1,38 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Vue Frontend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+
+.dapp-triangle {
+  display: inline-block;
+
+  .triangle {
+    margin-right: 2px;
+
+    &.up {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 6px 8px 6px;
+      border-color: transparent transparent #22e6ab transparent;
+    }
+
+    &.down {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 8px 6px 0 6px;
+      border-color: #e27857 transparent transparent transparent;
+    }
+  }
+
+  .both {
+    display: flex;
+    font-display: row;
+  }
+}

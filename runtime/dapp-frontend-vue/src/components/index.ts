@@ -16,6 +16,9 @@ import Header from "./Header/Header.vue";
 import Footer from "./Footer/Footer.vue";
 import Loader from "./Loader/Loader.vue";
 import ElevateLogo from "./ElevateLogo/ElevateLogo.vue";
+import DividedScreen from "./DividedScreen/DividedScreen.vue";
+import Card from "./Card/Card.vue";
+import DirectionTriangle from "./DirectionTriangle/DirectionTriangle.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
@@ -24,6 +27,9 @@ export const AppComponents = {
   Footer,
   Loader,
   ElevateLogo,
+  DividedScreen,
+  Card,
+  DirectionTriangle,
 };
 
 // scoped export of library-level components 

@@ -58,6 +58,14 @@ const router = new VueRouter({
       },
       component: () => import("./views/LoginScreen/LoginScreen.vue"),
     },
+    {
+      path: "/dashboard",
+      name: "dashboard",
+      meta: {
+        layout: "authenticated",
+      },
+      component: () => import("./views/Dashboard/Dashboard.vue"),
+    },
   ],
 });
 

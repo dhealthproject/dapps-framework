@@ -8,13 +8,19 @@
  * @license     LGPL-3.0
  */
 
-// external dependencies
-import { Component, Prop } from "vue-property-decorator";
+.dapp-card {
+  &__header {
+    margin-bottom: 17px;
 
-// internal dependencies
-import { MetaView } from "@/views/MetaView";
-
-@Component({})
-export default class DividedScreen extends MetaView {
-  @Prop({ default: 20 }) readonly gap?: number;
+    .dapp-card__title {
+      font-size: 20px;
+      font-weight: 700;
+      display: block;
+    }
+  }
+  &__inner {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 16px;
+  }
 }

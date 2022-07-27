@@ -11,7 +11,7 @@
 -->
 
 <template>
-  <div class="dapp-screen-header flex row justify-around items-center">
+  <div class="dapp-screen-header flex row items-center container">
     <div class="logo py-10 font-bold text-2xl">
       <ElevateLogo :width="167" theme="dark" />
     </div>
@@ -22,12 +22,12 @@
           :key="index"
           class="dapp-screen-header__link mx-3.5 inline-flex justify-center flex-row px-4 py-2 rounded-xl"
         >
-          <inline-svg
+          <!-- <inline-svg
             :src="getImageUrl(link.icon)"
             :width="17"
             class="dapp-screen-header__menu-icon inline-block mr-2 mt-0.5"
-          />
-          <!-- <img :src="getImageUrl(link.icon)" alt="" class="inline-block mr-2" /> -->
+          /> -->
+          <img :src="getImageUrl(link.icon)" alt="" class="inline-block mr-2" />
           <router-link :to="link.path" v-html="link.text" />
         </li>
       </ul>
