@@ -17,27 +17,14 @@ import InlineSvg from "vue-inline-svg";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import { DappButton } from "@dhealth/components";
-import Header from "@/components/Header/Header.vue";
 import Card from "@/components/Card/Card.vue";
 import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
-
-// eslint-disable-next-line prettier/prettier
-export interface CarouselItem {
-  background: string;
-  header?: {
-    icon: string;
-    text: string;
-  };
-  footer: {
-    title: string;
-    participants: number | string;
-  };
-}
+import { CarouselItem, CarouselConfig } from "./components/EventsCarousel";
+import EventsCarousel from "./components/EventsCarousel.vue";
 
 @Component({
   components: {
-    Header,
     Card,
     DividedScreen,
     DappButton,
@@ -45,10 +32,21 @@ export interface CarouselItem {
     VueperSlides,
     VueperSlide,
     DirectionTriangle,
+    EventsCarousel,
   },
 })
 export default class Dasboard extends MetaView {
   selectedTab = 0;
+
+  get sliderConfig(): CarouselConfig {
+    return {
+      arrows: false,
+      bullets: false,
+      itemsHeight: "203px",
+      visibleSlides: 2.2,
+      gap: 4,
+    };
+  }
 
   get carouselItems(): CarouselItem[] {
     return [
@@ -142,6 +140,31 @@ export default class Dasboard extends MetaView {
       {
         title: "Calories Burnt",
         amount: 1094,
+        direction: "down",
+      },
+      {
+        title: "Friends Referred",
+        amount: 5,
+        direction: "down",
+      },
+    ];
+  }
+
+  get quickStatsDaily() {
+    return [
+      {
+        title: "Minutes Exercised",
+        amount: 10,
+        direction: "up",
+      },
+      {
+        title: "$FIT earned",
+        amount: 620,
+        direction: "up",
+      },
+      {
+        title: "Calories Burnt",
+        amount: 10,
         direction: "down",
       },
       {

@@ -15,61 +15,9 @@
     <div class="container">
       <DividedScreen>
         <template v-slot:left>
-          <Card title="Upcoming Events" class="dapp-screen-dashboard__carousel">
+          <Card title="Upcoming Events">
             <template v-slot:content>
-              <vueper-slides
-                ref="vueperslides2"
-                :arrows="false"
-                :bullets="false"
-                :visible-slides="2.2"
-                :gap="4"
-                fixedHeight="203px"
-              >
-                <vueper-slide
-                  v-for="(carouselItem, index) in carouselItems"
-                  :key="index"
-                >
-                  <template #content>
-                    <div
-                      class="item"
-                      :style="{ background: carouselItem.background }"
-                    >
-                      <div v-if="carouselItem.header" class="item__header">
-                        <img
-                          :src="getImageUrl(carouselItem.header.icon)"
-                          :alt="carouselItem.header.text"
-                        />
-                        <span class="item__header__provided">{{
-                          carouselItem.header.text
-                        }}</span>
-                      </div>
-                      <div class="item__footer">
-                        <div class="item__footer__text">
-                          <span class="item__footer__text__title">{{
-                            carouselItem.footer.title
-                          }}</span>
-                          <br />
-                          <span
-                            >{{
-                              carouselItem.footer.participants
-                            }}
-                            participants</span
-                          >
-                        </div>
-                        <div class="item__footer__cta">
-                          <DappButton
-                            >Join
-                            <inline-svg
-                              :src="getImageUrl('icons/Plus-sign.svg')"
-                              :width="17"
-                              class="dapp-screen-header__button-icon inline-block"
-                          /></DappButton>
-                        </div>
-                      </div>
-                    </div>
-                  </template>
-                </vueper-slide>
-              </vueper-slides>
+              <EventsCarousel :items="carouselItems" :config="sliderConfig" />
             </template>
           </Card>
           <Card title="Leaderboard">
@@ -155,7 +103,7 @@
                       <img :src="getImageUrl('medal3.svg')" alt="Medal 3" />
                     </div>
                   </section>
-                  <div class="dapp-screen-dashboard__stats__section">
+                  <section class="dapp-screen-dashboard__stats__section">
                     <h2 class="title">Your Friends</h2>
                     <div class="friends-list">
                       <div class="friend-list__item">
@@ -169,9 +117,43 @@
                         <DappButton>Go 1-on-1</DappButton>
                       </div>
                     </div>
-                  </div>
+                  </section>
                 </div>
-                <div v-if="selectedTab === 1" class="tab-content">2</div>
+                <div v-if="selectedTab === 1" class="tab-content">
+                  <section class="dapp-screen-dashboard__stats__section">
+                    <h2 class="title">Quick Stats</h2>
+                    <div class="quick-stats">
+                      <div
+                        v-for="(item, index) in quickStatsDaily"
+                        :key="index"
+                        class="quick-stats__item"
+                      >
+                        <div class="flex items-center">
+                          <div class="number">{{ item.amount }}</div>
+                          <DirectionTriangle :direction="item.direction" />
+                        </div>
+                        <div class="title">{{ item.title }}</div>
+                      </div>
+                    </div>
+                  </section>
+                  <section class="dapp-screen-dashboard__stats__section">
+                    <h2 class="title">Your Medals</h2>
+                    <div class="medals">
+                      <img :src="getImageUrl('medal1.svg')" alt="Medal 1" />
+                      <img :src="getImageUrl('medal2.svg')" alt="Medal 2" />
+                    </div>
+                  </section>
+                  <section class="dapp-screen-dashboard__stats__section">
+                    <h2 class="title">Your Friends</h2>
+                    <div class="friends-list">
+                      <div class="friend-list__item">
+                        <img :src="getImageUrl('friend2.png')" alt="" />
+                        <span class="name">Terminator</span>
+                        <DappButton>Go 1-on-1</DappButton>
+                      </div>
+                    </div>
+                  </section>
+                </div>
               </div>
             </template></Card
           >

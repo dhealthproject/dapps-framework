@@ -1,0 +1,52 @@
+<template>
+  <div class="dapp-events-carousel">
+    <vueper-slides
+      ref="vueperslides2"
+      :arrows="config.arrows"
+      :bullets="config.bullets"
+      :visible-slides="config.visibleSlides"
+      :gap="config.gap"
+      :fixedHeight="config.itemsHeight"
+    >
+      <vueper-slide v-for="(carouselItem, index) in items" :key="index">
+        <template #content>
+          <div class="item" :style="{ background: carouselItem.background }">
+            <div v-if="carouselItem.header" class="item__header">
+              <img
+                :src="getImageUrl(carouselItem.header.icon)"
+                :alt="carouselItem.header.text"
+              />
+              <span class="item__header__provided">{{
+                carouselItem.header.text
+              }}</span>
+            </div>
+            <div class="item__footer">
+              <div class="item__footer__text">
+                <span class="item__footer__text__title">{{
+                  carouselItem.footer.title
+                }}</span>
+                <br />
+                <span>{{ carouselItem.footer.participants }} participants</span>
+              </div>
+              <div class="item__footer__cta">
+                <DappButton
+                  >Join
+                  <inline-svg
+                    :src="getImageUrl('icons/Plus-sign.svg')"
+                    :width="17"
+                    class="dapp-screen-header__button-icon inline-block"
+                /></DappButton>
+              </div>
+            </div>
+          </div>
+        </template>
+      </vueper-slide>
+    </vueper-slides>
+  </div>
+</template>
+
+<script lang="ts" src="./EventsCarousel.ts"></script>
+
+<style lang="scss">
+@import "./EventsCarousel.scss";
+</style>
