@@ -30,5 +30,11 @@ export interface BoardItem {
   },
 })
 export default class LeaderBoard extends MetaView {
+  /**
+   * Prop which defines list of items in leaderboard table
+   *
+   * @access readonly
+   * @var {items}
+   */
   @Prop({ default: () => [] }) readonly items?: BoardItem[];
 }

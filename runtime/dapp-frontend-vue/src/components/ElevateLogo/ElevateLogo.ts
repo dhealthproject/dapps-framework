@@ -19,16 +19,39 @@ import { MetaView } from "@/views/MetaView";
   components: { InlineSvg },
 })
 export default class ElevateLogo extends MetaView {
+  /**
+   * Prop which defines width of the logo
+   * defaults to 0
+   *
+   * @access readonly
+   * @var {width}
+   */
   @Prop({
     default: 0,
   })
   readonly width!: number;
 
+  /**
+   * Prop which defines color of the logo
+   * available values: "dark"
+   *
+   * @access readonly
+   * @var {theme}
+   */
   @Prop({
     default: "",
   })
   readonly theme: string | undefined;
 
+  /**
+   * Computed which returns
+   * color of the logo based on "theme"
+   * prop value
+   *
+   * available vales: "#000000" | "#ffffff"
+   *
+   * @returns {string}
+   */
   get fillColor(): string {
     return this.theme === "dark" ? "#000000" : "#ffffff";
   }

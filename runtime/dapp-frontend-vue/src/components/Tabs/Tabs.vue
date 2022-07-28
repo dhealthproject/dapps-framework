@@ -27,6 +27,13 @@
         :key="index + tabContentItem"
         class="dapp-tabs__content"
       >
+        <!-- Pass in this slot markup, which will represent tab content -->
+
+        <!-- USAGE EXAMPLE -->
+        <!-- <Tabs :tab-list="tabs">
+                <template v-slot:tabContent="props"> -- content of the current tab(tabList[index]) is scoped to tabContentProp
+                </template>
+              </Tabs> -->
         <slot
           v-if="selectedTab === index"
           name="tabContent"

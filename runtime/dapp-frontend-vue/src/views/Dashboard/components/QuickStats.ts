@@ -19,5 +19,11 @@ import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.
   components: { DirectionTriangle },
 })
 export default class QuickStats extends MetaView {
+  /**
+   * Prop which defines list of quick stats
+   *
+   * @access readonly
+   * @var {statsConfig}
+   */
   @Prop({ default: () => ({}) }) readonly statsConfig?: [];
 }

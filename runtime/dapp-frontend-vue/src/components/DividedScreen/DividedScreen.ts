@@ -16,5 +16,12 @@ import { MetaView } from "@/views/MetaView";
 
 @Component({})
 export default class DividedScreen extends MetaView {
+  /**
+   * Title displayed on top of the card,
+   * defaults to ""
+   *
+   * @access readonly
+   * @var {gap}
+   */
   @Prop({ default: 20 }) readonly gap?: number;
 }

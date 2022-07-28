@@ -50,8 +50,21 @@ export interface TransactionRequestConfig {
   },
 })
 export default class LoginScreen extends MetaView {
+  /**
+   * This property is used
+   * for tracking of currently selected tab
+   *
+   * @access protected
+   * @var {protected}
+   */
   protected selectedIndex = 0;
 
+  /**
+   * Computed which contains
+   * slides for left screen carousel
+   *
+   * @returns {string[]}
+   */
   get carouselItems(): string[] {
     return [
       "Keep a digital wardrobe of your gear as an NFT",
@@ -60,6 +73,12 @@ export default class LoginScreen extends MetaView {
     ];
   }
 
+  /**
+   * Computed which contains
+   * list of steps to login
+   *
+   * @returns {string[]}
+   */
   get tutorialItems(): string[] {
     return [
       "Open dHealth Signer app on your phone",

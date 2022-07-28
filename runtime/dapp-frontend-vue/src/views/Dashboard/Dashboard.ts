@@ -43,6 +43,12 @@ import FriendsList from "./components/FriendsList.vue";
   },
 })
 export default class Dasboard extends MetaView {
+  /**
+   * Computed which defines configuration
+   * for vueper carousel
+   *
+   * @returns {CarouselConfig}
+   */
   get sliderConfig(): CarouselConfig {
     return {
       arrows: false,
@@ -53,6 +59,11 @@ export default class Dasboard extends MetaView {
     };
   }
 
+  /**
+   * Computed which defines list of carousel items
+   *
+   * @returns {CarouselItem[]}
+   */
   get carouselItems(): CarouselItem[] {
     return [
       {
@@ -89,6 +100,11 @@ export default class Dasboard extends MetaView {
     ];
   }
 
+  /**
+   * Computed which defines list of users in leaderboard table
+   *
+   * @returns {BoardItem[]}
+   */
   get boardItems(): BoardItem[] {
     return [
       {
@@ -128,7 +144,13 @@ export default class Dasboard extends MetaView {
       },
     ];
   }
-  // "Today"
+
+  /**
+   * Computed which defines
+   * list of tabs and structure inside of them
+   *
+   * @returns {BoardItem[]}
+   */
   get tabs() {
     return [
       {

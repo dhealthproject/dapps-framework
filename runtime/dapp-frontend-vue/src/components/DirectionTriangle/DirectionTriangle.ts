@@ -16,5 +16,14 @@ import { MetaView } from "@/views/MetaView";
 
 @Component({})
 export default class DirectionTriangle extends MetaView {
+  /**
+   * Prop which defines direction & color of triangle
+   * defaults to "up"
+   *
+   * allowed values: "up" | "down" | "both"
+   *
+   * @access readonly
+   * @var {direction}
+   */
   @Prop({ default: "up" }) readonly direction?: "up" | "down" | "both";
 }

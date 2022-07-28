@@ -16,5 +16,11 @@ import { MetaView } from "@/views/MetaView";
 
 @Component({})
 export default class Medals extends MetaView {
+  /**
+   * Prop which defines list of medals
+   *
+   * @access readonly
+   * @var {medalsList}
+   */
   @Prop({ default: () => ({}) }) readonly medalsList?: [];
 }

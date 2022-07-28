@@ -27,7 +27,12 @@
             :width="17"
             class="dapp-screen-header__menu-icon inline-block mr-2 mt-0.5"
           /> -->
-          <img :src="getImageUrl(link.icon)" alt="" class="inline-block mr-2" />
+          <img
+            v-if="showIcons"
+            :src="getImageUrl(link.icon)"
+            alt=""
+            class="inline-block mr-2"
+          />
           <router-link :to="link.path" v-html="link.text" />
         </li>
       </ul>

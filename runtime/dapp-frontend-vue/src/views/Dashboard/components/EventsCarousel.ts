@@ -49,6 +49,21 @@ export interface CarouselConfig {
   },
 })
 export default class EventsCarousel extends MetaView {
+  /**
+   * Prop which defines list of items displayed in carousel
+   * defaults to []
+   *
+   * @access readonly
+   * @var {items}
+   */
   @Prop({ default: () => [] }) readonly items?: CarouselItem;
+
+  /**
+   * Prop which defines configuration of carousel
+   * defaults to {}
+   *
+   * @access readonly
+   * @var {config}
+   */
   @Prop({ default: () => ({}) }) readonly config?: CarouselConfig;
 }

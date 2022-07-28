@@ -16,5 +16,12 @@ import { MetaView } from "@/views/MetaView";
 
 @Component({})
 export default class Card extends MetaView {
+  /**
+   * Title displayed on top of the card,
+   * defaults to ""
+   *
+   * @access readonly
+   * @var {title}
+   */
   @Prop({ default: "" }) readonly title?: string;
 }

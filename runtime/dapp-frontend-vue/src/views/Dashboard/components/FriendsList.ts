@@ -19,5 +19,11 @@ import { DappButton } from "@dhealth/components";
   components: { DappButton },
 })
 export default class FriendsList extends MetaView {
+  /**
+   * Prop which defines list of friends
+   *
+   * @access readonly
+   * @var {friends}
+   */
   @Prop({ default: () => [] }) readonly friends?: [];
 }

@@ -36,6 +36,19 @@ export interface HeaderLink {
   },
 })
 export default class Header extends MetaView {
+  /**
+   * Prop which defines list of links available in header
+   *
+   * @access protected
+   * @var {links}
+   */
   @Prop({ default: () => [], required: true }) protected links?: HeaderLink[];
+
+  /**
+   * Prop which defines if icons(left from menu text) should be shown or not
+   *
+   * @access protected
+   * @var {showIcons}
+   */
   @Prop({ default: true }) protected showIcons?: boolean;
 }
