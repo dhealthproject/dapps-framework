@@ -14,6 +14,9 @@ import { Component, Prop } from "vue-property-decorator";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 
+// style resource
+import "./DividedScreen.scss";
+
 @Component({})
 export default class DividedScreen extends MetaView {
   /**

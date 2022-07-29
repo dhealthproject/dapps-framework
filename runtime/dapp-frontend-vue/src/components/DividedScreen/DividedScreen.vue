@@ -27,7 +27,3 @@
 </template>
 
 <script src="./DividedScreen.ts"></script>
-
-<style lang="scss" scoped>
-@import "./DividedScreen.scss";
-</style>

@@ -14,6 +14,9 @@ import { Component, Prop } from "vue-property-decorator";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 
+// style resource
+import "./Card.scss";
+
 @Component({})
 export default class Card extends MetaView {
   /**

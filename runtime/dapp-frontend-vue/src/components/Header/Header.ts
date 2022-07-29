@@ -16,6 +16,9 @@ import { MetaView } from "@/views/MetaView";
 import ElevateLogo from "../ElevateLogo/ElevateLogo.vue";
 import { DappButton } from "@dhealth/components";
 
+// style resource
+import "./Header.scss";
+
 // meny svgs
 // import Apple from "../../assets/icons/Apple.svg";
 // import Home from "../../assets/icons/Apple.svg";

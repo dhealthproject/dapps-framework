@@ -29,7 +29,3 @@
 </template>
 
 <script lang="ts" src="./ElevateLogo.ts"></script>
-
-<style lang="scss">
-@import "./ElevateLogo.scss";
-</style>

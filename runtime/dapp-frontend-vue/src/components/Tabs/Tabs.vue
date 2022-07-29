@@ -45,7 +45,3 @@
 </template>
 
 <script lang="ts" src="./Tabs.ts"></script>
-
-<style lang="scss">
-@import "./Tabs.scss";
-</style>

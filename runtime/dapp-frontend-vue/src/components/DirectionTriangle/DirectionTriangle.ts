@@ -14,6 +14,9 @@ import { Component, Prop } from "vue-property-decorator";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 
+// style resource
+import "./DirectionTriangle.scss";
+
 @Component({})
 export default class DirectionTriangle extends MetaView {
   /**

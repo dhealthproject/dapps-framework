@@ -14,6 +14,9 @@ import { Component, Prop } from "vue-property-decorator";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 
+// style resource
+import "./Tabs.scss";
+
 @Component({})
 export default class Tabs extends MetaView {
   /**

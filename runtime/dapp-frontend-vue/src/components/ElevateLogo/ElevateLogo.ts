@@ -15,6 +15,9 @@ import InlineSvg from "vue-inline-svg";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 
+// style resource
+import "./ElevateLogo.scss";
+
 @Component({
   components: { InlineSvg },
 })

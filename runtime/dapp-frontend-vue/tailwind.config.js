@@ -12,8 +12,8 @@ module.exports = {
     removeDeprecatedGapUtilities: true,
   },
   content: [
-    "./src/components/**/*.{vue,ts}",
-    "./src/pages/**/*.{vue,ts}",
+    "./src/components/**/*.{vue,ts,scss}",
+    "./src/pages/**/*.{vue,ts,scss}",
     "./src/App.ts",
     "./src/App.vue",
     "./public/index.html",

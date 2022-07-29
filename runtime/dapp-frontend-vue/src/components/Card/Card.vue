@@ -23,7 +23,3 @@
 </template>
 
 <script lang="ts" src="./Card.ts"></script>
-
-<style lang="scss">
-@import "./Card.scss";
-</style>

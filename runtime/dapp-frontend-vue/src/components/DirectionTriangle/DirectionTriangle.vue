@@ -28,7 +28,3 @@
 </template>
 
 <script lang="ts" src="./DirectionTriangle.ts"></script>
-
-<style lang="scss">
-@import "./DirectionTriangle.scss";
-</style>

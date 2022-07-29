@@ -80,12 +80,17 @@ export class MockModel {
     };
   }
   aggregate(param: any) {
-    return jest.fn((param) => ({
-      param: () => param,
-      exec: () => Promise.resolve([{
-        data: [{}],
-        metadata: [{ total: 1 }],
-      }]),
-    })).call(this, param);
+    return jest
+      .fn((param) => ({
+        param: () => param,
+        exec: () =>
+          Promise.resolve([
+            {
+              data: [{}],
+              metadata: [{ total: 1 }],
+            },
+          ]),
+      }))
+      .call(this, param);
   }
 }

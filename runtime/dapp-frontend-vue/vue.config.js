@@ -66,6 +66,16 @@ module.exports = {
       maxEntrypointSize: 5000000, // 5Mb
       maxAssetSize: 400000, // 400Kb
     },
+
+    module: {
+      rules: [
+        {
+          test: /\.s[ac]ss$/,
+          exclude: /node_modules/,
+          use: ["sass-loader"],
+        },
+      ],
+    },
   },
 
   // configures htmlWebpackPlugin
@@ -80,6 +90,15 @@ module.exports = {
     // this is necessary because we use the runtime compiler
     config.resolve.symlinks(false);
     config.resolve.alias.set("vue", path.resolve("./node_modules/vue"));
+
+    // function addStyleResource(rule) {
+    //   rule.use("style-resource").loader("sass-loader");
+    // }
+
+    // const types = ["vue-modules", "vue", "normal-modules", "normal"];
+    // types.forEach((type) =>
+    //   addStyleResource(config.module.rule("scss").oneOf(type))
+    // );
   },
 
   // configures SPA
