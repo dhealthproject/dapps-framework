@@ -9,12 +9,15 @@
  */
 
 // external dependencies
-import { Component } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
+import Cookies from "js-cookie";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import ElevateLogo from "@/components/ElevateLogo/ElevateLogo.vue";
 import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
+
+import { Auth } from "@/modules/Auth/Auth";
 
 import { DappQR } from "@dhealth/components";
 import {
@@ -58,6 +61,62 @@ export default class LoginScreen extends MetaView {
    * @var {protected}
    */
   protected selectedIndex = 0;
+
+  @Prop({
+    type: Object,
+    required: false,
+    default() {
+      return new Auth();
+    },
+  })
+
+  /**
+   * This property is used for
+   * calling related API endpoints
+   *
+   * @access public
+   * @var {service}
+   */
+  service?: Auth;
+
+  /**
+   * This property is used to
+   * see if any API call is being processed
+   *
+   * @access public
+   * @var {loading}
+   */
+  loading = false;
+
+  /**
+   * This property is used for storing
+   * received message from GET auth/challenge
+   *
+   * @access public
+   * @var {authMessage}
+   */
+  authMessage = "";
+
+  /**
+   * This property is used
+   * for storing pointer to
+   * interval for getting auth token
+   *
+   * @access public
+   * @var {interval}
+   */
+  interval: undefined | number = undefined;
+
+  /**
+   * This property is used
+   * for storing pointer to
+   * the timeout which stops
+   * calling auth request after 5 minutes
+   *
+   * @access public
+   * @var {globalIntervalTimer}
+   */
+  globalIntervalTimer: undefined | number = undefined;
 
   /**
    * Computed which contains
@@ -144,5 +203,68 @@ export default class LoginScreen extends MetaView {
       NetworkType.MAIN_NET,
       "ED5761EA890A096C50D3F50B7C2F0CCB4B84AFC9EA870F381E84DDE36D04EF16"
     );
+  }
+
+  /**
+   * Helper method to run authentication process
+   *
+   * @access protected
+   * @returns void
+   */
+  protected getToken(): void {
+    const isAuth = Cookies.get("accessToken");
+
+    if (!isAuth) {
+      const reqBody = {
+        address: "",
+        authCode: "not test",
+      };
+      let tokenResponse = null;
+
+      // Request token each 5 seconds until receive 200 response
+      this.interval = setInterval(async () => {
+        tokenResponse = await this.service?.login(reqBody);
+
+        if (tokenResponse) {
+          clearInterval(this.interval);
+          // replace secure: false for the development purposes, should be true
+          // Cookies.set("accessToken", tokenResponse.data.accessToken, {
+          //   secure: false,
+          //   sameSite: "strict",
+          //   domain: "localhost",
+          // });
+          this.service?.setAuthCookie(tokenResponse.data.accessToken);
+
+          this.$router.push({ name: "dashboard" });
+        }
+      }, 5000);
+
+      // Clear interval if during 5 minutes didn't receive token
+      this.globalIntervalTimer = setTimeout(() => {
+        clearInterval(this.interval);
+      }, 300000);
+    }
+  }
+
+  async mounted() {
+    try {
+      this.loading = true;
+
+      const resp = await this.service?.getAuthChallenge();
+      if (resp?.data) {
+        this.authMessage = resp.data;
+      }
+
+      this.getToken();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  beforeDestroyed() {
+    clearInterval(this.interval);
+    clearTimeout(this.globalIntervalTimer);
   }
 }

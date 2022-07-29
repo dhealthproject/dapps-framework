@@ -63,6 +63,7 @@ const router = new VueRouter({
       name: "dashboard",
       meta: {
         layout: "authenticated",
+        protected: true,
       },
       component: () => import("./views/Dashboard/Dashboard.vue"),
     },

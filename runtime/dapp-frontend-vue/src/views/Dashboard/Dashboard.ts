@@ -26,6 +26,7 @@ import Tabs from "@/components/Tabs/Tabs.vue";
 import QuickStats from "./components/QuickStats.vue";
 import Medals from "./components/Medals.vue";
 import FriendsList from "./components/FriendsList.vue";
+import { Profile } from "@/modules/Profile/Profile";
 
 @Component({
   components: {
@@ -43,6 +44,15 @@ import FriendsList from "./components/FriendsList.vue";
   },
 })
 export default class Dasboard extends MetaView {
+  /**
+   * This property is used for
+   * calling related API endpoints
+   *
+   * @access private
+   * @var {service}
+   */
+  private service = new Profile();
+
   /**
    * Computed which defines configuration
    * for vueper carousel
@@ -226,5 +236,14 @@ export default class Dasboard extends MetaView {
         ],
       },
     ];
+  }
+
+  async mounted() {
+    try {
+      const me = await this.service.getMe();
+      console.log({ me });
+    } catch (err) {
+      console.log("Dashboard: ", err);
+    }
   }
 }
