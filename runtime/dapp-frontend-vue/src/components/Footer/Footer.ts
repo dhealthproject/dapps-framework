@@ -21,5 +21,7 @@ export interface FooterLink {
 
 @Component({})
 export default class Footer extends MetaView {
-  @Prop({ default: () => [], required: true }) protected links?: FooterLink[];
+  @Prop({ default: () => [] }) protected links?: FooterLink[];
+
+  @Prop({ default: "default" }) protected layout?: string;
 }

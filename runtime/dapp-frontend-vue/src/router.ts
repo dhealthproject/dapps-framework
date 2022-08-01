@@ -45,10 +45,28 @@ const router = new VueRouter({
       path: "/terms-of-service",
       name: "legal.terms-of-service",
       meta: {
-        protected: true,
+        protected: false,
+        layout: "legal",
       },
-      component: () =>
-        import("./views/TermsOfServicePage/TermsOfServicePage.vue"),
+      component: () => import("./views/LegalDisclaimer/LegalDisclaimer.vue"),
+    },
+    {
+      path: "/terms-and-conditions",
+      name: "legal.terms-and-conditions",
+      meta: {
+        protected: false,
+        layout: "legal",
+      },
+      component: () => import("./views/LegalDisclaimer/LegalDisclaimer.vue"),
+    },
+    {
+      path: "/privacy-policy",
+      name: "legal.privacy-policy",
+      meta: {
+        protected: false,
+        layout: "legal",
+      },
+      component: () => import("./views/LegalDisclaimer/LegalDisclaimer.vue"),
     },
     {
       path: "/login",

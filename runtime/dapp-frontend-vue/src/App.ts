@@ -15,6 +15,7 @@ import { MetaView } from "@/views/MetaView";
 // child components
 import Assembler from "@/views/Assembler/Assembler.vue";
 import Header from "@/components/Header/Header.vue";
+import Footer from "@/components/Footer/Footer.vue";
 
 // configuration
 import packageConfig from "../package.json";
@@ -23,6 +24,7 @@ import packageConfig from "../package.json";
   components: {
     Assembler,
     Header,
+    Footer,
   },
 })
 export default class App extends MetaView {
@@ -46,6 +48,13 @@ export default class App extends MetaView {
       { path: "#1", text: "Fitness", icon: "icons/Running.svg" },
       { path: "#2", text: "Mindfulness", icon: "icons/Yoga.svg" },
       { path: "#3", text: "Wellness", icon: "icons/Apple.svg" },
+    ];
+  }
+
+  protected get emptyFooterLinks() {
+    return [
+      { path: "terms-and-conditions", text: "Terms & Conditions" },
+      { path: "privacy-policy", text: "Privacy Policy" },
     ];
   }
 

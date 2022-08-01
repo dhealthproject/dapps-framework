@@ -21,6 +21,11 @@
       <Header :links="headerLinks" />
       <router-view :key="$route.fullPath"></router-view>
     </div>
+    <div v-else-if="$route.meta.layout === 'legal'">
+      <Header />
+      <router-view :key="$route.fullPath"></router-view>
+      <Footer layout="empty" :links="emptyFooterLinks" />
+    </div>
     <div v-else class="layout-default">
       <header />
       <nav class="block">
