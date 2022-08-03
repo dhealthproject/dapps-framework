@@ -9,6 +9,7 @@
  */
 // external dependencies
 import { Module } from "@nestjs/common";
+import { ScheduleModule } from "@nestjs/schedule";
 import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
@@ -29,6 +30,7 @@ import { DiscoverTransactions } from "./DiscoverTransactions";
  */
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     QueryModule,
     StateModule,
     NetworkModule,

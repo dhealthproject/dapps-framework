@@ -16,7 +16,9 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { NetworkModule } from "../../../common/modules/NetworkModule";
 import { StateModule } from "../../../common/modules/StateModule";
 import { AccountsModule } from "../../modules/AccountsModule";
+import { TransactionsModule } from "../../modules/TransactionsModule";
 import { Account, AccountSchema } from "../../models/AccountSchema";
+import { Transaction, TransactionSchema } from "../../models/TransactionSchema";
 
 // private implementation
 import { DiscoverAccounts } from "./DiscoverAccounts";
@@ -33,7 +35,11 @@ import { DiscoverAccounts } from "./DiscoverAccounts";
     StateModule,
     NetworkModule,
     AccountsModule,
-    MongooseModule.forFeature([{ name: Account.name, schema: AccountSchema }]),
+    TransactionsModule,
+    MongooseModule.forFeature([
+      { name: Account.name, schema: AccountSchema },
+      { name: Transaction.name, schema: TransactionSchema },
+    ]),
   ],
   providers: [DiscoverAccounts],
   exports: [DiscoverAccounts],

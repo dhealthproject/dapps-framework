@@ -8,7 +8,6 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Option } from "nest-commander";
 import { PublicAccount, Address, NetworkType } from "@dhealth/sdk";
 
 // internal dependencies
@@ -27,7 +26,7 @@ import { BaseCommand, BaseCommandOptions } from "../../worker/BaseCommand";
  * @see BaseCommandOptions
  * @since v0.2.0
  */
- export interface DiscoveryCommandOptions extends BaseCommandOptions {
+export interface DiscoveryCommandOptions extends BaseCommandOptions {
   /**
    * Defines the discovery source for said discovery command. This
    * is usually a dHealth Account Public Key in hexadecimal format
@@ -123,11 +122,6 @@ export abstract class DiscoveryCommand extends BaseCommand {
    * @param     {string}  sourceOption     The sourceArgument as passed in the terminal.
    * @returns   {Address}   A parsed dHealth Account Address.
    */
-  @Option({
-    flags: '-s, --source <source>',
-    description: 'Defines the discovery source for this command, i.e. a public key or an address.',
-    required: true,
-  })
   protected parseSource(sourceOption: string): Address {
     // extracts the network type from configuration
     const { networkIdentifier } = this.networkConfig.network;
@@ -135,10 +129,14 @@ export abstract class DiscoveryCommand extends BaseCommand {
 
     // if we have a public key (64 characters in hexadecimal format)
     if (sourceOption.length === 64) {
-      return PublicAccount.createFromPublicKey(
+      // use PublicAccount from @dhealth/sdk using public key
+      const publicAccount = PublicAccount.createFromPublicKey(
         sourceOption,
         networkType,
-      ).address; // public-key to address
+      );
+
+      // public-key to address
+      return publicAccount.address;
     }
 
     // otherwise *assume* we have an address (and remove hyphens if any)

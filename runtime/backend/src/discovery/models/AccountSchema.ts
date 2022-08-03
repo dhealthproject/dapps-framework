@@ -42,7 +42,7 @@ export class Account extends Transferable<AccountDTO> /* extends Documentable */
    * @access public
    * @var {string}
    */
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   public address: string;
 
   /**

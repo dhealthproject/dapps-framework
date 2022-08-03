@@ -10,6 +10,7 @@
 // internal dependencies
 import type { Scope } from "./Scope";
 import { DatabaseConfig } from "./DatabaseConfig";
+import { DiscoveryConfig } from "./DiscoveryConfig";
 
 /**
  * @interface DappConfig
@@ -21,6 +22,7 @@ import { DatabaseConfig } from "./DatabaseConfig";
  * This interface is mainly used **internally** to restrict the configuration
  * values provided to some modules or services and methods.
  *
+ * @todo Allow for updated discovery sources configuration (must be backwards compatible).
  * @since v0.1.0
  */
 export interface DappConfig {
@@ -82,4 +84,16 @@ export interface DappConfig {
    * @var {DatabaseConfig}
    */
   database: DatabaseConfig;
+
+  /**
+   * An array of discovery sources as defined in {@link DiscoveryConfig}.
+   * <br /><br />
+   * Note that modifying the content of this configuration field
+   * *may slow down* the *synchronization process* of the backend
+   * runtime.
+   *
+   * @access public
+   * @var {DiscoveryConfig}
+   */
+  discovery?: DiscoveryConfig;
 }

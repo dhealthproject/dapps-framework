@@ -24,22 +24,10 @@ import type { StateData } from "../../common/models/StateData";
  */
 export class AccountDiscoveryStateData implements StateData {
   /**
-   * The transactions page that should be read during the
-   * discovery process(es). This field is used to keep
-   * track of the already *discovered* transactions pages.
+   * 
    *
    * @access public
    * @var {number}
    */
-  public latestTxPage: number;
-
-  /**
-   * The latest transaction hash that was *discovered* by
-   * the discovery process(es). This field is used to keep
-   * track of the already *discovered* transaction hashes.
-   *
-   * @access public
-   * @var {string}
-   */
-  public latestTxHash: string;
+  public lastExecutedAt: number;
 }

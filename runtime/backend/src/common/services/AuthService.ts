@@ -151,8 +151,9 @@ export class AuthService {
 
     // searches the `authCode` in transfer message ("on-chain")
     // @todo make compatible with encrypted messages (decrypt with authority privkey)
+    // @todo extract contract information vs. "auth code"
     const authTransaction: TransferTransaction = transactions.find(
-      (t: TransferTransaction) => t.message.payload === authCode
+      (t: TransferTransaction) => t.message.payload === authCode //XXX should extract JSON contract
     );
 
     // responds with error if the `authCode` could **not** be found

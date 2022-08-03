@@ -22,5 +22,11 @@ export default () => ({
     port: process.env.DB_PORT,
     name: process.env.DB_NAME,
     user: process.env.DB_USER,
+  },
+  discovery: {
+    sources: [
+      "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY", // authAuthority (login contract)
+      "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY", // main interactions account
+    ],
   }
 });

@@ -18,5 +18,8 @@ import { TransactionType } from "@dhealth/sdk";
  * @since v0.2.0
  */
 export const getTransactionType = (type: TransactionType): string => {
-  return TransactionType[TransactionType[type] as any].toLowerCase();
+  switch(type) {
+    case TransactionType.TRANSFER: return "transfer";
+    default: return "custom";
+  }
 };

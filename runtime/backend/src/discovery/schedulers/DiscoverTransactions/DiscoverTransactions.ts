@@ -8,26 +8,30 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Command, CommandRunner, Option } from "nest-commander";
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
+import { Cron } from "@nestjs/schedule";
 import {
+  Address,
   AggregateTransactionInfo,
+  Order,
+  Page,
   Transaction as SdkTransaction,
   TransactionGroup,
   TransactionInfo,
   TransactionType,
-  Order,
 } from "@dhealth/sdk";
 
 // internal dependencies
 import { StateService } from "../../../common/services/StateService";
 import { NetworkService } from "../../../common/services/NetworkService";
-import { StateData } from "../../../common/models/StateData";
+import { State, StateQuery } from "../../../common/models/StateSchema";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
 import { TransactionsService } from "../../../discovery/services/TransactionsService";
 import { getTransactionType } from "../../../discovery/models/TransactionTypes";
 import { Transaction, TransactionModel, TransactionQuery } from "../../models/TransactionSchema";
+import { TransactionDiscoveryStateData } from "../../models/TransactionDiscoveryStateData";
 
 /**
  * @interface DiscoverTransactionsCommandOptions
@@ -80,17 +84,9 @@ export interface DiscoverTransactionsCommandOptions extends DiscoveryCommandOpti
  *
  * @since v0.2.0
  */
-@Command({
-  name: "discovery:transactions",
-  arguments: "<mode>",
-  options: { isDefault: false },
-  argsDescription: {
-    "mode": "One of: 'incoming', 'outgoing' or 'both' (defaults to 'incoming')"
-  }
-})
+@Injectable()
 export class DiscoverTransactions
   extends DiscoveryCommand
-  implements CommandRunner
 {
   /**
    * Memory store for *all* transactions processed in one run of this
@@ -103,6 +99,24 @@ export class DiscoverTransactions
   protected transactions: SdkTransaction[] = [];
 
   /**
+   * Memory store for the last page number being read. This is used
+   * in {@link getStateData} to update the latest execution state.
+   *
+   * @access private
+   * @var {number}
+   */
+  private lastPageNumber: number;
+
+  /**
+   * Memory store for the last account being read. This is used
+   * in {@link getStateData} to update the latest execution state.
+   *
+   * @access private
+   * @var {string}
+   */
+  private lastUsedAccount: string;
+
+  /**
    * The constructor of this class.
    * Params will be automatically injected upon called.
    *
@@ -112,7 +126,7 @@ export class DiscoverTransactions
    * @param {TransactionsService}  transactionsService
    */
   constructor(
-    @InjectModel(Transaction.name) private readonly model: TransactionModel,
+    @InjectModel(Transaction.name) protected readonly model: TransactionModel,
     protected readonly configService: ConfigService,
     protected readonly stateService: StateService,
     protected readonly networkService: NetworkService,
@@ -120,6 +134,9 @@ export class DiscoverTransactions
   ) {
     // required super call
     super(stateService);
+
+    // sets default state data
+    this.lastPageNumber = 1;
   }
 
   /**
@@ -165,8 +182,10 @@ export class DiscoverTransactions
    * @access protected
    * @returns {StateData}
    */
-  protected getStateData(): StateData {
-    return {} as StateData
+  protected getStateData(): TransactionDiscoveryStateData {
+    return {
+      lastUsedAccount: this.lastUsedAccount,
+    } as TransactionDiscoveryStateData
   }
 
   /**
@@ -176,10 +195,6 @@ export class DiscoverTransactions
    * @param     {string}  transactionTypes     The transactionTypes as passed in the terminal.
    * @returns   {TransactionType[]|undefined}   An array of transaction types or undefined.
    */
-  @Option({
-    flags: '-t, --include-types',
-    description: 'Defines which transaction types are relevant to the discovery, e.g. "transfer"'
-  })
   protected parseTransactionTypes(transactionTypes: string): TransactionType[] {
     // maps utility names to transaction types
     if (transactionTypes.toLowerCase().indexOf("transfer")) {
@@ -197,10 +212,6 @@ export class DiscoverTransactions
    * @param     {string}  unconfirmedOption     The unconfirmedOption as passed in the terminal.
    * @returns   {boolean}   A boolean value that determines if unconfirmed transactions are included or not.
    */
-  @Option({
-    flags: '-u, --include-unconfirmed',
-    description: 'Defines whether the discovery should include unconfirmed transactions'
-  })
   protected parseUnconfirmedFlag(unconfirmedOption: string): boolean {
     return !!unconfirmedOption;
   }
@@ -212,12 +223,47 @@ export class DiscoverTransactions
    * @param     {string}  partialOption     The partialOption as passed in the terminal.
    * @returns   {boolean}   A boolean value that determines if unconfirmed transactions are included or not.
    */
-  @Option({
-    flags: '-p, --include-partial',
-    description: 'Defines whether the discovery should include partial transactions (aggregate bonded)'
-  })
   protected parsePartialFlag(partialOption: string): boolean {
     return !!partialOption;
+  }
+
+  /**
+   * This method is the **entry point** of this scheduler. Due to
+   * the usage of the `Cron` decorator, and the implementation
+   * the nest backend runtime is able to discover this when the
+   * `discovery` scope is enabled.
+   * <br /><br />
+   * This method is necessary to make sure this command is run
+   * with the correct `--source` option.
+   * <br /><br />
+   * This scheduler is registered to run **every 5 minutes**.
+   *
+   * @see BaseCommand
+   * @access public
+   * @async
+   * @param   {string[]}            passedParams  
+   * @param   {BaseCommandOptions}  options 
+   * @returns {Promise<void>}
+   */
+  @Cron("0 */1 * * * *", { name: "discovery:cronjobs:transactions" })
+  public async runAsScheduler(): Promise<void> {
+    // read discovery configuration
+    const sources = this.configService.get<string[]>("discovery.sources");
+
+    // bail out if configuration is empty
+    if (!sources || !sources.length) {
+      return ;
+    }
+
+    // iterate through all configured discovery sources and
+    // fetch transactions. Transactions will first be read
+    // for accounts that are *not yet synchronized*.
+    const source: string = await this.getNextSource(sources);
+    this.lastUsedAccount = source;
+
+    // executes the actual command logic (this will call discover())
+    // additionally, updates state.data.lastUsedAccount
+    await super.run([], { source, debug: true } as DiscoveryCommandOptions);
   }
 
   /**
@@ -237,100 +283,158 @@ export class DiscoverTransactions
   ): Promise<void> {
     // display starting moment information in debug mode
     if (options.debug && !options.quiet) {
-      this.debugLog(`Starting discovery with "${this.command}"`);
+      this.debugLog(`Starting transactions discovery for source "${options.source}"`);
     }
 
-    // initialize a connection to the node
-    // and prepare a transaction query (to REST gateway)
-    const nodeRequests = this.networkService.getTransactionRepository();
+    // per-source synchronization: "discovery:DiscoverTransactions:%SOURCE%"
+    const stateIdentifier = `${this.stateIdentifier}:${options.source}`;
+    const stateQuerySrc = new StateQuery({ name: stateIdentifier } as State);
 
-    // pageNumber=1 fetches "recent" due to DESC ordering
-    const nodeTxQuery = this.getTransactionQuery(1, options.includeTypes);
+    // fetch **per-source** synchronization state once
+    // Caution: do not confuse with `this.state`, this one
+    // is internal and synchronizes **per each source**.
+    const state = await this.stateService.findOne(stateQuerySrc);
 
-    // by default we query only **confirmed** transactions
-    // these are transactions that are *included in a block*.
-    const transactionPromises = [
-      nodeRequests.search({
-        ...nodeTxQuery,
-        group: TransactionGroup.Confirmed,
-      }).toPromise(),
-    ];
-
-    // we permit to include **unconfirmed** transactions
-    // with the option `--include-unconfirmed`.
-    if (undefined !== options.includeUnconfirmed) {
-      transactionPromises.push(nodeRequests.search({
-        ...nodeTxQuery,
-        group: TransactionGroup.Unconfirmed,
-      }).toPromise())
+    // reads the latest per-source execution state
+    if (!!state && "lastPageNumber" in state.data) {
+      this.lastPageNumber = state.data.lastPageNumber ?? 1;
     }
 
-    // we permit to include **partial** transactions (aggregate bonded)
-    // with the option `--include-partial`.
-    if (undefined !== options.includePartial) {
-      transactionPromises.push(nodeRequests.search({
-        ...nodeTxQuery,
-        group: TransactionGroup.Partial,
-      }).toPromise())
+    // display debug information about configuration
+    if (options.debug && !options.quiet) {
+      this.debugLog(`Last discovery ended with page: "${this.lastPageNumber}"`);
     }
 
-    // executes the promises
-    const transactionPages = await Promise.all(transactionPromises);
+    // note that these may be undefined
+    const { includeUnconfirmed, includePartial} = options;
 
-    // keeps only the transaction part and drops pagination
-    this.transactions = transactionPages.reduce(
-      (prev, cur, arr) => prev.concat(cur.data),
-      []
-    );
+    // (1) each round queries 1 page of transactions from REST gateway
+    // and fetches a maximum of 5 transaction pages following the last
+    let uniqueHashes: string[] = [];
+    for (let i = this.lastPageNumber, max = this.lastPageNumber+5;
+      i < max;
+      i++, this.lastPageNumber++) {
 
-    // each transaction that is read from the network is cached
-    // in our `transactions` collection using the *signer address*
-    // and the *transaction hash* as primary keys.
-    const documents: Transaction[] = [];
-    for (let i = 0, max = this.transactions.length; i < max; i++) {
-      // uses a mongoose query to find transaction
-      const model = await this.findOrCreateTransaction(this.transactions[i])
-      documents.push(model);
+      // prepare the transaction queries
+      const promises = this.getTransactionQueriesForPage(i, includeUnconfirmed, includePartial);
+
+      // executes the promises and fetches sync-state
+      const transactionPages = await Promise.all(promises);
+      const isSynchronized = transactionPages.reduce(
+        (prev, cur) => prev && cur.isLastPage,
+        true,
+      );
+
+      // keeps only the transaction part and drops pagination
+      this.transactions = transactionPages.reduce(
+        (prev, cur) => prev.concat(cur.data),
+        []
+      );
+
+      // (2) each transaction that is read from the network is
+      // cached in our `transactions` collection using the hash
+      // of the transaction as the document primary key.
+      const hashes = this.transactions.map(t => this.extractTransactionHash(t));
+      uniqueHashes = uniqueHashes.concat(hashes.filter(
+        async (transactionHash: string) => undefined === await this.transactionsService.findOne(
+          new TransactionQuery({ transactionHash } as Transaction)
+        )
+      ));
+
+      // break if this source is now considered synchronized
+      if (true === isSynchronized) {
+        break;
+      }
     }
 
-    // updates documents in database collection `transactions`
+    // (3) prepares and populates individual `transactions` documents
+    let documents: Transaction[] = [];
+    for (let i = 0, max = uniqueHashes.length; i < max; i++) {
+      // retrieve full transaction details
+      const transaction = this.transactions.find(
+        t => uniqueHashes[i] === this.extractTransactionHash(t)
+      );
+
+      // create a `transactions` document
+      documents.push(this.model.create({
+        transactionHash: uniqueHashes[i],
+        signerAddress: this.extractSignerAddress(transaction),
+        signerPublicKey: this.extractSignerPublicKey(transaction),
+        transactionType: this.extractTransactionType(transaction),
+        signature: this.extractTransactionSignature(transaction),
+        encodedBody: this.extractTransactionBody(transaction),
+      }));
+    }
+
+    // (4) commits documents to database collection `transactions`
     if (documents.length > 0) {
       // display debug information about database operation
       if (options.debug && !options.quiet) {
-        this.debugLog(`Updating ${documents.length} transactions documents in database`);
+        this.debugLog(`Creating ${documents.length} transactions documents in database`);
       }
 
       this.transactionsService.updateBatch(documents);
     }
+
+    // (5) update per-source state `lastPageNumber`
+    await this.stateService.updateOne(
+      stateQuerySrc, 
+      {
+        lastPageNumber: this.lastPageNumber,
+      }, 
+    );
   }
 
   /**
    * 
-   * @param transaction 
+   * @param sources 
+   * @param state
    * @returns 
    */
-  protected async findOrCreateTransaction(
-    transaction: SdkTransaction,
-  ): Promise<Transaction> {
-    // reads complex transaction details
-    const signerAddress: string = this.extractSignerAddress(transaction);
-    const transactionHash: string = this.extractTransactionHash(transaction);
-    
-    // queries the database to find transaction by signerAddress and hash
-    const databaseQuery = new TransactionQuery({
-      signerAddress,
-      transactionHash,
-    } as Transaction);
+  protected async getNextSource(
+    sources: string[],
+  ): Promise<string> {
+    // iterate through all configured discovery sources and
+    // fetch transactions. Transactions will first be read
+    // for accounts that are *not yet synchronized*.
+    let address: Address,
+        cursor: number;
+    do {
+      address = this.parseSource(sources[cursor++]);
 
-    // queries the database to find account by address
-    return await this.transactionsService.createOrUpdate(databaseQuery, this.model.create({
-      signerAddress: signerAddress,
-      transactionHash: transactionHash,
-      transactionType: this.extractTransactionType(transaction),
-      signature: transaction.signature,
-      encodedBody: this.extractTransactionBody(transaction),
-      discoveredAt: new Date(),
-    } as Transaction), {}); // empty operations
+      // fetch **per-source** synchronization state once
+      // Caution: do not confuse with `this.state`, this one
+      // is internal and synchronizes **per each source**.
+      const state = await this.stateService.findOne(new StateQuery({
+        name: `${this.stateIdentifier}:${address.plain()}`, // "discovery:DiscoverTransactions:%SOURCE%"
+      } as State));
+
+      // if current source is synchronized, move to next
+      if (!!state && "sync" in state.data && true === state.data.sync) {
+        continue;
+      }
+
+      // if no sync state is available, use **current source**
+      return address.plain();
+    }
+    while(cursor < sources.length);
+
+    // use first with no sync configuration
+    if (!this.state || !("lastUsedAccount" in this.state.data)) {
+      return sources[0];
+    }
+
+    // fully synchronized: switch source every minute
+    let lastIndex = sources.findIndex(
+      s => this.state.data.lastUsedAccount,
+    );
+
+    // if necessary, loop through back to first source
+    if (lastIndex === -1 || lastIndex === sources.length-1) {
+      return sources[0];
+    }
+
+    return sources[lastIndex+1];
   }
 
   /**
@@ -379,6 +483,62 @@ export class DiscoverTransactions
     }
 
     return baseQuery;
+  }
+
+
+  /**
+   * 
+   * @param transactionRepository 
+   * @returns {Promise<Page<Transaction>>[]}  An array of *promises* for transaction pages.
+   */
+   protected getTransactionQueriesForPage(
+    pageNumber: number,
+    includeUnconfirmed: boolean = false,
+    includePartial: boolean = false,
+  ): Promise<Page<SdkTransaction>>[] {
+    // prepares output
+    const promises = [];
+
+    // initialize a connection to the node
+    // and prepare a transaction query (to REST gateway)
+    const repository = this.networkService.getTransactionRepository();
+    const baseQuery = this.getTransactionQuery(pageNumber);
+
+    // add **confirmed** transaction query (by default)
+    // these are transactions that are *included in a block*.
+    promises.push(repository.search({ ...baseQuery,
+      group: TransactionGroup.Confirmed,
+    }).toPromise());
+
+    // we permit to include **unconfirmed** transactions
+    // note that unconfirmed transaction are always "recent".
+    if (true === includeUnconfirmed) {
+      promises.push(repository.search({ ...baseQuery,
+        pageNumber: 1,
+        group: TransactionGroup.Unconfirmed,
+      }).toPromise())
+    }
+
+    // we permit to include **partial** transactions (aggregate bonded)
+    // note that partial transaction are always "recent".
+    if (true === includePartial) {
+      promises.push(repository.search({ ...baseQuery,
+        pageNumber: 1,
+        group: TransactionGroup.Partial,
+      }).toPromise())
+    }
+
+    return promises;
+  }
+  /**
+   * Helper method to extract the signer public key of a `Transaction`
+   * instance.
+   *
+   * @param {Transaction} transaction 
+   * @returns {string}
+   */
+  protected extractSignerPublicKey(transaction: SdkTransaction): string {
+    return transaction.signer.publicKey;
   }
 
   /**

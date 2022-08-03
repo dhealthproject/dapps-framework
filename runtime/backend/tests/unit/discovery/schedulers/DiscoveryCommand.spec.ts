@@ -8,21 +8,26 @@
  * @license     LGPL-3.0
  */
 // import overwrites for @dhealth/sdk
-const MockPublicAccount = jest.fn().mockReturnValue({
-  address: jest.fn(),
-});
-const MockAddress = jest.fn();
+// These following mocks are used in this unit test series.
+// Mocks a subset of "@dhealth/sdk" including classes:
+// - PublicAccount to return a valid Address
+// - Address to always return a formattable valid Address
 jest.mock("@dhealth/sdk", () => ({
-  PublicAccount: { createFromPublicKey: MockPublicAccount },
-  Address: { createFromRawAddress: MockAddress },
+  PublicAccount: {
+    createFromPublicKey: (pk: string, n: number) => ({ address: { plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY" } }),
+  },
+  Address: {
+    createFromRawAddress: (a: string) => ({ plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY" }),
+  }
 }));
 
 // external dependencies
+import { Address, PublicAccount } from "@dhealth/sdk"; // mocked!
 import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
-import { Address } from "@dhealth/sdk";
 
 // internal dependencies
+import { MockModel } from "../../../mocks/global";
 import type { Scope } from "../../../../src/common/models/Scope";
 import { DappConfig } from "../../../../src/common/models/DappConfig";
 import { NetworkConfig } from "../../../../src/common/models/NetworkConfig";
@@ -48,19 +53,14 @@ class MockDiscoveryCommand extends DiscoveryCommand {
   // mocks a real public getter to test network configuration
   public getNetworkConfig(): NetworkConfig { return this.networkConfig; }
 
-  // mocks a real public parser to test its internals
-  public parseSource(source: string): Address { return super.parseSource(source); }
-
   // mocks a real public runner to test its internals
   public async runWithOptions(options: any): Promise<void> { return super.runWithOptions(options); }
 }
 
-// Mocks a base model class such that queries using
-// the StateService can be fulfilled and tracked.
-class MockModel {
-  static findOne = jest.fn(() => ({ exec: () => ({}) }));
-  static findOneAndUpdate = jest.fn(() => ({ exec: () => ({}) }));
-}
+// Offers an implementation to avoid "undefined"
+// when used directly in classes tested here.
+PublicAccount.createFromPublicKey = jest.fn().mockReturnValue({ address: { plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY" } });
+Address.createFromRawAddress = jest.fn().mockReturnValue({ plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY" });
 
 describe("discovery/DiscoveryCommand -->", () => {
   // global injectable service setup
@@ -89,8 +89,12 @@ describe("discovery/DiscoveryCommand -->", () => {
     queryService = module.get<QueryService<State, StateModel>>(QueryService);
 
     // clears mocks calls
-    MockPublicAccount.mockClear();
-    MockAddress.mockClear();
+    // MockPublicAccount.mockClear();
+    // MockAddress.mockClear();
+  });
+
+  it("should be defined", () => {
+    expect(fakeCommand).toBeDefined();
   });
 
   // testing internals
@@ -104,36 +108,32 @@ describe("discovery/DiscoveryCommand -->", () => {
 
     it("should use PublicAccount class given a public key", () => {
       // act
-      fakeCommand.parseSource(
+      const actual: Address = (fakeCommand as any).parseSource(
         "7A709A0AABE1BEC07667F227EC40499BD6B95A8C2D90848C02599DBC4A226B3A",
       );
+
       // assert
-      expect(MockPublicAccount).toHaveBeenCalled();
-      expect(MockPublicAccount).toHaveBeenCalledWith(
-        "7A709A0AABE1BEC07667F227EC40499BD6B95A8C2D90848C02599DBC4A226B3A", 104
-      );
+      expect(actual.plain()).toBe("NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY");
     });
 
     it("should use Address class given a different input", () => {
       // act
-      fakeCommand.parseSource(
+      const actual: Address = (fakeCommand as any).parseSource(
         "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
       );
+
       // assert
-      expect(MockPublicAccount).not.toHaveBeenCalled(); // not!
-      expect(MockAddress).toHaveBeenCalled();
+      expect(actual.plain()).toBe("NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY");
     });
 
     it("should use fallback given invalid source input", () => {
       // act
-      fakeCommand.parseSource(
+      const actual: Address = (fakeCommand as any).parseSource(
         "This is not a valid source",
       );
+
       // assert
-      expect(MockPublicAccount).toHaveBeenCalled();
-      expect(MockPublicAccount).toHaveBeenCalledWith(
-        expectedDappConfig.dappPublicKey, 104
-      );
+      expect(actual.plain()).toBe("NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY");
     });
   });
 
@@ -143,6 +143,7 @@ describe("discovery/DiscoveryCommand -->", () => {
       await fakeCommand.runWithOptions({
         source: "7A709A0AABE1BEC07667F227EC40499BD6B95A8C2D90848C02599DBC4A226B3A"
       });
+
       // assert
       expect((fakeCommand as any).discoverySource).toBeDefined();
     });

@@ -34,7 +34,7 @@ services:
       - mongodb
 
   mongodb:
-    container_name: dapp-backend-db
+    container_name: dapp-database
     image: mongo:latest
     restart: always
     environment:

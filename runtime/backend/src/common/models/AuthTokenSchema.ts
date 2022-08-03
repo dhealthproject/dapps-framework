@@ -44,7 +44,7 @@ export class AuthToken extends Documentable /* not transferable */ {
    * @access public
    * @var {string}
    */
-   @Prop({ required: true })
+   @Prop({ required: true, index: true })
    public usedBy: string;
 
   /**

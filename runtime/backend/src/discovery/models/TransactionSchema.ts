@@ -8,6 +8,10 @@
  * @license     LGPL-3.0
  */
 // external dependencies
+import {
+  Transaction as SdkTransaction,
+  TransactionMapping,
+} from "@dhealth/sdk";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 
@@ -40,7 +44,7 @@ export class Transaction extends Transferable<TransactionDTO> /* extends Documen
    * @access public
    * @var {string}
    */
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   public signerAddress: string;
 
   /**
@@ -49,7 +53,16 @@ export class Transaction extends Transferable<TransactionDTO> /* extends Documen
    * @access public
    * @var {string}
    */
-  @Prop()
+   @Prop({ required: true, index: true })
+  public signerPublicKey: string;
+
+  /**
+   * XXX
+   *
+   * @access public
+   * @var {string}
+   */
+  @Prop({ required: true })
   public transactionType: string;
 
   /**
@@ -58,7 +71,7 @@ export class Transaction extends Transferable<TransactionDTO> /* extends Documen
    * @access public
    * @var {string}
    */
-  @Prop()
+  @Prop({ required: true, index: true })
   public transactionHash: string;
 
   /**
@@ -67,7 +80,7 @@ export class Transaction extends Transferable<TransactionDTO> /* extends Documen
    * @access public
    * @var {string}
    */
-  @Prop()
+  @Prop({ required: true })
   public signature?: string;
 
   /**
@@ -125,6 +138,13 @@ export class Transaction extends Transferable<TransactionDTO> /* extends Documen
       encodedBody: this.encodedBody,
       discoveredAt: this.discoveredAt,
     }
+  }
+
+  /**
+   * 
+   */
+  public toSDK(): SdkTransaction {
+    return TransactionMapping.createFromPayload(this.encodedBody, false); // false for `isEmbedded`
   }
 }
 

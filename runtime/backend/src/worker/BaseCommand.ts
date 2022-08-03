@@ -8,7 +8,6 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { CommandRunner, Help } from 'nest-commander';
 import { Logger } from "@nestjs/common";
 
 // internal dependencies
@@ -75,7 +74,6 @@ export interface BaseCommandOptions {
  */
 export abstract class BaseCommand
   extends StatefulModule
-  implements CommandRunner
 {
   /**
    * The command scope. This is the scope that must be enabled
@@ -160,7 +158,6 @@ export abstract class BaseCommand
    * @access public
    * @returns {string}
    */
-  @Help("before")
   public usage(): string {
     // prints the command signature
     return `${this.signature}`;
@@ -219,6 +216,7 @@ export abstract class BaseCommand
 
       // displays state debug information
       if (options.debug && !options.quiet) {
+        this.debugLog(`Using state query: ${JSON.stringify(this.getStateQuery(), undefined, 2)}`);
         this.debugLog(`Current state: ${JSON.stringify(this.state, undefined, 2)}`);
       }
 
@@ -231,6 +229,11 @@ export abstract class BaseCommand
         this.getStateQuery(), 
         this.getStateData(), 
       );
+
+      // displays state debug information
+      if (options.debug && !options.quiet) {
+        this.debugLog(`Updated state: ${JSON.stringify(this.getStateData(), undefined, 2)}`);
+      }
     }
     catch (e: any) {
       // @todo Should provide failures stacktrace + database copy

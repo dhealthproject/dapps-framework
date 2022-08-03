@@ -43,7 +43,7 @@ export class State extends Transferable<StateDTO> /* extends Documentable */ {
    * @access public
    * @var {string}
    */
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   public name: string;
 
   /**

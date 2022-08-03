@@ -51,7 +51,6 @@
     "dotenv": "^16.0.1",
     "helmet": "^5.1.0",
     "mongoose": "^6.3.4",
-    "nest-commander": "^2.5.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "reflect-metadata": "^0.1.13",

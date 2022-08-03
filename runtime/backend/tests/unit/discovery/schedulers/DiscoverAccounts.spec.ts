@@ -36,7 +36,7 @@ jest.mock("@dhealth/sdk", () => ({
 }));
 
 // external dependencies
-import { Address, Order, TransferTransaction, TransactionGroup, TransactionType } from "@dhealth/sdk"; // mocked!
+import { Address, Order, TransactionGroup } from "@dhealth/sdk"; // mocked!
 import { Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { getModelToken } from "@nestjs/mongoose";
@@ -48,9 +48,9 @@ import { DappConfig } from "../../../../src/common/models/DappConfig";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
-import { State } from "../../../../src/common/models/StateSchema";
 import { AccountsService } from "../../../../src/discovery/services/AccountsService";
 import { Account, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
+import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
 import { DiscoverAccounts } from "../../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccounts";
 import { AccountDiscoveryStateData } from "../../../../src/discovery/models/AccountDiscoveryStateData";
 
@@ -64,21 +64,29 @@ class MockDiscoverAccounts extends DiscoverAccounts {
     return this.runWithOptions(options);
   }
 
+  // mocks the internally injected model
+  protected model: any = { create: jest.fn() };
+
   // mocks the internal StateService
   protected statesService: any = { updateOne: jest.fn() };
 
-  // mocks the internal StateService
+  // mocks the internal AccountsService
   protected accountsService: any = {
     updateBatch: jest.fn(),
     findOne: jest.fn(),
     createOrUpdate: jest.fn(),
   };
 
+  // mocks the internal TransactionsService
+  protected transactionsService: any = {
+    updateBatch: jest.fn(),
+    findOne: jest.fn(),
+    find: jest.fn().mockReturnValue({ data: [] }),
+    createOrUpdate: jest.fn(),
+  };
+
   // mocks **getters** for protected properties
-  // being filled in processTransactionsPage()
   public getDiscoveredAddresses(): string[] { return this.discoveredAddresses; }
-  public getTransactionsByAddress(): Map<string, string[]> { return this.transactionsByAddress; }
-  public getTransactions(): TransferTransaction[] { return this.transactions; }
 }
 
 /**
@@ -89,6 +97,7 @@ describe("discovery/DiscoverAccounts", () => {
   let service: MockDiscoverAccounts;
   let configService: ConfigService;
   let accountsService: AccountsService;
+  let transactionsService: TransactionsService;
   let statesService: StateService;
   let networkService: NetworkService;
   let logger: Logger;
@@ -104,11 +113,16 @@ describe("discovery/DiscoverAccounts", () => {
       providers: [
         ConfigService,
         AccountsService,
+        TransactionsService,
         QueryService,
         StateService,
         NetworkService,
         {
           provide: getModelToken("Account"),
+          useValue: MockModel, // test/mocks/global.ts
+        },
+        {
+          provide: getModelToken("Transaction"),
           useValue: MockModel, // test/mocks/global.ts
         },
         {
@@ -130,6 +144,7 @@ describe("discovery/DiscoverAccounts", () => {
     service = module.get<MockDiscoverAccounts>(MockDiscoverAccounts);
     configService = module.get<ConfigService>(ConfigService);
     accountsService = module.get<AccountsService>(AccountsService);
+    transactionsService = module.get<TransactionsService>(TransactionsService);
     statesService = module.get<StateService>(StateService);
     networkService = module.get<NetworkService>(NetworkService);
     logger = module.get<Logger>(Logger);
@@ -145,202 +160,8 @@ describe("discovery/DiscoverAccounts", () => {
       const data: AccountDiscoveryStateData = (service as any).getStateData();
 
       // assert
-      expect("latestTxPage" in data).toBe(true);
-      expect("latestTxHash" in data).toBe(true);
-      expect(data.latestTxPage).toBe(1);
-      expect(data.latestTxHash).toBeUndefined();
-    });
-
-    it("should watch state values update", () => {
-      // prepare
-      (service as any).lastPageNumber = 39;
-      (service as any).lastTransactionHash = "fakeHash1";
-
-      // act
-      const data: AccountDiscoveryStateData = (service as any).getStateData();
-
-      // assert
-      expect("latestTxPage" in data).toBe(true);
-      expect("latestTxHash" in data).toBe(true);
-      expect(data.latestTxPage).toBe(39);
-      expect(data.latestTxHash).toBe("fakeHash1");
-    });
-  });
-
-  describe("processTransactionsPage() -->", () => {
-    it("should create transaction hash index and return last processed hash", () => {
-      // prepare
-      (service as any).extractTransactionHash = jest.fn();
-
-      // act
-      (service as any).processTransactionsPage(undefined, [
-        {} as TransferTransaction,
-        {} as TransferTransaction,
-      ]);
-
-      // assert
-      expect((service as any).extractTransactionHash).toHaveBeenCalledTimes(2);
-    });
-
-    it("should add only transfer transactions to processed transactions", () => {
-      // prepare
-      const fakeTx = { type: TransactionType.TRANSFER, recipientAddress: { plain: jest.fn() } };
-
-      // act
-      (service as any).processTransactionsPage(undefined, [
-        { ...fakeTx, transactionInfo: { hash: "fakeHash1" } },
-        { ...fakeTx, transactionInfo: { hash: "fakeHash2" } },
-        { type: TransactionType.HASH_LOCK, transactionInfo: { hash: "fakeHash2" } },
-      ]);
-      const actualResult: TransferTransaction[] = service.getTransactions();
-
-      // assert
-      expect(actualResult).toBeDefined();
-      expect(actualResult.length).toBe(2); // <--- dropped hashlock transaction
-    });
-
-    it("should discover unique list of account addresses", () => {
-      // prepare
-      const fakeTx = {
-        type: TransactionType.TRANSFER,
-        recipientAddress: {
-          plain: jest.fn().mockReturnValue("always the same"),
-        },
-      };
-
-      // act
-      (service as any).processTransactionsPage(undefined, [
-        { ...fakeTx, transactionInfo: { hash: "fakeHash1" } },
-        { ...fakeTx, transactionInfo: { hash: "fakeHash2" } },
-      ]);
-      const actualResult: string[] = service.getDiscoveredAddresses();
-
-      // assert
-      expect(actualResult).toBeDefined();
-      expect(actualResult.length).toBe(1); // <--- only 1 ("always the same")
-    });
-
-    it("should store copy of transfer transactions by account address", () => {
-      // prepare
-      const fakeTx = {
-        type: TransactionType.TRANSFER,
-        recipientAddress: {
-          plain: jest.fn().mockReturnValue("by address A"),
-        },
-      };
-
-      // act
-      (service as any).processTransactionsPage(undefined, [
-        { ...fakeTx, transactionInfo: { hash: "fakeHash1" } },
-        { ...fakeTx, transactionInfo: { hash: "fakeHash2" } },
-      ]);
-      const actualResult: Map<string, string[]> = service.getTransactionsByAddress();
-
-      // assert
-      expect(actualResult.has("by address A")).toBe(true);
-      expect(actualResult.get("by address A")).toBeDefined();
-      expect(actualResult.get("by address A").length).toBe(2);
-    });
-
-    it("should return last processed transaction hash", () => {
-      // prepare
-      const fakeTx = { type: TransactionType.TRANSFER, recipientAddress: { plain: jest.fn() } };
-
-      // act
-      const actualResult: string = (service as any).processTransactionsPage(undefined, [
-        { ...fakeTx, transactionInfo: { hash: "fakeHash1" } },
-        { ...fakeTx, transactionInfo: { hash: "fakeHash2" } },
-      ]);
-
-      // assert
-      expect(actualResult).toBe("fakeHash2");
-    });
-  });
-
-  describe("findOrCreateAccount()", () => {
-    // for each findOrCreateAccount() test, we mock a *fake*
-    // list of processed transactions to test that the correct
-    // functions are called with correct queries to database
-    beforeEach(() => {
-      (service as any).transactionsByAddress = new Map<string, string[]>([
-        ["address A", ["fakeHash1", "fakeHash2"]]
-      ]);
-      (service as any).transactions = [
-        { transactionInfo: { hash: "fakeHash1", height: { compact: jest.fn() } } },
-        { transactionInfo: { hash: "fakeHash2", height: { compact: jest.fn() } } }
-      ];
-
-      (service as any).model = new MockModel();
-    });
-
-    it("should count processed transaction for said account", async () => {
-      // prepare
-      (service as any).transactionsByAddress = { get: jest.fn().mockReturnValue(
-        ["fakeHash1", "fakeHash2"]
-      ) };
-
-      // act
-      await (service as any).findOrCreateAccount(
-        "address A",
-        "fakeHash1",
-      );
-
-      expect((service as any).transactionsByAddress.get).toHaveBeenCalled();
-    });
-
-    it("should use AccountsService to findOne document by address", async () => {
-      // prepare
-      const accountMock = {
-        address: "address A",
-        transactionsCount: 37,
-      };
-      (service as any).accountsService = { createOrUpdate: jest.fn() };
-      (service as any).model.create = jest.fn().mockReturnValue(accountMock);
-
-      // act
-      await (service as any).findOrCreateAccount(
-        "address A",
-        "fakeHash1",
-      );
-
-      // assert
-      expect((service as any).model.create).toHaveBeenCalled();
-      expect((service as any).accountsService.createOrUpdate).toHaveBeenCalled();
-      expect((service as any).accountsService.createOrUpdate).toHaveBeenCalledWith(
-        new AccountQuery({ address: "address A" } as Account),
-        accountMock,
-        { $inc: { transactionsCount: 2 } }, // <-- we have 2 transactions in beforeEach()
-      );
-    });
-
-    it("should read transaction confirmation height for created document", async () => {
-      // act
-      await (service as any).findOrCreateAccount(
-        "address A",
-        "fakeHash1",
-      );
-
-      // assert
-      expect((service as any).transactions[0].transactionInfo.height.compact).toHaveBeenCalled();
-    });
-
-    it("should use correct values for newly created document", async () => {
-      // prepare
-      const accountMock = {
-        address: "address A",
-        transactionsCount: 37,
-      };
-      (service as any).accountsService = { createOrUpdate: jest.fn().mockReturnValue(accountMock) };
-      (service as any).model.create = jest.fn();
-      // act
-      const actualResult: Account = await (service as any).findOrCreateAccount(
-        "address A",
-        "fakeHash1",
-      );
-
-      // assert
-      expect(actualResult.address).toBe("address A");
-      expect(actualResult.transactionsCount).toBe(37);
+      expect("lastExecutedAt" in data).toBe(true);
+      expect(data.lastExecutedAt).toBe(mockDate.valueOf());
     });
   });
 
@@ -373,20 +194,27 @@ describe("discovery/DiscoverAccounts", () => {
       });
 
       // assert
-      expect(logger.debug).toHaveBeenNthCalledWith(1, "Starting discovery with \"DiscoverAccounts\"");
-      expect(logger.debug).toHaveBeenNthCalledWith(2, "Discovery is tracking the account: \"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\"");
-      expect(logger.debug).toHaveBeenLastCalledWith("Found transaction page with 0 transactions.");
+      expect(logger.debug).toHaveBeenNthCalledWith(1, "Starting accounts discovery for source \"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\"");
+      expect(logger.debug).toHaveBeenLastCalledWith("Found 0 new accounts from transactions");
     });
 
-    it("should use correct page number given existing pre-execution state", async () => {
-      // prepare: sets pre-execution state data
-      (service as any).state = new MockModel({
-        name: "discovery:DiscoverAccounts",
-        data: {
-          latestTxPage: 39,
-          latestTxHash: "hash56",
-        },
-      }).data; // unwrap MockModel.data
+    it("should use transactions service to query all transactions", async () => {
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      });
+
+      // assert
+      expect((service as any).transactionsService.find).toHaveBeenCalled();
+    });
+
+    it("should use accounts service to filter by unique addresses", async () => {
+      // prepare
+      (service as any).discoveredAddresses = ["NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY"];
+      const expectedQuery = new AccountQuery({
+        address: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY"
+      } as Account);
 
       // act
       await service.discover({
@@ -395,20 +223,14 @@ describe("discovery/DiscoverAccounts", () => {
       });
 
       // assert
-      expect(logger.debug).toHaveBeenCalledWith("Now reading 5 pages including page 39");
+      expect((service as any).accountsService.findOne).toHaveBeenCalledWith(expectedQuery);
     });
 
-    it("should use transaction repository with correctly paged transaction query", async () => {
-      // prepare: overwrites configuration
-      (service as any).configService.get = jest.fn().mockReturnValue(expectedDappConfig.dappPublicKey);
-      // prepare: sets pre-execution state data
-      (service as any).state = new MockModel({ 
-        name: "discovery:DiscoverAccounts",
-        data: {
-          latestTxPage: 39,
-          latestTxHash: "hash56",
-        },
-      }).data; // unwrap MockModel.data
+    it ("should use updateBatch given more than one document", async () => {
+      // prepare
+      const expectedData = { address: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY" };
+      (service as any).discoveredAddresses = ["NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY"];
+      (service as any).accountsService.findOne = jest.fn().mockReturnValue(undefined); // force undefined
 
       // act
       await service.discover({
@@ -417,60 +239,8 @@ describe("discovery/DiscoverAccounts", () => {
       });
 
       // assert
-      expect(emptyPageSearcherMock).toHaveBeenCalledTimes(1);
-      expect(emptyPageSearcherMock).toHaveBeenCalledWith({
-        signerPublicKey: expectedDappConfig.dappPublicKey,
-        group: TransactionGroup.Confirmed, // mocked!
-        embedded: true,
-        order: Order.Asc, // mocked!
-        pageNumber: 39,
-        pageSize: 100,
-      });
-    });
-
-    it("should stop searching given search results last page", async () => {
-      // act
-      await service.discover({
-        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
-        debug: true,
-      });
-
-      // assert
-      expect(emptyPageSearcherMock).toHaveBeenCalledTimes(1);
-    });
-
-    it("should issue 5 requests consecutively given full pages", async () => {
-      // prepare: overwrites configuration
-      (service as any).configService.get = jest.fn().mockReturnValue(expectedDappConfig.dappPublicKey);
-      // prepare: search results page is *not* last page
-      const fullPageSearcherMock = jest.fn().mockReturnValue({
-        toPromise: jest.fn().mockReturnValue({
-          data: [],
-          isLastPage: false,
-        }),
-      });
-      (service as any).networkService = {
-        getTransactionRepository: () => ({
-          search: fullPageSearcherMock
-        }),
-      };
-
-      // act
-      await service.discover({
-        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
-        debug: true,
-      });
-
-      // assert
-      expect(fullPageSearcherMock).toHaveBeenCalledTimes(5);
-      expect(fullPageSearcherMock).toHaveBeenNthCalledWith(5, {
-        signerPublicKey: expectedDappConfig.dappPublicKey,
-        group: TransactionGroup.Confirmed,
-        embedded: true,
-        order: Order.Asc,
-        pageNumber: 5, // <---- page incremented
-        pageSize: 100,
-      });
+      expect((service as any).model.create).toHaveBeenCalledWith(expectedData);
+      expect((service as any).accountsService.updateBatch).toHaveBeenCalled();
     });
   });
 });

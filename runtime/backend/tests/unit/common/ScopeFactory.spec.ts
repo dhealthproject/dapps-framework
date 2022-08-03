@@ -32,6 +32,11 @@ jest.mock("../../../src/discovery/modules/AccountsModule", () => {
   return { AccountsModule: AccountsModuleMock };
 });
 
+const TransactionsModuleMock: any = jest.fn();
+jest.mock("../../../src/discovery/modules/TransactionsModule", () => {
+  return { TransactionsModule: TransactionsModuleMock };
+});
+
 const DiscoveryModuleMock: any = jest.fn();
 jest.mock("../../../src/discovery/DiscoveryModule", () => {
   return { DiscoveryModule: DiscoveryModuleMock };
@@ -192,7 +197,9 @@ describe("common/ScopeFactory", () => {
         ConfigModuleMock,
         MongooseModuleMock,
         AccountsModuleMock,
+        TransactionsModuleMock,
         DiscoverAccountsCommandMock,
+        DiscoverTransactionsCommandMock,
       ]);
     });
 
@@ -214,7 +221,9 @@ describe("common/ScopeFactory", () => {
         ConfigModuleMock,
         MongooseModuleMock,
         AccountsModuleMock,
+        TransactionsModuleMock,
         DiscoverAccountsCommandMock,
+        DiscoverTransactionsCommandMock,
       ]);
     });
 
@@ -230,77 +239,6 @@ describe("common/ScopeFactory", () => {
 
       // act
       const result = MockFactory.create(configDto).getSchedulers();
-
-      // assert
-      expect(result).toEqual([
-        ConfigModuleMock,
-        MongooseModuleMock,
-      ]);
-    });
-  });
-
-  describe("getCommands() -->", () => {
-    it("should always include configuration and database modules", () => {
-      // prepare
-      const baseConfig = {
-        dappName: "Fake dApp",
-        dappPublicKey: "FakePublicKeyOfAdApp",
-        authAuthority: "NonExistingAuthority",
-        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
-      };
-
-      const configDto1: DappConfig = { ...baseConfig, scopes: [] };
-      const configDto2: DappConfig = { ...baseConfig, scopes: ["database"] };
-      const configDto3: DappConfig = { ...baseConfig, scopes: ["discovery"] };
-
-      // act
-      const result1 = MockFactory.create(configDto1).getCommands();
-      const result2 = MockFactory.create(configDto2).getCommands();
-      const result3 = MockFactory.create(configDto3).getCommands();
-
-      // assert
-      expect(result1).toEqual([ConfigModuleMock, MongooseModuleMock]);
-      expect(result2).toEqual([ConfigModuleMock, MongooseModuleMock]);
-      expect(result3).toEqual([
-        ConfigModuleMock,
-        MongooseModuleMock,
-        DiscoverTransactionsCommandMock,
-      ]);
-    });
-
-    it("should return correct list of enabled commands", () => {
-      // prepare
-      const configDto: DappConfig = {
-        dappName: "Fake dApp",
-        dappPublicKey: "FakePublicKeyOfAdApp",
-        authAuthority: "NonExistingAuthority",
-        scopes: ["discovery"],
-        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
-      };
-
-      // act
-      const result = MockFactory.create(configDto).getCommands();
-
-      // assert
-      expect(result).toEqual([
-        ConfigModuleMock,
-        MongooseModuleMock,
-        DiscoverTransactionsCommandMock,
-      ]);
-    });
-
-    it("should return correct empty list of enabled commands", () => {
-      // prepare
-      const configDto: DappConfig = {
-        dappName: "Fake dApp",
-        dappPublicKey: "FakePublicKeyOfAdApp",
-        authAuthority: "NonExistingAuthority",
-        scopes: [],
-        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
-      };
-
-      // act
-      const result = MockFactory.create(configDto).getCommands();
 
       // assert
       expect(result).toEqual([

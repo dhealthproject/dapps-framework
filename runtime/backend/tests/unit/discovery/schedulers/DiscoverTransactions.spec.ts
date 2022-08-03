@@ -11,6 +11,10 @@
 // These following mocks are used in this unit test series.
 // Mocks a subset of "@dhealth/sdk" including classes:
 // - Address to always return a formattable valid Address
+// - Order to test list ordering features
+// - TransactionGroup to test transaction state filtering
+// - TransactionType to test type enumerations for transactions
+// - TransferTransaction to define fixed transactionInfo
 jest.mock("@dhealth/sdk", () => ({
   Address: {
     createFromRawAddress: (a: string) => ({ plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY" }),
@@ -42,13 +46,13 @@ import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
 
 // internal dependencies
-import { MockModel } from "../../../mocks/global";
+import { MockModel, createTransaction } from "../../../mocks/global";
 import { DappConfig } from "../../../../src/common/models/DappConfig";
+import { State, StateQuery } from "../../../../src/common/models/StateSchema";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
 import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
-import { Transaction, TransactionQuery } from "../../../../src/discovery/models/TransactionSchema";
 import { DiscoverTransactions } from "../../../../src/discovery/schedulers/DiscoverTransactions/DiscoverTransactions";
 
 // configuration resources
@@ -62,7 +66,7 @@ class MockDiscoverTransactions extends DiscoverTransactions {
   }
 
   // mocks the internal StateService
-  protected statesService: any = { updateOne: jest.fn() };
+  protected stateService: any = { findOne: jest.fn(), updateOne: jest.fn() };
 
   // mocks the internal TransactionsService
   protected transactionsService: any = {
@@ -82,7 +86,7 @@ class MockDiscoverTransactions extends DiscoverTransactions {
 describe("discovery/DiscoverTransactions", () => {
   let service: MockDiscoverTransactions;
   let configService: ConfigService;
-  let statesService: StateService;
+  let stateService: StateService;
   let networkService: NetworkService;
   let transactionService: TransactionsService;
   let logger: Logger;
@@ -123,7 +127,7 @@ describe("discovery/DiscoverTransactions", () => {
 
     service = module.get<MockDiscoverTransactions>(MockDiscoverTransactions);
     configService = module.get<ConfigService>(ConfigService);
-    statesService = module.get<StateService>(StateService);
+    stateService = module.get<StateService>(StateService);
     networkService = module.get<NetworkService>(NetworkService);
     transactionService = module.get<TransactionsService>(TransactionsService);
     logger = module.get<Logger>(Logger);
@@ -188,75 +192,6 @@ describe("discovery/DiscoverTransactions", () => {
     });
   });
 
-  describe("findOrCreateTransaction()", () => {
-    // we mock extract routines as we use fake transactions
-    // for each call to this method, by default we return
-    // the following values from extracting routines.
-    beforeEach(() => {
-      (service as any).extractSignerAddress = jest.fn().mockReturnValue("address A");
-      (service as any).extractTransactionHash = jest.fn().mockReturnValue("fakeHash1");
-      (service as any).extractTransactionType = jest.fn().mockReturnValue(TransactionType.TRANSFER);
-      (service as any).extractTransactionSignature = jest.fn().mockReturnValue("signature");
-      (service as any).extractTransactionBody = jest.fn().mockReturnValue("incorrect-body-payload");
-
-      (service as any).model = new MockModel();
-    });
-
-    it("should use TransactionsService to findOne document by signer and hash", async () => {
-      // prepare
-      const transactionMock = new MockModel({
-        signerAddress: "address A",
-        transactionHash: "fakeHash1",
-        transactionType: TransactionType.TRANSFER,
-        signature: "signature",
-        encodedBody: "incorrect-body-payload",
-        discoveredAt: mockDate,
-      });
-      (service as any).transactionsService = { createOrUpdate: jest.fn() };
-      (service as any).model.create = jest.fn().mockReturnValue(transactionMock);
-
-      // act
-      await (service as any).findOrCreateTransaction({} as TransferTransaction);
-
-      // assert
-      expect((service as any).model.create).toHaveBeenCalled();
-      expect((service as any).extractSignerAddress).toHaveBeenCalled();
-      expect((service as any).extractTransactionHash).toHaveBeenCalled();
-      expect((service as any).transactionsService.createOrUpdate).toHaveBeenCalled();
-      expect((service as any).transactionsService.createOrUpdate).toHaveBeenCalledWith(
-        new TransactionQuery({
-          signerAddress: "address A", // mock of extractSignerAddress
-          transactionHash: "fakeHash1", // mock of extractTransactionHash
-        } as Transaction),
-        transactionMock,
-        {},
-      );
-    });
-
-    it("should use TransactionsService to createOrUpdate document", async () => {
-      // prepare
-      const transactionMock = new MockModel({
-        signerAddress: "address A",
-        transactionHash: "fakeHash1",
-        transactionType: TransactionType.TRANSFER,
-        signature: "signature",
-        encodedBody: "incorrect-body-payload",
-        discoveredAt: mockDate,
-      });
-      (service as any).transactionsService = { createOrUpdate: jest.fn().mockReturnValue(transactionMock) };
-      (service as any).model.create = jest.fn();
-
-      // act
-      const actualResult: Transaction = await (service as any).findOrCreateTransaction(
-        {} as TransferTransaction
-      );
-
-      // assert
-      expect((service as any).model.create).toHaveBeenCalled();
-      expect((service as any).transactionsService.createOrUpdate).toHaveBeenCalled();
-    });
-  });
-
   describe("discover()", () => {
     let transactionsQuery: any;
     const emptyPageSearcherMock = jest.fn().mockReturnValue({
@@ -302,7 +237,8 @@ describe("discovery/DiscoverTransactions", () => {
         });
 
         // assert
-        expect(logger.debug).toHaveBeenNthCalledWith(1, "Starting discovery with \"DiscoverTransactions\"");
+        expect(logger.debug).toHaveBeenNthCalledWith(1, "Starting transactions discovery for source \"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\"");
+        expect(logger.debug).toHaveBeenNthCalledWith(2, "Last discovery ended with page: \"1\"");
       });
 
       it("should include only confirmed transfer transactions by default", async () => {
@@ -397,9 +333,9 @@ describe("discovery/DiscoverTransactions", () => {
       // that the transaction search is faked to respond.
       beforeEach(() => {
         expectedTransactions = [
-          { transactionInfo: { hash: "fakeHash1" } } as TransferTransaction,
-          { transactionInfo: { hash: "fakeHash2" } } as TransferTransaction,
-          { transactionInfo: { hash: "fakeHash3" } } as TransferTransaction,
+          createTransaction("fakeHash1") as any,
+          createTransaction("fakeHash2") as any,
+          createTransaction("fakeHash3") as any,
         ];
         nonemptyPageSearcherMock = jest.fn().mockReturnValue({
           toPromise: jest.fn().mockReturnValue({
@@ -409,12 +345,23 @@ describe("discovery/DiscoverTransactions", () => {
         });
   
         // overwrites specific mocks
-        (service as any).findOrCreateTransaction = jest.fn();
         (service as any).networkService = {
           getTransactionRepository: () => ({
             search: nonemptyPageSearcherMock
           }),
         };
+      });
+
+      it("should read 5 transaction pages from operating node", async () => {
+        // act
+        await service.discover({
+          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+          debug: true,
+        });
+  
+        // assert
+        expect(nonemptyPageSearcherMock).toHaveBeenCalled();
+        expect(nonemptyPageSearcherMock).toHaveBeenCalledTimes(5);
       });
 
       it("should flatten transaction pages into transactions array", async () => {
@@ -425,14 +372,12 @@ describe("discovery/DiscoverTransactions", () => {
         });
   
         // assert
-        expect(nonemptyPageSearcherMock).toHaveBeenCalled();
-        expect(nonemptyPageSearcherMock).toHaveBeenCalledTimes(1);
         expect((service as any).transactions.length).toBe(
           expectedTransactions.length
         );
       });
   
-      it("should find or create models from transactions array", async () => {
+      it("should create models for unique transactions", async () => {
         // act
         await service.discover({
           source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
@@ -440,26 +385,11 @@ describe("discovery/DiscoverTransactions", () => {
         });
   
         // assert
-        expect((service as any).findOrCreateTransaction).toHaveBeenCalled();
-        expect((service as any).findOrCreateTransaction).toHaveBeenCalledTimes(3);
-        expect((service as any).findOrCreateTransaction).toHaveBeenNthCalledWith(1, {
-          transactionInfo: { hash: "fakeHash1" }
-        });
-        expect((service as any).findOrCreateTransaction).toHaveBeenNthCalledWith(2, {
-          transactionInfo: { hash: "fakeHash2" }
-        });
-        expect((service as any).findOrCreateTransaction).toHaveBeenNthCalledWith(3, {
-          transactionInfo: { hash: "fakeHash3" }
-        });
+        expect((service as any).model.createStub).toHaveBeenCalled();
+        expect((service as any).model.createStub).toHaveBeenCalledTimes(3 * 5); // 3 transactions for each of the 5 pages (mocks)
       });
 
       it("should use transactionsService.updateBatch with documents array", async () => {
-        // prepare
-        (service as any).findOrCreateTransaction = jest.fn().mockReturnValue({
-          fakeModel: true,
-          otherValue: "value",
-        });
-
         // act
         await service.discover({
           source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
@@ -469,11 +399,26 @@ describe("discovery/DiscoverTransactions", () => {
         // assert
         expect((service as any).transactionsService.updateBatch).toHaveBeenCalled();
         expect((service as any).transactionsService.updateBatch).toHaveBeenCalledTimes(1);
-        expect((service as any).transactionsService.updateBatch).toHaveBeenCalledWith([
-          { fakeModel: true, otherValue: "value" },
-          { fakeModel: true, otherValue: "value" },
-          { fakeModel: true, otherValue: "value" },
-        ]);
+      });
+
+      it("should update per-source state using stateService and correct page", async () => {
+        // prepare
+        const stateIdentifier = "discovery:DiscoverTransactions:NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY";
+
+        // act
+        await service.discover({
+          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+          debug: true,
+        });
+  
+        // assert
+        expect((service as any).stateService.updateOne).toHaveBeenCalled();
+        expect((service as any).stateService.updateOne).toHaveBeenCalledWith(
+          new StateQuery({ name: stateIdentifier } as State),
+          {
+            lastPageNumber: 6, // starts at page 1 and reads 5 pages
+          }
+        );
       });
     });
   });

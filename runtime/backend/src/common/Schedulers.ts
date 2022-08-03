@@ -12,8 +12,13 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import { AccountsModule } from "../discovery/modules/AccountsModule";
+import { TransactionsModule } from "../discovery/modules/TransactionsModule";
 import { DiscoverAccountsCommand } from "../discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand";
 import { DiscoverTransactionsCommand } from "../discovery/schedulers/DiscoverTransactions/DiscoverTransactionsCommand";
+
+// configuration resources
+import dappConfigLoader from "../../config/dapp";
+const db = dappConfigLoader().database;
 
 /**
  * @description This exported constant enumerates all available **scheduler**
@@ -37,11 +42,13 @@ import { DiscoverTransactionsCommand } from "../discovery/schedulers/DiscoverTra
  */
 export const Schedulers: { [key: string]: any[] } = {
   database: [MongooseModule.forRoot(
-    `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`,
+    `mongodb://${db.user}:${process.env.DB_PASS}@${db.host}:${db.port}/${db.name}?authSource=admin`,
   )],
   discovery: [
     AccountsModule,
+    TransactionsModule,
     DiscoverAccountsCommand,
+    DiscoverTransactionsCommand,
   ],
   payout: [],
   processor: [],
