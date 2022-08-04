@@ -47,6 +47,7 @@ import DappMosaicIcon from "./graphics/DappMosaicIcon/DappMosaicIcon";
 import DappMosaicAliasTransaction from "./graphics/transactions/DappMosaicAliasTransaction/DappMosaicAliasTransaction";
 import DappMosaicDefinitionTransaction from "./graphics/transactions/DappMosaicDefinitionTransaction/DappMosaicDefinitionTransaction";
 import DappMosaicSupplyChangeTransaction from "./graphics/transactions/DappMosaicSupplyChangeTransaction/DappMosaicSupplyChangeTransaction";
+import DappTransferTransaction from "./graphics/transactions/DappTransferTransaction/DappTransferTransaction";
 
 // exports
 export type { Variant };
@@ -78,4 +79,5 @@ export {
   DappMosaicAliasTransaction,
   DappMosaicDefinitionTransaction,
   DappMosaicSupplyChangeTransaction,
+  DappTransferTransaction,
 };

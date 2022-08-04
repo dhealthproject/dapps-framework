@@ -44,6 +44,7 @@ import DappMosaicIcon from "./graphics/DappMosaicIcon/DappMosaicIcon.vue";
 import DappMosaicAliasTransaction from "./graphics/transactions/DappMosaicAliasTransaction/DappMosaicAliasTransaction.vue";
 import DappMosaicDefinitionTransaction from "./graphics/transactions/DappMosaicDefinitionTransaction/DappMosaicDefinitionTransaction.vue";
 import DappMosaicSupplyChangeTransaction from "./graphics/transactions/DappMosaicSupplyChangeTransaction/DappMosaicSupplyChangeTransaction.vue";
+import DappTransferTransaction from "./graphics/transactions/DappTransferTransaction/DappTransferTransaction.vue";
 
 // exports components as named-exports
 export {
@@ -74,4 +75,5 @@ export {
   DappMosaicAliasTransaction,
   DappMosaicDefinitionTransaction,
   DappMosaicSupplyChangeTransaction,
+  DappTransferTransaction,
 };

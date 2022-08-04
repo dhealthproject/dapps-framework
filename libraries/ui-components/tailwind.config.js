@@ -30,6 +30,10 @@ module.exports = {
       white: "#ffffff",
       gray: "#e2e4e8",
       "gray-600": "#525c76",
+      lightGreen: "#ecfce5",
+      slightRedWhite: "#f7f7f7",
+      mediumGreen: "#198155",
+      deepGray: "rgba(25, 22, 59, 0.44)",
     },
     // overwrites default border radius
     borderRadius: {
