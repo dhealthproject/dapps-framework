@@ -263,7 +263,7 @@ export class DiscoverTransactions
 
     // executes the actual command logic (this will call discover())
     // additionally, updates state.data.lastUsedAccount
-    await super.run([], { source, debug: true } as DiscoveryCommandOptions);
+    await this.run([], { source, debug: true } as DiscoveryCommandOptions);
   }
 
   /**
@@ -398,7 +398,7 @@ export class DiscoverTransactions
     // fetch transactions. Transactions will first be read
     // for accounts that are *not yet synchronized*.
     let address: Address,
-        cursor: number;
+        cursor: number = 0;
     do {
       address = this.parseSource(sources[cursor++]);
 
@@ -426,7 +426,7 @@ export class DiscoverTransactions
 
     // fully synchronized: switch source every minute
     let lastIndex = sources.findIndex(
-      s => this.state.data.lastUsedAccount,
+      s => s === this.state.data.lastUsedAccount,
     );
 
     // if necessary, loop through back to first source

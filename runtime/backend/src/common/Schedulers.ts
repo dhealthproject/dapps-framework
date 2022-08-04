@@ -31,8 +31,8 @@ const db = dappConfigLoader().database;
  * information table:
  * | Scope | Scheduler | Description |
  * | --- | --- | --- |
- * | `discovery` | {@link DiscoverAccounts} | A discovery command that retrieves accounts information from the network using the incoming transaction of the dApp's main account. |
  * | `discovery` | {@link DiscoverTransactions} | A discovery command that retrieves transactions information from the network. |
+ * | `discovery` | {@link DiscoverAccounts} | A discovery command that retrieves accounts information from the database using discovered transactions. |
  * <br /><br />
  *
  * @var {[key: string]: any[]}
