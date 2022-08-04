@@ -36,6 +36,7 @@ lerna-debug.log*
 
 # Docker data
 data
+!data/.gitkeep
 
 # Do not checkin .env file
 .env
