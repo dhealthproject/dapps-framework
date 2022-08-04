@@ -43,6 +43,7 @@ import {
   DappMosaicAliasTransaction,
   DappMosaicDefinitionTransaction,
   DappMosaicSupplyChangeTransaction,
+  DappTransferTransaction,
 } from "./components";
 
 // use the web component wrapper to extend components
@@ -115,6 +116,7 @@ const install = (): void => {
     "DappMosaicSupplyChangeTransaction",
     DappMosaicSupplyChangeTransaction
   );
+  Vue.component("DappTransferTransaction", DappTransferTransaction);
 };
 
 // exporting web components requires adding style
@@ -197,4 +199,5 @@ export {
   DappMosaicAliasTransaction,
   DappMosaicDefinitionTransaction,
   DappMosaicSupplyChangeTransaction,
+  DappTransferTransaction,
 };
