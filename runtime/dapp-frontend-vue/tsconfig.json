@@ -24,8 +24,11 @@
       "chai",
       "jest",
       "./types/vue/",
-      "./types/vue-router/"
+      "./types/vue-router/",
+      "./types",
+      "./node_modules/@types"
     ],
+    "typeRoots": ["./types", "./node_modules/@types"],
     "paths": {
       "@/*": ["src/*"]
     },

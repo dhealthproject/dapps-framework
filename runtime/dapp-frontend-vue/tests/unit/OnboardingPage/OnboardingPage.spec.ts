@@ -15,36 +15,36 @@ import { Profile } from "@/modules/Profile/Profile";
 import { Transaction } from "@dhealth/sdk";
 import sinon from "sinon";
 
-const stubRequestHandler = {
-  call: () => this,
-};
-const stubService = {
-  baseUrl: "http://localhost:7903",
-  handler: stubRequestHandler,
-  getUrl: () => "this",
-  getAuthChallenge: () => this,
-  login: () => this,
-  getMe: () => this,
-};
+// const stubRequestHandler = {
+//   call: () => this,
+// };
+const getImageUrl = () => "../../../src/assets/ELEVATE.svg";
+// const stubService = {
+//   baseUrl: "http://localhost:7903",
+//   handler: stubRequestHandler,
+//   getUrl: () => "this",
+//   getAuthChallenge: () => this,
+//   login: () => this,
+//   getMe: () => this,
+// };
 
-sinon.stub(stubService, "getAuthChallenge").resolves({ data: "test" });
-sinon.stub(stubService, "getUrl").returns("test-url");
-sinon.stub(stubService, "login").resolves("test-login");
-sinon.stub(stubService, "getMe").resolves("test-getMe");
-sinon.stub(Auth, "getInstance").returns(stubService as any);
+// jest.mock("../../../src/modules/Auth/Auth");
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
 const componentOptions = {
   localVue,
   stubs: ["router-link"],
-  propsData: {
-    service: stubService,
+  mocks: {
+    getImageUrl,
   },
+  // propsData: {
+  //   service: new Auth(),
+  // },
 };
 // jest.mock("@dhealth/sdk", () => ({ Deadline: jest.fn() }));
 
-describe("OnboardingPage -->", async () => {
+describe("OnboardingPage -->", () => {
   let widget: any;
   let mockedResponse: any;
   beforeEach(async () => {

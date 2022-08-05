@@ -13,8 +13,12 @@ import Header from "@/components/Header/Header.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
+const getImageUrl = () => "../../../src/assets/ELEVATE.svg";
 const componentOptions = {
   localVue,
+  mocks: {
+    getImageUrl,
+  },
   propsData: {
     links: [
       { path: "#", text: "Home", icon: "" },
@@ -32,8 +36,8 @@ describe("Header -->", () => {
     widget = mount(Header as any, componentOptions);
   });
 
-  it("should display title", () => {
-    expect(widget.text()).to.include("Elevate");
+  it("should display logo", () => {
+    expect(widget.find(".dapp-logo").exists()).to.be.true;
   });
 
   it("should display header links", () => {

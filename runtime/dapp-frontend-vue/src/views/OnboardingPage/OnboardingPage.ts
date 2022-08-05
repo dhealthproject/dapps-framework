@@ -94,7 +94,7 @@ export default class OnboardingPage extends MetaView {
    * @access public
    * @var {interval}
    */
-  interval: undefined | number = undefined;
+  interval: undefined | ReturnType<typeof setTimeout> = undefined;
 
   /**
    * This property is used
@@ -105,7 +105,7 @@ export default class OnboardingPage extends MetaView {
    * @access public
    * @var {globalIntervalTimer}
    */
-  globalIntervalTimer: undefined | number = undefined;
+  globalIntervalTimer: undefined | ReturnType<typeof setTimeout> = undefined;
 
   /**
    * Draft computed for generating

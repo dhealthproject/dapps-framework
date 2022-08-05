@@ -29,3 +29,5 @@ jest.mock("js-sha3", () => ({
     arrayBuffer: jest.fn(),
   },
 }));
+
+globalThis.fetch = { bind: (data: any) => data } as any;

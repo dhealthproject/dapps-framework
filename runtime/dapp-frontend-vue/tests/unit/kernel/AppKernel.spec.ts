@@ -16,6 +16,8 @@ import { expect } from "chai";
 // imports the module configuration, card is picked from home.json
 import the_module from "../../../config/modules/home.json";
 
+// jest.mock("@dhealth/components", { DappButton: { get: jest.fn(), set: jest.fn() } } as any);
+
 describe("AppKernel class -->", () => {
   let instance: AppKernel;
   beforeEach(() => {
