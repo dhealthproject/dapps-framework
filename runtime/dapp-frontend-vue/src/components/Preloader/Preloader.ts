@@ -7,13 +7,11 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// external dependencies
-import { DappButton } from "@dhealth/components";
-// internal dependencies
-import HelloWorld from "./HelloWorld.vue";
-import Header from "./Header/Header.vue";
-import Footer from "./Footer/Footer.vue";
-import Preloader from "./Preloader/Preloader.vue";
 
-export const AppComponents = { HelloWorld, Header, Footer, Preloader };
-export const LibComponents = { DappButton };
+// external dependencies
+import { Component } from "vue-property-decorator";
+// internal dependencies
+import { MetaView } from "@/views/MetaView";
+
+@Component({})
+export default class Preloader extends MetaView {}

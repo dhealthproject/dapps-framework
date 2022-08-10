@@ -15,7 +15,7 @@ import Cookies from "js-cookie";
 import { MetaView } from "@/views/MetaView";
 import Header from "@/components/Header/Header.vue";
 import Footer from "@/components/Footer/Footer.vue";
-import Loader from "@/components/Loader/Loader.vue";
+import Preloader from "@/components/Preloader/Preloader.vue";
 import { DappQR } from "@dhealth/components";
 import {
   TransferTransaction,
@@ -47,7 +47,7 @@ export interface TransactionRequestConfig {
     Header,
     Footer,
     DappQR,
-    Loader,
+    Preloader,
   },
 })
 export default class OnboardingPage extends MetaView {
@@ -198,6 +198,7 @@ export default class OnboardingPage extends MetaView {
       }, 300000);
     }
   }
+
   /**
    * Helper method that generates
    * transaction request config
