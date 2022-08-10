@@ -31,12 +31,19 @@ const router = new VueRouter({
     },
     {
       path: "/onboarding",
-      name: "onboarding",
+      name: "onboarding.home",
       component: () => import("./views/OnboardingPage/OnboardingPage.vue"),
+      children: [
+        {
+          path: ":refCode",
+          name: "onboarding.refCode",
+          component: () => import("./views/OnboardingPage/OnboardingPage.vue"),
+        },
+      ],
     },
     {
-      path: "/termsofservice",
-      name: "termsofservice",
+      path: "/terms-of-service",
+      name: "legal.terms-of-service",
       meta: {
         protected: true,
       },

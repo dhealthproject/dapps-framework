@@ -188,7 +188,7 @@ export default class OnboardingPage extends MetaView {
           // });
           this.service?.setAuthCookie(tokenResponse.data.accessToken);
 
-          this.$router.push({ name: "termsofservice" });
+          this.$router.push({ name: "legal.terms-of-service" });
         }
       }, 5000);
 
@@ -224,6 +224,15 @@ export default class OnboardingPage extends MetaView {
   async mounted() {
     try {
       this.loading = true;
+      const code = this.$route.params.refCode;
+
+      if (this.$route.params.refCode) {
+        Cookies.set("refCode", code, {
+          secure: false,
+          sameSite: "strict",
+          domain: "localhost",
+        });
+      }
 
       const resp = await this.service?.getAuthChallenge();
       if (resp?.data) {
