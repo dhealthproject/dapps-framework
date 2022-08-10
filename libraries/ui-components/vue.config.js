@@ -23,7 +23,9 @@ module.exports = {
     // Disables bundling of the listed modules so that they are
     // requested at runtime from the environment.
     externals: {
-      canvas: {},
+      "canvas": {},
+      "utf-8-validate": {},
+      "bufferutil": {},
     },
 
     // configures polyfills

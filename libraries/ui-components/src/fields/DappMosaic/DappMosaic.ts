@@ -61,11 +61,13 @@ export default class DappMosaic extends Vue {
   @Prop({
     type: Object,
     required: true,
+    default: () =>
+      new Mosaic(
+        new MosaicId("39E0C49FA322A459"), // by default init to `dhealth.dhp`
+        UInt64.fromUint(0) // with 0 amount
+      ),
   })
-  protected value: Mosaic = new Mosaic(
-    new MosaicId("39E0C49FA322A459"), // by default init to `dhealth.dhp`
-    UInt64.fromUint(0) // with 0 amount
-  );
+  protected value?: Mosaic;
 
   /**
    * The required `src` value of the left icon image.
@@ -96,12 +98,15 @@ export default class DappMosaic extends Vue {
    * @returns {string}
    */
   protected get formattedValue(): string {
-    // use `Mosaic` to get amount
-    // @todo this is not protected for number overflows
-    const formattedValue: number = this.value.amount.compact();
+    let formattedValue = 0;
+    if (undefined !== this.value) {
+      // use `Mosaic` to get amount
+      // @todo this is not protected for number overflows
+      formattedValue = this.value.amount.compact();
+    }
 
     // @todo extract the number of decimals to Asset type
-    return `${formattedValue.toFixed(2)} ${this.getMosaicName(this.value)}`;
+    return `${formattedValue.toFixed(2)} ${this.getMosaicName()}`;
   }
 
   /**
@@ -112,7 +117,15 @@ export default class DappMosaic extends Vue {
    * @param {Mosaic} mosaic
    * @returns {string}
    */
-  public getMosaicName(mosaic: Mosaic): string {
-    return this.mosaicName ? this.mosaicName : mosaic.id.id.toHex();
+  public getMosaicName(): string {
+    if (this.mosaicName) {
+      return this.mosaicName;
+    }
+
+    if (this.value) {
+      return this.value.id.id.toHex();
+    }
+
+    return "DHP";
   }
 }
