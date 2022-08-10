@@ -20,16 +20,16 @@
 import type { Variant } from "./types/Variant";
 
 // components
+import DappAccountAvatar from "./graphics/DappAccountAvatar/DappAccountAvatar";
+import DappAccountCard from "./widgets/DappAccountCard/DappAccountCard";
 import DappButton from "./controls/DappButton/DappButton";
 import DappQR from "./widgets/DappQR/DappQR";
 import DappTokenAmount from "./fields/DappTokenAmount/DappTokenAmount";
 import DappIcon from "./graphics/DappIcon/DappIcon";
+import DappInput from "./fields/DappInput/DappInput";
 import DappTitle from "./texts/DappTitle/DappTitle";
 import DappDate from "./fields/DappDate/DappDate";
 import DappMessage from "./fields/DappMessage/DappMessage";
-import DappAccountAvatar from "./graphics/DappAccountAvatar/DappAccountAvatar";
-import DappAccountCard from "./widgets/DappAccountCard/DappAccountCard";
-import DappInput from "./fields/DappInput/DappInput";
 import DappMosaic from "./fields/DappMosaic/DappMosaic";
 
 // exports
@@ -40,10 +40,10 @@ export {
   DappButton,
   DappDate,
   DappIcon,
+  DappInput,
   DappMessage,
+  DappMosaic,
   DappQR,
   DappTitle,
   DappTokenAmount,
-  DappInput,
-  DappMosaic,
 };

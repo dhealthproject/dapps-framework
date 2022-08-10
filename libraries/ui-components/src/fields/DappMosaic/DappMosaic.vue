@@ -12,8 +12,8 @@
 <template>
   <DappInput
     :left-icon-src="iconSrc"
-    :input-value="`${value.amount.toFixed(2)} ${getMosaicName(value)}`"
-    disabled="true"
+    :input-value="formattedValue"
+    :disabled="true"
   />
 </template>
 
