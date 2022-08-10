@@ -63,6 +63,8 @@ module.exports = {
     // sizes such that no warnings are emitted for the library
     performance: {
       hints: false,
+      maxEntrypointSize: 5000000, // 5Mb
+      maxAssetSize: 400000, // 400Kb
     },
   },
 
@@ -102,6 +104,9 @@ module.exports = {
 
     // configures the workbox plugin
     workboxPluginMode: "GenerateSW",
+    workboxOptions: {
+      maximumFileSizeToCacheInBytes: 5000000, // 5Mb
+    },
 
     // configures WebApp manifest
     // assets are referred to with relative URLs
