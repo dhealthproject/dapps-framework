@@ -13,6 +13,7 @@ module.exports = {
   },
   // finds TailWind classes in files with listed extensions
   content: ["./src/**/*.{vue,ts,scss}"],
+  darkMode: "class",
   theme: {
     // defines custom colors for dHealth Design System
     colors: {

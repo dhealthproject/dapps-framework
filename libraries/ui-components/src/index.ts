@@ -44,6 +44,7 @@ import {
   DappMosaicDefinitionTransaction,
   DappMosaicSupplyChangeTransaction,
   DappTransferTransaction,
+  DappTitleBar,
 } from "./components";
 
 // use the web component wrapper to extend components
@@ -117,6 +118,7 @@ const install = (): void => {
     DappMosaicSupplyChangeTransaction
   );
   Vue.component("DappTransferTransaction", DappTransferTransaction);
+  Vue.component("DappTitleBar", DappTitleBar);
 };
 
 // exporting web components requires adding style
@@ -135,6 +137,7 @@ const allComponents = [
   DappMosaic,
   DappQR,
   DappTitle,
+  DappTitleBar,
   DappTokenAmount,
   DappMessageCircle,
   DappMosaicCircle,
@@ -201,4 +204,5 @@ export {
   DappMosaicDefinitionTransaction,
   DappMosaicSupplyChangeTransaction,
   DappTransferTransaction,
+  DappTitleBar,
 };
