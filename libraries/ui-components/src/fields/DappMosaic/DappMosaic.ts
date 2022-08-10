@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Mosaic } from "@dhealth/sdk";
+import { Mosaic, MosaicId, UInt64 } from "@dhealth/sdk";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 // internal dependencies
@@ -40,7 +40,7 @@ import DappInput from "../DappInput/DappInput.vue";
  * <br /><br />
  * #### Parameters
  *
- * @param  {Mosaic}    value                The optional `value` to be put inside the input element.
+ * @param  {Mosaic}    value                The required `value` to be put inside the input element.
  * @param  {string}    iconSrc              The required `src` value of the left icon image.
  * @param  {string}    mosaicName           The optional mosaic name to be displayed after the amount inside the input element.
  *
@@ -53,7 +53,7 @@ import DappInput from "../DappInput/DappInput.vue";
 })
 export default class DappMosaic extends Vue {
   /**
-   * The optional `value` to be put inside the input element.
+   * The required `value` to be put inside the input element.
    *
    * @access protected
    * @var {Mosaic}
@@ -62,7 +62,10 @@ export default class DappMosaic extends Vue {
     type: Object,
     required: true,
   })
-  protected value?: Mosaic;
+  protected value: Mosaic = new Mosaic(
+    new MosaicId("39E0C49FA322A459"), // by default init to `dhealth.dhp`
+    UInt64.fromUint(0) // with 0 amount
+  );
 
   /**
    * The required `src` value of the left icon image.
@@ -84,6 +87,22 @@ export default class DappMosaic extends Vue {
    */
   @Prop()
   protected mosaicName?: string;
+
+  /**
+   * Getter method to access the *formatted* input value. After formatting,
+   * the value will contain a *mosaic name* as defined in {@link mosaicName} or
+   * using the underlying {@link Mosaic} mosaic.
+   *
+   * @returns {string}
+   */
+  protected get formattedValue(): string {
+    // use `Mosaic` to get amount
+    // @todo this is not protected for number overflows
+    const formattedValue: number = this.value.amount.compact();
+
+    // @todo extract the number of decimals to Asset type
+    return `${formattedValue.toFixed(2)} ${this.getMosaicName(this.value)}`;
+  }
 
   /**
    * Method to return mosaic name/id to be displayed after amount inside the input element.

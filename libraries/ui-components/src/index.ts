@@ -21,12 +21,12 @@ import {
   DappButton,
   DappDate,
   DappIcon,
+  DappInput,
   DappMessage,
+  DappMosaic,
   DappQR,
   DappTitle,
   DappTokenAmount,
-  DappInput,
-  DappMosaic,
 } from "./components";
 
 // use the web component wrapper to extend components
@@ -66,17 +66,17 @@ import "./theme.scss";
  */
 const install = (): void => {
   // vue v2 and v3 compatible
-  Vue.component("DappButton", DappButton);
-  Vue.component("DappQR", DappQR);
-  Vue.component("DappTokenAmount", DappTokenAmount);
-  Vue.component("DappIcon", DappIcon);
-  Vue.component("DappTitle", DappTitle);
-  Vue.component("DappDate", DappDate);
-  Vue.component("DappMessage", DappMessage);
   Vue.component("DappAccountAvatar", DappAccountAvatar);
   Vue.component("DappAccountCard", DappAccountCard);
+  Vue.component("DappButton", DappButton);
+  Vue.component("DappDate", DappDate);
+  Vue.component("DappIcon", DappIcon);
   Vue.component("DappInput", DappInput);
+  Vue.component("DappMessage", DappMessage);
   Vue.component("DappMosaic", DappMosaic);
+  Vue.component("DappQR", DappQR);
+  Vue.component("DappTitle", DappTitle);
+  Vue.component("DappTokenAmount", DappTokenAmount);
 };
 
 // exporting web components requires adding style
@@ -89,7 +89,9 @@ const allComponents = [
   DappButton,
   DappDate,
   DappIcon,
+  DappInput,
   DappMessage,
+  DappMosaic,
   DappQR,
   DappTitle,
   DappTokenAmount,
@@ -125,10 +127,10 @@ export {
   DappButton,
   DappDate,
   DappIcon,
+  DappInput,
   DappMessage,
+  DappMosaic,
   DappQR,
   DappTitle,
   DappTokenAmount,
-  DappInput,
-  DappMosaic,
 };
