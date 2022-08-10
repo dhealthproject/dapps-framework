@@ -150,7 +150,7 @@ export class DiscoverAccounts
    * This method is necessary to make sure this command is run
    * with the correct `--source` option.
    * <br /><br />
-   * This scheduler is registered to run **every 5 minutes**.
+   * This scheduler is registered to run **every 2 minutes**.
    *
    * @todo This discovery should use a specific **discovery** config field instead of dappPublicKey
    * @see BaseCommand
@@ -160,7 +160,7 @@ export class DiscoverAccounts
    * @param   {BaseCommandOptions}  options 
    * @returns {Promise<void>}
    */
-  @Cron("0 */5 * * * *", { name: "discovery:cronjobs:accounts" })
+  @Cron("0 */2 * * * *", { name: "discovery:cronjobs:accounts" })
   public async runAsScheduler(): Promise<void> {
     // accounts discovery cronjob always read the dApp's main account
     const dappPubKey  = this.configService.get<string>("dappPublicKey");
@@ -186,7 +186,7 @@ export class DiscoverAccounts
    * from the dApp's main account.
    * <br /><br />
    * Discovery is done in 3 steps as described below:
-   * - Step 1: Reads a batch of 500 transactions and discover addresses
+   * - Step 1: Reads a batch of 1000 transactions and discover addresses
    * - Step 2: Find or create a corresponding document in `accounts`
    *
    * @access public
@@ -212,13 +212,13 @@ export class DiscoverAccounts
 
     // (1) each round queries a page of 100 transactions *from the database*
     // and discovers addresses that are involved in said transactions
-    for (let i = this.lastPageNumber, max = this.lastPageNumber+5;
+    for (let i = this.lastPageNumber, max = this.lastPageNumber+10;
       i < max;
       i++, this.lastPageNumber++) {
 
       // fetches transactions *from the database* (mongo)
       const transactions = await this.transactionsService.find(new TransactionQuery(
-        {} as TransactionDocument, // queries *any* transaction
+        { transactionMode: "incoming" } as TransactionDocument, // queries *any incoming* transaction
         {
           pageNumber: i, // in batches of 100 per page
           pageSize: 100,

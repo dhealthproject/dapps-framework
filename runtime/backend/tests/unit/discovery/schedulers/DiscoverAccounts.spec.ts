@@ -190,7 +190,7 @@ describe("discovery/DiscoverAccounts", () => {
       expect(logger.debug).toHaveBeenNthCalledWith(4, "Skipped 0 account(s) that already exist");
     });
 
-    it("should query 5 batches of 100 any type of transactions", async () => {
+    it("should query 10 batches of 100 any type of transactions", async () => {
       // act
       await service.discover({
         source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
@@ -198,16 +198,16 @@ describe("discovery/DiscoverAccounts", () => {
       });
 
       // assert
-      expect((service as any).transactionsService.find).toHaveBeenCalledTimes(5); // reads 5 pages
+      expect((service as any).transactionsService.find).toHaveBeenCalledTimes(10); // reads 10 pages
       expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(1, new TransactionQuery(
-        {} as TransactionDocument, // queries *any* transaction
+        { transactionMode: "incoming" } as TransactionDocument, // queries *any* transaction
         {
           pageNumber: 1,
           pageSize: 100, // in batches of 100 per page
         } as QueryParameters,
       ));
       expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(2, new TransactionQuery(
-        {} as TransactionDocument, // queries *any* transaction
+        { transactionMode: "incoming" } as TransactionDocument, // queries *any* transaction
         {
           pageNumber: 2,
           pageSize: 100, // in batches of 100 per page
