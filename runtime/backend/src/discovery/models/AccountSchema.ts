@@ -12,6 +12,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 
 // internal dependencies
+import { Documentable } from "../../common/concerns/Documentable";
 import { Transferable } from "../../common/concerns/Transferable";
 import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
 import { AccountDTO } from "../models/AccountDTO";
@@ -33,7 +34,7 @@ import { AccountDTO } from "../models/AccountDTO";
 @Schema({
   timestamps: true,
 })
-export class Account extends Transferable<AccountDTO> /* extends Documentable */ {
+export class Account extends Transferable<AccountDTO> {
   /**
    * The account's **address**. An address typically refers to a
    * human-readable series of 39 characters, starting either with
@@ -42,7 +43,7 @@ export class Account extends Transferable<AccountDTO> /* extends Documentable */
    * @access public
    * @var {string}
    */
-  @Prop({ required: true, index: true })
+  @Prop({ required: true, index: true, unique: true, type: String })
   public address: string;
 
   /**
@@ -89,7 +90,7 @@ export class Account extends Transferable<AccountDTO> /* extends Documentable */
    * @access public
    * @var {Date}
    */
-  @Prop()
+  @Prop({ index: true })
   public createdAt?: Date;
 
   /**
@@ -115,25 +116,13 @@ export class Account extends Transferable<AccountDTO> /* extends Documentable */
       address: this.address,
     };
   }
-
-  /**
-   * This method implements the document columns list as defined
-   * for the collection `accounts`.
-   *
-   * @returns {Record<string, any>}    The individual data fields that belong to the document.
-   */
-  public get toDocument(): Record<string, any> {
-    return {
-      id: this._id,
-      address: this.address,
-      transactionsCount: this.transactionsCount,
-      firstTransactionAt: this.firstTransactionAt,
-      firstTransactionAtBlock: this.firstTransactionAtBlock,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-    }
-  }
 }
+
+/**
+ * @type AccountDocument
+ * @description XXX
+ */
+ export type AccountDocument = Account & Documentable;
 
 /**
  * @class AccountModel
@@ -160,7 +149,7 @@ export class Account extends Transferable<AccountDTO> /* extends Documentable */
  *
  * @since v0.2.0
  */
-export class AccountModel extends Model<Account> {}
+export class AccountModel extends Model<AccountDocument> {}
 
 /**
  * @class AccountQuery
@@ -172,16 +161,16 @@ export class AccountModel extends Model<Account> {}
  *
  * @since v0.2.0
  */
-export class AccountQuery extends Queryable<Account> {
+export class AccountQuery extends Queryable<AccountDocument> {
   /**
    * Copy constructor for pageable queries in `accounts` collection.
    *
    * @see Queryable
-   * @param   {Account|undefined}     document          The *document* instance (defaults to `undefined`) (optional).
+   * @param   {AccountDocument|undefined}     document          The *document* instance (defaults to `undefined`) (optional).
    * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
   public constructor(
-    document?: Account,
+    document?: AccountDocument,
     queryParams: QueryParameters = undefined,
   ) {
     super(document, queryParams);

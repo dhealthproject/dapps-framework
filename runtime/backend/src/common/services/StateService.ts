@@ -10,10 +10,9 @@
 // external dependencies
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
 
 // internal dependencies
-import { State, StateModel, StateQuery } from "../models/StateSchema";
+import { State, StateDocument, StateModel, StateQuery } from "../models/StateSchema";
 import type { StateData } from "../models/StateData";
 import { QueryService } from "./QueryService";
 
@@ -34,7 +33,7 @@ export class StateService {
    */
   constructor(
     @InjectModel(State.name) private readonly model: StateModel,
-    private readonly queryService: QueryService<State, StateModel>,
+    private readonly queryService: QueryService<StateDocument, StateModel>,
   ) {}
 
   /**
@@ -47,7 +46,7 @@ export class StateService {
    * @param   {StateQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @returns {Promise<State>}  The resulting `states` document.
    */
-  async findOne(query: StateQuery): Promise<State> {
+  async findOne(query: StateQuery): Promise<StateDocument> {
     return await this.queryService.findOne(query, this.model);
   }
 
@@ -65,7 +64,7 @@ export class StateService {
   async updateOne(
     query: StateQuery,
     data: StateData,
-  ): Promise<State> {
+  ): Promise<StateDocument> {
     return await this.queryService.createOrUpdate(
       query,
       this.model,

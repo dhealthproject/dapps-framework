@@ -9,7 +9,7 @@
  */
 // external dependencies
 import { Injectable } from "@nestjs/common";
-import { Model } from "mongoose";
+import { Model, FilterQuery } from "mongoose";
 
 // internal dependencies
 import { Documentable } from "../concerns/Documentable";
@@ -147,19 +147,31 @@ export class QueryService<
    * 
    * @access public
    * @async
-   * @param   {Queryable<TDocument>}         query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @param   {TModel}  model     The model *class instance* used for the resulting document.
+   * @param   {Queryable<TDocument>}    query           The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {TModel}                  model           The model *class instance* used for the resulting document.
+   * @param   {boolean}                 stripDocument   Determines whether the query should be lean (strip out document properties).
    * @returns {Promise<TDocument>}  The resulting document.
    */
   public async findOne(
     query: Queryable<TDocument>,
     model: TModel,
-  ): Promise<TDocument> {
+    stripDocument: boolean = false,
+  ): Promise<TDocument|null> {
     // wrap pagination+query to be mongo-compatible
     const { searchQuery } = this.getQueryConfig(query);
 
-    // execute query and return a single document
-    return await model.findOne({ $match: searchQuery }).exec();
+    // prepares the query
+    const mongoQuery = model.findOne(searchQuery as FilterQuery<TDocument>);
+
+    // a *lean* selector query executes a performance-
+    // improved mongo query in that document properties
+    // are stripped out and only `_id` is returned.
+    if (true === stripDocument) {
+      return await mongoQuery.select("_id").lean();
+    }
+
+    // executes the [non-lean] query
+    return await mongoQuery.exec();
   }
 
   /**
@@ -234,7 +246,7 @@ export class QueryService<
       .upsert()
       .update({
         $set: {
-          ...(document.toDocument),
+          ...(document),
           updatedAt: new Date(),
         },
       })

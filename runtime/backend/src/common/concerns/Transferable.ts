@@ -7,9 +7,6 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// internal dependencies
-import { Documentable } from "./Documentable";
-
 /**
  * @class Transferable
  * @description This concern requires the presence of fields that
@@ -27,7 +24,7 @@ import { Documentable } from "./Documentable";
  * @todo Obviously remove the hacky `toDTO()` with some formatting/encoding/validation logic.
  * @since v0.2.0
  */
-export class Transferable<TDTOType> extends Documentable {
+export class Transferable<TDTOType> {
   /**
    * Returns the data transfer object related to an individual
    * entity and thereby we consider it to be **transferable**.

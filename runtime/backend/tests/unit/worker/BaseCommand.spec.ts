@@ -15,7 +15,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import type { Scope } from "../../../src/common/models/Scope";
 import { QueryService } from "../../../src/common/services/QueryService";
 import { StateService } from "../../../src/common/services/StateService";
-import { State, StateModel, StateQuery } from "../../../src/common/models/StateSchema";
+import { StateDocument, StateModel, StateQuery } from "../../../src/common/models/StateSchema";
 import { StateData } from "../../../src/common/models/StateData";
 import { BaseCommand, BaseCommandOptions } from "../../../src/worker/BaseCommand";
 
@@ -61,10 +61,15 @@ describe("worker/BaseCommand -->", () => {
   // global injectable service setup
   let fakeCommand: MockBaseCommand;
   let stateService: StateService;
-  let queryService: QueryService<State, StateModel>;
+  let queryService: QueryService<StateDocument, StateModel>;
 
   // each test gets its own TestingModule (injectable)
+  let mockDate: Date;
   beforeEach(async () => {
+    mockDate = new Date(1212, 1, 1);
+    jest.useFakeTimers("modern");
+    jest.setSystemTime(mockDate);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         QueryService,
@@ -79,7 +84,7 @@ describe("worker/BaseCommand -->", () => {
 
     fakeCommand = module.get<MockBaseCommand>(MockBaseCommand);
     stateService = module.get<StateService>(StateService);
-    queryService = module.get<QueryService<State, StateModel>>(QueryService);
+    queryService = module.get<QueryService<StateDocument, StateModel>>(QueryService);
   });
 
   // testing internals
@@ -114,20 +119,22 @@ describe("worker/BaseCommand -->", () => {
       expect((fakeCommand as any).debugLog).toHaveBeenCalled();
     });
 
-    it("should not print debug information given quiet mode", async () => {
-      // prepare
-      (fakeCommand as any).debugLog = jest.fn();
-      // act
-      await fakeCommand.run([], { debug: true, quiet: true });
-      // assert
-      expect((fakeCommand as any).debugLog).not.toHaveBeenCalled(); // not!
-    });
-
-    it("should not print debug information given disabled debug mode", async () => {
+    it("should print only timing information given disabled debug mode", async () => {
       // prepare
       (fakeCommand as any).debugLog = jest.fn();
       // act
       await fakeCommand.run([], { debug: false });
+      // assert
+      expect((fakeCommand as any).debugLog).toHaveBeenCalledTimes(2);
+      expect((fakeCommand as any).debugLog).toHaveBeenNthCalledWith(1, `Initializing command "fake-command"...`);
+      expect((fakeCommand as any).debugLog).toHaveBeenNthCalledWith(2, `Runtime duration: 0s`);
+    });
+
+    it("should not print any information given quiet mode", async () => {
+      // prepare
+      (fakeCommand as any).debugLog = jest.fn();
+      // act
+      await fakeCommand.run([], { debug: true, quiet: true });
       // assert
       expect((fakeCommand as any).debugLog).not.toHaveBeenCalled(); // not!
     });

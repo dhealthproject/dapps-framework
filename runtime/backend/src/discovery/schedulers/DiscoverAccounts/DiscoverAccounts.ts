@@ -12,23 +12,18 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
-import {
-  AggregateTransactionInfo,
-  PublicAccount,
-  Transaction as SdkTransaction,
-  TransactionInfo,
-  NetworkType,
-} from "@dhealth/sdk";
+import { PublicAccount, NetworkType } from "@dhealth/sdk";
 
 // internal dependencies
+import { QueryParameters } from "../../../common/concerns/Queryable";
 import { StateService } from "../../../common/services/StateService";
 import { NetworkService } from "../../../common/services/NetworkService";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
 import { AccountsService } from "../../services/AccountsService";
 import { TransactionsService } from "../../../discovery/services/TransactionsService";
-import { Account, AccountModel, AccountQuery } from "../../models/AccountSchema";
+import { Account, AccountDocument, AccountModel, AccountQuery } from "../../models/AccountSchema";
 import { AccountDiscoveryStateData } from "../../models/AccountDiscoveryStateData";
-import { Transaction, TransactionQuery } from "../../models/TransactionSchema";
+import { TransactionDocument, TransactionQuery } from "../../models/TransactionSchema";
 
 /**
  * @class DiscoverAccounts
@@ -53,6 +48,24 @@ export class DiscoverAccounts
   protected discoveredAddresses: string[] = [];
 
   /**
+   * Memory store for the last page number being read. This is used
+   * in {@link getStateData} to update the latest execution state.
+   *
+   * @access private
+   * @var {number}
+   */
+  private lastPageNumber: number;
+
+  /**
+   * Memory store for the last time of execution. This is used
+   * in {@link getStateData} to update the latest execution state.
+   *
+   * @access private
+   * @var {number}
+   */
+  private lastExecutedAt: number;
+
+  /**
    * The constructor of this class.
    * Params will be automatically injected upon called.
    *
@@ -71,6 +84,10 @@ export class DiscoverAccounts
   ) {
     // required super call
     super(statesService);
+
+    // sets default state data
+    this.lastPageNumber = 1;
+    this.lastExecutedAt = new Date().valueOf();
   }
 
   /**
@@ -101,7 +118,7 @@ export class DiscoverAccounts
    * @returns {string}
    */
   protected get signature(): string {
-    return `${this.command} [--source "SOURCE-ADDRESS-OR-PUBKEY"]`;
+    return `${this.command}`;
   }
 
   /**
@@ -118,7 +135,8 @@ export class DiscoverAccounts
    */
   protected getStateData(): AccountDiscoveryStateData {
     return {
-      lastExecutedAt: new Date().valueOf(),
+      lastPageNumber: this.lastPageNumber,
+      lastExecutedAt: this.lastExecutedAt,
     } as AccountDiscoveryStateData
   }
 
@@ -151,6 +169,9 @@ export class DiscoverAccounts
     // creates the discovery source public account
     const publicAcct  = PublicAccount.createFromPublicKey(dappPubKey, networkType);
 
+    // keep track of last execution
+    this.lastExecutedAt = new Date().valueOf();
+
     // executes the actual command logic (this will call discover())
     await super.run([], {
       source: publicAcct.address.plain(),
@@ -165,9 +186,8 @@ export class DiscoverAccounts
    * from the dApp's main account.
    * <br /><br />
    * Discovery is done in 3 steps as described below:
-   * - Step 1: Reads the dApp's main account outgoing transactions
-   * - Step 2: Updates accounts' transaction time if necessary
-   * - Step 3: Updates the accounts documents in a batch operation
+   * - Step 1: Reads a batch of 500 transactions and discover addresses
+   * - Step 2: Find or create a corresponding document in `accounts`
    *
    * @access public
    * @async
@@ -180,44 +200,65 @@ export class DiscoverAccounts
       this.debugLog(`Starting accounts discovery for source "${options.source}"`);
     }
 
-    // fetches transactions *from the database* (mongo)
-    const transactions = await this.transactionsService.find(new TransactionQuery(
-      {} as Transaction, // query *all* transactions
-    ));
+    // get the latest transactions page number
+    if (!!this.state && !!this.state.data && "lastPageNumber" in this.state.data) {
+      this.lastPageNumber = this.state.data.lastPageNumber;
+    }
 
-    // proceeds to extracting accounts from transactions
-    this.discoveredAddresses = this.discoveredAddresses.concat(
-      transactions.data.map(t => t.signerAddress),
-    ).filter((v, i, s) => s.indexOf(v) === i); // unique
+    // display debug information about configuration
+    if (options.debug && !options.quiet) {
+      this.debugLog(`Last accounts discovery ended with page: "${this.lastPageNumber}"`);
+    }
 
-    // (2) each discovered address is cached in our `accounts`
-    // collection and may require the creation of a document
-    let uniqueAddresses: string[] = this.discoveredAddresses.filter(
-      async (address: string) => undefined === await this.accountsService.findOne(
-        new AccountQuery({ address } as Account)
-      )
-    );
+    // (1) each round queries a page of 100 transactions *from the database*
+    // and discovers addresses that are involved in said transactions
+    for (let i = this.lastPageNumber, max = this.lastPageNumber+5;
+      i < max;
+      i++, this.lastPageNumber++) {
+
+      // fetches transactions *from the database* (mongo)
+      const transactions = await this.transactionsService.find(new TransactionQuery(
+        {} as TransactionDocument, // queries *any* transaction
+        {
+          pageNumber: i, // in batches of 100 per page
+          pageSize: 100,
+        } as QueryParameters,
+      ));
+
+      // proceeds to extracting accounts from transactions
+      this.discoveredAddresses = this.discoveredAddresses.concat(
+        transactions.data.map(t => t.signerAddress),
+      ).filter((v, i, s) => s.indexOf(v) === i); // unique
+    }
 
     if (options.debug && !options.quiet) {
-      this.debugLog(`Found ${uniqueAddresses.length} new accounts from transactions`);
+      this.debugLog(`Found ${this.discoveredAddresses.length} new accounts from transactions`);
     }
 
-    // (3) each round creates or finds 1 `accounts` document
-    const documents: Account[] = [];
-    for (let i = 0, max = uniqueAddresses.length; i < max; i++) {
-      documents.push(this.model.create({
-        address: uniqueAddresses[i],
-      }));
-    }
+    // (2) each round creates or finds 1 `accounts` document
+    let nSkipped: number = 0;
+    for (let i = 0, max = this.discoveredAddresses.length; i < max; i++) {
+      // retrieve existence information
+      const documentExists: boolean = await this.accountsService.exists(new AccountQuery({
+        address: this.discoveredAddresses[i],
+      } as AccountDocument));
 
-    // (4) commits documents to database collection `accounts`
-    if (documents.length > 0) {
-      // display debug information about database operation
-      if (options.debug && !options.quiet) {
-        this.debugLog(`Creating ${documents.length} accounts documents in database`);
+      // skip update for known accounts
+      if (true === documentExists) {
+        nSkipped++;
+        continue;
       }
 
-      this.accountsService.updateBatch(documents);
+      // store the discovered address in `accounts`
+      await this.model.create({
+        address: this.discoveredAddresses[i],
+      });
     }
+
+    if (options.debug && !options.quiet) {
+      this.debugLog(`Skipped ${nSkipped} account(s) that already exist`);
+    }
+
+    // no-return (void)
   }
 }

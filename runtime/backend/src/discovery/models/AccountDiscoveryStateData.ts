@@ -24,7 +24,19 @@ import type { StateData } from "../../common/models/StateData";
  */
 export class AccountDiscoveryStateData implements StateData {
   /**
-   * 
+   * Contains the last page number that was used in the
+   * transactions database query. Since accounts are all
+   * discovery from transactions, we only need to read a
+   * transaction once to discover the involved address(es).
+   *
+   * @access public
+   * @var {number}
+   */
+  public lastPageNumber: number;
+
+  /**
+   * Contains the timestamp of the last execution of the
+   * accounts discovery command.
    *
    * @access public
    * @var {number}

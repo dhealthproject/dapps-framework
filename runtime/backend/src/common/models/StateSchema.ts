@@ -12,6 +12,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 
 // internal dependencies
+import { Documentable } from "../concerns/Documentable";
 import { Transferable } from "../concerns/Transferable";
 import { Queryable, QueryParameters } from "../concerns/Queryable";
 import { StateDTO } from "../models/StateDTO";
@@ -33,7 +34,7 @@ import type { StateData } from "./StateData";
 @Schema({
   timestamps: true,
 })
-export class State extends Transferable<StateDTO> /* extends Documentable */ {
+export class State extends Transferable<StateDTO> {
   /**
    * The state cache document's **name**. Note that this field must
    * contain dynamic module names, e.g. `"discovery"` or `"payout",
@@ -43,7 +44,7 @@ export class State extends Transferable<StateDTO> /* extends Documentable */ {
    * @access public
    * @var {string}
    */
-  @Prop({ required: true, index: true })
+  @Prop({ required: true, index: true, unique: true, type: String })
   public name: string;
 
   /**
@@ -71,21 +72,13 @@ export class State extends Transferable<StateDTO> /* extends Documentable */ {
       name: this.name,
     }
   }
-
-  /**
-   * This method implements the document columns list as defined
-   * for the collection `states`.
-   *
-   * @returns {Record<string, any>}    The individual data fields that belong to the document.
-   */
-  public get toDocument(): Record<string, any> {
-    return {
-      id: this._id,
-      name: this.name,
-      data: this.data,
-    }
-  }
 }
+
+/**
+ * @type StateDocument
+ * @description XXX
+ */
+ export type StateDocument = State & Documentable;
 
 /**
  * @class StateModel
@@ -112,7 +105,7 @@ export class State extends Transferable<StateDTO> /* extends Documentable */ {
  *
  * @since v0.2.0
  */
-export class StateModel extends Model<State> {}
+export class StateModel extends Model<StateDocument> {}
 
 /**
  * @class StateQuery
@@ -124,16 +117,16 @@ export class StateModel extends Model<State> {}
  *
  * @since v0.2.0
  */
-export class StateQuery extends Queryable<State> {
+export class StateQuery extends Queryable<StateDocument> {
   /**
    * Copy constructor for pageable queries in `authTokens` collection.
    *
    * @see Queryable
-   * @param   {State|undefined}       document          The *document* instance (defaults to `undefined`) (optional).
+   * @param   {StateDocument|undefined}       document          The *document* instance (defaults to `undefined`) (optional).
    * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
   public constructor(
-    document?: State,
+    document?: StateDocument,
     queryParams: QueryParameters = undefined,
   ) {
     super(document, queryParams);

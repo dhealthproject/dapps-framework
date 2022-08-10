@@ -49,8 +49,9 @@ export const createTransaction = (
   hash: string = "fakeHash1",
   type: TransactionType = TransactionType.TRANSFER,
 ): any => ({
-  transactionInfo: { hash },
+  transactionInfo: { hash, height: { compact: jest.fn() } },
   signer: { address: { plain: jest.fn() } },
+  recipientAddress: { plain: jest.fn()},
   type,
   serialize: jest.fn().mockReturnValue(mockUnsignedTransferTransaction),
 });
@@ -64,8 +65,8 @@ export class MockModel {
   constructor(dto?: any) {
     this.data = dto;
   }
-  create() {
-    return this.createStub();
+  create(data: any) {
+    return this.createStub(data);
   }
   save() {
     return jest.fn(() => this.data).call(this);

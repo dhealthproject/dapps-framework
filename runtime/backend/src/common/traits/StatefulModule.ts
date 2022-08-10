@@ -12,7 +12,7 @@ import { Logger } from "@nestjs/common";
 
 // internal dependencies
 import { StateService } from "../services/StateService";
-import { State, StateQuery } from "../models/StateSchema";
+import { StateDocument, StateQuery } from "../models/StateSchema";
 import { StateData } from "../models/StateData";
 
 /**
@@ -31,9 +31,9 @@ export abstract class StatefulModule {
    *
    * @see StateService
    * @access protected
-   * @var {State}
+   * @var {StateDocument}
    */
-  protected state: State;
+  protected state: StateDocument;
 
   /**
    * This property permits to log information to the console or in files
@@ -68,7 +68,7 @@ export abstract class StatefulModule {
    */
   protected getStateQuery(): StateQuery {
     return new StateQuery(
-      { name: this.stateIdentifier } as State,
+      { name: this.stateIdentifier } as StateDocument,
     );
   }
 

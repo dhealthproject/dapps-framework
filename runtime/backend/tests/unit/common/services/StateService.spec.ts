@@ -14,11 +14,11 @@ import { Test, TestingModule } from "@nestjs/testing";
 // internal dependencies
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
-import { State, StateModel, StateQuery } from "../../../../src/common/models/StateSchema";
+import { StateDocument, StateModel, StateQuery } from "../../../../src/common/models/StateSchema";
 
 describe("common/StateService", () => {
   let service: StateService;
-  let queryService: QueryService<State, StateModel>;
+  let queryService: QueryService<StateDocument, StateModel>;
 
   const findOneCall = jest.fn(() => ({ exec: () => ({}) }));
   const saveOneCall = jest.fn(() => ({ exec: () => ({}) }));
@@ -40,7 +40,7 @@ describe("common/StateService", () => {
     }).compile();
 
     service = module.get<StateService>(StateService);
-    queryService = module.get<QueryService<State, StateModel>>(QueryService);
+    queryService = module.get<QueryService<StateDocument, StateModel>>(QueryService);
   });
 
   it("should be defined", () => {
@@ -49,7 +49,7 @@ describe("common/StateService", () => {
 
   describe("findOne() -->", () => {
     it("should call findOne() from queryService with correct param", async () => {
-      const expectedResult = {} as State;
+      const expectedResult = {} as StateDocument;
       const findMock = jest
         .spyOn(queryService, "findOne")
         .mockResolvedValue(expectedResult);
@@ -61,7 +61,7 @@ describe("common/StateService", () => {
 
   describe("updateOne() -->", () => {
     it("should call updateOne() from queryService with correct param", async () => {
-      const expectedResult = { data: {} } as State;
+      const expectedResult = { data: {} } as StateDocument;
       const findMock = jest
         .spyOn(queryService, "createOrUpdate")
         .mockResolvedValue(expectedResult);

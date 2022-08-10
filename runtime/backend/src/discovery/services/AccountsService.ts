@@ -13,7 +13,7 @@ import { InjectModel } from "@nestjs/mongoose";
 
 // internal dependencies
 import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
-import { Account, AccountModel, AccountQuery } from "../models/AccountSchema";
+import { Account, AccountDocument, AccountModel, AccountQuery } from "../models/AccountSchema";
 import { QueryService } from "../../common/services/QueryService";
 
 /**
@@ -35,7 +35,7 @@ export class AccountsService {
    */
   constructor(
     @InjectModel(Account.name) private readonly model: AccountModel,
-    private readonly queriesService: QueryService<Account, AccountModel>,
+    private readonly queriesService: QueryService<AccountDocument, AccountModel>,
   ) {}
 
   /**
@@ -46,9 +46,9 @@ export class AccountsService {
    * @access public
    * @async
    * @param   {AccountQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @returns {Promise<StateDocument>}  The resulting `states` document.
+   * @returns {Promise<StateDocument>}  The resulting `accounts` document.
    */
-  async findOne(query: AccountQuery): Promise<Account> {
+  async findOne(query: AccountQuery): Promise<AccountDocument> {
     return await this.queriesService.findOne(query, this.model);
   }
 
@@ -57,10 +57,33 @@ export class AccountsService {
    *
    * @async
    * @param   {AccountQuery} query
-   * @returns {Promise<PaginatedResultDTO<Account>>}
+   * @returns {Promise<PaginatedResultDTO<AccountDocument>>}
    */
-  async find(query: AccountQuery): Promise<PaginatedResultDTO<Account>> {
+  async find(query: AccountQuery): Promise<PaginatedResultDTO<AccountDocument>> {
     return await this.queriesService.find(query, this.model);
+  }
+
+  /**
+   * Method to query the *existence* of a document in the
+   * `accounts` collection.
+   * <br /><br />
+   * This executes a *lean* mongoose query such that the
+   * properties of the returned document are *reduced* to
+   * only the `"_id"` field.
+   *
+   * @param   {AccountQuery}  query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @returns {Promise<boolean>}  Whether a document exists which validates the passed query.
+   */
+  async exists(query: AccountQuery): Promise<boolean> {
+    // executes a *lean* mongoose findOne query
+    const document: AccountDocument = await this.queriesService.findOne(
+      query,
+      this.model,
+      true, // stripDocument ("lean query")
+    );
+
+    // https://simplernerd.com/typescript-convert-bool/
+    return !!document;
   }
 
   /**
@@ -71,13 +94,13 @@ export class AccountsService {
    * @param   {AccountQuery}          query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @param   {AccountModel}           data    The fields or data that has to be updated (will be added to `$set: {}`).
    * @param   {Record<string, any>}   ops    The operations that must be run additionally (e.g. `$inc: {}`) (optional).
-   * @returns {Promise<Account>}  The *updated* `states` document.
+   * @returns {Promise<Account>}  The *updated* `accounts` document.
    */
   async createOrUpdate(
     query: AccountQuery,
     data: AccountModel,
     ops: Record<string, any> = {},
-  ): Promise<Account> {
+  ): Promise<AccountDocument> {
     return await this.queriesService.createOrUpdate(
       query,
       this.model,

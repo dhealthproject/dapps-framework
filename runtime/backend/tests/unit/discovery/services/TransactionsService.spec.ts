@@ -15,11 +15,11 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
-import { Transaction, TransactionModel, TransactionQuery } from "../../../../src/discovery/models/TransactionSchema";
+import { TransactionDocument, TransactionModel, TransactionQuery } from "../../../../src/discovery/models/TransactionSchema";
 
 describe("discovery/TransactionsService", () => {
   let service: TransactionsService;
-  let queriesService: QueryService<Transaction, TransactionModel>;
+  let queriesService: QueryService<TransactionDocument, TransactionModel>;
   let mockDate: Date;
 
   // for each AccountService test we create a testing module
@@ -40,7 +40,7 @@ describe("discovery/TransactionsService", () => {
     }).compile();
 
     service = module.get<TransactionsService>(TransactionsService);
-    queriesService = module.get<QueryService<Transaction, TransactionModel>>(QueryService);
+    queriesService = module.get<QueryService<TransactionDocument, TransactionModel>>(QueryService);
   });
 
   it("should be defined", () => {
@@ -51,7 +51,7 @@ describe("discovery/TransactionsService", () => {
     it("should use QueryService.find() method with correct query", async () => {
       // prepare
       const expectedResult = {
-        data: [{} as Transaction],
+        data: [{} as TransactionDocument],
         pagination: {
           pageNumber: 1,
           pageSize: 20,
@@ -129,7 +129,6 @@ describe("discovery/TransactionsService", () => {
         transactionHash: "fakeHash1",
       });
       (transactionDoc as any).toQuery = jest.fn();
-      (transactionDoc as any).toDocument = transactionDoc.data;
 
       // act
       await service.updateBatch([transactionDoc]);
@@ -138,7 +137,7 @@ describe("discovery/TransactionsService", () => {
       expect(upsertMock.update).toHaveBeenCalled();
       expect(upsertMock.update).toHaveBeenCalledWith({
         $set: {
-          ...(transactionDoc.data),
+          ...(transactionDoc),
           updatedAt: mockDate,
         },
       });

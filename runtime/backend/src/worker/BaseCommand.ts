@@ -189,9 +189,13 @@ export abstract class BaseCommand
     this.logger = new Logger(`${this.scope}/${this.command}`);
     this.argv = passedParams;
 
+    // if not quiet, display info about start of execution
+    if (!options.quiet) {
+      this.debugLog(`Initializing command "${this.command}"...`);
+    }
+
     // display debug info about arguments and options
     if (options.debug && !options.quiet) {
-      this.debugLog(`Initializing command "${this.command}"...`);
       if (passedParams.length) this.debugLog(
         `Arguments received: ["${passedParams.join("\", \"")}"]`
       );
@@ -216,8 +220,9 @@ export abstract class BaseCommand
 
       // displays state debug information
       if (options.debug && !options.quiet) {
-        this.debugLog(`Using state query: ${JSON.stringify(this.getStateQuery(), undefined, 2)}`);
-        this.debugLog(`Current state: ${JSON.stringify(this.state, undefined, 2)}`);
+        this.debugLog(
+          `Current state for "${this.stateIdentifier}": ${JSON.stringify(this.state, undefined, 2)}`,
+        );
       }
 
       // delegate method execution to child classes
@@ -232,7 +237,9 @@ export abstract class BaseCommand
 
       // displays state debug information
       if (options.debug && !options.quiet) {
-        this.debugLog(`Updated state: ${JSON.stringify(this.getStateData(), undefined, 2)}`);
+        this.debugLog(
+          `Updated state for "${this.stateIdentifier}": ${JSON.stringify(this.getStateData(), undefined, 2)}`,
+        );
       }
     }
     catch (e: any) {
@@ -246,8 +253,8 @@ export abstract class BaseCommand
     // tracks ending moment
     const endTime = new Date().getTime();
 
-    // display debug info about total duration
-    if (options.debug && !options.quiet) {
+    // if not quiet, display info about total duration
+    if (!options.quiet) {
       this.debugLog(`Runtime duration: ${(endTime - startTime) / 1000}s`);
     }
 

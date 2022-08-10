@@ -15,11 +15,11 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { AccountsService } from "../../../../src/discovery/services/AccountsService";
-import { Account, AccountModel, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
+import { AccountDocument, AccountModel, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
 
 describe("discovery/AccountsService", () => {
   let service: AccountsService;
-  let queriesService: QueryService<Account, AccountModel>;
+  let queriesService: QueryService<AccountDocument, AccountModel>;
   let mockDate: Date;
 
   // for each AccountService test we create a testing module
@@ -40,7 +40,7 @@ describe("discovery/AccountsService", () => {
     }).compile();
 
     service = module.get<AccountsService>(AccountsService);
-    queriesService = module.get<QueryService<Account, AccountModel>>(QueryService);
+    queriesService = module.get<QueryService<AccountDocument, AccountModel>>(QueryService);
   });
 
   it("should be defined", () => {
@@ -51,7 +51,7 @@ describe("discovery/AccountsService", () => {
     it("should use QueryService.find() method with correct query", async () => {
       // prepare
       const expectedResult = {
-        data: [{} as Account],
+        data: [{} as AccountDocument],
         pagination: {
           pageNumber: 1,
           pageSize: 20,
@@ -129,7 +129,6 @@ describe("discovery/AccountsService", () => {
         transactionsCount: 1,
       });
       (accountDoc as any).toQuery = jest.fn();
-      (accountDoc as any).toDocument = accountDoc.data;
 
       // act
       await service.updateBatch([accountDoc]);
@@ -138,7 +137,7 @@ describe("discovery/AccountsService", () => {
       expect(upsertMock.update).toHaveBeenCalled();
       expect(upsertMock.update).toHaveBeenCalledWith({
         $set: {
-          ...(accountDoc.data),
+          ...(accountDoc),
           updatedAt: mockDate,
         },
       });

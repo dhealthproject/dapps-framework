@@ -27,7 +27,7 @@ import { Queryable, QueryParameters } from "../concerns/Queryable";
 @Schema({
   timestamps: true,
 })
-export class AuthToken extends Documentable /* not transferable */ {
+export class AuthToken /* not transferable */ {
   /**
    * The authentication code that is randomly generated for users
    * to use during authentication.
@@ -35,7 +35,7 @@ export class AuthToken extends Documentable /* not transferable */ {
    * @access public
    * @var {string}
    */
-  @Prop({ required: true })
+  @Prop({ required: true, index: true, unique: true, type: String })
   public authCode: string;
 
   /**
@@ -54,7 +54,7 @@ export class AuthToken extends Documentable /* not transferable */ {
    * @access public
    * @var {Date}
    */
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   public usedAt: Date;
 
   /**
@@ -69,22 +69,13 @@ export class AuthToken extends Documentable /* not transferable */ {
       authCode: this.authCode,
     };
   }
-
-  /**
-   * This method implements the document columns list as defined
-   * for the collection `authTokens`.
-   *
-   * @returns {Record<string, any>}    The individual data fields that belong to the document.
-   */
-  public get toDocument(): Record<string, any> {
-    return {
-      id: this._id,
-      authCode: this.authCode,
-      usedBy: this.usedBy,
-      usedAt: this.usedAt,
-    }
-  }
 }
+
+/**
+ * @type AuthTokenDocument
+ * @description XXX
+ */
+export type AuthTokenDocument = AuthToken & Documentable;
 
 /**
  * @class AuthTokenModel
@@ -111,7 +102,7 @@ export class AuthToken extends Documentable /* not transferable */ {
  *
  * @since v0.2.0
  */
-export class AuthTokenModel extends Model<AuthToken> {}
+export class AuthTokenModel extends Model<AuthTokenDocument> {}
 
 /**
  * @class AuthTokenQuery
@@ -123,16 +114,16 @@ export class AuthTokenModel extends Model<AuthToken> {}
  *
  * @since v0.2.0
  */
-export class AuthTokenQuery extends Queryable<AuthToken> {
+export class AuthTokenQuery extends Queryable<AuthTokenDocument> {
   /**
    * Copy constructor for pageable queries in `authTokens` collection.
    *
    * @see Queryable
-   * @param   {AuthToken|undefined}   document          The *document* instance (defaults to `undefined`) (optional).
+   * @param   {AuthTokenDocument|undefined}   document          The *document* instance (defaults to `undefined`) (optional).
    * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
   public constructor(
-    document?: AuthToken,
+    document?: AuthTokenDocument,
     queryParams: QueryParameters = undefined,
   ) {
     super(document, queryParams);

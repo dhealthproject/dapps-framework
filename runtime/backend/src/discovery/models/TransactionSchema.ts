@@ -16,6 +16,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 
 // internal dependencies
+import { Documentable } from "../../common/concerns/Documentable";
 import { Transferable } from "../../common/concerns/Transferable";
 import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
 import { TransactionDTO } from "../models/TransactionDTO";
@@ -35,11 +36,25 @@ import { TransactionDTO } from "../models/TransactionDTO";
  * @since v0.2.0
  */
 @Schema({
-  timestamps: false,
+  timestamps: true,
 })
-export class Transaction extends Transferable<TransactionDTO> /* extends Documentable */ {
+export class Transaction extends Transferable<TransactionDTO> {
   /**
-   * XXX
+   * This is the discovery source's address, not to be confused
+   * with the signer address. A discovery source is an address
+   * owned by the dApp itself and *from/to which* transactions
+   * are issued.
+   *
+   * @access public
+   * @var {string}
+   */
+  @Prop({ required: true, index: true })
+  public sourceAddress: string;
+
+  /**
+   * This is the signer's address. The signer corresponds to the
+   * issuer of said transaction ("owner"). It is not to be confused
+   * with the discovery source address.
    *
    * @access public
    * @var {string}
@@ -48,34 +63,73 @@ export class Transaction extends Transferable<TransactionDTO> /* extends Documen
   public signerAddress: string;
 
   /**
-   * XXX
-   *
-   * @access public
-   * @var {string}
-   */
-   @Prop({ required: true, index: true })
-  public signerPublicKey: string;
-
-  /**
-   * XXX
-   *
-   * @access public
-   * @var {string}
-   */
-  @Prop({ required: true })
-  public transactionType: string;
-
-  /**
-   * XXX
+   * This is the signer's public key. The signer corresponds to
+   * the issuer of said transaction ("owner").
    *
    * @access public
    * @var {string}
    */
   @Prop({ required: true, index: true })
+  public signerPublicKey: string;
+
+  /**
+   * This is the recipient address. The recipient corresponds to the
+   * destination of said transaction.
+   *
+   * @access public
+   * @var {string}
+   */
+  @Prop({ required: true, index: true })
+  public recipientAddress: string;
+
+  /**
+   * This is the transaction mode and may contain one of the
+   * following values:
+   * - `"incoming"`: This transaction is an *incoming* transaction
+   *   of the {@link sourceAddress} discovery source account. i.e.
+   *   this transaction was *sent to* the discovery source account.
+   * - `"outgoing"`: This transaction is an *outgoing* transaction
+   *   of the {@link sourceAddress} discovery source account. i.e.
+   *   this transaction was *sent from* the discovery source account.
+   *
+   * @access public
+   * @var {string}
+   */
+  @Prop({ required: true })
+  public transactionMode: string;
+
+  /**
+   * This is the transaction type as defined in dApps. Typically,
+   * this field will contain `"transfer"`, as for now dApps always
+   * use transfer transactions to perform operations.
+   *
+   * @access public
+   * @var {string}
+   */
+  @Prop({ required: true, index: true })
+  public transactionType: string;
+
+  /**
+   * This is the transaction hash as defined by dHealth Network. It
+   * contains an *immutable* sha3-256 hash created from the transaction
+   * body.
+   * <br /><br />
+   * Due to the usage of sha3-256, this hash is **always** a **32 bytes**
+   * transaction hash (64 characters in hexadecimal notation).
+   *
+   * @access public
+   * @var {string}
+   */
+  @Prop({ required: true, index: true, unique: true, type: String })
   public transactionHash: string;
 
   /**
-   * XXX
+   * This is the transaction signature as defined by dHealth Network. It
+   * contains an *immutable* sha3-512 hash created from *some* of the data
+   * stored in the transaction body.
+   * <br /><br />
+   * Due to the usage of sha3-512, this hash is **always** a **64 bytes**
+   * transaction hash (128 characters in hexadecimal notation).
    *
    * @access public
    * @var {string}
@@ -84,13 +138,37 @@ export class Transaction extends Transferable<TransactionDTO> /* extends Documen
   public signature?: string;
 
   /**
-   * XXX
+   * This is the transaction body as defined by the dApps Framework. This
+   * field contains *only a subset* of the binary payload that represents
+   * this transaction.
+   * <br /><br />
+   * Notably, following transaction header applies on dHealth Network:
+   * ```
+   * size | r1 | sig | pub | r2 | ver | net | type
+   *   4b | 4b | 64b | 32b | 4b |  1b |  1b |   2b
+   * ```
+   * <br /><br />
+   * This field *does not* contain the above transaction header as it is
+   * always the same network-wide, depending on the transaction type. It
+   * permits to save `112 bytes` of data, that is easily reproduced using
+   * the other fields of this document.
    *
    * @access public
    * @var {string}
    */
   @Prop()
   public encodedBody?: string;
+
+  /**
+   * The document's creation block number. This field **does** reflect the
+   * time of creation of a transaction. You can use the dHealth Network API
+   * to find out exact timestamp by block height.
+   *
+   * @access public
+   * @var {number}
+   */
+  @Prop()
+  public creationBlock?: number;
 
   /**
    * The document's discovery timestamp. This field **does not** reflect the
@@ -102,6 +180,30 @@ export class Transaction extends Transferable<TransactionDTO> /* extends Documen
    */
   @Prop()
   public discoveredAt?: Date;
+
+  /**
+   * The document's creation timestamp. This field **does not** reflect the
+   * date of update of a transaction but rather the date of creation of the
+   * cached database entry.
+   * <br /><br />
+   * This field is added for consistency with the other database schema.
+   *
+   * @access public
+   * @var {Date}
+   */
+  @Prop({ index: true })
+  public createdAt: Date;
+
+  /**
+   * The document's update timestamp. This field **does not** reflect the
+   * date of update of a transaction but rather the date of update of the
+   * cached database entry.
+   *
+   * @access public
+   * @var {Date}
+   */
+  @Prop()
+  public updatedAt?: Date;
 
   /**
    * This method implements a specialized query format to query items
@@ -123,30 +225,19 @@ export class Transaction extends Transferable<TransactionDTO> /* extends Documen
   }
 
   /**
-   * This method implements the document columns list as defined
-   * for the collection `transactions`.
-   *
-   * @returns {Record<string, any>}    The individual data fields that belong to the document.
-   */
-  public get toDocument(): Record<string, any> {
-    return {
-      id: this._id,
-      signerAddress: this.signerAddress,
-      transactionType: this.transactionType,
-      transactionHash: this.transactionHash,
-      signature: this.signature,
-      encodedBody: this.encodedBody,
-      discoveredAt: this.discoveredAt,
-    }
-  }
-
-  /**
    * 
    */
   public toSDK(): SdkTransaction {
+    //XXX this assumes "encodedBody" contains the *full* payload.
     return TransactionMapping.createFromPayload(this.encodedBody, false); // false for `isEmbedded`
   }
 }
+
+/**
+ * @type TransactionDocument
+ * @description XXX
+ */
+export type TransactionDocument = Transaction & Documentable;
 
 /**
  * @class TransactionModel
@@ -173,7 +264,7 @@ export class Transaction extends Transferable<TransactionDTO> /* extends Documen
  *
  * @since v0.2.0
  */
-export class TransactionModel extends Model<Transaction> {}
+export class TransactionModel extends Model<TransactionDocument> {}
 
 /**
  * @class TransactionQuery
@@ -185,16 +276,16 @@ export class TransactionModel extends Model<Transaction> {}
  *
  * @since v0.2.0
  */
-export class TransactionQuery extends Queryable<Transaction> {
+export class TransactionQuery extends Queryable<TransactionDocument> {
   /**
    * Copy constructor for pageable queries in `transactions` collection.
    *
    * @see Queryable
-   * @param   {Transaction|undefined} document          The *document* instance (defaults to `undefined`) (optional).
+   * @param   {TransactionDocument|undefined} document          The *document* instance (defaults to `undefined`) (optional).
    * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
    public constructor(
-    document?: Transaction,
+    document?: TransactionDocument,
     queryParams: QueryParameters = undefined,
   ) {
     super(document, queryParams);

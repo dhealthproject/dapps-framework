@@ -14,7 +14,6 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import { NetworkModule } from "../../../common/modules/NetworkModule";
-import { QueryModule } from "../../../common/modules/QueryModule";
 import { StateModule } from "../../../common/modules/StateModule";
 import { TransactionsModule } from "../../modules/TransactionsModule";
 import { Transaction, TransactionSchema } from "../../models/TransactionSchema";
@@ -31,7 +30,6 @@ import { DiscoverTransactions } from "./DiscoverTransactions";
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    QueryModule,
     StateModule,
     NetworkModule,
     TransactionsModule,

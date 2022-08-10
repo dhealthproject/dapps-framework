@@ -21,16 +21,18 @@ import {
   TransactionGroup,
   TransactionInfo,
   TransactionType,
+  TransferTransaction,
 } from "@dhealth/sdk";
+import { UpdateQuery } from "mongoose";
 
 // internal dependencies
 import { StateService } from "../../../common/services/StateService";
 import { NetworkService } from "../../../common/services/NetworkService";
-import { State, StateQuery } from "../../../common/models/StateSchema";
+import { StateDocument, StateQuery } from "../../../common/models/StateSchema";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
 import { TransactionsService } from "../../../discovery/services/TransactionsService";
 import { getTransactionType } from "../../../discovery/models/TransactionTypes";
-import { Transaction, TransactionModel, TransactionQuery } from "../../models/TransactionSchema";
+import { Transaction, TransactionDocument, TransactionModel, TransactionQuery } from "../../models/TransactionSchema";
 import { TransactionDiscoveryStateData } from "../../models/TransactionDiscoveryStateData";
 
 /**
@@ -82,6 +84,8 @@ export interface DiscoverTransactionsCommandOptions extends DiscoveryCommandOpti
  * scheduler. Contains source code for the execution logic of a
  * command with name: `discovery:transactions`.
  *
+ * @todo This discovery scheduler currently *only tracks incoming* transactions of said account.
+ * @todo Should use `BigInt` in {@link extractTransactionBlock} because `height.compact()` is not protected for number overflow.
  * @since v0.2.0
  */
 @Injectable()
@@ -263,7 +267,8 @@ export class DiscoverTransactions
 
     // executes the actual command logic (this will call discover())
     // additionally, updates state.data.lastUsedAccount
-    await this.run([], { source, debug: true } as DiscoveryCommandOptions);
+    // @todo remove debug flag for staging/production releases
+    await this.run(["both"], { source, debug: true } as DiscoveryCommandOptions);
   }
 
   /**
@@ -288,7 +293,7 @@ export class DiscoverTransactions
 
     // per-source synchronization: "discovery:DiscoverTransactions:%SOURCE%"
     const stateIdentifier = `${this.stateIdentifier}:${options.source}`;
-    const stateQuerySrc = new StateQuery({ name: stateIdentifier } as State);
+    const stateQuerySrc = new StateQuery({ name: stateIdentifier } as StateDocument);
 
     // fetch **per-source** synchronization state once
     // Caution: do not confuse with `this.state`, this one
@@ -302,15 +307,16 @@ export class DiscoverTransactions
 
     // display debug information about configuration
     if (options.debug && !options.quiet) {
-      this.debugLog(`Last discovery ended with page: "${this.lastPageNumber}"`);
+      this.debugLog(`Last discovery for "${stateIdentifier}" ended with page: "${this.lastPageNumber}"`);
     }
 
     // note that these may be undefined
-    const { includeUnconfirmed, includePartial} = options;
+    const { includeUnconfirmed, includePartial } = options;
 
     // (1) each round queries 1 page of transactions from REST gateway
     // and fetches a maximum of 5 transaction pages following the last
-    let uniqueHashes: string[] = [];
+    let hashes: string[] = [];
+    let isSynchronized: boolean;
     for (let i = this.lastPageNumber, max = this.lastPageNumber+5;
       i < max;
       i++, this.lastPageNumber++) {
@@ -320,26 +326,24 @@ export class DiscoverTransactions
 
       // executes the promises and fetches sync-state
       const transactionPages = await Promise.all(promises);
-      const isSynchronized = transactionPages.reduce(
+      isSynchronized = transactionPages.reduce(
         (prev, cur) => prev && cur.isLastPage,
         true,
       );
 
       // keeps only the transaction part and drops pagination
-      this.transactions = transactionPages.reduce(
+      const transactions = transactionPages.reduce(
         (prev, cur) => prev.concat(cur.data),
-        []
+        [],
       );
 
-      // (2) each transaction that is read from the network is
-      // cached in our `transactions` collection using the hash
-      // of the transaction as the document primary key.
-      const hashes = this.transactions.map(t => this.extractTransactionHash(t));
-      uniqueHashes = uniqueHashes.concat(hashes.filter(
-        async (transactionHash: string) => undefined === await this.transactionsService.findOne(
-          new TransactionQuery({ transactionHash } as Transaction)
-        )
-      ));
+      // reads transaction hashes
+      hashes = hashes.concat(transactions.map(
+        t => this.extractTransactionHash(t),
+      )).filter((v, i, s) => s.indexOf(v) === i); // unique
+
+      // store transactions in memory during runtime
+      this.transactions = this.transactions.concat(transactions);
 
       // break if this source is now considered synchronized
       if (true === isSynchronized) {
@@ -347,49 +351,84 @@ export class DiscoverTransactions
       }
     }
 
+    // debug information about upcoming database operations
+    if (options.debug && !options.quiet && hashes.length > 0) {
+      this.debugLog(`(${stateIdentifier}) Found ${hashes.length} transactions`);
+    }
+    // also display debug message when no operations are executed
+    else if (options.debug && !options.quiet && !hashes.length) {
+      this.debugLog(`(${stateIdentifier}) No transactions found`);
+    }
+
     // (3) prepares and populates individual `transactions` documents
-    let documents: Transaction[] = [];
-    for (let i = 0, max = uniqueHashes.length; i < max; i++) {
+    //let documents: Transaction[] = [];
+    let nSkipped: number = 0;
+    for (let i = 0, max = hashes.length; i < max; i++) {
       // retrieve full transaction details
       const transaction = this.transactions.find(
-        t => uniqueHashes[i] === this.extractTransactionHash(t)
+        t => hashes[i] === this.extractTransactionHash(t),
       );
 
+      // retrieve existence information
+      const documentExists: boolean = await this.transactionsService.exists(new TransactionQuery({
+        transactionHash: hashes[i],
+      } as TransactionDocument));
+
+      // skip update for known transactions
+      if (true === documentExists) {
+        nSkipped++;
+        continue;
+      }
+
+      // determine the transaction mode
+      const recipient: string = this.extractRecipientAddress(transaction);
+      const sourceAddr: string = this.discoverySource.plain();
+      const transactionMode: string = recipient === sourceAddr ? "incoming" : "outgoing";
+
       // create a `transactions` document
-      documents.push(this.model.create({
-        transactionHash: uniqueHashes[i],
+      await this.model.create({
+        transactionHash: hashes[i],
+        transactionMode,
+        sourceAddress: sourceAddr,
+        recipientAddress: recipient,
         signerAddress: this.extractSignerAddress(transaction),
         signerPublicKey: this.extractSignerPublicKey(transaction),
         transactionType: this.extractTransactionType(transaction),
         signature: this.extractTransactionSignature(transaction),
         encodedBody: this.extractTransactionBody(transaction),
-      }));
+        creationBlock: this.extractTransactionBlock(transaction),
+      });
     }
 
-    // (4) commits documents to database collection `transactions`
-    if (documents.length > 0) {
-      // display debug information about database operation
-      if (options.debug && !options.quiet) {
-        this.debugLog(`Creating ${documents.length} transactions documents in database`);
-      }
-
-      this.transactionsService.updateBatch(documents);
+    if (options.debug && !options.quiet) {
+      this.debugLog(`(${stateIdentifier}) Skipped ${nSkipped} transaction(s) that already exist`);
     }
 
-    // (5) update per-source state `lastPageNumber`
+    // (4) update per-source state `lastPageNumber`
     await this.stateService.updateOne(
-      stateQuerySrc, 
+      stateQuerySrc, // /!\ per-source
       {
         lastPageNumber: this.lastPageNumber,
+        sync: isSynchronized,
       }, 
     );
+
+    // no-return (void)
   }
 
   /**
-   * 
-   * @param sources 
-   * @param state
-   * @returns 
+   * This method will find the *next relevant discovery source*
+   * by iterating through the passed {@link sources} and checking
+   * individual synchronization state.
+   * <br /><br />
+   * Accounts that are fully synchronized require *less* requests
+   * for recent transactions. Note that a *per-source* state is
+   * persisted as well, to keep track of the last page number as
+   * well as to keep track of when the runtime reads the latest
+   * available page of transactions for said discovery source.
+   *
+   * @param   {string[]}    sources   The discovery sources public keys and/or addresses.
+   * @returns {Promise<string>}       The discovery source *address*.
    */
   protected async getNextSource(
     sources: string[],
@@ -407,7 +446,7 @@ export class DiscoverTransactions
       // is internal and synchronizes **per each source**.
       const state = await this.stateService.findOne(new StateQuery({
         name: `${this.stateIdentifier}:${address.plain()}`, // "discovery:DiscoverTransactions:%SOURCE%"
-      } as State));
+      } as StateDocument));
 
       // if current source is synchronized, move to next
       if (!!state && "sync" in state.data && true === state.data.sync) {
@@ -449,7 +488,7 @@ export class DiscoverTransactions
    * @param   {TransactionType[]}   transactionTypes    The transaction types that must be included (defaults to any type). (optional)
    * @param   {boolean}             unfoldEmbedded      Whether embedded transactions must be unfold or not (default to `true`). (optional)
    * @param   {number}              pageSize            The page size (defaults to `100`). (optional)
-   * @param   {Order}               order               The ordering strategy that is used for the query (defaults to `Order.Desc`). (optional)
+   * @param   {Order}               order               The ordering strategy that is used for the query (defaults to `Order.Asc`). (optional)
    * @returns 
    */
   protected getTransactionQuery(
@@ -457,7 +496,7 @@ export class DiscoverTransactions
     transactionTypes: TransactionType[] = [TransactionType.TRANSFER],
     unfoldEmbedded: boolean = true,
     pageSize: number = 100,
-    order: Order = Order.Desc,
+    order: Order = Order.Asc,
   ): any {
     // should hold one of: "incoming", "outgoing" or "both"
     const queryMode: string = this.argv[0];
@@ -487,7 +526,14 @@ export class DiscoverTransactions
 
 
   /**
-   * 
+   * This method creates one or more *transaction page queries*
+   * that are executed using the `@dhealth/sdk` transactions
+   * repository.
+   * <br /><br />
+   * Note that the unconfirmed- and partial- transaction pools
+   * do not use multiple pages and thereby always return *recent*
+   * transactions.
+   *
    * @param transactionRepository 
    * @returns {Promise<Page<Transaction>>[]}  An array of *promises* for transaction pages.
    */
@@ -502,7 +548,11 @@ export class DiscoverTransactions
     // initialize a connection to the node
     // and prepare a transaction query (to REST gateway)
     const repository = this.networkService.getTransactionRepository();
-    const baseQuery = this.getTransactionQuery(pageNumber);
+    const baseQuery = this.getTransactionQuery(
+      pageNumber,
+      [TransactionType.TRANSFER],
+      false, // excludes embedded
+    );
 
     // add **confirmed** transaction query (by default)
     // these are transactions that are *included in a block*.
@@ -530,6 +580,7 @@ export class DiscoverTransactions
 
     return promises;
   }
+
   /**
    * Helper method to extract the signer public key of a `Transaction`
    * instance.
@@ -549,7 +600,19 @@ export class DiscoverTransactions
    * @returns {string}
    */
   protected extractSignerAddress(transaction: SdkTransaction): string {
-    return transaction.signer.address.plain()
+    return transaction.signer.address.plain();
+  }
+
+  /**
+   * Helper method to extract the recipient address of a `Transaction`
+   * instance.
+   *
+   * @param {Transaction} transaction 
+   * @returns {string}
+   */
+  protected extractRecipientAddress(transaction: SdkTransaction): string {
+    const transfer = transaction as TransferTransaction;
+    return transfer.recipientAddress.plain();
   }
 
   /**
@@ -567,7 +630,12 @@ export class DiscoverTransactions
   }
 
   /**
-   * Helper method to extract the transaction 
+   * Helper method to extract the transaction type as defined by the
+   * dApps Framework.
+   * <br /><br />
+   * Note that in the first draft of the framework, the only transaction
+   * type that is effectively used is `"transfer"` because all operations
+   * are executed using *transfer transactions*.
    *
    * @param {Transaction} transaction 
    * @returns {string}
@@ -577,16 +645,25 @@ export class DiscoverTransactions
   }
 
   /**
-   * 
-   * @param transaction 
+   * Helper method to extract the signature of a `Transaction` instance.
+   *
+   * @param {Transaction} transaction 
+   * @returns {string}
    */
   protected extractTransactionSignature(transaction: SdkTransaction): string {
     return transaction.signature;
   }
 
   /**
-   * 
-   * @param transaction 
+   * Helper method to extract the body of a `Transaction` instance. Note
+   * that the binary payload of the transaction is **reduced** in that the
+   * transaction header (56 bytes) is dropped.
+   * <br /><br />
+   * The transaction header can always be re-created using the other fields
+   * present in the {@link Transaction} document.
+   *
+   * @param {Transaction} transaction 
+   * @returns {string}
    */
   protected extractTransactionBody(transaction: SdkTransaction): string {
     // serializes transaction to get hexadecimal payload
@@ -598,5 +675,18 @@ export class DiscoverTransactions
     // --> we are dropping 112 bytes as the header
     // and we return only the remaining body after
     return payload.substring(112);
+  }
+
+  /**
+   * Helper method to extract the confirmation block number of a 
+   * `Transaction` instance. This is necessary to track the time
+   * at which a transaction was first included in a block, and
+   * thereby *confirmed on the dHealth Network*.
+   *
+   * @param {Transaction} transaction 
+   * @returns {number}
+   */
+  protected extractTransactionBlock(transaction: SdkTransaction): number {
+    return transaction.transactionInfo.height.compact();
   }
 }

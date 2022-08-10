@@ -24,7 +24,11 @@
   */
  export class TransactionDiscoveryStateData implements StateData {
    /**
-    * 
+    * Contains the *address* of the last account that was used
+    * in the *transaction* discovery. This is used in the case
+    * of runtime configuration that contains **more than one**
+    * discovery source and permits to track multiple accounts
+    * sequentially.
     *
     * @access public
     * @var {string}

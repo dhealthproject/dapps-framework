@@ -36,9 +36,10 @@ import {
   Address,
   Order,
   Transaction as SdkTransaction,
-  TransferTransaction,
   TransactionGroup,
+  TransactionMapping,
   TransactionType,
+  TransferTransaction,
 } from "@dhealth/sdk"; // mocked above ^^^^
 import { Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -48,7 +49,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 // internal dependencies
 import { MockModel, createTransaction } from "../../../mocks/global";
 import { DappConfig } from "../../../../src/common/models/DappConfig";
-import { State, StateQuery } from "../../../../src/common/models/StateSchema";
+import { StateDocument, StateQuery } from "../../../../src/common/models/StateSchema";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
@@ -70,9 +71,7 @@ class MockDiscoverTransactions extends DiscoverTransactions {
 
   // mocks the internal TransactionsService
   protected transactionsService: any = {
-    updateBatch: jest.fn(),
-    findOne: jest.fn(),
-    createOrUpdate: jest.fn(),
+    exists: jest.fn(),
   };
 
   // mocks **getters** for protected properties
@@ -132,6 +131,7 @@ describe("discovery/DiscoverTransactions", () => {
     transactionService = module.get<TransactionsService>(TransactionsService);
     logger = module.get<Logger>(Logger);
 
+    // overwrites the internal model (injected)
     (service as any).model = new MockModel();
   });
 
@@ -204,9 +204,9 @@ describe("discovery/DiscoverTransactions", () => {
     // for each discover call, we mock the network service to
     // fake network requests and create a generic REST request
     beforeEach(() => {
-      (service as any).argv = ["incoming"];
+      (service as any).argv = ["both"];
       (service as any).logger = logger;
-      (service as any).discoverySource = Address.createFromRawAddress("mocked");
+      (service as any).discoverySource = { plain: jest.fn() };
       (service as any).networkService = {
         getTransactionRepository: () => ({
           search: emptyPageSearcherMock
@@ -218,11 +218,11 @@ describe("discovery/DiscoverTransactions", () => {
 
       // batch prepare
       transactionsQuery = {
-        embedded: true,
-        order: Order.Desc,
+        embedded: false,
+        order: Order.Asc,
         pageNumber: 1,
         pageSize: 100,
-        recipientAddress: (service as any).discoverySource,
+        address: (service as any).discoverySource,
         type: [TransactionType.TRANSFER],
       };
     });
@@ -238,7 +238,7 @@ describe("discovery/DiscoverTransactions", () => {
 
         // assert
         expect(logger.debug).toHaveBeenNthCalledWith(1, "Starting transactions discovery for source \"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\"");
-        expect(logger.debug).toHaveBeenNthCalledWith(2, "Last discovery ended with page: \"1\"");
+        expect(logger.debug).toHaveBeenNthCalledWith(2, "Last discovery for \"discovery:DiscoverTransactions:NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\" ended with page: \"1\"");
       });
 
       it("should include only confirmed transfer transactions by default", async () => {
@@ -350,6 +350,9 @@ describe("discovery/DiscoverTransactions", () => {
             search: nonemptyPageSearcherMock
           }),
         };
+
+        // clear database mocks
+        (service as any).model.createStub.mockClear();
       });
 
       it("should read 5 transaction pages from operating node", async () => {
@@ -373,10 +376,22 @@ describe("discovery/DiscoverTransactions", () => {
   
         // assert
         expect((service as any).transactions.length).toBe(
-          expectedTransactions.length
+          expectedTransactions.length * 5 // 5 transaction pages
         );
       });
+
+      it("should check for the existence of hashes in mongo", async () => {
+        // act
+        await service.discover({
+          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+          debug: true,
+        });
   
+        // assert
+        expect((service as any).model.createStub).toHaveBeenCalledTimes(3); // 3 transactions with unique hash
+        expect((service as any).transactionsService.exists).toHaveBeenCalledTimes(3);
+      });
+    
       it("should create models for unique transactions", async () => {
         // act
         await service.discover({
@@ -386,19 +401,7 @@ describe("discovery/DiscoverTransactions", () => {
   
         // assert
         expect((service as any).model.createStub).toHaveBeenCalled();
-        expect((service as any).model.createStub).toHaveBeenCalledTimes(3 * 5); // 3 transactions for each of the 5 pages (mocks)
-      });
-
-      it("should use transactionsService.updateBatch with documents array", async () => {
-        // act
-        await service.discover({
-          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
-          debug: true,
-        });
-  
-        // assert
-        expect((service as any).transactionsService.updateBatch).toHaveBeenCalled();
-        expect((service as any).transactionsService.updateBatch).toHaveBeenCalledTimes(1);
+        expect((service as any).model.createStub).toHaveBeenCalledTimes(3); // 3 transactions with unique hash
       });
 
       it("should update per-source state using stateService and correct page", async () => {
@@ -414,9 +417,10 @@ describe("discovery/DiscoverTransactions", () => {
         // assert
         expect((service as any).stateService.updateOne).toHaveBeenCalled();
         expect((service as any).stateService.updateOne).toHaveBeenCalledWith(
-          new StateQuery({ name: stateIdentifier } as State),
+          new StateQuery({ name: stateIdentifier } as StateDocument),
           {
             lastPageNumber: 6, // starts at page 1 and reads 5 pages
+            sync: false, // synchronization state is "not synchronized yet"
           }
         );
       });
@@ -517,7 +521,7 @@ describe("discovery/DiscoverTransactions", () => {
       expect((service as any).stateService.findOne).toHaveBeenCalled();
       expect((service as any).stateService.findOne).toHaveBeenCalledWith(new StateQuery({
         name: `discovery:DiscoverTransactions:${source}`, // "discovery:DiscoverTransactions:%SOURCE%"
-      } as State));
+      } as StateDocument));
     });
 
     it("should loop through available sources", async () => {
@@ -540,10 +544,10 @@ describe("discovery/DiscoverTransactions", () => {
       expect((service as any).stateService.findOne).toHaveBeenCalledTimes(2);
       expect((service as any).stateService.findOne).toHaveBeenNthCalledWith(1, new StateQuery({
         name: `discovery:DiscoverTransactions:a`, // "discovery:DiscoverTransactions:%SOURCE%"
-      } as State));
+      } as StateDocument));
       expect((service as any).stateService.findOne).toHaveBeenNthCalledWith(2, new StateQuery({
         name: `discovery:DiscoverTransactions:b`, // "discovery:DiscoverTransactions:%SOURCE%"
-      } as State));
+      } as StateDocument));
     });
 
     describe("given fully synchronized state", () => {

@@ -177,5 +177,7 @@ export abstract class DiscoveryCommand extends BaseCommand {
     // unnecessary here. Possibly this will change with some
     // commands that require more detailed error handling
     await this.discover(options);
+
+    // no-return (void)
   }
 }

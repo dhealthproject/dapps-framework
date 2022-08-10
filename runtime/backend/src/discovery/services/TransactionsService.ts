@@ -13,7 +13,7 @@ import { InjectModel } from "@nestjs/mongoose";
 
 // internal dependencies
 import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
-import { Transaction, TransactionModel, TransactionQuery } from "../models/TransactionSchema";
+import { Transaction, TransactionDocument, TransactionModel, TransactionQuery } from "../models/TransactionSchema";
 import { QueryService } from "../../common/services/QueryService";
 
 /**
@@ -33,7 +33,7 @@ export class TransactionsService {
    */
   constructor(
     @InjectModel(Transaction.name) private readonly model: TransactionModel,
-    private readonly queriesService: QueryService<Transaction, TransactionModel>,
+    private readonly queriesService: QueryService<TransactionDocument, TransactionModel>,
   ) {}
 
   /**
@@ -41,11 +41,34 @@ export class TransactionsService {
    * return as paginated results.
    *
    * @async
-   * @param   {TransactionQuery} query
-   * @returns {Promise<PaginatedResultDTO<Transaction>>}
+   * @param   {TransactionQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @returns {Promise<PaginatedResultDTO<TransactionDocument>>}
    */
-  async find(query: TransactionQuery): Promise<PaginatedResultDTO<Transaction>> {
+  async find(query: TransactionQuery): Promise<PaginatedResultDTO<TransactionDocument>> {
     return await this.queriesService.find(query, this.model);
+  }
+
+  /**
+   * Method to query the *existence* of a document in the
+   * `transactions` collection.
+   * <br /><br />
+   * This executes a *lean* mongoose query such that the
+   * properties of the returned document are *reduced* to
+   * only the `"_id"` field.
+   *
+   * @param   {TransactionQuery}  query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @returns {Promise<boolean>}  Whether a document exists which validates the passed query.
+   */
+  async exists(query: TransactionQuery): Promise<boolean> {
+    // executes a *lean* mongoose findOne query
+    const document: TransactionDocument = await this.queriesService.findOne(
+      query,
+      this.model,
+      true, // stripDocument ("lean query")
+    );
+
+    // https://simplernerd.com/typescript-convert-bool/
+    return !!document;
   }
 
   /**
@@ -56,9 +79,9 @@ export class TransactionsService {
    * @access public
    * @async
    * @param   {TransactionQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @returns {Promise<Transaction>}  The resulting `states` document.
+   * @returns {Promise<Transaction>}  The resulting `transactions` document.
    */
-  async findOne(query: TransactionQuery): Promise<Transaction> {
+  async findOne(query: TransactionQuery): Promise<TransactionDocument> {
     return await this.queriesService.findOne(query, this.model);
   }
 
@@ -69,15 +92,15 @@ export class TransactionsService {
    *
    * @async
    * @param   {TransactionQuery}          query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @param   {TransactionModel}           data    The fields or data that has to be updated (will be added to `$set: {}`).
+   * @param   {TransactionDocument}           data    The fields or data that has to be updated (will be added to `$set: {}`).
    * @param   {Record<string, any>}   ops    The operations that must be run additionally (e.g. `$inc: {}`) (optional).
-   * @returns {Promise<StateDocument>}  The *updated* `states` document.
+   * @returns {Promise<StateDocument>}  The *updated* `transactions` document.
    */
   async createOrUpdate(
     query: TransactionQuery,
     data: TransactionModel,
     ops: Record<string, any> = {},
-  ): Promise<Transaction> {
+  ): Promise<TransactionDocument> {
     return await this.queriesService.createOrUpdate(
       query,
       this.model,
