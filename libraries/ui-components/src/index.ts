@@ -27,6 +27,9 @@ import {
   DappTokenAmount,
 } from "./components";
 
+// use the web component wrapper to extend components
+import { webComponentWrapper } from "./build/Wrapper";
+
 // importing compiled tailwind styles
 // triggers a build when adding classes
 import "./theme.scss";
@@ -72,9 +75,23 @@ const install = (): void => {
   Vue.component("DappAccountCard", DappAccountCard);
 };
 
-import { webComponentWrap } from "./libraries/";
-import * as allComponents from "./components";
+// exporting web components requires adding style
+// tags for all components that are exported
+// note we are *listing* components here rather
+// than re-importing them a second time.
+const allComponents = [
+  DappAccountAvatar,
+  DappAccountCard,
+  DappButton,
+  DappDate,
+  DappIcon,
+  DappMessage,
+  DappQR,
+  DappTitle,
+  DappTokenAmount,
+];
 
+// prepare <style> tags
 const styles = document.styleSheets;
 let styleStr = "";
 [...styles].forEach((style) => {
@@ -85,9 +102,10 @@ let styleStr = "";
 const styleEl = document.createElement("style");
 styleEl.innerHTML = styleStr;
 
+// define custom web components
 Object.entries(allComponents).forEach(([name, component]) => {
-  const elName = "dapp-" + name.split("Dapp")[1].toLowerCase();
-  const wrappedElement: any = webComponentWrap(Vue, component, styleEl);
+  const elName = "dapp-" + name.replace(/^Dapp/, "").toLowerCase();
+  const wrappedElement: any = webComponentWrapper(Vue, component, styleEl);
   window.customElements.define(elName, wrappedElement as any);
 });
 

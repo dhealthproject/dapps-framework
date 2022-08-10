@@ -9,6 +9,7 @@
  */
 // external dependencies
 import _Vue, { Component, AsyncComponent } from "vue";
+
 // internal dependencies
 import {
   toVNodes,
@@ -21,11 +22,11 @@ import {
   convertAttributeValue,
 } from "./Utils";
 
-export default function webComponentWrap(
+export const webComponentWrapper = (
   Vue: typeof _Vue,
   Component: Component | AsyncComponent,
   styleElement: HTMLStyleElement
-): HTMLElement {
+): HTMLElement => {
   const isAsync = typeof Component === "function" && !(Component as any).cid;
   let isInitialized = false;
   let hyphenatedPropsList: string[];
@@ -222,4 +223,4 @@ export default function webComponentWrap(
   }
 
   return CustomElement as unknown as HTMLElement;
-}
+};
