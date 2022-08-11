@@ -86,7 +86,17 @@ export default class LoginScreen extends MetaView {
    * @access public
    * @var {loading}
    */
-  loading = false;
+  @Prop({
+    type: Boolean,
+    required: true,
+    default: true,
+  })
+  protected loading?: boolean;
+
+  /**
+   *
+   */
+  protected hasLoaded = false;
 
   /**
    * This property is used for storing
@@ -105,7 +115,7 @@ export default class LoginScreen extends MetaView {
    * @access public
    * @var {interval}
    */
-  interval: undefined | ReturnType<typeof setTimeout> = undefined;
+  protected interval?: ReturnType<typeof setTimeout>;
 
   /**
    * This property is used
@@ -116,7 +126,7 @@ export default class LoginScreen extends MetaView {
    * @access public
    * @var {globalIntervalTimer}
    */
-  globalIntervalTimer: undefined | ReturnType<typeof setTimeout> = undefined;
+  protected globalIntervalTimer?: ReturnType<typeof setTimeout>;
 
   /**
    * Computed which contains
@@ -190,6 +200,13 @@ export default class LoginScreen extends MetaView {
   }
 
   /**
+   *
+   */
+  public get isLoading(): boolean {
+    return this.loading === true || !this.hasLoaded;
+  }
+
+  /**
    * Helper method for
    * generating QR code request
    * which goes into :qr-code prop
@@ -225,7 +242,7 @@ export default class LoginScreen extends MetaView {
       this.interval = setInterval(async () => {
         tokenResponse = await this.service?.login(reqBody);
 
-        if (tokenResponse) {
+        if (tokenResponse && !!this.interval) {
           clearInterval(this.interval);
           // replace secure: false for the development purposes, should be true
           // Cookies.set("accessToken", tokenResponse.data.accessToken, {
@@ -241,15 +258,15 @@ export default class LoginScreen extends MetaView {
 
       // Clear interval if during 5 minutes didn't receive token
       this.globalIntervalTimer = setTimeout(() => {
-        clearInterval(this.interval);
+        if (this.interval) {
+          clearInterval(this.interval);
+        }
       }, 300000);
     }
   }
 
   async mounted() {
     try {
-      this.loading = true;
-
       const resp = await this.service?.getAuthChallenge();
       if (resp?.data) {
         this.authMessage = resp.data;
@@ -259,12 +276,17 @@ export default class LoginScreen extends MetaView {
     } catch (err) {
       console.error(err);
     } finally {
-      this.loading = false;
+      this.hasLoaded = true;
     }
   }
 
   beforeDestroyed() {
-    clearInterval(this.interval);
-    clearTimeout(this.globalIntervalTimer);
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+
+    if (this.globalIntervalTimer) {
+      clearTimeout(this.globalIntervalTimer);
+    }
   }
 }

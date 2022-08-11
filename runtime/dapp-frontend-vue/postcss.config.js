@@ -7,9 +7,6 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-const autoprefixer = require("autoprefixer");
-const tailwindcss = require("tailwindcss");
-
 module.exports = {
   plugins: {
     "tailwindcss/nesting": {},

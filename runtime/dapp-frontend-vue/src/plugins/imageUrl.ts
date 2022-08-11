@@ -7,12 +7,8 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-
-// import Vue from "vue";
-// import VueType from "vue/types/umd";
-
 export default {
-  install(Vue: any, options: any) {
+  install(Vue: any) {
     Vue.prototype.getImageUrl = (path: string) => {
       return require("../assets/" + path);
     };

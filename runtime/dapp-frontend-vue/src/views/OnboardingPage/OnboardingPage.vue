@@ -13,7 +13,7 @@
 <template>
   <div class="dapp-screen-onboarding">
     <Header :links="dummyLinks" />
-    <Preloader v-if="loading" />
+    <Loader v-if="isLoading" />
     <DappQR v-else :qrCode="createLoginContract()" />
     <Footer :links="dummyLinks" />
   </div>

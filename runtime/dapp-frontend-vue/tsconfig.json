@@ -20,7 +20,6 @@
     "outDir": "./dist/",
     "types": [
       "webpack-env",
-      "mocha",
       "chai",
       "jest",
       "./types/vue/",
@@ -39,7 +38,8 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx",
+    "tests/**/*.spec.ts",
   ],
   "exclude": ["node_modules"]
 }

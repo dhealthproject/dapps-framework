@@ -17,6 +17,7 @@ import { expect } from "chai";
 import the_module from "../../../config/modules/home.json";
 
 // jest.mock("@dhealth/components", { DappButton: { get: jest.fn(), set: jest.fn() } } as any);
+jest.mock("@/views/Assembler/Assembler.vue", () => ({}));
 
 describe("AppKernel class -->", () => {
   let instance: AppKernel;

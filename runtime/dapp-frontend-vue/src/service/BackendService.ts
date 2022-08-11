@@ -32,7 +32,7 @@ export interface RequestHandler {
 /**
  * @class BackendService
  * @description This class handles the execution of HTTP requests using
- * a running backend runtime. 
+ * a running backend runtime.
  * <br /><br />
  * @example Using the BackendService class
  * ```typescript
@@ -77,7 +77,7 @@ export class BackendService {
    * @var {HttpRequestHandler}
    */
   protected handler: HttpRequestHandler = new HttpRequestHandler(
-    this.getAuthCookie(),
+    this.getAuthCookie()
   );
 
   /**

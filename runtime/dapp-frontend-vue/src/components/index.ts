@@ -34,5 +34,5 @@ export const AppComponents = {
   Tabs,
 };
 
-// scoped export of library-level components 
+// scoped export of library-level components
 export const LibComponents = { DappButton };

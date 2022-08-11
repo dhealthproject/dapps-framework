@@ -11,12 +11,6 @@
 // external dependencies
 import { Component, Prop } from "vue-property-decorator";
 import Cookies from "js-cookie";
-// internal dependencies
-import { MetaView } from "@/views/MetaView";
-import Header from "@/components/Header/Header.vue";
-import Footer from "@/components/Footer/Footer.vue";
-import Preloader from "@/components/Preloader/Preloader.vue";
-import { DappQR } from "@dhealth/components";
 import {
   TransferTransaction,
   Deadline,
@@ -28,9 +22,14 @@ import {
   MosaicId,
   UInt64,
 } from "@dhealth/sdk";
-
 import { QRCodeGenerator } from "@dhealth/qr-library";
+import { DappQR } from "@dhealth/components";
 
+// internal dependencies
+import { MetaView } from "@/views/MetaView";
+import Header from "@/components/Header/Header.vue";
+import Footer from "@/components/Footer/Footer.vue";
+import Loader from "@/components/Loader/Loader.vue";
 import { Auth } from "@/modules/Auth/Auth";
 
 export interface TransactionRequestConfig {
@@ -47,18 +46,10 @@ export interface TransactionRequestConfig {
     Header,
     Footer,
     DappQR,
-    Preloader,
+    Loader,
   },
 })
 export default class OnboardingPage extends MetaView {
-  @Prop({
-    type: Object,
-    required: false,
-    default() {
-      return new Auth();
-    },
-  })
-
   /**
    * This property is used for
    * calling related API endpoints
@@ -66,7 +57,7 @@ export default class OnboardingPage extends MetaView {
    * @access public
    * @var {service}
    */
-  service?: Auth;
+  protected service: Auth = new Auth();
 
   /**
    * This property is used to
@@ -75,37 +66,44 @@ export default class OnboardingPage extends MetaView {
    * @access public
    * @var {loading}
    */
-  loading = false;
+  @Prop({
+    type: Boolean,
+    required: true,
+    default: true,
+  })
+  protected loading?: boolean;
 
   /**
-   * This property is used for storing
-   * received message from GET auth/challenge
+   *
+   */
+  protected hasLoaded = false;
+
+  /**
+   * This property is used for storing the received message
+   * from the backend request to `/auth/challenge`.
    *
    * @access public
    * @var {authMessage}
    */
-  authMessage = "";
+  protected authMessage = "";
 
   /**
-   * This property is used
-   * for storing pointer to
-   * interval for getting auth token
+   * This property is used for storing a pointer to
+   * the interval that fetches the authentication token.
    *
    * @access public
    * @var {interval}
    */
-  interval: undefined | ReturnType<typeof setTimeout> = undefined;
+  protected interval?: ReturnType<typeof setTimeout>;
 
   /**
-   * This property is used
-   * for storing pointer to
-   * the timeout which stops
-   * calling auth request after 5 minutes
+   * This property is used for storing a pointer to
+   * the timeout which stops calling auth request after 5 minutes.
    *
    * @access public
    * @var {globalIntervalTimer}
    */
-  globalIntervalTimer: undefined | ReturnType<typeof setTimeout> = undefined;
+  protected globalIntervalTimer?: ReturnType<typeof setTimeout>;
 
   /**
    * Draft computed for generating
@@ -143,6 +141,13 @@ export default class OnboardingPage extends MetaView {
   }
 
   /**
+   *
+   */
+  public get isLoading(): boolean {
+    return this.loading === true || !this.hasLoaded;
+  }
+
+  /**
    * Helper method for
    * generating QR code request
    * which goes into :qr-code prop
@@ -176,9 +181,9 @@ export default class OnboardingPage extends MetaView {
 
       // Request token each 5 seconds until receive 200 response
       this.interval = setInterval(async () => {
-        tokenResponse = await this.service?.login(reqBody);
+        tokenResponse = await this.service.login(reqBody);
 
-        if (tokenResponse) {
+        if (tokenResponse && !!this.interval) {
           clearInterval(this.interval);
           // replace secure: false for the development purposes, should be true
           // Cookies.set("accessToken", tokenResponse.data.accessToken, {
@@ -186,7 +191,7 @@ export default class OnboardingPage extends MetaView {
           //   sameSite: "strict",
           //   domain: "localhost",
           // });
-          this.service?.setAuthCookie(tokenResponse.data.accessToken);
+          this.service.setAuthCookie(tokenResponse.data.accessToken);
 
           this.$router.push({ name: "legal.terms-of-service" });
         }
@@ -194,7 +199,9 @@ export default class OnboardingPage extends MetaView {
 
       // Clear interval if during 5 minutes didn't receive token
       this.globalIntervalTimer = setTimeout(() => {
-        clearInterval(this.interval);
+        if (this.interval) {
+          clearInterval(this.interval);
+        }
       }, 300000);
     }
   }
@@ -223,7 +230,6 @@ export default class OnboardingPage extends MetaView {
 
   async mounted() {
     try {
-      this.loading = true;
       const code = this.$route.params.refCode;
 
       if (this.$route.params.refCode) {
@@ -234,7 +240,7 @@ export default class OnboardingPage extends MetaView {
         });
       }
 
-      const resp = await this.service?.getAuthChallenge();
+      const resp = await this.service.getAuthChallenge();
       if (resp?.data) {
         this.authMessage = resp.data;
       }
@@ -243,12 +249,17 @@ export default class OnboardingPage extends MetaView {
     } catch (err) {
       console.error(err);
     } finally {
-      this.loading = false;
+      this.hasLoaded = true;
     }
   }
 
   beforeDestroyed() {
-    clearInterval(this.interval);
-    clearTimeout(this.globalIntervalTimer);
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+
+    if (this.globalIntervalTimer) {
+      clearTimeout(this.globalIntervalTimer);
+    }
   }
 }
