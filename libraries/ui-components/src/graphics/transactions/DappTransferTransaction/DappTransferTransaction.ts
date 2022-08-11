@@ -8,56 +8,50 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Component, Prop } from "vue-property-decorator";
+import { Asset } from "@/types/Asset";
 import {
-  Message,
+  Address,
+  MessageType,
   Mosaic,
-  PublicAccount,
   TransferTransaction,
 } from "@dhealth/sdk";
-
-// internal dependencies
-import DappGraphicComponent from "@/graphics/DappGraphicComponent/DappGraphicComponent";
-import DappAccountAvatar from "@/graphics/DappAccountAvatar/DappAccountAvatar.vue";
-import DappMessageCircle from "@/graphics/DappMessageCircle/DappMessageCircle.vue";
-import DappMosaicCircle from "@/graphics/DappMosaicCircle/DappMosaicCircle.vue";
-import DappTransactionArrow from "@/graphics/DappTransactionArrow/DappTransactionArrow.vue";
+import { Component, Prop, PropSync, Vue } from "vue-property-decorator";
 
 /**
  * @class DappTransferTransaction
- * @description This component display a transaction graphic that represents
- * a {@link TransferTransaction} instance.
+ * @description This component displays a graphic presentation
+ * of a {@link TransferTransaction} instance, with different
+ * adjustments for each contract type if the transaction is a
+ * contract transaction.
  * <br /><br />
- * You can customize this component using custom HTML
- * attributes [as listed below](#parameters).
+ * You can customize the look&feel of this components with adjusting the props.
  * <br /><br />
- * @example Using the DappTransferTransaction component
+ * @example Using the DappIcon component with sizes
+ * Sizes that are available with the components library
+ * can take up values as defined in {@link Size}.
+ * <br /><br />
  * ```html
- *   <template>
- *     <DappTransferTransaction
- *      :transaction="someTransferTransactionInstance"
- *     />
- *   </template>
+ *  <template>
+ *    <DappTransferTransaction
+ *      :transaction="some-TransferTransaction-var"
+ *      senderName="some-sender-name"
+ *      recipientName="some-recipient-name"
+ *      displayAddresses="true"
+ *    />
+ *  </template>
  * ```
- *
  * <br /><br />
  * #### Parameters
- *
- * @param  {TransferTransaction}    transaction         The {@link TransferTransaction} instance to be displayed.
- *
- * @since v0.1.0
+ * @param  {TransferTransaction}   transaction        This component's required {@link TransferTransaction} instance.
+ * @param  {Asset}                 asset              The transaction's associated {@link Asset} information.
+ * @param  {string}                senderName         The sender account name to be displayed.
+ * @param  {string}                recipientName      The recipient account name to be displayed.
+ * @param  {boolean}               displayAddresses   The optional flag indicating whether to display account addresses or not.
  */
-@Component({
-  components: {
-    DappAccountAvatar,
-    DappMessageCircle,
-    DappMosaicCircle,
-    DappTransactionArrow,
-  },
-})
-export default class DappTransferTransaction extends DappGraphicComponent {
+@Component({})
+export default class DappTransferTransaction extends Vue {
   /**
-   * The {@link TransferTransaction} instance to be displayed.
+   * This component's required {@link TransferTransaction} instance.
    *
    * @access protected
    * @var {TransferTransaction}
@@ -69,123 +63,230 @@ export default class DappTransferTransaction extends DappGraphicComponent {
   protected transaction?: TransferTransaction;
 
   /**
-   * Getter to return the transaction type (in string).
+   * The transaction's associated {@link Asset} information.
+   *
+   * @access protected
+   * @var {Asset}
+   */
+  @Prop({
+    type: Object,
+    required: true,
+  })
+  protected asset?: Asset;
+
+  /**
+   * The sender account name to be displayed.
+   *
+   * @access protected
+   * @var {string}
+   */
+  @Prop({
+    type: String,
+    required: true,
+  })
+  protected senderName?: string;
+
+  /**
+   * The recipient account name to be displayed.
+   *
+   * @access protected
+   * @var {string}
+   */
+  @Prop({
+    type: String,
+    required: true,
+  })
+  protected recipientName?: string;
+
+  /**
+   * The optional flag indicating whether to display account addresses or not.
+   *
+   * @access protected
+   * @var {boolean}
+   */
+  @Prop({
+    type: Boolean,
+    default: true,
+  })
+  protected displayAddresses?: boolean;
+
+  /**
+   * The contract object extracted from the message of this component's transaction.
+   *
+   * @access protected
+   * @var {Record<string, string>}
+   */
+  @PropSync('_contract', {
+    type: Object
+  })
+  protected contract?: Record<string, string>;
+
+  /**
+   * The contract type extracted from the message of this component's transaction.
+   *
+   * @access protected
+   * @var {Record<string, string>}
+   */
+  @PropSync('_contractType', {
+    type: String
+  })
+  protected contractType?: string;
+
+  /**
+   * The amounts object extracted from the message of this component's transaction.
+   *  <br /><br />
+   * Note that this prop has the following format:
+   * ```js
+   * {
+   *  token: 100.00, // the specified token in `asset` prop
+   *  "39E0C49FA322A459": 1000000, // some other token from the transaction
+   *  ...
+   * }
+   * ```
+   * <br /><br />
+   *
+   * @access protected
+   * @var {Record<string, string>}
+   */
+  @PropSync('_amounts', {
+    type: Object
+  })
+  protected amounts?: Record<string, string>;
+
+  /**
+   * Implementation of this component's `mounted` lifecycle hook.
+   * (@see https://vuejs.org/guide/essentials/lifecycle.html)
+   *
+   * Fetch the current market price of DHP and the amount from transaction.
+   *
+   * @access protected
+   * @async
+   * @returns {void}}
+   */
+  protected mounted(): void {
+    this.amounts = this.getMosaicAmounts();
+    if (
+      this.transaction &&
+      this.transaction?.message.type === MessageType.PlainMessage
+    ) {
+      try {
+        const msgObj = JSON.parse(this.transaction.message.payload);
+        if (msgObj.contract) {
+          this.contract = msgObj.contract;
+          this.contractType = msgObj.contract.split(":")[1];
+        }
+      } catch (e) {
+        return;
+      }
+    }
+  }
+
+  /**
+   * Getter to return a boolean indicating whether this component's
+   * transaction is a contract transaction or not.
+   *
+   * Note that this information is obtained by checking the message of the component
+   * and see whether it is a valid JSON object, containing the `contract` field.
+   *
+   * @access protected
+   * @returns {boolen}
+   */
+  protected get hasContract(): boolean {
+    return !!this.contract;
+  }
+
+  /**
+   * Getter to return the sender's address in pretty format.
+   * e.g. ABCDEF-GHIJKL-MNOPQR-STUVWX-YZ0123-456789-ABC
    *
    * @access protected
    * @returns {string}
    */
-  protected get transactionType(): string {
-    return this.getTransactionTypeCaption(16724); // Transfer
+  protected get senderAddress(): string {
+    if (!this.transaction || !this.transaction.signer) return "";
+    return this.transaction.signer.address.pretty();
   }
 
   /**
-   * Getter to return the circle icons to be displayed.
-   *
-   * @access protected
-   * @returns {boolean[]}
-   */
-  protected get circleIconsToDisplay(): boolean[] {
-    return [this.hasMessage, this.hasMosaic, this.hasNativeMosaic];
-  }
-
-  /**
-   * Getter to return a boolean indicating whether the
-   * component's transaction contains message content.
-   *
-   * @access protected
-   * @returns {boolean}
-   */
-  protected get hasMessage(): boolean {
-    if (!this.message) return false;
-    return (
-      typeof this.message.payload === "string" &&
-      this.message.payload.length > 0
-    );
-  }
-
-  /**
-   * Getter to return a boolean indicating whether the
-   * component's transaction contains the network's native mosaic.
-   * Note that currently it is temporarily set to false by default.
-   *
-   * @access protected
-   * @returns {boolean}
-   */
-  protected get hasNativeMosaic(): boolean {
-    // return typeof this.nativeMosaic !== 'undefined';
-    return false;
-  }
-
-  /**
-   * Getter to return a boolean indicating whether the
-   * component's transaction contains any mosaic.
-   *
-   * @access protected
-   * @returns {boolean}
-   */
-  protected get hasMosaic(): boolean {
-    return this.mosaicList.length > 0;
-  }
-
-  // protected get nativeMosaic() {
-  // 	if (!this.mosaics) return null;
-  // 	return this.mosaics.find(
-  // 		mosaic => mosaic.mosaicId === this.nativeMosaicId
-  // 	);
-  // }
-
-  /**
-   * Getter to return the list of mosaics in this component's transaction.
-   *
-   * @access protected
-   * @returns {Mosaic[]}
-   */
-  protected get mosaicList(): Mosaic[] {
-    // return this.mosaics.filter(
-    // 	mosaic => mosaic.mosaicId !== this.nativeMosaicId
-    // );
-    return this.mosaics ? this.mosaics : [];
-  }
-
-  /**
-   * Getter to return the {@link Message} instance of this component's transaction.
-   *
-   * @access protected
-   * @returns {Message | undefined}
-   */
-  protected get message(): Message | undefined {
-    return this.transaction?.message;
-  }
-
-  /**
-   * Getter to return the transaction's `signer`.
-   *
-   * @access protected
-   * @returns {PublicAccount}
-   */
-  protected get signer(): PublicAccount {
-    // return this.transaction?.signer?.address.plain();
-    return (this.transaction?.signer?.address as any).address;
-  }
-
-  /**
-   * Getter to return the transaction's recipient's address.
+   * Getter to return the recipient's address in pretty format.
+   * e.g. ABCDEF-GHIJKL-MNOPQR-STUVWX-YZ0123-456789-ABC
    *
    * @access protected
    * @returns {string}
    */
-  protected get recipient(): string {
-    // return this.transaction?.recipientAddress.plain();
-    return (this.transaction?.recipientAddress as any).address;
+  protected get recipientAddress(): string {
+    if (!this.transaction) return "";
+    return (this.transaction.recipientAddress as Address).pretty();
   }
 
   /**
-   * Getter to return the list of mosaics in this component's transaction.
+   * Getter to return the token amount string of this component's transaction.
+   * Result is fixed to 2 decimal points (e.g. 100.00).
    *
    * @access protected
-   * @returns {Mosaic[]}
+   * @returns {string}
    */
-  protected get mosaics() {
-    return this.transaction?.mosaics;
+  protected get amountToken(): string {
+    if (!this.amounts) return "0";
+    return this.amounts.token;
+  }
+
+  /**
+   * Getter to return the fiat equivalent of the token amount of this component's transaction.
+   * Result is fixed to 2 decimal points (e.g. 100.00).
+   *
+   * @access protected
+   * @returns {string}
+   */
+  protected get amountFiat(): string {
+    const decimalPoints = this.asset?.outputDecimals
+      ? this.asset?.outputDecimals
+      : 2;
+    return (this.getTokenPrice() * +this.amountToken).toFixed(decimalPoints);
+  }
+
+  /**
+   * Method to get the current market price of the associated token.
+   * Result is in specified fiat currency and is rounded to 2 decimal places.
+   *
+   * @access protected
+   * @returns {number}
+   */
+  protected getTokenPrice(): number {
+    return this.asset ? this.asset.price : 0;
+  }
+
+  /**
+   * Method to extract mosaic amount from this component's transaction
+   * as an object with following format:
+   * ```js
+   * {
+   *  token: 100.00,
+   *  "39E0C49FA322A459": 1000000,
+   *  ...
+   * }
+   * ```
+   *
+   * @access protected
+   * @returns {Record<string, string>}
+   */
+  protected getMosaicAmounts(): Record<string, string> {
+    const amounts: Record<string, string> = {};
+    this.transaction?.mosaics.forEach((mosaic: Mosaic) => {
+      if (mosaic.id.toHex() === this.asset?.mosaicId) {
+        const inputDecimals = this.asset.inputDecimals
+          ? this.asset.inputDecimals
+          : 6;
+        const outputDecimals = this.asset.outputDecimals
+          ? this.asset.outputDecimals
+          : 2;
+        amounts.token = (
+          mosaic.amount.compact() / Math.pow(10, inputDecimals)
+        ).toFixed(outputDecimals);
+      } else {
+        amounts[mosaic.id.toHex()] = mosaic.amount.toString();
+      }
+    });
+    return amounts;
   }
 }
