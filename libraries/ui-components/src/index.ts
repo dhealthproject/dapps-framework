@@ -118,10 +118,11 @@ const allComponents = [
   DappMessageCircle,
   DappMosaicCircle,
   DappTransactionArrow,
-  DappTransferGraphic,
-  DappUnknownTransactionGraphic,
-  DappAbstractTransactionGraphic,
+  DappTransferTransaction,
+  DappUnknownTransaction,
+  DappAbstractTransaction,
   DappTransactionGraphic,
+  DappAddressAliasTransaction,
 ];
 
 // prepare <style> tags
