@@ -15,10 +15,6 @@ const path = require("path");
 // eslint-disable-next-line
 const metaConfig = require("./config/meta.json");
 
-// eslint-disable-next-line
-const gb = this;
-gb.fetch = { bind: (data) => data };
-
 /**
  * Exports the configuration for the Vue app. This also
  * contains the manifest configuration under `pwa` and
@@ -51,9 +47,6 @@ module.exports = {
     plugins: [
       new webpack.ProvidePlugin({
         Buffer: ["buffer", "Buffer"],
-      }),
-      new webpack.DefinePlugin({
-        self: gb,
       }),
     ],
 

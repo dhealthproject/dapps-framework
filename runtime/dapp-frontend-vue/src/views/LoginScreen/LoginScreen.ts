@@ -62,14 +62,6 @@ export default class LoginScreen extends MetaView {
    */
   protected selectedIndex = 0;
 
-  @Prop({
-    type: Object,
-    required: false,
-    default() {
-      return new Auth();
-    },
-  })
-
   /**
    * This property is used for
    * calling related API endpoints
@@ -77,7 +69,12 @@ export default class LoginScreen extends MetaView {
    * @access public
    * @var {service}
    */
-  service?: Auth;
+  @Prop({
+    type: Object,
+    required: false,
+    default: () => new Auth(),
+  })
+  protected service?: Auth;
 
   /**
    * This property is used to
@@ -88,7 +85,7 @@ export default class LoginScreen extends MetaView {
    */
   @Prop({
     type: Boolean,
-    required: true,
+    required: false,
     default: true,
   })
   protected loading?: boolean;
@@ -127,6 +124,13 @@ export default class LoginScreen extends MetaView {
    * @var {globalIntervalTimer}
    */
   protected globalIntervalTimer?: ReturnType<typeof setTimeout>;
+
+  /**
+   *
+   */
+  get backendService(): Auth {
+    return undefined !== this.service ? this.service : new Auth();
+  }
 
   /**
    * Computed which contains
@@ -240,7 +244,7 @@ export default class LoginScreen extends MetaView {
 
       // Request token each 5 seconds until receive 200 response
       this.interval = setInterval(async () => {
-        tokenResponse = await this.service?.login(reqBody);
+        tokenResponse = await this.backendService.login(reqBody);
 
         if (tokenResponse && !!this.interval) {
           clearInterval(this.interval);
@@ -250,7 +254,7 @@ export default class LoginScreen extends MetaView {
           //   sameSite: "strict",
           //   domain: "localhost",
           // });
-          this.service?.setAuthCookie(tokenResponse.data.accessToken);
+          this.backendService.setAuthCookie(tokenResponse.data.accessToken);
 
           this.$router.push({ name: "dashboard" });
         }
@@ -267,7 +271,7 @@ export default class LoginScreen extends MetaView {
 
   async mounted() {
     try {
-      const resp = await this.service?.getAuthChallenge();
+      const resp = await this.backendService.getAuthChallenge();
       if (resp?.data) {
         this.authMessage = resp.data;
       }
