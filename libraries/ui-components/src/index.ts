@@ -145,6 +145,7 @@ const allComponents = [
   DappAbstractTransaction,
   DappTransactionGraphic,
   DappAddressAliasTransaction,
+  DappTransferTransaction,
 ];
 
 // prepare <style> tags

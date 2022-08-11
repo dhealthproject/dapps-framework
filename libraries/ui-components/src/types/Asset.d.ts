@@ -43,4 +43,18 @@ export type Asset = {
    * @var {number}
    */
   price: number;
+
+  /**
+   * Divisibility of the mosaic to be displayed.
+   *
+   * @var {number}
+   */
+  inputDecimals: number;
+
+  /**
+   * Number of decimals used to display the fiat amount.
+   *
+   * @var {number}
+   */
+  outputDecimals: number;
 };
