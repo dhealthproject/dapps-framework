@@ -14,7 +14,7 @@
   <div class="dapp-divided-screen">
     <div class="dapp-divided-screen__columns">
       <div
-        :style="{ paddingRight: `${gap}px` }"
+        :style="{ paddingRight: `${gapValue}px` }"
         class="dapp-divided-screen__columns__column"
       >
         <slot name="left"></slot>
