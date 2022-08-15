@@ -26,7 +26,12 @@ import DappGraphicComponent from "../DappGraphicComponent/DappGraphicComponent";
  * ```html
  *   <template>
  *     <DappNamespaceCircle
- *      :namespaces="some-Namespace-array-instance"
+ *       :namespaces="[
+ *         {
+ *           namespaceId: '1B3FD12D2E7832CCD',
+ *           namespaceName: 'DHP',
+ *         },
+ *       ]"
  *     />
  *   </template>
  * ```

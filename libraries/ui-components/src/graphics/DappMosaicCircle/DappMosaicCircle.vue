@@ -22,7 +22,7 @@
     xml:space="preserve"
     class="dappMosaicCircle-circle-icon"
   >
-    <title>{{ mosaicsTitle }}</title>
+    <title>{{ mosaicsJSON }}</title>
     <defs>
       <linearGradient
         id="mosaics-circle-gradient"

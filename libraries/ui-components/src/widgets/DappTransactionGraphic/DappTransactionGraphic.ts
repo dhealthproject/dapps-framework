@@ -17,7 +17,7 @@ import {
 import { Component, Prop } from "vue-property-decorator";
 
 // internal dependencies
-import DappAbstractTransaction from "@/transaction-graphics/DappAbstractTransaction/DappAbstractTransaction.vue";
+import DappAbstractTransaction from "@/graphics/transactions/DappAbstractTransaction/DappAbstractTransaction.vue";
 import DappGraphicComponent from "@/graphics/DappGraphicComponent/DappGraphicComponent";
 import SignatureIcon from "@/assets/img/signature.png";
 
@@ -89,32 +89,6 @@ export default class DappTransactionGraphic extends DappGraphicComponent {
     return {
       TransactionType,
       SignatureIcon,
-      supportedTransactionTypes: [
-        TransactionType.TRANSFER,
-        TransactionType.ADDRESS_ALIAS,
-        TransactionType.MOSAIC_ALIAS,
-        TransactionType.NAMESPACE_REGISTRATION,
-        TransactionType.SECRET_LOCK,
-        TransactionType.MOSAIC_DEFINITION,
-        TransactionType.MOSAIC_SUPPLY_CHANGE,
-        TransactionType.AGGREGATE_COMPLETE,
-        TransactionType.AGGREGATE_BONDED,
-        TransactionType.HASH_LOCK,
-        TransactionType.SECRET_PROOF,
-        TransactionType.VRF_KEY_LINK,
-        TransactionType.ACCOUNT_KEY_LINK,
-        TransactionType.NODE_KEY_LINK,
-        TransactionType.VOTING_KEY_LINK,
-        TransactionType.MOSAIC_GLOBAL_RESTRICTION,
-        TransactionType.MOSAIC_ADDRESS_RESTRICTION,
-        TransactionType.ACCOUNT_OPERATION_RESTRICTION,
-        TransactionType.ACCOUNT_ADDRESS_RESTRICTION,
-        TransactionType.ACCOUNT_MOSAIC_RESTRICTION,
-        TransactionType.MULTISIG_ACCOUNT_MODIFICATION,
-        TransactionType.ACCOUNT_METADATA,
-        TransactionType.NAMESPACE_METADATA,
-        TransactionType.MOSAIC_METADATA,
-      ],
     };
   }
 

@@ -36,11 +36,11 @@ import DappMosaicCircle from "./graphics/DappMosaicCircle/DappMosaicCircle";
 import DappNamespaceCircle from "./graphics/DappNamespaceCircle/DappNamespaceCircle";
 import DappNamespaceUnlinkCircle from "./graphics/DappNamespaceUnlinkCircle/DappNamespaceUnlinkCircle";
 import DappTransactionArrow from "./graphics/DappTransactionArrow/DappTransactionArrow";
-import DappTransferTransaction from "./transaction-graphics/DappTransferTransaction/DappTransferTransaction";
-import DappUnknownTransaction from "./transaction-graphics/DappUnknownTransaction/DappUnknownTransaction";
-import DappAbstractTransaction from "./transaction-graphics/DappAbstractTransaction/DappAbstractTransaction";
+import DappTransferTransaction from "./graphics/transactions/DappTransferTransaction/DappTransferTransaction";
+import DappUnknownTransaction from "./graphics/transactions/DappUnknownTransaction/DappUnknownTransaction";
+import DappAbstractTransaction from "./graphics/transactions/DappAbstractTransaction/DappAbstractTransaction";
 import DappTransactionGraphic from "./widgets/DappTransactionGraphic/DappTransactionGraphic";
-import DappAddressAliasTransaction from "./transaction-graphics/DappAddressAliasTransaction/DappAddressAliasTransaction";
+import DappAddressAliasTransaction from "./graphics/transactions/DappAddressAliasTransaction/DappAddressAliasTransaction";
 
 // exports
 export type { Variant };

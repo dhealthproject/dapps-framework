@@ -26,7 +26,12 @@ import DappGraphicComponent from "../DappGraphicComponent/DappGraphicComponent";
  * ```html
  *   <template>
  *     <DappNamespaceUnlinkCircle
- *      :namespaces="some-Namespace-array-instance"
+ *       :namespaces="[
+ *         {
+ *           namespaceId: '1B3FD12D2E7832CCD',
+ *           namespaceName: 'DHP',
+ *         },
+ *       ]"
  *     />
  *   </template>
  * ```
@@ -53,14 +58,12 @@ export default class DappNamespaceUnlinkCircle extends DappGraphicComponent {
   protected namespaces?: Namespace[];
 
   /**
-   * Method to return this component's data.
+   * Getter to return this component's id.
    *
    * @access protected
    * @returns {object}
    */
-  protected data(): object {
-    return {
-      id: this.getId("namespace-circle"),
-    };
+  protected get id(): string {
+    return this.getId("namespace-circle");
   }
 }

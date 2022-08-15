@@ -12,8 +12,8 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { Transaction, TransactionType } from "@dhealth/sdk";
 
 // internal dependencies
-import DappTransferTransaction from "@/transaction-graphics/DappTransferTransaction/DappTransferTransaction.vue";
-import DappUnknownTransaction from "../DappUnknownTransaction/DappUnknownTransaction.vue";
+import DappTransferTransaction from "@/graphics/transactions/DappTransferTransaction/DappTransferTransaction.vue";
+import DappUnknownTransaction from "@/graphics/transactions/DappUnknownTransaction/DappUnknownTransaction.vue";
 
 /**
  * @class DappAbstractTransaction

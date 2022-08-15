@@ -33,11 +33,11 @@ import DappMosaicCircle from "./graphics/DappMosaicCircle/DappMosaicCircle.vue";
 import DappNamespaceCircle from "./graphics/DappNamespaceCircle/DappNamespaceCircle.vue";
 import DappNamespaceUnlinkCircle from "./graphics/DappNamespaceUnlinkCircle/DappNamespaceUnlinkCircle.vue";
 import DappTransactionArrow from "./graphics/DappTransactionArrow/DappTransactionArrow.vue";
-import DappTransferTransaction from "./transaction-graphics/DappTransferTransaction/DappTransferTransaction.vue";
-import DappUnknownTransaction from "./transaction-graphics/DappUnknownTransaction/DappUnknownTransaction.vue";
-import DappAbstractTransaction from "./transaction-graphics/DappAbstractTransaction/DappAbstractTransaction.vue";
+import DappTransferTransaction from "./graphics/transactions/DappTransferTransaction/DappTransferTransaction.vue";
+import DappUnknownTransaction from "./graphics/transactions/DappUnknownTransaction/DappUnknownTransaction.vue";
+import DappAbstractTransaction from "./graphics/transactions/DappAbstractTransaction/DappAbstractTransaction.vue";
 import DappTransactionGraphic from "./widgets/DappTransactionGraphic/DappTransactionGraphic.vue";
-import DappAddressAliasTransaction from "./transaction-graphics/DappAddressAliasTransaction/DappAddressAliasTransaction.vue";
+import DappAddressAliasTransaction from "./graphics/transactions/DappAddressAliasTransaction/DappAddressAliasTransaction.vue";
 
 // exports components as named-exports
 export {

@@ -26,7 +26,20 @@ import DappGraphicComponent from "../DappGraphicComponent/DappGraphicComponent";
  * ```html
  *   <template>
  *     <DappMosaicCircle
- *      :mosaics="some-Mosaic-array"
+ *       :mosaics="[
+ *         {
+ *           id: {
+ *             id: {
+ *               lower: 3646934825,
+ *               higher: 3576016193,
+ *             },
+ *           },
+ *           amount: {
+ *             lower: 1000000,
+ *             higher: 0,
+ *           },
+ *         },
+ *       ]"
  *     />
  *   </template>
  * ```
@@ -77,12 +90,12 @@ export default class DappMosaicCircle extends DappGraphicComponent {
   }
 
   /**
-   * Returns the title content (displayed when hover) of this component.
+   * Returns the json content (displayed when hover) of mosaics prop.
    *
    * @access protected
    * @returns {string}
    */
-  protected get mosaicsTitle(): string {
+  protected get mosaicsJSON(): string {
     if (!this.mosaics) return "";
     return JSON.stringify(this.mosaics, null, 2);
   }
