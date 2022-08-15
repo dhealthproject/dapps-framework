@@ -110,6 +110,33 @@ export class QueryService<
   }
 
   /**
+   * Method to query the *existence* of a document in the
+   * collection mapped to {@link TModel}.
+   * <br /><br />
+   * This executes a *lean* mongoose query such that the
+   * properties of the returned document are *reduced* to
+   * only the `"_id"` field.
+   *
+   * @param   {Queryable<TDocument>}  query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {TModel}  model     The model *class instance* used for matching documents.
+   * @returns {Promise<boolean>}  Whether a document exists which validates the passed query.
+   */
+   async exists(
+    query: Queryable<TDocument>,
+    model: TModel,
+  ): Promise<boolean> {
+    // executes a *lean* mongoose findOne query
+    const document: TDocument = await this.findOne(
+      query,
+      model,
+      true, // stripDocument ("lean query")
+    );
+
+    // https://simplernerd.com/typescript-convert-bool/
+    return !!document;
+  }
+
+  /**
    * Create a generic *search query* that is compatible with Mongo. The
    * returned {@link PaginatedResultDto} contains a `data` field and a
    * `pagination` field to permit multiple queries to be sequenced.

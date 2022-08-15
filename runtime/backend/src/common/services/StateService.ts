@@ -21,7 +21,6 @@ import { QueryService } from "./QueryService";
  * @description The main service for the state module.
  * Responsible for querying and saving states of the application.
  *
- * @todo Method `updateOne()` should not take a DTO in parameters, but a StateDocument or StateQuery instead.
  * @since v0.1.0
  */
 @Injectable()

@@ -19,8 +19,8 @@ import type { StateData } from "./StateData";
  * and a `data` field that may contain custom fields in the form
  * of an object.
  * <br /><br />
- * This class shall be used to **respond** to queries for the mongo
- * `states` collection documents.
+ * This class shall be used to **respond** to queries *over the
+ * network* using the mongo `states` collection documents.
  *
  * @since v0.1.0
  */

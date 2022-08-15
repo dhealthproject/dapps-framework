@@ -28,7 +28,7 @@ import dappConfigLoader from "../config/dapp";
  */
 @Module({
   imports: [
-    AuthModule
+    AuthModule,
   ]
 })
 export class AppModule {

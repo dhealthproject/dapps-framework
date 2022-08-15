@@ -8,21 +8,23 @@
  * @license     LGPL-3.0
  */
 /**
- * 
+ *
+ * @todo Add relevant type documentation
  */
-export type NodeParameters = {
+export type NodeConnectionPayload = {
   url: string,
-  port: number,
+  port?: number | string,
 };
 
 /**
- * 
+ *
+ * @todo Add relevant type documentation
  */
 export type NetworkParameters = {
   namespaceName: string,
   mosaicId: string,
   namespaceId: string,
-  divisibility: string,
+  divisibility: number,
   networkIdentifier: number,
   epochAdjustment: number,
   generationHash: string,
@@ -33,11 +35,14 @@ export type NetworkParameters = {
  * @description This interface defines the required configuration of dApps
  * network connections.
  *
+ * @todo Add relevant property documentation for {@link defaultNode}
+ * @todo Add relevant property documentation for {@link apiNodes}
+ * @todo Add relevant property documentation for {@link network}
  * @since v0.2.0
  */
 export interface NetworkConfig {
   /**
-   * 
+   *
    *
    * @access public
    * @var {string}
@@ -45,15 +50,15 @@ export interface NetworkConfig {
   defaultNode: string;
 
   /**
-   * 
+   *
    *
    * @access public
-   * @var {NodeParameters}
+   * @var {NodeConnectionPayload}
    */
-  apiNodes: NodeParameters[],
+  apiNodes: NodeConnectionPayload[],
 
   /**
-   * 
+   *
    *
    * @access public
    * @var {NetworkParameters}

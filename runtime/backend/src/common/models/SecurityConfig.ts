@@ -8,7 +8,8 @@
  * @license     LGPL-3.0
  */
 /**
- * 
+ *
+ * @todo Add relevant type documentation
  */
 export type AuthParameters = {
   secret: string,
@@ -16,7 +17,8 @@ export type AuthParameters = {
 };
 
 /**
- * 
+ *
+ * @todo Add relevant type documentation
  */
 export type CookieParameters = {
   name: string,
@@ -28,6 +30,8 @@ export type CookieParameters = {
  * @description This interface defines the required configuration of dApps
  * security guards.
  *
+ * @todo Add relevant property documentation for {@link auth}
+ * @todo Add relevant property documentation for {@link cookie}
  * @since v0.2.0
  */
 export interface SecurityConfig {

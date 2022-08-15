@@ -19,7 +19,7 @@
   * This class shall be used mainly to refer and handle
   * data in relation with the **discovery** module.
   *
-  * @see DiscoverAccounts
+  * @see DiscoverTransactions
   * @since v0.1.0
   */
  export class TransactionDiscoveryStateData implements StateData {

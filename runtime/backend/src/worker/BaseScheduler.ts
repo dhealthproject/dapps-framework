@@ -10,17 +10,11 @@
 // internal dependencies
 import { BaseCommand } from "./BaseCommand";
 
-
 /**
- * @class BaseCommand
+ * @class BaseScheduler
  * @description The abstract definition of a command line script
- * that the backend runtime can execute. Commands refer to routines
- * that handle scoped business layer logic and that may or may not
- * run on a separate process in the background.
- * <br /><br />
- * Note that cronjobs, for example, should always use commands to
- * execute their business logic as this permits to further augment
- * the access to cronjobs for the team.
+ * that the backend runtime can execute as a cronjob background
+ * process(es).
  *
  * @since v0.2.0
  */

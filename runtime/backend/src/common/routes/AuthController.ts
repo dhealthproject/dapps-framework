@@ -32,6 +32,7 @@ import { TokenRequestDTO } from "../models/TokenRequestDTO";
  * about *authentication*, *access tokens* and basic profile
  * information requests.
  *
+ * @todo Add relevant method documentation for method {@link getAuthCode}
  * @since v0.2.0
  */
 @Controller()

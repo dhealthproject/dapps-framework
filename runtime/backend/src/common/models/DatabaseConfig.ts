@@ -12,6 +12,11 @@
  * @description This interface defines the required configuration of dApps
  * database connections.
  *
+ * @todo The {@link port} property should likely be a `number | string`.
+ * @todo Add relevant property documentation for {@link host}
+ * @todo Add relevant property documentation for {@link port}
+ * @todo Add relevant property documentation for {@link name}
+ * @todo Add relevant property documentation for {@link user}
  * @since v0.2.0
  */
 export interface DatabaseConfig {

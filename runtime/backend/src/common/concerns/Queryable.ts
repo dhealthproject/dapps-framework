@@ -36,6 +36,7 @@ export interface QueryParameters extends Pageable, Sortable {
  * @description This concern requires the presence of fields that
  * consist in delivering *queryable* information.
  *
+ * @todo Add usage example, for example as illustrated in {@link StateSchema}.
  * @since v0.2.0
  */
 export class Queryable<TDocument extends Documentable>

@@ -8,14 +8,12 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Request } from "express";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import {
   Address,
   Order,
-  Transaction,
   TransactionGroup,
   TransactionType,
   TransferTransaction,
@@ -26,7 +24,8 @@ import { NetworkService } from "../services/NetworkService";
 import { User } from "../models/User";
 
 /**
- * 
+ *
+ * @todo Add relevant interface documentation and usage example
  */
 export interface CookiePayload {
   name: string;
@@ -35,7 +34,8 @@ export interface CookiePayload {
 }
 
 /**
- * 
+ *
+ * @todo Add relevant interface documentation and usage example
  */
 export interface AuthenticationPayload {
   sub: string;
@@ -44,7 +44,8 @@ export interface AuthenticationPayload {
 }
 
 /**
- * 
+ *
+ * @todo Add relevant interface documentation and usage example
  */
 export interface AuthenticationToken {
   accessToken: string;
@@ -57,6 +58,13 @@ export interface AuthenticationToken {
  * This can be used to *authenticate* the access to [a subset] of your dApp
  * routes and modules.
  *
+ * @todo Add injection of {@link AuthToken} model instance
+ * @todo Add relevant method documentation for method {@link getCookie}
+ * @todo Add relevant method documentation for method {@link getChallenge}
+ * @todo Add relevant method documentation for method {@link validate}
+ * @todo Add relevant method documentation for method {@link getAccessToken}
+ * @todo Add relevant method documentation for method {@link getTransactionQuery}
+ * @todo Add unit tests for {@link getAccessToken} and remove debug information
  * @since v0.2.0
  */
 @Injectable()

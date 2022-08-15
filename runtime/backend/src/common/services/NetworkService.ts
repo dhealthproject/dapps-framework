@@ -24,6 +24,9 @@ import {
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
+// internal dependencies
+import { NetworkParameters, NodeConnectionPayload } from "../models/NetworkConfig";
+
 /**
  * @type NetworkConnectionPayload
  * @description This type encapsulates parameters that can be
@@ -32,6 +35,7 @@ import { ConfigService } from "@nestjs/config";
  * extra node requests to be issued *before* connection can be
  * established.
  *
+ * @todo Add usage example
  * @since v0.1.0
  */
 export type NetworkConnectionPayload = {
@@ -40,14 +44,6 @@ export type NetworkConnectionPayload = {
   epochAdjustment: number;
   networkIdentifier: number;
   networkCurrencies: NetworkCurrencies;
-};
-
-/**
- * 
- */
-export type NodeConnectionPayload = {
-  url: string,
-  port?: number | string,
 };
 
 /**
@@ -64,6 +60,8 @@ export type NodeConnectionPayload = {
  * @todo Potentially add `nodePublicKey` to network configuration (for default node).
  * @todo Move method {@link getBlockTimestamp} to helpers/formatters concern.
  * @todo Move method {@link getNetworkTimestampFromUInt64} to helpers/formatters concern.
+ * @todo Deprecate method {@link getBlockRepository} in favor of {@link delegatePromises}.
+ * @todo Deprecate method {@link getTransactionRepository} in favor of {@link delegatePromises}.
  * @since v0.1.0
  */
 @Injectable()
@@ -140,55 +138,17 @@ export class NetworkService {
    * @access public
    * @param {ConfigService} configService
    */
-  public constructor(private readonly configService: ConfigService) {
+  public constructor(
+    private readonly configService: ConfigService,
+  ) {
     // prepares the connection parameters
     const defaultNode = this.configService.get<string>("defaultNode");
-    const generationHash = this.configService.get<string>(
-      "network.generationHash",
-    );
-    const epochAdjustment = this.configService.get<number>(
-      "network.epochAdjustment",
-    );
-    const networkIdentifier = this.configService.get<number>(
-      "network.networkIdentifier",
-    );
-    const currencyMosaicId = this.configService.get<string>("network.mosaicId");
-    const tokenDivisibility = this.configService.get<number>(
-      "network.divisibility",
-    );
 
-    // makes sure to connect only with values set for
-    // all required fields during node connection setup.
-    const isConnectionPossible: boolean =
-      !!defaultNode &&
-      !!generationHash &&
-      !!currencyMosaicId &&
-      defaultNode.length > 0 &&
-      generationHash.length > 0 &&
-      currencyMosaicId.length > 0;
+    // store a copy of network parameters in memory
+    this.currentNetwork = this.getNetworkConfiguration();
 
-    if (isConnectionPossible) {
-      // initializes network currencies (uses `js-sha3`)
-      // so that they are not retrieved from the node.
-      const networkCurrency = new Currency({
-        mosaicId: new MosaicId(currencyMosaicId),
-        divisibility: tokenDivisibility,
-        transferable: true,
-        supplyMutable: false,
-        restrictable: false,
-      });
-
-      // stores a copy of the network connection payload
-      this.currentNetwork = {
-        generationHash,
-        epochAdjustment,
-        networkIdentifier,
-        networkCurrencies: new NetworkCurrencies(
-          networkCurrency,
-          networkCurrency,
-        ),
-      } as NetworkConnectionPayload;
-
+    // connects to a node only if there is a default
+    if (!!defaultNode && defaultNode.length > 0) {
       // initializes a repository factory and passes connection
       // information to avoid extra node requests.
       this.connectToNode(defaultNode, this.currentNetwork);
@@ -201,6 +161,11 @@ export class NetworkService {
    * <br /><br />
    * This repository permits to execute requests on the `/blocks`
    * namespace using the node's REST interface.
+   * <br /><br />
+   * @deprecated This method will be deprecated in upcoming releases
+   * of the software. It is deprecated in favor of {@link delegatePromises()}.
+   * Please use the {@link delegatePromises()} method instead of this one
+   * to prevent node requests failures.
    *
    * @access public
    * @returns {BlockRepository}
@@ -215,12 +180,95 @@ export class NetworkService {
    * <br /><br />
    * This repository permits to execute requests on the `/transactions`
    * namespace using the node's REST interface.
+   * <br /><br />
+   * @deprecated This method will be deprecated in upcoming releases
+   * of the software. It is deprecated in favor of {@link delegatePromises()}.
+   * Please use the {@link delegatePromises()} method instead of this one
+   * to prevent node requests failures.
    *
    * @access public
    * @returns {TransactionRepository}
    */
   public getTransactionRepository(): TransactionRepository {
     return this.transactionRepository;
+  }
+
+  /**
+   * Public helper method to retrieve the *network parameters* from the
+   * runtime configuration. This is helpful to create new adapters that
+   * connect to nodes on dHealth Network.
+   * <br /><br />
+   * This method is used internally to populate the {@link currentNetwork}
+   * class property and can be used whenever network parameters must be
+   * fetched from the runtime configuration.
+   *
+   * @returns {NetworkConnectionPayload}
+   */
+  public getNetworkConfiguration(): NetworkConnectionPayload {
+    // reads runtime configuration related to network parameters
+    const networkParameters = this.configService.get<NetworkParameters>(
+      "network",
+    );
+
+    // no configuration of network parameters should instead
+    // read network parameters *from the node* and therefore
+    // we return an empty network connection payload
+    if (undefined === networkParameters) {
+      return {} as NetworkConnectionPayload;
+    }
+
+    // destructuring for further usage in connection payload
+    const {
+      generationHash,
+      epochAdjustment,
+      networkIdentifier,
+      mosaicId: currencyMosaicId,
+      divisibility: tokenDivisibility,
+    } = this.configService.get<NetworkParameters>("network");
+
+    // creating this object locally avoids node requests for it
+    const networkCurrency = this.getNetworkCurrency(
+      currencyMosaicId,
+      tokenDivisibility,
+    );
+
+    // returns a purposefully created NetworkConnectionPayload
+    return {
+      generationHash,
+      epochAdjustment,
+      networkIdentifier,
+      networkCurrencies: new NetworkCurrencies(
+        networkCurrency,
+        networkCurrency,
+      ),
+    } as NetworkConnectionPayload;
+  }
+
+  /**
+   * Public helper method to retrieve the *network currenciy* from the
+   * runtime configuration. This is helpful to create new adapters that
+   * connect to nodes on dHealth Network and *to avoid extra requests
+   * to the node*.
+   * <br /><br />
+   * This method is used internally to populate the `networkCurrencies`
+   * field in the {@link currentNetwork} class property and can be used
+   * whenever network currencies information is necessary.
+   *
+   * @param   {string}  currencyMosaicId 
+   * @param   {number}  tokenDivisibility 
+   * @returns {Currency}
+   */
+  public getNetworkCurrency(
+    currencyMosaicId: string,
+    tokenDivisibility: number,
+  ): Currency {
+    return new Currency({
+      mosaicId: new MosaicId(currencyMosaicId),
+      divisibility: tokenDivisibility,
+      transferable: true,
+      supplyMutable: false,
+      restrictable: false,
+    })
   }
 
   /**
@@ -258,7 +306,7 @@ export class NetworkService {
   /**
    * This method forwards the execution of promises using
    * `Promise.all()` and given request failure, connects to
-   * a different node that is currently in a health state.
+   * a different node that is currently in a healthy state.
    *
    * @async
    * @access public
@@ -284,8 +332,14 @@ export class NetworkService {
    * nodes is currently in a healthy state, this method will
    * use the {@link http://peers.dhealth.cloud:7903/network/nodes} endpoint
    * instead.
+   * <br /><br />
+   * Note that this method executes a call to the node's API
+   * using the endpoint `/node/health` to determine the health
+   * state of selected nodes. As of now, the nodes that are
+   * added to the runtime configuration will be iterated in a
+   * sequential and ascending order.
    *
-   * @todo implement network-api interface to query health nodes
+   * @todo implement network-api interface to query healthy nodes
    * @async
    * @access protected
    * @returns {NodeConnectionPayload}

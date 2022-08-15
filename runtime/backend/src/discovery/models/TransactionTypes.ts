@@ -14,6 +14,7 @@ import { TransactionType } from "@dhealth/sdk";
  * @class TransactionDTO
  * @description
  *
+ * @todo Add relevant helper function documentation
  * @todo Use the `@dhealth/contracts` abstraction and include in TransactionDTO if necessary.
  * @since v0.2.0
  */

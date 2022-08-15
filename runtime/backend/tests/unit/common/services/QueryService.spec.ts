@@ -272,4 +272,12 @@ describe("common/QueryService", () => {
       });
     });
   });
+
+  //@todo Write tests for getQueryConfig()
+  //@todo Write tests for sanitizeSearchQuery()
+  //@todo Write tests for exists()
+  //@todo Write tests for count()
+  //@todo Write tests for findOne()
+  //@todo Write tests for createOrUpdate()
+  //@todo Write tests for updateBatch()
 });

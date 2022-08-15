@@ -22,6 +22,7 @@
  * origin database documents.
  *
  * @todo Obviously remove the hacky `toDTO()` with some formatting/encoding/validation logic.
+ * @todo Add usage example, for example as illustrated in {@link StateSchema}.
  * @since v0.2.0
  */
 export class Transferable<TDTOType> {

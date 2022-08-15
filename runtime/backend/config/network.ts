@@ -20,7 +20,7 @@
     namespaceName: "dhealth.dhp",
     mosaicId: "39E0C49FA322A459",
     namespaceId: "9D8930CDBB417337",
-    divisibility: "6",
+    divisibility: 6,
     networkIdentifier: 104,
     epochAdjustment: 1616978397,
     generationHash: "ED5761EA890A096C50D3F50B7C2F0CCB4B84AFC9EA870F381E84DDE36D04EF16"

@@ -114,4 +114,11 @@ describe("common/NetworkService", () => {
       expect(result).toEqual(expectedResult);
     });
   });
+
+  //@todo Write tests for getNetworkConfiguration()
+  //@todo Write tests for getNetworkCurrency()
+  //@todo Write tests for delegatePromises()
+  //@todo Write tests for getNextAvailableNode()
+  //@todo Write tests for getNodeUrl()
+  //@todo Write tests for connectToNode()
 });

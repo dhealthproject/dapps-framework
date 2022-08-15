@@ -14,6 +14,7 @@ import { ApiProperty } from "@nestjs/swagger";
  * @class TransactionDTO
  * @description
  *
+ * @todo Add relevant class documentation and usage example
  * @todo Use the `@dhealth/contracts` abstraction and include in TransactionDTO if necessary.
  * @since v0.2.0
  */

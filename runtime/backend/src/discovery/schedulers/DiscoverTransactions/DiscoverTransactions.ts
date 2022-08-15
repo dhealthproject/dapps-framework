@@ -84,8 +84,6 @@ export interface DiscoverTransactionsCommandOptions extends DiscoveryCommandOpti
  * scheduler. Contains source code for the execution logic of a
  * command with name: `discovery:transactions`.
  *
- * @todo Add statistics collection or document with `__stats__` identifier, to contain total documents counter.
- * @todo This discovery scheduler currently *only tracks incoming* transactions of said account.
  * @todo Should use `BigInt` in {@link extractTransactionBlock} because `height.compact()` is not protected for number overflow.
  * @since v0.2.0
  */
