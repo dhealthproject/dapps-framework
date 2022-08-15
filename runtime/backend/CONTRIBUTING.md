@@ -13,7 +13,15 @@ the developers managing and developing this open source project. In return,
 they should reciprocate that respect in addressing your issue, assessing changes, 
 and helping you finalize your pull requests.
 
-Please, **don't use the issue tracker for support questions**. 
+Please, **don't use the issue tracker for support questions**.
+
+- [Bug reports](#bug-reports)
+- [Feature requests](#feature-requests)
+- [Contributing code](#contributing-code-and-documentation-changes)
+- [Coding guidelines](#rules)
+- [Commit types](#commit-types)
+- [Commit scopes](#commit-scopes)
+- [Project status](#project-status)
 
 ## Bug reports
 
@@ -34,7 +42,6 @@ Please, take in consideration the next template to report your issue:
 > A short sentence enplaning what the code does. \
 > **Steps to reproduce**\
 > For faster issue detection, we would need a step by step description do reproduce the issue.
-
 
 Provide as much information as you can.
 
@@ -168,8 +175,36 @@ The subject contains a succinct description of the change(s):
 * don't capitalize the first letter
 * no dot (.) at the end
 
+## <a name="project-status"></a> Project status
+
+We introduce a *standard* for determining the overall *state of a project* as it pertains to the lifecycle of open source software as presented in the attached source code repository.
+
+This standard is currently not enforced and willingly added to repositories *that MUST* include a **Status** badge in the [README](README.md) on the top of the file, alongside other badges already included.
+
+The project status badge can take one of the following states:
+
+* ![Idea](https://img.shields.io/badge/Status-Idea-ff0018.svg): This badge is attached to projects that are being started. Projects in this state *MAY* not respond to reports of issues or accept contributions. Projects marked as *ideas* don't necessarily have to ever move out of this state.
+* ![Prototype](https://img.shields.io/badge/Status-Prototype-ff7c00.svg): This badge is attached to projects that are a bit further along than ideas. Often, this badge is attached to *proof-of-concepts* (PoC). Projects in this state *MAY* \[still\] not be accepting contributions, but *MAY* be open to feedback. Projects marked as *prototypes* don't necessarily have to ever move out of this state.
+* ![In progress](https://img.shields.io/badge/Status-In%20progress-2b00ff.svg): This badge is attached to projects that are under development. Projects in this state *MAY* not be fully functional, but maintainers are more likely to accept contributions, help and feedback. Projects marked as being *in progress* *MUST* move out of this state to become one of *paused*, *active* or any of the below listed states.
+* ![Paused](https://img.shields.io/badge/Status-Paused-ff9e9e.svg): This badge is attached to projects that currently not active but that *MAY* be continued at a later point in time. Projects in this state *MAY* be slow to respond or unresponsive to issues and feedback. Projects marked as *paused* don't necessarily have to ever move out of this state but are likely to become one of *active* or *archived* at a later point in time.
+* ![Active](https://img.shields.io/badge/Status-Active-9effe1.svg): This badge is attached to projects that are *functional* but still actively developing new features. Projects in this state *MUST* accept contributions (after successful review), help and feedback and *MUST* have had previous *stable* releases.
+* ![Stable](https://img.shields.io/badge/Status-Stable-05d302.svg): This badge is attached to projects that are *effectively complete*. Projects in this state *MAY* release security patches and *MUST* accept contributions (after successful review), help and feedback.
+* ![Relinquished](https://img.shields.io/badge/Status-Relinquished-fec17d.svg): This badge is attached to projects that are no longer being developed or maintained by the original maintainer(s). Projects in this state *MAY* be fully functional but are likely to be looking for new maintainer(s). Projects marked as *relinquished* don't necessarily have to ever move out of this state.
+* ![Archived](https://img.shields.io/badge/Status-Archived-fefc7d.svg): This badge is attached to projects that are *no longer active*. Projects in this state *MAY* or *MAY NOT* be read-only and maintainer(s) *MAY* not intend to fix any issues (security or otherwise), or support users.
+* ![Static](https://img.shields.io/badge/Status-Static-e3fe7d.svg): This badge is attached to projects that are *archived* immediately after initial publication. Projects in this state *MAY* be fully functional but the maintainer(s) *MAY* not intend to fix any issues (security or otherwise), or support users
+
+[Source](https://leaddev.com/agile-other-ways-working/how-communicate-state-your-open-source-project)
+
+## <a name="welcome"></a> Welcoming contributions!
+
+We are happy about any contributions, help or feedback about our open source software and our team will be happy to support you in the process of starting to contribute or collaborate.
+
+We welcome contributions to our software and use these contributing notes as a way to set some simple [rules](#rules) around contributions that our team will review and assess.
+
+--
+
 *CONTRIBUTING.md is based on [CONTRIBUTING-template.md](https://github.com/nayafia/contributing-template/blob/master/CONTRIBUTING-template.md)* 
-and [elasticsearch/CONTRIGUTING](https://github.com/elastic/elasticsearch/blob/master/CONTRIBUTING.md)
+and [elasticsearch/CONTRIBUTING](https://github.com/elastic/elasticsearch/blob/master/CONTRIBUTING.md)
 
 [pull-request]:https://help.github.com/articles/about-pull-requests/
 [github-issues]:https://github.com/dhealthproject/dapps-framework/issues

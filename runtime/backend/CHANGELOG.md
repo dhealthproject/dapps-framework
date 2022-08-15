@@ -3,6 +3,24 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 0.3.0 - Unreleased
+
+#### Added
+
+- [@dhealthdapps/backend] perf: add mongo indexes, required fields and improve mongo query handling
+- [@dhealthdapps/backend] chore: add data folder for database persistence
+- [@dhealthdapps/backend] test: add more unit tests for transactions discovery
+- [@dhealthdapps/backend] feat(base): add support for mongoose FilterQuery and promise delegation in NetworkService
+
+#### Changed
+
+- [@dhealthdapps/backend] refactor: set transactions discovery at core of accounts
+- [@dhealthdapps/backend] refactor: add helper methods to NetworkService, add @todo and hints on missing unit tests
+
+#### Fixed
+
+- [@dhealthdapps/backend] fix: run account discovery every 2 minutes and add transaction query by mode
+
 ## [0.2.0][0.2.0] - 13-Jul-2022
 
 #### Added

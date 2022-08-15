@@ -3,6 +3,7 @@
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 [![License](https://img.shields.io/badge/License-LGPL%203.0%20only-blue.svg)][license]
 [![Discord](https://img.shields.io/badge/chat-on%20discord-green.svg)][discord]
+[![In progress](https://img.shields.io/badge/Status-In%20progress-2b00ff.svg)](CONTRIBUTING.md#project-status)
 
 dHealth dApps Framework for [dHealth Network][parent-url].
 

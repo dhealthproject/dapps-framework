@@ -3,6 +3,40 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 0.3.0 - Unreleased
+
+#### Added
+
+- [@dhealthdapps/frontend] docs: apply review comments and document properties
+- [@dhealthdapps/frontend] review: add relevant source code documentation
+- [@dhealthdapps/frontend] feat(app): add settings entry for auth token, add route guard
+- [@dhealthdapps/frontend] feat(kernel): add pre-render-completion loader, add axios)
+- [@dhealthdapps/frontend] review(screens): apply review comments, add unit tests
+- [@dhealthdapps/frontend] feat(screens): add generation of transaction in mobile app for qr code
+- [@dhealthdapps/frontend] feat(screens): add draft for onboarding page to start authentication
+- [@dhealthdapps/frontend] chore(package): add PWA precache for entrypoint
+- [@dhealthdapps/frontend] test: added global mocks for sdk and qr lib, working unit tests
+- [@dhealthdapps/frontend] test(build): use jest for unit tests and add global mocks
+- [@dhealthdapps/frontend] test: add functional SCSS imports during unit tests runtime
+- [@dhealthdapps/frontend] feat(app): add implementation of login functionality
+- [@dhealthdapps/frontend] docs: add relevant source code documentation
+- [@dhealthdapps/frontend] feat(screens): add first draft of dashboard screen
+- [@dhealthdapps/frontend] feat(screens): add first draft of vertically split screen
+- [@dhealthdapps/frontend] feat(screens): add login screen layout, svg to tag conversion, header config
+- [@dhealthdapps/frontend] feat(screens): add first draft of login screen
+
+#### Changed
+
+- [@dhealthdapps/frontend] refactor: split dashboard screen implementation into components
+- [@dhealthdapps/frontend] refactor: move carousel into separate component
+
+#### Fixed 
+
+- [@dhealthdapps/frontend] fix(widgets): components rename
+- [@dhealthdapps/frontend] fix: add backendService in LoginScreen and remove vue.config fetch mock
+- [@dhealthdapps/frontend] fix(screens): adapt carousel image display
+- [@dhealthdapps/frontend] fix(routes): restore termsofservice route
+
 ## [0.2.0][0.2.0] - 13-Jul-2022
 
 #### Added

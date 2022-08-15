@@ -3,6 +3,23 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 0.3.0 - Unreleased
+
+#### Added
+
+- [@dhealth/components] build: add correct order for imports and code style in DappMosaic
+- [@dhealth/components] feat(elements): add DappInput and DappMosaic form components
+- [@dhealth/components] build: add web component wrapper as a library
+- [@dhealth/components] feat(elements): add export of components as web components
+
+#### Changed
+
+- [@dhealth/components] refactor: improve perf for web components
+
+#### Fixed
+
+- [@dhealth/components] fix(test): add utf-8-validate and bufferutil externals fill, DappMosaic code style
+
 ## [0.2.0][0.2.0] - 13-Jul-2022
 
 #### Added
