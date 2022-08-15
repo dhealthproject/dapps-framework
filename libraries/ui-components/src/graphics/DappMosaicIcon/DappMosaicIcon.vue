@@ -25,6 +25,7 @@
   >
     <g>
       <title>{{ title }}</title>
+      <!-- Display a DHP token icon, fill it with color from prop `iconColor` -->
       <path
         fill-rule="evenodd"
         clip-rule="evenodd"

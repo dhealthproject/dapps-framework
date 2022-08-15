@@ -28,7 +28,9 @@ import DappGraphicComponent from "../DappGraphicComponent/DappGraphicComponent";
  *     <DappMosaicIcon
  *       :width="123"
  *       :height="123"
- *       :mosaic="some-mosaic-object"
+ *       :mosaic="{
+ *         mosaicId: "39E0C49FA322A459"
+ *       }"
  *       :hideCaption="true"
  *     />
  *   </template>
