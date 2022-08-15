@@ -37,15 +37,18 @@ export class TransactionsService {
   ) {}
 
   /**
-   * Method to query `Transactions` based on query and
-   * return as paginated results.
+   * This method executes a *count* query using the {@link model}
+   * argument.
+   * <br /><br />
+   * Caution: Count queries require a considerable amount of RAM
+   * to execute. It is preferred to use pro-active statistics with
+   * collections that contain one document with a counter.
    *
-   * @async
-   * @param   {TransactionQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @returns {Promise<PaginatedResultDTO<TransactionDocument>>}
-   */
-  async find(query: TransactionQuery): Promise<PaginatedResultDTO<TransactionDocument>> {
-    return await this.queriesService.find(query, this.model);
+   * @param   {TransactionQuery}  query 
+   * @returns {Promise<number>}   The number of matching transactions.
+   */ 
+  async count(query: TransactionQuery): Promise<number> {
+    return await this.queriesService.count(query, this.model);
   }
 
   /**
@@ -69,6 +72,18 @@ export class TransactionsService {
 
     // https://simplernerd.com/typescript-convert-bool/
     return !!document;
+  }
+
+  /**
+   * Method to query `Transactions` based on query and
+   * return as paginated results.
+   *
+   * @async
+   * @param   {TransactionQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @returns {Promise<PaginatedResultDTO<TransactionDocument>>}
+   */
+  async find(query: TransactionQuery): Promise<PaginatedResultDTO<TransactionDocument>> {
+    return await this.queriesService.find(query, this.model);
   }
 
   /**

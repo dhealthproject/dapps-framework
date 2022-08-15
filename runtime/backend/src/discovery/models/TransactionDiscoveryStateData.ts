@@ -34,5 +34,15 @@
     * @var {string}
     */
    public lastUsedAccount: string;
+
+   /**
+    * Contains the **total number of transactions** that have
+    * been discovered using the *transaction* discovery. This
+    * data field can be used to avoid count queries.
+    *
+    * @access public
+    * @var {number}
+    */
+   public totalNumberOfTransactions: number;
  }
  

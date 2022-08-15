@@ -84,6 +84,7 @@ export interface DiscoverTransactionsCommandOptions extends DiscoveryCommandOpti
  * scheduler. Contains source code for the execution logic of a
  * command with name: `discovery:transactions`.
  *
+ * @todo Add statistics collection or document with `__stats__` identifier, to contain total documents counter.
  * @todo This discovery scheduler currently *only tracks incoming* transactions of said account.
  * @todo Should use `BigInt` in {@link extractTransactionBlock} because `height.compact()` is not protected for number overflow.
  * @since v0.2.0
@@ -121,6 +122,15 @@ export class DiscoverTransactions
   private lastUsedAccount: string;
 
   /**
+   * Memory store for the total number of transactions. This is used
+   * in {@link getStateData} to update the latest execution state.
+   *
+   * @access private
+   * @var {number}
+   */
+  private totalNumberOfTransactions: number;
+
+  /**
    * The constructor of this class.
    * Params will be automatically injected upon called.
    *
@@ -141,6 +151,7 @@ export class DiscoverTransactions
 
     // sets default state data
     this.lastPageNumber = 1;
+    this.totalNumberOfTransactions = 0;
   }
 
   /**
@@ -189,6 +200,7 @@ export class DiscoverTransactions
   protected getStateData(): TransactionDiscoveryStateData {
     return {
       lastUsedAccount: this.lastUsedAccount,
+      totalNumberOfTransactions: this.totalNumberOfTransactions,
     } as TransactionDiscoveryStateData
   }
 
@@ -291,6 +303,23 @@ export class DiscoverTransactions
       this.debugLog(`Starting transactions discovery for source "${options.source}"`);
     }
 
+    // reads the latest global execution state
+    if (!!this.state && "totalNumberOfTransactions" in this.state.data) {
+      this.totalNumberOfTransactions = this.state.data.totalNumberOfTransactions ?? 0;
+    }
+
+    // account for transactions created before this run
+    if (0 === this.totalNumberOfTransactions) {
+      this.totalNumberOfTransactions = await this.transactionsService.count(new TransactionQuery(
+        {} as TransactionDocument,
+      ));
+    }
+
+    // display debug information about total number of transactions
+    if (options.debug && !options.quiet) {
+      this.debugLog(`Total number of transactions: "${this.totalNumberOfTransactions}"`);
+    }
+
     // per-source synchronization: "discovery:DiscoverTransactions:%SOURCE%"
     const stateIdentifier = `${this.stateIdentifier}:${options.source}`;
     const stateQuerySrc = new StateQuery({ name: stateIdentifier } as StateDocument);
@@ -325,7 +354,11 @@ export class DiscoverTransactions
       const promises = this.getTransactionQueriesForPage(i, includeUnconfirmed, includePartial);
 
       // executes the promises and fetches sync-state
-      const transactionPages = await Promise.all(promises);
+      // uses the network service to execute transaction queries
+      // as to avoid request failures due to node connection issues
+      const transactionPages = await this.networkService.delegatePromises(promises);
+
+      // determines the current source's synchronization state
       isSynchronized = transactionPages.reduce(
         (prev, cur) => prev && cur.isLastPage,
         true,
@@ -339,7 +372,7 @@ export class DiscoverTransactions
 
       // reads transaction hashes
       hashes = hashes.concat(transactions.map(
-        t => this.extractTransactionHash(t),
+        (t: SdkTransaction) => this.extractTransactionHash(t),
       )).filter((v, i, s) => s.indexOf(v) === i); // unique
 
       // store transactions in memory during runtime
@@ -363,6 +396,7 @@ export class DiscoverTransactions
     // (3) prepares and populates individual `transactions` documents
     //let documents: Transaction[] = [];
     let nSkipped: number = 0;
+    let nCreated: number = 0;
     for (let i = 0, max = hashes.length; i < max; i++) {
       // retrieve full transaction details
       const transaction = this.transactions.find(
@@ -398,7 +432,11 @@ export class DiscoverTransactions
         encodedBody: this.extractTransactionBody(transaction),
         creationBlock: this.extractTransactionBlock(transaction),
       });
+      nCreated++;
     }
+
+    // updates total counter
+    this.totalNumberOfTransactions += nCreated;
 
     if (options.debug && !options.quiet) {
       this.debugLog(`(${stateIdentifier}) Skipped ${nSkipped} transaction(s) that already exist`);

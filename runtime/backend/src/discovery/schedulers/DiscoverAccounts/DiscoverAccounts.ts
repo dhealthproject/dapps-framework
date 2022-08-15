@@ -17,6 +17,7 @@ import { PublicAccount, NetworkType } from "@dhealth/sdk";
 // internal dependencies
 import { QueryParameters } from "../../../common/concerns/Queryable";
 import { StateService } from "../../../common/services/StateService";
+import { StateDocument, StateQuery } from "../../../common/models/StateSchema";
 import { NetworkService } from "../../../common/services/NetworkService";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
 import { AccountsService } from "../../services/AccountsService";
@@ -204,6 +205,22 @@ export class DiscoverAccounts
     if (!!this.state && !!this.state.data && "lastPageNumber" in this.state.data) {
       this.lastPageNumber = this.state.data.lastPageNumber;
     }
+    
+    // check for the total number of transactions
+    const transactionsState = await this.stateService.findOne(new StateQuery({
+      name: "discovery:DiscoverTransactions",
+    } as StateDocument));
+
+    const countTransactions = !!transactionsState && "totalNumberOfTransactions" in transactionsState.data
+      ? transactionsState.data.totalNumberOfTransactions
+      : 0;
+
+    // if we reached the end of transactions, we want
+    // to continue *only* with recent transactions in
+    // the next runs of accounts discovery
+    if (countTransactions > 0 && this.lastPageNumber * 100 > countTransactions) {
+      this.lastPageNumber = this.lastPageNumber - 1;
+    }
 
     // display debug information about configuration
     if (options.debug && !options.quiet) {
@@ -218,7 +235,7 @@ export class DiscoverAccounts
 
       // fetches transactions *from the database* (mongo)
       const transactions = await this.transactionsService.find(new TransactionQuery(
-        { transactionMode: "incoming" } as TransactionDocument, // queries *any incoming* transaction
+        {} as TransactionDocument, // queries *any* transaction
         {
           pageNumber: i, // in batches of 100 per page
           pageSize: 100,
@@ -227,7 +244,7 @@ export class DiscoverAccounts
 
       // proceeds to extracting accounts from transactions
       this.discoveredAddresses = this.discoveredAddresses.concat(
-        transactions.data.map(t => t.signerAddress),
+        transactions.data.map((t: TransactionDocument) => t.recipientAddress),
       ).filter((v, i, s) => s.indexOf(v) === i); // unique
     }
 

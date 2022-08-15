@@ -7,6 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
+import { FilterQuery } from "mongoose";
+
 // internal dependencies
 import { Pageable } from "./Pageable";
 import { Sortable } from "./Sortable";
@@ -38,24 +41,28 @@ export interface QueryParameters extends Pageable, Sortable {
 export class Queryable<TDocument extends Documentable>
   implements QueryParameters {
   /**
-   * The **document** identifier. Any document that is queryable,
-   * typically has an *identifier*, a.k.a. a **primary key value**.
+   * The document entry used as a filter. This property can be used
+   * to query documents by equality of fields.
+   * <br /><br />
+   * Note that queries with more complex *operators* must use the
+   * {@link filterQuery} property instead and leave this one blank.
+   * <br /><br />
+   * @example Setting a `document`
+   * ```js
+   *  document: {} as Document
+   *  document: { field: value } as Document
+   * ```
    *
    * @access public
-   * @var {string}
-   */
-  // public id?: string;
-
-  /**
-   * 
+   * @var {TDocument}
    */
   public document?: TDocument;
 
   /**
-   * Page number query.
-   * Determine which page number the result should be returned from.
-   *
-   * E.g.
+   * Determines the page number that is being requested. This will
+   * also define the offset of results that are returned.
+   * <br /><br />
+   * @example Setting a `pageNumber`
    * ```js
    *  pageNumber: 3
    * ```
@@ -67,10 +74,10 @@ export class Queryable<TDocument extends Documentable>
   public pageNumber: number;
 
   /**
-   * Page size query.
-   * Determine which page size the result should be returned as.
-   *
-   * E.g.
+   * Determines the page size that is being requested. This will
+   * also define the maximum number of results that are returned.
+   * <br /><br />
+   * @example Setting a `document`
    * ```js
    *  pageSize: 100
    * ```
@@ -82,12 +89,12 @@ export class Queryable<TDocument extends Documentable>
   public pageSize: number;
 
   /**
-   * Sort query.
-   * Determine which field of the result should be sorted by.
-   *
-   * E.g.
+   * Determines the sort field that is being requested. This will
+   * define the field used to sort results that are returned.
+   * <br /><br />
+   * @example Setting a `sort` field name
    * ```js
-   *  sort: 'address'
+   *  sort: "address"
    * ```
    *
    * @access public
@@ -97,14 +104,17 @@ export class Queryable<TDocument extends Documentable>
   public sort: string;
 
   /**
-   * Order query.
-   * Determine which direction the result should be sorted by.
-   *
-   * Values are `asc` and `desc`.
-   *
-   * E.g.
+   * Determines the order direction that is being requested. This will
+   * define the order direction of results that are returned.
+   * <br /><br />
+   * Possible values are:
+   * - `"asc"`: Sorts the results in *ascending* order, i.e. "first in, first out".
+   * - `"desc"`: Sorts the results in *descendeing* order, i.e. "last in, first out".
+   * <br /><br />
+   * @example Setting a `order` direction
    * ```js
-   *  order: 'asc'
+   *  order: "asc"
+   *  order: "desc"
    * ```
    *
    * @access public
@@ -112,6 +122,28 @@ export class Queryable<TDocument extends Documentable>
    * @var {string}
    */
   public order: string;
+
+  /**
+   * The custom filter query that must be used. This property can
+   * be used to filter results using enhanced mongodb operators,
+   * including: `$ne`, `$in`, `$gte`, `$lte`, etc.
+   * <br /><br />
+   * Note that queries that use only the *equality* operator can
+   * use the {@link document} property as well which removes the
+   * need to specify the operators (always uses equality).
+   * <br /><br />
+   * @example Setting a `filterQuery`
+   * ```js
+   *  filterQuery: { 
+   *    $ne: { field: value },
+   *    $gte: { otherField: otherValue }
+   *  } as FilterQuery<Document>
+   * ```
+   *
+   * @access public
+   * @var {FilterQuery<TDocument>}
+   */
+  public filterQuery?: FilterQuery<TDocument>;
 
   /**
    * Copy constructor for pageable *generic* queries. The query
@@ -136,10 +168,12 @@ export class Queryable<TDocument extends Documentable>
       sort: "_id",
       order: "asc"
     },
+    filterQuery?: FilterQuery<TDocument>,
   ) {
     // note that the `document` parameter can take `undefined`,
     // the document is then ignored and not used in the query.
     this.document = document;
+    this.filterQuery = filterQuery;
 
     // mapping default field values if necessary
     this.pageNumber = undefined === pageNumber ? 1 : pageNumber;

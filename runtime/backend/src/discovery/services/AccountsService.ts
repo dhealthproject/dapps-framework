@@ -39,28 +39,18 @@ export class AccountsService {
   ) {}
 
   /**
-   * Find one `AccountDocument` instance in the database and use
-   * a query based on the {@link Queryable} class.
+   * This method executes a *count* query using the {@link model}
+   * argument.
    * <br /><br />
-   * 
-   * @access public
-   * @async
-   * @param   {AccountQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @returns {Promise<StateDocument>}  The resulting `accounts` document.
-   */
-  async findOne(query: AccountQuery): Promise<AccountDocument> {
-    return await this.queriesService.findOne(query, this.model);
-  }
-
-  /**
-   * Method to query accounts based on query and returns as paginated result.
+   * Caution: Count queries require a considerable amount of RAM
+   * to execute. It is preferred to use pro-active statistics with
+   * collections that contain one document with a counter.
    *
-   * @async
-   * @param   {AccountQuery} query
-   * @returns {Promise<PaginatedResultDTO<AccountDocument>>}
-   */
-  async find(query: AccountQuery): Promise<PaginatedResultDTO<AccountDocument>> {
-    return await this.queriesService.find(query, this.model);
+   * @param   {AccountQuery}  query 
+   * @returns {Promise<number>}   The number of matching accounts.
+   */ 
+  async count(query: AccountQuery): Promise<number> {
+    return await this.queriesService.count(query, this.model);
   }
 
   /**
@@ -84,6 +74,31 @@ export class AccountsService {
 
     // https://simplernerd.com/typescript-convert-bool/
     return !!document;
+  }
+
+  /**
+   * Method to query accounts based on query and returns as paginated result.
+   *
+   * @async
+   * @param   {AccountQuery} query
+   * @returns {Promise<PaginatedResultDTO<AccountDocument>>}
+   */
+  async find(query: AccountQuery): Promise<PaginatedResultDTO<AccountDocument>> {
+    return await this.queriesService.find(query, this.model);
+  }
+
+  /**
+   * Find one `AccountDocument` instance in the database and use
+   * a query based on the {@link Queryable} class.
+   * <br /><br />
+   * 
+   * @access public
+   * @async
+   * @param   {AccountQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @returns {Promise<StateDocument>}  The resulting `accounts` document.
+   */
+  async findOne(query: AccountQuery): Promise<AccountDocument> {
+    return await this.queriesService.findOne(query, this.model);
   }
 
   /**

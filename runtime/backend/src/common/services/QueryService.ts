@@ -91,6 +91,25 @@ export class QueryService<
   TModel extends Model<TDocument, {}, {}, {}> = Model<TDocument>,
 > {
   /**
+   * This method executes a *count* query using the {@link model}
+   * argument.
+   * <br /><br />
+   * Caution: Count queries require a considerable amount of RAM
+   * to execute. It is preferred to use pro-active statistics with
+   * collections that contain one document with a counter.
+   *
+   * @param   {Queryable<TDocument>}  query 
+   * @param   {TModel}                model
+   * @returns {Promise<number>}   The number of matching documents.
+   */ 
+  async count(
+    query: Queryable<TDocument>,
+    model: TModel,
+  ): Promise<number> {
+    return await model.count(query);
+  }
+
+  /**
    * Create a generic *search query* that is compatible with Mongo. The
    * returned {@link PaginatedResultDto} contains a `data` field and a
    * `pagination` field to permit multiple queries to be sequenced.

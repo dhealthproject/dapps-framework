@@ -69,9 +69,13 @@ class MockDiscoverTransactions extends DiscoverTransactions {
   // mocks the internal StateService
   protected stateService: any = { findOne: jest.fn(), updateOne: jest.fn() };
 
+  // mocks the internal NetworkService
+  protected networkService: any = { delegatePromises: jest.fn().mockReturnValue([]) };
+
   // mocks the internal TransactionsService
   protected transactionsService: any = {
-    exists: jest.fn(),
+    exists: jest.fn().mockReturnValue(false),
+    count: jest.fn().mockReturnValue(0),
   };
 
   // mocks **getters** for protected properties
@@ -211,6 +215,7 @@ describe("discovery/DiscoverTransactions", () => {
         getTransactionRepository: () => ({
           search: emptyPageSearcherMock
         }),
+        delegatePromises: jest.fn().mockReturnValue([]),
       };
 
       // clear mocks
@@ -238,7 +243,8 @@ describe("discovery/DiscoverTransactions", () => {
 
         // assert
         expect(logger.debug).toHaveBeenNthCalledWith(1, "Starting transactions discovery for source \"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\"");
-        expect(logger.debug).toHaveBeenNthCalledWith(2, "Last discovery for \"discovery:DiscoverTransactions:NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\" ended with page: \"1\"");
+        expect(logger.debug).toHaveBeenNthCalledWith(2, "Total number of transactions: \"0\"");
+        expect(logger.debug).toHaveBeenNthCalledWith(3, "Last discovery for \"discovery:DiscoverTransactions:NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\" ended with page: \"1\"");
       });
 
       it("should include only confirmed transfer transactions by default", async () => {
@@ -349,6 +355,10 @@ describe("discovery/DiscoverTransactions", () => {
           getTransactionRepository: () => ({
             search: nonemptyPageSearcherMock
           }),
+          delegatePromises: jest.fn().mockReturnValue([{
+            data: expectedTransactions,
+            isLastPage: false,
+          }]),
         };
 
         // clear database mocks

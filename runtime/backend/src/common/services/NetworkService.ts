@@ -10,9 +10,12 @@
 // external dependencies
 import {
   BlockRepository,
+  ChainRepository,
   Currency,
   MosaicId,
   NetworkCurrencies,
+  NodeHealth,
+  NodeRepository,
   RepositoryFactoryHttp,
   RepositoryFactoryConfig,
   TransactionRepository,
@@ -22,7 +25,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 /**
- * @type NodeConnectionPayload
+ * @type NetworkConnectionPayload
  * @description This type encapsulates parameters that can be
  * used when connecting to a dHealth Network node. Configuring
  * the connection object (repository factory) permits to avoid
@@ -31,12 +34,20 @@ import { ConfigService } from "@nestjs/config";
  *
  * @since v0.1.0
  */
-export type NodeConnectionPayload = {
+export type NetworkConnectionPayload = {
   nodePublicKey?: string;
   generationHash: string;
   epochAdjustment: number;
   networkIdentifier: number;
   networkCurrencies: NetworkCurrencies;
+};
+
+/**
+ * 
+ */
+export type NodeConnectionPayload = {
+  url: string,
+  port?: number | string,
 };
 
 /**
@@ -57,6 +68,24 @@ export type NodeConnectionPayload = {
  */
 @Injectable()
 export class NetworkService {
+  /**
+   * The currently connected node.
+   *
+   * @access protected
+   * @var {NodeConnectionPayload}
+   */
+  protected currentNode: NodeConnectionPayload;
+
+  /**
+   * The information related to the connected network.
+   * This is necessary to connect to other nodes of the
+   * network.
+   *
+   * @access protected
+   * @var {NetworkConnectionPayload}
+   */
+  protected currentNetwork: NetworkConnectionPayload;
+
   /**
    * The repository factory used to communicate with the
    * connected node's REST interface.
@@ -83,6 +112,24 @@ export class NetworkService {
    * @var {BlockRepository}
    */
   protected blockRepository: BlockRepository;
+
+  /**
+   * The chain repository that permits to execute REST
+   * requests on the `/chain` namespace.
+   *
+   * @access protected
+   * @var {ChainRepository}
+   */
+  protected chainRepository: ChainRepository;
+
+  /**
+   * The node repository that permits to execute REST
+   * requests on the `/node` namespace.
+   *
+   * @access protected
+   * @var {NodeRepository}
+   */
+  protected nodeRepository: NodeRepository;
 
   /**
    * Constructs an instance of the network service and connects
@@ -131,9 +178,8 @@ export class NetworkService {
         restrictable: false,
       });
 
-      // initializes a repository factory and passes connection
-      // information to avoid extra node requests.
-      this.connectToNode(defaultNode, {
+      // stores a copy of the network connection payload
+      this.currentNetwork = {
         generationHash,
         epochAdjustment,
         networkIdentifier,
@@ -141,7 +187,11 @@ export class NetworkService {
           networkCurrency,
           networkCurrency,
         ),
-      } as NodeConnectionPayload);
+      } as NetworkConnectionPayload;
+
+      // initializes a repository factory and passes connection
+      // information to avoid extra node requests.
+      this.connectToNode(defaultNode, this.currentNetwork);
     }
   }
 
@@ -167,7 +217,7 @@ export class NetworkService {
    * namespace using the node's REST interface.
    *
    * @access public
-   * @returns {BlockRepository}
+   * @returns {TransactionRepository}
    */
   public getTransactionRepository(): TransactionRepository {
     return this.transactionRepository;
@@ -176,8 +226,8 @@ export class NetworkService {
   /**
    * Method to get timestamp from a dHealth block-height number.
    *
-   * @access public
    * @async
+   * @access public
    * @param {number} height
    * @returns {Promise<number>}
    */
@@ -206,19 +256,121 @@ export class NetworkService {
   }
 
   /**
+   * This method forwards the execution of promises using
+   * `Promise.all()` and given request failure, connects to
+   * a different node that is currently in a health state.
+   *
+   * @async
+   * @access public
+   * @param   {Promise<ResponseType>[]}  promises    An array of promises that will be executed.
+   * @returns {Promise<ResponseType[]>}  An array of results as promised.
+   */
+  public async delegatePromises<ResponseType>(
+    promises: Promise<ResponseType>[],
+  ): Promise<ResponseType[]> {
+    try {
+      return await Promise.all(promises);
+    }
+    catch (e) {
+      // request to node **failed**, try with a different node
+      this.currentNode = await this.getNextAvailableNode();
+      return this.delegatePromises(promises);
+    }
+  }
+
+  /**
+   * Helper method to pick a **healthy** and available node
+   * from the runtime configuration. If none of the configured
+   * nodes is currently in a healthy state, this method will
+   * use the {@link http://peers.dhealth.cloud:7903/network/nodes} endpoint
+   * instead.
+   *
+   * @todo implement network-api interface to query health nodes
+   * @async
+   * @access protected
+   * @returns {NodeConnectionPayload}
+   */
+  protected async getNextAvailableNode(): Promise<NodeConnectionPayload> {
+    // reads configuration
+    const otherNodes = this.configService.get<NodeConnectionPayload[]>("apiNodes");
+
+    // iterates through all nodes that are listed in the
+    // configuration and checks for their healthiness to
+    // make sure we always return a node that is currently
+    // available and healthy on the network.
+    for (let i = 0, max = otherNodes.length; i < max; i++) {
+      // parses the node connection payload
+      const nodeUrl = this.getNodeUrl(otherNodes[i]);
+
+      try {
+        // instanciate new repository factory
+        this.connectToNode(nodeUrl, this.currentNetwork);
+
+        // query for node health before we continue
+        const result: NodeHealth = await this.nodeRepository
+          .getNodeHealth()
+          .toPromise();
+
+        // break here if node is healthy
+        if (result.apiNode === "up" && result.db === "up") {
+          return otherNodes[i];
+        }
+
+        throw new Error("Skipping unhealthy node");
+      }
+      catch (e) {
+        // ignore errors here as they are expected when
+        // a node is not in a healthy state or not available
+        continue;
+      }
+    }
+
+    // none of the configured nodes is currently in a healthy
+    // state, we will now use the network-api to query for a
+    // healthy and available node instead
+    // @todo implement network-api interface to query health nodes
+
+    // fallback to current node
+    return this.currentNode;
+  }
+
+  /**
+   * Helper method that constructs a node URL using the
+   * {@link NodeConnectionPayload} payload.
+   *
+   * @access protected
+   * @param   {NodeConnectionPayload}   payload 
+   * @returns {string}
+   */
+  protected getNodeUrl(
+    payload: NodeConnectionPayload,
+  ): string {
+    // when the URL already contains a port, returns URL
+    if (payload.url.match(/:[0-9]{2,5}\/?/)) {
+      return payload.url.replace(/\/$/, "");
+    }
+
+    // otherwise, use port from payload or fallback to default
+    const port = "port" in payload ? payload.port : 3000;
+    return `${payload.url}:${port}`;
+  }
+
+  /**
    * Helper method that connects to a node's REST interface
    * using the SDK's `RepositoryFactoryHttp` class. Note that
    * the connection payload is *pre-configured* so that extra
    * requests are spared.
    *
+   * @access protected
    * @param {string} nodeUrl
-   * @param {NodeConnectionPayload} connectionPayload
+   * @param {NetworkConnectionPayload} connectionPayload
    * @returns {NetworkService}
    */
   protected connectToNode(
     nodeUrl: string,
-    connectionPayload: NodeConnectionPayload,
+    connectionPayload: NetworkConnectionPayload,
   ): NetworkService {
+    // configures the repository factory
     this.repositoryFactoryHttp = new RepositoryFactoryHttp(nodeUrl, {
       generationHash: connectionPayload.generationHash,
       epochAdjustment: connectionPayload.epochAdjustment,
@@ -227,9 +379,15 @@ export class NetworkService {
       nodePublicKey: "FakeUnauthorizedPublicKey",
     } as RepositoryFactoryConfig);
 
+    // store copy of connected node
+    this.currentNode = { url: nodeUrl, port: 3000 };
+
+    // retrieve repositories from factory
     this.transactionRepository =
       this.repositoryFactoryHttp.createTransactionRepository();
     this.blockRepository = this.repositoryFactoryHttp.createBlockRepository();
+    this.chainRepository = this.repositoryFactoryHttp.createChainRepository();
+    this.nodeRepository  = this.repositoryFactoryHttp.createNodeRepository();
 
     return this;
   }

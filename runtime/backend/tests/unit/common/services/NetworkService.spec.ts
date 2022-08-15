@@ -14,18 +14,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 // internal dependencies
 import {
   NetworkService,
-  NodeConnectionPayload,
+  NetworkConnectionPayload,
 } from "../../../../src/common/services/NetworkService";
-
-// Mocks the full `js-sha3` dependency to avoid
-// calls to actual SHA3/Keccak algorithms.
-jest.mock("js-sha3", () => ({
-  sha3_256: {
-    update: jest.fn().mockReturnThis(),
-    create: jest.fn().mockReturnThis(),
-    arrayBuffer: jest.fn(),
-  },
-}));
 
 const createTransactionRepositoryCall: any = jest.fn(
   (url) => () => `transactionRepository-${url}`,
@@ -33,9 +23,17 @@ const createTransactionRepositoryCall: any = jest.fn(
 const createBlockRepositoryCall: any = jest.fn(
   (url) => () => `blockRepository-${url}`,
 );
+const createChainRepositoryCall: any = jest.fn(
+  (url) => () => `chainRepository-${url}`,
+);
+const createNodeRepositoryCall: any = jest.fn(
+  (url) => () => `nodeRepository-${url}`,
+);
 const RepositoryFactoryHttpMock: any = jest.fn((url) => ({
   createTransactionRepository: createTransactionRepositoryCall(url),
   createBlockRepository: createBlockRepositoryCall(url),
+  createChainRepository: createChainRepositoryCall(url),
+  createNodeRepository: createNodeRepositoryCall(url),
 }));
 
 // Mocks the network service's connection adapter
@@ -44,7 +42,7 @@ const RepositoryFactoryHttpMock: any = jest.fn((url) => ({
 class MockNetworkService extends NetworkService {
   protected connectToNode(
     nodeUrl: string,
-    connectionPayload: NodeConnectionPayload,
+    connectionPayload: NetworkConnectionPayload,
   ): MockNetworkService {
     this.repositoryFactoryHttp = RepositoryFactoryHttpMock("fake-node");
     this.transactionRepository =
