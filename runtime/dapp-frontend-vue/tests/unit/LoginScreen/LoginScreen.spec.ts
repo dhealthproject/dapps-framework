@@ -12,9 +12,6 @@
 import { expect } from "chai";
 import { mount, createLocalVue } from "@vue/test-utils";
 
-// internal dependencies
-import { Auth } from "@/modules/Auth/Auth";
-
 // components page being tested
 import LoginScreen from "@/views/LoginScreen/LoginScreen.vue";
 // mocks the Auth module completely
@@ -47,5 +44,13 @@ describe("LoginScreen -->", () => {
 
   it("should display logo", () => {
     expect(widget.find(".dapp-logo").exists()).to.be.true;
+  });
+
+  it("should display carousel", () => {
+    expect(widget.find(".dapp-login-screen__carousel").exists()).to.be.true;
+  });
+
+  it("should display list of steps", () => {
+    expect(widget.find(".steps").exists()).to.be.true;
   });
 });

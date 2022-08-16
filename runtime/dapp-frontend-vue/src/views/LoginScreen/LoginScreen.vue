@@ -16,7 +16,10 @@
       <template v-slot:left>
         <div class="hero">
           <ElevateLogo :width="212" />
-          <div class="dapp-login-screen__carousel">
+          <div
+            v-if="carouselItems.length > 0"
+            class="dapp-login-screen__carousel"
+          >
             <div
               v-for="(item, index) in carouselItems"
               :key="item + index"

@@ -27,8 +27,4 @@ export default class DividedScreen extends MetaView {
    * @var {gap}
    */
   @Prop({ default: 20, required: false }) protected gap?: number;
-
-  get gapValue(): number | undefined {
-    return this.gap;
-  }
 }
