@@ -9,21 +9,28 @@
  */
 // external dependencies
 import { Module } from "@nestjs/common";
+
+// internal dependencies
 import { AccountsModule } from "./modules/AccountsModule";
 import { TransactionsModule } from "./modules/TransactionsModule";
 
 /**
+ * @label DISCOVERY
  * @class DiscoveryModule
  * @description The discovery scope's main module. This module
  * is loaded by the software when `"discovery"` is present in
  * the enabled scopes through configuration (config/dapp.json).
  * <br /><br />
- * This scoped module currently features:
- * - A {@link AccountsModule} that maps to `/accounts` route endpoints and DTOs.
+ * This scoped module currently features the following submodules:
+ * | Module | Mongo collection(s) | Routes | Description |
+ * | --- | --- | --- | --- |
+ * | {@link TransactionsModule:DISCOVERY} | `transactions` | `/transactions` | Module with schedulers, collections and routes around **dApp transactions**. |
+ * | {@link AccountsModule:DISCOVERY} | `accounts` | `/accounts` | Module with schedulers, collections and routes around **dApp accounts**. |
  * <br /><br />
- * Note also that in {@link Schedulers}, we map the following **schedulers**
+ * Note also that in {@link Schedulers:COMMON}, we map the following **schedulers**
  * to this module:
- * - A {@link DiscoverAccounts} *scheduler* that discovers accounts in the background.
+ * - A {@link DiscoverTransactions:DISCOVERY} *scheduler* that discovers transactions in the background.
+ * - A {@link DiscoverAccounts:DISCOVERY} *scheduler* that discovers accounts in the background.
  *
  * @since v0.1.0
  */

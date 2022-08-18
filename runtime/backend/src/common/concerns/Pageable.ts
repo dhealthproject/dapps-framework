@@ -8,6 +8,7 @@
  * @license     LGPL-3.0
  */
 /**
+ * @label COMMON
  * @interface Pageable
  * @description This concern requires the presence of fields that
  * consist in delivering *paginated* information.

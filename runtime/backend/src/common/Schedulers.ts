@@ -21,6 +21,8 @@ import dappConfigLoader from "../../config/dapp";
 const db = dappConfigLoader().database;
 
 /**
+ * @label COMMON
+ * @module Schedulers
  * @description This exported constant enumerates all available **scheduler**
  * modules. Schedulers are opt-in through the **scopes** field value of a
  * dApp's configuration files (config/dapp.json). Schedulers always belong to

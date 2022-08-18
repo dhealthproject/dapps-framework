@@ -164,6 +164,7 @@ export class Transaction extends Transferable<TransactionDTO> {
    * time of creation of a transaction. You can use the dHealth Network API
    * to find out exact timestamp by block height.
    *
+   * @todo Note this is not protected for number overflows (but there is a long way until block numbers do overflow..)
    * @access public
    * @var {number}
    */
@@ -235,7 +236,19 @@ export class Transaction extends Transferable<TransactionDTO> {
 
 /**
  * @type TransactionDocument
- * @description XXX
+ * @description This type is used to interface entities of the
+ * `transactions` collection with *mongoose* and permits to
+ * instanciate objects representing these entities.
+ * <br /><br />
+ * e.g. alongside {@link TransactionSchema}, we also define
+ * `TransactionDocument` which is a mixin that comprises of
+ * {@link Transaction} and this `Documentable` class.
+ * <br /><br />
+ * In class {@link Queryable:COMMON}, the first generic accepted
+ * permits to use *documents* that are typed with this, to filter
+ * results in a documents query.
+ *
+ * @since v0.3.0
  */
 export type TransactionDocument = Transaction & Documentable;
 

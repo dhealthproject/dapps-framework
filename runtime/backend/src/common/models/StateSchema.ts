@@ -25,7 +25,7 @@ import type { StateData } from "./StateData";
  * used whenever database *documents* are being handled or read
  * for the `states` collection.
  * <br /><br />
- * Note that this class uses the generic {@link Transferable} trait to
+ * Note that this class uses the generic {@link Transferable:COMMON} trait to
  * enable a `toDTO()` method on the model.
  *
  * @todo The {@link State} model does not need fields to be **public**.
@@ -61,6 +61,28 @@ export class State extends Transferable<StateDTO> {
   public data: StateData;
 
   /**
+   * The document's creation timestamp. This field **does not** reflect the
+   * date of creation of an account but rather the date of creation of the
+   * cached database entry.
+   *
+   * @access public
+   * @var {Date}
+   */
+  @Prop({ index: true })
+  public createdAt?: Date;
+ 
+  /**
+   * The document's update timestamp. This field **does not** reflect the
+   * date of update of an account but rather the date of update of the
+   * cached database entry.
+   *
+   * @access public
+   * @var {Date}
+   */
+  @Prop()
+  public updatedAt?: Date;
+
+  /**
    * This method implements a specialized query format to query items
    * individually, as documents, in the collection: `states`.
    *
@@ -76,7 +98,19 @@ export class State extends Transferable<StateDTO> {
 
 /**
  * @type StateDocument
- * @description XXX
+ * @description This type is used to interface entities of the
+ * `states` collection with *mongoose* and permits to
+ * instanciate objects representing these entities.
+ * <br /><br />
+ * e.g. alongside {@link StateSchema}, we also define
+ * `StateDocument` which is a mixin that comprises of
+ * {@link State} and this `Documentable` class.
+ * <br /><br />
+ * In class {@link Queryable:COMMON}, the first generic accepted
+ * permits to use *documents* that are typed with this, to filter
+ * results in a documents query.
+ *
+ * @since v0.3.0
  */
  export type StateDocument = State & Documentable;
 

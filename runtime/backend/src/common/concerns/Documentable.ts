@@ -11,6 +11,7 @@
 import { Document } from "mongoose";
 
 /**
+ * @label COMMON
  * @interface Documentable
  * @description This concern requires the presence of fields that
  * consist in delivering *documentable* information. This type of

@@ -20,6 +20,8 @@ import dappConfigLoader from "../../config/dapp";
 const db = dappConfigLoader().database;
 
 /**
+ * @label COMMON
+ * @module Scopes
  * @description This exported constant enumerates all available **scoped**
  * modules. Scopes are opt-in and only enabled if they are present in a
  * dApp's configuration files (config/dapp.json).

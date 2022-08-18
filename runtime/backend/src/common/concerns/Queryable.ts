@@ -16,6 +16,7 @@ import { Sortable } from "./Sortable";
 import { Documentable } from "./Documentable";
 
 /**
+ * @label COMMON
  * @interface QueryParameters
  * @description This interface configures simple database queries
  * that can be *paginated* and *sorted*. A query may use the `id`
@@ -32,6 +33,7 @@ export interface QueryParameters extends Pageable, Sortable {
 }
 
 /**
+ * @label COMMON
  * @interface Queryable
  * @description This concern requires the presence of fields that
  * consist in delivering *queryable* information.

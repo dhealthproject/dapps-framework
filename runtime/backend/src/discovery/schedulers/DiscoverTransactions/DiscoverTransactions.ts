@@ -82,7 +82,7 @@ export interface DiscoverTransactionsCommandOptions extends DiscoveryCommandOpti
  * @class DiscoverTransactions
  * @description The implementation for the transaction discovery
  * scheduler. Contains source code for the execution logic of a
- * command with name: `discovery:transactions`.
+ * command with name: `discovery:DiscoverTransactions`.
  *
  * @todo Should use `BigInt` in {@link extractTransactionBlock} because `height.compact()` is not protected for number overflow.
  * @since v0.2.0
@@ -157,6 +157,9 @@ export class DiscoverTransactions
    * it should use only characters of: A-Za-z0-9:-_.
    * <br /><br />
    * e.g. "scope:name"
+   * <br /><br />
+   * This property is required through the extension of
+   * {@link DiscoveryCommand}.
    *
    * @see DiscoveryCommand
    * @see BaseCommand
@@ -173,6 +176,9 @@ export class DiscoverTransactions
    * and optional arguments.
    * <br /><br />
    * e.g. "command <argument> [--option value]"
+   * <br /><br />
+   * This property is required through the extension of
+   * {@link DiscoveryCommand}.
    *
    * @see DiscoveryCommand
    * @see BaseCommand
@@ -180,7 +186,12 @@ export class DiscoverTransactions
    * @returns {string}
    */
   protected get signature(): string {
-    return `${this.command} [--source "SOURCE-ADDRESS-OR-PUBKEY"]`;
+    return `${this.command} incoming|outgoing|both [`
+      + `--source "SOURCE-ADDRESS-OR-PUBKEY"`
+      + `--includeTypes "transfer"`
+      + `--includeUnconfirmed`
+      + `--includePartial`
+      + `]`;
   }
 
   /**
@@ -250,7 +261,7 @@ export class DiscoverTransactions
    * This method is necessary to make sure this command is run
    * with the correct `--source` option.
    * <br /><br />
-   * This scheduler is registered to run **every 5 minutes**.
+   * This scheduler is registered to run **every 1 minute**.
    *
    * @see BaseCommand
    * @access public

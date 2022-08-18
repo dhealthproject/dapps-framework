@@ -8,6 +8,7 @@
  * @license     LGPL-3.0
  */
 /**
+ * @label COMMON
  * @class Transferable
  * @description This concern requires the presence of fields that
  * consist in delivering *transferable* information. This concerns

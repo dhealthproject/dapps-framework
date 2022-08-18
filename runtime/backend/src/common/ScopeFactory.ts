@@ -23,6 +23,7 @@ import networkConfigLoader from "../../config/network";
 import securityConfigLoader from "../../config/security";
 
 /**
+ * @label COMMON
  * @class ScopeFactory
  * @description Singleton class that serves as a helper to aggregate
  * and dynamically configure nest module imports. A differentiation is

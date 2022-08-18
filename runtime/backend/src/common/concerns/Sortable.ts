@@ -8,6 +8,7 @@
  * @license     LGPL-3.0
  */
 /**
+ * @label COMMON
  * @interface Sortable
  * @description This concern requires the presence of fields that
  * consist in delivering *sorted* information.

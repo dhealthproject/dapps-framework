@@ -59,7 +59,8 @@ export abstract class DiscoveryCommand extends BaseCommand {
    * through the configuration files for this command to be
    * available.
    * <br /><br />
-   * Child classes *must* overwrite the value of this property.
+   * This property is required through the extension of
+   * {@link BaseCommand:WORKER}.
    *
    * @access protected
    * @var {Scope}
@@ -92,6 +93,11 @@ export abstract class DiscoveryCommand extends BaseCommand {
    * it should use only characters of: A-Za-z0-9:-_.
    * <br /><br />
    * e.g. "scope:name"
+   * <br /><br />
+   * This property is required through the extension of
+   * {@link BaseCommand:WORKER} but is intentionally forwarded
+   * to further *child classes* such that **each command defines
+   * its own command name**.
    *
    * @abstract
    * @access protected
@@ -105,6 +111,11 @@ export abstract class DiscoveryCommand extends BaseCommand {
    * and optional arguments.
    * <br /><br />
    * e.g. "command <argument> [--option value]"
+   * <br /><br />
+   * This property is required through the extension of
+   * {@link BaseCommand:WORKER} but is intentionally forwarded
+   * to further *child classes* such that **each command defines
+   * its own command signature**.
    *
    * @abstract
    * @access protected
