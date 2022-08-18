@@ -2,7 +2,7 @@
   "name": "@dhealthdapps/backend",
   "version": "0.2.1",
   "homepage": "https://github.com/dhealthproject/dapps-framework/tree/main/runtime/backend#readme",
-  "description": "dHealth dApps Backend with NestJS",
+  "description": "dHealth ELEVATE API",
   "author": "dHealth Network <devs@dhealth.foundation>",
   "license": "LGPL-3.0-only",
   "bugs": {

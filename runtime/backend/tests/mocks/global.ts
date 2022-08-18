@@ -94,3 +94,16 @@ export class MockModel {
       .call(this, param);
   }
 }
+
+// sets mocked environment variables
+process.env.DB_USER = "fake-user";
+process.env.DB_PASS = "fake-pass";
+process.env.DB_HOST = "fake-host";
+process.env.DB_PORT = "1234";
+process.env.DB_NAME = "fake-db-name";
+process.env.AUTH_TOKEN_SECRET="fake-auth-token";
+process.env.BACKEND_DOMAIN="fake-backend-host";
+process.env.BACKEND_PORT="4321";
+process.env.FRONTEND_DOMAIN="fake-frontend-host";
+process.env.FRONTEND_PORT="9876";
+process.env.ANOTHER_DB_NAME_THROUGH_ENV = "this-exists-only-in-mock";
