@@ -29,7 +29,8 @@
     "build:watch": "vue-cli-service build --target app --watch",
     "test": "jest",
     "test:unit": "vue-cli-service test:unit",
-    "serve": "vue-cli-service serve"
+    "serve": "vue-cli-service serve",
+    "serve:prod": "vue-cli-service serve --mode=production"
   },
   "dependencies": {
     "@dhealth/components": "next",
