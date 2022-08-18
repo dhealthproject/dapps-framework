@@ -94,7 +94,7 @@ export class TransactionsService {
    * @access public
    * @async
    * @param   {TransactionQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @returns {Promise<Transaction>}  The resulting `transactions` document.
+   * @returns {Promise<TransactionDocument>}  The resulting `transactions` document.
    */
   async findOne(query: TransactionQuery): Promise<TransactionDocument> {
     return await this.queriesService.findOne(query, this.model);
@@ -109,7 +109,7 @@ export class TransactionsService {
    * @param   {TransactionQuery}          query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @param   {TransactionDocument}           data    The fields or data that has to be updated (will be added to `$set: {}`).
    * @param   {Record<string, any>}   ops    The operations that must be run additionally (e.g. `$inc: {}`) (optional).
-   * @returns {Promise<StateDocument>}  The *updated* `transactions` document.
+   * @returns {Promise<TransactionDocument>}  The *updated* `transactions` document.
    */
   async createOrUpdate(
     query: TransactionQuery,

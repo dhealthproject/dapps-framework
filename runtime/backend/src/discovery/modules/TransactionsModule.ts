@@ -14,6 +14,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 // internal dependencies
 import { QueryModule } from "../../common/modules/QueryModule";
 import { TransactionsService } from "../services/TransactionsService";
+import { TransactionsController } from "../routes/TransactionsController";
 import { Transaction, TransactionSchema } from "../models/TransactionSchema";
 
 /**
@@ -23,6 +24,7 @@ import { Transaction, TransactionSchema } from "../models/TransactionSchema";
  * @since v0.1.0
  */
 @Module({
+  controllers: [TransactionsController],
   providers: [TransactionsService],
   imports: [
     MongooseModule.forFeature([{
