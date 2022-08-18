@@ -11,12 +11,15 @@
 import { Module } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
+import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import { NetworkModule } from "../modules/NetworkModule";
 import { AuthService } from "../services/AuthService";
 import { AuthStrategy } from '../traits/AuthStrategy';
 import { AuthController } from "../routes/AuthController";
+import { AuthChallenge, AuthChallengeSchema } from "../models/AuthChallengeSchema";
+import { Account, AccountSchema } from "../models/AccountSchema";
 
 /**
  * @class AuthModule
@@ -35,6 +38,10 @@ import { AuthController } from "../routes/AuthController";
       // signature expires after 60 seconds of validity
       signOptions: { expiresIn: "60s"},
     }),
+    MongooseModule.forFeature([
+      { name: AuthChallenge.name, schema: AuthChallengeSchema },
+      { name: Account.name, schema: AccountSchema },
+    ]),
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthStrategy],

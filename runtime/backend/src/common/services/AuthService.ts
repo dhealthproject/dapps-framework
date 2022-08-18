@@ -11,6 +11,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
+import { InjectModel } from "@nestjs/mongoose";
 import {
   Address,
   Order,
@@ -21,7 +22,9 @@ import {
 
 // internal dependencies
 import { NetworkService } from "../services/NetworkService";
-import { User } from "../models/User";
+import { Account } from "../models/AccountSchema";
+import { AccessTokenDTO } from "../models/AccessTokenDTO";
+import { AuthChallenge, AuthChallengeModel } from "../models/AuthChallengeSchema";
 
 /**
  *
@@ -44,27 +47,18 @@ export interface AuthenticationPayload {
 }
 
 /**
- *
- * @todo Add relevant interface documentation and usage example
- */
-export interface AuthenticationToken {
-  accessToken: string;
-  refreshToken: string;
-}
-
-/**
+ * @label COMMON
  * @class AuthService
  * @description This class serves as an *authentication handler* for users.
  * This can be used to *authenticate* the access to [a subset] of your dApp
  * routes and modules.
  *
- * @todo Add injection of {@link AuthToken} model instance
+ * @todo Add injection of {@link AuthChallenge} model instance
  * @todo Add relevant method documentation for method {@link getCookie}
  * @todo Add relevant method documentation for method {@link getChallenge}
  * @todo Add relevant method documentation for method {@link validate}
  * @todo Add relevant method documentation for method {@link getAccessToken}
  * @todo Add relevant method documentation for method {@link getTransactionQuery}
- * @todo Add unit tests for {@link getAccessToken} and remove debug information
  * @since v0.2.0
  */
 @Injectable()
@@ -83,7 +77,7 @@ export class AuthService {
    * @param {ConfigService} configService
    */
   public constructor(
-    //XXX AuthToken schema
+    @InjectModel(AuthChallenge.name) private readonly model: AuthChallengeModel,
     private readonly configService: ConfigService,
     private readonly networkService: NetworkService,
     private jwtService: JwtService,
@@ -118,13 +112,13 @@ export class AuthService {
 
   /**
    * 
-   * @param authCode 
+   * @param challenge 
    * @returns {Promise<User|null>}
    * @throws {HttpException}
    */
   public async validate(
-    authCode: string,
-  ): Promise<User> {
+    challenge: string,
+  ): Promise<Account> {
 
     // initialize a connection to the node
     const nodeRequests = this.networkService.getTransactionRepository();
@@ -157,14 +151,14 @@ export class AuthService {
       throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
     }
 
-    // searches the `authCode` in transfer message ("on-chain")
+    // searches the `challenge` in transfer message ("on-chain")
     // @todo make compatible with encrypted messages (decrypt with authority privkey)
     // @todo extract contract information vs. "auth code"
     const authTransaction: TransferTransaction = transactions.find(
-      (t: TransferTransaction) => t.message.payload === authCode //XXX should extract JSON contract
+      (t: TransferTransaction) => t.message.payload === challenge //XXX should extract JSON contract
     );
 
-    // responds with error if the `authCode` could **not** be found
+    // responds with error if the `challenge` could **not** be found
     // 401: Unauthorized
     if (authTransaction === undefined) {
       throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
@@ -175,10 +169,8 @@ export class AuthService {
 
     // gets authorized user details from transaction
     const authorizedAddr: Address = authTransaction.signer.address;
-    const authorizedUser: User = {
-      id: authorizedAddr.plain(),
-      name: authorizedAddr.pretty(),
-    } as User;
+    const authorizedUser: Account = new Account();
+    authorizedUser.address = authorizedAddr.pretty();
 
     // returns the authorized user details
     return authorizedUser;
@@ -188,17 +180,31 @@ export class AuthService {
    * 
    * @param address 
    */
-  public async getAccessToken(user: User): Promise<AuthenticationToken> {
+  public async getAccessToken(user: Account): Promise<AccessTokenDTO> {
     // constructs the JwT token payload (it will then be *signed*)
-    const payload: AuthenticationPayload = { sub: user.id, address: user.name };
+    const payload: AuthenticationPayload = { sub: user.address, address: user.address };
 
-    console.log("creating token for: ", { user });
-
-    return { accessToken: this.jwtService.sign(payload, {
+    // constructs a short-lived accessToken for the next hour
+    const accessToken: string = this.jwtService.sign(payload, {
       // defines a symmetric secret key for signing tokens
       secret: process.env.AUTH_TOKEN_SECRET,
-      expiresIn: "1h"
-    }) } as AuthenticationToken;
+      expiresIn: "1h", // 1 hour expiry for access tokens
+    });
+
+    // tries to read refresh token from document
+    let refreshToken: string = user.refreshToken;
+
+    // or constructs a long-lived refreshToken for the next year
+    if (undefined === refreshToken) {
+      refreshToken = this.jwtService.sign(payload, {
+        // defines a symmetric secret key for signing tokens
+        secret: process.env.AUTH_TOKEN_SECRET,
+        expiresIn: "1y", // 1 year expiry for refresh tokens
+      });
+    }
+
+    // return pair of tokens
+    return { accessToken, refreshToken } as AccessTokenDTO;
   }
 
   /**

@@ -13,7 +13,7 @@ import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 
 // internal dependencies
-import { User } from "../models/User";
+import { Account } from "../models/AccountSchema";
 
 /**
  * @class AuthStrategy
@@ -51,7 +51,9 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
    * @param   {Record<string, any>}   payload   The valid token JSON object.
    * @returns 
    */
-  public async validate(payload: Record<string, any>): Promise<User> {
-    return { id: payload.sub, name: payload.address } as User;
+  public async validate(payload: Record<string, any>): Promise<Account> {
+    const account = new Account();
+    account.address = payload.address;
+    return account;
   }
 }

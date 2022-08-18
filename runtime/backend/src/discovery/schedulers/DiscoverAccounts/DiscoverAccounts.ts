@@ -19,19 +19,18 @@ import { QueryParameters } from "../../../common/concerns/Queryable";
 import { StateService } from "../../../common/services/StateService";
 import { StateDocument, StateQuery } from "../../../common/models/StateSchema";
 import { NetworkService } from "../../../common/services/NetworkService";
+import { AccountsService } from "../../../common/services/AccountsService";
+import { Account, AccountDocument, AccountModel, AccountQuery } from "../../../common/models/AccountSchema";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
-import { AccountsService } from "../../services/AccountsService";
 import { TransactionsService } from "../../../discovery/services/TransactionsService";
-import { Account, AccountDocument, AccountModel, AccountQuery } from "../../models/AccountSchema";
 import { AccountDiscoveryStateData } from "../../models/AccountDiscoveryStateData";
 import { TransactionDocument, TransactionQuery } from "../../models/TransactionSchema";
 
 /**
  * @class DiscoverAccounts
- * @description The private implementation for the scheduler as
- * defined in {@link DiscoverAccountsCommand}. Contains source
- * code for the execution logic of a cronjob with identifier:
- * `accountsDiscovery`.
+ * @description The implementation for the accounts discovery
+ * scheduler. Contains source code for the execution logic of a
+ * command with name: `discovery:DiscoverAccounts`.
  *
  * @since v0.1.0
  */
@@ -95,7 +94,10 @@ export class DiscoverAccounts
    * This method must return a *command name*. Note that
    * it should use only characters of: A-Za-z0-9:-_.
    * <br /><br />
-   * e.g. "scope:name"
+   * e.g. "name"
+   * <br /><br />
+   * This property is required through the extension of
+   * {@link DiscoveryCommand}.
    *
    * @see DiscoveryCommand
    * @see BaseCommand
@@ -112,6 +114,9 @@ export class DiscoverAccounts
    * and optional arguments.
    * <br /><br />
    * e.g. "command <argument> [--option value]"
+   * <br /><br />
+   * This property is required through the extension of
+   * {@link DiscoveryCommand}.
    *
    * @see DiscoveryCommand
    * @see BaseCommand
@@ -119,7 +124,9 @@ export class DiscoverAccounts
    * @returns {string}
    */
   protected get signature(): string {
-    return `${this.command}`;
+    return `${this.command} [`
+      + `--source "SOURCE-ADDRESS-OR-PUBKEY"`
+      + `]`;
   }
 
   /**
@@ -219,7 +226,7 @@ export class DiscoverAccounts
     // to continue *only* with recent transactions in
     // the next runs of accounts discovery
     if (countTransactions > 0 && this.lastPageNumber * 100 > countTransactions) {
-      this.lastPageNumber = this.lastPageNumber - 1;
+      this.lastPageNumber = Math.floor(countTransactions / 100);
     }
 
     // display debug information about configuration

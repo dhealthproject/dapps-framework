@@ -19,46 +19,15 @@ import {
 
 // internal dependencies
 import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
-import { Account, AccountQuery } from "../models/AccountSchema";
-import { AccountDTO } from "../models/AccountDTO";
-import { AccountsService } from "../services/AccountsService";
+import { Account, AccountQuery } from "../../common/models/AccountSchema";
+import { AccountDTO } from "../../common/models/AccountDTO";
+import { AccountsService } from "../../common/services/AccountsService";
 
-/**
- * @class AccountsController
- * @description The controller of the module. Handles requests
- * from the specified entry points and passes on to the module service.
- *
- * @since v0.1.0
- */
-@ApiTags("Accounts Information")
-@Controller("accounts")
-export class AccountsController {
-  /**
-   * The constructor of the controller.
-   *
-   * @constructor
-   * @param {AccountsService} accountsService
-   */
-  constructor(private readonly accountsService: AccountsService) {}
-
-  /**
-   * Handler of the `/accounts` endpoint.
-   * Returns all accounts that match request's query.
-   * If request's query is null or not specified, returns all accounts.
-   * Result is paginated.
-   *
-   * @async
-   * @method  GET
-   * @param   {AccountQueryDTO} query
-   * @returns {Promise<PaginatedResultDTO<Account>>}
-   */
-  @Get()
-  @ApiOperation({
-    summary: "Search accounts",
-    description: "Get an array of accounts.",
-  })
-  @ApiExtraModels(Account, PaginatedResultDTO)
-  @ApiOkResponse({
+namespace HTTPResponses {
+  // creates a variable that we include in a namespace
+  // and configure the OpenAPI schema for the response
+  // maps to the HTTP response of `/auth/challenge`
+  export const AccountSearchResponseSchema = {
     schema: {
       allOf: [
         { $ref: getSchemaPath(PaginatedResultDTO) },
@@ -72,13 +41,60 @@ export class AccountsController {
         },
       ],
     },
+  };
+}
+
+/**
+ * @label DISCOVERY
+ * @class AccountsController
+ * @description The accounts controller of the app. Handles requests
+ * about *accounts* that are available in the database.
+ * <br /><br />
+ * This controller defines the following routes:
+ * | URI | HTTP method | Class method | Description |
+ * | --- | --- | --- | --- |
+ * | `/accounts` | **`GET`** | {@link find} | Responds with a pageable {@link PaginatedResultDTO} that contains {@link AccountDTO} objects. |
+ * <br /><br />
+ *
+ * @since v0.1.0
+ */
+@ApiTags("Accounts")
+@Controller("accounts")
+export class AccountsController {
+  /**
+   * Constructs an instance of this controller.
+   *
+   * @constructor
+   * @param {AccountsService} accountsService
+   */
+  constructor(private readonly accountsService: AccountsService) {}
+
+  /**
+   * Handler of the `/accounts` endpoint. Returns all account
+   * that match the request query. If the query is null or not
+   * specified returns all documents.
+   * <br /><br />
+   * The result of this endpoint can be paginated using query
+   * parameters: `pageSize`, `pageNumber`. Also, it can be sorted
+   * with query parameters: `sort`, `order`.
+   *
+   * @async
+   * @method  GET
+   * @param   {AccountQuery} query
+   * @returns {Promise<PaginatedResultDTO<AccountDTO>>}
+   */
+  @Get()
+  @ApiOperation({
+    summary: "Search accounts",
+    description: "Search for accounts using custom filters. The resulting iterable contains only matching accounts.",
   })
+  @ApiExtraModels(AccountDTO, PaginatedResultDTO)
+  @ApiOkResponse(HTTPResponses.AccountSearchResponseSchema)
   find(@Query() query: AccountQuery): Promise<PaginatedResultDTO<AccountDTO>> {
     return this.accountsService.find(query).then((result) => ({
-      data:
-        result.data.length > 0
-          ? result.data.map((d: Account) => d as AccountDTO)
-          : [],
+      data: result.data.length > 0
+        ? result.data.map((d: Account) => d as AccountDTO)
+        : [],
       pagination: result.pagination,
     }));
   }

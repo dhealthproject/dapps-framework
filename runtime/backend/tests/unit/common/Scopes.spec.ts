@@ -75,7 +75,6 @@ jest.mock("../../../src/processor/ProcessorModule", () => {
 // internal dependencies
 import { Scopes } from "../../../src/common/Scopes";
 import { ScopeFactory } from "../../../src/common/ScopeFactory";
-import { DappConfig } from "../../../src/common/models/DappConfig";
 
 // Mock the imports factory to re-create class instances
 // everytime a new test is running. This mock mimics the

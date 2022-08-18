@@ -15,9 +15,9 @@ import { MongooseModule } from "@nestjs/mongoose";
 // internal dependencies
 import { NetworkModule } from "../../../common/modules/NetworkModule";
 import { StateModule } from "../../../common/modules/StateModule";
+import { Account, AccountSchema } from "../../../common/models/AccountSchema";
 import { AccountsModule } from "../../modules/AccountsModule";
 import { TransactionsModule } from "../../modules/TransactionsModule";
-import { Account, AccountSchema } from "../../models/AccountSchema";
 import { Transaction, TransactionSchema } from "../../models/TransactionSchema";
 
 // private implementation

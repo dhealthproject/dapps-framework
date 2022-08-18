@@ -12,10 +12,10 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 
 // internal dependencies
-import { Documentable } from "../../common/concerns/Documentable";
-import { Transferable } from "../../common/concerns/Transferable";
-import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
-import { AccountDTO } from "../models/AccountDTO";
+import { Documentable } from "../concerns/Documentable";
+import { Transferable } from "../concerns/Transferable";
+import { Queryable, QueryParameters } from "../concerns/Queryable";
+import { AccountDTO } from "./AccountDTO";
 
 /**
  * @class Account
@@ -29,7 +29,7 @@ import { AccountDTO } from "../models/AccountDTO";
  *
  * @todo The {@link Account} model does not need fields to be **public**.
  * @todo Timestamp fields should be **numbers** to avoid timezone issues.
- * @since v0.2.0
+ * @since v0.3.0
  */
 @Schema({
   timestamps: true,
@@ -39,6 +39,9 @@ export class Account extends Transferable<AccountDTO> {
    * The account's **address**. An address typically refers to a
    * human-readable series of 39 characters, starting either with
    * a `T`, for TESTNET addresses, or with a `N`, for MAINNET addresses.
+   * <br /><br />
+   * This field is **required**, *indexed* and values are expected
+   * to be *unique*.
    *
    * @access public
    * @var {string}
@@ -53,6 +56,8 @@ export class Account extends Transferable<AccountDTO> {
    * <br /><br />
    * Caution: This field **does not** represent the *total* number of
    * transactions that an account has done during its entire lifecycle.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
    *
    * @access public
    * @var {number}
@@ -64,23 +69,44 @@ export class Account extends Transferable<AccountDTO> {
    * The account's first identified **transaction date**. Typically, this
    * field will contain the timestamp of the first transaction *to the dApp*
    * that was issued with this account.
+   * <br /><br />
+   * This field is **optional** and *indexed*.
    *
    * @access public
    * @var {Date}
    */
-  @Prop()
+  @Prop({ index: true })
   public firstTransactionAt?: Date;
 
   /**
    * The account's first identified **transaction block**. Typically, this
    * field will contain the block height of the first transaction *to the dApp*
    * that was issued with this account.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
    *
+   * @todo Note this is not protected for number overflows (but there is a long way until block numbers do overflow..)
    * @access public
    * @var {number}
    */
   @Prop()
   public firstTransactionAtBlock?: number;
+
+  /**
+   * The JWT refresh token that can be attached in the **bearer
+   * authorization header** of HTTP requests to `/auth/token` to
+   * indicate that a user's access token must be refreshed.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
+   * <br /><br />
+   * See more details in {@link AccessTokenDTO}.
+   *
+   * @access public
+   * @var {string}
+   */
+  
+  @Prop({})
+  public refreshToken?: string;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -120,7 +146,19 @@ export class Account extends Transferable<AccountDTO> {
 
 /**
  * @type AccountDocument
- * @description XXX
+ * @description This type is used to interface entities of the
+ * `accounts` collection with *mongoose* and permits to
+ * instanciate objects representing these entities.
+ * <br /><br />
+ * e.g. alongside {@link AccountSchema}, we also define
+ * `AccountDocument` which is a mixin that comprises of
+ * {@link Account} and this `Documentable` class.
+ * <br /><br />
+ * In class {@link Queryable:COMMON}, the first generic accepted
+ * permits to use *documents* that are typed with this, to filter
+ * results in a documents query.
+ *
+ * @since v0.3.0
  */
  export type AccountDocument = Account & Documentable;
 
@@ -147,7 +185,7 @@ export class Account extends Transferable<AccountDTO> {
  *   }
  * ```
  *
- * @since v0.2.0
+ * @since v0.3.0
  */
 export class AccountModel extends Model<AccountDocument> {}
 
@@ -159,7 +197,7 @@ export class AccountModel extends Model<AccountDocument> {}
  * The main purpose of this class shall be to perform queries against
  * the `accounts` collection.
  *
- * @since v0.2.0
+ * @since v0.3.0
  */
 export class AccountQuery extends Queryable<AccountDocument> {
   /**
@@ -183,7 +221,7 @@ export class AccountQuery extends Queryable<AccountDocument> {
  * {@link Account} class and should be used mainly when *inferring* the
  * type of fields in a document for the corresponding collection.
  *
- * @since v0.2.0
+ * @since v0.3.0
  */
 export const AccountSchema = SchemaFactory.createForClass(Account);
 

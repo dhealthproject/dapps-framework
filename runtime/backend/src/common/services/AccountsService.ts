@@ -12,9 +12,9 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 
 // internal dependencies
-import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
+import { PaginatedResultDTO } from "../models/PaginatedResultDTO";
+import { QueryService } from "../services/QueryService";
 import { Account, AccountDocument, AccountModel, AccountQuery } from "../models/AccountSchema";
-import { QueryService } from "../../common/services/QueryService";
 
 /**
  * @class AccountsService
@@ -95,7 +95,7 @@ export class AccountsService {
    * @access public
    * @async
    * @param   {AccountQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
-   * @returns {Promise<StateDocument>}  The resulting `accounts` document.
+   * @returns {Promise<AccountDocument>}  The resulting `accounts` document.
    */
   async findOne(query: AccountQuery): Promise<AccountDocument> {
     return await this.queriesService.findOne(query, this.model);
@@ -109,7 +109,7 @@ export class AccountsService {
    * @param   {AccountQuery}          query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @param   {AccountModel}           data    The fields or data that has to be updated (will be added to `$set: {}`).
    * @param   {Record<string, any>}   ops    The operations that must be run additionally (e.g. `$inc: {}`) (optional).
-   * @returns {Promise<Account>}  The *updated* `accounts` document.
+   * @returns {Promise<AccountDocument>}  The *updated* `accounts` document.
    */
   async createOrUpdate(
     query: AccountQuery,

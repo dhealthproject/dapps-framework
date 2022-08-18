@@ -12,17 +12,23 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
-import { AccountsModule as CommonAccountsModule } from "../../common/modules/AccountsModule";
-import { AccountsController } from "../routes/AccountsController";
+import { QueryModule } from "../../common/modules/QueryModule";
+import { AccountsService } from "../services/AccountsService";
+import { Account, AccountSchema } from "../models/AccountSchema";
 
 /**
- * @label DISCOVERY
+ * @label COMMON
  * @class AccountsModule
  * @description The main definition for the Accounts module.
  *
- * @since v0.3.0
+ * @since v0.1.0
  */
 @Module({
-  controllers: [AccountsController],
+  providers: [AccountsService],
+  imports: [
+    MongooseModule.forFeature([{ name: Account.name, schema: AccountSchema }]),
+    QueryModule,
+  ],
+  exports: [AccountsService],
 })
-export class AccountsModule extends CommonAccountsModule {}
+export class AccountsModule {}

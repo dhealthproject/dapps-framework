@@ -12,6 +12,7 @@ import { DynamicModule, Logger, Module } from "@nestjs/common";
 
 // internal dependencies
 import { AuthModule } from "./common/modules/AuthModule";
+import { AccountsModule } from "./common/modules/AccountsModule";
 import { AppController } from "./AppController";
 import { AppService } from "./AppService";
 import { ScopeFactory } from "./common/ScopeFactory";
@@ -29,6 +30,7 @@ import dappConfigLoader from "../config/dapp";
 @Module({
   imports: [
     AuthModule,
+    AccountsModule,
   ]
 })
 export class AppModule {

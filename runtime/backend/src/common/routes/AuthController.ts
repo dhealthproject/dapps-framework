@@ -18,23 +18,101 @@ import {
   Res as NestResponse,
   UseGuards,
 } from "@nestjs/common";
+import {
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  getSchemaPath,
+} from "@nestjs/swagger";
 import { Request, Response } from "express";
 
 // internal dependencies
-import { AuthenticationToken, AuthService } from "../services/AuthService";
+import { AccountDTO } from "../../common/models/AccountDTO";
+import { AuthService } from "../services/AuthService";
 import { AuthGuard } from "../traits/AuthGuard";
-import { User } from "../models/User";
-import { TokenRequestDTO } from "../models/TokenRequestDTO";
+import { AccessTokenDTO } from "../models/AccessTokenDTO";
+import { AccessTokenRequest } from "../requests/AccessTokenRequest";
+import { Account } from "../models/AccountSchema";
+import { AuthChallengeDTO } from "../models/AuthChallengeDTO";
+
+namespace HTTPResponses {
+  // creates a variable that we include in a namespace
+  // and configure the OpenAPI schema for the response
+  // maps to the HTTP response of `/auth/challenge`
+  export const AuthChallengeResponseSchema = {
+    schema: {
+      allOf: [
+        {
+          properties: {
+            data: {
+              type: "array",
+              items: { $ref: getSchemaPath(AuthChallengeDTO) },
+            },
+          },
+        },
+      ],
+    },
+  };
+
+  // creates a variable that we include in a namespace
+  // and configure the OpenAPI schema for the response
+  // maps to the HTTP response of `/auth/token`
+  export const AuthTokenResponseSchema = {
+    schema: {
+      allOf: [
+        {
+          properties: {
+            data: {
+              type: "array",
+              items: { $ref: getSchemaPath(AccessTokenDTO) },
+            },
+          },
+        },
+      ],
+    },
+  };
+
+  // creates a variable that we include in a namespace
+  // and configure the OpenAPI schema for the response
+  // maps to the HTTP response of `/me`
+  export const MeResponseSchema = {
+    schema: {
+      allOf: [
+        {
+          properties: {
+            data: {
+              type: "array",
+              items: { $ref: getSchemaPath(AccountDTO) },
+            },
+          },
+        },
+      ],
+    },
+  };
+}
 
 /**
+ * @label COMMON
  * @class AuthController
  * @description The auth controller of the app. Handles requests
  * about *authentication*, *access tokens* and basic profile
  * information requests.
- *
- * @todo Add relevant method documentation for method {@link getAuthCode}
+ * <br /><br />
+ * This controller defines the following routes:
+ * | URI | HTTP method | Class method | Description |
+ * | --- | --- | --- | --- |
+ * | `/auth/challenge` | **`GET`** | {@link AuthController.getAuthCode} | Responds with an *authentication challenge* that **MUST** be attached on-chain for a successful authentication. |
+ * | `/auth/token` | **`POST`** | {@link AuthController.getAccessToken} | Accepts a `authCode` in the request body and validates it using {@link AuthService:COMMON} |
+ * | `/me` | **`GET`** | {@link AuthController.getProfile} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Bearer authorization header) and displays the authenticated user information for valid (authenticated) requests. |
+ * <br /><br />
+ * 
+ * @todo Add `refreshToken` logic in method {@link AuthController.getAccessToken}.
+ * @todo Add request parameters documentation, see {@link AccountsController}.
+ * @todo Add response documentation, see {@link AccountsController}.
  * @since v0.2.0
  */
+@ApiTags("Authentication")
 @Controller()
 export class AuthController {
   /**
@@ -49,7 +127,19 @@ export class AuthController {
   ) {}
 
   /**
-   * 
+   * This method generates an *authentication cookie* depending
+   * on the runtime configuration (dApp), i.e. the cookie will
+   * include a [sub-]*domain name* and a name that are used to
+   * *secure the cookie content*.
+   * <br /><br />
+   * A **cookie** is attached to the response which is signed
+   * using the **authentication secret** from the runtime and
+   * which is restricted to the dApp's domain name. Also, the
+   * cookie is a **HTTP-only** cookie to prevent *cross-site
+   * scripting* exploits.
+   * Note that reading the cookie using *frontends* requires
+   * an additional parameter, often named `withCredentials`
+   * that will permit to decipher the secure cookie.
    * <br /><br />
    * The `passthrough` flag in `NestResponse()` operator permits
    * to instruct *nest* to pass on the response cookie onto the
@@ -59,10 +149,16 @@ export class AuthController {
    * @returns 
    */
   @Get("auth/challenge")
+  @ApiOperation({
+    summary: "Get an authentication challenge",
+    description: "Request an authentication challenge. This challenge must be included in a transaction on dHealth Network for the authentication process to succeed.",
+  })
+  @ApiExtraModels(AuthChallengeDTO)
+  @ApiOkResponse(HTTPResponses.AuthChallengeResponseSchema)
   protected async getAuthCode(
     @NestRequest() request: Request,
     @NestResponse({ passthrough: true }) response: Response,
-  ): Promise<string> {
+  ): Promise<AuthChallengeDTO> {
     // generates cookie configuration (depends on dApp)
     const authCookie = this.authService.getCookie();
 
@@ -79,7 +175,7 @@ export class AuthController {
     });
 
     // serves the authentication challenge
-    return authChallenge;
+    return { challenge: authChallenge } as AuthChallengeDTO;
   }
 
   /**
@@ -96,14 +192,20 @@ export class AuthController {
    * @returns Promise<AuthenticationToken>
    */
   @Post('auth/token')
+  @ApiOperation({
+    summary: "Get an authenticated user's access tokens",
+    description: "Request an authenticated user's access token and refresh token. The access token is short-lived (1 hour) and the refresh token can be used to get a new access token after it expired.",
+  })
+  @ApiExtraModels(AccessTokenDTO)
+  @ApiOkResponse(HTTPResponses.AuthTokenResponseSchema)
   protected async getAccessToken(
     @NestRequest() req: Request,
     @Ip() ip: string,
-    @Body() body: TokenRequestDTO
-  ): Promise<AuthenticationToken> {
+    @Body() body: AccessTokenRequest
+  ): Promise<AccessTokenDTO> {
     try {
-      const user: User = await this.authService.validate(
-        body.authCode,
+      const user: Account = await this.authService.validate(
+        body.challenge,
       );
 
       if (null !== user) {
@@ -128,6 +230,12 @@ export class AuthController {
    */
   @UseGuards(AuthGuard)
   @Get('me')
+  @ApiOperation({
+    summary: "Get an authenticated user's profile details",
+    description: "Request an authenticated user's profile details. This request will only succeed given a valid access token in the bearer authorization header of the request.",
+  })
+  @ApiExtraModels(AccountDTO)
+  @ApiOkResponse(HTTPResponses.MeResponseSchema)
   protected getProfile(@NestRequest() req: Request) {
     return req.user;
   }
