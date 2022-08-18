@@ -22,6 +22,7 @@ import dappConfigLoader from "../../config/dapp";
 import networkConfigLoader from "../../config/network";
 import securityConfigLoader from "../../config/security";
 import processorConfigLoader from "../../config/processor";
+import oauthConfigLoader from "../../config/oauth";
 
 /**
  * @label COMMON
@@ -80,6 +81,7 @@ export class ScopeFactory {
           networkConfigLoader,
           securityConfigLoader,
           processorConfigLoader,
+          oauthConfigLoader,
         ],
         isGlobal: true,
         envFilePath: [".env", ".env-sample"],

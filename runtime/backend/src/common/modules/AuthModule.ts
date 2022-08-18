@@ -25,6 +25,8 @@ import {
   AuthChallengeSchema,
 } from "../models/AuthChallengeSchema";
 import { Account, AccountSchema } from "../models/AccountSchema";
+import { OAuthController } from "../routes/OAuthController";
+import { OAuthService } from "../services/OAuthService";
 
 // configuration resources
 import securityConfigLoader from "../../../config/security";
@@ -54,8 +56,8 @@ const auth = securityConfigLoader().auth;
       { name: Account.name, schema: AccountSchema },
     ]),
   ],
-  controllers: [AuthController],
-  providers: [AuthService, AuthStrategy],
-  exports: [AuthService],
+  controllers: [AuthController, OAuthController],
+  providers: [AuthService, OAuthService, AuthStrategy],
+  exports: [AuthService, OAuthService],
 })
 export class AuthModule {}

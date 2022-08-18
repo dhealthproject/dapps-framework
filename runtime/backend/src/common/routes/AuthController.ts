@@ -37,7 +37,11 @@ import { AccessTokenRequest } from "../requests/AccessTokenRequest";
 import { AuthChallengeDTO } from "../models/AuthChallengeDTO";
 import { StatusDTO } from "../models/StatusDTO";
 import { AccountsService } from "../services/AccountsService";
-import { Account, AccountDocument, AccountQuery } from "../models/AccountSchema";
+import {
+  Account,
+  AccountDocument,
+  AccountQuery,
+} from "../models/AccountSchema";
 
 namespace HTTPResponses {
   // creates a variable that we include in a namespace

@@ -96,7 +96,7 @@ export default () => ({
    * ```
    *
    * @link NetworkParameters:COMMON
-   * @var {NetworkConfig}
+   * @var {NetworkParameters}
    */
   network: {
     /**
