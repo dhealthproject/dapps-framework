@@ -15,12 +15,12 @@ import type { StateData } from "./StateData";
 
 /**
  * @class StateDTO
- * @description A DTO class that consists of a **module** `name`
- * and a `data` field that may contain custom fields in the form
- * of an object.
+ * @description A DTO class that consists of the *transferable* properties
+ * of a module state. Typically this includes information *that is already
+ * public* or is known from dHealth Network.
  * <br /><br />
- * This class shall be used to **respond** to queries *over the
- * network* using the mongo `states` collection documents.
+ * This class shall be used in **HTTP responses** to avoid any additional
+ * data about module states to be revealed.
  *
  * @since v0.1.0
  */
@@ -37,7 +37,10 @@ export class StateDTO {
    * @access public
    * @var {string}
    */
-  @ApiProperty()
+  @ApiProperty({
+    example: "discovery:DiscoverTransactions",
+    description: "The identifier of the state entry. Typically, this holds a unique identifier that determines for which module state is being saved.",
+  })
   public name: string;
 
   /**
@@ -51,6 +54,9 @@ export class StateDTO {
    * @access public
    * @var {string}
    */
-  @ApiProperty()
+  @ApiProperty({
+    example: { stateKey1: 1, stateKey2: "value2", stateKey3: true },
+    description: "Contains the actual state cache data. This field is usually populated or updated within a service class.",
+  })
   public data: StateData;
 }

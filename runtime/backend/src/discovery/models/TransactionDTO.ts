@@ -20,64 +20,61 @@ import { ApiProperty } from "@nestjs/swagger";
  */
 export class TransactionDTO {
   /**
-   * The transaction signer address. This is more commonly referred
-   * to the *owner* of said transaction.
+   * This is the signer's address. The signer corresponds to the
+   * issuer of said transaction ("owner"). It is not to be confused
+   * with the discovery source address.
    *
    * @access public
    * @var {string}
    */
-  @ApiProperty()
+  @ApiProperty({
+    example: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+    description: "This is the signer's address. The signer corresponds to the issuer of said transaction - a.k.a the owner.",
+  })
   public signerAddress: string;
 
   /**
-   * The transaction type in string format. Note that we use strings
-   * here rather than numbers as provided by `@dhealth/sdk`, for clarity.
+   * This is the recipient address. The recipient corresponds to the
+   * destination of said transaction.
    *
-   * @see getTransactionType
    * @access public
    * @var {string}
    */
-  @ApiProperty()
-  public transactionType: string;
+  @ApiProperty({
+    example: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+    description: "This is the recipient address. The recipient corresponds to the destination of said transaction.",
+  })
+  public recipientAddress: string;
 
   /**
-   * The transaction hash. This property *can never* be altered
-   * after a transaction has been read.
+   * This is the transaction hash as defined by dHealth Network. It
+   * contains an *immutable* sha3-256 hash created from the transaction
+   * body.
    * <br /><br />
-   * The content of this field is represented in *hexadecimal* format.
+   * Due to the usage of sha3-256, this hash is **always** a **32 bytes**
+   * transaction hash (64 characters in hexadecimal notation).
    *
    * @access public
    * @var {string}
    */
-  @ApiProperty()
+  @ApiProperty({
+    example: "4288A7ACF51A04AEFFBAA3DC96BCB96F20BA95671C19C3EE9E0443BC0FB79A61",
+    description: "This is the transaction hash as defined by dHealth Network. It contains an *immutable* sha3-256 hash created from the transaction body.",
+  })
   public transactionHash: string;
 
   /**
-   * The transaction signature. This property *can never* be altered
-   * after a transaction has been read.
-   * <br /><br />
-   * The content of this field is represented in *hexadecimal* format.
+   * The document's creation block number. This field **does** reflect the
+   * time of creation of a transaction. You can use the dHealth Network API
+   * to find out exact timestamp by block height.
    *
+   * @todo Note this is not protected for number overflows (but there is a long way until block numbers do overflow..)
    * @access public
-   * @var {string}
+   * @var {number}
    */
-  @ApiProperty()
-  public signature: string;
-
-  /**
-   * The *encoded* body of the transaction. This property contains
-   * only the actual *content* of the transaction and does not
-   * contain the transaction header.
-   * <br /><br />
-   * It is important to note that re-building transactions using
-   * this payload *must* re-construct the transaction header
-   * separately, i.e. using {@link signature} and {@link transactionHash}.
-   * <br /><br />
-   * The content of this field is represented in *hexadecimal* format.
-   *
-   * @access public
-   * @var {string}
-   */
-  @ApiProperty()
-  public encodedBody: string;
+  @ApiProperty({
+    example: 123456,
+    description: "The height of the block that included this transaction on dHealth Network",
+  })
+  public creationBlock?: number;
 }

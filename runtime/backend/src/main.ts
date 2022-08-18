@@ -30,6 +30,9 @@ import dappConfigLoader from "../config/dapp";
  * @returns {Promise<void>}
  */
 async function bootstrap(): Promise<void> {
+  // read configuration
+  const dappConfig: DappConfig = dappConfigLoader();
+
   // create app instance
   const app = await NestFactory.create(
     AppModule.register({
@@ -38,7 +41,7 @@ async function bootstrap(): Promise<void> {
   );
 
   // create a logger instance
-  const logger = new Logger(dappConfigLoader().dappName);
+  const logger = new Logger(dappConfig.dappName);
   logger.debug(`Starting ${packageJson.name} at v${packageJson.version}`);
 
   // add secutity
@@ -52,14 +55,14 @@ async function bootstrap(): Promise<void> {
 
   // init OpenAPI documentation with information from package.json
   const docConfig = new DocumentBuilder()
-    .setTitle(packageJson.name)
+    .setTitle(dappConfig.dappName)
     .setDescription(packageJson.description)
     .setVersion(packageJson.version)
     .addTag(`${packageJson.name} v${packageJson.version}`)
     .addServer(`http://${appUrl}:${appPort}`, "dHealth dApp Backend")
     .build();
   const document = SwaggerModule.createDocument(app, docConfig);
-  SwaggerModule.setup("specs", app, document);
+  SwaggerModule.setup("api", app, document);
 
   // start the worker
   logger.debug(`Starting the worker process...`);
@@ -68,6 +71,7 @@ async function bootstrap(): Promise<void> {
   // start the app
   logger.debug(`Now listening for requests on port ${appPort}`);
   await app.listen(appPort);
+  logger.debug(`Accepting requests on: ${await app.getUrl()}`);
 }
 
 /**
