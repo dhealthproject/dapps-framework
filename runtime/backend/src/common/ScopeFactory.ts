@@ -21,6 +21,7 @@ import { Schedulers } from "./Schedulers";
 import dappConfigLoader from "../../config/dapp";
 import networkConfigLoader from "../../config/network";
 import securityConfigLoader from "../../config/security";
+import providersConfigLoader from "../../config/providers";
 
 /**
  * @class ScopeFactory
@@ -77,9 +78,10 @@ export class ScopeFactory {
           dappConfigLoader,
           networkConfigLoader,
           securityConfigLoader,
+          providersConfigLoader,
         ],
         isGlobal: true,
-        envFilePath: ['.env', '.env-sample'],
+        envFilePath: [".env", ".env-sample"],
       }),
     ];
   }
@@ -157,21 +159,18 @@ export class ScopeFactory {
     // in **cronjobs** the database is always added
     // in addition to the configuration module.
     // Note: does **not** modify {@link baseImports}.
-    const requiredImports = this.baseImports.concat(
-      Schedulers["database"],
-    );
+    const requiredImports = this.baseImports.concat(Schedulers["database"]);
 
     // reads *all* enabled schedulers, note here that
     // each scope may define an *array* of schedulers
-    const schedulerImports = scopes.filter(
-      (s) => s !== "database" && s in Schedulers,
-    ).map((s) => Schedulers[s]);
+    const schedulerImports = scopes
+      .filter((s) => s !== "database" && s in Schedulers)
+      .map((s) => Schedulers[s]);
 
     // concatenates `Schedulers` that are *enabled* (opt-in)
     // through the dApp configuration's `scopes` field.
-    return requiredImports.concat(schedulerImports.reduce(
-      (prev, cur) => prev.concat([...cur]),
-      []
-    ));
+    return requiredImports.concat(
+      schedulerImports.reduce((prev, cur) => prev.concat([...cur]), []),
+    );
   }
 }

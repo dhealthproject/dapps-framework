@@ -15,8 +15,10 @@ import { JwtModule } from "@nestjs/jwt";
 // internal dependencies
 import { NetworkModule } from "../modules/NetworkModule";
 import { AuthService } from "../services/AuthService";
-import { AuthStrategy } from '../traits/AuthStrategy';
+import { AuthStrategy } from "../traits/AuthStrategy";
 import { AuthController } from "../routes/AuthController";
+import { OAuthController } from "../routes/OAuthController";
+import { OAuthService } from "../services/OAuthService";
 
 /**
  * @class AuthModule
@@ -33,11 +35,11 @@ import { AuthController } from "../routes/AuthController";
       // defines the secret token for *verifying* JwT tokens
       secret: process.env.AUTH_TOKEN_SECRET,
       // signature expires after 60 seconds of validity
-      signOptions: { expiresIn: "60s"},
+      signOptions: { expiresIn: "60s" },
     }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService, AuthStrategy],
-  exports: [AuthService],
+  controllers: [AuthController, OAuthController],
+  providers: [AuthService, OAuthService, AuthStrategy],
+  exports: [AuthService, OAuthService],
 })
 export class AuthModule {}

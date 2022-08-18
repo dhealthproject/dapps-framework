@@ -44,19 +44,17 @@ export class AuthController {
    * @param {ConfigService} configService
    * @param {AppService} appService
    */
-  public constructor(
-    private readonly authService: AuthService,
-  ) {}
+  public constructor(private readonly authService: AuthService) {}
 
   /**
-   * 
+   *
    * <br /><br />
    * The `passthrough` flag in `NestResponse()` operator permits
    * to instruct *nest* to pass on the response cookie onto the
    * express `Response` object.
    *
-   * @param req 
-   * @returns 
+   * @param req
+   * @returns
    */
   @Get("auth/challenge")
   protected async getAuthCode(
@@ -90,27 +88,24 @@ export class AuthController {
    * in an encrypted transfer transaction on dHealth Network.
    *
    * @method POST
-   * @param req 
-   * @param ip 
-   * @param body 
+   * @param req
+   * @param ip
+   * @param body
    * @returns Promise<AuthenticationToken>
    */
-  @Post('auth/token')
+  @Post("auth/token")
   protected async getAccessToken(
     @NestRequest() req: Request,
     @Ip() ip: string,
-    @Body() body: TokenRequestDTO
+    @Body() body: TokenRequestDTO,
   ): Promise<AuthenticationToken> {
     try {
-      const user: User = await this.authService.validate(
-        body.authCode,
-      );
+      const user: User = await this.authService.validate(body.authCode);
 
       if (null !== user) {
         return this.authService.getAccessToken(user);
       }
-    }
-    catch (e: any) {
+    } catch (e: any) {
       // Caution: this is dangerous (just a first draft ;())
       throw e;
     }
@@ -123,11 +118,11 @@ export class AuthController {
    *
    * @see AuthGuard
    * @method GET
-   * @param req 
-   * @returns 
+   * @param req
+   * @returns
    */
   @UseGuards(AuthGuard)
-  @Get('me')
+  @Get("me")
   protected getProfile(@NestRequest() req: Request) {
     return req.user;
   }
