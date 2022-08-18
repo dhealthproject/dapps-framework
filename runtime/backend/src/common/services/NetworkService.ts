@@ -273,6 +273,10 @@ export class NetworkService {
 
   /**
    * Method to get timestamp from a dHealth block-height number.
+   * <br /><br />
+   * @deprecated This method will be deprecated in upcoming releases
+   * of the software. It is yet to be defined which helper classes
+   * are necessary to favor instead.
    *
    * @async
    * @access public
@@ -290,6 +294,10 @@ export class NetworkService {
 
   /**
    * Method to get (network adjusted) timestamp from an UInt64 timestamp.
+   * <br /><br />
+   * @deprecated This method will be deprecated in upcoming releases
+   * of the software. It is yet to be defined which helper classes
+   * are necessary to favor instead.
    *
    * @access public
    * @param {UInt64} timestamp

@@ -13,16 +13,18 @@ import { DatabaseConfig } from "./DatabaseConfig";
 import { DiscoveryConfig } from "./DiscoveryConfig";
 
 /**
+ * @label COMMON
  * @interface DappConfig
- * @description This interface defines the required configuration of dApps
- * that use this software runtime. Notable fields in the configuration of
- * a custom dApp include its {@link dappPublicKey} and {@link scopes} which
- * are used to determine which modules are enabled and running for a dApp.
+ * @description The dApp configuration object. This configuration
+ * object is used to determine general settings of this dApp runtime
+ * including its' name, its main public key or scopes that are enabled
+ * for the dApp in the backend runtime.
  * <br /><br />
  * This interface is mainly used **internally** to restrict the configuration
  * values provided to some modules or services and methods.
  *
  * @todo Allow for updated discovery sources configuration (must be backwards compatible).
+ * @link DappConfig:CONFIG
  * @since v0.1.0
  */
 export interface DappConfig {
@@ -45,20 +47,6 @@ export interface DappConfig {
    * @var {string}
    */
   dappPublicKey: string;
-
-  /**
-   * An **address** that identifies the dApp's authentication
-   * authority account. This account receives transactions when
-   * someone logs in to a dApp.
-   * <br /><br />
-   * Note that this authority *will be deprecated* in later
-   * iterations given that the dHealth Signer software will
-   * permit to call a *webhook* upon signatures creation.
-   *
-   * @access public
-   * @var {string}
-   */
-  authAuthority: string;
 
   /**
    * An array of {@link Scope} that represents the enabled
@@ -86,7 +74,8 @@ export interface DappConfig {
   database: DatabaseConfig;
 
   /**
-   * An array of discovery sources as defined in {@link DiscoveryConfig}.
+   * A configuration object related to the discovery module as defined
+   * {@link DiscoveryConfig}.
    * <br /><br />
    * Note that modifying the content of this configuration field
    * *may slow down* the *synchronization process* of the backend

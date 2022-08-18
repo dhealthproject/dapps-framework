@@ -13,6 +13,7 @@ import { PublicAccount, Address, NetworkType } from "@dhealth/sdk";
 // internal dependencies
 import { Scope } from "../../common/models/Scope";
 import { BaseCommand, BaseCommandOptions } from "../../worker/BaseCommand";
+import { AccountsService } from "../../common/services/AccountsService";
 
 /**
  * @interface DiscoveryCommandOptions
@@ -134,32 +135,10 @@ export abstract class DiscoveryCommand extends BaseCommand {
    * @returns   {Address}   A parsed dHealth Account Address.
    */
   protected parseSource(sourceOption: string): Address {
-    // extracts the network type from configuration
-    const { networkIdentifier } = this.networkConfig.network;
-    const networkType = networkIdentifier as NetworkType;
-
-    // if we have a public key (64 characters in hexadecimal format)
-    if (sourceOption.length === 64) {
-      // use PublicAccount from @dhealth/sdk using public key
-      const publicAccount = PublicAccount.createFromPublicKey(
-        sourceOption,
-        networkType,
-      );
-
-      // public-key to address
-      return publicAccount.address;
-    }
-
-    // otherwise *assume* we have an address (and remove hyphens if any)
-    const sourceAddress: string = sourceOption.replace(/\-/g, '');
-
-    // source input is **not** a valid address, return fallback
-    if (sourceAddress.length !== 39) {
-      return this.parseSource(this.dappConfig.dappPublicKey);
-    }
-
-    // source input **is a valid address format** 
-    return Address.createFromRawAddress(sourceAddress);
+    // uses accounts service to parse source
+    return AccountsService.createPublicAccount(
+      sourceOption,
+    ).address;
   }
 
   /**

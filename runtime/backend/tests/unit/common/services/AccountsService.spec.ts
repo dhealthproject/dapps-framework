@@ -14,8 +14,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
-import { AccountsService } from "../../../../src/discovery/services/AccountsService";
-import { AccountDocument, AccountModel, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
+import { AccountsService } from "../../../../src/common/services/AccountsService";
+import { AccountDocument, AccountModel, AccountQuery } from "../../../../src/common/models/AccountSchema";
 
 describe("discovery/AccountsService", () => {
   let service: AccountsService;

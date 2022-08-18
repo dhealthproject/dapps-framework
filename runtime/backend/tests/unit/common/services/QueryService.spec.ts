@@ -14,7 +14,7 @@ import { Model } from "mongoose";
 // internal dependencies
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
-import { AccountDocument, AccountModel, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
+import { AccountDocument, AccountModel, AccountQuery } from "../../../../src/common/models/AccountSchema";
 import { QueryParameters } from "@/common/concerns/Queryable";
 
 // Mock the query service to enable *testing* of protected

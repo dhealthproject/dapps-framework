@@ -8,6 +8,7 @@
  * @license     LGPL-3.0
  */
 /**
+ * @label COMMON
  * @type {Scope}
  * @description This enumeration contains the configurable **scopes** for
  * the runtime. Any newly added scope must be added here as well to make

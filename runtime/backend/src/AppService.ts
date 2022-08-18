@@ -102,14 +102,5 @@ export class AppService {
     this.networkType = this.configService.get<number>(
       "network.networkIdentifier",
     );
-
-    // read a public key to start with
-    //const dappPublicKey = this.configService.get<string>("dappPublicKey");
-
-    // interprets the dApp public information
-    // this.dappPublicAccount = PublicAccount.createFromPublicKey(
-    //   dappPublicKey,
-    //   this.networkType as NetworkType
-    // );
   }
 }

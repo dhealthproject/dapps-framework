@@ -10,11 +10,17 @@
 // external dependencies
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import { Address, NetworkType, PublicAccount } from "@dhealth/sdk";
 
 // internal dependencies
 import { PaginatedResultDTO } from "../models/PaginatedResultDTO";
 import { QueryService } from "../services/QueryService";
 import { Account, AccountDocument, AccountModel, AccountQuery } from "../models/AccountSchema";
+import { NetworkConfig } from "../models/NetworkConfig";
+
+// configuration resources
+import dappConfigLoader from "../../../config/dapp";
+import networkConfigLoader from "../../../config/network";
 
 /**
  * @class AccountsService
@@ -64,7 +70,7 @@ export class AccountsService {
    * @param   {AccountQuery}  query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @returns {Promise<boolean>}  Whether a document exists which validates the passed query.
    */
-  async exists(query: AccountQuery): Promise<boolean> {
+  public async exists(query: AccountQuery): Promise<boolean> {
     // executes a *lean* mongoose findOne query
     const document: AccountDocument = await this.queriesService.findOne(
       query,
@@ -83,7 +89,7 @@ export class AccountsService {
    * @param   {AccountQuery} query
    * @returns {Promise<PaginatedResultDTO<AccountDocument>>}
    */
-  async find(query: AccountQuery): Promise<PaginatedResultDTO<AccountDocument>> {
+  public async find(query: AccountQuery): Promise<PaginatedResultDTO<AccountDocument>> {
     return await this.queriesService.find(query, this.model);
   }
 
@@ -97,7 +103,7 @@ export class AccountsService {
    * @param   {AccountQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @returns {Promise<AccountDocument>}  The resulting `accounts` document.
    */
-  async findOne(query: AccountQuery): Promise<AccountDocument> {
+  public async findOne(query: AccountQuery): Promise<AccountDocument> {
     return await this.queriesService.findOne(query, this.model);
   }
 
@@ -111,7 +117,7 @@ export class AccountsService {
    * @param   {Record<string, any>}   ops    The operations that must be run additionally (e.g. `$inc: {}`) (optional).
    * @returns {Promise<AccountDocument>}  The *updated* `accounts` document.
    */
-  async createOrUpdate(
+  public async createOrUpdate(
     query: AccountQuery,
     data: AccountModel,
     ops: Record<string, any> = {},
@@ -131,10 +137,58 @@ export class AccountsService {
    * @param   {AccountModel[]} accountDocuments
    * @returns {Promise<number>}
    */
-  async updateBatch(accountDocuments: AccountModel[]): Promise<number> {
+  public async updateBatch(accountDocuments: AccountModel[]): Promise<number> {
     return await this.queriesService.updateBatch(
       this.model,
       accountDocuments,
     );
+  }
+
+/**
+ * Static API
+ */
+  /**
+   * This helper method serves as a *parser* for account
+   * public keys and addresses.
+   * <br /><br />
+   * This *static* method can be used for any inputs that
+   * require to *identify* a participant [account]. Accounts
+   * can always be referred to by their public key as it can
+   * be used to generate the resulting identifier (address).
+   *
+   * @param     {string}  publicKeyOrAddress     Must contain one of an account public key or an account address.
+   * @returns   {Address}   A parsed dHealth Account Address
+   */
+  public static createAddress(
+    publicKeyOrAddress: string,
+  ): Address {
+    // extracts the network type from configuration
+    const { networkIdentifier } = networkConfigLoader().network;
+    const networkType = networkIdentifier as NetworkType;
+
+    // if we have a public key (64 characters in hexadecimal format)
+    if (publicKeyOrAddress.length === 64) {
+      // use PublicAccount from @dhealth/sdk using public key
+      const publicAccount = PublicAccount.createFromPublicKey(
+        publicKeyOrAddress,
+        networkType,
+      );
+
+      // public-key to address
+      return publicAccount.address;
+    }
+
+    // otherwise *assume* we have an address (and remove hyphens/spaces if any)
+    const sourceAddress: string = publicKeyOrAddress.replace(/[\- ]/g, '');
+
+    // source input is **not** a valid address, return fallback
+    if (sourceAddress.length !== 39) {
+      return AccountsService.createAddress(
+        dappConfigLoader().dappPublicKey,
+      );
+    }
+
+    // source input **is a valid address format** 
+    return Address.createFromRawAddress(sourceAddress);
   }
 }

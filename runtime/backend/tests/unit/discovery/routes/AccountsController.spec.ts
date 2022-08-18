@@ -15,10 +15,10 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
-import { AccountsService } from "../../../../src/discovery/services/AccountsService";
+import { AccountsService } from "../../../../src/common/services/AccountsService";
+import { AccountDTO } from "../../../../src/common/models/AccountDTO";
+import { AccountDocument, AccountQuery } from "../../../../src/common/models/AccountSchema";
 import { AccountsController } from "../../../../src/discovery/routes/AccountsController";
-import { AccountDTO } from "../../../../src/discovery/models/AccountDTO";
-import { AccountDocument, AccountQuery } from "../../../../src/discovery/models/AccountSchema";
 
 describe("discovery/AccountsController", () => {
   let controller: AccountsController;

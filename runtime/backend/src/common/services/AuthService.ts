@@ -22,6 +22,7 @@ import {
 
 // internal dependencies
 import { NetworkService } from "../services/NetworkService";
+import { AccountsService } from "../services/AccountsService";
 import { Account } from "../models/AccountSchema";
 import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import { AuthChallenge, AuthChallengeModel } from "../models/AuthChallengeSchema";
@@ -213,11 +214,17 @@ export class AuthService {
    */
   protected getTransactionQuery(): any {
     // get the account address from config
-    const authAuthority = this.configService.get<string>("authAuthority");
+    const registries = this.configService.get<string[]>("auth.registries");
+
+    // @todo this limits the authentication registries to 1 accounts,
+    // @todo instead, should allow using all listed registries.
+    const authRegistryAddress: Address = AccountsService.createAddress(
+      registries[0],
+    );
 
     // returns a REST-compatible query
     return {
-      recipientAddress: Address.createFromRawAddress(authAuthority),
+      recipientAddress: authRegistryAddress,
       type: [TransactionType.TRANSFER],
       embedded: false,
       order: Order.Desc,
