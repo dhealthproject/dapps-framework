@@ -15,7 +15,10 @@ jest.mock("@nestjs/config", () => {
 
 const mongooseForRootCall: any = jest.fn(() => MongooseModuleMock);
 const mongooseForFeatCall: any = jest.fn(() => MongooseModuleMock);
-const MongooseModuleMock: any = { forRoot: mongooseForRootCall, forFeature: mongooseForFeatCall };
+const MongooseModuleMock: any = {
+  forRoot: mongooseForRootCall,
+  forFeature: mongooseForFeatCall,
+};
 jest.mock("@nestjs/mongoose", () => {
   return { MongooseModule: MongooseModuleMock };
 });
@@ -58,14 +61,20 @@ jest.mock("../../../src/processor/modules/OperationsModule", () => {
 });
 
 const DiscoverAccountsCommandMock: any = jest.fn();
-jest.mock("../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand", () => {
-  return { DiscoverAccountsCommand: DiscoverAccountsCommandMock };
-});
+jest.mock(
+  "../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand",
+  () => {
+    return { DiscoverAccountsCommand: DiscoverAccountsCommandMock };
+  },
+);
 
 const DiscoverTransactionsCommandMock: any = jest.fn();
-jest.mock("../../../src/discovery/schedulers/DiscoverTransactions/DiscoverTransactionsCommand", () => {
-  return { DiscoverTransactionsCommand: DiscoverTransactionsCommandMock };
-});
+jest.mock(
+  "../../../src/discovery/schedulers/DiscoverTransactions/DiscoverTransactionsCommand",
+  () => {
+    return { DiscoverTransactionsCommand: DiscoverTransactionsCommandMock };
+  },
+);
 
 const ProcessOperationsCommandMock: any = jest.fn();
 jest.mock("../../../src/processor/schedulers/ProcessOperations/ProcessOperationsCommand", () => {

@@ -52,7 +52,7 @@ export class OAuthController {
    * @returns
    */
   @Get("oauth/:provider")
-  protected async getOAuthToken(
+  protected async authorize(
     @NestResponse() response: Response,
     @Param("provider") provider: string,
     @Query() query: any,

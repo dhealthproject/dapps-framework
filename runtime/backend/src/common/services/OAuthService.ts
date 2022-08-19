@@ -19,11 +19,21 @@ import {
 } from "../models/OAuthConfig";
 import { OAuthDriver, BasicOAuthDriver, StravaOAuthDriver } from "../drivers";
 
+/**
+ * @class OAuthService
+ * @description This class contains methods
+ * for connecting, linking accounts to the providers
+ * usage example can be found in OAuthController
+ *
+ * @since v0.2.0
+ */
 @Injectable()
 export class OAuthService {
   /**
+   * Constructs an instance of this controller.
    *
-   * @param configService
+   * @constructor
+   * @param {ConfigService} configService
    */
   public constructor(private readonly configService: ConfigService) {}
 
