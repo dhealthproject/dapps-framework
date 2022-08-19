@@ -52,15 +52,13 @@ export class OAuthController {
    * @returns
    */
   @Get("authorization/:provider")
-  protected async getOAuthToken(
+  protected getOAuthToken(
     @NestResponse() response: Response,
     @Param("provider") provider: string,
     @Query() query: any,
   ) {
     const { ref, dhealthAddress } = query;
-    console.log("address", dhealthAddress);
-    console.log("address", ref);
-    const redirect_uri = await this.oauthService.getRedirectURL(
+    const redirect_uri = this.oauthService.getRedirectURL(
       provider,
       dhealthAddress,
       ref,

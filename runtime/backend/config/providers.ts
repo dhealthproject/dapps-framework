@@ -10,14 +10,14 @@
 
 export default () => ({
   strava: {
-    client_secret: "8e87fe57b896b624ca4fdfda561d98900d4dae3c", // TODO: MOVE THIS VALUE INTO .env
+    client_secret: "8e87fe57b896b624ca4fdfda561d98900d4dae3c", // @todo: MOVE THIS VALUE INTO .env
     oauth_url: "https://www.strava.com/oauth/authorize",
-    redirect_url: "http://localhost:8080/", // TODO: REPLACE WITH THE VALID URL
+    redirect_url: "http://localhost:8080/", // @todo: REPLACE WITH THE VALID URL
     webhook_url:
-      "https://us-central1-health-to-earn.cloudfunctions.net/webhook", // TODO: REPLACE WITH ELEVATE RELATED URL
+      "https://us-central1-health-to-earn.cloudfunctions.net/webhook", // @todo: REPLACE WITH ELEVATE RELATED URL
     subscribe_url:
-      "https://us-central1-health-to-earn.cloudfunctions.net/subscribe", // TODO: REPLACE WITH ELEVATE RELATED URL
-    client_id: "92236", // TODO: MOVE THIS VALUE INTO .env
-    verify_token: "94bc78225eba1282476d0ce6bcb3fe0ed789c2ee", // TODO: MOVE THIS VALUE INTO .env
+      "https://us-central1-health-to-earn.cloudfunctions.net/subscribe", // @todo: REPLACE WITH ELEVATE RELATED URL
+    client_id: "92236", // @todo: MOVE THIS VALUE INTO .env
+    verify_token: "94bc78225eba1282476d0ce6bcb3fe0ed789c2ee", // @todo: MOVE THIS VALUE INTO .env
   },
 });

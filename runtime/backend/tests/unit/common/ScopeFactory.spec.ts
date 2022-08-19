@@ -15,7 +15,10 @@ jest.mock("@nestjs/config", () => {
 
 const mongooseForRootCall: any = jest.fn(() => MongooseModuleMock);
 const mongooseForFeatCall: any = jest.fn(() => MongooseModuleMock);
-const MongooseModuleMock: any = { forRoot: mongooseForRootCall, forFeature: mongooseForFeatCall };
+const MongooseModuleMock: any = {
+  forRoot: mongooseForRootCall,
+  forFeature: mongooseForFeatCall,
+};
 jest.mock("@nestjs/mongoose", () => {
   return { MongooseModule: MongooseModuleMock };
 });
@@ -53,14 +56,20 @@ jest.mock("../../../src/common/modules/NetworkModule", () => {
 });
 
 const DiscoverAccountsCommandMock: any = jest.fn();
-jest.mock("../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand", () => {
-  return { DiscoverAccountsCommand: DiscoverAccountsCommandMock };
-});
+jest.mock(
+  "../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand",
+  () => {
+    return { DiscoverAccountsCommand: DiscoverAccountsCommandMock };
+  },
+);
 
 const DiscoverTransactionsCommandMock: any = jest.fn();
-jest.mock("../../../src/discovery/schedulers/DiscoverTransactions/DiscoverTransactionsCommand", () => {
-  return { DiscoverTransactionsCommand: DiscoverTransactionsCommandMock };
-});
+jest.mock(
+  "../../../src/discovery/schedulers/DiscoverTransactions/DiscoverTransactionsCommand",
+  () => {
+    return { DiscoverTransactionsCommand: DiscoverTransactionsCommandMock };
+  },
+);
 
 const PayoutModuleMock: any = jest.fn();
 jest.mock("../../../src/payout/PayoutModule", () => {
@@ -95,7 +104,12 @@ describe("common/ScopeFactory", () => {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
-        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        database: {
+          host: "fake",
+          port: "1",
+          name: "fake-db",
+          user: "fake-user",
+        },
       };
 
       const configDto1: DappConfig = { ...baseConfig, scopes: [] };
@@ -117,7 +131,12 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
         scopes: ["discovery", "payout", "processor"],
-        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        database: {
+          host: "fake",
+          port: "1",
+          name: "fake-db",
+          user: "fake-user",
+        },
       };
 
       // act
@@ -139,7 +158,12 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
         scopes: ["discovery", "processor"],
-        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        database: {
+          host: "fake",
+          port: "1",
+          name: "fake-db",
+          user: "fake-user",
+        },
       };
 
       // act
@@ -160,7 +184,12 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
         scopes: ["database"],
-        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        database: {
+          host: "fake",
+          port: "1",
+          name: "fake-db",
+          user: "fake-user",
+        },
       };
 
       // act
@@ -178,7 +207,12 @@ describe("common/ScopeFactory", () => {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
-        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        database: {
+          host: "fake",
+          port: "1",
+          name: "fake-db",
+          user: "fake-user",
+        },
       };
 
       const configDto1: DappConfig = { ...baseConfig, scopes: [] };
@@ -210,7 +244,12 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
         scopes: ["discovery"],
-        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        database: {
+          host: "fake",
+          port: "1",
+          name: "fake-db",
+          user: "fake-user",
+        },
       };
 
       // act
@@ -234,17 +273,19 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         authAuthority: "NonExistingAuthority",
         scopes: [],
-        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        database: {
+          host: "fake",
+          port: "1",
+          name: "fake-db",
+          user: "fake-user",
+        },
       };
 
       // act
       const result = MockFactory.create(configDto).getSchedulers();
 
       // assert
-      expect(result).toEqual([
-        ConfigModuleMock,
-        MongooseModuleMock,
-      ]);
+      expect(result).toEqual([ConfigModuleMock, MongooseModuleMock]);
     });
   });
 });

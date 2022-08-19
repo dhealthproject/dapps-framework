@@ -13,7 +13,6 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 // internal dependencies
-import providersList from "config/providers";
 import { Address } from "@dhealth/sdk";
 
 /**
@@ -26,14 +25,41 @@ enum Providers {
   // appleHealth = https://www.apple-health.com/oauth/authorize
 }
 
+/**
+ * @class OAuthService
+ * @description This class contains methods
+ * for connecting, linking accounts to the providers
+ * usage example can be found in OAuthController
+ *
+ * @since v0.2.0
+ */
 @Injectable()
 export class OAuthService {
+  /**
+   * Constructs an instance of this controller.
+   *
+   * @constructor
+   * @param {ConfigService} configService
+   */
   public constructor(private readonly configService: ConfigService) {}
-  async getRedirectURL(provider: string, dhealthAddress: string, ref: string) {
+
+  /**
+   * Returns url & query for redirect to provider page
+   *
+   * @method GET
+   * @param provider
+   * @param dhealthAddress
+   * @param ref
+   *
+   * @returns string
+   */
+  getRedirectURL(provider: string, dhealthAddress: string, ref: string) {
+    // check if provider exists
     if (!Object.keys(Providers).includes(provider)) {
       throw new BadRequestException("Provider does not exist");
     }
 
+    // check if provided address is valid
     try {
       const addr = Address.createFromRawAddress(dhealthAddress);
     } catch (e) {
@@ -43,13 +69,11 @@ export class OAuthService {
     let providerUrl: string;
     let query: string;
 
-    // const oauthConfig = this.configService.get<any>;
     const client_id = this.configService.get<string>(`${provider}.client_id`);
     const oauth_url = this.configService.get<string>(`${provider}.oauth_url`);
     const redirect_url = this.configService.get<string>(
       `${provider}.redirect_url`,
     );
-
     providerUrl = oauth_url;
     query =
       `?` +
