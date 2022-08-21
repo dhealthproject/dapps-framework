@@ -8,7 +8,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 #### Added
 
 - [@dhealth/contracts] chore(package): Adds base structure for Contracts Library.
-- [@dhealth/contracts] chore(build): Creates `dHealthContract` bundle in `@dhealth/contracts.x`.
-- [@dhealth/contracts] feat(types): Adds exported types for contract parameterization and generic network connection.
+- [@dhealth/contracts] feat(types): Adds exported types for contract parameterization and generic dHealth Network connection.
 - [@dhealth/contracts] feat(buffers): Adds contract buffer classes that prepare binary payloads using JSON, each contract payload is split into header and body.
-- [@dhealth/contracts] feat(contracts): Adds initial contracts implementation for `Auth`, `Earn`, `Referral` and `Welcome`.
+- [@dhealth/contracts] feat(contracts): Adds initial contracts implementation for Auth, Earn, Referral and Welcome.
+- [@dhealth/contracts] test(base): Adds initial unit tests for Contract abstraction layer and Auth contract.

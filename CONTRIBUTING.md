@@ -169,6 +169,8 @@ These commit scopes can be used for *any* of the software repositories:
 
 * **types**: Changes that affect exported types of the contracts library
 * **buffer**: Changes that affect the contract buffers and binary payload of the contracts library
+* **contracts**: Changes that affect the available contracts as exported by the contracts library
+* **factories**: Changes that affect contract factories of the contracts library
 
 ##### <a name="commit-scopes-frontend"></a> Valid scopes for **@dhealthdapps/frontend**
 
