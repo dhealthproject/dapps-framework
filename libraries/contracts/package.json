@@ -1,0 +1,110 @@
+{
+  "name": "@dhealth/contracts",
+  "version": "0.1.0",
+  "homepage": "https://github.com/dhealthproject/dapps-framework/tree/main/libraries/contracts#readme",
+  "description": "Contracts for dApps Development with dHealth Network",
+  "author": "dHealth Network <devs@dhealth.foundation>",
+  "license": "LGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/dhealthproject/dapps-framework/issues"
+  },
+  "main": "dist/src/Contracts.js",
+  "types": "dist/types/src/Contracts.d.ts",
+  "files": [
+    "dist/*",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prettier": "prettier --check ./src ./tests",
+    "lint:fix": "prettier --write ./src ./tests",
+    "lint": "npm run prettier ; eslint src/ --ext .ts && eslint tests/ --ext .ts",
+    "docs": "npx typedoc --out \"docs/`npm run version --silent`\" src",
+    "prebuild": "rimraf dist/ ; npm run lint",
+    "build": "tsc",
+    "test": "ts-mocha --paths -p tsconfig.json \"tests/**/*.spec.ts\""
+  },
+  "dependencies": {
+    "@dhealth/sdk": "~1.0.3-alpha-202201201200",
+    "crypto-browserify": "^3.12.0",
+    "stream-browserify": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.1",
+    "@types/mocha": "^9.1.1",
+    "@types/sinon": "^10.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
+    "chai": "^4.3.6",
+    "eslint": "^8.17.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "mocha": "10.0.0",
+    "sinon": "^14.0.0",
+    "tsconfig-paths": "4.1.0",
+    "ts-mocha": "10.0.0",
+    "ts-node": "^9.1.1",
+    "typedoc": "^0.22.15",
+    "typescript": "~4.5.5",
+    "utf8": "3.0.0",
+    "highlight.js": ">=10.4.1",
+    "rimraf": "3.0.2"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2020
+    },
+    "rules": {
+      "no-console": "off",
+      "no-debugger": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-empty-interface": "off",
+      "@typescript-eslint/no-inferrable-types": "off"
+    },
+    "overrides": [
+      {
+        "files": [
+          "**/tests/**/*.spec.ts"
+        ],
+        "env": {
+          "mocha": true
+        }
+      }
+    ]
+  },
+  "contributors": [
+    {
+      "name": "Grégory Saive",
+      "email": "greg@evi.as"
+    },
+    {
+      "name": "Son Nguyen",
+      "email": "son@dhealth.foundation"
+    },
+    {
+      "name": "Komal Narwani",
+      "email": "kn@dhealth.foundation"
+    },
+    {
+      "name": "Paul Rieger",
+      "email": "paul@dhealth.foundation"
+    },
+    {
+      "name": "Vitaliy Kravchenko",
+      "email": "vitaliy@dhealth.foundation"
+    }
+  ]
+}
