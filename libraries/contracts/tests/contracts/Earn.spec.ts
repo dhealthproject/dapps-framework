@@ -15,45 +15,45 @@ import { TransferTransaction } from "@dhealth/sdk";
 import type { ObjectLiteral } from "@/types/ObjectLiteral";
 import type { NetworkParameters } from "@/types/NetworkParameters";
 import type { TransactionParameters } from "@/types/TransactionParameters";
-import { Auth, AuthParameters } from "@/contracts/Auth";
+import { Earn, EarnParameters } from "@/contracts/Earn";
 import { MissingContractFieldError } from "@/errors/MissingContractFieldError";
 import { dHealthNetwork } from "@/types/dHealthNetwork";
 
 const mockAccountPublicKey =
   "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE";
 
-describe("contracts/Auth", () => {
-  let instance: Auth;
+describe("contracts/Earn", () => {
+  let instance: Earn;
 
   describe("constructor()", () => {
     beforeEach(() => {
-      instance = new Auth({
+      instance = new Earn({
         dappIdentifier: "fake-dapp",
-        challenge: "no-challenge",
-      } as AuthParameters);
+        date: "20220829",
+      } as EarnParameters);
     });
 
-    it('should accept "challenge" input field', () => {
+    it('should accept "date" input field', () => {
       // prepare
-      instance = new Auth({
+      instance = new Earn({
         dappIdentifier: "fake-dapp",
-        challenge: "another-challenge",
-      } as AuthParameters);
+        date: "2022-08-29",
+      } as EarnParameters);
 
       // act
-      const inputs: AuthParameters = (instance as any).inputs;
+      const inputs: EarnParameters = (instance as any).inputs;
 
       // assert
-      expect("challenge" in inputs).to.be.equal(true);
-      expect(inputs.challenge).to.be.equal("another-challenge");
+      expect("date" in inputs).to.be.equal(true);
+      expect(inputs.date).to.be.equal("2022-08-29");
     });
 
-    it('should throw error given missing "challenge" input', () => {
+    it('should throw error given missing "date" input', () => {
       // act
       try {
-        new Auth({} as AuthParameters);
+        new Earn({} as EarnParameters);
       } catch (e) {
-        // missing "challenge"
+        // missing "date"
         // assert
         expect(e instanceof MissingContractFieldError).to.be.equal(true);
       }
@@ -61,11 +61,11 @@ describe("contracts/Auth", () => {
 
     it('should accept change of "version" field', () => {
       // act
-      instance = new Auth(
+      instance = new Earn(
         {
           dappIdentifier: "fake-dapp",
-          challenge: "another-challenge",
-        } as AuthParameters,
+          date: "2022-08-29",
+        } as EarnParameters,
         9999
       );
       const header: ObjectLiteral = instance.header;
@@ -80,11 +80,11 @@ describe("contracts/Auth", () => {
       dHealthFake.generationHash = "not-the-same-network";
 
       // act
-      instance = new Auth(
+      instance = new Earn(
         {
           dappIdentifier: "fake-dapp",
-          challenge: "another-challenge",
-        } as AuthParameters,
+          date: "2022-08-29",
+        } as EarnParameters,
         1,
         dHealthFake
       );
@@ -97,50 +97,34 @@ describe("contracts/Auth", () => {
 
   describe("body()", () => {
     beforeEach(() => {
-      instance = new Auth({
+      instance = new Earn({
         dappIdentifier: "fake-dapp",
-        challenge: "no-challenge",
-      } as AuthParameters);
+        date: "2022-08-29",
+      } as EarnParameters);
     });
 
-    it('should include "challenge" field', () => {
+    it('should include "date" field', () => {
       // prepare
-      instance = new Auth({
+      instance = new Earn({
         dappIdentifier: "fake-dapp",
-        challenge: "another-challenge",
-      } as AuthParameters);
+        date: "20220829",
+      } as EarnParameters);
 
       // act
       const body: ObjectLiteral = instance.body;
 
       // assert
-      expect("challenge" in body).to.be.equal(true);
-      expect(body.challenge).to.be.equal("another-challenge");
-    });
-
-    it('should include "refCode" given it is non-empty', () => {
-      // prepare
-      instance = new Auth({
-        dappIdentifier: "fake-dapp",
-        challenge: "another-challenge",
-        refCode: "this-works",
-      } as AuthParameters);
-
-      // act
-      const body: ObjectLiteral = instance.body;
-
-      // assert
-      expect("refCode" in body).to.be.equal(true);
-      expect(body.refCode).to.be.equal("this-works");
+      expect("date" in body).to.be.equal(true);
+      expect(body.date).to.be.equal("20220829");
     });
   });
 
   describe("toTransaction()", () => {
     beforeEach(() => {
-      instance = new Auth({
+      instance = new Earn({
         dappIdentifier: "fake-dapp",
-        challenge: "no-challenge",
-      } as AuthParameters);
+        date: "2022-08-29",
+      } as EarnParameters);
     });
 
     it("should accept recipient in transaction parameters", () => {

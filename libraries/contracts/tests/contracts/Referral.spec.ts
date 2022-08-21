@@ -15,45 +15,45 @@ import { TransferTransaction } from "@dhealth/sdk";
 import type { ObjectLiteral } from "@/types/ObjectLiteral";
 import type { NetworkParameters } from "@/types/NetworkParameters";
 import type { TransactionParameters } from "@/types/TransactionParameters";
-import { Auth, AuthParameters } from "@/contracts/Auth";
+import { Referral, ReferralParameters } from "@/contracts/Referral";
 import { MissingContractFieldError } from "@/errors/MissingContractFieldError";
 import { dHealthNetwork } from "@/types/dHealthNetwork";
 
 const mockAccountPublicKey =
   "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE";
 
-describe("contracts/Auth", () => {
-  let instance: Auth;
+describe("contracts/Referral", () => {
+  let instance: Referral;
 
   describe("constructor()", () => {
     beforeEach(() => {
-      instance = new Auth({
+      instance = new Referral({
         dappIdentifier: "fake-dapp",
-        challenge: "no-challenge",
-      } as AuthParameters);
+        refCode: "FAKE-REF",
+      } as ReferralParameters);
     });
 
-    it('should accept "challenge" input field', () => {
+    it('should accept "refCode" input field', () => {
       // prepare
-      instance = new Auth({
+      instance = new Referral({
         dappIdentifier: "fake-dapp",
-        challenge: "another-challenge",
-      } as AuthParameters);
+        refCode: "FAKE-REF",
+      } as ReferralParameters);
 
       // act
-      const inputs: AuthParameters = (instance as any).inputs;
+      const inputs: ReferralParameters = (instance as any).inputs;
 
       // assert
-      expect("challenge" in inputs).to.be.equal(true);
-      expect(inputs.challenge).to.be.equal("another-challenge");
+      expect("refCode" in inputs).to.be.equal(true);
+      expect(inputs.refCode).to.be.equal("FAKE-REF");
     });
 
-    it('should throw error given missing "challenge" input', () => {
+    it('should throw error given missing "refCode" input', () => {
       // act
       try {
-        new Auth({} as AuthParameters);
+        new Referral({} as ReferralParameters);
       } catch (e) {
-        // missing "challenge"
+        // missing "refCode"
         // assert
         expect(e instanceof MissingContractFieldError).to.be.equal(true);
       }
@@ -61,11 +61,11 @@ describe("contracts/Auth", () => {
 
     it('should accept change of "version" field', () => {
       // act
-      instance = new Auth(
+      instance = new Referral(
         {
           dappIdentifier: "fake-dapp",
-          challenge: "another-challenge",
-        } as AuthParameters,
+          refCode: "ANOTHER_REF",
+        } as ReferralParameters,
         9999
       );
       const header: ObjectLiteral = instance.header;
@@ -80,11 +80,11 @@ describe("contracts/Auth", () => {
       dHealthFake.generationHash = "not-the-same-network";
 
       // act
-      instance = new Auth(
+      instance = new Referral(
         {
           dappIdentifier: "fake-dapp",
-          challenge: "another-challenge",
-        } as AuthParameters,
+          refCode: "A-THIRD-ref",
+        } as ReferralParameters,
         1,
         dHealthFake
       );
@@ -97,50 +97,34 @@ describe("contracts/Auth", () => {
 
   describe("body()", () => {
     beforeEach(() => {
-      instance = new Auth({
+      instance = new Referral({
         dappIdentifier: "fake-dapp",
-        challenge: "no-challenge",
-      } as AuthParameters);
+        refCode: "JOINUSNOW",
+      } as ReferralParameters);
     });
 
-    it('should include "challenge" field', () => {
+    it('should include "refCode" field', () => {
       // prepare
-      instance = new Auth({
+      instance = new Referral({
         dappIdentifier: "fake-dapp",
-        challenge: "another-challenge",
-      } as AuthParameters);
-
-      // act
-      const body: ObjectLiteral = instance.body;
-
-      // assert
-      expect("challenge" in body).to.be.equal(true);
-      expect(body.challenge).to.be.equal("another-challenge");
-    });
-
-    it('should include "refCode" given it is non-empty', () => {
-      // prepare
-      instance = new Auth({
-        dappIdentifier: "fake-dapp",
-        challenge: "another-challenge",
-        refCode: "this-works",
-      } as AuthParameters);
+        refCode: "JOINUSNOW",
+      } as ReferralParameters);
 
       // act
       const body: ObjectLiteral = instance.body;
 
       // assert
       expect("refCode" in body).to.be.equal(true);
-      expect(body.refCode).to.be.equal("this-works");
+      expect(body.refCode).to.be.equal("JOINUSNOW");
     });
   });
 
   describe("toTransaction()", () => {
     beforeEach(() => {
-      instance = new Auth({
+      instance = new Referral({
         dappIdentifier: "fake-dapp",
-        challenge: "no-challenge",
-      } as AuthParameters);
+        refCode: "JOINUSNOW",
+      } as ReferralParameters);
     });
 
     it("should accept recipient in transaction parameters", () => {
