@@ -32,7 +32,7 @@ import { RuntimeError } from "@/errors/RuntimeError";
 import { UnknownContractError } from "@/errors/UnknownContractError";
 
 // export named modules as default
-export default {
+export {
   // generics
   Contract,
   Factory,
@@ -51,7 +51,7 @@ export default {
   UnknownContractError,
 };
 
-// export *types* explicitely
+// export *types* explicitly
 export type {
   // generic interfaces
   ContractParameters,

@@ -24,7 +24,7 @@
     "prettier": "prettier --check ./src ./tests",
     "lint:fix": "prettier --write ./src ./tests",
     "lint": "npm run prettier ; eslint src/ --ext .ts && eslint tests/ --ext .ts",
-    "docs": "npx typedoc --out \"docs/`npm run version --silent`\" src",
+    "docs": "npx typedoc --out \"docs/`npm run version --silent`\" src/Contracts.ts",
     "prebuild": "rimraf dist/ ; npm run lint",
     "build": "tsc",
     "test": "ts-mocha --paths -p tsconfig.json \"tests/**/*.spec.ts\""
