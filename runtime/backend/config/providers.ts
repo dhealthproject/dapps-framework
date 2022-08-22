@@ -10,6 +10,7 @@
 
 export default () => ({
   strava: {
+    base_url: "https://www.strava.com/oauth",
     client_secret: "8e87fe57b896b624ca4fdfda561d98900d4dae3c", // @todo: MOVE THIS VALUE INTO .env
     oauth_url: "https://www.strava.com/oauth/authorize",
     redirect_url: "http://localhost:8080/", // @todo: REPLACE WITH THE VALID URL

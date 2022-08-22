@@ -21,12 +21,18 @@ jest.mock("@nestjs/config", () => {
   return { ConfigService: () => ConfigServiceMock };
 });
 
+const configForRoot: any = jest.fn(() => RemoteServiceMock);
+const RemoteServiceMock: any = { get: configForRoot };
+jest.mock("@nestjs/config", () => {
+  return { RemoteService: () => RemoteServiceMock };
+});
+
 describe("OAuthController", () => {
   let oauthController: OAuthController;
   let oauthService: OAuthService;
 
   beforeEach(() => {
-    oauthService = new OAuthService(ConfigServiceMock);
+    oauthService = new OAuthService(ConfigServiceMock, RemoteServiceMock);
     oauthController = new OAuthController(oauthService);
   });
 

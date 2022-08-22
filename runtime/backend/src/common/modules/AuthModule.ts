@@ -19,6 +19,7 @@ import { AuthStrategy } from "../traits/AuthStrategy";
 import { AuthController } from "../routes/AuthController";
 import { OAuthController } from "../routes/OAuthController";
 import { OAuthService } from "../services/OAuthService";
+import { RemoteService } from "../services/RemoteService";
 
 /**
  * @class AuthModule
@@ -39,7 +40,7 @@ import { OAuthService } from "../services/OAuthService";
     }),
   ],
   controllers: [AuthController, OAuthController],
-  providers: [AuthService, OAuthService, AuthStrategy],
-  exports: [AuthService, OAuthService],
+  providers: [AuthService, OAuthService, RemoteService, AuthStrategy],
+  exports: [AuthService, OAuthService, RemoteService],
 })
 export class AuthModule {}

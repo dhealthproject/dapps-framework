@@ -13,6 +13,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 // internal dependencies
+import { RemoteService } from "./RemoteService";
 import { Address } from "@dhealth/sdk";
 
 /**
@@ -23,6 +24,18 @@ enum Providers {
   strava = "strava",
   // example of other provider
   // appleHealth = https://www.apple-health.com/oauth/authorize
+}
+
+/**
+ * @description interface that defines
+ * structure of link configuration
+ */
+export interface LinkConfig {
+  provider: string;
+  athlete: string;
+  scope: string;
+  state: string;
+  code: string;
 }
 
 /**
@@ -41,7 +54,10 @@ export class OAuthService {
    * @constructor
    * @param {ConfigService} configService
    */
-  public constructor(private readonly configService: ConfigService) {}
+  public constructor(
+    private readonly configService: ConfigService,
+    private readonly remoteService: RemoteService,
+  ) {}
 
   /**
    * Returns url & query for redirect to provider page
@@ -85,5 +101,28 @@ export class OAuthService {
       `&state=${dhealthAddress}${ref}`; // forwards address and refcode
 
     return `${providerUrl}${query}`;
+  }
+
+  async link(config: LinkConfig) {
+    const client_id = this.configService.get<string>(
+      `${config.provider}.client_id`,
+    );
+    const client_secret = this.configService.get<string>(
+      `${config.provider}.client_secret`,
+    );
+    const res = await this.remoteService.remoteCall(
+      "POST",
+      "token",
+      {
+        client_id,
+        client_secret,
+        grant_type: "authorization_code",
+        state: config.state,
+        code: config.code,
+      },
+      config.provider,
+    );
+    console.log("res: ", res);
+    return res;
   }
 }

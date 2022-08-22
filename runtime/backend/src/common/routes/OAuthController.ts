@@ -19,7 +19,7 @@ import {
 import { Response } from "express";
 
 // internal dependencies
-import { OAuthService } from "../services/OAuthService";
+import { LinkConfig, OAuthService } from "../services/OAuthService";
 
 /**
  * @class OAuthController
@@ -65,5 +65,22 @@ export class OAuthController {
     );
 
     return response.redirect(redirect_uri);
+  }
+
+  @Get("link/:provider")
+  protected async getLinkProvider(
+    @Param("provider") provider: string,
+    @Query() query: any,
+  ) {
+    const { athlete, scope, state, code } = query;
+    const linkData: LinkConfig = {
+      provider,
+      athlete,
+      scope,
+      state,
+      code,
+    };
+
+    const providerResponse = await this.oauthService.link(linkData);
   }
 }
