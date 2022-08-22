@@ -55,7 +55,7 @@ describe("Contract", () => {
       expect(header.version).to.be.equal(1);
     });
 
-    it('should allow updating the "version" field', () => {
+    it("should allow updating the 'version' field", () => {
       // act
       instance = new FakeContractMock(9999);
       const header: ObjectLiteral = instance.header;
@@ -172,7 +172,7 @@ describe("Contract", () => {
       instance = new FakeContractMock();
     });
 
-    it('should contain fields "contract" and "version"', () => {
+    it("should contain fields 'contract' and 'version'", () => {
       // act
       const json: string = instance.toJSON();
       const parsed: ObjectLiteral = JSON.parse(json);
@@ -185,7 +185,7 @@ describe("Contract", () => {
       expect(parsed.version).to.be.equal(1);
     });
 
-    it('should use updated "version" field', () => {
+    it("should use updated 'version' field", () => {
       // prepare
       instance = new FakeContractMock(9999);
 
@@ -199,7 +199,7 @@ describe("Contract", () => {
       expect(parsed.version).to.be.equal(9999);
     });
 
-    it('should use updated dApp name for "contract"', () => {
+    it("should use updated dApp name for 'contract'", () => {
       // prepare
       (instance as any).inputs.dappIdentifier = "new-dapp-identifier";
 

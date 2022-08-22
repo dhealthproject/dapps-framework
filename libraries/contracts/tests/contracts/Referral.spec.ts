@@ -33,7 +33,7 @@ describe("contracts/Referral", () => {
       } as ReferralParameters);
     });
 
-    it('should accept "refCode" input field', () => {
+    it("should accept 'refCode' input field", () => {
       // prepare
       instance = new Referral({
         dappIdentifier: "fake-dapp",
@@ -48,7 +48,7 @@ describe("contracts/Referral", () => {
       expect(inputs.refCode).to.be.equal("FAKE-REF");
     });
 
-    it('should throw error given missing "refCode" input', () => {
+    it("should throw error given missing 'refCode' input", () => {
       // act
       try {
         new Referral({} as ReferralParameters);
@@ -59,7 +59,7 @@ describe("contracts/Referral", () => {
       }
     });
 
-    it('should accept change of "version" field', () => {
+    it("should accept change of 'version' field", () => {
       // act
       instance = new Referral(
         {
@@ -76,8 +76,9 @@ describe("contracts/Referral", () => {
 
     it("should accept change of network parameters", () => {
       // prepare
-      const dHealthFake = new dHealthNetwork();
-      dHealthFake.generationHash = "not-the-same-network";
+      const dHealthFake = new dHealthNetwork({
+        generationHash: "not-the-same-network",
+      });
 
       // act
       instance = new Referral(
@@ -103,7 +104,7 @@ describe("contracts/Referral", () => {
       } as ReferralParameters);
     });
 
-    it('should include "refCode" field', () => {
+    it("should include 'refCode' field", () => {
       // prepare
       instance = new Referral({
         dappIdentifier: "fake-dapp",

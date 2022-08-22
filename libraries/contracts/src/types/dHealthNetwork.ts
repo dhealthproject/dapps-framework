@@ -8,6 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
+import { ChronoUnit } from "@js-joda/core";
 import {
   Deadline,
   Mosaic,
@@ -35,8 +36,10 @@ import { NetworkParameters } from "@/types/NetworkParameters";
  * // creating dHealth Network Parameters
  * const dHealth = new dHealthNetwork();
  * ```
- *
- * @link NetworkParameters
+ * <br /><br />
+ * #### Other links
+ * {@link NetworkParameters}
+ * <br /><br />
  * @since v0.3.0
  */
 export class dHealthNetwork implements NetworkParameters {
@@ -56,10 +59,11 @@ export class dHealthNetwork implements NetworkParameters {
    * with this library. Use with caution.
    *
    * @access public
+   * @readonly
    * @example `"ED5761EA890A096C50D3F50B7C2F0CCB4B84AFC9EA870F381E84DDE36D04EF16"`
    * @var {string}
    */
-  public generationHash: string;
+  public readonly generationHash: string;
 
   /**
    * Contains the *type of network* that is used to broadcast
@@ -75,10 +79,11 @@ export class dHealthNetwork implements NetworkParameters {
    * with this library. Use with caution.
    *
    * @access public
+   * @readonly
    * @example `104`
    * @var {NetworkType | number}
    */
-  public networkType: NetworkType | number;
+  public readonly networkType: NetworkType | number;
 
   /**
    * Contains an the *UTC timestamp* in *seconds* which is used
@@ -93,10 +98,11 @@ export class dHealthNetwork implements NetworkParameters {
    * with this library. Use with caution.
    *
    * @access public
+   * @readonly
    * @example `1616978397`
    * @var {NetworkType | number}
    */
-  public epochAdjustment: number;
+  public readonly epochAdjustment: number;
 
   /**
    * Contains a *mosaic identifier* in hexadecimal format. This
@@ -112,10 +118,11 @@ export class dHealthNetwork implements NetworkParameters {
    * with this library. Use with caution.
    *
    * @access public
+   * @readonly
    * @example `1616978397`
    * @var {NetworkType | number}
    */
-  public currencyMosaicId: string;
+  public readonly currencyMosaicId: string;
 
   /**
    * Constructs an instance of network parameters to connect
@@ -125,7 +132,17 @@ export class dHealthNetwork implements NetworkParameters {
    * @param   {NetworkParameters|any}   parameters    (Optional) The network connection parameters (defaults to dHealth Network).
    */
   public constructor(
-    { generationHash, networkType, epochAdjustment, currencyMosaicId } = {
+    {
+      generationHash,
+      networkType,
+      epochAdjustment,
+      currencyMosaicId,
+    }: {
+      generationHash?: string;
+      networkType?: NetworkType | number;
+      epochAdjustment?: number;
+      currencyMosaicId?: string;
+    } = {
       generationHash:
         "ED5761EA890A096C50D3F50B7C2F0CCB4B84AFC9EA870F381E84DDE36D04EF16",
       networkType: NetworkType.MAIN_NET,
@@ -133,10 +150,16 @@ export class dHealthNetwork implements NetworkParameters {
       currencyMosaicId: "39E0C49FA322A459",
     }
   ) {
-    this.generationHash = generationHash;
-    this.networkType = networkType;
-    this.epochAdjustment = epochAdjustment;
-    this.currencyMosaicId = currencyMosaicId;
+    this.generationHash =
+      generationHash && generationHash.length
+        ? generationHash
+        : "ED5761EA890A096C50D3F50B7C2F0CCB4B84AFC9EA870F381E84DDE36D04EF16";
+    this.networkType = networkType ? networkType : NetworkType.MAIN_NET;
+    this.epochAdjustment = epochAdjustment ? epochAdjustment : 1616978397;
+    this.currencyMosaicId =
+      currencyMosaicId && currencyMosaicId.length
+        ? currencyMosaicId
+        : "39E0C49FA322A459";
   }
 
   /**
@@ -144,12 +167,29 @@ export class dHealthNetwork implements NetworkParameters {
    * in `@dhealth/sdk`. The transaction deadline consists of the
    * *UTC timestamp* at which the *transaction shall expire* in
    * case it is not yet confirmed in a block.
+   * <br /><br />
+   * Deadlines can be created that are longer than the **default**
+   * that is used **`2 hours`**. Also, you can use the `ChronoUnit`
+   * enumeration values to change the *type of unit* for defining
+   * deadlines, i.e. change to `2 minutes`.
+   * <br /><br />
+   * Note that transactions that *are not yet confirmed in a block*
+   * before the *deadline expires*, effectively **expire** and have
+   * to be re-broadcast with an *updated deadline and signature*.
+   * <br /><br />
+   * Details about `ChronoUnit` can be found in the [documentation
+   * of the `@js-joda/core` package](https://js-joda.github.io/js-joda/file/packages/core/src/temporal/ChronoUnit.js.html).
    *
    * @access public
+   * @param   {number}      unit    (Optional) The number of hours/minutes/seconds to set as a deadline, defaults to `2`.
+   * @param   {ChronoUnit}  type    (Optional) The type of unit to use, defaults to `ChronoUnit.HOURS`.
    * @returns {Deadline}   A *UTC timestamp* represented as an object of `Deadline`.
    */
-  public getDeadline(): Deadline {
-    return Deadline.create(this.epochAdjustment);
+  public getDeadline(
+    unit: number = 2,
+    type: ChronoUnit = ChronoUnit.HOURS
+  ): Deadline {
+    return Deadline.create(this.epochAdjustment, unit, type);
   }
 
   /**

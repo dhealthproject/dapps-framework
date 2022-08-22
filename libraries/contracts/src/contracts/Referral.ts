@@ -30,6 +30,7 @@ import { dHealthNetwork } from "@/types/dHealthNetwork";
  * | --- | --- | --- | --- |
  * | `dappIdentifier` | `string` | **Required** | The dApp identifier, e.g. "elevate". |
  * | `refCode` | `string` | **Required** | The referral code for this referral operation, e.g. "ELEVATE2022". |
+ *
  * <br /><br />
  * @example Using the `ReferralParameters` class
  * ```ts
@@ -39,10 +40,10 @@ import { dHealthNetwork } from "@/types/dHealthNetwork";
  *   refCode: "ELEVATE2022",
  * } as ReferralParameters;
  * ```
- *
- * @link Referral
- * @link Contract
- * @link Factory
+ * <br /><br />
+ * #### Other links
+ * {@link Referral} | {@link Contract} | {@link Factory}
+ * <br /><br />
  * @since v0.3.0
  */
 export interface ReferralParameters extends ContractParameters {
@@ -78,6 +79,7 @@ export interface ReferralParameters extends ContractParameters {
  * | --- | --- | --- | --- |
  * | `dappIdentifier` | `string` | **Required** | The dApp identifier, e.g. "elevate". |
  * | `refCode` | `string` | **Required** | The referral code for this operation, e.g. "ELEVATE2022". |
+ *
  * <br /><br />
  * @example Using the `Referral` contract class
  * ```ts
@@ -87,10 +89,10 @@ export interface ReferralParameters extends ContractParameters {
  *   refCode: "ELEVATE2022",
  * });
  * ```
- *
- * @link ReferralParameters
- * @link Contract
- * @link Factory
+ * <br /><br />
+ * #### Other links
+ * {@link ReferralParameters} | {@link Contract} | {@link Factory}
+ * <br /><br />
  * @since v0.3.0
  */
 export class Referral extends Contract {

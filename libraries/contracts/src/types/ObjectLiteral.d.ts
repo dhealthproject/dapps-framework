@@ -26,7 +26,7 @@
  *   complexity: "pow(10, 0)",
  * } as ObjectLiteral;
  * ```
- *
+ * <br /><br />
  * @since v0.3.0
  */
 export type ObjectLiteral =

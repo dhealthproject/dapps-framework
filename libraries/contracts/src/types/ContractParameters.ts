@@ -23,6 +23,7 @@ import { Parameters } from "@/types/Parameters";
  * | Input | Type | Required? | Description |
  * | --- | --- | --- | --- |
  * | `dappIdentifier` | `string` | Required | The dApp identifier, e.g. "elevate". |
+ *
  * <br /><br />
  * @example Using the `ContractParameters` interface
  * ```ts
@@ -31,9 +32,10 @@ import { Parameters } from "@/types/Parameters";
  *   dappIdentifier: "my-cool-dapp",
  * } as ContractParameters;
  * ```
- *
- * @link Contract
- * @link Factory
+ * <br /><br />
+ * #### Other links
+ * {@link Contract} | {@link Factory}
+ * <br /><br />
  * @since v0.3.0
  */
 export interface ContractParameters extends Parameters {

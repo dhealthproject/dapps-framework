@@ -21,10 +21,10 @@ import { RuntimeError } from "@/errors/RuntimeError";
  * ```ts
  * throw new InvalidArgumentError("This argument is invalid.");
  * ```
- *
- * @link InvalidContractError
- * @link MissingContractFieldError
- * @link UnknownContractError
+ * <br /><br />
+ * #### Other links
+ * {@link InvalidContractError} | {@link MissingContractFieldError} | {@link UnknownContractError}
+ * <br /><br />
  * @since v0.3.0
  */
 export class InvalidArgumentError extends RuntimeError {}

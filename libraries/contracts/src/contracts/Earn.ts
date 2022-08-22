@@ -30,6 +30,7 @@ import { dHealthNetwork } from "@/types/dHealthNetwork";
  * | --- | --- | --- | --- |
  * | `dappIdentifier` | `string` | **Required** | The dApp identifier, e.g. "elevate". |
  * | `date` | `string` | **Required** | The date of the operation being rewarded, e.g. "20220829". |
+ *
  * <br /><br />
  * @example Using the `EarnParameters` class
  * ```ts
@@ -39,10 +40,10 @@ import { dHealthNetwork } from "@/types/dHealthNetwork";
  *   date: "20220829",
  * } as EarnParameters;
  * ```
- *
- * @link Earn
- * @link Contract
- * @link Factory
+ * <br /><br />
+ * #### Other links
+ * {@link Earn} | {@link Contract} | {@link Factory}
+ * <br /><br />
  * @since v0.3.0
  */
 export interface EarnParameters extends ContractParameters {
@@ -85,6 +86,7 @@ export interface EarnParameters extends ContractParameters {
  * | --- | --- | --- | --- |
  * | `dappIdentifier` | `string` | **Required** | The dApp identifier, e.g. "elevate". |
  * | `date` | `string` | **Required** | The date of the operation being rewarded, e.g. "20220829". |
+ *
  * <br /><br />
  * @example Using the `Earn` contract class
  * ```ts
@@ -94,10 +96,10 @@ export interface EarnParameters extends ContractParameters {
  *   date: "20220829",
  * });
  * ```
- *
- * @link EarnParameters
- * @link Contract
- * @link Factory
+ * <br /><br />
+ * #### Other links
+ * {@link EarnParameters} | {@link Contract} | {@link Factory}
+ * <br /><br />
  * @since v0.3.0
  */
 export class Earn extends Contract {

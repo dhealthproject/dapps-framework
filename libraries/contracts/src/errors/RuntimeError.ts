@@ -19,11 +19,10 @@
  * ```ts
  * throw new RuntimeError("This error happens at runtime.");
  * ```
- *
- * @link InvalidArgumentError
- * @link InvalidContractError
- * @link MissingContractFieldError
- * @link UnknownContractError
+ * <br /><br />
+ * #### Other links
+ * {@link InvalidArgumentError} | {@link InvalidContractError} | {@link MissingContractFieldError} | {@link UnknownContractError}
+ * <br /><br />
  * @since v0.3.0
  */
 export class RuntimeError extends Error {}

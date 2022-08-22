@@ -24,8 +24,10 @@ import { InvalidArgumentError } from "@/errors/InvalidArgumentError";
  * ```ts
  * throw new UnknownContractError("This contract is unknown.");
  * ```
- *
- * @link Factory.buildContract
+ * <br /><br />
+ * #### Other links
+ * {@link Factory.buildContract}
+ * <br /><br />
  * @since v0.3.0
  */
 export class UnknownContractError extends InvalidArgumentError {}

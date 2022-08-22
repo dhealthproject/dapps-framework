@@ -33,7 +33,7 @@ describe("contracts/Auth", () => {
       } as AuthParameters);
     });
 
-    it('should accept "challenge" input field', () => {
+    it("should accept 'challenge' input field", () => {
       // prepare
       instance = new Auth({
         dappIdentifier: "fake-dapp",
@@ -48,7 +48,7 @@ describe("contracts/Auth", () => {
       expect(inputs.challenge).to.be.equal("another-challenge");
     });
 
-    it('should throw error given missing "challenge" input', () => {
+    it("should throw error given missing 'challenge' input", () => {
       // act
       try {
         new Auth({} as AuthParameters);
@@ -59,7 +59,7 @@ describe("contracts/Auth", () => {
       }
     });
 
-    it('should accept change of "version" field', () => {
+    it("should accept change of 'version' field", () => {
       // act
       instance = new Auth(
         {
@@ -76,8 +76,9 @@ describe("contracts/Auth", () => {
 
     it("should accept change of network parameters", () => {
       // prepare
-      const dHealthFake = new dHealthNetwork();
-      dHealthFake.generationHash = "not-the-same-network";
+      const dHealthFake = new dHealthNetwork({
+        generationHash: "not-the-same-network",
+      });
 
       // act
       instance = new Auth(
@@ -103,7 +104,7 @@ describe("contracts/Auth", () => {
       } as AuthParameters);
     });
 
-    it('should include "challenge" field', () => {
+    it("should include 'challenge' field", () => {
       // prepare
       instance = new Auth({
         dappIdentifier: "fake-dapp",
@@ -118,7 +119,7 @@ describe("contracts/Auth", () => {
       expect(body.challenge).to.be.equal("another-challenge");
     });
 
-    it('should include "refCode" given it is non-empty', () => {
+    it("should include 'refCode' given it is non-empty", () => {
       // prepare
       instance = new Auth({
         dappIdentifier: "fake-dapp",

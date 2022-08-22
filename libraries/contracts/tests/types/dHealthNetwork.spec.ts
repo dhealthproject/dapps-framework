@@ -11,7 +11,6 @@
 import { expect } from "chai";
 import { ChronoUnit } from "@js-joda/core";
 import { Deadline, NetworkType } from "@dhealth/sdk";
-import sinon from "sinon";
 
 // internal dependencies
 import { dHealthNetwork } from "@/types/dHealthNetwork";
@@ -40,7 +39,6 @@ describe("types/dHealthNetwork", () => {
 
     // should accept empty parameters
     it("should accept empty parameters and use dHealth Network", () => {
-
       // act
       instance = new dHealthNetwork({});
 
@@ -99,7 +97,7 @@ describe("types/dHealthNetwork", () => {
       // assert
       expect(asNumber2).to.not.be.equal(asNumber1);
       // 2 minutes is less than 1 hour
-      expect(asNumber2).to.be.lessThan(asNumber1); 
+      expect(asNumber2).to.be.lessThan(asNumber1);
     });
 
     it("should use deadline of '2 hours' given defaults", () => {
@@ -117,7 +115,7 @@ describe("types/dHealthNetwork", () => {
       expect(asNumber2).to.be.greaterThan(asNumber1);
       expect(asNumber2).to.be.lessThan(asNumber3);
       expect(asNumber2 - asNumber1).to.be.greaterThanOrEqual(
-        1 * 60 * 60 * 1000, // 1 hour difference
+        1 * 60 * 60 * 1000 // 1 hour difference
       );
     });
   });

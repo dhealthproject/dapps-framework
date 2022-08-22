@@ -31,6 +31,7 @@ import { dHealthNetwork } from "@/types/dHealthNetwork";
  * | `dappIdentifier` | `string` | **Required** | The dApp identifier, e.g. "elevate". |
  * | `challenge` | `string` | **Required** | The authentication challenge used for this log-in operation, e.g. "abcdef12". |
  * | `refCode` | `string` | *Optional* | An optional referral code, e.g. "ELEVATE2022". |
+ *
  * <br /><br />
  * @example Using the `AuthParameters` class
  * ```ts
@@ -41,10 +42,10 @@ import { dHealthNetwork } from "@/types/dHealthNetwork";
  *   refCode: "ELEVATE2022",
  * } as AuthParameters;
  * ```
- *
- * @link Auth
- * @link Contract
- * @link Factory
+ * <br /><br />
+ * #### Other links
+ * {@link Auth} | {@link Contract} | {@link Factory}
+ * <br /><br />
  * @since v0.3.0
  */
 export interface AuthParameters extends ContractParameters {
@@ -98,6 +99,7 @@ export interface AuthParameters extends ContractParameters {
  * | `dappIdentifier` | `string` | **Required** | The dApp identifier, e.g. "elevate". |
  * | `challenge` | `string` | **Required** | The authentication challenge used for this log-in operation, e.g. "abcdef12". |
  * | `refCode` | `string` | *Optional* | An optional referral code, e.g. "ELEVATE2022". |
+ *
  * <br /><br />
  * @example Using the `Auth` contract class
  * ```ts
@@ -108,10 +110,10 @@ export interface AuthParameters extends ContractParameters {
  *   refCode: "ELEVATE2022",
  * });
  * ```
- *
- * @link AuthParameters
- * @link Contract
- * @link Factory
+ * <br /><br />
+ * #### Other links
+ * {@link AuthParameters} | {@link Contract} | {@link Factory}
+ * <br /><br />
  * @since v0.3.0
  */
 export class Auth extends Contract {

@@ -32,6 +32,7 @@ import { dHealthNetwork } from "@/types/dHealthNetwork";
  * | Input | Type | Required? | Description |
  * | --- | --- | --- | --- |
  * | `dappIdentifier` | `string` | **Required** | The dApp identifier, e.g. "elevate". |
+ *
  * <br /><br />
  * @example Extending the `Contract` class
  * ```ts
@@ -45,8 +46,10 @@ import { dHealthNetwork } from "@/types/dHealthNetwork";
  *   }
  * }
  * ```
- *
- * @link Factory
+ * <br /><br />
+ * #### Other links
+ * {@link Factory}
+ * <br /><br />
  * @since v0.3.0
  */
 export abstract class Contract {
@@ -124,6 +127,10 @@ export abstract class Contract {
      */
     protected parameters: NetworkParameters = new dHealthNetwork()
   ) {}
+
+  // @todo public validate(Transaction)
+  // @todo protected validateConditions()
+  // @todo protected conditions: TransactionCondition[]
 
   /**
    * This getter method transforms the provided `dappIdentifier`

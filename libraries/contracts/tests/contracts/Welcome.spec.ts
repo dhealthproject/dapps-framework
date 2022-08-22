@@ -16,7 +16,6 @@ import type { ObjectLiteral } from "@/types/ObjectLiteral";
 import type { NetworkParameters } from "@/types/NetworkParameters";
 import type { TransactionParameters } from "@/types/TransactionParameters";
 import { Welcome, WelcomeParameters } from "@/contracts/Welcome";
-import { MissingContractFieldError } from "@/errors/MissingContractFieldError";
 import { dHealthNetwork } from "@/types/dHealthNetwork";
 
 const mockAccountPublicKey =
@@ -32,7 +31,7 @@ describe("contracts/Welcome", () => {
       } as WelcomeParameters);
     });
 
-    it('should accept "message" input field', () => {
+    it("should accept 'message' input field", () => {
       // prepare
       instance = new Welcome({
         dappIdentifier: "fake-dapp",
@@ -47,7 +46,7 @@ describe("contracts/Welcome", () => {
       expect(inputs.message).to.be.equal("Hello and welcome!");
     });
 
-    it('should accept empty "message" input', () => {
+    it("should accept empty 'message' input", () => {
       // act
       try {
         new Welcome({} as WelcomeParameters);
@@ -61,7 +60,7 @@ describe("contracts/Welcome", () => {
       }
     });
 
-    it('should accept change of "version" field', () => {
+    it("should accept change of 'version' field", () => {
       // act
       instance = new Welcome(
         {
@@ -78,8 +77,9 @@ describe("contracts/Welcome", () => {
 
     it("should accept change of network parameters", () => {
       // prepare
-      const dHealthFake = new dHealthNetwork();
-      dHealthFake.generationHash = "not-the-same-network";
+      const dHealthFake = new dHealthNetwork({
+        generationHash: "not-the-same-network",
+      });
 
       // act
       instance = new Welcome(
@@ -105,7 +105,7 @@ describe("contracts/Welcome", () => {
       } as WelcomeParameters);
     });
 
-    it('should include "message" field', () => {
+    it("should include 'message' field", () => {
       // prepare
       instance = new Welcome({
         dappIdentifier: "fake-dapp",

@@ -46,8 +46,10 @@ import { dHealthNetwork } from "@/types/dHealthNetwork";
  *   refCode: "MY-REF-CODE",
  * });
  * ```
- *
- * @link Contract
+ * <br /><br />
+ * #### Other links
+ * {@link Contract} | {@link Auth} | {@link Earn} | {@link Referral} | {@link Welcome}
+ * <br /><br />
  * @since v0.3.0
  */
 export class Factory {

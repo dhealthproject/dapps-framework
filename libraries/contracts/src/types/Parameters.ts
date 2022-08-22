@@ -30,10 +30,10 @@
  *   coolness: "with a cool 8-) value",
  * } as Parameters;
  * ```
- *
- * @link ContractParameters
- * @link NetworkParameters
- * @link TransactionParameters
+ * <br /><br />
+ * #### Other links
+ * {@link ContractParameters} | {@link NetworkParameters} | {@link TransactionParameters}
+ * <br /><br />
  * @since v0.3.0
  */
 export interface Parameters {}

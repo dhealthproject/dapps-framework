@@ -24,8 +24,10 @@ import { InvalidArgumentError } from "@/errors/InvalidArgumentError";
  * ```ts
  * throw new InvalidContractError("This JSON payload is invalid.");
  * ```
- *
- * @link Factory.parseJSON
+ * <br /><br />
+ * #### Other links
+ * {@link Factory.parseJSON}
+ * <br /><br />
  * @since v0.3.0
  */
 export class InvalidContractError extends InvalidArgumentError {}

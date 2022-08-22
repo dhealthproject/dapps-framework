@@ -30,6 +30,7 @@ import { dHealthNetwork } from "@/types/dHealthNetwork";
  * | --- | --- | --- | --- |
  * | `dappIdentifier` | `string` | **Required** | The dApp identifier, e.g. "elevate". |
  * | `message` | `string` | *Optional* | An optional welcome message or a greeting. |
+ *
  * <br /><br />
  * @example Using the `WelcomeParameters` class
  * ```ts
@@ -39,10 +40,10 @@ import { dHealthNetwork } from "@/types/dHealthNetwork";
  *   message: "Welcome to my cool dApp!",
  * } as WelcomeParameters;
  * ```
- *
- * @link Welcome
- * @link Contract
- * @link Factory
+ * <br /><br />
+ * #### Other links
+ * {@link Welcome} | {@link Contract} | {@link Factory}
+ * <br /><br />
  * @since v0.3.0
  */
 export interface WelcomeParameters extends ContractParameters {
@@ -78,6 +79,7 @@ export interface WelcomeParameters extends ContractParameters {
  * | --- | --- | --- | --- |
  * | `dappIdentifier` | `string` | **Required** | The dApp identifier, e.g. "elevate". |
  * | `message` | `string` | *Optional* | An optional welcome message or a greeting. |
+ *
  * <br /><br />
  * @example Using the `Welcome` contract class
  * ```ts
@@ -87,10 +89,10 @@ export interface WelcomeParameters extends ContractParameters {
  *   message: "Welcome to my cool dApp!",
  * });
  * ```
- *
- * @link WelcomeParameters
- * @link Contract
- * @link Factory
+ * <br /><br />
+ * #### Other links
+ * {@link WelcomeParameters} | {@link Contract} | {@link Factory}
+ * <br /><br />
  * @since v0.3.0
  */
 export class Welcome extends Contract {

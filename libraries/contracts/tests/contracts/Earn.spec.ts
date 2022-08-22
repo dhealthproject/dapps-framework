@@ -33,7 +33,7 @@ describe("contracts/Earn", () => {
       } as EarnParameters);
     });
 
-    it('should accept "date" input field', () => {
+    it("should accept 'date' input field", () => {
       // prepare
       instance = new Earn({
         dappIdentifier: "fake-dapp",
@@ -48,7 +48,7 @@ describe("contracts/Earn", () => {
       expect(inputs.date).to.be.equal("2022-08-29");
     });
 
-    it('should throw error given missing "date" input', () => {
+    it("should throw error given missing 'date' input", () => {
       // act
       try {
         new Earn({} as EarnParameters);
@@ -59,7 +59,7 @@ describe("contracts/Earn", () => {
       }
     });
 
-    it('should accept change of "version" field', () => {
+    it("should accept change of 'version' field", () => {
       // act
       instance = new Earn(
         {
@@ -76,8 +76,9 @@ describe("contracts/Earn", () => {
 
     it("should accept change of network parameters", () => {
       // prepare
-      const dHealthFake = new dHealthNetwork();
-      dHealthFake.generationHash = "not-the-same-network";
+      const dHealthFake = new dHealthNetwork({
+        generationHash: "not-the-same-network",
+      });
 
       // act
       instance = new Earn(
@@ -103,7 +104,7 @@ describe("contracts/Earn", () => {
       } as EarnParameters);
     });
 
-    it('should include "date" field', () => {
+    it("should include 'date' field", () => {
       // prepare
       instance = new Earn({
         dappIdentifier: "fake-dapp",

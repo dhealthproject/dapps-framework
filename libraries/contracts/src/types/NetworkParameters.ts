@@ -43,9 +43,10 @@ import { Parameters } from "@/types/Parameters";
  *   currencyMosaicId: "39E0C49FA322A459", // dhealth.dhp
  * } as ContractParameters;
  * ```
- *
- * @link Contract
- * @link dHealthNetwork
+ * <br /><br />
+ * #### Other links
+ * {@link Contract} | {@link dHealthNetwork}
+ * <br /><br />
  * @since v0.3.0
  */
 export interface NetworkParameters extends Parameters {

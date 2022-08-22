@@ -33,8 +33,10 @@ import { Parameters } from "@/types/Parameters";
  *   recipientPublicKey: "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE",
  * } as TransactionParameters;
  * ```
- *
- * @link Contract.toTransaction
+ * <br /><br />
+ * #### Other links
+ * {@link Contract.toTransaction}
+ * <br /><br />
  * @since v0.3.0
  */
 export interface TransactionParameters extends Parameters {
