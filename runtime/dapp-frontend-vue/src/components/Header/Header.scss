@@ -12,6 +12,11 @@
   justify-content: space-between;
   padding: 0 15px;
 
+  // temporary fix for QR and DappButton bgcolor
+  .style-primary {
+    background-color: transparent !important;
+  }
+
   &__navigation {
     li {
       a {
