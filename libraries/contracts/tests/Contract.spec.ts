@@ -9,12 +9,25 @@
  */
 // external dependencies
 import { expect } from "chai";
+import {
+  EmptyMessage,
+  PlainMessage,
+  Transaction,
+  TransferTransaction,
+} from "@dhealth/sdk";
 
 // internal dependencies
 import type { ObjectLiteral } from "@/types/ObjectLiteral";
+import type { TransactionParameters } from "@/types/TransactionParameters";
+import type { NetworkParameters } from "@/types/NetworkParameters";
 import { Contract } from "@/Contract";
-import { TransactionParameters } from "@/Contracts";
-import { Transaction } from "@dhealth/sdk";
+import { dHealthNetwork } from "@/types/dHealthNetwork";
+import { InvalidContractError } from "@/errors/InvalidContractError";
+import { MissingContractFieldError } from "@/errors/MissingContractFieldError";
+import { UnknownContractError } from "@/errors/UnknownContractError";
+
+const mockAccountPublicKey =
+  "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE";
 
 // mocks a *fake* implementation of the abstract
 // `Contract` class, to test internal methods
@@ -39,6 +52,26 @@ class FakeContractMock extends Contract {
     return { ...parameters } as any as Transaction;
   }
 }
+
+// utility transaction factory
+const transferFactory = (
+  message: string | PlainMessage
+): TransferTransaction => {
+  const networkConfig: NetworkParameters = new dHealthNetwork();
+  const parsedMsg =
+    message instanceof PlainMessage ? message : PlainMessage.create(message);
+
+  return TransferTransaction.create(
+    networkConfig.getDeadline(),
+    networkConfig.getPublicAccount(
+      mockAccountPublicKey,
+      networkConfig.getNetworkType()
+    ).address,
+    [],
+    parsedMsg,
+    networkConfig.getNetworkType()
+  );
+};
 
 describe("Contract", () => {
   let instance: FakeContractMock = new FakeContractMock();
@@ -113,13 +146,13 @@ describe("Contract", () => {
 
     it("should replace spaces by hyphens", () => {
       // prepare
-      (instance as any).inputs.dappIdentifier = "this will be hyphenised";
+      (instance as any).inputs.dappIdentifier = "this will be hyphenated";
 
       // act
       const dApp: string = (instance as any).dApp;
 
       // assert
-      expect(dApp).to.be.equal("this-will-be-hyphenised");
+      expect(dApp).to.be.equal("this-will-be-hyphenated");
     });
 
     it("should remove undesired characters", () => {
@@ -221,6 +254,114 @@ describe("Contract", () => {
       expect(parsed).to.not.be.undefined;
       expect("fakeKey" in parsed).to.be.equal(true);
       expect(parsed.fakeKey).to.be.equal("fake-value");
+    });
+  });
+
+  describe("fromTransaction()", () => {
+    const emptyMessageTransfer = transferFactory(EmptyMessage);
+
+    it("should throw error given missing 'message' in transfer", () => {
+      // act
+      try {
+        Contract.fromTransaction(emptyMessageTransfer);
+      } catch (e) {
+        // empty "message"
+        // assert
+        expect(e instanceof InvalidContractError).to.be.equal(true);
+        expect((e as InvalidContractError).message).to.be.equal(
+          "A contract payload (JSON) is missing."
+        );
+      }
+    });
+
+    it("should throw error given missing 'contract' field", () => {
+      // act
+      try {
+        Contract.fromTransaction(
+          transferFactory(
+            JSON.stringify({
+              version: 1,
+              challenge: "abcdef12",
+            })
+          )
+        );
+      } catch (e) {
+        // missing "contract"
+        // assert
+        expect(e instanceof MissingContractFieldError).to.be.equal(true);
+      }
+    });
+
+    it("should throw error given missing 'version' field", () => {
+      // act
+      try {
+        Contract.fromTransaction(
+          transferFactory(
+            JSON.stringify({
+              contract: "awesome-dapp:fake-contract",
+              challenge: "abcdef12",
+            })
+          )
+        );
+      } catch (e) {
+        // missing "version"
+        // assert
+        expect(e instanceof MissingContractFieldError).to.be.equal(true);
+      }
+    });
+
+    it("should throw error given unsupported contract signature", () => {
+      // act
+      try {
+        Contract.fromTransaction(
+          transferFactory(
+            JSON.stringify({
+              contract: "awesome-dapp:this-contract-does-not-exist",
+              version: 1,
+            })
+          )
+        );
+      } catch (e) {
+        // contract not supported
+        // assert
+        expect(e instanceof UnknownContractError).to.be.equal(true);
+      }
+    });
+
+    // this block can also be used as an example for *obligatory*
+    // fields to parse JSON payloads that create supported contracts
+    // @todo always add newly supported contracts here
+    [
+      { identifier: "auth", v: 1, inputs: { challenge: "abcdef12" } },
+      { identifier: "earn", v: 1, inputs: { date: "20220829" } },
+      { identifier: "referral", v: 1, inputs: { refCode: "ELEVATE2022" } },
+      {
+        identifier: "welcome",
+        v: 1,
+        inputs: { message: "Hello and welcome!" },
+      },
+    ].forEach((contract) => {
+      it(`should create payload of supported Contract child class for '${contract.identifier}'`, () => {
+        // prepare
+        const fields = Object.keys(contract.inputs);
+
+        // act
+        const parsed: ObjectLiteral = Contract.fromTransaction(
+          transferFactory(
+            JSON.stringify({
+              contract: `awesome-dapp:${contract.identifier}`,
+              version: contract.v,
+              ...contract.inputs,
+            })
+          )
+        );
+
+        // assert
+        expect(parsed.contract).to.be.equal(
+          `awesome-dapp:${contract.identifier}`
+        );
+        fields.forEach((f) => expect(f in parsed).to.be.equal(true));
+      });
     });
   });
 });

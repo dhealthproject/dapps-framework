@@ -86,8 +86,8 @@ export class Factory {
     const contractObject: ObjectLiteral | null =
       factory.parseTransaction(transaction);
 
-    // forward to other factory after we
-    // successfully read a JSON payload
+    // forward to other factory after we successfully
+    // read a JSON payload from a transfer transaction
     return Factory.createFromJSON(contractObject, parameters);
   }
 
@@ -207,19 +207,16 @@ export class Factory {
    * @returns {ObjectLiteral}   A *parsed* contract consists of an `object` of type {@link ObjectLiteral}.
    */
   protected parseJSON(contractJSON: string | ObjectLiteral): ObjectLiteral {
-    // the parsed contract is an object built from JSON
-    let parsed: ObjectLiteral = {};
-
     // do we need to parse?
     if (typeof contractJSON === "string") {
       try {
-        parsed = JSON.parse(contractJSON);
+        return JSON.parse(contractJSON);
       } catch (e) {
         throw new InvalidContractError("A contract could not be parsed.");
       }
     }
 
-    return parsed;
+    return contractJSON as ObjectLiteral;
   }
 
   /**
@@ -245,12 +242,8 @@ export class Factory {
    * @returns {ObjectLiteral}   A *parsed* contract consists of an `object` of type {@link ObjectLiteral}.
    */
   protected parseTransaction(transaction: Transaction): ObjectLiteral {
-    // parse the transaction to find a contract payload
-    const contractObject: ObjectLiteral = Contract.fromTransaction(transaction);
-
-    return {
-      contractObject,
-    };
+    // @todo add validation of transaction fields ("runtime conditions")
+    return Contract.fromTransaction(transaction);
   }
 
   /**
