@@ -18,6 +18,10 @@ import type { Parameters } from "@/types/Parameters";
 import { Contract } from "@/Contract";
 import { Factory } from "@/Factory";
 
+// utilities
+import { Assertions } from "@/types/Assertions";
+import { dHealthNetwork } from "@/types/dHealthNetwork";
+
 // contracts and parameters
 import { Auth, AuthParameters } from "@/contracts/Auth";
 import { Earn, EarnParameters } from "@/contracts/Earn";
@@ -34,8 +38,10 @@ import { UnknownContractError } from "@/errors/UnknownContractError";
 // export named modules as default
 export {
   // generics
+  Assertions,
   Contract,
   Factory,
+  dHealthNetwork,
 
   // exported contracts
   Auth,

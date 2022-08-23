@@ -7,18 +7,21 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
+import { Transaction } from "@dhealth/sdk";
+
 // internal dependencies
 import type { ObjectLiteral } from "@/types/ObjectLiteral";
 import type { NetworkParameters } from "@/types/NetworkParameters";
-import type { ContractParameters } from "./Contracts";
+import type { ContractParameters } from "@/types/ContractParameters";
 import { Contract } from "@/Contract";
 import { Auth, AuthParameters } from "@/contracts/Auth";
 import { Earn, EarnParameters } from "@/contracts/Earn";
 import { Referral, ReferralParameters } from "@/contracts/Referral";
 import { Welcome, WelcomeParameters } from "@/contracts/Welcome";
 import { InvalidContractError } from "@/errors/InvalidContractError";
-import { MissingContractFieldError } from "@/errors/MissingContractFieldError";
 import { UnknownContractError } from "./errors/UnknownContractError";
+import { Assertions } from "@/types/Assertions";
 import { dHealthNetwork } from "@/types/dHealthNetwork";
 
 /**
@@ -53,6 +56,41 @@ import { dHealthNetwork } from "@/types/dHealthNetwork";
  * @since v0.3.0
  */
 export class Factory {
+  /**
+   * This *static* factory method creates a *contract instance*
+   * using a dHealth Transaction, as present on dHealth Network
+   * in *transfer transaction messages* OR in *the first transfer
+   * transaction of an aggregate bundle*.
+   * <br /><br />
+   * Refer to the {@link Factory.createFromJSON} factory for more details
+   * about how this library *parses* the JSON payloads.
+   *
+   * @access public
+   * @static
+   * @param   {Transaction}          transaction    A transaction object that contains the *full* definition of the executed contract.
+   * @param   {NetworkParameters}    parameters     (Optional) A configuration object that is used to overwrite the default network parameters.
+   * @throws  {MissingContractFieldError}   Given missing one or more obligatory field(s) in the contract JSON payload.
+   * @throws  {InvalidContractError}    Given no contract JSON payload is found or given a contract JSON payload that contains **invalid JSON** and could not get parsed into a contract.
+   * @throws  {UnknownContractError}        Given contract JSON payload that could not get parsed into a valid contract that extends {@link Contract}.
+   * @returns {Contract}    An instance of a *child class* of {@link Contract} that has been built using the {@link transaction}, e.g. {@link Auth}, {@link Earn}, {@link Welcome}.
+   */
+  public static createFromTransaction(
+    transaction: Transaction,
+    parameters: NetworkParameters = new dHealthNetwork()
+  ): Contract {
+    // prepare the factory instance
+    const factory = new Factory(parameters);
+
+    // validates the contract content (JSON)
+    // may throw `InvalidContractError`
+    const contractObject: ObjectLiteral | null =
+      factory.parseTransaction(transaction);
+
+    // forward to other factory after we
+    // successfully read a JSON payload
+    return Factory.createFromJSON(contractObject, parameters);
+  }
+
   /**
    * This *static* factory method creates a *contract instance*
    * using its' JSON payload as present on dHealth Network in
@@ -91,19 +129,12 @@ export class Factory {
     const contractObject: ObjectLiteral | null =
       factory.parseJSON(contractJSON);
 
-    // some fields are obligatory and must be included
-    const keys: string[] = Object.keys(contractObject);
-    const obligatory = ["contract", "version"];
-
-    // verify presence of mandatory fields
-    if (obligatory.filter((k) => !keys.includes(k)).length) {
-      throw new MissingContractFieldError(
-        `` +
-          `Some fields are missing in the contract. ` +
-          `One of ${obligatory.join(" or ")} is not present ` +
-          `but it is required to parse contracts.`
-      );
-    }
+    // "contract" and "version" are obligatory and must be included
+    // @throws MissingContractFieldError given missing obligatory field
+    Assertions.assertObligatoryFields(
+      ["contract", "version"],
+      Object.keys(contractObject)
+    );
 
     // destructure the contract content
     const { contract, version, ...body } = contractObject;
@@ -113,7 +144,7 @@ export class Factory {
     // inconsistent end-user input (e.g. "eleVaTe").
     const dappIdentifier: string = contract.replace(
       // eslint-disable-next-line
-      /^([a-zA-Z0-9\._-]+):([a-zA-Z0-9\._-:]+)$/,
+      /^([a-zA-Z0-9\._\-]+):([a-zA-Z0-9\._\-:]+)$/,
       "$1"
     );
 
@@ -192,6 +223,37 @@ export class Factory {
   }
 
   /**
+   * This method *parses a contract's JSON payload* to create an
+   * object of type {@link ObjectLiteral}. This is necessary to
+   * further secure the processes that *manipulate* this created
+   * object. Note that we use the {@link Contract.fromTransaction} method
+   * to parse JSON payloads from transaction objects as presented
+   * on dHealth Network.
+   * <br /><br />
+   * Invalid JSON errors will trigger the {@link InvalidContractError}
+   * exception to be thrown.
+   * <br /><br />
+   * This method is used internally to *transform* a `Transaction`
+   * object into an {@link ObjectLiteral} by making sure that the
+   * JSON payload uses *valid JSON formatting rules* and lives
+   * inside either of: the *transfer transaction message* or the
+   * *aggregate bundle's first transfer transaction's message*.
+   *
+   * @access protected
+   * @param   {Transaction}          transaction    A transaction object that contains the *full* definition of the executed contract.
+   * @throws  {InvalidContractError}    Given no contract JSON payload is found or given a contract JSON payload that contains **invalid JSON** and could not get parsed into a contract.
+   * @returns {ObjectLiteral}   A *parsed* contract consists of an `object` of type {@link ObjectLiteral}.
+   */
+  protected parseTransaction(transaction: Transaction): ObjectLiteral {
+    // parse the transaction to find a contract payload
+    const contractObject: ObjectLiteral = Contract.fromTransaction(transaction);
+
+    return {
+      contractObject,
+    };
+  }
+
+  /**
    * This method parses the *contract signature* and creates a new instance
    * of a *child class* of {@link Contract}, attaching the *version*, the
    * *inputs* and *network parameters* to it, i.e. this method may return
@@ -219,22 +281,22 @@ export class Factory {
   ): Contract {
     // (1) e.g. "elevate:auth" contract
     // eslint-disable-next-line
-    if (contract.match(/^([a-z0-9\._-]+):auth$/)) {
+    if (contract.match(/^([a-z0-9\._\-]+):auth$/)) {
       return new Auth(inputs as AuthParameters, version, parameters);
     }
     // (2) e.g. "elevate:earn" contract
     // eslint-disable-next-line
-    else if (contract.match(/^([a-z0-9\._-]+):earn$/)) {
+    else if (contract.match(/^([a-z0-9\._\-]+):earn$/)) {
       return new Earn(inputs as EarnParameters, version, parameters);
     }
     // (3) e.g. "elevate:referral" contract
     // eslint-disable-next-line
-    else if (contract.match(/^([a-z0-9\._-]+):referral$/)) {
+    else if (contract.match(/^([a-z0-9\._\-]+):referral$/)) {
       return new Referral(inputs as ReferralParameters, version, parameters);
     }
     // (4) e.g. "elevate:welcome" contract
     // eslint-disable-next-line
-    else if (contract.match(/^([a-z0-9\._-]+):welcome$/)) {
+    else if (contract.match(/^([a-z0-9\._\-]+):welcome$/)) {
       return new Welcome(inputs as WelcomeParameters, version, parameters);
     }
 

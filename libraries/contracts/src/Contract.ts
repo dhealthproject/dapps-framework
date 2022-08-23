@@ -8,14 +8,19 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Transaction } from "@dhealth/sdk";
+import {
+  AggregateTransaction,
+  Transaction,
+  TransactionType,
+  TransferTransaction,
+} from "@dhealth/sdk";
 
 // internal dependencies
 import type { ContractParameters } from "@/types/ContractParameters";
 import type { NetworkParameters } from "@/types/NetworkParameters";
 import type { TransactionParameters } from "@/types/TransactionParameters";
 import type { ObjectLiteral } from "@/types/ObjectLiteral";
-import { MissingContractFieldError } from "@/errors/MissingContractFieldError";
+import { InvalidContractError } from "@/errors/InvalidContractError";
 import { dHealthNetwork } from "@/types/dHealthNetwork";
 
 /**
@@ -249,31 +254,86 @@ export abstract class Contract {
   public abstract toTransaction(parameters: TransactionParameters): Transaction;
 
   /**
-   * This method asserts the presence of *mandatory* inputs for
-   * the execution of a contract. The first argument {@link obligatory}
-   * can be used to list the obligatory field names and the second
-   * argument {@link fields} must contain the fields present in
-   * the JSON payload.
+   * This method uses a `Transaction` child class from which it
+   * reads the *contract JSON payload*.
+   * <br /><br />
+   * Invalid JSON errors will trigger the {@link InvalidContractError}
+   * exception to be thrown.
+   * <br /><br />
+   * This method is used internally to *transform* a `Transaction`
+   * object into an {@link ObjectLiteral} by making sure that the
+   * JSON payload uses *valid JSON formatting rules* and lives
+   * inside either of: the *transfer transaction message* or the
+   * *aggregate bundle's first transfer transaction's message*.
    *
-   * @param   {string[]}  obligatory        An array of *obligatory* field names.
-   * @param   {string[]}  fields            An array of *fields* as presented and to be checked.
-   * @throws  {MissingContractFieldError}   Given missing one of {@link obligatory} (obligatory fields) in {@link fields}.
-   * @returns {void}
+   * @access protected
+   * @param   {Transaction}          transaction    A transaction object that contains the *full* definition of the executed contract.
+   * @throws  {InvalidContractError}    Given no contract JSON payload is found or given a contract JSON payload that contains **invalid JSON** and could not get parsed into a contract.
+   * @returns {ObjectLiteral}   A *parsed* contract consists of an `object` of type {@link ObjectLiteral}.
    */
-  protected assertObligatoryInputs(
-    obligatory: string[],
-    fields: string[]
-  ): void {
-    if (
-      !fields.length ||
-      obligatory.filter((k) => !fields.includes(k)).length > 0
-    ) {
-      throw new MissingContractFieldError(
-        `` +
-          `Some fields are missing in the contract. ` +
-          `One of ${obligatory.join(" or ")} is not present ` +
-          `but it is required.`
-      );
+  public static fromTransaction(transaction: Transaction): ObjectLiteral {
+    // aggregate can be bonded or complete but
+    // the embedded transactions API is the same
+    const aggregateTypes: TransactionType[] = [
+      TransactionType.AGGREGATE_BONDED,
+      TransactionType.AGGREGATE_COMPLETE,
+    ];
+
+    // output of this method is a *parsed* contract
+    // JSON payload that uses ObjectLiteral
+    let jsonPayload: string = "";
+
+    // (1) extracts the JSON payload from the transfer message
+    if (transaction.type === TransactionType.TRANSFER) {
+      const transfer = transaction as TransferTransaction;
+
+      // break here if there is no payload available
+      if (transfer.message === undefined) {
+        throw new InvalidContractError(
+          "A transfer transaction message is missing."
+        );
+      }
+
+      // JSON payload extracted from transfer message
+      jsonPayload = transfer.message.payload;
+    }
+    // (2) finds all potential JSON payloads from transactions
+    else if (aggregateTypes.includes(transaction.type)) {
+      const aggregate = transaction as AggregateTransaction;
+
+      // filter to keep only transfers inside aggregate
+      const payloads = aggregate.innerTransactions
+        .filter((i) => i.type === TransactionType.TRANSFER)
+        .map((t) => t as TransferTransaction)
+        .filter(
+          (t) => t.message !== undefined && t.message.payload.match(/^\{.*\}$/)
+        )
+        .map((t) => t.message.payload);
+
+      // break here if there is no payload available
+      if (payloads === undefined || !payloads.length) {
+        throw new InvalidContractError(
+          "A transfer transaction message is missing."
+        );
+      }
+
+      // CAUTION: we keep only the **first** transfer transaction
+      // the `as` operator here can be used because
+      // we already know that a payload exists
+      jsonPayload = payloads.shift() as string;
+    }
+
+    // if we didn't satisfy the above conditions, we should
+    // break here and forward an error to the integration
+    if (!jsonPayload.length) {
+      throw new InvalidContractError("A contract payload (JSON) is missing.");
+    }
+
+    // this block permits to avoid invalid JSON payloads
+    try {
+      return JSON.parse(jsonPayload) as ObjectLiteral;
+    } catch (e) {
+      throw new InvalidContractError("A contract could not be parsed.");
     }
   }
 }

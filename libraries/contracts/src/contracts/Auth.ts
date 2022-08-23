@@ -16,6 +16,7 @@ import type { NetworkParameters } from "@/types/NetworkParameters";
 import type { ObjectLiteral } from "@/types/ObjectLiteral";
 import type { TransactionParameters } from "@/types/TransactionParameters";
 import { Contract } from "@/Contract";
+import { Assertions } from "@/types/Assertions";
 import { dHealthNetwork } from "@/types/dHealthNetwork";
 
 /**
@@ -192,7 +193,7 @@ export class Auth extends Contract {
     super(inputs, version, parameters);
 
     // @throws MissingContractFieldError given missing obligatory field
-    this.assertObligatoryInputs(["challenge"], Object.keys(inputs));
+    Assertions.assertObligatoryFields(["challenge"], Object.keys(inputs));
   }
 
   /**
