@@ -162,6 +162,39 @@ export abstract class Contract {
   }
 
   /**
+   * This getter method returns the **contract signature**
+   * as it is attached inside contracts' JSON payloads.
+   * <br /><br />
+   * This method is used internally to determine a contract
+   * signature that is included in the contract {@link header}.
+   *
+   * @access public
+   * @returns {string}  A *contract signature*, e.g. "elevate:auth".
+   */
+  public get signature(): string {
+    return `${this.dApp}:${this.identifier}`;
+  }
+
+  /**
+   * This getter method returns the **contract payload**
+   * as it is attached inside transfer transaction messages.
+   * <br /><br />
+   * This method is used internally to determine a contract
+   * payload that is used to produce JSON in {@link toJSON}.
+   *
+   * @access public
+   * @returns {string}  A full *contract payload* (with "contract" and "version").
+   */
+  public get payload(): ObjectLiteral {
+    const { contract, version } = this.header;
+    return {
+      contract,
+      version,
+      ...this.body,
+    } as ObjectLiteral;
+  }
+
+  /**
    * This getter method prepares the contract **header**. The
    * header consists of the *contract signature* and *version*
    * of the contract.
@@ -174,7 +207,7 @@ export abstract class Contract {
    */
   public get header(): ObjectLiteral {
     return {
-      contract: `${this.dApp}:${this.identifier}`,
+      contract: this.signature,
       version: this.version,
     };
   }
@@ -191,14 +224,8 @@ export abstract class Contract {
    * @returns {string}  A JSON payload that can be attached to transfer transactions.
    */
   public toJSON(): string {
-    const { contract, version } = this.header;
-
     return JSON.stringify(
-      {
-        contract,
-        version,
-        ...this.body,
-      },
+      this.payload,
       undefined, // replacer
       2 // spaces=2
     );
