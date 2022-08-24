@@ -59,6 +59,7 @@
     "@nestjs/swagger": "^5.2.1",
     "axios": "^0.27.2",
     "cookie-parser": "^1.4.6",
+    "dayjs": "^1.11.5",
     "dotenv": "^16.0.1",
     "helmet": "^5.1.0",
     "mongoose": "^6.3.4",

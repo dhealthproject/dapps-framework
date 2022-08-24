@@ -18,6 +18,7 @@ import { AppController } from "./AppController";
 import { AppService } from "./AppService";
 import { ScopeFactory } from "./common/ScopeFactory";
 import { DappConfig } from "./common/models/DappConfig";
+import { ProvidersModule } from "./common/modules/ProvidersModule";
 
 // configuration resources
 import dappConfigLoader from "../config/dapp";
