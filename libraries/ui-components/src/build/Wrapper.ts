@@ -63,10 +63,11 @@ export const webComponentWrapper = (
       function (this: typeof Component | AsyncComponent) {
         const emit = this.$emit;
         this.$emit = (name: string, ...args: object[]) => {
-          this.$root.$options.customElement.dispatchEvent(
-            createCustomEvent(name, args)
-          );
-          return emit.call(this, name, ...args);
+          if (this.$root.$options.customElement) {
+            this.$root.$options.customElement.dispatchEvent(
+              createCustomEvent(name, args)
+            );
+          }
         };
       }
     );
