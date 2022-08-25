@@ -45,7 +45,7 @@
     "db:migration:down": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert -d config/migrations.ts"
   },
   "dependencies": {
-    "@dhealth/contracts": "file:../../libraries/contracts",
+    "@dhealth/contracts": "next",
     "@dhealth/sdk": "^1.0.3-alpha-202201201200",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.0.1",
