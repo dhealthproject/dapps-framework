@@ -52,6 +52,7 @@ export class StateDTO {
    * the `Record<string, any>` type to permit greater flexibility
    * around state cache entries.
    *
+   * @todo We probably don't want this data to be as public, instead should be the "cache hash".
    * @access public
    * @var {string}
    */

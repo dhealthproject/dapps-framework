@@ -10,5 +10,31 @@
 // external dependencies
 import { Module } from "@nestjs/common";
 
-@Module({})
+// internal dependencies
+import { OperationsModule } from "./modules/OperationsModule";
+
+/**
+ * @label ProcessorModule
+ * @class ProcessorModule
+ * @description The processor scope's main module. This module
+ * is loaded by the software when `"processor"` is present in
+ * the enabled scopes through configuration (config/dapp.json).
+ * <br /><br />
+ * This scoped module currently features the following submodules:
+ * | Module | Mongo collection(s) | Routes | Description |
+ * | --- | --- | --- | --- |
+ * | {@link OperationsModule:PROCESSOR} | `operations` | `/operations` | Module with schedulers, collections and routes around **dApp operations**. |
+ * <br /><br />
+ * Note also that in {@link Schedulers:COMMON}, we map the following **schedulers**
+ * to this module:
+ * - A {@link ProcessOperations:PROCESSOR} *scheduler* that processes operations using transactions, in the background.
+ *
+ * @since v0.3.0
+ */
+@Module({
+  imports: [
+    // imports routes and DTOs
+    OperationsModule,
+  ],
+})
 export class ProcessorModule {}

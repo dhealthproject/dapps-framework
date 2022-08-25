@@ -8,21 +8,44 @@
  * @license     LGPL-3.0
  */
 export default () => ({
-  contracts: {
-    "elevate:auth": {
+  contracts: [
+    "elevate:auth",
+    "elevate:earn",
+    "elevate:referral",
+    "elevate:welcome",
+  ],
+  operations: [
+    {
+      contract: "elevate:auth",
       label: "Session|Sessions",
-      source: "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY",
-      mode: "incoming",
+      query: {
+        sourceAddress: "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY",
+        transactionMode: "incoming",
+      }
     },
-    "elevate:earn": {
+    {
+      contract: "elevate:earn",
       label: "Activity|Activities",
-      source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
-      mode: "outgoing",
+      query: {
+        sourceAddress: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        transactionMode: "outgoing",
+      }
     },
-    "elevate:ref": {
+    {
+      contract: "elevate:referral",
       label: "Referral|Referrals",
-      source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
-      mode: "outgoing",
+      query: {
+        sourceAddress: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        transactionMode: "outgoing",
+      }
     },
-  },
+    {
+      contract: "elevate:welcome",
+      label: "Greeting|Greetings",
+      query: {
+        sourceAddress: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        transactionMode: "outgoing",
+      }
+    },
+  ],
 });
