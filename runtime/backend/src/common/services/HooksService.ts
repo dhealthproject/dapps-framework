@@ -15,8 +15,24 @@ import dayjs from "dayjs";
 // internal dependencies
 import { activityPayload } from "../routes/HooksController";
 
+/**
+ * @class HooksService
+ * @description Class that contains different
+ * hook handlers
+ *
+ * example of usage: const hooks: HooksService = new HooksService();
+ *
+ * @since v0.2.0
+ */
 @Injectable()
 export class HooksService {
+  /**
+   * Creates or updates new activity
+   * in database, updates statistics
+   *
+   * @param data
+   *
+   */
   async createUpdateActivities<T extends activityPayload>(data: T) {
     // @Todo: replace with .findOne when dev-processor will be merged
     const mockedUsers = [
@@ -29,7 +45,7 @@ export class HooksService {
       },
     ];
 
-    const mockedRewards = [{ rewardsId: "20220824-1122", exists: true }];
+    const mockedRewards = [{ rewardsId: "20220825-1122", exists: true }];
 
     const mockPostRewards = [];
 
@@ -63,7 +79,7 @@ export class HooksService {
       // prepares rewards entry
       const rewardedDate = new Date();
       const formattedDate = dayjs(rewardedDate).format("YYYYMMDD");
-      // console.log({ formattedDate });
+      console.log({ formattedDate });
       const address = user.owner_id;
       const athleteId = user.athleteId;
       const activityId = object_id; // from Strava
