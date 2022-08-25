@@ -35,13 +35,16 @@ export class Auth extends BackendService {
   public async getAuthChallenge(): Promise<
     AxiosResponse<any, any> | undefined
   > {
-    const res = await this.handler.call(
+    // request an authentication challenge
+    const response = await this.handler.call(
       "GET",
       this.getUrl("auth/challenge"),
       {}
     );
-    console.log(res);
-    return res;
+
+    // responds with just the challenge content
+    console.log("Auth.getAuthChallenge(): ", response);
+    return response.data.challenge;
   }
 
   /**
@@ -50,15 +53,19 @@ export class Auth extends BackendService {
    * @param  {{authCode:string;address:string;}} config
    * @returns Promise
    */
-  public async login(config: {
-    authCode: string;
-    address: string;
-  }): Promise<AxiosResponse<any, any> | undefined> {
-    const { authCode, address } = config;
-    const res = await this.handler.call("POST", this.getUrl("auth/token"), {
-      authCode,
-      address,
+  public async login(
+    challenge: string,
+  ): Promise<AxiosResponse<any, any> | undefined> {
+    // request an access token for authenticated users
+    // a token will only be returned given the challenge
+    // was successfully found in a dHealth Network transfer
+    const response = await this.handler.call("POST", this.getUrl("auth/token"), {
+      challenge,
     });
-    return res;
+
+    // responds with the complete access token payload
+    // if this is the initial token creation for
+    // an account, this will contain a `refreshToken`
+    return response.data;
   }
 }

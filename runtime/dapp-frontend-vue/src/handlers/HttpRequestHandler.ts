@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 /**
  * @class HttpRequestHandler
@@ -28,6 +28,7 @@ export class HttpRequestHandler {
    * @access public
    */
   constructor(protected cookie: string | undefined) {}
+
   /**
    * Generic method for api calls
    *
@@ -36,30 +37,36 @@ export class HttpRequestHandler {
    * @param  {any} options
    *
    */
-  public call(method: string, url: string, options: any) {
+  public async call(
+    url: string,
+    method: string = "GET",
+    options: any = {},
+  ): Promise<AxiosResponse<any,any>> {
+    // prepares authentication
+    const headers = {
+      authorization: `Bearer ${this.cookie}`,
+    };
+
     try {
-      if (method === "GET") {
-        return axios.get(url, {
-          ...options,
-          headers: {
-            authorization: `Bearer ${this.cookie}`,
-          },
-        });
-      }
-      // POST
+      // forward POST requests to axios
       if (method === "POST") {
         return axios({
           method: method.toLowerCase(),
           url,
           data: {
             ...options,
-            headers: {
-              authorization: `Bearer ${this.cookie}`,
-            },
+            headers,
           },
         });
       }
+
+      // by default execute GET request
+      return axios.get(url, {
+        ...options,
+        headers,
+      });
     } catch (err) {
+      // @todo improve error handling and messaging
       console.log("Request failed: ", err);
       throw err;
     }
