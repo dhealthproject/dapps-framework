@@ -98,14 +98,11 @@ export class QueryService<
    * to execute. It is preferred to use pro-active statistics with
    * collections that contain one document with a counter.
    *
-   * @param   {Queryable<TDocument>}  query 
+   * @param   {Queryable<TDocument>}  query
    * @param   {TModel}                model
    * @returns {Promise<number>}   The number of matching documents.
-   */ 
-  async count(
-    query: Queryable<TDocument>,
-    model: TModel,
-  ): Promise<number> {
+   */
+  async count(query: Queryable<TDocument>, model: TModel): Promise<number> {
     return await model.count(query);
   }
 
@@ -121,10 +118,7 @@ export class QueryService<
    * @param   {TModel}  model     The model *class instance* used for matching documents.
    * @returns {Promise<boolean>}  Whether a document exists which validates the passed query.
    */
-   async exists(
-    query: Queryable<TDocument>,
-    model: TModel,
-  ): Promise<boolean> {
+  async exists(query: Queryable<TDocument>, model: TModel): Promise<boolean> {
     // executes a *lean* mongoose findOne query
     const document: TDocument = await this.findOne(
       query,
@@ -161,7 +155,7 @@ export class QueryService<
     // execute Mongo query
     const [{ data, metadata }] = await model
       .aggregate([
-        { $match: searchQuery },
+        { $match: searchQuery as FilterQuery<TDocument> },
         {
           $facet: {
             data: [
@@ -183,14 +177,19 @@ export class QueryService<
     };
 
     // returns wrapped entity page
-    return { data: data.map((d: any) => d as TDocument), pagination };
+    // @todo move to static factory
+    const result: PaginatedResultDTO<TDocument> =
+      new PaginatedResultDTO<TDocument>();
+    result.data = data.map((d: any) => d as TDocument);
+    result.pagination = pagination;
+    return result;
   }
 
   /**
    * Find one `TDocument` instance in the database and use
    * a query based on the {@link Queryable} class.
    * <br /><br />
-   * 
+   *
    * @access public
    * @async
    * @param   {Queryable<TDocument>}    query           The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
@@ -201,8 +200,8 @@ export class QueryService<
   public async findOne(
     query: Queryable<TDocument>,
     model: TModel,
-    stripDocument: boolean = false,
-  ): Promise<TDocument|null> {
+    stripDocument = false,
+  ): Promise<TDocument | null> {
     // wrap pagination+query to be mongo-compatible
     const { searchQuery } = this.getQueryConfig(query);
 
@@ -255,9 +254,12 @@ export class QueryService<
     // execute query and return a single document
     // note that this method uses the `upsert` option
     // to execute an INSERT for inexisting document
-    return await model.findOneAndUpdate(
-      updateQuery as any, operations, { upsert: true, returnOriginal: false }
-    ).exec();
+    return await model
+      .findOneAndUpdate(updateQuery as any, operations, {
+        upsert: true,
+        returnOriginal: false,
+      })
+      .exec();
   }
 
   /**
@@ -274,7 +276,7 @@ export class QueryService<
    *
    * @todo Currently the `$set` parameters use `new Date()`, probably a mongo/mongoose routine for "now" is more adequate.
    * @async
-   * @param   {TModel}    model       
+   * @param   {TModel}    model
    * @param   {TDocument[]}         documents
    * @returns {Promise<number>}   The number of documents **affected** by the update queries.
    */
@@ -288,26 +290,30 @@ export class QueryService<
     // each document is updated in one query
     // all queries are batched together with bulk handler
     // note that an **upsert** is used for new documents
-    documents.map((document: TDocument) => bulk.find(document.toQuery)
-      .upsert()
-      .update({
-        $set: {
-          ...(document),
-          updatedAt: new Date(),
-        },
-      })
+    documents.map((document: TDocument) =>
+      bulk
+        .find(document.toQuery)
+        .upsert()
+        .update({
+          $set: {
+            ...document,
+            updatedAt: new Date(),
+          },
+        }),
     );
 
     // execute the bulk operation
     let result: any;
-    if (! (result = await bulk.execute())) {
+    if (!(result = await bulk.execute())) {
       return 0;
     }
 
     // sum number of inserted, updated and upserted
-    return ("nInserted" in result ? result.nInserted : 0)
-      + ("nModified" in result ? result.nModified : 0)
-      + ("nUpserted" in result ? result.nUpserted : 0)
+    return (
+      ("nInserted" in result ? result.nInserted : 0) +
+      ("nModified" in result ? result.nModified : 0) +
+      ("nUpserted" in result ? result.nUpserted : 0)
+    );
   }
 
   /**
@@ -328,8 +334,14 @@ export class QueryService<
     const { sort, order, pageNumber, pageSize } = query;
 
     // wrap search query and validate/fix query fields
-    const { searchQuery } = (({ sort, order, pageNumber, pageSize, document }) => ({
-      searchQuery: this.sanitizeSearchQuery({...document}), // destructuring
+    const { searchQuery } = (({
+      sort,
+      order,
+      pageNumber,
+      pageSize,
+      document,
+    }) => ({
+      searchQuery: this.sanitizeSearchQuery({ ...document }), // destructuring
     }))(query);
 
     // defaults to sortField being "_id"

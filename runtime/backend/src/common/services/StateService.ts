@@ -12,7 +12,12 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 
 // internal dependencies
-import { State, StateDocument, StateModel, StateQuery } from "../models/StateSchema";
+import {
+  State,
+  StateDocument,
+  StateModel,
+  StateQuery,
+} from "../models/StateSchema";
 import type { StateData } from "../models/StateData";
 import { QueryService } from "./QueryService";
 
@@ -39,7 +44,7 @@ export class StateService {
    * Find one `TDocument` instance in the database and use
    * a query based on the {@link Queryable} class.
    * <br /><br />
-   * 
+   *
    * @access public
    * @async
    * @param   {StateQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
@@ -60,10 +65,7 @@ export class StateService {
    * @param   {StateData}           data    The fields or data that has to be updated (will be added to `$set: {}`).
    * @returns {Promise<State>}  The *updated* `states` document.
    */
-  async updateOne(
-    query: StateQuery,
-    data: StateData,
-  ): Promise<StateDocument> {
+  async updateOne(query: StateQuery, data: StateData): Promise<StateDocument> {
     return await this.queryService.createOrUpdate(
       query,
       this.model,

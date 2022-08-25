@@ -40,10 +40,9 @@ const db = dappConfigLoader().database;
  * imported here.
  * <br /<br />
  *
- * @var {[key: string]: any}
+ * @var {[key: string]: KnownScopeModules}
  *
  * @todo define class `AbstractAppModule` and use in `DiscoveryModule`, `PayoutModule`, etc.
- * @todo The object `Scopes` should **at least** use a custom type (not `any`).
  * @since v0.1.0
  */
 export const Scopes: { [key: string]: any } = {

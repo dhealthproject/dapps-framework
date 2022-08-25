@@ -124,6 +124,24 @@ export class Transaction extends Transferable<TransactionDTO> {
   public transactionHash: string;
 
   /**
+   * This is the transaction message as defined by dHealth Network. It
+   * contains a *plain text* or *encrypted* message that in turn may be
+   * *processed as an operation*, or ignored.
+   * <br /><br />
+   * Due to some end-users preferring to *encrypt* their messages,
+   * the content of this field may be highly variable, reaching from
+   * plain text content over to hexadecimal payloads of encrypted text.
+   * <br /><br />
+   * CAUTION: This indexed field *must* be analyzed as it *could* grow
+   * heavily due to the potential of 1024 bytes in transfer messages.
+   *
+   * @access public
+   * @var {string}
+   */
+  @Prop({ required: true, index: true })
+  public transactionMessage: string;
+
+  /**
    * This is the transaction signature as defined by dHealth Network. It
    * contains an *immutable* sha3-512 hash created from *some* of the data
    * stored in the transaction body.
@@ -214,7 +232,7 @@ export class Transaction extends Transferable<TransactionDTO> {
    * @returns {Record<string, any>}    The individual document data that is used in a query.
    */
   public get toQuery(): Record<string, any> {
-    let query: Record<string, any> = {};
+    const query: Record<string, any> = {};
 
     if (undefined !== this.signerAddress)
       query["signerAddress"] = this.signerAddress;
@@ -226,7 +244,7 @@ export class Transaction extends Transferable<TransactionDTO> {
   }
 
   /**
-   * 
+   *
    */
   public toSDK(): SdkTransaction {
     //XXX this assumes "encodedBody" contains the *full* payload.
@@ -268,7 +286,7 @@ export type TransactionDocument = Transaction & Documentable;
  *     public constructor(
  *       @InjectModel(Transaction.name) private readonly model: TransactionModel
  *     )
- * 
+ *
  *     public addEntry(data: Record<string, any>) {
  *       return this.model.create(data);
  *     }
@@ -297,7 +315,7 @@ export class TransactionQuery extends Queryable<TransactionDocument> {
    * @param   {TransactionDocument|undefined} document          The *document* instance (defaults to `undefined`) (optional).
    * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
-   public constructor(
+  public constructor(
     document?: TransactionDocument,
     queryParams: QueryParameters = undefined,
   ) {
@@ -308,7 +326,7 @@ export class TransactionQuery extends Queryable<TransactionDocument> {
 /**
  * @export TransactionSchema
  * @description This export creates a mongoose schema using the custom
- * {@link Transaction} class and should be used mainly when 
+ * {@link Transaction} class and should be used mainly when
  * *inferring* the type of fields in a document for the corresponding
  * collection.
  *

@@ -28,8 +28,8 @@
  * @since v0.3.0
  */
 export type NodeConnectionPayload = {
-  url: string,
-  port?: number | string,
+  url: string;
+  port?: number | string;
 };
 
 /**
@@ -61,13 +61,13 @@ export type NodeConnectionPayload = {
  * @since v0.3.0
  */
 export type NetworkParameters = {
-  namespaceName: string,
-  mosaicId: string,
-  namespaceId: string,
-  divisibility: number,
-  networkIdentifier: number,
-  epochAdjustment: number,
-  generationHash: string,
+  namespaceName: string;
+  mosaicId: string;
+  namespaceId: string;
+  divisibility: number;
+  networkIdentifier: number;
+  epochAdjustment: number;
+  generationHash: string;
 };
 
 /**
@@ -108,7 +108,7 @@ export interface NetworkConfig {
    * @access public
    * @var {NodeConnectionPayload}
    */
-  apiNodes: NodeConnectionPayload[],
+  apiNodes: NodeConnectionPayload[];
 
   /**
    * A network configuration object. This consists of parameters that

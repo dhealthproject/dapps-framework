@@ -9,6 +9,7 @@
  */
 // external dependencies
 import { MongooseModule } from "@nestjs/mongoose";
+import { DynamicModule } from "@nestjs/common";
 
 // internal dependencies
 import { AccountsModule } from "../discovery/modules/AccountsModule";
@@ -38,14 +39,14 @@ const db = dappConfigLoader().database;
  * <br /><br />
  *
  * @var {[key: string]: any[]}
- *
- * @todo The object `Schedulers` should **at least** use a custom type (not `any`).
  * @since v0.1.0
  */
 export const Schedulers: { [key: string]: any[] } = {
-  database: [MongooseModule.forRoot(
-    `mongodb://${db.user}:${process.env.DB_PASS}@${db.host}:${db.port}/${db.name}?authSource=admin`,
-  )],
+  database: [
+    MongooseModule.forRoot(
+      `mongodb://${db.user}:${process.env.DB_PASS}@${db.host}:${db.port}/${db.name}?authSource=admin`,
+    ),
+  ],
   discovery: [
     AccountsModule,
     TransactionsModule,

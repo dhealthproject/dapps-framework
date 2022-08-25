@@ -57,7 +57,7 @@ export class AppController {
    * @method GET
    * @returns {string}
    */
-  @Get('hello')
+  @Get("hello")
   protected getHello(): string {
     return `Hello, world of ${this.dappName}!`;
   }

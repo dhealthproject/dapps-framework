@@ -14,8 +14,8 @@ import { Logger } from "@nestjs/common";
 import { StateService } from "../common/services/StateService";
 import { StatefulModule } from "../common/traits/StatefulModule";
 import { Scope } from "../common/models/Scope";
-import { DappConfig } from '../common/models/DappConfig';
-import { NetworkConfig } from '../common/models/NetworkConfig';
+import { DappConfig } from "../common/models/DappConfig";
+import { NetworkConfig } from "../common/models/NetworkConfig";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -72,9 +72,7 @@ export interface BaseCommandOptions {
  *
  * @since v0.2.0
  */
-export abstract class BaseCommand
-  extends StatefulModule
-{
+export abstract class BaseCommand extends StatefulModule {
   /**
    * The command scope. This is the scope that must be enabled
    * through the configuration files for this command to be
@@ -123,9 +121,7 @@ export abstract class BaseCommand
    *
    * @access public
    */
-  public constructor(
-    protected readonly stateService: StateService,
-  ) {
+  public constructor(protected readonly stateService: StateService) {
     super(stateService);
     this.dappConfig = dappConfigLoader();
     this.networkConfig = networkConfigLoader();
@@ -177,8 +173,8 @@ export abstract class BaseCommand
    * a try-catch block to force the error handling process.
    *
    * @access public
-   * @param   {string[]}            passedParams  
-   * @param   {BaseCommandOptions}  options 
+   * @param   {string[]}            passedParams
+   * @param   {BaseCommandOptions}  options
    * @returns {Promise<void>}
    */
   public async run(
@@ -196,12 +192,12 @@ export abstract class BaseCommand
 
     // display debug info about arguments and options
     if (options.debug && !options.quiet) {
-      if (passedParams.length) this.debugLog(
-        `Arguments received: ["${passedParams.join("\", \"")}"]`
-      );
-      if (options !== undefined) this.debugLog(
-        `Options received: ${JSON.stringify(options, undefined, 2)}`
-      );
+      if (passedParams.length)
+        this.debugLog(`Arguments received: ["${passedParams.join('", "')}"]`);
+      if (options !== undefined)
+        this.debugLog(
+          `Options received: ${JSON.stringify(options, undefined, 2)}`,
+        );
     }
 
     // tracks starting moment
@@ -221,7 +217,11 @@ export abstract class BaseCommand
       // displays state debug information
       if (options.debug && !options.quiet) {
         this.debugLog(
-          `Current state for "${this.stateIdentifier}": ${JSON.stringify(this.state, undefined, 2)}`,
+          `Current state for "${this.stateIdentifier}": ${JSON.stringify(
+            this.state,
+            undefined,
+            2,
+          )}`,
         );
       }
 
@@ -231,22 +231,25 @@ export abstract class BaseCommand
 
       // updates state with this round's information
       this.state = await this.stateService.updateOne(
-        this.getStateQuery(), 
-        this.getStateData(), 
+        this.getStateQuery(),
+        this.getStateData(),
       );
 
       // displays state debug information
       if (options.debug && !options.quiet) {
         this.debugLog(
-          `Updated state for "${this.stateIdentifier}": ${JSON.stringify(this.getStateData(), undefined, 2)}`,
+          `Updated state for "${this.stateIdentifier}": ${JSON.stringify(
+            this.getStateData(),
+            undefined,
+            2,
+          )}`,
         );
       }
-    }
-    catch (e: any) {
+    } catch (e: any) {
       // @todo Should provide failures stacktrace + database copy
       this.errorLog(
-        undefined !== e && 'message' in e ? e.message : e,
-        undefined !== e && 'stack' in e ? e.stack : undefined,
+        undefined !== e && "message" in e ? e.message : e,
+        undefined !== e && "stack" in e ? e.stack : undefined,
       );
     }
 
@@ -275,7 +278,7 @@ export abstract class BaseCommand
 
   /**
    * This method must return a *command signature* that
-   * contains hints on the command name and its required 
+   * contains hints on the command name and its required
    * and optional arguments.
    * <br /><br />
    * e.g. "command <required-argument> [--option value]"
@@ -301,7 +304,5 @@ export abstract class BaseCommand
    * @param {BaseCommandOptions}  options   The *parsed* runtime arguments passed to the command.
    * @returns {Promise<void>}
    */
-  protected abstract runWithOptions(
-    options: BaseCommandOptions,
-  ): Promise<void>;
+  protected abstract runWithOptions(options: BaseCommandOptions): Promise<void>;
 }

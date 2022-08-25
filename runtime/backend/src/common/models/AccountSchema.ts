@@ -93,6 +93,21 @@ export class Account extends Transferable<AccountDTO> {
   public firstTransactionAtBlock?: number;
 
   /**
+   * The JWT access token that can be attached in the **bearer
+   * authorization header** of HTTP requests to indicate that
+   * a user is authenticated.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
+   * <br /><br />
+   * See more details in {@link AccessTokenDTO}.
+   *
+   * @access public
+   * @var {string}
+   */
+  @Prop({})
+  public accessToken?: string;
+
+  /**
    * The JWT refresh token that can be attached in the **bearer
    * authorization header** of HTTP requests to `/auth/token` to
    * indicate that a user's access token must be refreshed.
@@ -104,9 +119,20 @@ export class Account extends Transferable<AccountDTO> {
    * @access public
    * @var {string}
    */
-  
+  @Prop({ index: true })
+  public refreshTokenHash?: string;
+
+  /**
+   * The transaction hash that is/was attached to the **last**
+   * authenticated *session* of this account.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
+   *
+   * @access public
+   * @var {string}
+   */
   @Prop({})
-  public refreshToken?: string;
+  public lastSessionHash?: string;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -135,9 +161,9 @@ export class Account extends Transferable<AccountDTO> {
    * individually, as documents, in the collection: `accounts`.
    *
    * @access public
-   * @returns {Record<string, any>}    The individual document data that is used in a query.
+   * @returns {Record<string, unknown>}    The individual document data that is used in a query.
    */
-  public get toQuery(): Record<string, any> {
+  public get toQuery(): Record<string, unknown> {
     return {
       address: this.address,
     };
@@ -160,7 +186,7 @@ export class Account extends Transferable<AccountDTO> {
  *
  * @since v0.3.0
  */
- export type AccountDocument = Account & Documentable;
+export type AccountDocument = Account & Documentable;
 
 /**
  * @class AccountModel
@@ -178,7 +204,7 @@ export class Account extends Transferable<AccountDTO> {
  *     public constructor(
  *       @InjectModel(Account.name) private readonly model: AccountModel
  *     )
- * 
+ *
  *     public addEntry(data: Record<string, any>) {
  *       return this.model.create(data);
  *     }

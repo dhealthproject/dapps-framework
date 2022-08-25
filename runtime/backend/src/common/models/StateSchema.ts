@@ -70,7 +70,7 @@ export class State extends Transferable<StateDTO> {
    */
   @Prop({ index: true })
   public createdAt?: Date;
- 
+
   /**
    * The document's update timestamp. This field **does not** reflect the
    * date of update of an account but rather the date of update of the
@@ -87,12 +87,12 @@ export class State extends Transferable<StateDTO> {
    * individually, as documents, in the collection: `states`.
    *
    * @access public
-   * @returns {Record<string, any>}    The individual document data that is used in a query.
+   * @returns {Record<string, unknown>}    The individual document data that is used in a query.
    */
-  public get toQuery(): Record<string, any> {
+  public get toQuery(): Record<string, unknown> {
     return {
       name: this.name,
-    }
+    };
   }
 }
 
@@ -112,7 +112,7 @@ export class State extends Transferable<StateDTO> {
  *
  * @since v0.3.0
  */
- export type StateDocument = State & Documentable;
+export type StateDocument = State & Documentable;
 
 /**
  * @class StateModel
@@ -130,7 +130,7 @@ export class State extends Transferable<StateDTO> {
  *     public constructor(
  *       @InjectModel(State.name) private readonly model: StateModel
  *     )
- * 
+ *
  *     public addEntry(data: Record<string, any>) {
  *       return this.model.create(data);
  *     }

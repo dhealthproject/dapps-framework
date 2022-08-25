@@ -27,7 +27,7 @@ async function bootstrap(): Promise<void> {
   // create an instance of the scheduler with imported configs
   NestFactory.createApplicationContext(
     WorkerModule.register({
-      ...(dappConfigLoader()),
+      ...dappConfigLoader(),
     } as DappConfig),
   );
 }

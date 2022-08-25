@@ -19,7 +19,10 @@ import {
 
 // internal dependencies
 import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
-import { Account, AccountQuery } from "../../common/models/AccountSchema";
+import {
+  AccountDocument,
+  AccountQuery,
+} from "../../common/models/AccountSchema";
 import { AccountDTO } from "../../common/models/AccountDTO";
 import { AccountsService } from "../../common/services/AccountsService";
 
@@ -79,6 +82,7 @@ export class AccountsController {
    * with query parameters: `sort`, `order`.
    *
    * @async
+   * @access public
    * @method  GET
    * @param   {AccountQuery} query
    * @returns {Promise<PaginatedResultDTO<AccountDTO>>}
@@ -86,16 +90,21 @@ export class AccountsController {
   @Get()
   @ApiOperation({
     summary: "Search accounts",
-    description: "Search for accounts using custom filters. The resulting iterable contains only matching accounts.",
+    description:
+      "Search for accounts using custom filters. The resulting iterable contains only matching accounts.",
   })
   @ApiExtraModels(AccountDTO, PaginatedResultDTO)
   @ApiOkResponse(HTTPResponses.AccountSearchResponseSchema)
-  find(@Query() query: AccountQuery): Promise<PaginatedResultDTO<AccountDTO>> {
-    return this.accountsService.find(query).then((result) => ({
-      data: result.data.length > 0
-        ? result.data.map((d: Account) => d as AccountDTO)
-        : [],
-      pagination: result.pagination,
-    }));
+  public async find(
+    @Query() query: AccountQuery,
+  ): Promise<PaginatedResultDTO<AccountDTO>> {
+    // reads from database
+    const data = await this.accountsService.find(query);
+
+    // wraps for transport
+    return PaginatedResultDTO.createForTransport<AccountDTO, AccountDocument>(
+      data.data,
+      data.pagination,
+    );
   }
 }

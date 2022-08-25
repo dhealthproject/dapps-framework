@@ -11,6 +11,8 @@
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
+import { Request } from "express";
+import { sha3_256 } from "js-sha3";
 
 // internal dependencies
 import { AccountDocument, AccountQuery } from "../models/AccountSchema";
@@ -21,27 +23,30 @@ import {
 } from "../services/AuthService";
 
 /**
- * @class AuthStrategy
+ * @class RefreshStrategy
  * @description This trait implements a **passport strategy** that
- * authenticates users using **JwT tokens** that are attached to the HTTP
- * request *using a Bearer token header*.
+ * refreshes a user's expired access tokens using **JwT tokens**
+ * that are attached to the HTTP request *using a Bearer token header*.
  *
  * @todo Investigate whether a PEM-encoded public key makes more sense for *signing tokens* in production environments.
- * @since v0.2.0
+ * @since v0.3.0
  */
 @Injectable()
-export class AuthStrategy extends PassportStrategy(Strategy) {
+export class RefreshStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
   /**
    *
    */
   public constructor(private readonly accountsService: AccountsService) {
     super({
       // determines the *token* extraction method
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      // delegates the validation of expiry to Passport
-      ignoreExpiration: false,
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        // do we have a refresh token in Authorization header?
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       // defines a symmetric secret key for signing tokens
       secretOrKey: process.env.AUTH_TOKEN_SECRET,
+      // permits to access the cookie from validate method
+      passReqToCallback: true,
     });
   }
 
@@ -60,11 +65,15 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
     request: RequestWithUser,
     payload: Record<string, any>,
   ): Promise<AuthenticationPayload> {
-    // finds an `accounts` document that corresponds
-    // the authentication payload's dHealth address.
+    // extracts refresh token from *request cookies*
+    const refreshToken = request.cookies.Refresh;
+
+    // finds an `accounts` document using a SHA3-256
+    // hash of the refresh token (never plain text).
     const account: AccountDocument = await this.accountsService.findOne(
       new AccountQuery({
         address: payload.address,
+        refreshTokenHash: sha3_256(refreshToken),
       } as AccountDocument),
     );
 

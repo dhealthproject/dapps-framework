@@ -36,7 +36,8 @@ export class AuthChallengeDTO {
    */
   @ApiProperty({
     example: "abc12def",
-    description: "The authentication challenge that can be used to authenticate a user to the dApp.",
+    description:
+      "The authentication challenge that can be used to authenticate a user to the dApp.",
   })
   public challenge: string;
 }

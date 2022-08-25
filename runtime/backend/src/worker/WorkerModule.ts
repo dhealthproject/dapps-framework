@@ -45,7 +45,7 @@ export class WorkerModule {
     // filters out scopes that do not have schedulers registered
     // the `database` scope is ignored due to lack of schedulers
     const actualScopes = configs.scopes.filter(
-      s => s !== "database" && s in Schedulers && Schedulers[s].length > 0
+      (s) => s !== "database" && s in Schedulers && Schedulers[s].length > 0,
     );
 
     // print activation information of all scopes

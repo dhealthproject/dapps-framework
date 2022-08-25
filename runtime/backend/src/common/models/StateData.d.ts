@@ -14,4 +14,4 @@
  *
  * @since v0.1.0
  */
-export type StateData = Record<string, any>;
+export type StateData = Record<string, any> | any;

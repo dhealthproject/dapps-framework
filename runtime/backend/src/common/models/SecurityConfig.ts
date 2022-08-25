@@ -28,9 +28,9 @@
  * @since v0.3.0
  */
 export type AuthParameters = {
-  registries: string[],
-  secret: string,
-  challengeSize: number,
+  registries: string[];
+  secret: string;
+  challengeSize: number;
 };
 
 /**
@@ -52,8 +52,8 @@ export type AuthParameters = {
  * @since v0.3.0
  */
 export type CookieParameters = {
-  name: string,
-  domain: string,
+  name: string;
+  domain: string;
 };
 
 /**
@@ -111,5 +111,4 @@ export interface SecurityConfig {
    * @var {CookieParameters}
    */
   cookie: CookieParameters;
-
 }

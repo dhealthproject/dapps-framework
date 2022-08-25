@@ -54,9 +54,7 @@ export abstract class StatefulModule {
    *
    * @param   {StateService}    stateService
    */
-  public constructor(
-    protected readonly stateService: StateService,
-  ) {}
+  public constructor(protected readonly stateService: StateService) {}
 
   /**
    * Creates a **state query** for this discovery service. Each
@@ -67,9 +65,7 @@ export abstract class StatefulModule {
    * @returns {StateQuery}
    */
   protected getStateQuery(): StateQuery {
-    return new StateQuery(
-      { name: this.stateIdentifier } as StateDocument,
-    );
+    return new StateQuery({ name: this.stateIdentifier } as StateDocument);
   }
 
   /**
@@ -85,7 +81,7 @@ export abstract class StatefulModule {
    * @returns {StateData}
    */
   protected getStateData(): StateData {
-    return {} as StateData
+    return {} as StateData;
   }
 
   /**
@@ -95,14 +91,10 @@ export abstract class StatefulModule {
    * @param   {string|undefined}    context
    * @returns {void}
    */
-  protected debugLog(
-    message: string,
-    context?: string,
-  ): void {
+  protected debugLog(message: string, context?: string): void {
     if (!!context) {
       this.logger.debug(message, context);
-    }
-    else this.logger.debug(message);
+    } else this.logger.debug(message);
   }
 
   /**
@@ -114,11 +106,7 @@ export abstract class StatefulModule {
    * @param   {string|undefined}    context
    * @returns {void}
    */
-  protected errorLog(
-    message: string,
-    stack?: string,
-    context?: string,
-  ): void {
+  protected errorLog(message: string, stack?: string, context?: string): void {
     this.logger.error(message, stack, context);
   }
 

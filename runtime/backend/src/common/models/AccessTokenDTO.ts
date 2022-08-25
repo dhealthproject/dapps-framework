@@ -34,8 +34,10 @@ export class AccessTokenDTO {
    * @var {string}
    */
   @ApiProperty({
-    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-    description: "The JWT access token that can be attached in the **bearer authorization header** of HTTP requests to indicate users that are authenticated - a.k.a logged in.",
+    example:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+    description:
+      "The JWT access token that can be attached in the **bearer authorization header** of HTTP requests to indicate users that are authenticated - a.k.a logged in.",
   })
   public accessToken: string;
 
@@ -51,8 +53,10 @@ export class AccessTokenDTO {
    * @var {string}
    */
   @ApiProperty({
-    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-    description: "The JWT refresh token that can be attached in the **bearer authorization header** of HTTP requests to `/auth/token` to indicate that a user's access token must be refreshed.",
+    example:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+    description:
+      "The JWT refresh token that can be attached in the **bearer authorization header** of HTTP requests to `/auth/token` to indicate that a user's access token must be refreshed.",
   })
-  public refreshToken: string;
+  public refreshToken?: string;
 }

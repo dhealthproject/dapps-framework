@@ -19,7 +19,10 @@ import {
 
 // internal dependencies
 import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
-import { Transaction, TransactionQuery } from "../models/TransactionSchema";
+import {
+  TransactionDocument,
+  TransactionQuery,
+} from "../models/TransactionSchema";
 import { TransactionDTO } from "../models/TransactionDTO";
 import { TransactionsService } from "../services/TransactionsService";
 
@@ -79,6 +82,7 @@ export class TransactionsController {
    * with query parameters: `sort`, `order`.
    *
    * @async
+   * @access public
    * @method  GET
    * @param   {TransactionQuery} query
    * @returns {Promise<PaginatedResultDTO<TransactionDTO>>}
@@ -86,18 +90,21 @@ export class TransactionsController {
   @Get()
   @ApiOperation({
     summary: "Search transactions",
-    description: "Search for transactions using custom filters. The resulting iterable contains only matching transactions.",
+    description:
+      "Search for transactions using custom filters. The resulting iterable contains only matching transactions.",
   })
   @ApiExtraModels(TransactionDTO, PaginatedResultDTO)
   @ApiOkResponse(HTTPResponses.TransactionSearchResponseSchema)
-  public find(
+  public async find(
     @Query() query: TransactionQuery,
   ): Promise<PaginatedResultDTO<TransactionDTO>> {
-    return this.transactionsService.find(query).then((result) => ({
-      data: result.data.length > 0
-        ? result.data.map((d: Transaction) => d as TransactionDTO)
-        : [],
-      pagination: result.pagination,
-    }));
+    // reads from database
+    const data = await this.transactionsService.find(query);
+
+    // wraps for transport
+    return PaginatedResultDTO.createForTransport<
+      TransactionDTO,
+      TransactionDocument
+    >(data.data, data.pagination);
   }
 }

@@ -20,11 +20,19 @@ import { StateService } from "../../../common/services/StateService";
 import { StateDocument, StateQuery } from "../../../common/models/StateSchema";
 import { NetworkService } from "../../../common/services/NetworkService";
 import { AccountsService } from "../../../common/services/AccountsService";
-import { Account, AccountDocument, AccountModel, AccountQuery } from "../../../common/models/AccountSchema";
+import {
+  Account,
+  AccountDocument,
+  AccountModel,
+  AccountQuery,
+} from "../../../common/models/AccountSchema";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
 import { TransactionsService } from "../../../discovery/services/TransactionsService";
 import { AccountDiscoveryStateData } from "../../models/AccountDiscoveryStateData";
-import { TransactionDocument, TransactionQuery } from "../../models/TransactionSchema";
+import {
+  TransactionDocument,
+  TransactionQuery,
+} from "../../models/TransactionSchema";
 
 /**
  * @class DiscoverAccounts
@@ -35,9 +43,7 @@ import { TransactionDocument, TransactionQuery } from "../../models/TransactionS
  * @since v0.1.0
  */
 @Injectable()
-export class DiscoverAccounts
-  extends DiscoveryCommand
-{
+export class DiscoverAccounts extends DiscoveryCommand {
   /**
    * Memory store of addresses that have been discovered as recipient
    * of transfer transactions issued from the dApp's main account.
@@ -110,7 +116,7 @@ export class DiscoverAccounts
 
   /**
    * This method must return a *command signature* that
-   * contains hints on the command name and its required 
+   * contains hints on the command name and its required
    * and optional arguments.
    * <br /><br />
    * e.g. "command <argument> [--option value]"
@@ -124,9 +130,7 @@ export class DiscoverAccounts
    * @returns {string}
    */
   protected get signature(): string {
-    return `${this.command} [`
-      + `--source "SOURCE-ADDRESS-OR-PUBKEY"`
-      + `]`;
+    return `${this.command} [` + `--source "SOURCE-ADDRESS-OR-PUBKEY"` + `]`;
   }
 
   /**
@@ -145,7 +149,7 @@ export class DiscoverAccounts
     return {
       lastPageNumber: this.lastPageNumber,
       lastExecutedAt: this.lastExecutedAt,
-    } as AccountDiscoveryStateData
+    } as AccountDiscoveryStateData;
   }
 
   /**
@@ -164,18 +168,23 @@ export class DiscoverAccounts
    * @see BaseCommand
    * @access public
    * @async
-   * @param   {string[]}            passedParams  
-   * @param   {BaseCommandOptions}  options 
+   * @param   {string[]}            passedParams
+   * @param   {BaseCommandOptions}  options
    * @returns {Promise<void>}
    */
   @Cron("0 */2 * * * *", { name: "discovery:cronjobs:accounts" })
   public async runAsScheduler(): Promise<void> {
     // accounts discovery cronjob always read the dApp's main account
-    const dappPubKey  = this.configService.get<string>("dappPublicKey");
-    const networkType = this.configService.get<NetworkType>("network.networkIdentifier");
+    const dappPubKey = this.configService.get<string>("dappPublicKey");
+    const networkType = this.configService.get<NetworkType>(
+      "network.networkIdentifier",
+    );
 
     // creates the discovery source public account
-    const publicAcct  = PublicAccount.createFromPublicKey(dappPubKey, networkType);
+    const publicAcct = PublicAccount.createFromPublicKey(
+      dappPubKey,
+      networkType,
+    );
 
     // keep track of last execution
     this.lastExecutedAt = new Date().valueOf();
@@ -187,7 +196,7 @@ export class DiscoverAccounts
     } as DiscoveryCommandOptions);
   }
 
- /**
+  /**
    * This method implements the discovery logic for this command
    * that will find relevant *subjects*. Subjects in this command
    * are **accounts** that have previously *received* a transaction
@@ -205,67 +214,91 @@ export class DiscoverAccounts
   public async discover(options?: DiscoveryCommandOptions): Promise<void> {
     // display starting moment information in debug mode
     if (options.debug && !options.quiet) {
-      this.debugLog(`Starting accounts discovery for source "${options.source}"`);
+      this.debugLog(
+        `Starting accounts discovery for source "${options.source}"`,
+      );
     }
 
     // get the latest transactions page number
-    if (!!this.state && !!this.state.data && "lastPageNumber" in this.state.data) {
+    if (
+      !!this.state &&
+      !!this.state.data &&
+      "lastPageNumber" in this.state.data
+    ) {
       this.lastPageNumber = this.state.data.lastPageNumber;
     }
-    
-    // check for the total number of transactions
-    const transactionsState = await this.stateService.findOne(new StateQuery({
-      name: "discovery:DiscoverTransactions",
-    } as StateDocument));
 
-    const countTransactions = !!transactionsState && "totalNumberOfTransactions" in transactionsState.data
-      ? transactionsState.data.totalNumberOfTransactions
-      : 0;
+    // check for the total number of transactions
+    const transactionsState = await this.stateService.findOne(
+      new StateQuery({
+        name: "discovery:DiscoverTransactions",
+      } as StateDocument),
+    );
+
+    const countTransactions =
+      !!transactionsState &&
+      "totalNumberOfTransactions" in transactionsState.data
+        ? transactionsState.data.totalNumberOfTransactions
+        : 0;
 
     // if we reached the end of transactions, we want
     // to continue *only* with recent transactions in
     // the next runs of accounts discovery
-    if (countTransactions > 0 && this.lastPageNumber * 100 > countTransactions) {
+    if (
+      countTransactions > 0 &&
+      this.lastPageNumber * 100 > countTransactions
+    ) {
       this.lastPageNumber = Math.floor(countTransactions / 100);
     }
 
     // display debug information about configuration
     if (options.debug && !options.quiet) {
-      this.debugLog(`Last accounts discovery ended with page: "${this.lastPageNumber}"`);
+      this.debugLog(
+        `Last accounts discovery ended with page: "${this.lastPageNumber}"`,
+      );
     }
 
     // (1) each round queries a page of 100 transactions *from the database*
     // and discovers addresses that are involved in said transactions
-    for (let i = this.lastPageNumber, max = this.lastPageNumber+10;
+    for (
+      let i = this.lastPageNumber, max = this.lastPageNumber + 10;
       i < max;
-      i++, this.lastPageNumber++) {
-
+      i++, this.lastPageNumber++
+    ) {
       // fetches transactions *from the database* (mongo)
-      const transactions = await this.transactionsService.find(new TransactionQuery(
-        {} as TransactionDocument, // queries *any* transaction
-        {
-          pageNumber: i, // in batches of 100 per page
-          pageSize: 100,
-        } as QueryParameters,
-      ));
+      const transactions = await this.transactionsService.find(
+        new TransactionQuery(
+          {} as TransactionDocument, // queries *any* transaction
+          {
+            pageNumber: i, // in batches of 100 per page
+            pageSize: 100,
+          } as QueryParameters,
+        ),
+      );
 
       // proceeds to extracting accounts from transactions
-      this.discoveredAddresses = this.discoveredAddresses.concat(
-        transactions.data.map((t: TransactionDocument) => t.recipientAddress),
-      ).filter((v, i, s) => s.indexOf(v) === i); // unique
+      this.discoveredAddresses = this.discoveredAddresses
+        .concat(
+          transactions.data.map((t: TransactionDocument) => t.recipientAddress),
+        )
+        .filter((v, i, s) => s.indexOf(v) === i); // unique
     }
 
     if (options.debug && !options.quiet) {
-      this.debugLog(`Found ${this.discoveredAddresses.length} new accounts from transactions`);
+      this.debugLog(
+        `Found ${this.discoveredAddresses.length} new accounts from transactions`,
+      );
     }
 
     // (2) each round creates or finds 1 `accounts` document
-    let nSkipped: number = 0;
+    let nSkipped = 0;
     for (let i = 0, max = this.discoveredAddresses.length; i < max; i++) {
       // retrieve existence information
-      const documentExists: boolean = await this.accountsService.exists(new AccountQuery({
-        address: this.discoveredAddresses[i],
-      } as AccountDocument));
+      const documentExists: boolean = await this.accountsService.exists(
+        new AccountQuery({
+          address: this.discoveredAddresses[i],
+        } as AccountDocument),
+      );
 
       // skip update for known accounts
       if (true === documentExists) {

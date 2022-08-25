@@ -104,14 +104,14 @@ describe("common/QueryService", () => {
     });
 
     it("should have correct result", async () => {
-      const expectedResult: PaginatedResultDTO<AccountDocument> = {
-        data: [{} as AccountDocument],
-        pagination: {
+      const expectedResult: PaginatedResultDTO<AccountDocument> = new PaginatedResultDTO(
+        [{} as AccountDocument],
+        {
           pageNumber: 1,
           pageSize: 20,
           total: 1,
         },
-      };
+      );
       const result = await service.find(
         new AccountQuery({ id: "non-existing" } as AccountDocument),
         testModel,
@@ -120,14 +120,14 @@ describe("common/QueryService", () => {
     });
 
     it("should type resulting entities correctly", async () => {
-      const expectedResult: PaginatedResultDTO<AccountDocument> = {
-        data: [{} as AccountDocument],
-        pagination: {
+      const expectedResult: PaginatedResultDTO<AccountDocument> = new PaginatedResultDTO(
+        [{} as AccountDocument],
+        {
           pageNumber: 1,
           pageSize: 20,
           total: 1,
         },
-      };
+      );
       const result = await service.find(
         new AccountQuery({ id: "non-existing" } as AccountDocument),
         testModel,
@@ -140,14 +140,14 @@ describe("common/QueryService", () => {
     });
 
     it("should have correct result when metadata is empty", async () => {
-      const expectedResult: PaginatedResultDTO<AccountDocument> = {
-        data: [],
-        pagination: {
+      const expectedResult: PaginatedResultDTO<AccountDocument> = new PaginatedResultDTO(
+        [{} as AccountDocument],
+        {
           pageNumber: 1,
           pageSize: 20,
           total: 0,
         },
-      };
+      );
       aggregateFn = jest.fn((param) => {
         return {
           param: () => param,

@@ -33,9 +33,9 @@ export class Documentable extends Document {
    * If not overloaded in child classes, we use the default auto-generated
    * `id` column as it is always present with mongodb.
    *
-   * @returns {Record<string, any>}    The individual document data that is used in a query.
+   * @returns {Record<string, unknown>}    The individual document data that is used in a query.
    */
-  public get toQuery(): Record<string, any> {
+  public get toQuery(): Record<string, unknown> {
     return {
       id: this._id,
     };

@@ -33,7 +33,9 @@ import { DiscoverTransactions } from "./DiscoverTransactions";
     StateModule,
     NetworkModule,
     TransactionsModule,
-    MongooseModule.forFeature([{ name: Transaction.name, schema: TransactionSchema }]),
+    MongooseModule.forFeature([
+      { name: Transaction.name, schema: TransactionSchema },
+    ]),
   ],
   providers: [DiscoverTransactions],
   exports: [DiscoverTransactions],

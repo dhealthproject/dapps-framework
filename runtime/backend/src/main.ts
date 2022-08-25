@@ -36,7 +36,7 @@ async function bootstrap(): Promise<void> {
   // create app instance
   const app = await NestFactory.create(
     AppModule.register({
-      ...(dappConfigLoader()),
+      ...dappConfigLoader(),
     } as DappConfig),
   );
 

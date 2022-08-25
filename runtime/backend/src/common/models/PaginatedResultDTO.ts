@@ -11,6 +11,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 // internal dependencies
+import { Transferable } from "../concerns/Transferable";
 import { Countable } from "../concerns/Countable";
 import { Pageable } from "../concerns/Pageable";
 
@@ -48,4 +49,46 @@ export class PaginatedResultDTO<TData> {
    */
   @ApiProperty()
   public pagination: Pageable & Countable;
+
+  /**
+   *
+   */
+  public static createForTransport<
+    TTransport,
+    TDocument extends Transferable<TTransport>,
+  >(
+    data: TDocument[],
+    pagination: Pageable & Countable,
+  ): PaginatedResultDTO<TTransport> {
+    const result = new PaginatedResultDTO<TTransport>();
+    result.data = data.map((d: TDocument) => d.toDTO);
+    result.pagination = pagination;
+    return result;
+  }
+
+  /**
+   *
+   */
+  public constructor(
+    data: TData[] = [],
+    pagination: Pageable & Countable = {
+      pageNumber: 1,
+      pageSize: 100,
+      total: 0,
+    },
+  ) {
+    this.data = data;
+    this.pagination = pagination;
+  }
+
+  /**
+   *
+   */
+  public isLastPage(): boolean {
+    return (
+      this.data.length < this.pagination.pageSize ||
+      this.pagination.pageNumber * this.pagination.pageSize >=
+        (this.pagination.total ?? 0)
+    );
+  }
 }

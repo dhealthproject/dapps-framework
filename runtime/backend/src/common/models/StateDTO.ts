@@ -39,7 +39,8 @@ export class StateDTO {
    */
   @ApiProperty({
     example: "discovery:DiscoverTransactions",
-    description: "The identifier of the state entry. Typically, this holds a unique identifier that determines for which module state is being saved.",
+    description:
+      "The identifier of the state entry. Typically, this holds a unique identifier that determines for which module state is being saved.",
   })
   public name: string;
 
@@ -56,7 +57,8 @@ export class StateDTO {
    */
   @ApiProperty({
     example: { stateKey1: 1, stateKey2: "value2", stateKey3: true },
-    description: "Contains the actual state cache data. This field is usually populated or updated within a service class.",
+    description:
+      "Contains the actual state cache data. This field is usually populated or updated within a service class.",
   })
   public data: StateData;
 }

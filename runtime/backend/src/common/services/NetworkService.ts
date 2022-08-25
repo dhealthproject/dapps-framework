@@ -25,7 +25,10 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 // internal dependencies
-import { NetworkParameters, NodeConnectionPayload } from "../models/NetworkConfig";
+import {
+  NetworkParameters,
+  NodeConnectionPayload,
+} from "../models/NetworkConfig";
 
 /**
  * @type NetworkConnectionPayload
@@ -88,46 +91,46 @@ export class NetworkService {
    * The repository factory used to communicate with the
    * connected node's REST interface.
    *
-   * @access protected
+   * @access public
    * @var {RepositoryFactoryHttp}
    */
-  protected repositoryFactoryHttp: RepositoryFactoryHttp;
+  public repositoryFactoryHttp: RepositoryFactoryHttp;
 
   /**
    * The transaction repository that permits to execute REST
    * requests on the `/transaction` namespace.
    *
-   * @access protected
+   * @access public
    * @var {TransactionRepository}
    */
-  protected transactionRepository: TransactionRepository;
+  public transactionRepository: TransactionRepository;
 
   /**
    * The blocks repository that permits to execute REST
    * requests on the `/blocks` namespace.
    *
-   * @access protected
+   * @access public
    * @var {BlockRepository}
    */
-  protected blockRepository: BlockRepository;
+  public blockRepository: BlockRepository;
 
   /**
    * The chain repository that permits to execute REST
    * requests on the `/chain` namespace.
    *
-   * @access protected
+   * @access public
    * @var {ChainRepository}
    */
-  protected chainRepository: ChainRepository;
+  public chainRepository: ChainRepository;
 
   /**
    * The node repository that permits to execute REST
    * requests on the `/node` namespace.
    *
-   * @access protected
+   * @access public
    * @var {NodeRepository}
    */
-  protected nodeRepository: NodeRepository;
+  public nodeRepository: NodeRepository;
 
   /**
    * Constructs an instance of the network service and connects
@@ -138,9 +141,7 @@ export class NetworkService {
    * @access public
    * @param {ConfigService} configService
    */
-  public constructor(
-    private readonly configService: ConfigService,
-  ) {
+  public constructor(private readonly configService: ConfigService) {
     // prepares the connection parameters
     const defaultNode = this.configService.get<string>("defaultNode");
 
@@ -156,44 +157,6 @@ export class NetworkService {
   }
 
   /**
-   * Getter method that returns the *blocks* repository for the
-   * currently connected node (through repository factory).
-   * <br /><br />
-   * This repository permits to execute requests on the `/blocks`
-   * namespace using the node's REST interface.
-   * <br /><br />
-   * @deprecated This method will be deprecated in upcoming releases
-   * of the software. It is deprecated in favor of {@link delegatePromises()}.
-   * Please use the {@link delegatePromises()} method instead of this one
-   * to prevent node requests failures.
-   *
-   * @access public
-   * @returns {BlockRepository}
-   */
-  public getBlockRepository(): BlockRepository {
-    return this.blockRepository;
-  }
-
-  /**
-   * Getter method that returns the *transactions* repository for the
-   * currently connected node (through repository factory).
-   * <br /><br />
-   * This repository permits to execute requests on the `/transactions`
-   * namespace using the node's REST interface.
-   * <br /><br />
-   * @deprecated This method will be deprecated in upcoming releases
-   * of the software. It is deprecated in favor of {@link delegatePromises()}.
-   * Please use the {@link delegatePromises()} method instead of this one
-   * to prevent node requests failures.
-   *
-   * @access public
-   * @returns {TransactionRepository}
-   */
-  public getTransactionRepository(): TransactionRepository {
-    return this.transactionRepository;
-  }
-
-  /**
    * Public helper method to retrieve the *network parameters* from the
    * runtime configuration. This is helpful to create new adapters that
    * connect to nodes on dHealth Network.
@@ -206,9 +169,8 @@ export class NetworkService {
    */
   public getNetworkConfiguration(): NetworkConnectionPayload {
     // reads runtime configuration related to network parameters
-    const networkParameters = this.configService.get<NetworkParameters>(
-      "network",
-    );
+    const networkParameters =
+      this.configService.get<NetworkParameters>("network");
 
     // no configuration of network parameters should instead
     // read network parameters *from the node* and therefore
@@ -254,8 +216,8 @@ export class NetworkService {
    * field in the {@link currentNetwork} class property and can be used
    * whenever network currencies information is necessary.
    *
-   * @param   {string}  currencyMosaicId 
-   * @param   {number}  tokenDivisibility 
+   * @param   {string}  currencyMosaicId
+   * @param   {number}  tokenDivisibility
    * @returns {Currency}
    */
   public getNetworkCurrency(
@@ -268,7 +230,7 @@ export class NetworkService {
       transferable: true,
       supplyMutable: false,
       restrictable: false,
-    })
+    });
   }
 
   /**
@@ -326,8 +288,7 @@ export class NetworkService {
   ): Promise<ResponseType[]> {
     try {
       return await Promise.all(promises);
-    }
-    catch (e) {
+    } catch (e) {
       // request to node **failed**, try with a different node
       this.currentNode = await this.getNextAvailableNode();
       return this.delegatePromises(promises);
@@ -354,7 +315,8 @@ export class NetworkService {
    */
   protected async getNextAvailableNode(): Promise<NodeConnectionPayload> {
     // reads configuration
-    const otherNodes = this.configService.get<NodeConnectionPayload[]>("apiNodes");
+    const otherNodes =
+      this.configService.get<NodeConnectionPayload[]>("apiNodes");
 
     // iterates through all nodes that are listed in the
     // configuration and checks for their healthiness to
@@ -379,8 +341,7 @@ export class NetworkService {
         }
 
         throw new Error("Skipping unhealthy node");
-      }
-      catch (e) {
+      } catch (e) {
         // ignore errors here as they are expected when
         // a node is not in a healthy state or not available
         continue;
@@ -401,12 +362,10 @@ export class NetworkService {
    * {@link NodeConnectionPayload} payload.
    *
    * @access protected
-   * @param   {NodeConnectionPayload}   payload 
+   * @param   {NodeConnectionPayload}   payload
    * @returns {string}
    */
-  protected getNodeUrl(
-    payload: NodeConnectionPayload,
-  ): string {
+  protected getNodeUrl(payload: NodeConnectionPayload): string {
     // when the URL already contains a port, returns URL
     if (payload.url.match(/:[0-9]{2,5}\/?/)) {
       return payload.url.replace(/\/$/, "");
@@ -449,7 +408,7 @@ export class NetworkService {
       this.repositoryFactoryHttp.createTransactionRepository();
     this.blockRepository = this.repositoryFactoryHttp.createBlockRepository();
     this.chainRepository = this.repositoryFactoryHttp.createChainRepository();
-    this.nodeRepository  = this.repositoryFactoryHttp.createNodeRepository();
+    this.nodeRepository = this.repositoryFactoryHttp.createNodeRepository();
 
     return this;
   }

@@ -55,20 +55,10 @@ export class AuthChallenge extends Transferable<AuthChallengeDTO> {
    * may be referred to as the *time of consumption* of a token.
    *
    * @access public
-   * @var {Date}
+   * @var {number}
    */
   @Prop({ required: true, index: true })
-  public expiresAt: Date;
-
-  /**
-   * The timestamp at which this authentication token was used, this
-   * may be referred to as the *time of consumption* of a token.
-   *
-   * @access public
-   * @var {Date}
-   */
-  @Prop({ required: true, index: true })
-  public usedAt: Date;
+  public usedAt: number;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -94,14 +84,14 @@ export class AuthChallenge extends Transferable<AuthChallengeDTO> {
 
   /**
    * This method implements a specialized query format to query items
-   * individually, as documents, in the collection: `authTokens`.
+   * individually, as documents, in the collection: `authChallenges`.
    *
    * @access public
-   * @returns {Record<string, any>}    The individual document data that is used in a query.
+   * @returns {Record<string, unknown>}    The individual document data that is used in a query.
    */
-  public get toQuery(): Record<string, any> {
+  public get toQuery(): Record<string, unknown> {
     return {
-      authCode: this.challenge,
+      challenge: this.challenge,
     };
   }
 }
@@ -110,7 +100,7 @@ export class AuthChallenge extends Transferable<AuthChallengeDTO> {
  * @type AuthChallengeDocument
  * @description This type is used to interface entities of the
  * `authChallenges` collection with *mongoose* and permits to
- * instanciate objects representing these entities.
+ * create objects representing these entities.
  * <br /><br />
  * e.g. alongside {@link AuthChallengeSchema}, we also define
  * `AuthChallengeDocument` which is a mixin that comprises of
@@ -140,7 +130,7 @@ export type AuthChallengeDocument = AuthChallenge & Documentable;
  *     public constructor(
  *       @InjectModel(AuthChallenge.name) private readonly model: AuthChallengeModel
  *     )
- * 
+ *
  *     public addEntry(data: Record<string, any>) {
  *       return this.model.create(data);
  *     }
@@ -188,6 +178,6 @@ export class AuthChallengeQuery extends Queryable<AuthChallengeDocument> {
 export const AuthChallengeSchema = SchemaFactory.createForClass(AuthChallenge);
 
 // This call to **loadClass** on the schema object enables instance
-// methods on the {@link AuthChallenge} class to be called when the model gets
-// instanciated by `mongoose` directly, e.g. as the result of a query.
+// methods on the {@link AuthChallenge} class to be called when the model
+// is created by `mongoose` directly, e.g. as the result of a query.
 AuthChallengeSchema.loadClass(AuthChallenge, true);

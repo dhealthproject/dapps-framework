@@ -16,6 +16,7 @@ import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
 import { TransactionDocument, TransactionModel, TransactionQuery } from "../../../../src/discovery/models/TransactionSchema";
+import { PaginatedResultDTO } from "@/common/models/PaginatedResultDTO";
 
 describe("discovery/TransactionsService", () => {
   let service: TransactionsService;
@@ -50,14 +51,14 @@ describe("discovery/TransactionsService", () => {
   describe("find() -->", () => {
     it("should use QueryService.find() method with correct query", async () => {
       // prepare
-      const expectedResult = {
-        data: [{} as TransactionDocument],
-        pagination: {
+      const expectedResult = new PaginatedResultDTO(
+        [{} as TransactionDocument],
+        {
           pageNumber: 1,
           pageSize: 20,
           total: 1,
         },
-      };
+      );
       const findMock = jest
         .spyOn(queriesService, "find")
         .mockResolvedValue(expectedResult);

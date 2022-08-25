@@ -13,7 +13,12 @@ import { InjectModel } from "@nestjs/mongoose";
 
 // internal dependencies
 import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
-import { Transaction, TransactionDocument, TransactionModel, TransactionQuery } from "../models/TransactionSchema";
+import {
+  Transaction,
+  TransactionDocument,
+  TransactionModel,
+  TransactionQuery,
+} from "../models/TransactionSchema";
 import { QueryService } from "../../common/services/QueryService";
 
 /**
@@ -33,7 +38,10 @@ export class TransactionsService {
    */
   constructor(
     @InjectModel(Transaction.name) private readonly model: TransactionModel,
-    private readonly queriesService: QueryService<TransactionDocument, TransactionModel>,
+    private readonly queriesService: QueryService<
+      TransactionDocument,
+      TransactionModel
+    >,
   ) {}
 
   /**
@@ -44,9 +52,9 @@ export class TransactionsService {
    * to execute. It is preferred to use pro-active statistics with
    * collections that contain one document with a counter.
    *
-   * @param   {TransactionQuery}  query 
+   * @param   {TransactionQuery}  query
    * @returns {Promise<number>}   The number of matching transactions.
-   */ 
+   */
   async count(query: TransactionQuery): Promise<number> {
     return await this.queriesService.count(query, this.model);
   }
@@ -82,7 +90,9 @@ export class TransactionsService {
    * @param   {TransactionQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @returns {Promise<PaginatedResultDTO<TransactionDocument>>}
    */
-  async find(query: TransactionQuery): Promise<PaginatedResultDTO<TransactionDocument>> {
+  async find(
+    query: TransactionQuery,
+  ): Promise<PaginatedResultDTO<TransactionDocument>> {
     return await this.queriesService.find(query, this.model);
   }
 
@@ -90,7 +100,7 @@ export class TransactionsService {
    * Find one `Transactions` document in the database and use
    * a query based on the {@link TransactionQuery} class.
    * <br /><br />
-   * 
+   *
    * @access public
    * @async
    * @param   {TransactionQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
@@ -132,12 +142,7 @@ export class TransactionsService {
    * @param   {TransactionModel[]} documents
    * @returns {Promise<number>}
    */
-  async updateBatch(
-    documents: TransactionModel[],
-  ): Promise<number> {
-    return await this.queriesService.updateBatch(
-      this.model,
-      documents,
-    );
+  async updateBatch(documents: TransactionModel[]): Promise<number> {
+    return await this.queriesService.updateBatch(this.model, documents);
   }
 }

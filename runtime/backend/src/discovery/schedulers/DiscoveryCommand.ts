@@ -108,7 +108,7 @@ export abstract class DiscoveryCommand extends BaseCommand {
 
   /**
    * This method must return a *command signature* that
-   * contains hints on the command name and its required 
+   * contains hints on the command name and its required
    * and optional arguments.
    * <br /><br />
    * e.g. "command <argument> [--option value]"
@@ -136,9 +136,7 @@ export abstract class DiscoveryCommand extends BaseCommand {
    */
   protected parseSource(sourceOption: string): Address {
     // uses accounts service to parse source
-    return AccountsService.createPublicAccount(
-      sourceOption,
-    ).address;
+    return AccountsService.createAddress(sourceOption);
   }
 
   /**
@@ -156,7 +154,6 @@ export abstract class DiscoveryCommand extends BaseCommand {
   protected async runWithOptions(
     options: DiscoveryCommandOptions,
   ): Promise<void> {
-
     // explicitely parsing here because of compatibility with
     // either of public keys and addresses in string format
     if (options.source && options.source.length) {

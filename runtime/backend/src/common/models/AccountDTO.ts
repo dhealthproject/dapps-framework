@@ -44,7 +44,8 @@ export class AccountDTO {
    */
   @ApiProperty({
     example: 1,
-    description: "The total number of transactions discovered for this account on dHealth Network",
+    description:
+      "The total number of transactions discovered for this account on dHealth Network",
   })
   public transactionsCount?: number;
 
@@ -57,7 +58,8 @@ export class AccountDTO {
    */
   @ApiProperty({
     example: "2022-08-16T22:24:00.216Z",
-    description: "The time at which this account first interacted with this dApp on dHealth Network",
+    description:
+      "The time at which this account first interacted with this dApp on dHealth Network",
   })
   public firstTransactionAt?: Date;
 
@@ -72,7 +74,8 @@ export class AccountDTO {
    */
   @ApiProperty({
     example: 123456,
-    description: "The height of the block that included the transaction with which this account first interacted with this dApp on dHealth Network",
+    description:
+      "The height of the block that included the transaction with which this account first interacted with this dApp on dHealth Network",
   })
   public firstTransactionAtBlock?: number;
 
@@ -87,8 +90,10 @@ export class AccountDTO {
    * @var {string}
    */
   @ApiProperty({
-    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-    description: "The JWT refresh token that can be attached in the **bearer authorization header** of HTTP requests to `/auth/token` to indicate that a user's access token must be refreshed.",
+    example:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+    description:
+      "The JWT refresh token that can be attached in the **bearer authorization header** of HTTP requests to `/auth/token` to indicate that a user's access token must be refreshed.",
   })
   public refreshToken?: string;
 }

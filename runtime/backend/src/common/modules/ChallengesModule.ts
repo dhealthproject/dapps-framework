@@ -13,28 +13,30 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import { QueryModule } from "../../common/modules/QueryModule";
-import { TransactionsService } from "../services/TransactionsService";
-import { TransactionsController } from "../routes/TransactionsController";
-import { Transaction, TransactionSchema } from "../models/TransactionSchema";
+import { ChallengesService } from "../services/ChallengesService";
+import {
+  AuthChallenge,
+  AuthChallengeSchema,
+} from "../models/AuthChallengeSchema";
 
 /**
- * @class TransactionsModule
+ * @label COMMON
+ * @class ChallengesModule
  * @description The main definition for the Accounts module.
  *
- * @since v0.1.0
+ * @since v0.3.0
  */
 @Module({
-  controllers: [TransactionsController],
-  providers: [TransactionsService],
+  providers: [ChallengesService],
   imports: [
     MongooseModule.forFeature([
       {
-        name: Transaction.name,
-        schema: TransactionSchema,
+        name: AuthChallenge.name,
+        schema: AuthChallengeSchema,
       },
     ]),
     QueryModule,
   ],
-  exports: [TransactionsService],
+  exports: [ChallengesService],
 })
-export class TransactionsModule {}
+export class ChallengesModule {}

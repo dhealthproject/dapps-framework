@@ -13,6 +13,7 @@ import { DynamicModule, Logger, Module } from "@nestjs/common";
 // internal dependencies
 import { AuthModule } from "./common/modules/AuthModule";
 import { AccountsModule } from "./common/modules/AccountsModule";
+import { ChallengesModule } from "./common/modules/ChallengesModule";
 import { AppController } from "./AppController";
 import { AppService } from "./AppService";
 import { ScopeFactory } from "./common/ScopeFactory";
@@ -24,14 +25,17 @@ import dappConfigLoader from "../config/dapp";
 /**
  * @class AppModule
  * @description The main module definition for the app.
+ * <br /><br />
+ * By default, the app automatically injects modules
+ * such as {@link AuthModule:COMMON}, {@link AccountsModule:COMMON}
+ * and {@link ChallengesModule:COMMON} as these are
+ * necessary to handle common dApp use cases such as
+ * for example log-in operations.
  *
  * @since v0.1.0
  */
 @Module({
-  imports: [
-    AuthModule,
-    AccountsModule,
-  ]
+  imports: [AuthModule, AccountsModule, ChallengesModule],
 })
 export class AppModule {
   /**

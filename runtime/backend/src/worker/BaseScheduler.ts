@@ -18,9 +18,7 @@ import { BaseCommand } from "./BaseCommand";
  *
  * @since v0.2.0
  */
-export abstract class BaseScheduler
-  extends BaseCommand
-{
+export abstract class BaseScheduler extends BaseCommand {
   /**
    * This method must implement the *scheduler* logic of
    * the underlying command. Additionally, the method

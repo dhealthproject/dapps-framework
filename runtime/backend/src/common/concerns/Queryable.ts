@@ -42,7 +42,8 @@ export interface QueryParameters extends Pageable, Sortable {
  * @since v0.2.0
  */
 export class Queryable<TDocument extends Documentable>
-  implements QueryParameters {
+  implements QueryParameters
+{
   /**
    * The document entry used as a filter. This property can be used
    * to query documents by equality of fields.
@@ -137,7 +138,7 @@ export class Queryable<TDocument extends Documentable>
    * <br /><br />
    * @example Setting a `filterQuery`
    * ```js
-   *  filterQuery: { 
+   *  filterQuery: {
    *    $ne: { field: value },
    *    $gte: { otherField: otherValue }
    *  } as FilterQuery<Document>
@@ -165,11 +166,11 @@ export class Queryable<TDocument extends Documentable>
    */
   public constructor(
     document?: TDocument,
-    {pageNumber, pageSize, sort, order}: QueryParameters = {
+    { pageNumber, pageSize, sort, order }: QueryParameters = {
       pageNumber: 1,
       pageSize: 20,
       sort: "_id",
-      order: "asc"
+      order: "asc",
     },
     filterQuery?: FilterQuery<TDocument>,
   ) {
@@ -200,7 +201,7 @@ export class Queryable<TDocument extends Documentable>
    * This method implements the setter logic for the current
    * queryable document.
    *
-   * @param   {TDocument}   document 
+   * @param   {TDocument}   document
    * @returns {Queryable<TDocument>}
    */
   public setDocument(document: TDocument): Queryable<TDocument> {
@@ -215,9 +216,9 @@ export class Queryable<TDocument extends Documentable>
    * *primary key(s)* of the entity and values are those of the
    * document represented by the current instance.
    *
-   * @returns {Record<string, any>}    The individual document data that is used in a query.
+   * @returns {Record<string, unknown>}    The individual document data that is used in a query.
    */
-  public forDocument(): Record<string, any> {
+  public forDocument(): Record<string, unknown> {
     return this.document.toQuery;
   }
 }

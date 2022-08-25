@@ -16,9 +16,12 @@ import { MongooseModule } from "@nestjs/mongoose";
 // internal dependencies
 import { NetworkModule } from "../modules/NetworkModule";
 import { AuthService } from "../services/AuthService";
-import { AuthStrategy } from '../traits/AuthStrategy';
+import { AuthStrategy } from "../traits/AuthStrategy";
 import { AuthController } from "../routes/AuthController";
-import { AuthChallenge, AuthChallengeSchema } from "../models/AuthChallengeSchema";
+import {
+  AuthChallenge,
+  AuthChallengeSchema,
+} from "../models/AuthChallengeSchema";
 import { Account, AccountSchema } from "../models/AccountSchema";
 
 /**
@@ -36,7 +39,7 @@ import { Account, AccountSchema } from "../models/AccountSchema";
       // defines the secret token for *verifying* JwT tokens
       secret: process.env.AUTH_TOKEN_SECRET,
       // signature expires after 60 seconds of validity
-      signOptions: { expiresIn: "60s"},
+      signOptions: { expiresIn: "60s" },
     }),
     MongooseModule.forFeature([
       { name: AuthChallenge.name, schema: AuthChallengeSchema },

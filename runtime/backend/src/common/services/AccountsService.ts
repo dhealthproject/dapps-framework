@@ -15,8 +15,12 @@ import { Address, NetworkType, PublicAccount } from "@dhealth/sdk";
 // internal dependencies
 import { PaginatedResultDTO } from "../models/PaginatedResultDTO";
 import { QueryService } from "../services/QueryService";
-import { Account, AccountDocument, AccountModel, AccountQuery } from "../models/AccountSchema";
-import { NetworkConfig } from "../models/NetworkConfig";
+import {
+  Account,
+  AccountDocument,
+  AccountModel,
+  AccountQuery,
+} from "../models/AccountSchema";
 
 // configuration resources
 import dappConfigLoader from "../../../config/dapp";
@@ -24,10 +28,9 @@ import networkConfigLoader from "../../../config/network";
 
 /**
  * @class AccountsService
- * @description The main service of the Accounts module.
+ * @description The main service to handle documents in the
+ * `accounts` collection.
  *
- * @todo The updateBatch method should accept a **query** not a list of DTOs.
- * @todo This class should not handle *DTOs* as it does not **transfer** data, it should handle only **models** and queries (repository pattern).
  * @since v0.1.0
  */
 @Injectable()
@@ -41,7 +44,10 @@ export class AccountsService {
    */
   constructor(
     @InjectModel(Account.name) private readonly model: AccountModel,
-    private readonly queriesService: QueryService<AccountDocument, AccountModel>,
+    private readonly queriesService: QueryService<
+      AccountDocument,
+      AccountModel
+    >,
   ) {}
 
   /**
@@ -52,9 +58,9 @@ export class AccountsService {
    * to execute. It is preferred to use pro-active statistics with
    * collections that contain one document with a counter.
    *
-   * @param   {AccountQuery}  query 
+   * @param   {AccountQuery}  query
    * @returns {Promise<number>}   The number of matching accounts.
-   */ 
+   */
   async count(query: AccountQuery): Promise<number> {
     return await this.queriesService.count(query, this.model);
   }
@@ -89,7 +95,9 @@ export class AccountsService {
    * @param   {AccountQuery} query
    * @returns {Promise<PaginatedResultDTO<AccountDocument>>}
    */
-  public async find(query: AccountQuery): Promise<PaginatedResultDTO<AccountDocument>> {
+  public async find(
+    query: AccountQuery,
+  ): Promise<PaginatedResultDTO<AccountDocument>> {
     return await this.queriesService.find(query, this.model);
   }
 
@@ -97,7 +105,7 @@ export class AccountsService {
    * Find one `AccountDocument` instance in the database and use
    * a query based on the {@link Queryable} class.
    * <br /><br />
-   * 
+   *
    * @access public
    * @async
    * @param   {AccountQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
@@ -138,15 +146,12 @@ export class AccountsService {
    * @returns {Promise<number>}
    */
   public async updateBatch(accountDocuments: AccountModel[]): Promise<number> {
-    return await this.queriesService.updateBatch(
-      this.model,
-      accountDocuments,
-    );
+    return await this.queriesService.updateBatch(this.model, accountDocuments);
   }
 
-/**
- * Static API
- */
+  /**
+   * Static API
+   */
   /**
    * This helper method serves as a *parser* for account
    * public keys and addresses.
@@ -159,9 +164,7 @@ export class AccountsService {
    * @param     {string}  publicKeyOrAddress     Must contain one of an account public key or an account address.
    * @returns   {Address}   A parsed dHealth Account Address
    */
-  public static createAddress(
-    publicKeyOrAddress: string,
-  ): Address {
+  public static createAddress(publicKeyOrAddress: string): Address {
     // extracts the network type from configuration
     const { networkIdentifier } = networkConfigLoader().network;
     const networkType = networkIdentifier as NetworkType;
@@ -179,16 +182,14 @@ export class AccountsService {
     }
 
     // otherwise *assume* we have an address (and remove hyphens/spaces if any)
-    const sourceAddress: string = publicKeyOrAddress.replace(/[\- ]/g, '');
+    const sourceAddress: string = publicKeyOrAddress.replace(/[\- ]/g, "");
 
     // source input is **not** a valid address, return fallback
     if (sourceAddress.length !== 39) {
-      return AccountsService.createAddress(
-        dappConfigLoader().dappPublicKey,
-      );
+      return AccountsService.createAddress(dappConfigLoader().dappPublicKey);
     }
 
-    // source input **is a valid address format** 
+    // source input **is a valid address format**
     return Address.createFromRawAddress(sourceAddress);
   }
 }
