@@ -78,6 +78,9 @@ export const webComponentWrapper = (
       function (this: typeof Component | AsyncComponent) {
         // sync default props values to wrapper on created
         camelizedPropsList.forEach((key: string) => {
+          if (!this.$root.props) {
+            this.$root.props = {};
+          }
           this.$root.props[key] = this[key];
         });
       }
