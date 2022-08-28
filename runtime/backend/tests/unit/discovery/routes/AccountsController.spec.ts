@@ -26,10 +26,6 @@ describe("discovery/AccountsController", () => {
   let mockDate: Date;
 
   beforeEach(async () => {
-    mockDate = new Date(1212, 1, 1);
-    jest.useFakeTimers("modern");
-    jest.setSystemTime(mockDate);
-
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AccountsController],
       providers: [
@@ -52,21 +48,30 @@ describe("discovery/AccountsController", () => {
 
   describe("find() -->", () => {
     it("should call correct method and respond with DTO", async () => {
-      const expectedResult = new PaginatedResultDTO<AccountDocument>();
-      expectedResult.data = [{} as AccountDocument];
-      expectedResult.pagination = {
-        pageNumber: 1,
-        pageSize: 20,
-        total: 1,
-      };
-      const findCall = jest
+      // prepare
+      const expectToFetchDocuments = new PaginatedResultDTO<AccountDocument>(
+        [{ address: "fakeAddress", toDTO: { address: "fakeAddress" } as AccountDTO } as unknown as AccountDocument], 
+        { pageNumber: 1, pageSize: 20, total: 1 },
+      );
+      const expectToMapToDTOs = new PaginatedResultDTO<AccountDTO>(
+        [{ address: "fakeAddress" } as AccountDTO], 
+        { pageNumber: 1, pageSize: 20, total: 1 },
+      );
+      const serviceFindMock = jest
         .spyOn(accountsService, "find")
-        .mockResolvedValue(expectedResult);
+        .mockResolvedValue(expectToFetchDocuments);
 
-      const mappedToDTOResult = { ...expectedResult, data: [{} as AccountDTO] };
-      const result = await controller.find(new AccountQuery());
-      expect(findCall).toBeCalledWith(new AccountQuery());
-      expect(result).toEqual(mappedToDTOResult);
+      // act
+      const result = await controller.find(new AccountQuery(
+        { address: "fakeAddress" } as AccountDocument,
+      ));
+
+      // assert
+      expect(serviceFindMock).toBeCalledTimes(1);
+      expect(serviceFindMock).toBeCalledWith(new AccountQuery(
+        { address: "fakeAddress" } as AccountDocument,
+      ));
+      expect(result).toEqual(expectToMapToDTOs);
     });
   });
 });

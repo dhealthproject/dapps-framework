@@ -10,6 +10,9 @@
 // external dependencies
 import { ApiProperty } from "@nestjs/swagger";
 
+// internal dependencies
+import { BaseDTO } from "../../common/models/BaseDTO";
+
 /**
  * @class TransactionDTO
  * @description A DTO class that consists of the *transferable* properties
@@ -22,7 +25,7 @@ import { ApiProperty } from "@nestjs/swagger";
  * @todo Use the `@dhealth/contracts` abstraction and include in TransactionDTO if necessary.
  * @since v0.2.0
  */
-export class TransactionDTO {
+export class TransactionDTO extends BaseDTO {
   /**
    * This is the signer's address. The signer corresponds to the
    * issuer of said transaction ("owner"). It is not to be confused

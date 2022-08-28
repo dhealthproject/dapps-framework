@@ -10,6 +10,9 @@
 // external dependencies
 import { ApiProperty } from "@nestjs/swagger";
 
+// internal dependencies
+import { BaseDTO } from "./BaseDTO";
+
 /**
  * @class AccountDTO
  * @description A DTO class that consists of the *transferable* properties
@@ -22,7 +25,7 @@ import { ApiProperty } from "@nestjs/swagger";
  * @todo The transaction timestamp in `firstTransactionAt` should probably be a **number** to avoid timezone issues.
  * @since v0.1.0
  */
-export class AccountDTO {
+export class AccountDTO extends BaseDTO {
   /**
    * The Address of this account on dHealth Network.
    *

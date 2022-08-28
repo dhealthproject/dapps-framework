@@ -168,6 +168,32 @@ export class Account extends Transferable<AccountDTO> {
       address: this.address,
     };
   }
+
+  /**
+   * This method implements a specialized transport format to restrict
+   * the items that are ever returned in HTTP responses (DTOs).
+   *
+   * @access public
+   * @returns {AccountDTO}    The individual document data that is used transport it.
+   */
+  public get toDTO(): AccountDTO {
+    const dto = new AccountDTO();
+    dto.address = this.address;
+
+    if (this.transactionsCount !== undefined) {
+      dto.transactionsCount = this.transactionsCount;
+    }
+
+    if (this.firstTransactionAt !== undefined) {
+      dto.firstTransactionAt = this.firstTransactionAt;
+    }
+
+    if (this.firstTransactionAtBlock !== undefined) {
+      dto.firstTransactionAtBlock = this.firstTransactionAtBlock;
+    }
+
+    return dto;
+  }
 }
 
 /**

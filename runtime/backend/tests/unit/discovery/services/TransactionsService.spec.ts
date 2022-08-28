@@ -16,7 +16,7 @@ import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
 import { TransactionDocument, TransactionModel, TransactionQuery } from "../../../../src/discovery/models/TransactionSchema";
-import { PaginatedResultDTO } from "@/common/models/PaginatedResultDTO";
+import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 
 describe("discovery/TransactionsService", () => {
   let service: TransactionsService;

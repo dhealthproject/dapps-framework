@@ -244,6 +244,26 @@ export class Transaction extends Transferable<TransactionDTO> {
   }
 
   /**
+   * This method implements a specialized transport format to restrict
+   * the items that are ever returned in HTTP responses (DTOs).
+   *
+   * @access public
+   * @returns {TransactionDTO}    The individual document data that is used transport it.
+   */
+  public get toDTO(): TransactionDTO {
+    const dto = new TransactionDTO();
+    dto.signerAddress = this.signerAddress;
+    dto.recipientAddress = this.recipientAddress;
+    dto.transactionHash = this.transactionHash;
+
+    if (this.creationBlock !== undefined) {
+      dto.creationBlock = this.creationBlock;
+    }
+
+    return dto;
+  }
+
+  /**
    *
    */
   public toSDK(): SdkTransaction {

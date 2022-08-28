@@ -94,6 +94,19 @@ export class AuthChallenge extends Transferable<AuthChallengeDTO> {
       challenge: this.challenge,
     };
   }
+
+  /**
+   * This method implements a specialized transport format to restrict
+   * the items that are ever returned in HTTP responses (DTOs).
+   *
+   * @access public
+   * @returns {AuthChallengeDTO}    The individual document data that is used transport it.
+   */
+  public get toDTO(): AuthChallengeDTO {
+    const dto = new AuthChallengeDTO();
+    dto.challenge = this.challenge;
+    return dto;
+  }
 }
 
 /**

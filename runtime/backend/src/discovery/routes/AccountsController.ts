@@ -99,7 +99,8 @@ export class AccountsController {
     @Query() query: AccountQuery,
   ): Promise<PaginatedResultDTO<AccountDTO>> {
     // reads from database
-    const data = await this.accountsService.find(query);
+    const data: PaginatedResultDTO<AccountDocument> =
+      await this.accountsService.find(query);
 
     // wraps for transport
     return PaginatedResultDTO.createForTransport<AccountDTO, AccountDocument>(

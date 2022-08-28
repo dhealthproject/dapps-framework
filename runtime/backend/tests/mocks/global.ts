@@ -54,6 +54,7 @@ export const createTransaction = (
   recipientAddress: { plain: jest.fn()},
   type,
   serialize: jest.fn().mockReturnValue(mockUnsignedTransferTransaction),
+  message: { payload: "fakePayload" },
 });
 
 // Mocks a **model** class for nestjs internal

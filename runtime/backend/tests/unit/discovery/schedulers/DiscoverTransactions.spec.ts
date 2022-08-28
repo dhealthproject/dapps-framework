@@ -212,9 +212,9 @@ describe("discovery/DiscoverTransactions", () => {
       (service as any).logger = logger;
       (service as any).discoverySource = { plain: jest.fn() };
       (service as any).networkService = {
-        getTransactionRepository: () => ({
+        transactionRepository: {
           search: emptyPageSearcherMock
-        }),
+        },
         delegatePromises: jest.fn().mockReturnValue([]),
       };
 
@@ -352,9 +352,9 @@ describe("discovery/DiscoverTransactions", () => {
   
         // overwrites specific mocks
         (service as any).networkService = {
-          getTransactionRepository: () => ({
+          transactionRepository: {
             search: nonemptyPageSearcherMock
-          }),
+          },
           delegatePromises: jest.fn().mockReturnValue([{
             data: expectedTransactions,
             isLastPage: false,

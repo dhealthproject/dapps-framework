@@ -94,6 +94,20 @@ export class State extends Transferable<StateDTO> {
       name: this.name,
     };
   }
+
+  /**
+   * This method implements a specialized transport format to restrict
+   * the items that are ever returned in HTTP responses (DTOs).
+   *
+   * @access public
+   * @returns {StateDTO}    The individual document data that is used transport it.
+   */
+  public get toDTO(): StateDTO {
+    const dto = new StateDTO();
+    dto.name = this.name;
+    dto.data = this.data;
+    return dto;
+  }
 }
 
 /**

@@ -13,8 +13,8 @@ import { Model, FilterQuery } from "mongoose";
 
 // internal dependencies
 import { Documentable } from "../concerns/Documentable";
-import { Queryable } from "src/common/concerns/Queryable";
-import { PaginatedResultDTO } from "src/common/models/PaginatedResultDTO";
+import { Queryable } from "../concerns/Queryable";
+import { PaginatedResultDTO } from "../models/PaginatedResultDTO";
 
 /// block to-refactor
 // the following types permit a "no-implicit-any" ruling on the repository

@@ -10,6 +10,9 @@
 // external dependencies
 import { ApiProperty } from "@nestjs/swagger";
 
+// internal dependencies
+import { BaseDTO } from "./BaseDTO";
+
 /**
  * @class AuthChallengeDTO
  * @description A DTO class that consists of an authentication challenge.
@@ -25,7 +28,7 @@ import { ApiProperty } from "@nestjs/swagger";
  *
  * @since v0.3.0
  */
-export class AuthChallengeDTO {
+export class AuthChallengeDTO extends BaseDTO {
   /**
    * The authentication challenge that can be used to authenticate
    * a user to the dApp. This challenge must be included in a transaction

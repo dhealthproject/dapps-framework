@@ -10,6 +10,9 @@
 // external dependencies
 import { ApiProperty } from "@nestjs/swagger";
 
+// internal dependencies
+import { BaseDTO } from "./BaseDTO";
+
 /**
  * @class AccessTokenDTO
  * @description A DTO class that consists of an JWT access token
@@ -21,7 +24,7 @@ import { ApiProperty } from "@nestjs/swagger";
  *
  * @since v0.3.0
  */
-export class AccessTokenDTO {
+export class AccessTokenDTO extends BaseDTO {
   /**
    * The JWT access token that can be attached in the **bearer
    * authorization header** of HTTP requests to indicate users

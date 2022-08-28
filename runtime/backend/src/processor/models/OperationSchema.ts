@@ -153,6 +153,22 @@ export class Operation extends Transferable<OperationDTO> {
 
     return query;
   }
+
+  /**
+   * This method implements a specialized transport format to restrict
+   * the items that are ever returned in HTTP responses (DTOs).
+   *
+   * @access public
+   * @returns {OperationDTO}    The individual document data that is used transport it.
+   */
+  public get toDTO(): OperationDTO {
+    const dto = new OperationDTO();
+    dto.userAddress = this.userAddress;
+    dto.transactionHash = this.transactionHash;
+    dto.contractSignature = this.contractSignature;
+    dto.creationBlock = this.creationBlock;
+    return dto;
+  }
 }
 
 /**

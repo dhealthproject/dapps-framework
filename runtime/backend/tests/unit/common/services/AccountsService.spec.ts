@@ -16,7 +16,7 @@ import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
 import { AccountDocument, AccountModel, AccountQuery } from "../../../../src/common/models/AccountSchema";
-import { PaginatedResultDTO } from "@/common/models/PaginatedResultDTO";
+import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 
 describe("discovery/AccountsService", () => {
   let service: AccountsService;

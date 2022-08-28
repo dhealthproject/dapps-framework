@@ -139,9 +139,9 @@ describe("common/QueryService", () => {
       expect(result.data[0]).toBeDefined();
     });
 
-    it("should have correct result when metadata is empty", async () => {
+    it("should have correct result when data is empty", async () => {
       const expectedResult: PaginatedResultDTO<AccountDocument> = new PaginatedResultDTO(
-        [{} as AccountDocument],
+        [],
         {
           pageNumber: 1,
           pageSize: 20,

@@ -10,6 +10,9 @@
 // external dependencies
 import { ApiProperty } from "@nestjs/swagger";
 
+// internal dependencies
+import { BaseDTO } from "../../common/models/BaseDTO";
+
 /**
  * @class OperationDTO
  * @description A DTO class that consists of the *transferable* properties
@@ -21,7 +24,7 @@ import { ApiProperty } from "@nestjs/swagger";
  *
  * @since v0.3.0
  */
-export class OperationDTO {
+export class OperationDTO extends BaseDTO {
   /**
    * This is the user's address. The user corresponds to the
    * account that has *executed* said operation, a.k.a. the

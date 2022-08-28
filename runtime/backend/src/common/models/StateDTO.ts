@@ -12,6 +12,7 @@ import { ApiProperty } from "@nestjs/swagger";
 
 // internal dependencies
 import type { StateData } from "./StateData";
+import { BaseDTO } from "./BaseDTO";
 
 /**
  * @class StateDTO
@@ -24,7 +25,7 @@ import type { StateData } from "./StateData";
  *
  * @since v0.1.0
  */
-export class StateDTO {
+export class StateDTO extends BaseDTO {
   /**
    * Contains the name of this state cache entry. An example name
    * may be `"discovery"`, or `"payout"` which correspond to a

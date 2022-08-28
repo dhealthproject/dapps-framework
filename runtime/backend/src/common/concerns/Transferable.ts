@@ -7,6 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// internal dependencies
+import { BaseDTO } from "../models/BaseDTO";
+
 /**
  * @label COMMON
  * @class Transferable
@@ -22,11 +25,11 @@
  * standardize the retrieval and formatting of DTOs from their
  * origin database documents.
  *
- * @todo Obviously remove the hacky `toDTO()` with some formatting/encoding/validation logic.
+ * @abstract
  * @todo Add usage example, for example as illustrated in {@link StateSchema}.
  * @since v0.2.0
  */
-export class Transferable<TDTOType> {
+export abstract class Transferable<TDTOType extends BaseDTO> {
   /**
    * Returns the data transfer object related to an individual
    * entity and thereby we consider it to be **transferable**.
@@ -37,11 +40,5 @@ export class Transferable<TDTOType> {
    * @access public
    * @returns {TDTOType}
    */
-  public get toDTO(): TDTOType {
-    // magic typescript trickery that returns only a subset
-    // of fields if types are compatible or an empty object
-    // if types are incompatible. There is no protection of
-    // fields done here.
-    return this as any as TDTOType;
-  }
+  public abstract get toDTO(): TDTOType;
 }

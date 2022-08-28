@@ -60,10 +60,10 @@ export class PaginatedResultDTO<TData> {
     data: TDocument[],
     pagination: Pageable & Countable,
   ): PaginatedResultDTO<TTransport> {
-    const result = new PaginatedResultDTO<TTransport>();
-    result.data = data.map((d: TDocument) => d.toDTO);
-    result.pagination = pagination;
-    return result;
+    return new PaginatedResultDTO<TTransport>(
+      data.map((d: TDocument) => d.toDTO),
+      pagination,
+    );
   }
 
   /**
@@ -78,7 +78,24 @@ export class PaginatedResultDTO<TData> {
     },
   ) {
     this.data = data;
-    this.pagination = pagination;
+    this.pagination = pagination ?? {
+      pageNumber: 1,
+      pageSize: 100,
+      total: this.data.length,
+    };
+
+    // sets default values for pagination
+    if (!this.pagination.pageNumber || this.pagination.pageNumber <= 0) {
+      this.pagination.pageNumber = 1;
+    }
+
+    if (!this.pagination.pageSize || this.pagination.pageSize <= 0) {
+      this.pagination.pageSize = 100;
+    }
+
+    if (!this.pagination.total || this.pagination.total <= 0) {
+      this.pagination.total = this.data.length;
+    }
   }
 
   /**
