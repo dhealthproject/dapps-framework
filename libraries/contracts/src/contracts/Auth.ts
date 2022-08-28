@@ -144,11 +144,11 @@ export class Auth extends Contract {
      * the `dappIdentifier` and `challenge`, refer to the above
      * [parameters description](#parameters) for more details.
      *
-     * @access protected
+     * @access public
      * @example `{ dappIdentifier: "my-cool-dapp", challenge: "abcdef12" }`
      * @var {AuthParameters}
      */
-    protected inputs: AuthParameters,
+    public inputs: AuthParameters,
 
     /**
      * Consists of the *version* of this contract. Each contract may
@@ -164,11 +164,11 @@ export class Auth extends Contract {
      * <br /><br />
      * Defaults to `1` to denote the *first* version of a contract.
      *
-     * @access protected
+     * @access public
      * @example `1`
      * @var {number}
      */
-    protected readonly version: number = 1,
+    public readonly version: number = 1,
 
     /**
      * Contains a configuration object that defines fields necessary
@@ -184,11 +184,11 @@ export class Auth extends Contract {
      * <br /><br />
      * Defaults to connection parameters to connect to dHealth Network.
      *
-     * @access protected
+     * @access public
      * @example `{ generationHash: "my-different-network" }`
      * @var {NetworkParameters}
      */
-    protected parameters: NetworkParameters = new dHealthNetwork()
+    public parameters: NetworkParameters = new dHealthNetwork()
   ) {
     super(inputs, version, parameters);
 

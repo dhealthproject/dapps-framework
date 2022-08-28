@@ -123,11 +123,11 @@ export class Referral extends Contract {
      * and `refCode` for the operation, refer to the above [parameters](#parameters)
      * description for more details.
      *
-     * @access protected
+     * @access public
      * @example `{ dappIdentifier: "my-cool-dapp", date: "20220829" }`
      * @var {EarnParameters}
      */
-    protected inputs: ReferralParameters,
+    public inputs: ReferralParameters,
 
     /**
      * Consists of the *version* of this contract. Each contract may
@@ -143,11 +143,11 @@ export class Referral extends Contract {
      * <br /><br />
      * Defaults to `1` to denote the *first* version of a contract.
      *
-     * @access protected
+     * @access public
      * @example `1`
      * @var {number}
      */
-    protected readonly version: number = 1,
+    public readonly version: number = 1,
 
     /**
      * Contains a configuration object that defines fields necessary
@@ -163,11 +163,11 @@ export class Referral extends Contract {
      * <br /><br />
      * Defaults to connection parameters to connect to dHealth Network.
      *
-     * @access protected
+     * @access public
      * @example `{ generationHash: "my-different-network" }`
      * @var {NetworkParameters}
      */
-    protected parameters: NetworkParameters = new dHealthNetwork()
+    public parameters: NetworkParameters = new dHealthNetwork()
   ) {
     super(inputs, version, parameters);
 

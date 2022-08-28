@@ -84,11 +84,11 @@ export abstract class Contract {
      * Defaults to an empty inputs object that contains a dApp identifier
      * of `"unknown-dapp". Make sure to change that.
      *
-     * @access protected
+     * @access public
      * @example `{ dappIdentifier: "my-cool-dapp" }`
      * @var {ContractParameters}
      */
-    protected inputs: ContractParameters = {
+    public inputs: ContractParameters = {
       dappIdentifier: "unknown-dapp",
     } as ContractParameters,
 
@@ -106,11 +106,11 @@ export abstract class Contract {
      * <br /><br />
      * Defaults to `1` to denote the *first* version of a contract.
      *
-     * @access protected
+     * @access public
      * @example `1`
      * @var {number}
      */
-    protected readonly version: number = 1,
+    public readonly version: number = 1,
 
     /**
      * Contains a configuration object that defines fields necessary
@@ -126,11 +126,11 @@ export abstract class Contract {
      * <br /><br />
      * Defaults to connection parameters to connect to dHealth Network.
      *
-     * @access protected
+     * @access public
      * @example `{ generationHash: "my-different-network" }`
      * @var {NetworkParameters}
      */
-    protected parameters: NetworkParameters = new dHealthNetwork()
+    public parameters: NetworkParameters = new dHealthNetwork()
   ) {}
 
   // @todo public validate(Transaction)
