@@ -12,12 +12,12 @@ import { expect } from "chai";
 import { TransferTransaction } from "@dhealth/sdk";
 
 // internal dependencies
-import type { ObjectLiteral } from "@/types/ObjectLiteral";
-import type { NetworkParameters } from "@/types/NetworkParameters";
-import type { TransactionParameters } from "@/types/TransactionParameters";
-import { Earn, EarnParameters } from "@/contracts/Earn";
-import { MissingContractFieldError } from "@/errors/MissingContractFieldError";
-import { dHealthNetwork } from "@/types/dHealthNetwork";
+import type { ObjectLiteral } from "../../src/types/ObjectLiteral";
+import type { NetworkParameters } from "../../src/types/NetworkParameters";
+import type { TransactionParameters } from "../../src/types/TransactionParameters";
+import { Earn, EarnParameters } from "../../src/contracts/Earn";
+import { MissingContractFieldError } from "../../src/errors/MissingContractFieldError";
+import { dHealthNetwork } from "../../src/types/dHealthNetwork";
 
 const mockAccountPublicKey =
   "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE";

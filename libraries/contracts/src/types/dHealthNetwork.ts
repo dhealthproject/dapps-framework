@@ -19,7 +19,7 @@ import {
 } from "@dhealth/sdk";
 
 // internal dependencies
-import { NetworkParameters } from "@/types/NetworkParameters";
+import { NetworkParameters } from "../types/NetworkParameters";
 
 /**
  * @class dHealthNetwork

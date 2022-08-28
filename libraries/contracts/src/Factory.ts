@@ -11,18 +11,18 @@
 import { Transaction } from "@dhealth/sdk";
 
 // internal dependencies
-import type { ObjectLiteral } from "@/types/ObjectLiteral";
-import type { NetworkParameters } from "@/types/NetworkParameters";
-import type { ContractParameters } from "@/types/ContractParameters";
-import { Contract } from "@/Contract";
-import { Auth, AuthParameters } from "@/contracts/Auth";
-import { Earn, EarnParameters } from "@/contracts/Earn";
-import { Referral, ReferralParameters } from "@/contracts/Referral";
-import { Welcome, WelcomeParameters } from "@/contracts/Welcome";
-import { InvalidContractError } from "@/errors/InvalidContractError";
+import type { ObjectLiteral } from "./types/ObjectLiteral";
+import type { NetworkParameters } from "./types/NetworkParameters";
+import type { ContractParameters } from "./types/ContractParameters";
+import { Contract } from "./Contract";
+import { Auth, AuthParameters } from "./contracts/Auth";
+import { Earn, EarnParameters } from "./contracts/Earn";
+import { Referral, ReferralParameters } from "./contracts/Referral";
+import { Welcome, WelcomeParameters } from "./contracts/Welcome";
+import { InvalidContractError } from "./errors/InvalidContractError";
 import { UnknownContractError } from "./errors/UnknownContractError";
-import { Assertions } from "@/types/Assertions";
-import { dHealthNetwork } from "@/types/dHealthNetwork";
+import { Assertions } from "./types/Assertions";
+import { dHealthNetwork } from "./types/dHealthNetwork";
 
 /**
  * @class Factory

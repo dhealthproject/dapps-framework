@@ -12,13 +12,13 @@ import { expect } from "chai";
 import { EmptyMessage, PlainMessage, TransferTransaction } from "@dhealth/sdk";
 
 // internal dependencies
-import type { NetworkParameters } from "@/types/NetworkParameters";
-import { Contract } from "@/Contract";
-import { dHealthNetwork } from "@/types/dHealthNetwork";
-import { Factory } from "@/Factory";
-import { InvalidContractError } from "@/errors/InvalidContractError";
-import { MissingContractFieldError } from "@/errors/MissingContractFieldError";
-import { UnknownContractError } from "@/errors/UnknownContractError";
+import type { NetworkParameters } from "../src/types/NetworkParameters";
+import { Contract } from "../src/Contract";
+import { dHealthNetwork } from "../src/types/dHealthNetwork";
+import { Factory } from "../src/Factory";
+import { InvalidContractError } from "../src/errors/InvalidContractError";
+import { MissingContractFieldError } from "../src/errors/MissingContractFieldError";
+import { UnknownContractError } from "../src/errors/UnknownContractError";
 
 const mockAccountPublicKey =
   "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE";

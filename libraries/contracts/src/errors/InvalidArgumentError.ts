@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
-import { RuntimeError } from "@/errors/RuntimeError";
+import { RuntimeError } from "./RuntimeError";
 
 /**
  * @class InvalidArgumentError

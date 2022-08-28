@@ -13,7 +13,7 @@ import { ChronoUnit } from "@js-joda/core";
 import { Deadline, NetworkType } from "@dhealth/sdk";
 
 // internal dependencies
-import { dHealthNetwork } from "@/types/dHealthNetwork";
+import { dHealthNetwork } from "../../src/types/dHealthNetwork";
 
 // dHealth Network connection parameters (as expected)
 const dHealth_networkType = NetworkType.MAIN_NET;

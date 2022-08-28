@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
-import { InvalidArgumentError } from "@/errors/InvalidArgumentError";
+import { InvalidArgumentError } from "./InvalidArgumentError";
 
 /**
  * @class UnknownContractError

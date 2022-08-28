@@ -17,7 +17,7 @@ import {
 } from "@dhealth/sdk";
 
 // internal dependencies
-import { Parameters } from "@/types/Parameters";
+import { Parameters } from "../types/Parameters";
 
 /**
  * @interface NetworkParameters

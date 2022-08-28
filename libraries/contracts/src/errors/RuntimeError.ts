@@ -7,7 +7,6 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-
 /**
  * @class RuntimeError
  * @description This class is used for more transparent error

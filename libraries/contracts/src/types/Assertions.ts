@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
-import { MissingContractFieldError } from "@/errors/MissingContractFieldError";
+import { MissingContractFieldError } from "../errors/MissingContractFieldError";
 
 /**
  * @class Assertions

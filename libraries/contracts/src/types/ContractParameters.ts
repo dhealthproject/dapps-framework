@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
-import { Parameters } from "@/types/Parameters";
+import { Parameters } from "../types/Parameters";
 
 /**
  * @interface ContractParameters

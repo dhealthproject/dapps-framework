@@ -16,12 +16,12 @@ import {
 } from "@dhealth/sdk";
 
 // internal dependencies
-import type { ContractParameters } from "@/types/ContractParameters";
-import type { NetworkParameters } from "@/types/NetworkParameters";
-import type { TransactionParameters } from "@/types/TransactionParameters";
-import type { ObjectLiteral } from "@/types/ObjectLiteral";
-import { InvalidContractError } from "@/errors/InvalidContractError";
-import { dHealthNetwork } from "@/types/dHealthNetwork";
+import type { ContractParameters } from "./types/ContractParameters";
+import type { NetworkParameters } from "./types/NetworkParameters";
+import type { TransactionParameters } from "./types/TransactionParameters";
+import type { ObjectLiteral } from "./types/ObjectLiteral";
+import { InvalidContractError } from "./errors/InvalidContractError";
+import { dHealthNetwork } from "./types/dHealthNetwork";
 
 /**
  * @abstract

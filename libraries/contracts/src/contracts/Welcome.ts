@@ -11,12 +11,12 @@
 import { PlainMessage, TransferTransaction } from "@dhealth/sdk";
 
 // internal dependencies
-import type { ContractParameters } from "@/types/ContractParameters";
-import type { NetworkParameters } from "@/types/NetworkParameters";
-import type { ObjectLiteral } from "@/types/ObjectLiteral";
-import type { TransactionParameters } from "@/types/TransactionParameters";
-import { Contract } from "@/Contract";
-import { dHealthNetwork } from "@/types/dHealthNetwork";
+import type { ContractParameters } from "../types/ContractParameters";
+import type { NetworkParameters } from "../types/NetworkParameters";
+import type { ObjectLiteral } from "../types/ObjectLiteral";
+import type { TransactionParameters } from "../types/TransactionParameters";
+import { Contract } from "../Contract";
+import { dHealthNetwork } from "../types/dHealthNetwork";
 
 /**
  * @interface WelcomeParameters
