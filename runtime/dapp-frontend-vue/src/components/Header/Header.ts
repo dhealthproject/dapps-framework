@@ -18,6 +18,7 @@ import { MetaView } from "@/views/MetaView";
 
 // child components
 import ElevateLogo from "../ElevateLogo/ElevateLogo.vue";
+import HamburgerButton from "../HamburgerButton/HamburgerButton.vue";
 
 // style resource
 import "./Header.scss";
@@ -33,6 +34,7 @@ export interface HeaderLink {
     ElevateLogo,
     InlineSvg,
     DappButton,
+    HamburgerButton,
   },
 })
 export default class Header extends MetaView {
@@ -62,5 +64,21 @@ export default class Header extends MetaView {
 
     // redirect to login
     return this.$router.push({ name: "app.login" });
+  }
+
+  /* Data prop that defines state of mobile menu
+   *
+   * @access protected
+   * @var {showIcons}
+   */
+  isMenuOpen = false;
+
+  /**
+   * Computed that shows if slot is populated
+   *
+   * @access public
+   */
+  get hasBackButton(): boolean {
+    return !!this.$slots["back-button"];
   }
 }
