@@ -85,6 +85,19 @@ export default class Dashboard extends MetaView {
   }
 
   /**
+   * Media queried slider configuration
+   *
+   * @returns {any}
+   */
+  get sliderBreakPoints(): any {
+    return {
+      768: {
+        visibleSlides: 1,
+      },
+    };
+  }
+
+  /**
    * Computed which defines list of carousel items
    *
    * @returns {CarouselItem[]}

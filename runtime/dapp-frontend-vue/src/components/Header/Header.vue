@@ -11,21 +11,89 @@
 -->
 <template>
   <div class="dapp-screen-header flex row items-center container">
+    <transition name="slide">
+      <div
+        v-if="isMenuOpen"
+        class="dapp-screen-header__menu-overlay flex flex-col"
+      >
+        <div class="dapp-screen-header__menu-overlay__actions">
+          <div class="flex items-center">
+            <div class="flex-auto text-left">
+              <ElevateLogo :width="122" theme="dark" />
+            </div>
+            <div class="flex-auto text-right">
+              <HamburgerButton
+                :is-open="isMenuOpen"
+                @menu-toggle="isMenuOpen = $event"
+                class="dapp-screen-header__hamburger"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="dapp-screen-header__menu-overlay__profile-stats">
+          <div class="flex items-center pb-[16px] inner">
+            <div class="pr-[24px]">
+              <img
+                class="w-[64px] h-[64px]"
+                :src="getImageUrl('profile-avatar.png')"
+                alt="User avatar"
+              />
+            </div>
+            <div class="flex flex-col flex-auto text-left">
+              <span class="user-name">User Name</span>
+              <span class="user-balance">User balance: <b>$0.00</b></span>
+            </div>
+          </div>
+        </div>
+        <div class="dapp-screen-header__menu-overlay__nav-links">
+          <ul>
+            <li v-for="(link, index) in links" :key="link.text + index">
+              <img
+                v-if="showIcons"
+                :src="getImageUrl(link.icon)"
+                alt=""
+                class="inline-block mr-4 w-[24px] h-[24px]"
+              />
+              <router-link :to="link.path" v-html="link.text" />
+            </li>
+          </ul>
+        </div>
+        <div class="dapp-screen-header__menu-overlay__footer text-left">
+          <button>
+            Disconnect Wallet
+            <inline-svg
+              :src="getImageUrl('disconnect.svg')"
+              :width="16"
+              :height="16"
+            />
+          </button>
+
+          <div class="legal-credentials">
+            <span class="powered">Powered by </span>
+            <inline-svg :src="getImageUrl('dhealth-logo.svg')" />
+          </div>
+
+          <div class="legal-links">
+            <router-link :to="{}" v-html="'Privacy Policy'" />
+            <router-link
+              :to="{ name: 'legal.terms-of-service' }"
+              v-html="'Terms of Service'"
+            />
+          </div>
+        </div>
+      </div>
+    </transition>
     <div v-if="hasBackButton" class="dapp-screen-header__back-button">
       <slot name="back-button" />
     </div>
-    <div class="logo py-10 font-bold text-2xl lg-max:hidden">
-      <ElevateLogo :width="167" theme="dark" />
-      <!-- <ElevateLogo :width="122" theme="dark" class="lg-max:block" /> -->
-    </div>
     <div class="logo py-10 font-bold text-2xl">
-      <ElevateLogo :width="122" theme="dark" />
+      <ElevateLogo :width="167" theme="dark" />
     </div>
     <nav class="text-right">
       <HamburgerButton
         :is-open="isMenuOpen"
         @menu-toggle="isMenuOpen = $event"
-        class="lg:hidden"
+        class="dapp-screen-header__hamburger"
       />
       <ul class="dapp-screen-header__navigation lg-max:hidden">
         <li

@@ -17,7 +17,11 @@
         <template v-slot:left>
           <Card title="Upcoming Events">
             <template v-slot:content>
-              <EventsCarousel :items="carouselItems" :config="sliderConfig" />
+              <EventsCarousel
+                :items="carouselItems"
+                :config="sliderConfig"
+                :breakpoints="sliderBreakPoints"
+              />
             </template>
           </Card>
           <Card title="Leaderboard">

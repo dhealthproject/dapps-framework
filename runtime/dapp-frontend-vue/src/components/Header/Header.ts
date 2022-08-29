@@ -9,7 +9,7 @@
  */
 
 // external dependencies
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Watch } from "vue-property-decorator";
 import InlineSvg from "vue-inline-svg";
 import { DappButton } from "@dhealth/components";
 
@@ -80,5 +80,15 @@ export default class Header extends MetaView {
    */
   get hasBackButton(): boolean {
     return !!this.$slots["back-button"];
+  }
+
+  @Watch("isMenuOpen")
+  onMenuChanged(newValue: boolean) {
+    const body = document.getElementsByTagName("body")[0];
+    if (newValue) {
+      body.style.overflowY = "hidden";
+    } else {
+      body.style.overflowY = "initial";
+    }
   }
 }

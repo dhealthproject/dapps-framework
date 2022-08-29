@@ -12,6 +12,150 @@
   justify-content: space-between;
   padding: 0 15px;
 
+  .slide-leave-active,
+  .slide-enter-active {
+    transition: 1s;
+  }
+  .slide-enter {
+    transform: translate(100%, 0);
+  }
+  .slide-leave-to {
+    transform: translate(100%, 0);
+  }
+
+  .logo {
+    @media screen and (max-width: 1024px) {
+      svg {
+        width: 122px;
+      }
+    }
+  }
+
+  &__hamburger {
+    display: none;
+
+    @media screen and (max-width: 1024px) {
+      display: inline-block;
+    }
+  }
+
+  &__menu-overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #DEFF58;
+    z-index: 999;
+    padding-top: 44px;
+
+    &__actions {
+      border-bottom: 1px solid #000;
+      padding: 0 24px 18px 18px;
+    }
+
+    &__profile-stats {
+      padding: 41px 24px 0 24px;
+
+      .inner {
+        border-bottom: 1px solid #000;
+      }
+
+      .user-name {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 24px;
+      }
+  
+      .user-balance {
+        font-size: 14px;
+      }
+    }
+
+    &__nav-links {
+      text-align: left;
+      padding: 48px 24px 0 24px;
+      height: 310px;
+      overflow-y: scroll;
+
+      ul {
+        li {
+          display: flex;
+          align-items: center;
+          padding-bottom: 38px;
+
+          &:last-child {
+            padding-bottom: 0;
+          }
+
+          a {
+            font-size: 24px;
+            line-height: 36px;
+            font-weight: 500;
+            color: #000
+          }
+        }
+      }
+    }
+
+    &__footer {
+     margin-top: auto;
+     padding: 0 24px 18px 24px;
+
+     button {
+      color: #09090A;
+      font-size: 14px;
+      padding: 14px 40px;
+      border-radius: 40px;
+      border: 1px solid #09090A;
+      font-weight: 700;
+      background-color: #fff;
+      box-shadow: 3px -2px 0px #09090a;
+
+      svg {
+        display: inline-block;
+        margin-left: 8px;
+        
+        path {
+          fill: #09090A;
+        }
+      }
+     }
+
+     .legal-credentials {
+      padding-top: 17px;
+      display: flex;
+      align-items: center;
+
+      .powered {
+        font-size: 14px;
+        font-weight: 700;
+        color: #625E83;
+      }
+
+      svg {
+        display: inline-block;
+        margin-left: 12px;
+      }
+     }
+
+     .legal-links {
+      a {
+        font-size: 12px;
+        display: inline-block;
+        line-height: 22px;
+        color: #5D64FF;
+        margin-right: 8px;
+        text-decoration: underline;
+      }
+     }
+    }
+
+    // > div {
+    //   padding: 0 24px 0 18px;
+    // }
+  }
+
   &__navigation {
     li {
       a {

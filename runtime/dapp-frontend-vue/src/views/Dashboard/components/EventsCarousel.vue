@@ -14,6 +14,7 @@
   <div class="dapp-events-carousel">
     <vueper-slides
       ref="vueperslides2"
+      :breakpoints="breakpoints"
       :arrows="config.arrows"
       :bullets="config.bullets"
       :visible-slides="config.visibleSlides"

@@ -38,6 +38,7 @@ export interface CarouselConfig {
   itemsHeight: string | number;
   visibleSlides: number;
   gap: number;
+  breakpoints?: any;
 }
 
 @Component({
@@ -66,4 +67,13 @@ export default class EventsCarousel extends MetaView {
    * @var {config}
    */
   @Prop({ default: () => ({}) }) readonly config?: CarouselConfig;
+
+  /**
+   * Prop which defines configuration of carousel breakpoints
+   * defaults to {}
+   *
+   * @access readonly
+   * @var {breakpoints}
+   */
+  @Prop({ default: () => ({}) }) readonly breakpoints?: any;
 }
