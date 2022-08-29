@@ -30,7 +30,10 @@
             </div>
           </div>
         </div>
-        <div class="dapp-screen-header__menu-overlay__profile-stats">
+        <div
+          v-if="isAuthenticated"
+          class="dapp-screen-header__menu-overlay__profile-stats"
+        >
           <div class="flex items-center pb-[16px] inner">
             <div class="pr-[24px]">
               <img

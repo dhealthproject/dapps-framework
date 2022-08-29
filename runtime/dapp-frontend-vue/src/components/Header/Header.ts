@@ -22,6 +22,7 @@ import HamburgerButton from "../HamburgerButton/HamburgerButton.vue";
 
 // style resource
 import "./Header.scss";
+import Cookies from "js-cookie";
 
 export interface HeaderLink {
   path: string;
@@ -80,6 +81,11 @@ export default class Header extends MetaView {
    */
   get hasBackButton(): boolean {
     return !!this.$slots["back-button"];
+  }
+
+  get isAuthenticated(): boolean {
+    const token = Cookies.get("accessToken");
+    return !!token;
   }
 
   @Watch("isMenuOpen")
