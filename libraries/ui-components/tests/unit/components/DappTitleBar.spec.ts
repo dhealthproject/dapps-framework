@@ -9,8 +9,7 @@
  */
 import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
-import DappTitleBar from "@/widgets/DappTitleBar/DappTitleBar.vue";
-import DappTitle from "@/texts/DappTitle/DappTitle.vue";
+import DappTitleBar from "@/headers/DappTitleBar/DappTitleBar.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
@@ -25,18 +24,10 @@ describe("DappTitleBar -->", () => {
   });
 
   it("should have correct props", () => {
-    expect(widget.props().title).to.equals("dHealth Network");
     widget = shallowMount(DappTitleBar as any, {
       ...componentOptions,
-      propsData: { title: "test-title" },
     });
-    expect(widget.props().title).to.equals("test-title");
-  });
-
-  it("should render DappTitle component with correct value", async () => {
-    const dappTitle = widget.findComponent(DappTitle);
-    expect(dappTitle.exists()).is.true;
-    expect(dappTitle.props().text).to.equals("dHealth Network");
+    expect(widget.props().variant).to.equals("primary");
   });
 
   it("should always add dappTitleBar-base CSS class", () => {
@@ -65,5 +56,23 @@ describe("DappTitleBar -->", () => {
         `dappTitleBar-style-${variant}`
       );
     });
+  });
+
+  it("should render slots", () => {
+    // prepare
+    const slots: Record<string, string> = {
+      left: `<div>left-slot-content</div>`,
+      center: `<div>center-slot-content</div>`,
+      right: `<div>right-slot-content</div>`,
+    };
+    // adding "slots" property
+    widget = shallowMount(DappTitleBar as any, {
+      ...componentOptions,
+      slots,
+    });
+    // assert
+    for (const key in slots) {
+      expect(widget.html()).to.includes(`${key}-slot-content`);
+    }
   });
 });

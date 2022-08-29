@@ -1,0 +1,48 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth UI Components
+ * @subpackage  Components
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+.dappTitleBar {
+  &-base {
+    @apply flex items-center justify-center flex-row w-full;
+    @apply h-[70px] sm:h-[88px];
+    @apply py-5 px-6 sm:py-0 sm:px-8;
+    @apply gap-3 sm:gap-[226px];
+    @apply sm:border-b-navy;
+
+    .dappTitleBar-left,
+    .dappTitleBar-center,
+    .dappTitleBar-right {
+      @apply flex-1 h-full w-full;
+    }
+
+    .dappTitleBar-left {
+      @apply flex items-center justify-start;
+    }
+
+    .dappTitleBar-center {
+      @apply flex items-center justify-center;
+    }
+
+    .dappTitleBar-right {
+      @apply flex items-center justify-end;
+    }
+  }
+
+  &-style-primary {
+    @apply bg-white;
+  }
+
+  &-style-secondary {
+    @apply bg-white;
+  }
+
+  &-style-tertiary {
+    @apply bg-white;
+  }
+}
