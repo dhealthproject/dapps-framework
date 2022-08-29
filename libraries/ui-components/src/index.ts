@@ -47,6 +47,8 @@ import {
   DappTitleBar,
   DappDirectionTriangle,
   DappAccountDetails,
+  DappNavigation,
+  DappNavigationItem,
 } from "./components";
 
 // use the web component wrapper to extend components
@@ -123,6 +125,8 @@ const install = (): void => {
   Vue.component("DappTitleBar", DappTitleBar);
   Vue.component("DappDirectionTriangle", DappDirectionTriangle);
   Vue.component("DappAccountDetails", DappAccountDetails);
+  Vue.component("DappNavigation", DappNavigation);
+  Vue.component("DappNavigationItem", DappNavigationItem);
 };
 
 // exporting web components requires adding style
@@ -155,6 +159,8 @@ const allComponents = [
   DappTransferTransaction,
   DappDirectionTriangle,
   DappAccountDetails,
+  DappNavigation,
+  DappNavigationItem,
 ];
 
 // prepare <style> tags
@@ -213,4 +219,6 @@ export {
   DappTitleBar,
   DappDirectionTriangle,
   DappAccountDetails,
+  DappNavigation,
+  DappNavigationItem,
 };

@@ -125,9 +125,11 @@ describe("DappNavigation -->", () => {
     expect(leftSlotElement.exists()).to.be.true;
     const menuItemsSlotElement = dappTitleBar.find(".dappNavigation-menuItems");
     expect(menuItemsSlotElement.exists()).to.be.true;
-    const menuItemsSlotInnerElements = menuItemsSlotElement.findAll(".dappNavigation-menuItem");
+    const menuItemsSlotInnerElements = menuItemsSlotElement.findAll(
+      ".dappNavigation-menuItem"
+    );
     expect(menuItemsSlotInnerElements.length).to.equals(2);
-    const titleSlotElement  = dappTitleBar.find(".dappNavigation-title");
+    const titleSlotElement = dappTitleBar.find(".dappNavigation-title");
     expect(titleSlotElement.exists()).to.be.true;
     const dappTitleElement = titleSlotElement.findComponent(DappTitle);
     expect(dappTitleElement.exists()).to.be.true;
@@ -139,10 +141,16 @@ describe("DappNavigation -->", () => {
     expect(mobileEndSlotElement.attributes().height).to.equals("24");
     expect(mobileEndSlotElement.attributes().viewBox).to.equals("0 0 24 24");
     expect(mobileEndSlotElement.attributes().fill).to.equals("none");
-    expect(mobileEndSlotElement.attributes().xmlns).to.equals("http://www.w3.org/2000/svg");
-    expect(mobileEndSlotElement.attributes().class).to.equals("dappNavigation-end");
+    expect(mobileEndSlotElement.attributes().xmlns).to.equals(
+      "http://www.w3.org/2000/svg"
+    );
+    expect(mobileEndSlotElement.attributes().class).to.equals(
+      "dappNavigation-end"
+    );
     const pathElement = mobileEndSlotElement.find("path");
-    expect(pathElement.attributes().d).to.equals("M16 18V20H5V18H16ZM21 11V13H3V11H21ZM19 4V6H8V4H19Z");
+    expect(pathElement.attributes().d).to.equals(
+      "M16 18V20H5V18H16ZM21 11V13H3V11H21ZM19 4V6H8V4H19Z"
+    );
     expect(pathElement.attributes().fill).to.equals("#1D1843");
   });
 });

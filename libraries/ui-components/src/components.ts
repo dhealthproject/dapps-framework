@@ -45,9 +45,11 @@ import DappMosaicDefinitionTransaction from "./graphics/transactions/DappMosaicD
 import DappMosaicSupplyChangeTransaction from "./graphics/transactions/DappMosaicSupplyChangeTransaction/DappMosaicSupplyChangeTransaction.vue";
 import DappTransferTransaction from "./graphics/transactions/DappTransferTransaction/DappTransferTransaction.vue";
 import DappContractOperation from "./widgets/DappContractOperation/DappContractOperation.vue";
-import DappTitleBar from "./widgets/DappTitleBar/DappTitleBar.vue";
 import DappDirectionTriangle from "./graphics/DappDirectionTriangle/DappDirectionTriangle.vue";
 import DappAccountDetails from "./graphics/DappAccountDetails/DappAccountDetails.vue";
+import DappTitleBar from "./headers/DappTitleBar/DappTitleBar.vue";
+import DappNavigation from "./headers/DappNavigation/DappNavigation.vue";
+import DappNavigationItem from "./graphics/DappNavigationItem/DappNavigationItem.vue";
 
 // exports components as named-exports
 export {
@@ -82,4 +84,6 @@ export {
   DappTitleBar,
   DappDirectionTriangle,
   DappAccountDetails,
+  DappNavigation,
+  DappNavigationItem,
 };

@@ -48,9 +48,11 @@ import DappMosaicDefinitionTransaction from "./graphics/transactions/DappMosaicD
 import DappMosaicSupplyChangeTransaction from "./graphics/transactions/DappMosaicSupplyChangeTransaction/DappMosaicSupplyChangeTransaction";
 import DappTransferTransaction from "./graphics/transactions/DappTransferTransaction/DappTransferTransaction";
 import DappContractOperation from "./widgets/DappContractOperation/DappContractOperation";
-import DappTitleBar from "./widgets/DappTitleBar/DappTitleBar";
 import DappDirectionTriangle from "./graphics/DappDirectionTriangle/DappDirectionTriangle";
 import DappAccountDetails from "./graphics/DappAccountDetails/DappAccountDetails";
+import DappTitleBar from "./headers/DappTitleBar/DappTitleBar";
+import DappNavigation from "./headers/DappNavigation/DappNavigation";
+import DappNavigationItem from "./graphics/DappNavigationItem/DappNavigationItem";
 
 // exports
 export type { Variant };
@@ -86,4 +88,6 @@ export {
   DappTitleBar,
   DappDirectionTriangle,
   DappAccountDetails,
+  DappNavigation,
+  DappNavigationItem,
 };

@@ -1,0 +1,50 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth UI Components
+ * @subpackage  Components
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+.dappNavigationItem-base {
+  @apply flex-1 w-full h-full cursor-pointer;
+
+  .dappNavigationItem-mainDiv {
+    @apply w-full h-full flex flex-col items-center justify-center text-[#7E7B93] gap-[10px];
+
+    /* Responsive */
+    @apply sm:w-auto sm:py-2 sm:px-4 sm:flex-row sm:text-[#7E7B93];
+
+    .dappNavigationItem-svg {
+      @apply fill-[#7E7B93] sm:fill-[#7E7B93];
+    }
+  }
+}
+
+.dappNavigationItem-style {
+  &-primary {
+    @apply flex items-center justify-center flex-col;
+  }
+
+  /* todo: add secondary styles */
+  &-secondary {
+    @apply flex items-center justify-center flex-col;
+  }
+
+  /* todo: add secondary styles */
+  &-tertiary {
+    @apply flex items-center justify-center flex-col;
+  }
+}
+
+.active {
+  .dappNavigationItem-svg {
+    @apply sm:fill-[#000000] !important;
+  }
+
+  .dappNavigationItem-mainDiv {
+    @apply sm:text-[#000000] sm:font-semibold sm:bg-[#D8DAFF] sm:rounded-[80px] !important;
+    @apply sm:py-2 sm:px-6 !important;
+  }
+}
