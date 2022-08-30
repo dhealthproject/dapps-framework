@@ -19,6 +19,7 @@ import DividedScreen from "./DividedScreen/DividedScreen.vue";
 import Card from "./Card/Card.vue";
 import DirectionTriangle from "./DirectionTriangle/DirectionTriangle.vue";
 import Tabs from "./Tabs/Tabs.vue";
+import GenericList from "./GenericList/GenericList.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
@@ -30,6 +31,7 @@ export const AppComponents = {
   Card,
   DirectionTriangle,
   Tabs,
+  GenericList,
 };
 
 // scoped export of library-level components

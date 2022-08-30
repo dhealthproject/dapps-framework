@@ -12,6 +12,35 @@
   //   background-color: #e5e5e5;
   text-align: left;
 
+  @media screen and (max-width: 768px) {
+    .dapp-list__custom {
+      flex-direction: column;
+    }
+  }
+
+  .medals {
+    display: inline-block;
+    
+    img {
+      margin-right: 7px;
+    }
+  }
+
+  .quick-stats__item {
+    .number {
+      font-weight: 700;
+      display: inline-block;
+      padding-right: 4px;
+      font-size: 44px;
+      line-height: 66px;
+    }
+
+    .title {
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+
   &__section {
     padding: 18px 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.15);

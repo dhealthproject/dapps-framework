@@ -26,12 +26,8 @@ import EventsCarousel from "./components/EventsCarousel.vue";
 import { BoardItem } from "./components/LeaderBoard";
 import LeaderBoard from "./components/LeaderBoard.vue";
 import Tabs from "@/components/Tabs/Tabs.vue";
-import QuickStats from "./components/QuickStats.vue";
-import Medals from "./components/Medals.vue";
-import FriendsList from "./components/FriendsList.vue";
-
-// style resource
-import "./Dashboard.scss";
+import { Profile } from "@/modules/Profile/Profile";
+import GenericList from "@/components/GenericList/GenericList.vue";
 
 @Component({
   components: {
@@ -43,9 +39,7 @@ import "./Dashboard.scss";
     EventsCarousel,
     LeaderBoard,
     Tabs,
-    QuickStats,
-    Medals,
-    FriendsList,
+    GenericList,
   },
   computed: {
     ...mapGetters({
@@ -220,10 +214,12 @@ export default class Dashboard extends MetaView {
           {
             avatar: "friend1.png",
             name: "Yoga Maestro",
+            cta: "Go 1-on-1",
           },
           {
             avatar: "friend2.png",
             name: "Terminator",
+            cta: "Go 1-on-1",
           },
         ],
       },

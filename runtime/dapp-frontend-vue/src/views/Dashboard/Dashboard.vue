@@ -45,13 +45,41 @@
               <Tabs :tab-list="tabs">
                 <template v-slot:tabContent="props">
                   <div class="dapp-screen-dashboard__section">
-                    <QuickStats :stats-config="props.tabData.quickStats" />
+                    <GenericList
+                      :items="props.tabData.quickStats"
+                      title="Quick Stats"
+                    >
+                      <template v-slot:itemContent="props">
+                        <div class="quick-stats__item">
+                          <div class="flex flex-row items-center">
+                            <div class="number">
+                              {{ props.itemData.amount }}
+                            </div>
+                            <DirectionTriangle
+                              :direction="props.itemData.direction"
+                            />
+                          </div>
+                          <div class="title">{{ props.itemData.title }}</div>
+                        </div>
+                      </template>
+                    </GenericList>
                   </div>
                   <div class="dapp-screen-dashboard__section">
-                    <Medals :medals-list="props.tabData.medals" />
+                    <GenericList
+                      :items="props.tabData.medals"
+                      title="Your Medals"
+                      class="medals"
+                    >
+                      <template v-slot:itemContent="props">
+                        <img :src="getImageUrl(props.itemData)" alt="Medal 1" />
+                      </template>
+                    </GenericList>
                   </div>
                   <div class="dapp-screen-dashboard__section">
-                    <FriendsList :friends="props.tabData.friends" />
+                    <GenericList
+                      :items="props.tabData.friends"
+                      title="Your Friends"
+                    />
                   </div>
                 </template>
               </Tabs> </template
