@@ -20,21 +20,25 @@
       >
         <div
           v-for="(item, index) in items"
-          :key="index"
+          :key="index + item"
           class="dapp-list__custom__item"
         >
           <slot name="itemContent" :itemData="item" />
         </div>
       </div>
       <!-- If no custom slot provided - display default list -->
-      <div v-else class="dapp-list__default">
+      <div v-else class="dapp-list__default flex flex-row">
         <div
           v-for="(item, index) in items"
-          :key="index + item.title"
-          class="dapp-friends-list__item"
+          :key="index + item.name"
+          class="dapp-friends-list__item text-center mx-[10px]"
         >
-          <img :src="getImageUrl(item.avatar)" :alt="item.title" />
-          <span class="name">{{ item.name }}</span>
+          <img
+            class="inline-block"
+            :src="getImageUrl(item.avatar)"
+            :alt="item.title"
+          />
+          <span class="name block">{{ item.name }}</span>
           <DappButton v-if="item.cta" @click="$emit('cta-click', item)">{{
             item.cta
           }}</DappButton>
