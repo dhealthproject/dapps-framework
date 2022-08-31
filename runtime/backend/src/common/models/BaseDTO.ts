@@ -23,5 +23,5 @@ export class BaseDTO {
   /**
    *
    */
-  public constructor() {}
+  public constructor(data: any | Record<string, unknown> = {}) {}
 }

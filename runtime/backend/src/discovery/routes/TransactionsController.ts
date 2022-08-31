@@ -20,6 +20,7 @@ import {
 // internal dependencies
 import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
 import {
+  Transaction,
   TransactionDocument,
   TransactionQuery,
 } from "../models/TransactionSchema";
@@ -102,9 +103,11 @@ export class TransactionsController {
     const data = await this.transactionsService.find(query);
 
     // wraps for transport
-    return PaginatedResultDTO.createForTransport<
-      TransactionDTO,
-      TransactionDocument
-    >(data.data, data.pagination);
+    return new PaginatedResultDTO<TransactionDTO>(
+      data.data.map((d: TransactionDocument) =>
+        Transaction.fillDTO(d, new TransactionDTO()),
+      ),
+      data.pagination,
+    );
   }
 }

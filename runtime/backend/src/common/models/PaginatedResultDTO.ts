@@ -53,22 +53,6 @@ export class PaginatedResultDTO<TData> {
   /**
    *
    */
-  public static createForTransport<
-    TTransport,
-    TDocument extends Transferable<TTransport>,
-  >(
-    data: TDocument[],
-    pagination: Pageable & Countable,
-  ): PaginatedResultDTO<TTransport> {
-    return new PaginatedResultDTO<TTransport>(
-      data.map((d: TDocument) => d.toDTO),
-      pagination,
-    );
-  }
-
-  /**
-   *
-   */
   public constructor(
     data: TData[] = [],
     pagination: Pageable & Countable = {

@@ -153,6 +153,8 @@ export class QueryService<
       this.getQueryConfig(query);
 
     // execute Mongo query
+    // @todo this *aggregate* query should be moved to a new method `findWithTotal`.
+    // @todo fallback to `mongoose` Model.find method instead for performance.
     const [{ data, metadata }] = await model
       .aggregate([
         { $match: searchQuery as FilterQuery<TDocument> },
@@ -180,7 +182,7 @@ export class QueryService<
     // @todo move to static factory
     const result: PaginatedResultDTO<TDocument> =
       new PaginatedResultDTO<TDocument>();
-    result.data = data.map((d: any) => d as TDocument);
+    result.data = data;
     result.pagination = pagination;
     return result;
   }
@@ -437,7 +439,7 @@ export class QueryService<
         // if the typecast results in a known routine
         // then the routine values should be returned
         if (Object.keys(sanitizedItem).includes("$in")) {
-          // case the internal routine values
+          // cast the internal routine values
           const val: number[] | string[] = (sanitizedItem as MongoQueryRoutine)[
             "$in"
           ];

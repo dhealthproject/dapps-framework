@@ -18,7 +18,7 @@ import { OperationsController } from "../routes/OperationsController";
 import { Operation, OperationSchema } from "../models/OperationSchema";
 
 /**
- * @class TransactionsModule
+ * @class OperationsModule
  * @description The main definition for the Accounts module.
  *
  * @since v0.1.0

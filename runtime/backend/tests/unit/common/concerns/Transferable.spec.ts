@@ -17,9 +17,12 @@ class FakeDTO extends BaseDTO {
 
 class FakeSchema extends Transferable<FakeDTO> {
   public address: string;
-  public get toDTO(): FakeDTO {
-    const dto = new FakeDTO();
-    dto.address = this.address;
+
+  public static fillDTO(
+    doc: any,
+    dto: FakeDTO,
+  ): FakeDTO {
+    dto.address = doc.address;
     return dto;
   }
 }
@@ -32,10 +35,10 @@ describe("concerns/Transferable", () => {
     document.address = "fakeAddress";
   });
 
-  describe("toDTO()", () => {
+  describe("fillDTO()", () => {
     it("should transform into DTO object and keep known fields", () => {
       // act
-      const dto: FakeDTO = document.toDTO;
+      const dto: FakeDTO = FakeSchema.fillDTO(document, new FakeDTO());
 
       // assert
       expect(dto).toBeDefined();
@@ -48,7 +51,7 @@ describe("concerns/Transferable", () => {
       (document as any).unknownField = "noValue";
 
       // act
-      const dto: FakeDTO = document.toDTO;
+      const dto: FakeDTO = FakeSchema.fillDTO(document, new FakeDTO());
 
       // assert
       expect(dto).toBeDefined();

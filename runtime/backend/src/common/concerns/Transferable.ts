@@ -31,14 +31,22 @@ import { BaseDTO } from "../models/BaseDTO";
  */
 export abstract class Transferable<TDTOType extends BaseDTO> {
   /**
-   * Returns the data transfer object related to an individual
-   * entity and thereby we consider it to be **transferable**.
-   * <br /><br />
-   * Note that this helper method uses type-inferrence to determine
-   * which fields are kept or not from an origin model object.
+   * This *static* method populates a DTO object from the
+   * values of a document as presented by mongoose queries.
    *
+   * @internal This method should not be used directly. Use child classes' implementation instead.
    * @access public
-   * @returns {TDTOType}
+   * @static
+   * @param   {any}   doc   The document as received from mongoose.
+   * @param   {any}   dto   The DTO object that will be populated with values.
+   * @returns {any}   The `dto` object with fields set.
    */
-  public abstract get toDTO(): TDTOType;
+  public static fillDTO(doc: any, dto: any): any {
+    // CAUTION: This method must be implemented in child classes
+    //          in order to provide *restricted* transferable fields
+    // This method should not be used as it is not securely excluding
+    // some fields, which would be usual for DTO types.
+    dto = doc as any;
+    return dto;
+  }
 }

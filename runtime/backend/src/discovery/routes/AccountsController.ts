@@ -20,6 +20,7 @@ import {
 // internal dependencies
 import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
 import {
+  Account,
   AccountDocument,
   AccountQuery,
 } from "../../common/models/AccountSchema";
@@ -103,8 +104,10 @@ export class AccountsController {
       await this.accountsService.find(query);
 
     // wraps for transport
-    return PaginatedResultDTO.createForTransport<AccountDTO, AccountDocument>(
-      data.data,
+    return new PaginatedResultDTO<AccountDTO>(
+      data.data.map((d: AccountDocument) =>
+        Account.fillDTO(d, new AccountDTO()),
+      ),
       data.pagination,
     );
   }

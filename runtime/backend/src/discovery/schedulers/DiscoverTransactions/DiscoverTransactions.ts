@@ -798,7 +798,16 @@ export class DiscoverTransactions extends DiscoveryCommand {
    * @returns {string}
    */
   protected extractTransactionMessage(transaction: SdkTransaction): string {
+    // shortcuts
     const transfer = transaction as TransferTransaction;
-    return transfer.message.payload;
+    const message = transfer.message;
+
+    // only if message is present and filled
+    if (undefined !== message && undefined !== message.payload) {
+      return message.payload.length > 0 ? message.payload : null;
+    }
+
+    // db field transactionMessage is nullable
+    return null;
   }
 }

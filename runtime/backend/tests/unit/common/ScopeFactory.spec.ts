@@ -52,6 +52,11 @@ jest.mock("../../../src/common/modules/NetworkModule", () => {
   return { NetworkModule: NetworkModuleMock };
 });
 
+const OperationsModuleMock: any = jest.fn();
+jest.mock("../../../src/processor/modules/OperationsModule", () => {
+  return { OperationsModule: OperationsModuleMock };
+});
+
 const DiscoverAccountsCommandMock: any = jest.fn();
 jest.mock("../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand", () => {
   return { DiscoverAccountsCommand: DiscoverAccountsCommandMock };
@@ -60,6 +65,11 @@ jest.mock("../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCo
 const DiscoverTransactionsCommandMock: any = jest.fn();
 jest.mock("../../../src/discovery/schedulers/DiscoverTransactions/DiscoverTransactionsCommand", () => {
   return { DiscoverTransactionsCommand: DiscoverTransactionsCommandMock };
+});
+
+const ProcessOperationsCommandMock: any = jest.fn();
+jest.mock("../../../src/processor/schedulers/ProcessOperations/ProcessOperationsCommand", () => {
+  return { ProcessOperationsCommand: ProcessOperationsCommandMock };
 });
 
 const PayoutModuleMock: any = jest.fn();
@@ -237,6 +247,27 @@ describe("common/ScopeFactory", () => {
       expect(result).toEqual([
         ConfigModuleMock,
         MongooseModuleMock,
+      ]);
+    });
+
+    it("should return correct list of enabled schedulers for processor", () => {
+      // prepare
+      const configDto: DappConfig = {
+        dappName: "Fake dApp",
+        dappPublicKey: "FakePublicKeyOfAdApp",
+        scopes: ["processor"],
+        database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+      };
+
+      // act
+      const result = MockFactory.create(configDto).getSchedulers();
+
+      // assert
+      expect(result).toEqual([
+        ConfigModuleMock,
+        MongooseModuleMock,
+        OperationsModuleMock,
+        ProcessOperationsCommandMock,
       ]);
     });
   });

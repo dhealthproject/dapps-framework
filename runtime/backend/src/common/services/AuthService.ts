@@ -21,7 +21,7 @@ import {
   TransactionType,
   TransferTransaction,
 } from "@dhealth/sdk";
-import { Contract } from "@dhealth/contracts";
+import { Auth, Contract } from "@dhealth/contracts";
 import { Request } from "express";
 
 // internal dependencies
@@ -278,7 +278,7 @@ export class AuthService {
    * happens after one hour of lifetime.
    *
    * @param   {AuthenticationPayload}   payload   The authentication payload of validated log-in operation.
-   * @returns {Promise<AccessTokenDTO>}
+   * @returns {Promise<AccessTokenDTO>}   An access token for the authenticated user and possibly a refresh token (first time).
    */
   public async getAccessToken(
     payload: AuthenticationPayload,
@@ -335,7 +335,22 @@ export class AuthService {
   }
 
   /**
+   * This method accepts an end-user address (string) and a
+   * *refresh token* which must be valid as a pair.
+   * <br /><br />
+   * This method will *generate a new access token*,
+   * *sign it using the authentication secret* as provided
+   * in the configuration file `config/security.ts` and
+   * returns it in a {@link AccessTokenDTO} object.
+   * <br /><br />
+   * Note that the expiration of access tokens automatically
+   * happens after one hour of lifetime.
    *
+   * @access public
+   * @async
+   * @param   {string}  userAddress       The address of the end-user for which a new access token must be generated ("Refresh").
+   * @returns {Promise<AccessTokenDTO>}   An access token for the authenticated user.
+   * @throws  {HttpException}             Given invalid log-in state for the requested account.
    */
   public async refreshAccessToken(
     userAddress: string,
@@ -383,7 +398,13 @@ export class AuthService {
   }
 
   /**
+   * This method returns an *accounts query* for the mongo collection
+   * named `accounts`, and is used to query an account by the address
+   * attached inside the {@link AuthenticationPayload} payload.
    *
+   * @access protected
+   * @param   {AuthenticationPayload}   payload
+   * @returns {AccountQuery}
    */
   protected getAccountQuery(payload: AuthenticationPayload): AccountQuery {
     return new AccountQuery({
@@ -478,10 +499,18 @@ export class AuthService {
     return transactions.find((t: TransferTransaction) => {
       try {
         // do we have a valid contract JSON payload?
-        const contract: Contract = Contract.fromTransaction(t);
+        const spec: Contract = Contract.fromTransaction(t);
 
         // do we have the *relevant* challenge?
-        return "challenge" in contract && contract.challenge === challenge;
+        if (spec.signature === "elevate:auth") {
+          const contract: Auth = spec as Auth;
+          return (
+            "challenge" in contract.inputs &&
+            contract.inputs.challenge === challenge
+          );
+        }
+
+        return false;
       } catch (e) {
         return false;
       }

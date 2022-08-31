@@ -170,28 +170,20 @@ export class Account extends Transferable<AccountDTO> {
   }
 
   /**
-   * This method implements a specialized transport format to restrict
-   * the items that are ever returned in HTTP responses (DTOs).
+   * This *static* method populates a {@link AccountDTO} object from the
+   * values of a {@link AccountDocument} as presented by mongoose queries.
    *
    * @access public
-   * @returns {AccountDTO}    The individual document data that is used transport it.
+   * @static
+   * @param   {AccountDocument}   doc   The document as received from mongoose.
+   * @param   {AccountDTO}        dto   The DTO object that will be populated with values.
+   * @returns {AccountDTO}        The `dto` object with fields set.
    */
-  public get toDTO(): AccountDTO {
-    const dto = new AccountDTO();
-    dto.address = this.address;
-
-    if (this.transactionsCount !== undefined) {
-      dto.transactionsCount = this.transactionsCount;
-    }
-
-    if (this.firstTransactionAt !== undefined) {
-      dto.firstTransactionAt = this.firstTransactionAt;
-    }
-
-    if (this.firstTransactionAtBlock !== undefined) {
-      dto.firstTransactionAtBlock = this.firstTransactionAtBlock;
-    }
-
+  public static fillDTO(doc: AccountDocument, dto: AccountDTO): AccountDTO {
+    dto.address = doc.address;
+    dto.transactionsCount = doc.transactionsCount;
+    dto.firstTransactionAt = doc.firstTransactionAt;
+    dto.firstTransactionAtBlock = doc.firstTransactionAtBlock;
     return dto;
   }
 }

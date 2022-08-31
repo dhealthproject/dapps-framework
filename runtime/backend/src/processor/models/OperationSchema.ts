@@ -155,18 +155,23 @@ export class Operation extends Transferable<OperationDTO> {
   }
 
   /**
-   * This method implements a specialized transport format to restrict
-   * the items that are ever returned in HTTP responses (DTOs).
+   * This *static* method populates a {@link OperationDTO} object from the
+   * values of a {@link OperationDocument} as presented by mongoose queries.
    *
    * @access public
-   * @returns {OperationDTO}    The individual document data that is used transport it.
+   * @static
+   * @param   {OperationDocument}   doc   The document as received from mongoose.
+   * @param   {OperationDTO}        dto   The DTO object that will be populated with values.
+   * @returns {OperationDTO}        The `dto` object with fields set.
    */
-  public get toDTO(): OperationDTO {
-    const dto = new OperationDTO();
-    dto.userAddress = this.userAddress;
-    dto.transactionHash = this.transactionHash;
-    dto.contractSignature = this.contractSignature;
-    dto.creationBlock = this.creationBlock;
+  public static fillDTO(
+    doc: OperationDocument,
+    dto: OperationDTO,
+  ): OperationDTO {
+    dto.userAddress = doc.userAddress;
+    dto.transactionHash = doc.transactionHash;
+    dto.contractSignature = doc.contractSignature;
+    dto.creationBlock = doc.creationBlock;
     return dto;
   }
 }

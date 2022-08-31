@@ -19,7 +19,11 @@ import {
 
 // internal dependencies
 import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
-import { OperationDocument, OperationQuery } from "../models/OperationSchema";
+import {
+  Operation,
+  OperationDocument,
+  OperationQuery,
+} from "../models/OperationSchema";
 import { OperationDTO } from "../models/OperationDTO";
 import { OperationsService } from "../services/OperationsService";
 
@@ -99,9 +103,11 @@ export class OperationsController {
     const data = await this.operationsService.find(query);
 
     // wraps for transport
-    return PaginatedResultDTO.createForTransport<
-      OperationDTO,
-      OperationDocument
-    >(data.data, data.pagination);
+    return new PaginatedResultDTO<OperationDTO>(
+      data.data.map((d: OperationDocument) =>
+        Operation.fillDTO(d, new OperationDTO()),
+      ),
+      data.pagination,
+    );
   }
 }

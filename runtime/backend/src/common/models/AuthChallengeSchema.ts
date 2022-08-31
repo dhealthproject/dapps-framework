@@ -96,15 +96,20 @@ export class AuthChallenge extends Transferable<AuthChallengeDTO> {
   }
 
   /**
-   * This method implements a specialized transport format to restrict
-   * the items that are ever returned in HTTP responses (DTOs).
+   * This *static* method populates a {@link AuthChallengeDTO} object from the
+   * values of a {@link AuthChallengeDocument} as presented by mongoose queries.
    *
    * @access public
-   * @returns {AuthChallengeDTO}    The individual document data that is used transport it.
+   * @static
+   * @param   {AuthChallengeDocument}   doc   The document as received from mongoose.
+   * @param   {AuthChallengeDTO}        dto   The DTO object that will be populated with values.
+   * @returns {AuthChallengeDTO}        The `dto` object with fields set.
    */
-  public get toDTO(): AuthChallengeDTO {
-    const dto = new AuthChallengeDTO();
-    dto.challenge = this.challenge;
+  public static fillDTO(
+    doc: AuthChallengeDocument,
+    dto: AuthChallengeDTO,
+  ): AuthChallengeDTO {
+    dto.challenge = doc.challenge;
     return dto;
   }
 }

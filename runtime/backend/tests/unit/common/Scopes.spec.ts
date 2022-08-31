@@ -52,6 +52,11 @@ jest.mock("../../../src/common/modules/NetworkModule", () => {
   return { NetworkModule: NetworkModuleMock };
 });
 
+const OperationsModuleMock: any = jest.fn();
+jest.mock("../../../src/processor/modules/OperationsModule", () => {
+  return { OperationsModule: OperationsModuleMock };
+});
+
 const DiscoverAccountsCommandMock: any = jest.fn();
 jest.mock("../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand", () => {
   return { DiscoverAccountsCommand: DiscoverAccountsCommandMock };
@@ -60,6 +65,11 @@ jest.mock("../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCo
 const DiscoverTransactionsCommandMock: any = jest.fn();
 jest.mock("../../../src/discovery/schedulers/DiscoverTransactions/DiscoverTransactionsCommand", () => {
   return { DiscoverTransactionsCommand: DiscoverTransactionsCommandMock };
+});
+
+const ProcessOperationsCommandMock: any = jest.fn();
+jest.mock("../../../src/processor/schedulers/ProcessOperations/ProcessOperationsCommand", () => {
+  return { ProcessOperationsCommand: ProcessOperationsCommandMock };
 });
 
 const PayoutModuleMock: any = jest.fn();

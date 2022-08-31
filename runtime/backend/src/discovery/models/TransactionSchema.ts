@@ -138,8 +138,8 @@ export class Transaction extends Transferable<TransactionDTO> {
    * @access public
    * @var {string}
    */
-  @Prop({ required: true, index: true })
-  public transactionMessage: string;
+  @Prop({ index: true, nullable: true })
+  public transactionMessage?: string;
 
   /**
    * This is the transaction signature as defined by dHealth Network. It
@@ -237,30 +237,16 @@ export class Transaction extends Transferable<TransactionDTO> {
     if (undefined !== this.signerAddress)
       query["signerAddress"] = this.signerAddress;
 
+    if (undefined !== this.recipientAddress)
+      query["recipientAddress"] = this.recipientAddress;
+
     if (undefined !== this.transactionHash)
       query["transactionHash"] = this.transactionHash;
 
+    if (undefined !== this.transactionMessage)
+      query["transactionMessage"] = this.transactionMessage;
+
     return query;
-  }
-
-  /**
-   * This method implements a specialized transport format to restrict
-   * the items that are ever returned in HTTP responses (DTOs).
-   *
-   * @access public
-   * @returns {TransactionDTO}    The individual document data that is used transport it.
-   */
-  public get toDTO(): TransactionDTO {
-    const dto = new TransactionDTO();
-    dto.signerAddress = this.signerAddress;
-    dto.recipientAddress = this.recipientAddress;
-    dto.transactionHash = this.transactionHash;
-
-    if (this.creationBlock !== undefined) {
-      dto.creationBlock = this.creationBlock;
-    }
-
-    return dto;
   }
 
   /**
@@ -269,6 +255,27 @@ export class Transaction extends Transferable<TransactionDTO> {
   public toSDK(): SdkTransaction {
     //XXX this assumes "encodedBody" contains the *full* payload.
     return TransactionMapping.createFromPayload(this.encodedBody, false); // false for `isEmbedded`
+  }
+
+  /**
+   * This *static* method populates a {@link TransactionDTO} object from the
+   * values of a {@link TransactionDocument} as presented by mongoose queries.
+   *
+   * @access public
+   * @static
+   * @param   {TransactionDocument}   doc   The document as received from mongoose.
+   * @param   {TransactionDTO}        dto   The DTO object that will be populated with values.
+   * @returns {TransactionDTO}        The `dto` object with fields set.
+   */
+  public static fillDTO(
+    doc: TransactionDocument,
+    dto: TransactionDTO,
+  ): TransactionDTO {
+    dto.signerAddress = doc.signerAddress;
+    dto.recipientAddress = doc.recipientAddress;
+    dto.transactionHash = doc.transactionHash;
+    dto.creationBlock = doc.creationBlock;
+    return dto;
   }
 }
 

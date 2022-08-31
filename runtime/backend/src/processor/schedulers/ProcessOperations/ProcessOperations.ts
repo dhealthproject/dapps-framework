@@ -8,7 +8,6 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { TransactionMapping, TransferTransaction } from "@dhealth/sdk";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
@@ -23,7 +22,7 @@ import { NetworkService } from "../../../common/services/NetworkService";
 import { StateDocument, StateQuery } from "../../../common/models/StateSchema";
 import { ProcessorCommand, ProcessorCommandOptions } from "../ProcessorCommand";
 import { OperationsService } from "../../services/OperationsService";
-import { getOperationType } from "../../models/OperationTypes";
+import { getOperation } from "../../models/OperationTypes";
 import {
   Operation,
   OperationDocument,
@@ -31,10 +30,7 @@ import {
   OperationQuery,
 } from "../../models/OperationSchema";
 import { OperationProcessorStateData } from "../../models/OperationProcessorStateData";
-import {
-  OperationParameters,
-  ProcessorConfig,
-} from "../../models/ProcessorConfig";
+import { OperationParameters } from "../../models/ProcessorConfig";
 
 // @todo processor scope *requires* presence of discovery scope
 import { TransactionsService } from "../../../discovery/services/TransactionsService";
@@ -86,6 +82,16 @@ export class ProcessOperations extends ProcessorCommand {
    * @var {TransactionDocument[]}
    */
   protected transactions: TransactionDocument[] = [];
+
+  /**
+   * Memory store for *all* contracts processed in one run of this
+   * command. As is usual, one contract is always execute with one
+   * transaction [hash].
+   *
+   * @access protected
+   * @var {Record<string, Contract>}
+   */
+  protected contractsByHash: Record<string, Contract> = {};
 
   /**
    * Memory store for the total number of operations. This is used
@@ -220,7 +226,7 @@ export class ProcessOperations extends ProcessorCommand {
    * @param   {BaseCommandOptions}  options
    * @returns {Promise<void>}
    */
-  @Cron("0/30 * * * * *", { name: "processor:cronjobs:operations" })
+  @Cron("*/30 * * * * *", { name: "processor:cronjobs:operations" })
   public async runAsScheduler(): Promise<void> {
     // read processor configuration
     const contracts: string[] = this.configService.get<string[]>("contracts");
@@ -232,9 +238,10 @@ export class ProcessOperations extends ProcessorCommand {
       return;
     }
 
+    let at = 0;
     do {
       // next contract to be processed
-      const contract: string = contracts.shift();
+      const contract: string = contracts[at];
       const operation: OperationParameters = operations.find(
         (o) => o.contract === contract,
       );
@@ -254,7 +261,7 @@ export class ProcessOperations extends ProcessorCommand {
         operation,
         debug: true,
       } as ProcessorCommandOptions);
-    } while (contracts.length);
+    } while (++at < contracts.length);
   }
 
   /**
@@ -350,7 +357,7 @@ export class ProcessOperations extends ProcessorCommand {
 
     // (1) each round queries 1 page of transactions from the database
     // and fetches a maximum of 5 transaction pages following the last
-    const hashes: string[] = [];
+    this.transactions = [];
     for (
       let i = this.lastPageNumber, max = this.lastPageNumber + 5;
       i < max;
@@ -378,21 +385,23 @@ export class ProcessOperations extends ProcessorCommand {
 
     // (2) each transfer transaction may contain a contract payload
     // and may or may not be relevant to the current processed operation
-    const subjects: TransactionDocument[] = this.transactions.filter(
-      (t: TransactionDocument) => {
+    const subjects: TransactionDocument[] = this.transactions
+      .filter((t: TransactionDocument) => t.transactionMessage !== null)
+      .filter((t: TransactionDocument) => {
         try {
           // do we have a valid contract JSON payload?
-          const contract: Contract = Factory.createFromJSON(
-            t.transactionMessage,
-          );
+          const contract: Contract = getOperation(t.transactionMessage);
+
+          // store a copy of the contract instance by hash
+          this.contractsByHash[t.transactionHash] = contract;
 
           // do we have the *relevant* contract signature?
-          return contract.signature === options.contract;
+          return contract !== null && contract.signature === options.contract;
         } catch (e) {
+          console.log("Error parsing: ", e);
           return false;
         }
-      },
-    );
+      });
 
     // debug information about upcoming database operations
     if (options.debug && !options.quiet && subjects.length > 0) {
@@ -424,7 +433,8 @@ export class ProcessOperations extends ProcessorCommand {
       }
 
       // extracts the previously validated payload
-      const contract: Contract = this.extractContract(transaction);
+      const contract: Contract =
+        this.contractsByHash[transaction.transactionHash];
 
       // create an `operations` document
       await this.model.create({
@@ -446,9 +456,9 @@ export class ProcessOperations extends ProcessorCommand {
       );
     }
 
-    // (4) update per-source state `lastPageNumber`
+    // (4) update per-contract state `lastPageNumber`
     await this.stateService.updateOne(
-      stateQueryCtr, // /!\ per-source
+      stateQueryCtr, // /!\ per-contract
       {
         lastPageNumber: this.lastPageNumber,
       },

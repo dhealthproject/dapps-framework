@@ -9,13 +9,17 @@
  */
 // external dependencies
 import { MongooseModule } from "@nestjs/mongoose";
-import { DynamicModule } from "@nestjs/common";
 
 // internal dependencies
+// discovery scope
 import { AccountsModule } from "../discovery/modules/AccountsModule";
 import { TransactionsModule } from "../discovery/modules/TransactionsModule";
 import { DiscoverAccountsCommand } from "../discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand";
 import { DiscoverTransactionsCommand } from "../discovery/schedulers/DiscoverTransactions/DiscoverTransactionsCommand";
+
+// processor scope
+import { OperationsModule } from "../processor/modules/OperationsModule";
+import { ProcessOperationsCommand } from "../processor/schedulers/ProcessOperations/ProcessOperationsCommand";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -54,5 +58,5 @@ export const Schedulers: { [key: string]: any[] } = {
     DiscoverTransactionsCommand,
   ],
   payout: [],
-  processor: [],
+  processor: [OperationsModule, ProcessOperationsCommand],
 };

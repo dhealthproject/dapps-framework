@@ -21,6 +21,7 @@ import { Schedulers } from "./Schedulers";
 import dappConfigLoader from "../../config/dapp";
 import networkConfigLoader from "../../config/network";
 import securityConfigLoader from "../../config/security";
+import processorConfigLoader from "../../config/processor";
 
 /**
  * @label COMMON
@@ -74,7 +75,12 @@ export class ScopeFactory {
     // configure the base imports with a `DappConfig`
     this.baseImports = [
       ConfigModule.forRoot({
-        load: [dappConfigLoader, networkConfigLoader, securityConfigLoader],
+        load: [
+          dappConfigLoader,
+          networkConfigLoader,
+          securityConfigLoader,
+          processorConfigLoader,
+        ],
         isGlobal: true,
         envFilePath: [".env", ".env-sample"],
       }),

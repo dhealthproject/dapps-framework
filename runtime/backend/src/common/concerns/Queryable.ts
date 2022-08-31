@@ -133,8 +133,8 @@ export class Queryable<TDocument extends Documentable>
    * including: `$ne`, `$in`, `$gte`, `$lte`, etc.
    * <br /><br />
    * Note that queries that use only the *equality* operator can
-   * use the {@link document} property as well which removes the
-   * need to specify the operators (always uses equality).
+   * use the `document` property as well which removes the need
+   * to specify the operators (always uses equality).
    * <br /><br />
    * @example Setting a `filterQuery`
    * ```js

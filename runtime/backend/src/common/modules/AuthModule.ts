@@ -14,6 +14,8 @@ import { JwtModule } from "@nestjs/jwt";
 import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
+import { AccountsModule } from "../modules/AccountsModule";
+import { ChallengesModule } from "../modules/ChallengesModule";
 import { NetworkModule } from "../modules/NetworkModule";
 import { AuthService } from "../services/AuthService";
 import { AuthStrategy } from "../traits/AuthStrategy";
@@ -34,6 +36,8 @@ import { Account, AccountSchema } from "../models/AccountSchema";
 @Module({
   imports: [
     NetworkModule,
+    AccountsModule,
+    ChallengesModule,
     PassportModule,
     JwtModule.register({
       // defines the secret token for *verifying* JwT tokens

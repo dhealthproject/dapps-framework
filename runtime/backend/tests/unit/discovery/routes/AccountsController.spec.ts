@@ -17,7 +17,7 @@ import { QueryService } from "../../../../src/common/services/QueryService";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
 import { AccountDTO } from "../../../../src/common/models/AccountDTO";
-import { AccountDocument, AccountQuery } from "../../../../src/common/models/AccountSchema";
+import { Account, AccountDocument, AccountQuery } from "../../../../src/common/models/AccountSchema";
 import { AccountsController } from "../../../../src/discovery/routes/AccountsController";
 
 describe("discovery/AccountsController", () => {
@@ -49,8 +49,10 @@ describe("discovery/AccountsController", () => {
   describe("find() -->", () => {
     it("should call correct method and respond with DTO", async () => {
       // prepare
+      const accountDoc = new Account();
+      accountDoc.address = "fakeAddress";
       const expectToFetchDocuments = new PaginatedResultDTO<AccountDocument>(
-        [{ address: "fakeAddress", toDTO: { address: "fakeAddress" } as AccountDTO } as unknown as AccountDocument], 
+        [accountDoc as AccountDocument], 
         { pageNumber: 1, pageSize: 20, total: 1 },
       );
       const expectToMapToDTOs = new PaginatedResultDTO<AccountDTO>(

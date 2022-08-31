@@ -96,16 +96,18 @@ export class State extends Transferable<StateDTO> {
   }
 
   /**
-   * This method implements a specialized transport format to restrict
-   * the items that are ever returned in HTTP responses (DTOs).
+   * This *static* method populates a {@link StateDTO} object from the
+   * values of a {@link StateDocument} as presented by mongoose queries.
    *
    * @access public
-   * @returns {StateDTO}    The individual document data that is used transport it.
+   * @static
+   * @param   {StateDocument}   doc   The document as received from mongoose.
+   * @param   {StateDTO}        dto   The DTO object that will be populated with values.
+   * @returns {StateDTO}        The `dto` object with fields set.
    */
-  public get toDTO(): StateDTO {
-    const dto = new StateDTO();
-    dto.name = this.name;
-    dto.data = this.data;
+  public static fillDTO(doc: StateDocument, dto: StateDTO): StateDTO {
+    dto.name = doc.name;
+    dto.data = doc.data;
     return dto;
   }
 }

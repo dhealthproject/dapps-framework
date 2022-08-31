@@ -26,6 +26,9 @@ import { BaseCommand, BaseCommandOptions } from "../../worker/BaseCommand";
 export interface ProcessorCommandOptions extends BaseCommandOptions {
   /**
    * Defines the contract that is being processed with this command.
+   * <br /><br />
+   * We require the input of a contract here such that processing is
+   * always scoped around singular contract functionalities.
    *
    * @access public
    * @var {string}
