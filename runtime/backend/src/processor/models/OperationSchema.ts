@@ -151,6 +151,9 @@ export class Operation extends Transferable<OperationDTO> {
     if (undefined !== this.transactionHash)
       query["transactionHash"] = this.transactionHash;
 
+    if (undefined !== this.contractSignature)
+      query["contractSignature"] = this.contractSignature;
+
     return query;
   }
 

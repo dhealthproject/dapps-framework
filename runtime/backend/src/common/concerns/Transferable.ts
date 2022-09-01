@@ -33,6 +33,11 @@ export abstract class Transferable<TDTOType extends BaseDTO> {
   /**
    * This *static* method populates a DTO object from the
    * values of a document as presented by mongoose queries.
+   * <br /><br />
+   * CAUTION: This method must be implemented in child classes
+   * in order to provide *restricted* transferable fields. This
+   * method should not be used directly as it does no exclusion
+   * of fields as would be usual for transferable DTOs.
    *
    * @internal This method should not be used directly. Use child classes' implementation instead.
    * @access public

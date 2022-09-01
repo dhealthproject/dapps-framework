@@ -21,7 +21,7 @@ import {
   TransactionType,
   TransferTransaction,
 } from "@dhealth/sdk";
-import { Auth, Contract } from "@dhealth/contracts";
+import { Auth, Contract, Factory } from "@dhealth/contracts";
 import { Request } from "express";
 
 // internal dependencies
@@ -245,7 +245,7 @@ export class AuthService {
     const authorizedAddr: Address = transaction.signer.address;
     const authorizedUser: AuthenticationPayload = {
       sub: transaction.transactionInfo.hash,
-      address: authorizedAddr.pretty(),
+      address: authorizedAddr.plain(),
     };
 
     // stores a validated authentication challenge
@@ -255,7 +255,7 @@ export class AuthService {
         challenge: challenge,
       } as AuthChallengeDocument),
       {
-        usedBy: authorizedAddr,
+        usedBy: authorizedAddr.plain(),
         usedAt: new Date().valueOf(),
       },
     );
@@ -291,7 +291,7 @@ export class AuthService {
     );
 
     // tries to read tokens from `accounts` document
-    if (undefined !== account) {
+    if (null !== account) {
       accessToken = account.accessToken;
       refreshToken = account.refreshTokenHash;
     }
@@ -487,9 +487,7 @@ export class AuthService {
     // flat array of **transfer** transactions
     const transactions: TransferTransaction[] = transactionPages.reduce(
       (prev, cur) =>
-        transactions.concat(
-          cur.data.map((t: Transaction) => t as TransferTransaction),
-        ),
+        prev.concat(cur.data.map((t: Transaction) => t as TransferTransaction)),
       [],
     );
 
@@ -499,7 +497,7 @@ export class AuthService {
     return transactions.find((t: TransferTransaction) => {
       try {
         // do we have a valid contract JSON payload?
-        const spec: Contract = Contract.fromTransaction(t);
+        const spec: Contract = Factory.createFromTransaction(t);
 
         // do we have the *relevant* challenge?
         if (spec.signature === "elevate:auth") {

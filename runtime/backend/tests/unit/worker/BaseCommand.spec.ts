@@ -126,7 +126,7 @@ describe("worker/BaseCommand -->", () => {
       await fakeCommand.run([], { debug: false });
       // assert
       expect((fakeCommand as any).debugLog).toHaveBeenCalledTimes(2);
-      expect((fakeCommand as any).debugLog).toHaveBeenNthCalledWith(1, `Initializing command "fake-command"...`);
+      expect((fakeCommand as any).debugLog).toHaveBeenNthCalledWith(1, `Initializing command "fake-command"`);
       expect((fakeCommand as any).debugLog).toHaveBeenNthCalledWith(2, `Runtime duration: 0s`);
     });
 

@@ -298,7 +298,7 @@ export class DiscoverTransactions extends DiscoveryCommand {
     // @todo remove debug flag for staging/production releases
     await this.run(["both"], {
       source,
-      debug: true,
+      debug: false,
     } as DiscoveryCommandOptions);
   }
 

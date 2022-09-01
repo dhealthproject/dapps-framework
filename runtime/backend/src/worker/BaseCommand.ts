@@ -187,7 +187,11 @@ export abstract class BaseCommand extends StatefulModule {
 
     // if not quiet, display info about start of execution
     if (!options.quiet) {
-      this.debugLog(`Initializing command "${this.command}"...`);
+      this.debugLog(
+        `` +
+          `Initializing command "${this.command}"` +
+          `${this.argv.length ? "with: " + this.argv.join() : ""}`,
+      );
     }
 
     // display debug info about arguments and options

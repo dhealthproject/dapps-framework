@@ -192,7 +192,7 @@ export class DiscoverAccounts extends DiscoveryCommand {
     // executes the actual command logic (this will call discover())
     await super.run([], {
       source: publicAcct.address.plain(),
-      debug: true,
+      debug: false,
     } as DiscoveryCommandOptions);
   }
 

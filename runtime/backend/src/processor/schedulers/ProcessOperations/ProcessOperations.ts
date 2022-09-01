@@ -8,11 +8,11 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
-import { Contract, Factory, ObjectLiteral } from "@dhealth/contracts";
+import { Contract, Factory } from "@dhealth/contracts";
 
 // internal dependencies
 import { QueryParameters } from "../../../common/concerns/Queryable";
@@ -238,6 +238,19 @@ export class ProcessOperations extends ProcessorCommand {
       return;
     }
 
+    // prepares execution logger
+    this.logger = new Logger(`${this.scope}/${this.command}`);
+
+    // display starting moment information in debug mode
+    this.debugLog(
+      `Starting operations processor for contracts: ${contracts.join(", ")}`,
+    );
+
+    // display debug information about total number of transactions
+    this.debugLog(
+      `Total number of operations processed: "${this.totalNumberOfOperations}"`,
+    );
+
     let at = 0;
     do {
       // next contract to be processed
@@ -255,11 +268,10 @@ export class ProcessOperations extends ProcessorCommand {
       }
 
       // executes the actual command logic (this will call process())
-      // @todo remove debug flag for staging/production releases
       await this.run([contract], {
         contract,
         operation,
-        debug: true,
+        debug: false,
       } as ProcessorCommandOptions);
     } while (++at < contracts.length);
   }
@@ -286,24 +298,10 @@ export class ProcessOperations extends ProcessorCommand {
   public async process(
     options?: ProcessOperationsCommandOptions,
   ): Promise<void> {
-    // display starting moment information in debug mode
-    if (options.debug && !options.quiet) {
-      this.debugLog(
-        `Starting operations processor for contract "${options.contract}"`,
-      );
-    }
-
     // reads the latest global execution state
     if (!!this.state && "totalNumberOfOperations" in this.state.data) {
       this.totalNumberOfOperations =
         this.state.data.totalNumberOfOperations ?? 0;
-    }
-
-    // display debug information about total number of transactions
-    if (options.debug && !options.quiet) {
-      this.debugLog(
-        `Total number of operations processed: "${this.totalNumberOfOperations}"`,
-      );
     }
 
     // per-contract synchronization: "processor:ProcessOperations:%CONTRACT%"
