@@ -1,6 +1,6 @@
 {
   "name": "@dhealth/components",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "homepage": "https://github.com/dhealthproject/dapps-framework/tree/main/libraries/ui-components#readme",
   "description": "Components Library for dApps Development with dHealth Network",
   "author": "dHealth Network <devs@dhealth.foundation>",
@@ -26,7 +26,7 @@
     "prettier": "prettier --check ./src ./tests",
     "lint:fix": "prettier --write ./src ./tests",
     "lint": "vue-cli-service lint && npm run prettier",
-    "docs": "typedoc --out \"ts-docs/$(npm run version --silent)\" src/classes.ts",
+    "docs": "typedoc --out \"docs/$(npm run version --silent)\" src/classes.ts",
     "prebuild": "npm run lint",
     "build": "npm run build:lib && npm run build:ts && npm run build:css",
     "build:lib": "vue-cli-service build --target lib --inline-vue --name dHealthComponents --filename @dhealth/components src/index.ts",

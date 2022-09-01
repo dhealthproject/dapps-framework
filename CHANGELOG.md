@@ -3,15 +3,33 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## 0.3.0 - Unreleased
+## [0.3.0][0.3.0] - 01-Sep-2022
 
 #### Added
 
 - [framework] docs: add updated contributing notes (project status) and update changelogs
+- [framework] chore(build): map system uid, remove redundant environment config, use serve:prod for frontend
+- [framework] chore(build): fix runtime/dapp-frontend-vue to use custom .env
 - [@dhealth/components] build: add correct order for imports and code style in DappMosaic
 - [@dhealth/components] feat(elements): add DappInput and DappMosaic form components
 - [@dhealth/components] build: add web component wrapper as a library
 - [@dhealth/components] feat(elements): add export of components as web components
+- [@dhealth/contracts] fix(api): facade contract classes use public inputs and parameters
+- [@dhealth/contracts] fix(build): use relative path to permit node integrations
+- [@dhealth/contracts] deps: update version for first canary and update js-joda
+- [@dhealth/contracts] feat(contracts): add facade methods to access contract signature and payload
+- [@dhealth/contracts] test(factories): add unit tests for Contract.fromTransaction and Factory.createFromX
+- [@dhealth/contracts] feat(factories): add implementation for createFromTransaction, refactor error handling
+- [@dhealth/contracts] docs(base): adapt markup for all classes to correctly display after running typedoc
+- [@dhealth/contracts] test(contracts): add unit tests for dHealthNetwork connection parameters
+- [@dhealth/contracts] build(docs): default to named exports to fix generation of docs
+- [@dhealth/contracts] test(contracts): add unit tests for contract Earn, Referral and Welcome
+[framework] docs: add new scopes to @dhealth/contracts
+- [@dhealth/contracts] test(base): add initial unit tests for Contract abstraction layer and Auth contract.
+- [@dhealth/contracts] feat(contracts): add initial contracts implementation for Auth, Earn, Referral and Welcome.
+- [@dhealth/contracts] feat(buffers): add contract buffer classes that prepare binary payloads using JSON, each contract payload is split into header and body.
+- [@dhealth/contracts] feat(types): add exported types for contract parameterization and generic dHealth Network connection.
+- [@dhealth/contracts] chore(package): add base structure for Contracts Library.
 - [@dhealthdapps/frontend] docs: apply review comments and document properties
 - [@dhealthdapps/frontend] review: add relevant source code documentation
 - [@dhealthdapps/frontend] feat(app): add settings entry for auth token, add route guard
@@ -29,10 +47,26 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] feat(screens): add first draft of vertically split screen
 - [@dhealthdapps/frontend] feat(screens): add login screen layout, svg to tag conversion, header config
 - [@dhealthdapps/frontend] feat(screens): add first draft of login screen
+- [@dhealthdapps/frontend] refactor: adapt authentication, add documentation, remove dead code, implement store draft, add dApp config
+- [@dhealthdapps/frontend] build: update Dockerfile to remove redundant command execution, small refactor in HttpRequestHandler
+- [@dhealthdapps/frontend] refactor(app): add Vuex store, use environment variables with .env, adapt log-in functionality and refactor BackendService/AuthService/ProfileService
+- [@dhealthdapps/backend] docs(config): add relevant documentation for config files, add authentication registries, post-refactor accounts fixes
+- [@dhealthdapps/backend] feat(routes): add namespace for API with /transactions to search transactions
+- [@dhealthdapps/backend] docs(api): update nestjs/swagger properties descriptions and set /api namespace for API reference
+- [@dhealthdapps/backend] docs: apply typedoc declaration reference with COMMON, DISCOVERY, WORKER labels, add some missing methods/classes
+- [@dhealthdapps/backend] refactor: make AccountsModule (without routes) a common module, update auth module to use DTO classes
 - [@dhealthdapps/backend] perf: add mongo indexes, required fields and improve mongo query handling
 - [@dhealthdapps/backend] chore: add data folder for database persistence
 - [@dhealthdapps/backend] test: add more unit tests for transactions discovery
 - [@dhealthdapps/backend] feat(base): add support for mongoose FilterQuery and promise delegation in NetworkService
+- [@dhealthdapps/backend] config: update dApp info, add database test
+- [@dhealthdapps/backend] feat(scopes): enable processor scope for operations, add per-schema fillDTO, add enabled routes for operations
+- [@dhealthdapps/backend] feat(routes): add BaseDTO base class for Transferable DTOs
+- [@dhealthdapps/backend] chore(deps): use next distribution tag for @dhealth/contracts
+- [@dhealthdapps/backend] chore(package): set correct executable in configuration
+- [@dhealthdapps/backend] feat(scopes): add draft implementation of operations processor (contracts)
+- [@dhealthdapps/backend] feat(routes): add /auth/refresh functionality, apply linter changes, update Transaction and Account database schema pre-processor features, update AuthService implementation
+- [@dhealthdapps/backend] fix(common): update recent challenge discovery to use Factory of @dhealth/contracts
 
 #### Changed
 
@@ -122,5 +156,6 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: add implementation for schedulers enabled through scopes and more refactor (types)
 
 
+[0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0
 [0.2.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.1.0..v0.2.0
 [0.1.0]: https://github.com/dhealthproject/dapps-framework/releases/tag/v0.1.0

@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## 0.3.0 - Unreleased
+## [0.3.0][0.3.0] - 01-Sep-2022
 
 #### Added
 
@@ -11,6 +11,14 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] chore: add data folder for database persistence
 - [@dhealthdapps/backend] test: add more unit tests for transactions discovery
 - [@dhealthdapps/backend] feat(base): add support for mongoose FilterQuery and promise delegation in NetworkService
+- [@dhealthdapps/backend] config: update dApp info, add database test
+- [@dhealthdapps/backend] feat(scopes): enable processor scope for operations, add per-schema fillDTO, add enabled routes for operations
+- [@dhealthdapps/backend] feat(routes): add BaseDTO base class for Transferable DTOs
+- [@dhealthdapps/backend] chore(deps): use next distribution tag for @dhealth/contracts
+- [@dhealthdapps/backend] chore(package): set correct executable in configuration
+- [@dhealthdapps/backend] feat(scopes): add draft implementation of operations processor (contracts)
+- [@dhealthdapps/backend] feat(routes): add /auth/refresh functionality, apply linter changes, update Transaction and Account database schema pre-processor features, update AuthService implementation
+- [@dhealthdapps/backend] fix(common): update recent challenge discovery to use Factory of @dhealth/contracts
 
 #### Changed
 
@@ -45,5 +53,6 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: add implementation for schedulers enabled through scopes and more refactor (types)
 
 
+[0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0
 [0.2.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.1.0..v0.2.0
 [0.1.0]: https://github.com/dhealthproject/dapps-framework/releases/tag/v0.1.0

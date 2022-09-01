@@ -23,7 +23,7 @@
     "prettier": "prettier --check ./src ./tests",
     "lint:fix": "prettier --write ./src ./tests",
     "lint": "vue-cli-service lint && npm run prettier",
-    "docs": "typedoc --out \"ts-docs/$(npm run version --silent)\" src/kernel src/views/MetaView.ts src/views/Assembler/Assembler.ts",
+    "docs": "typedoc --out \"docs/$(npm run version --silent)\" src/kernel src/views/MetaView.ts src/views/Assembler/Assembler.ts",
     "prebuild": "npm run lint",
     "build": "vue-cli-service build --target app",
     "build:watch": "vue-cli-service build --target app --watch",

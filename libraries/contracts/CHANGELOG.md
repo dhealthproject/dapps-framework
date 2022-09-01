@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## 0.1.0 - Unreleased
+## [0.3.0][0.3.0] - 01-Sep-2022
 
 #### Added
 
@@ -19,3 +19,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealth/contracts] feat(factories): add implementation for createFromTransaction, refactor error handling
 - [@dhealth/contracts] test(factories): add unit tests for Contract.fromTransaction and Factory.createFromX
 - [@dhealth/contracts] feat(contracts): add facade methods to access contract signature and payload
+- [@dhealth/contracts] deps: update version for first canary and update js-joda
+- [@dhealth/contracts] fix(build): use relative path to permit node integrations
+- [@dhealth/contracts] fix(api): facade contract classes use public inputs and parameters
+
+
+[0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0

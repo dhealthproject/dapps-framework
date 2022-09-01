@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## 0.3.0 - Unreleased
+## [0.3.0][0.3.0] - 01-Sep-2022
 
 #### Added
 
@@ -24,6 +24,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] feat(screens): add first draft of vertically split screen
 - [@dhealthdapps/frontend] feat(screens): add login screen layout, svg to tag conversion, header config
 - [@dhealthdapps/frontend] feat(screens): add first draft of login screen
+- [@dhealthdapps/frontend] refactor: adapt authentication, add documentation, remove dead code, implement store draft, add dApp config
+- [@dhealthdapps/frontend] build: update Dockerfile to remove redundant command execution, small refactor in HttpRequestHandler
+- [@dhealthdapps/frontend] refactor(app): add Vuex store, use environment variables with .env, adapt log-in functionality and refactor BackendService/AuthService/ProfileService
 
 #### Changed
 
@@ -68,5 +71,6 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] feat(theme): adds tailwindcss@3.0.x and moves assets to resources/
 
 
+[0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0
 [0.2.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.1.0..v0.2.0
 [0.1.0]: https://github.com/dhealthproject/dapps-framework/releases/tag/v0.1.0
