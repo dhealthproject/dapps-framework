@@ -9,9 +9,8 @@ services:
       target: production
     ports:
       - ${FRONTEND_PORT}:8080
-    environment:
-      FRONTEND_DOMAIN: $FRONTEND_DOMAIN
-      FRONTEND_PORT: $FRONTEND_PORT
+    env_file:
+      - runtime/dapp-frontend-vue/.env
     command: npm run serve:prod
     networks:
       - dapp-net
