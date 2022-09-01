@@ -15,6 +15,7 @@ import { AuthModule } from "./common/modules/AuthModule";
 import { AccountsModule } from "./common/modules/AccountsModule";
 import { ChallengesModule } from "./common/modules/ChallengesModule";
 import { WebHooksModule } from "./common/modules/WebHooksModule";
+import { ActivitiesModule } from "./common/modules/ActivitiesModule";
 import { AppController } from "./AppController";
 import { AppService } from "./AppService";
 import { ScopeFactory } from "./common/ScopeFactory";
@@ -25,18 +26,29 @@ import dappConfigLoader from "../config/dapp";
 
 /**
  * @class AppModule
- * @description The main module definition for the app.
+ * @description The main module definition for the app. This module injects
+ * dependencies that are required for the *common scope* and enables some
+ * API endpoints as described below.
  * <br /><br />
- * By default, the app automatically injects modules
- * such as {@link AuthModule:COMMON}, {@link AccountsModule:COMMON}
- * and {@link ChallengesModule:COMMON} as these are
- * necessary to handle common dApp use cases such as
- * for example log-in operations.
+ * This scoped module currently features the following submodules:
+ * | Module | Mongo collection(s) | Routes | Description |
+ * | --- | --- | --- | --- |
+ * | {@link AccountsModule:COMMON} | `accounts` | `/accounts` | Module with schedulers, collections and routes around **dApp accounts**. |
+ * | {@link AuthModule:COMMON} | N/A | `/auth` | Module with schedulers, collections and routes around **dApp authentication**. |
+ * | {@link ChallengesModule:COMMON} | `authchallenges` | `/auth/challenge` | Module with schedulers, collections and routes around **authentication challenges**. |
+ * | {@link WebHooksModule:COMMON} | N/A | `/webhook/:provider` | Module with schedulers, collections and routes around **Web Hooks**. |
+ * | {@link ActivitiesModule:COMMON} | `activities` | `/activities` | Module with schedulers, collections and routes around **activities**. |
  *
  * @since v0.1.0
  */
 @Module({
-  imports: [AccountsModule, AuthModule, ChallengesModule, WebHooksModule],
+  imports: [
+    AccountsModule,
+    AuthModule,
+    ChallengesModule,
+    WebHooksModule,
+    ActivitiesModule,
+  ],
 })
 export class AppModule {
   /**
