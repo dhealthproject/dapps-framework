@@ -243,8 +243,7 @@ describe("discovery/DiscoverTransactions", () => {
 
         // assert
         expect(logger.debug).toHaveBeenNthCalledWith(1, "Starting transactions discovery for source \"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\"");
-        expect(logger.debug).toHaveBeenNthCalledWith(2, "Total number of transactions: \"0\"");
-        expect(logger.debug).toHaveBeenNthCalledWith(3, "Last discovery for \"discovery:DiscoverTransactions:NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\" ended with page: \"1\"");
+        expect(logger.debug).toHaveBeenNthCalledWith(2, "Last discovery for \"discovery:DiscoverTransactions:NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\" ended with page: \"1\"");
       });
 
       it("should include only confirmed transfer transactions by default", async () => {

@@ -24,7 +24,6 @@ import {
   TransactionType,
   TransferTransaction,
 } from "@dhealth/sdk";
-import { UpdateQuery } from "mongoose";
 
 // internal dependencies
 import { StateService } from "../../../common/services/StateService";
@@ -337,13 +336,6 @@ export class DiscoverTransactions extends DiscoveryCommand {
       );
     }
 
-    // display debug information about total number of transactions
-    if (options.debug && !options.quiet) {
-      this.debugLog(
-        `Total number of transactions: "${this.totalNumberOfTransactions}"`,
-      );
-    }
-
     // per-source synchronization: "discovery:DiscoverTransactions:%SOURCE%"
     const stateIdentifier = `${this.stateIdentifier}:${options.source}`;
     const stateQuerySrc = new StateQuery({
@@ -480,6 +472,11 @@ export class DiscoverTransactions extends DiscoveryCommand {
 
     // updates total counter
     this.totalNumberOfTransactions += nCreated;
+
+    // display debug information about total number of transactions
+    this.debugLog(
+      `Total number of transactions: "${this.totalNumberOfTransactions}"`,
+    );
 
     if (options.debug && !options.quiet) {
       this.debugLog(

@@ -273,7 +273,6 @@ export class AuthController {
         return tokens;
       }
     } catch (e: any) {
-      console.log("Error during challenge validation: ", e);
       // @todo Add error handling for HTTP exceptions
       throw e;
     }
