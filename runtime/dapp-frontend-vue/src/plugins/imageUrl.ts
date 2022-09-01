@@ -7,6 +7,7 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// @todo add plugin documentation (explanation)
 export default {
   install(Vue: any) {
     Vue.prototype.getImageUrl = (path: string) => {

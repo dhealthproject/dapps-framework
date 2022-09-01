@@ -28,6 +28,9 @@ import Medals from "./components/Medals.vue";
 import FriendsList from "./components/FriendsList.vue";
 import { ProfileService } from "@/services/ProfileService";
 
+// style resource
+import "./Dashboard.scss";
+
 @Component({
   components: {
     Card,
@@ -43,7 +46,7 @@ import { ProfileService } from "@/services/ProfileService";
     FriendsList,
   },
 })
-export default class Dasboard extends MetaView {
+export default class Dashboard extends MetaView {
   /**
    * This property is used for
    * calling related API endpoints
@@ -77,7 +80,7 @@ export default class Dasboard extends MetaView {
   get carouselItems(): CarouselItem[] {
     return [
       {
-        image: "footbalbg.jpg",
+        image: "footballbg.jpg",
         gradient:
           "linear-gradient(360deg, rgba(32, 89, 234, 0.7) 0%, rgba(32, 94, 255, 0) 106.16%)",
         footer: {
@@ -88,7 +91,7 @@ export default class Dasboard extends MetaView {
       {
         header: {
           icon: "provided.svg",
-          text: "Powered by lululemon®",
+          text: "Powered by dHealth",
         },
         image: "runningbg.jpg",
         gradient:
@@ -99,7 +102,7 @@ export default class Dasboard extends MetaView {
         },
       },
       {
-        image: "footbalbg.jpg",
+        image: "footballbg.jpg",
         gradient:
           "linear-gradient(360deg, rgba(32, 89, 234, 0.7) 0%, rgba(32, 94, 255, 0) 106.16%)",
         footer: {

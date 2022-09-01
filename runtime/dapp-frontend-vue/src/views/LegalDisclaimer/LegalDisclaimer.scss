@@ -1,0 +1,53 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Vue Frontend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+.dapp-screen-legal-disclaimer {
+  height: calc(100vh - 207px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding-bottom: 75px;
+
+  &__title {
+    font-size: 42px;
+    color: #0a0433;
+    font-weight: 700;
+    margin-bottom: 40px;
+  }
+
+  &__text {
+    font-size: 14px;
+    line-height: 19.6px;
+    letter-spacing: 0.0125em;
+    max-width: 623px;
+    text-align: left;
+  }
+
+  &__confirm {
+    padding-top: 40px;
+
+    &__checkbox {
+      padding-bottom: 40px;
+
+      label {
+        display: inline-block;
+        padding-left: 14px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #0a0433;
+      }
+    }
+  }
+
+  &__consent {
+    overflow-y: scroll;
+    height: 400px;
+  }
+}

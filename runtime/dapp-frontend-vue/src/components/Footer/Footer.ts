@@ -13,13 +13,27 @@ import { Component, Prop } from "vue-property-decorator";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 
+/**
+ *
+ */
 export interface FooterLink {
   path: string;
   text: string;
   icon: string;
 }
 
+/**
+ *
+ */
 @Component({})
 export default class Footer extends MetaView {
-  @Prop({ default: () => [], required: true }) protected links?: FooterLink[];
+  /**
+   *
+   */
+  @Prop({ default: () => [] }) protected links?: FooterLink[];
+
+  /**
+   *
+   */
+  @Prop({ default: "default" }) protected layout?: string;
 }

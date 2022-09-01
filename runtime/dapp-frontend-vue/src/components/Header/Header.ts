@@ -40,12 +40,13 @@ export interface HeaderLink {
 })
 export default class Header extends MetaView {
   /**
-   * Prop which defines list of links available in header
+   * Prop which defines list of links available in header. If the list
+   * is empty, the header will be displayed without menu links.
    *
    * @access protected
-   * @var {links}
+   * @var {HeaderLink[]}
    */
-  @Prop({ default: () => [], required: true }) protected links?: HeaderLink[];
+  @Prop({ default: () => [] }) protected links?: HeaderLink[];
 
   /**
    * Prop which defines if icons(left from menu text) should be shown or not

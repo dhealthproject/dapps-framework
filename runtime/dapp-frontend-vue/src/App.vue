@@ -11,14 +11,29 @@
 -->
 <template>
   <div id="app">
-    <div v-if="$route.meta.layout === 'guest'" class="layout-fullscreen">
+    <!-- Guest SIGN-IN layout (divided screen) -->
+    <div
+      v-if="$route.meta.layout === 'guest/split-horizontal'"
+      class="layout-fullscreen"
+    >
       <router-view :key="$route.fullPath"></router-view>
     </div>
-    <div v-else-if="$route.meta.layout === 'user'" class="layout-user">
+    <!-- Guest default layout (non-authenticated) -->
+    <div v-else-if="$route.meta.layout === 'guest/default'">
+      <Header />
+      <router-view :key="$route.fullPath"></router-view>
+      <Footer layout="empty" :links="emptyFooterLinks" />
+    </div>
+    <!-- In-App layout (authenticated) -->
+    <div v-else-if="$route.meta.layout === 'app/default'" class="layout-user">
       <Header :links="headerLinks" />
       <router-view :key="$route.fullPath"></router-view>
     </div>
-    <div v-else class="layout-default">
+    <!-- Dynamic layout (assembled) -->
+    <div
+      v-else-if="$route.meta.layout === 'dynamic/default'"
+      class="layout-default"
+    >
       <header />
       <nav class="block">
         <router-link :to="{ name: 'app.home' }">Home</router-link> |
@@ -34,11 +49,11 @@
         <div class="text-xs">v{{ version }}</div>
       </footer>
     </div>
+    <!-- Loader if still loading -->
+    <div v-else class="layout-default">
+      <Loader />
+    </div>
   </div>
 </template>
 
 <script lang="ts" src="./App.ts"></script>
-
-<style lang="scss">
-@import "./App.scss";
-</style>

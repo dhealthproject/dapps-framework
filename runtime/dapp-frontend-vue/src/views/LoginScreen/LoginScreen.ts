@@ -22,14 +22,18 @@ import {
   UInt64,
 } from "@dhealth/sdk";
 import { QRCode, QRCodeGenerator } from "@dhealth/qr-library";
-import { Component, Prop } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 import Cookies from "js-cookie";
+import { mapGetters } from "vuex";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import ElevateLogo from "@/components/ElevateLogo/ElevateLogo.vue";
 import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
 import { AccessTokenDTO, AuthService } from "@/services/AuthService";
+
+// style resource
+import "./LoginScreen.scss";
 
 /**
  * @type CarouselItem
@@ -73,6 +77,12 @@ export interface TutorialStepItem {
     DappButton,
     DividedScreen,
   },
+  computed: {
+    ...mapGetters({
+      authChallenge: "auth/getChallenge",
+      accessToken: "auth/getAccessToken",
+    }),
+  },
 })
 export default class LoginScreen extends MetaView {
   /**
@@ -82,46 +92,37 @@ export default class LoginScreen extends MetaView {
    * @access protected
    * @var {number}
    */
-  protected selectedIndex = 0;
-
-  /**
-   * This property is used internally to enable the authentication
-   * functionality's APIs.
-   *
-   * @access protected
-   * @var {Auth}
-   */
-  @Prop({
-    type: Object,
-    required: false,
-    default: () => new AuthService(),
-  })
-  protected service?: AuthService;
-
-  /**
-   * Whether the component is currently in an active *request* to
-   * the backend APIs.
-   *
-   * @access public
-   * @var {boolean}
-   */
-  @Prop({
-    type: Boolean,
-    required: false,
-    default: true,
-  })
-  protected loading?: boolean;
+  protected selectedIndex: number = 0;
 
   /**
    * This property contains the *authentication challenge* as it
    * is requested from the backend API. The end-user must then
    * include this authentication challenge inside a transaction
    * on dHealth Network.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
    *
    * @access protected
    * @var {string}
    */
-  protected authChallenge = "";
+  public authChallenge!: string;
+
+  /**
+   * This property contains the *authentication challenge* as it
+   * is requested from the backend API. The end-user must then
+   * include this authentication challenge inside a transaction
+   * on dHealth Network.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access protected
+   * @var {string}
+   */
+  public accessToken!: string;
 
   /**
    * Whether the QRCode has been fully prepared and loaded or not.
@@ -149,17 +150,6 @@ export default class LoginScreen extends MetaView {
    * @var {globalIntervalTimer}
    */
   protected globalIntervalTimer?: ReturnType<typeof setTimeout>;
-
-  /**
-   * This *computed* property is used internally to make sure
-   * we always have a backend connection to execute API requests.
-   *
-   * @access protected
-   * @returns {Auth}
-   */
-  protected get backendService(): AuthService {
-    return undefined !== this.service ? this.service : new AuthService();
-  }
 
   /**
    * This *computed* property is used internally to configure
@@ -207,7 +197,7 @@ export default class LoginScreen extends MetaView {
    * @returns {boolean}
    */
   protected get isLoading(): boolean {
-    return this.loading === true || !this.hasLoaded;
+    return !this.hasLoaded;
   }
 
   /**
@@ -222,6 +212,7 @@ export default class LoginScreen extends MetaView {
    * @returns {string}
    */
   protected get authContractJSON(): string {
+    // when we have a challenge, we can create the QR Code.
     return new AuthContract({
       dappIdentifier: "elevate",
       challenge: this.authChallenge,
@@ -279,21 +270,17 @@ export default class LoginScreen extends MetaView {
    */
   public async mounted() {
     try {
+      // @todo make sure referral code is saved
       if (this.$route.params.refCode) {
         const refCode: string = this.$route.params.refCode;
         Cookies.set("refCode", refCode, {
           secure: false,
           sameSite: "strict",
-          // @todo should not be here but in service as well
-          domain: "localhost",
+          domain: process.env.VUE_APP_FRONTEND_DOMAIN,
         });
       }
 
-      // first request a valid and *random* authentication challenge
-      const challenge: string = await this.backendService.getAuthChallenge();
-      this.authChallenge = challenge;
-
-      // then start requesting for an access token and refresh token
+      // now start requesting for an access token and refresh token
       // this backend API call will only succeed after the end-user
       // successfully attached the challenge inside a transaction.
       this.fetchAccessToken();
@@ -336,13 +323,17 @@ export default class LoginScreen extends MetaView {
    * @access protected
    * @returns {QRCode}
    */
-  protected createLoginQRCode(): QRCode {
-    return QRCodeGenerator.createTransactionRequest(
-      this.transactionRequest,
-      NetworkType.MAIN_NET,
-      // @todo this should be part of the configuration of ELEVATE
-      "ED5761EA890A096C50D3F50B7C2F0CCB4B84AFC9EA870F381E84DDE36D04EF16"
-    );
+  protected createLoginQRCode(): QRCode | null {
+    try {
+      return QRCodeGenerator.createTransactionRequest(
+        this.transactionRequest,
+        NetworkType.MAIN_NET,
+        // @todo this should be part of the configuration of ELEVATE
+        "ED5761EA890A096C50D3F50B7C2F0CCB4B84AFC9EA870F381E84DDE36D04EF16"
+      );
+    } catch (e) {
+      return null;
+    }
   }
 
   /**
@@ -363,17 +354,17 @@ export default class LoginScreen extends MetaView {
     // do we already have an access token? then redirect
     const isAuth = Cookies.get("accessToken");
     if (isAuth) {
-      this.$router.push({ name: "dashboard" });
+      this.$router.push({ name: "app.dashboard" });
     }
 
     // we use an interval here because the backend API only returns
     // a HTTP200-Success response when the challenge has been found
     // inside a transfer transaction on dHealth Network
-    this.createAccessTokenLoop(5 * 1000);
+    this.createAccessTokenLoop(15 * 1000);
 
     // this interval is used to *clear memory* in the browser and to
     // avoid that requesting access tokens continues *forever* at the
-    // same pace (every 5 seconds). after 5 minutes of requesting access
+    // same pace (every 15 seconds). after 5 minutes of requesting access
     // tokens, we assume that the user may need more time to perform
     // authentication and will only request access tokens every minute
     // starting from here.
@@ -387,6 +378,8 @@ export default class LoginScreen extends MetaView {
       if (undefined !== this.interval) {
         clearInterval(this.interval);
       }
+
+      // @todo may want to refresh?
     }, 30 * 60 * 1000);
   }
 
@@ -395,26 +388,25 @@ export default class LoginScreen extends MetaView {
    * from the backend API.
    * <br /><br />
    * The default interval length is to execute this process
-   * every `5 seconds` (noted in milliseconds: `5000`).
+   * every `15 seconds` (noted in milliseconds: `15000`).
    *
    * @access protected
    * @param   {number}    milliseconds    The number of milliseconds between each execution of the access token loop.
    * @returns {void}
    */
-  protected createAccessTokenLoop(milliseconds: number = 5 * 1000): void {
+  protected createAccessTokenLoop(milliseconds: number = 15 * 1000): void {
     this.interval = setInterval(async () => {
       try {
         // try authenticating the user and requesting an access token
         // this will only succeed provided that the end-user attached
         // the authentication challenge in a transfer transaction
-        const response: AccessTokenDTO = await this.backendService.login(
-          this.authChallenge
+        const response: AccessTokenDTO = await this.$store.dispatch(
+          "auth/fetchAccessToken"
         );
 
         // store the access token inside a browser cookie such that
         // it gets attached to future requests to the backend API
-        AuthService.setAccessToken(response.accessToken);
-        // @todo AuthService.setRefreshToken(response.refreshToken);
+        AuthService.setAccessToken(response.accessToken, response.refreshToken);
 
         // no need to further try authentication, done here.
         if (undefined !== this.interval) {
@@ -422,7 +414,7 @@ export default class LoginScreen extends MetaView {
         }
 
         // redirects to a protected area and marks successful log-in
-        this.$router.push({ name: "dashboard" });
+        this.$router.push({ name: "app.dashboard" });
       } catch (e) {
         // because dHealth Network data storage is asynchronous, the
         // backend API returns a HTTP401-Unauthorized *until* it can

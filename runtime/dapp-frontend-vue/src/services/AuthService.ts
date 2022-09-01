@@ -78,14 +78,21 @@ export class AuthService extends BackendService {
    *
    * @returns void
    */
-  public static setAccessToken(accessToken: string) {
+  public static setAccessToken(accessToken: string, refreshToken?: string) {
     // @todo replace secure: false for the development purposes, should be true
-    Cookies.set("accessToken", accessToken, {
+    const options: any = {
       secure: false,
       sameSite: "strict",
-      // @todo should use the correct domain name in prod..
-      domain: "localhost",
-    });
+      domain: process.env.VUE_APP_FRONTEND_DOMAIN,
+    };
+
+    // save the access token in browser cookie
+    Cookies.set("accessToken", accessToken, options);
+
+    // and if we also received a refreshToken, save it
+    if (undefined !== refreshToken) {
+      Cookies.set("refreshToken", refreshToken, options);
+    }
   }
 
   /**
@@ -96,15 +103,14 @@ export class AuthService extends BackendService {
   public async getAuthChallenge(): Promise<string> {
     // request an authentication challenge
     const response = await this.handler.call(
-      "GET",
-      this.getUrl("auth/challenge")
+      this.getUrl("auth/challenge"),
+      "GET"
       // no-body
       // no-options
       // no-headers
     );
 
     // responds with just the challenge content
-    console.log("Auth.getAuthChallenge(): ", response);
     return response.data.challenge;
   }
 
@@ -119,8 +125,8 @@ export class AuthService extends BackendService {
     // a token will only be returned given the challenge
     // was successfully found in a dHealth Network transfer
     const response = await this.handler.call(
-      "POST",
       this.getUrl("auth/token"),
+      "POST",
       {
         challenge,
       }

@@ -8,10 +8,28 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import Vuex from "vuex";
+import Vuex, { ActionContext } from "vuex";
 
 // internal dependencies
 import { AppModule } from "./AppModule";
+import { AuthModule } from "./AuthModule";
+import { AwaitLock } from "../AwaitLock";
+
+/**
+ *
+ */
+export interface RootState {
+  initialized: boolean;
+}
+
+/**
+ *
+ */
+export type RootContext = ActionContext<any, RootState>;
+
+// creates an "async"-lock for state of pending initialization
+// this will be kept *locally* to this store module implementation
+const Lock = AwaitLock.create();
 
 /**
  *
@@ -19,7 +37,7 @@ import { AppModule } from "./AppModule";
  * @returns
  */
 export const createStore = () => {
-  return new Vuex.Store({
+  return new Vuex.Store<RootState>({
     /**
      * Forces the Vuex store into non-strict mode because
      * use-strict is not compatible with SDK listeners.
@@ -30,10 +48,35 @@ export const createStore = () => {
 
     modules: {
       app: AppModule,
+      auth: AuthModule,
     },
-    state: {},
+    state: (): RootState => ({
+      initialized: false,
+    }),
     getters: {},
-    mutations: {},
-    actions: {},
+
+    mutations: {
+      /**
+       *
+       */
+      setInitialized: (state: RootState, payload: boolean): boolean =>
+        (state.initialized = payload),
+    },
+
+    actions: {
+      /**
+       *
+       */
+      async initialize(context: RootContext): Promise<boolean> {
+        const callback = async () => {
+          await context.dispatch("auth/initialize");
+          context.commit("setInitialized", true);
+        };
+
+        // aquire async lock until initialized
+        await Lock.initialize(callback, context);
+        return true;
+      },
+    },
   });
 };

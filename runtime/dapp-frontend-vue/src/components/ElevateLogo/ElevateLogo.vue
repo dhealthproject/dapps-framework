@@ -12,12 +12,7 @@
 
 <template>
   <div class="dapp-logo inline-block">
-    <router-link :to="{ name: 'home' }">
-      <!-- <img
-        class="dapp-logo__image"
-        :src="getImageUrl('ELEVATE.svg')"
-        :style="{ width: '100%', maxWidth: width + 'px' }"
-    /> -->
+    <router-link :to="{ name: 'app.home' }">
       <inline-svg
         :src="getImageUrl('ELEVATE.svg')"
         :class="theme"

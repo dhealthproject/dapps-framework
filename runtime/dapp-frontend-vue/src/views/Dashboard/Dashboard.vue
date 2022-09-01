@@ -59,7 +59,3 @@
 </template>
 
 <script lang="ts" src="./Dashboard.ts"></script>
-
-<style lang="scss">
-@import "./Dashboard.scss";
-</style>

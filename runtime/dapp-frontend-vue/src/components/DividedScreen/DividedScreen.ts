@@ -17,14 +17,17 @@ import { MetaView } from "@/views/MetaView";
 // style resource
 import "./DividedScreen.scss";
 
+/**
+ *
+ */
 @Component({})
 export default class DividedScreen extends MetaView {
   /**
-   * Title displayed on top of the card,
-   * defaults to ""
+   * Defines gap, in pixels, between screens. This property
+   * defaults to `20`.
    *
-   * @access readonly
-   * @var {gap}
+   * @access protected
+   * @var {number}
    */
-  @Prop({ default: 20 }) readonly gap?: number;
+  @Prop({ default: 20, required: false }) protected gap?: number;
 }

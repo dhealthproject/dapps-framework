@@ -214,6 +214,7 @@ export class AppKernel {
         path,
         name: page.identifier,
         component: Assembler,
+        meta: { layout: "dynamic/default" },
         props: { page },
       });
     }

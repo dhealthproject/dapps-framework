@@ -40,7 +40,7 @@ export abstract class BackendService {
    * @access protected
    * @var {string}
    */
-  protected baseUrl = "http://localhost:7903";
+  protected baseUrl = `${process.env.VUE_APP_BACKEND_URL}`;
 
   /**
    * This property is used to handle requests using a

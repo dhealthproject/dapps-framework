@@ -15,6 +15,11 @@ import { MetaView } from "@/views/MetaView";
 // child components
 import Assembler from "@/views/Assembler/Assembler.vue";
 import Header from "@/components/Header/Header.vue";
+import Footer from "@/components/Footer/Footer.vue";
+import Loader from "@/components/Loader/Loader.vue";
+
+// style resource
+import "./App.scss";
 
 // configuration
 import packageConfig from "../package.json";
@@ -23,6 +28,8 @@ import packageConfig from "../package.json";
   components: {
     Assembler,
     Header,
+    Footer,
+    Loader,
   },
 })
 export default class App extends MetaView {
@@ -52,8 +59,24 @@ export default class App extends MetaView {
   /**
    *
    */
+  protected get emptyFooterLinks() {
+    return [
+      { path: "terms-and-conditions", text: "Terms & Conditions" },
+      { path: "privacy-policy", text: "Privacy Policy" },
+    ];
+  }
+
+  /**
+   *
+   */
   public created() {
+    // dispatches the *root* initialization action
+    this.$store
+      .dispatch("initialize")
+      .catch((error) => console.log("[App] initialize error: ", error));
+
     console.log("[App] route: ", this.$route);
     console.log("[App] store: ", this.$store);
+    console.log("[App] BACKEND_URL: ", process.env.VUE_APP_BACKEND_URL);
   }
 }

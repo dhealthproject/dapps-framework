@@ -25,18 +25,13 @@ import { AuthService } from "@/services/AuthService";
  * @param  {any} next
  * @returns {void}
  */
-export const authenticationHandler = (to: any, from: any, next: any) => {
-  if (!("meta" in to) || !to.meta.protected) {
-    // Access authorized
-    return next();
-  }
-
+export const authenticationHandler = ({ next, router }: any) => {
   // protected pages
   if (!AuthService.hasClientAuthorization()) {
     // Unauthorized: redirect to log-in
     // @todo add referrer_url parameter to redirect after log-in.
-    return next({
-      path: "/login",
+    return router.push({
+      name: "app.login",
     });
   }
 

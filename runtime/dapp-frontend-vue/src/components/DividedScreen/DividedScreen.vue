@@ -26,4 +26,4 @@
   </div>
 </template>
 
-<script src="./DividedScreen.ts"></script>
+<script lang="ts" src="./DividedScreen.ts"></script>

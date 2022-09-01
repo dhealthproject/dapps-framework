@@ -7,7 +7,13 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
+import { ActionContext } from "vuex";
+
 // internal dependencies
+import { RootState } from ".";
+import { AwaitLock } from "../AwaitLock";
+
 // configuration
 import packageConfig from "../../../package.json";
 import dappConfig from "../../../config/dapp.json";
@@ -25,6 +31,15 @@ export interface AppState {
 /**
  *
  */
+export type AppContext = ActionContext<AppState, RootState>;
+
+// creates an "async"-lock for state of pending initialization
+// this will be kept *locally* to this store module implementation
+const Lock = AwaitLock.create();
+
+/**
+ *
+ */
 export const AppModule = {
   // this store module is namespaced, meaning the
   // module name must be included when calling a
@@ -34,7 +49,7 @@ export const AppModule = {
     name: dappConfig.name,
     version: packageConfig.version,
     language: dappConfig.i18n.locale,
-    backendUrl: dappConfig.backend.url,
+    backendUrl: process.env.BACKEND_URL,
   }),
 
   getters: {
@@ -42,5 +57,20 @@ export const AppModule = {
     getVersion: (state: AppState): string => state.version,
     getLanguage: (state: AppState): string => state.language,
     getBackendURL: (state: AppState): string => state.backendUrl,
+  },
+
+  actions: {
+    /**
+     *
+     */
+    async initialize(context: AppContext): Promise<boolean> {
+      const callback = async () => {
+        context.commit("setInitialized", true);
+      };
+
+      // aquire async lock until initialized
+      await Lock.initialize(callback, context);
+      return true;
+    },
   },
 };
