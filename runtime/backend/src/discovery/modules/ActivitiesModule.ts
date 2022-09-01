@@ -13,9 +13,9 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import { QueryModule } from "../../common/modules/QueryModule";
-import { ActivitiesService } from "../services/ActivitiesService";
-import { ActivitiesController } from "../routes/ActivitiesController";
 import { Activity, ActivitySchema } from "../models/ActivitySchema";
+import { ActivitiesController } from "../routes/ActivitiesController";
+import { ActivitiesService } from "../services/ActivitiesService";
 
 /**
  * @label COMMON
