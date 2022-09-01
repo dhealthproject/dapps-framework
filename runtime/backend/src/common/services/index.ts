@@ -7,9 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-export * from "./Countable";
-export * from "./Documentable";
-export * from "./Pageable";
-export * from "./Queryable";
-export * from "./Sortable";
-export * from "./Transferable";
+export * from "./AccountsService";
+export * from "./AuthService";
+export * from "./ChallengesService";
+export * from "./NetworkService";
+export * from "./QueryService";
+export * from "./StateService";

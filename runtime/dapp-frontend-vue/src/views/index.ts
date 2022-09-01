@@ -3,13 +3,11 @@
  * Copyright (C) 2022-present dHealth Network, All rights reserved.
  *
  * @package     dHealth dApps Framework
- * @subpackage  Backend
+ * @subpackage  Vue Frontend
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-export * from "./Countable";
-export * from "./Documentable";
-export * from "./Pageable";
-export * from "./Queryable";
-export * from "./Sortable";
-export * from "./Transferable";
+export * from "./MetaView";
+export * from "./Assembler/Assembler";
+
+// @todo pages may *also* export Typescript class documentation

@@ -22,12 +22,9 @@
       "webpack-env",
       "chai",
       "jest",
-      "./types/vue/",
-      "./types/vue-router/",
-      "./types",
-      "./node_modules/@types"
+      "node"
     ],
-    "typeRoots": ["./types", "./node_modules/@types"],
+    "typeRoots": ["node_modules/@types"],
     "paths": {
       "@/*": ["src/*"]
     },

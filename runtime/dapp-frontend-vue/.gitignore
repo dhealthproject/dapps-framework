@@ -25,4 +25,4 @@ pnpm-debug.log*
 *.sw?
 
 # documentation
-ts-docs/
+docs/

@@ -40,3 +40,6 @@ data
 
 # Do not checkin .env file
 .env
+
+# Documentation
+docs/

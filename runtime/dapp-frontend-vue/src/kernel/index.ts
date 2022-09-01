@@ -8,6 +8,8 @@
  * @license     LGPL-3.0
  */
 export * from "./contracts";
+export * from "./errors";
 export * from "./i18n";
+export * from "./remote";
 export * from "./storage";
 export * from "./AppKernel";

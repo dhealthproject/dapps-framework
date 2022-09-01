@@ -21,27 +21,27 @@ import { PaginatedResultDTO } from "../models/PaginatedResultDTO";
 // but will be refactored to further extend the *abstraction layer* around
 // queries and make it compatible with 1. Mongo Queries and 2. HTTP Queries
 // such that the query service can be used as a middleware to build queries
-type UnknownFieldValue = boolean | number | string | any[] | null | any;
+export type UnknownFieldValue = boolean | number | string | any[] | null | any;
 
-type UnsafeQueryConditions = {
+export type UnsafeQueryConditions = {
   [key: string]: UnknownFieldValue;
 };
 
-type MongoQueryCursor = {
+export type MongoQueryCursor = {
   page: number;
   limit: number;
   skip: number;
 };
 
-type MongoQueryRoutine = { $in: number[] | string[] };
-type MongoQueryConditionValue =
+export type MongoQueryRoutine = { $in: number[] | string[] };
+export type MongoQueryConditionValue =
   | boolean
   | number
   | string
   | any[]
   | MongoQueryRoutine;
 
-type MongoQueryConditions = {
+export type MongoQueryConditions = {
   [key: string]: MongoQueryConditionValue;
 };
 /// end-block to-refactor

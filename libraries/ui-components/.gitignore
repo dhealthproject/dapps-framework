@@ -23,4 +23,4 @@ yarn-error.log*
 yarn.lock
 
 # documentation
-ts-docs/
+docs/

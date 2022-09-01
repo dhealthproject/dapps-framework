@@ -42,7 +42,8 @@
     "db:migration:show": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:show -d config/migrations.ts",
     "db:migration:add": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate -d config/migrations.ts",
     "db:migration:up": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:run -d config/migrations.ts",
-    "db:migration:down": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert -d config/migrations.ts"
+    "db:migration:down": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert -d config/migrations.ts",
+    "docs": "npx typedoc --out \"docs/`npm run version --silent`\" src/classes.ts"
   },
   "dependencies": {
     "@dhealth/contracts": "next",
@@ -93,6 +94,7 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "^3.10.1",
+    "typedoc": "^0.22.15",
     "typescript": "^4.3.5"
   },
   "jest": {

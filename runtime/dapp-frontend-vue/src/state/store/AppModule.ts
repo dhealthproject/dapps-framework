@@ -11,7 +11,7 @@
 import { ActionContext } from "vuex";
 
 // internal dependencies
-import { RootState } from ".";
+import { RootState } from "./Store";
 import { AwaitLock } from "../AwaitLock";
 
 // configuration
@@ -49,7 +49,7 @@ export const AppModule = {
     name: dappConfig.name,
     version: packageConfig.version,
     language: dappConfig.i18n.locale,
-    backendUrl: process.env.BACKEND_URL,
+    backendUrl: process.env.BACKEND_URL ?? "http://localhost:7903",
   }),
 
   getters: {

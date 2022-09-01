@@ -40,7 +40,7 @@ Vue.use(imageUrl);
 import router from "./router";
 
 // initializes state
-import { createStore } from "./state/store";
+import { createStore } from "./state/store/Store";
 
 // defines App component
 import App from "./App.vue";

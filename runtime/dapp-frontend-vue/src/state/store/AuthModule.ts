@@ -11,7 +11,7 @@
 import { ActionContext } from "vuex";
 
 // internal dependencies
-import { RootState } from ".";
+import { RootState } from "./Store";
 import { AccessTokenDTO, AuthService } from "@/services/AuthService";
 import { AwaitLock } from "../AwaitLock";
 

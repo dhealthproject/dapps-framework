@@ -11,7 +11,6 @@
 import { DappButton } from "@dhealth/components";
 
 // internal dependencies
-import HelloWorld from "./HelloWorld.vue";
 import Header from "./Header/Header.vue";
 import Footer from "./Footer/Footer.vue";
 import Loader from "./Loader/Loader.vue";
@@ -23,7 +22,6 @@ import Tabs from "./Tabs/Tabs.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
-  HelloWorld,
   Header,
   Footer,
   Loader,
