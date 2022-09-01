@@ -1,0 +1,28 @@
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log
+
+# dotenv environment variables file
+.env
+
+# OS X temporary files
+.DS_Store
+
+# Ignore full source code
+libraries/contracts/*
+libraries/ui-components/*
+runtime/backend/*
+runtime/dapp-frontend-vue/*
+.env-sample
+docker-compose.yml
+lerna.json
+package.json
+
+# Documentation
+!libraries/contracts/docs
+!libraries/ui-components/docs
+!runtime/backend/docs
+!runtime/dapp-frontend-vue/docs
