@@ -15,7 +15,6 @@ import { AuthModule } from "./common/modules/AuthModule";
 import { AccountsModule } from "./common/modules/AccountsModule";
 import { ChallengesModule } from "./common/modules/ChallengesModule";
 import { WebHooksModule } from "./common/modules/WebHooksModule";
-import { ActivitiesModule } from "./common/modules/ActivitiesModule";
 import { AppController } from "./AppController";
 import { AppService } from "./AppService";
 import { ScopeFactory } from "./common/ScopeFactory";
@@ -37,7 +36,6 @@ import dappConfigLoader from "../config/dapp";
  * | {@link AuthModule:COMMON} | N/A | `/auth` | Module with schedulers, collections and routes around **dApp authentication**. |
  * | {@link ChallengesModule:COMMON} | `authchallenges` | `/auth/challenge` | Module with schedulers, collections and routes around **authentication challenges**. |
  * | {@link WebHooksModule:COMMON} | N/A | `/webhook/:provider` | Module with schedulers, collections and routes around **Web Hooks**. |
- * | {@link ActivitiesModule:COMMON} | `activities` | `/activities` | Module with schedulers, collections and routes around **activities**. |
  *
  * @since v0.1.0
  */
@@ -47,7 +45,6 @@ import dappConfigLoader from "../config/dapp";
     AuthModule,
     ChallengesModule,
     WebHooksModule,
-    ActivitiesModule,
   ],
 })
 export class AppModule {

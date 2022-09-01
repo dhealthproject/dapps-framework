@@ -14,6 +14,7 @@ import { Module } from "@nestjs/common";
 import { AccountsModule } from "./modules/AccountsModule";
 import { AssetsModule } from "./modules/AssetsModule";
 import { TransactionsModule } from "./modules/TransactionsModule";
+import { ActiviesModule } from "./modules/ActivitiesModule";
 
 /**
  * @label DISCOVERY
@@ -43,6 +44,7 @@ import { TransactionsModule } from "./modules/TransactionsModule";
     AccountsModule,
     TransactionsModule,
     AssetsModule,
+    ActiviesModule,
   ],
 })
 export class DiscoveryModule {}
