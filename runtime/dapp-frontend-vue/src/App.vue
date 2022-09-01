@@ -11,22 +11,18 @@
 -->
 <template>
   <div id="app">
-    <div v-if="$route.meta.layout === 'fullscreen'" class="layout-fullscreen">
+    <div v-if="$route.meta.layout === 'guest'" class="layout-fullscreen">
       <router-view :key="$route.fullPath"></router-view>
     </div>
-    <div
-      v-else-if="$route.meta.layout === 'authenticated'"
-      class="layout-authenticated"
-    >
+    <div v-else-if="$route.meta.layout === 'user'" class="layout-user">
       <Header :links="headerLinks" />
       <router-view :key="$route.fullPath"></router-view>
     </div>
     <div v-else class="layout-default">
       <header />
       <nav class="block">
-        <router-link :to="{ name: 'home' }">Home</router-link> |
-        <router-link :to="{ name: 'about' }">About</router-link> |
-        <router-link :to="{ name: 'onboarding' }">Onboarding</router-link>
+        <router-link :to="{ name: 'app.home' }">Home</router-link> |
+        <router-link :to="{ name: 'app.login' }">Sign in</router-link>
       </nav>
 
       <div class="block w-screen mx-auto">

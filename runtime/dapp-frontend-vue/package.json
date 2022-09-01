@@ -1,6 +1,6 @@
 {
   "name": "@dhealthdapps/frontend",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "homepage": "https://github.com/dhealthproject/dapps-framework/tree/main/runtime/dapp-frontend-vue#readme",
   "description": "dHealth dApps Frontend with Vue",
   "author": "dHealth Network <devs@dhealth.foundation>",
@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "@dhealth/components": "next",
+    "@dhealth/contracts": "next",
     "@dhealth/qr-library": "~1.0.0",
     "@dhealth/sdk": "~1.0.3-alpha-202201201200",
     "axios": "^0.27.2",

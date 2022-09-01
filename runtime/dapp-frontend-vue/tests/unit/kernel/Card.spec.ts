@@ -17,7 +17,9 @@ import the_module from "../../../config/modules/home.json";
 describe("Card class -->", () => {
   let card: any;
   beforeEach(() => {
-    card = the_module.routerConfig["/"].cards[0];
+    // hello-world module is added as an always-present example
+    // for dynamic modules using the AppKernel generic pages
+    card = the_module.routerConfig["/hello-world"].cards[0];
   });
 
   it("should exist", () => {

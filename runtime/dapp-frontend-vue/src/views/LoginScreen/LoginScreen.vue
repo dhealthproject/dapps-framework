@@ -9,7 +9,6 @@
  * @license     LGPL-3.0
  */
 -->
-
 <template>
   <div class="dapp-login-screen bg-[#f5f5f5]">
     <DividedScreen>
@@ -19,11 +18,11 @@
           <div class="dapp-login-screen__carousel">
             <div
               v-for="(item, index) in carouselItems"
-              :key="item + index"
+              :key="item.id + index"
               class="carousel-item"
             >
               <h2 v-if="index === selectedIndex" class="carousel-item__title">
-                {{ item }}
+                {{ item.text }}
               </h2>
             </div>
             <div class="carousel-controls">
@@ -41,10 +40,11 @@
 
       <template v-slot:right>
         <div class="dapp-login-screen__qr flex flex-column justify-center">
-          <DappQR :qrCode="createLoginContract()" />
+          <DappQR :qrCode="createLoginQRCode()" />
           <ul class="steps">
             <li v-for="(tutorialItem, index) in tutorialItems" :key="index">
-              <span class="number">{{ index + 1 }}</span> {{ tutorialItem }}
+              <span class="number">{{ index + 1 }}</span>
+              {{ tutorialItem.text }}
             </li>
           </ul>
           <DappButton class="dapp-login-screen__button"

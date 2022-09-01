@@ -11,6 +11,7 @@
 import Vue from "vue";
 import VueMeta from "vue-meta";
 import VueRouter from "vue-router";
+import Vuex from "vuex";
 
 // internal dependencies
 import "./registerServiceWorker";
@@ -30,6 +31,7 @@ Vue.use(internalComponentsInstaller);
 // importing Vue plugins
 Vue.use(VueMeta, { keyName: "metaInfo" });
 Vue.use(VueRouter);
+Vue.use(Vuex);
 
 // importing internal Vue plugins
 Vue.use(imageUrl);
@@ -38,7 +40,7 @@ Vue.use(imageUrl);
 import router from "./router";
 
 // initializes state
-import store from "./state/store";
+import { createStore } from "./state/store";
 
 // defines App component
 import App from "./App.vue";
@@ -46,6 +48,6 @@ import App from "./App.vue";
 // create app instance
 new Vue({
   router,
-  store,
+  store: createStore(),
   render: (h) => h(App),
 }).$mount("#app");

@@ -26,7 +26,7 @@ import Tabs from "@/components/Tabs/Tabs.vue";
 import QuickStats from "./components/QuickStats.vue";
 import Medals from "./components/Medals.vue";
 import FriendsList from "./components/FriendsList.vue";
-import { Profile } from "@/modules/Profile/Profile";
+import { ProfileService } from "@/services/ProfileService";
 
 @Component({
   components: {
@@ -51,7 +51,7 @@ export default class Dasboard extends MetaView {
    * @access private
    * @var {service}
    */
-  private service = new Profile();
+  private service = new ProfileService();
 
   /**
    * Computed which defines configuration

@@ -7,17 +7,7 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// external dependencies
-import { Component } from "vue-property-decorator";
-
-// internal dependencies
-import { MetaView } from "@/views/MetaView";
-
-@Component({
-  methods: {
-    pageName() {
-      return "About";
-    },
-  },
-})
-export default class AboutPage extends MetaView {}
+/**
+ *
+ */
+export class UnauthorizedError extends Error {}

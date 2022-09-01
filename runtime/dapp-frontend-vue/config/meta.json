@@ -15,16 +15,16 @@
     "og:url": "example-dapp.dhealth.com",
     "og:image": "https://example-dapp.dhealth.com/img/icons/android-chrome-192x192.png"
   },
-  "HomePage": {
-    "title": "Home | dHealth dApp",
-    "description": "dHealth dApp is built with dHealth dApp Framework"
-  },
-  "AboutPage": {
-    "title": "About | dHealth dApp",
-    "description": "dHealth dApp is built with dHealth dApp Framework"
-  },
   "Assembler": {
     "title": "Assembled page | dHealth dApp",
-    "description": "dHealth dApp is built with dHealth dApp Framework. This page assembled dynamically."
+    "description": "dHealth dApp is built with dHealth dApps Framework. This page assembled dynamically."
+  },
+  "Dashboard": {
+    "title": "Dashboard | dHealth dApp",
+    "description": "dHealth dApp is built with dHealth dApps Framework."
+  },
+  "LoginScreen": {
+    "title": "Sign in | dHealth dApp",
+    "description": "dHealth dApp is built with dHealth dApps Framework."
   }
 }

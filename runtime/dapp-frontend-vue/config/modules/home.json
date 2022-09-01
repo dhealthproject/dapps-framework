@@ -5,7 +5,7 @@
   },
   "namespaced": false,
   "routerConfig": {
-    "/": {
+    "/hello-world": {
       "identifier": "home",
       "formatters": {},
       "layout": "singular",
@@ -22,20 +22,6 @@
           "component": "DappButton",
           "props": {
             "variant": "tertiary"
-          }
-        }
-      ]
-    },
-    "/settings": {
-      "identifier": "settings",
-      "formatters": {},
-      "layout": "default",
-      "cards": [
-        {
-          "identifier": "title-message",
-          "component": "TableCard",
-          "state": {
-            "getter": "app/getSettings"
           }
         }
       ]

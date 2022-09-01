@@ -1,0 +1,10 @@
+{
+  "name": "ELEVATE",
+  "i18n": {
+    "locale": "en",
+    "locales": ["en", "de"]
+  },
+  "backend": {
+    "url": "http://localhost:7903"
+  }
+}

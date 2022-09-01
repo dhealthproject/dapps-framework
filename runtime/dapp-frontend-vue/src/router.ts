@@ -25,44 +25,33 @@ const router = new VueRouter({
   routes: [
     ...dynamicRoutes,
     {
-      path: "/about",
-      name: "about",
-      component: () => import("./views/pages/AboutPage/AboutPage.vue"),
-    },
-    {
-      path: "/onboarding",
-      name: "onboarding.home",
-      component: () => import("./views/OnboardingPage/OnboardingPage.vue"),
-      children: [
-        {
-          path: ":refCode",
-          name: "onboarding.refCode",
-          component: () => import("./views/OnboardingPage/OnboardingPage.vue"),
-        },
-      ],
-    },
-    {
-      path: "/terms-of-service",
-      name: "legal.terms-of-service",
+      path: "/",
+      name: "app.home",
       meta: {
-        protected: true,
-      },
-      component: () =>
-        import("./views/TermsOfServicePage/TermsOfServicePage.vue"),
-    },
-    {
-      path: "/login",
-      name: "login",
-      meta: {
-        layout: "fullscreen",
+        layout: "guest",
       },
       component: () => import("./views/LoginScreen/LoginScreen.vue"),
     },
     {
-      path: "/dashboard",
-      name: "dashboard",
+      path: "/login",
+      name: "app.login",
       meta: {
-        layout: "authenticated",
+        layout: "guest",
+      },
+      component: () => import("./views/LoginScreen/LoginScreen.vue"),
+      children: [
+        {
+          path: ":refCode",
+          name: "app.login.withRefCode",
+          component: () => import("./views/LoginScreen/LoginScreen.vue"),
+        },
+      ],
+    },
+    {
+      path: "/dashboard",
+      name: "app.dashboard",
+      meta: {
+        layout: "user",
         protected: true,
       },
       component: () => import("./views/Dashboard/Dashboard.vue"),

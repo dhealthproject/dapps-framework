@@ -54,5 +54,6 @@ export default class App extends MetaView {
    */
   public created() {
     console.log("[App] route: ", this.$route);
+    console.log("[App] store: ", this.$store);
   }
 }
