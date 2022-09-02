@@ -11,13 +11,14 @@
 import { Injectable, HttpException } from "@nestjs/common";
 
 // internal dependencies
+import { Activity } from "../routes/ActivitiesController";
 // import { AuthService } from "./AuthService";
 
 @Injectable()
 export class ActivitiesService {
   // This is mocked activities list, should be removed when DB will be available
   // @Todo: replaced mock with actual DB
-  protected activitiesList: any[] = [
+  protected activitiesList: Activity[] = [
     {
       id: 0,
       name: "John doe",
@@ -27,7 +28,7 @@ export class ActivitiesService {
       total_elevation_gain: 45566,
       kilojoules: 32,
       calories: 134,
-      start_date: 12344222,
+      start_date: "12344222",
     },
     {
       id: 1,
@@ -38,7 +39,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 2,
@@ -49,7 +50,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 3,
@@ -60,7 +61,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 4,
@@ -71,7 +72,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
 
     {
@@ -83,7 +84,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 6,
@@ -94,7 +95,7 @@ export class ActivitiesService {
       total_elevation_gain: 45566,
       kilojoules: 32,
       calories: 134,
-      start_date: 12344222,
+      start_date: "12344222",
     },
     {
       id: 7,
@@ -105,7 +106,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 8,
@@ -116,7 +117,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 9,
@@ -127,7 +128,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 10,
@@ -138,7 +139,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
 
     {
@@ -150,7 +151,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 12,
@@ -161,7 +162,7 @@ export class ActivitiesService {
       total_elevation_gain: 45566,
       kilojoules: 32,
       calories: 134,
-      start_date: 12344222,
+      start_date: "12344222",
     },
     {
       id: 13,
@@ -172,7 +173,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 14,
@@ -183,7 +184,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 15,
@@ -194,7 +195,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 16,
@@ -205,7 +206,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
 
     {
@@ -217,7 +218,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 18,
@@ -228,7 +229,7 @@ export class ActivitiesService {
       total_elevation_gain: 45566,
       kilojoules: 32,
       calories: 134,
-      start_date: 12344222,
+      start_date: "12344222",
     },
     {
       id: 19,
@@ -239,7 +240,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 20,
@@ -250,7 +251,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 21,
@@ -261,7 +262,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 22,
@@ -272,7 +273,7 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
     {
       id: 23,
@@ -283,12 +284,18 @@ export class ActivitiesService {
       total_elevation_gain: 765878,
       kilojoules: 55,
       calories: 444,
-      start_date: 43245677,
+      start_date: "43245677",
     },
   ];
 
-  constructor() {}
-
+  /**
+   * Gets activities from existinglist
+   * can paginate, sort items
+   *
+   * @access public
+   * @param {headersObj} any
+   * @param {query} any
+   */
   async getActivies(headersObj: any, query: any) {
     const { authorization } = headersObj;
 
@@ -309,18 +316,18 @@ export class ActivitiesService {
       const sliced = this.activitiesList.slice((page - 1) * size, page * size);
       switch (sort) {
         case "ASC":
-          return sliced.sort((a, b) => a.position - b.position);
+          return sliced.sort((a, b) => a.id - b.id);
         case "DESC":
-          return sliced.sort((a, b) => b.position - a.position);
+          return sliced.sort((a, b) => b.id - a.id);
       }
     }
 
     if (sort) {
       switch (sort) {
         case "ASC":
-          return this.activitiesList.sort((a, b) => a.position - b.position);
+          return this.activitiesList.sort((a, b) => a.id - b.id);
         case "DESC":
-          return this.activitiesList.sort((a, b) => b.position - a.position);
+          return this.activitiesList.sort((a, b) => b.id - a.id);
       }
     }
 

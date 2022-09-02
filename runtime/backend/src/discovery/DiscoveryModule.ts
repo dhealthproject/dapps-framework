@@ -14,7 +14,7 @@ import { Module } from "@nestjs/common";
 import { AccountsModule } from "./modules/AccountsModule";
 import { AssetsModule } from "./modules/AssetsModule";
 import { TransactionsModule } from "./modules/TransactionsModule";
-import { ActiviesModule } from "./modules/ActivitiesModule";
+import { ActivitiesModule } from "./modules/ActivitiesModule";
 
 /**
  * @label DISCOVERY
@@ -29,6 +29,7 @@ import { ActiviesModule } from "./modules/ActivitiesModule";
  * | {@link TransactionsModule:DISCOVERY} | `transactions` | `/transactions` | Module with schedulers, collections and routes around **dApp transactions**. |
  * | {@link AccountsModule:DISCOVERY} | `accounts` | `/accounts` | Module with schedulers, collections and routes around **dApp accounts**. |
  * | {@link AssetsModule:DISCOVERY} | `assets` | `/assets` | Module with schedulers, collections and routes around **dApp assets**. |
+ * | {@link ActivitiesModule:COMMON} | `activities` | `/activities` | Module with schedulers, collections and routes around **activities**. |
  * <br /><br />
  * Note also that in {@link Schedulers:COMMON}, we map the following **schedulers**
  * to this module:
@@ -44,7 +45,7 @@ import { ActiviesModule } from "./modules/ActivitiesModule";
     AccountsModule,
     TransactionsModule,
     AssetsModule,
-    ActiviesModule,
+    ActivitiesModule,
   ],
 })
 export class DiscoveryModule {}

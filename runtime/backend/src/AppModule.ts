@@ -40,12 +40,7 @@ import dappConfigLoader from "../config/dapp";
  * @since v0.1.0
  */
 @Module({
-  imports: [
-    AccountsModule,
-    AuthModule,
-    ChallengesModule,
-    WebHooksModule,
-  ],
+  imports: [AccountsModule, AuthModule, ChallengesModule, WebHooksModule],
 })
 export class AppModule {
   /**

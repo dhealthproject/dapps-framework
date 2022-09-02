@@ -13,7 +13,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import { QueryModule } from "../../common/modules/QueryModule";
-import { Activity, ActivitySchema } from "../models/ActivitySchema";
+import { Activity, ActivitySchema } from "../../common/models/ActivitySchema";
 import { ActivitiesController } from "../routes/ActivitiesController";
 import { ActivitiesService } from "../services/ActivitiesService";
 
