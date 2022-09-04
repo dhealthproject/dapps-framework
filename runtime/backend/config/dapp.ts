@@ -92,6 +92,37 @@ export default () => ({
   },
 
   /**
+   * A *Front-end App* configuration object. This property is mainly
+   * used to configure the access to the backend or restrict requests
+   * that are issued to it.
+   *
+   * @example `{ url: "http://a.b.c:1234", host: "a.b.c", port: 1234, https: false}`
+   * @access public
+   * @var {AppConnectionPayload}
+   */
+  frontendApp: {
+    url: process.env.FRONTEND_URL,
+    host: process.env.FRONTEND_DOMAIN,
+    port: process.env.FRONTEND_PORT,
+    https: false
+  },
+
+  /**
+   * A *Backend-end App* configuration object. This property is mainly
+   * used to configure the generation OpenAPI specification.
+   *
+   * @example `{ url: "http://a.b.c:1234", host: "a.b.c", port: 1234, https: false}`
+   * @access public
+   * @var {AppConnectionPayload}
+   */
+  backendApp: {
+    url: process.env.BACKEND_URL,
+    host: process.env.BACKEND_DOMAIN,
+    port: process.env.BACKEND_PORT,
+    https: false
+  },
+
+  /**
    * A configuration object related to the discovery module as defined
    * {@link DiscoveryConfig}.
    * <br /><br />

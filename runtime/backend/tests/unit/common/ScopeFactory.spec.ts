@@ -105,6 +105,8 @@ describe("common/ScopeFactory", () => {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
         database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        frontendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
+        backendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
       };
 
       const configDto1: DappConfig = { ...baseConfig, scopes: [] };
@@ -126,6 +128,8 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         scopes: ["discovery", "payout", "processor"],
         database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        frontendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
+        backendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
       };
 
       // act
@@ -147,6 +151,8 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         scopes: ["discovery", "processor"],
         database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        frontendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
+        backendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
       };
 
       // act
@@ -167,6 +173,8 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         scopes: ["database"],
         database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        frontendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
+        backendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
       };
 
       // act
@@ -184,6 +192,8 @@ describe("common/ScopeFactory", () => {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
         database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        frontendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
+        backendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
       };
 
       const configDto1: DappConfig = { ...baseConfig, scopes: [] };
@@ -215,6 +225,8 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         scopes: ["discovery"],
         database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        frontendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
+        backendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
       };
 
       // act
@@ -238,6 +250,8 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         scopes: [],
         database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        frontendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
+        backendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
       };
 
       // act
@@ -257,6 +271,8 @@ describe("common/ScopeFactory", () => {
         dappPublicKey: "FakePublicKeyOfAdApp",
         scopes: ["processor"],
         database: { host: "fake", port: "1", name: "fake-db", user: "fake-user" },
+        frontendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
+        backendApp: { url: "fake-url", host: "fake-domain", port: 1234, https: false },
       };
 
       // act

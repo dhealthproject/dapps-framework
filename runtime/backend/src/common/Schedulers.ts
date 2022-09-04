@@ -34,6 +34,9 @@ const db = dappConfigLoader().database;
  * and are registered through a *scoped module*, i.e. "discovery" defines some
  * schedulers and "payout" may define more schedulers.
  * <br /><br />
+ * Note that the database *password* is intentionally read *only* from environment
+ * variables and is **not added to the configuration** to reduce potential leaks.
+ * <br /><br />
  * Schedulers that are currently available are represented in the following
  * information table:
  * | Scope | Scheduler | Description |

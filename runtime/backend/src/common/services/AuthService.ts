@@ -35,6 +35,10 @@ import {
   AuthChallengeQuery,
 } from "../models/AuthChallengeSchema";
 
+// configuration resources
+import dappConfigLoader from "../../../config/dapp";
+const conf = dappConfigLoader();
+
 /**
  * @interface CookiePayload
  * @description This type is used to describe an individual cookie
@@ -95,13 +99,6 @@ export interface AuthenticationPayload {
 }
 
 /**
- *
- */
-export interface RequestWithUser extends Request {
-  payload: AuthenticationPayload;
-}
-
-/**
  * @label COMMON
  * @class AuthService
  * @description This class serves as an *authentication handler* for users.
@@ -139,6 +136,39 @@ export class AuthService {
   protected challengeSize: number;
 
   /**
+   *
+   */
+  private authSecret: string;
+
+  /**
+   * This method extracts a JWT Token from different parts of the
+   * request object with following order:
+   * - Signed cookies
+   * - Unsigned cookies
+   * - Authorization header
+   *
+   * @param   {Request}   request     A `express` Request object.
+   * @returns {string|null}
+   */
+  public static extractToken(
+    request: Request,
+    cookieName: string = conf.dappName,
+  ): string | null {
+    let token: string =
+      request.signedCookies[cookieName] ??
+      request.cookies[cookieName] ??
+      request.headers["Authorization"] ??
+      null;
+
+    // remove Bearer prefix if extracting from (unsecure) header
+    if (token && token.length && null !== token.match(/^Bearer: /)) {
+      token = token.replace(/^Bearer: /, "");
+    }
+
+    return token;
+  }
+
+  /**
    * Constructs an instance of the authentication service and sets
    * up the *cookie generation* and *challenge generation* routines.
    *
@@ -157,13 +187,14 @@ export class AuthService {
     private readonly challengesService: ChallengesService,
     private jwtService: JwtService,
   ) {
-    const name = this.configService.get<string>("cookie.name");
-    const domain = this.configService.get<string>("cookie.domain");
+    const name = this.configService.get<string>("dappName");
+    const domain = this.configService.get<string>("frontendApp.host");
     const secret = this.configService.get<string>("auth.secret");
 
     // configures cookie(s) creation
     this.cookie = { name, domain, secret } as CookiePayload;
     this.challengeSize = this.configService.get<number>("auth.challengeSize");
+    this.authSecret = secret;
   }
 
   /**
@@ -292,46 +323,95 @@ export class AuthService {
 
     // tries to read tokens from `accounts` document
     if (null !== account) {
-      accessToken = account.accessToken;
-      refreshToken = account.refreshTokenHash;
+      accessToken = account.accessToken ?? null;
+      refreshToken = account.refreshTokenHash ?? null;
     }
 
-    // if we don't have an active access token for this user
-    // constructs a short-lived accessToken for the next hour
-    if (undefined === accessToken) {
-      accessToken = this.jwtService.sign(payload, {
-        // defines a symmetric secret key for signing tokens
-        secret: process.env.AUTH_TOKEN_SECRET,
-        expiresIn: "1h", // 1 hour expiry for access tokens
-      });
-    }
+    console.log("[AuthService] accessToken from db is: ", accessToken);
+    console.log("[AuthService] refreshToken from db is: ", refreshToken);
 
+    // block: creating access token
+    try {
+      // if we don't have an active access token for this user
+      // constructs a short-lived accessToken for the next hour
+      if (undefined === accessToken || null === accessToken) {
+        console.log("[AuthService] creating accessToken");
+        accessToken = this.jwtService.sign(payload, {
+          // defines a symmetric secret key for signing tokens
+          secret: this.authSecret,
+          expiresIn: "1h", // 1 hour expiry for access tokens
+        });
+      }
+      // if on the other hand, we already have an active access
+      // token for the account, we verify that it hasn't expired
+      else {
+        console.log("[AuthService] verifying accessToken");
+        this.jwtService.verify(accessToken, {
+          secret: this.authSecret,
+          ignoreExpiration: false,
+          maxAge: "1h",
+        });
+      }
+
+      // token is valid [or new] and not expired
+    } catch (e: any) {
+      // token expired, we must to create a new one
+      if ("name" in e && e.name === "TokenExpiredError") {
+        console.log("[AuthService] accessToken expired, creating");
+        accessToken = this.jwtService.sign(payload, {
+          // defines a symmetric secret key for signing tokens
+          secret: this.authSecret,
+          expiresIn: "1h", // 1 hour expiry for access tokens
+        });
+      }
+      // token is invalid / signature is invalid
+      else {
+        console.log("[AuthService] accessToken invalid, erroring");
+        throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+      }
+    }
+    // /block: creating access token
+
+    // prepare an update of the user's accessToken
+    const userData: any = {
+      accessToken,
+      lastSessionHash: payload.sub, // contains a transaction hash
+    };
+
+    // prepare a result object (DTO) that holds only an
+    // access token OR a pair of access- and refresh- tokens
+    const accessTokenDTO: AccessTokenDTO = { accessToken };
+
+    // block: creating refresh token
     // if we don't have an active refresh token for this user
     // constructs a long-lived refreshToken for the next year
     // and store a copy of the created tokens in `accounts`
-    if (undefined === refreshToken) {
+    if (undefined === refreshToken || null === refreshToken) {
+      console.log("[AuthService] creating refreshToken");
       refreshToken = this.jwtService.sign(payload, {
         // defines a symmetric secret key for signing tokens
-        secret: process.env.AUTH_TOKEN_SECRET,
+        secret: this.authSecret,
         expiresIn: "1y", // 1 year expiry for refresh tokens
       });
 
-      // store tokens in `accounts` document
-      // note that we store a *hash* of the refresh token
-      // otherwise there would be too much risk in leaking
-      await this.accountsService.createOrUpdate(this.getAccountQuery(payload), {
-        accessToken,
-        refreshTokenHash: sha3_256(refreshToken),
-        lastSessionHash: payload.sub, // contains a transaction hash
-      });
-
-      // return pair of tokens (this is the "first" time)
-      return { accessToken, refreshToken } as AccessTokenDTO;
+      // as we just created a refreshToken, we store a hash of it
+      userData.refreshTokenHash = sha3_256(refreshToken);
+      accessTokenDTO.refreshToken = refreshToken;
     }
+    // /block: creating refresh token
 
-    // return only access token, this is a follow-up call
-    // as we *already* have an active refresh token created
-    return { accessToken } as AccessTokenDTO;
+    // store tokens in `accounts` document
+    // note that we store a *hash* of the refresh token
+    // otherwise there would be too much risk in leaking
+    await this.accountsService.createOrUpdate(
+      this.getAccountQuery(payload),
+      userData,
+    );
+
+    // return pair of tokens (this is the "first" time)
+    // specifying refreshToken explicitly sets undefined
+    // given no refreshToken was generated
+    return accessTokenDTO as AccessTokenDTO;
   }
 
   /**
@@ -383,7 +463,7 @@ export class AuthService {
     // a valid address and refresh token pair are passed
     const accessToken: string = this.jwtService.sign(payload, {
       // defines a symmetric secret key for signing tokens
-      secret: process.env.AUTH_TOKEN_SECRET,
+      secret: this.authSecret,
       expiresIn: "1h", // 1 hour expiry for access tokens
     });
 

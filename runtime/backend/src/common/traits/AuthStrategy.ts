@@ -11,14 +11,18 @@
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
+import { Request } from "express";
 
 // internal dependencies
 import { AccountDocument, AccountQuery } from "../models/AccountSchema";
 import { AccountsService } from "../services/AccountsService";
-import {
-  AuthenticationPayload,
-  RequestWithUser,
-} from "../services/AuthService";
+import { AuthenticationPayload } from "../services/AuthService";
+
+// configuration resources
+import dappConfigLoader from "../../../config/dapp";
+import securityConfigLoader from "../../../config/security";
+const conf = dappConfigLoader();
+const auth = securityConfigLoader().auth;
 
 /**
  * @class AuthStrategy
@@ -37,11 +41,22 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
   public constructor(private readonly accountsService: AccountsService) {
     super({
       // determines the *token* extraction method
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        // do we have a refresh token in the request's *signed*
+        // httpOnly cookies? (name: "dappName:Refresh")
+        (request: Request) => request?.signedCookies[conf.dappName] ?? null,
+
+        // do we have a refresh token in the request's *unsigned*
+        // httpOnly cookies? (name: "dappName:Refresh")
+        (request: Request) => request?.cookies[conf.dappName] ?? null,
+
+        // enables `Authorization` header
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       // delegates the validation of expiry to Passport
       ignoreExpiration: false,
       // defines a symmetric secret key for signing tokens
-      secretOrKey: process.env.AUTH_TOKEN_SECRET,
+      secretOrKey: auth.secret,
     });
   }
 
@@ -57,7 +72,7 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
    * @returns
    */
   public async validate(
-    request: RequestWithUser,
+    request: Request,
     payload: Record<string, any>,
   ): Promise<AuthenticationPayload> {
     // finds an `accounts` document that corresponds
@@ -69,11 +84,9 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
     );
 
     // re-build the authentication payload
-    request.payload = {
+    return {
       sub: account.lastSessionHash,
       address: account.address,
-    };
-
-    return request.payload;
+    } as AuthenticationPayload;
   }
 }

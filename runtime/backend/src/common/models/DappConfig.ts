@@ -14,6 +14,34 @@ import { DiscoveryConfig } from "./DiscoveryConfig";
 
 /**
  * @label COMMON
+ * @type AppConnectionPayload
+ * @description This type consists of an URL, a host, a port and a
+ * flag to enable/disable HTTPS. This type is used to establish a
+ * connection to *the frontend* or *the backend* **apps** from the
+ * outside of the hosting network ("public internet").
+ * <br /><br />
+ * @example Using the `AppConnectionPayload` type to configure apps
+ * ```ts
+ * const myFrontend = {
+ *   url: "http://elevate.dhealth.cloud:8080",
+ *   host: "elevate.dhealth.cloud",
+ *   port: 8080,
+ *   https: false
+ * } as AppConnectionPayload;
+ * ```
+ *
+ * @link DappConfig:COMMON
+ * @since v0.3.0
+ */
+export type AppConnectionPayload = {
+  url: string;
+  host: string;
+  port: string | number;
+  https: boolean;
+};
+
+/**
+ * @label COMMON
  * @interface DappConfig
  * @description The dApp configuration object. This configuration
  * object is used to determine general settings of this dApp runtime
@@ -32,6 +60,7 @@ export interface DappConfig {
    * A public name for the dApp. This name is used across module
    * implementations to describe the currently configured dApp.
    *
+   * @example `"ELEVATE"`
    * @access public
    * @var {string}
    */
@@ -43,6 +72,7 @@ export interface DappConfig {
    * that a dApp's public key refers to an account that is *not*
    * used in modules for doing payouts, etc.
    *
+   * @example `"71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE"`
    * @access public
    * @var {string}
    */
@@ -56,6 +86,7 @@ export interface DappConfig {
    * A scope typically also defines **routes** and **DTOs** that
    * are published when the scope in enabled (opt-in).
    *
+   * @example `["database", "discovery"]`
    * @access public
    * @var {Scope[]}
    */
@@ -68,10 +99,32 @@ export interface DappConfig {
    * *changes* the database connection and may thereby affect the
    * data loaded by the backend runtime.
    *
+   * @example `{ host: "a.b.c", port: 1234, name: "dbname", user: "root"}`
    * @access public
    * @var {DatabaseConfig}
    */
   database: DatabaseConfig;
+
+  /**
+   * A *Front-end App* configuration object. This property is mainly
+   * used to configure the access to the backend or restrict requests
+   * that are issued to it.
+   *
+   * @example `{ url: "http://a.b.c:1234", host: "a.b.c", port: 1234, https: false}`
+   * @access public
+   * @var {AppConnectionPayload}
+   */
+  frontendApp: AppConnectionPayload;
+
+  /**
+   * A *Backend-end App* configuration object. This property is mainly
+   * used to configure the generation OpenAPI specification.
+   *
+   * @example `{ url: "http://a.b.c:1234", host: "a.b.c", port: 1234, https: false}`
+   * @access public
+   * @var {AppConnectionPayload}
+   */
+  backendApp: AppConnectionPayload;
 
   /**
    * A configuration object related to the discovery module as defined
@@ -81,6 +134,7 @@ export interface DappConfig {
    * *may slow down* the *synchronization process* of the backend
    * runtime.
    *
+   * @see DiscoveryConfig
    * @access public
    * @var {DiscoveryConfig}
    */

@@ -59,26 +59,26 @@ export default () => ({
   },
 
   /**
-   * A cookies configuration object. This consists of parameters
-   * that are necessary to persist *sessions* (securely) for end-users.
-   * This configuration option uses the {@link CookieParameters:COMMON}
-   * type and consists of a **cookie name** that can be any human
-   * readable ("friendly") name, as well as a domain name (or IP)
-   * that is used to secure the cookie.
+   * A CORS configuration object. This consists of parameters
+   * that are necessary to secure API Requests of this backend runtime.
+   * This configuration option uses the {@link CrossOriginParameters:COMMON}
+   * type and consists of an **origin** configuration to enable/disable
+   * CORS and restrict the originators of requests to the API.
    * <br /><br />
-   * @example Example cookies configuration object
+   * @example Example backend CORS configuration object
    * ```json
-   * {
-   *   name: "accounts-of-dHealthverse",
-   *   domain: "elevate.dhealth.com",
-   * }
+   * { origin: "*" }
+   * ```
+   * <br /><br />
+   * @example Example backend CORS configuration object for a frontend
+   * ```json
+   * { origin: process.env.FRONTEND_URL }
    * ```
    *
-   * @link CookieParameters:COMMON
-   * @var {CookieParameters}
+   * @link CrossOriginParameters:COMMON
+   * @var {CrossOriginParameters}
    */
-  cookie: {
-    name: "dapps.dhealth.universe",
-    domain: "localhost",
-  },
+  cors: {
+    origin: process.env.FRONTEND_URL,
+  }
 });

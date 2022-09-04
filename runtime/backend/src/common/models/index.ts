@@ -30,3 +30,4 @@ export * from "./AccessTokenDTO";
 export * from "./AccountDTO";
 export * from "./AuthChallengeDTO";
 export * from "./StateDTO";
+export * from "./StatusDTO";

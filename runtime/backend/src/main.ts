@@ -19,9 +19,11 @@ import cookieParser from "cookie-parser";
 import { AppModule } from "./AppModule";
 import * as packageJson from "../package.json";
 import { DappConfig } from "./common/models/DappConfig";
+import { SecurityConfig } from "./common/models/SecurityConfig";
 
 // configuration resources
 import dappConfigLoader from "../config/dapp";
+import securityConfigLoader from "../config/security";
 
 /**
  * Main function to bootstrap the app.
@@ -32,11 +34,12 @@ import dappConfigLoader from "../config/dapp";
 async function bootstrap(): Promise<void> {
   // read configuration
   const dappConfig: DappConfig = dappConfigLoader();
+  const securityConfig: SecurityConfig = securityConfigLoader();
 
   // create app instance
   const app = await NestFactory.create(
     AppModule.register({
-      ...dappConfigLoader(),
+      ...dappConfig,
     } as DappConfig),
   );
 
@@ -44,14 +47,32 @@ async function bootstrap(): Promise<void> {
   const logger = new Logger(dappConfig.dappName);
   logger.debug(`Starting ${packageJson.name} at v${packageJson.version}`);
 
-  // add secutity
-  app.enableCors();
+  // enable CORS only when desired
+  const allowedOrigins = securityConfig.cors.origin;
+
+  // origin may be one of:
+  // - an array of URLs
+  // - one specific URL
+  // - a boolean `true`
+  if (allowedOrigins !== false && allowedOrigins !== "*") {
+    app.enableCors({
+      credentials: true,
+      origin: allowedOrigins,
+    });
+  }
+  // wildcard CORS does not *require* credentials
+  else if (allowedOrigins === "*") {
+    app.enableCors({ origin: "*" });
+  }
+
+  // enable throttle and *secured* cookie parser
   app.use(helmet());
-  app.use(cookieParser(process.env.AUTH_TOKEN_SECRET));
+  app.use(cookieParser(securityConfig.auth.secret));
 
   // configures the request listener (HTTP server)
-  const appPort: string = process.env.BACKEND_PORT;
-  const appUrl: string = process.env.BACKEND_DOMAIN;
+  const appPort = dappConfig.backendApp.port;
+  const appUrl: string = dappConfig.backendApp.url;
+  const appName = `${dappConfig.dappName} API`;
 
   // init OpenAPI documentation with information from package.json
   const docConfig = new DocumentBuilder()
@@ -59,7 +80,7 @@ async function bootstrap(): Promise<void> {
     .setDescription(packageJson.description)
     .setVersion(packageJson.version)
     .addTag(`${packageJson.name} v${packageJson.version}`)
-    .addServer(`http://${appUrl}:${appPort}`, "dHealth dApp Backend")
+    .addServer(`${appUrl}`, appName)
     .build();
   const document = SwaggerModule.createDocument(app, docConfig);
   SwaggerModule.setup("api", app, document);

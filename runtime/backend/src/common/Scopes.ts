@@ -26,6 +26,9 @@ const db = dappConfigLoader().database;
  * modules. Scopes are opt-in and only enabled if they are present in a
  * dApp's configuration files (config/dapp.json).
  * <br /><br />
+ * Note that the database *password* is intentionally read *only* from environment
+ * variables and is **not added to the configuration** to reduce potential leaks.
+ * <br /><br />
  * Scopes that are currently available are represented in the following
  * information table:
  * | Scope | Reference | Description |

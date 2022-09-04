@@ -35,25 +35,37 @@ export type AuthParameters = {
 
 /**
  * @label COMMON
- * @type CookieParameters
- * @description This type consists of a **cookie name** that can
- * be any human readable ("friendly") name, as well as a domain
- * name (or IP) that is used to secure the cookie.
+ * @type CrossOriginParameters
+ * @description This type consists of the security configuration
+ * related to the backend runtime API. It sets the valid origins
+ * to enable/disable CORS and permits to stop accepting requests
+ * from unknown locations ("origins").
  * <br /><br />
- * @example Using the `CookieParameters` type to configure cookies
+ * @example Using the `CrossOriginParameters` type with a wildcard origin
  * ```json
- * {
- *   name: "accounts-of-dHealthverse",
- *   domain: "elevate.dhealth.com",
- * }
+ * { origin: "*" }
+ * ```
+ * <br /><br />
+ * @example Using the `CrossOriginParameters` type with a list of origins
+ * ```json
+ * // this allows both localhost and example.com
+ * { origin: ["http://localhost", "http://example.com"] }
+ * ```
+ * <br /><br />
+ * @example Using the `CrossOriginParameters` type to disable CORS
+ * ```json
+ * // Setting `origin: false` disables CORS
+ * { origin: false }
+ *
+ * // Setting `origin: true` is the equivalent of a wilcard
+ * { origin: true }
  * ```
  *
  * @link SecurityConfig:COMMON
  * @since v0.3.0
  */
-export type CookieParameters = {
-  name: string;
-  domain: string;
+export type CrossOriginParameters = {
+  origin: string[] | string | boolean;
 };
 
 /**
@@ -91,24 +103,20 @@ export interface SecurityConfig {
   auth: AuthParameters;
 
   /**
-   * A cookies configuration object. This consists of parameters
-   * that are necessary to persist *sessions* (securely) for end-users.
-   * This configuration option uses the {@link CookieParameters:COMMON}
-   * type and consists of a **cookie name** that can be any human
-   * readable ("friendly") name, as well as a domain name (or IP)
-   * that is used to secure the cookie.
+   * A CORS configuration object. This consists of parameters
+   * that are necessary to secure API Requests of this backend runtime.
+   * This configuration option uses the {@link CrossOriginParameters:COMMON}
+   * type and consists of an **origin** configuration to enable/disable
+   * CORS and restrict the originators of requests to the API.
    * <br /><br />
-   * @example Example cookies configuration object
+   * @example Example backend CORS configuration object
    * ```json
-   * {
-   *   name: "accounts-of-dHealthverse",
-   *   domain: "elevate.dhealth.com",
-   * }
+   * { origin: "*" }
    * ```
    *
-   * @link CookieParameters:COMMON
+   * @link CrossOriginParameters:COMMON
    * @access public
-   * @var {CookieParameters}
+   * @var {CrossOriginParameters}
    */
-  cookie: CookieParameters;
+  cors: CrossOriginParameters;
 }

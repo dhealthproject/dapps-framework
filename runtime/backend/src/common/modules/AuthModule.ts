@@ -26,6 +26,10 @@ import {
 } from "../models/AuthChallengeSchema";
 import { Account, AccountSchema } from "../models/AccountSchema";
 
+// configuration resources
+import securityConfigLoader from "../../../config/security";
+const auth = securityConfigLoader().auth;
+
 /**
  * @class AuthModule
  * @description The main definition for the Auth module.
@@ -41,7 +45,7 @@ import { Account, AccountSchema } from "../models/AccountSchema";
     PassportModule,
     JwtModule.register({
       // defines the secret token for *verifying* JwT tokens
-      secret: process.env.AUTH_TOKEN_SECRET,
+      secret: auth.secret,
       // signature expires after 60 seconds of validity
       signOptions: { expiresIn: "60s" },
     }),

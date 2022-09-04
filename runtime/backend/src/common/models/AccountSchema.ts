@@ -104,7 +104,7 @@ export class Account extends Transferable<AccountDTO> {
    * @access public
    * @var {string}
    */
-  @Prop({})
+  @Prop({ index: true, unique: true, type: String, nullable: true })
   public accessToken?: string;
 
   /**
@@ -119,7 +119,7 @@ export class Account extends Transferable<AccountDTO> {
    * @access public
    * @var {string}
    */
-  @Prop({ index: true })
+  @Prop({ index: true, nullable: true })
   public refreshTokenHash?: string;
 
   /**
@@ -131,7 +131,7 @@ export class Account extends Transferable<AccountDTO> {
    * @access public
    * @var {string}
    */
-  @Prop({})
+  @Prop({ nullable: true })
   public lastSessionHash?: string;
 
   /**

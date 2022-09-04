@@ -25,19 +25,19 @@ import {
   getSchemaPath,
 } from "@nestjs/swagger";
 import { Request, Response } from "express";
+import { sha3_256 } from "js-sha3";
 
 // internal dependencies
 import { AccountDTO } from "../../common/models/AccountDTO";
-import {
-  AuthenticationPayload,
-  AuthService,
-  RequestWithUser,
-} from "../services/AuthService";
+import { AuthenticationPayload, AuthService } from "../services/AuthService";
 import { AuthGuard } from "../traits/AuthGuard";
 import { RefreshGuard } from "../traits/RefreshGuard";
 import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import { AccessTokenRequest } from "../requests/AccessTokenRequest";
 import { AuthChallengeDTO } from "../models/AuthChallengeDTO";
+import { StatusDTO } from "../models/StatusDTO";
+import { AccountsService } from "../services/AccountsService";
+import { Account, AccountDocument, AccountQuery } from "../models/AccountSchema";
 
 namespace HTTPResponses {
   // creates a variable that we include in a namespace
@@ -111,6 +111,24 @@ namespace HTTPResponses {
       ],
     },
   };
+
+  // creates a variable that we include in a namespace
+  // and configure the OpenAPI schema for the response
+  // maps to the HTTP response of `/auth/logout`
+  export const AuthLogoutResponseSchema = {
+    schema: {
+      allOf: [
+        {
+          properties: {
+            data: {
+              type: "array",
+              items: { $ref: getSchemaPath(StatusDTO) },
+            },
+          },
+        },
+      ],
+    },
+  };
 }
 
 /**
@@ -144,7 +162,10 @@ export class AuthController {
    * @param {ConfigService} configService
    * @param {AppService} appService
    */
-  public constructor(private readonly authService: AuthService) {}
+  public constructor(
+    private readonly authService: AuthService,
+    private readonly accountsService: AccountsService,
+  ) {}
 
   /**
    * This method generates an *authentication cookie* depending
@@ -165,8 +186,11 @@ export class AuthController {
    * to instruct *nest* to pass on the response cookie onto the
    * express `Response` object.
    *
-   * @param req
-   * @returns
+   * @todo Should accept an authorized registry in the /auth/challenge request
+   * @method GET
+   * @access protected
+   * @async
+   * @returns Promise<AuthChallengeDTO>   A freshly-created authentication challenge.
    */
   @Get("auth/challenge")
   @ApiOperation({
@@ -176,12 +200,9 @@ export class AuthController {
   })
   @ApiExtraModels(AuthChallengeDTO)
   @ApiOkResponse(HTTPResponses.AuthChallengeResponseSchema)
-  protected async getAuthCode(
-    @NestRequest() request: Request,
-    @NestResponse({ passthrough: true }) response: Response,
-  ): Promise<AuthChallengeDTO> {
+  protected async getAuthCode(): Promise<AuthChallengeDTO> {
     // generates cookie configuration (depends on dApp)
-    const authCookie = this.authService.getCookie();
+    //const authCookie = this.authService.getCookie();
 
     // generates a *random* authentication challenge
     const authChallenge = this.authService.getChallenge();
@@ -189,11 +210,11 @@ export class AuthController {
     // set authentication challenge as the value of the
     // cookie. This will be replaced by the accessToken
     // and refreshToken when authentication is successful.
-    response.cookie(authCookie.name, authChallenge, {
-      httpOnly: true,
-      domain: authCookie.domain,
-      signed: true,
-    });
+    // response.cookie(authCookie.name, authChallenge, {
+    //   httpOnly: true,
+    //   domain: authCookie.domain,
+    //   signed: true,
+    // });
 
     // serves the authentication challenge
     return { challenge: authChallenge } as AuthChallengeDTO;
@@ -217,7 +238,10 @@ export class AuthController {
    * call, please refer to [the `cookie` documentation](https://www.npmjs.com/package/cookie).
    *
    * @method POST
+   * @access protected
+   * @async
    * @param   {AccessTokenRequest}  body    A request that contains an *authentication challenge*.
+   * @param   {Response}            response    An `express` response object that will be used to attach signed cookies.
    * @returns Promise<AccessTokenDTO>   An access/refresh token pair or an access token, or HTTP401-Unauthorized.
    * @throws  {HttpException}   Given an *invalid* authentication challenge which could not be found in recent transactions on dHealth Network.
    */
@@ -263,7 +287,9 @@ export class AuthController {
         // cookie in the response to permit refreshing
         // `refreshToken` will only be attached the first time
         if (undefined !== tokens.refreshToken) {
-          response.cookie("Refresh", tokens.refreshToken, {
+          // @todo This should permit multi-devices at some point
+          // @todo It is currently not possible to *refresh* on multi devices
+          response.cookie(`${authCookie.name}:Refresh`, tokens.refreshToken, {
             httpOnly: true,
             domain: authCookie.domain,
             signed: true,
@@ -293,7 +319,10 @@ export class AuthController {
    * express `Response` object.
    *
    * @method POST
-   * @param   {Request}  request    A request that contains an authenticated user's authentication payload.
+   * @access protected
+   * @async
+   * @param   {Request}  request        An `express` request that contains an authenticated user's authentication payload.
+   * @param   {Response} response       An `express` response object that will be used to attach signed cookies.
    * @returns Promise<AccessTokenDTO>   An access token, or HTTP401-Unauthorized.
    * @throws  {HttpException}   Given an *invalid* refresh token or address or an invalid combination of both.
    */
@@ -307,18 +336,31 @@ export class AuthController {
   @ApiExtraModels(AccessTokenDTO)
   @ApiOkResponse(HTTPResponses.AuthRefreshResponseSchema)
   protected async refreshTokens(
-    @NestRequest() request: RequestWithUser,
+    @NestRequest() request: Request,
     @NestResponse({ passthrough: true }) response: Response,
   ): Promise<AccessTokenDTO> {
     try {
       // generates cookie configuration (depends on dApp)
       const authCookie = this.authService.getCookie();
 
+      // read and decode refresh token
+      const token: string = AuthService.extractToken(
+        request,
+        `${authCookie.name}:Refresh`,
+      );
+
+      // find profile information in database
+      const account = await this.accountsService.findOne(
+        new AccountQuery({
+          refreshTokenHash: sha3_256(token),
+        } as AccountDocument),
+      );
+
       // validate the refresh token and get authentication payload
       // - make sure it is a valid `refreshToken` in `accounts`
       const tokens: AccessTokenDTO = await this.authService.refreshAccessToken(
-        request.payload.address,
-        request.cookies.Refresh,
+        account.address,
+        token,
       );
 
       // set access token as the value of the cookie,
@@ -337,14 +379,75 @@ export class AuthController {
   }
 
   /**
+   * Revokes an end-user's access token and refresh token. This
+   * request should be executed to sign-out users in a frontend.
+   * <br /><br />
+   * The request is secured using the {@link AuthGuard} guard
+   * which attaches a `payload` to the request object.
+   * <br /><br />
+   * The `passthrough` flag in `NestResponse()` operator permits
+   * to instruct *nest* to pass on the response cookie onto the
+   * express `Response` object.
+   * <br /><br />
+   * For details about the *options* passed to the `response.cookie`
+   * call, please refer to [the `cookie` documentation](https://www.npmjs.com/package/cookie).
+   *
+   * @todo should invalidate accessToken+refreshToken also in database
+   * @method POST
+   * @access protected
+   * @async
+   * @param   {Response} response       An `express` response object that will be used to attach signed cookies.
+   * @returns Promise<StatusDTO>        An execution *status* DTO. Contains a HTTP status code and a `status` boolean property.
+   */
+  @UseGuards(AuthGuard)
+  @Post("auth/logout")
+  @ApiOperation({
+    summary: "Sign-out a user to invalidate access token",
+    description:
+      "Revokes a user's access token (invalidate). The access token cannot be used anymore, a new access token must be requested instead.",
+  })
+  @ApiExtraModels(StatusDTO)
+  @ApiOkResponse(HTTPResponses.AuthLogoutResponseSchema)
+  protected async logout(
+    @NestResponse({ passthrough: true }) response: Response,
+  ): Promise<StatusDTO> {
+    // generates cookie configuration (depends on dApp)
+    const authCookie = this.authService.getCookie();
+
+    // removes accessToken from signed cookies
+    response.cookie(authCookie.name, "", {
+      httpOnly: true,
+      domain: authCookie.domain,
+      signed: true,
+    });
+
+    // removes refreshToken from signed cookies
+    response.cookie(`${authCookie.name}:Refresh`, "", {
+      httpOnly: true,
+      domain: authCookie.domain,
+      signed: true,
+    });
+
+    // @todo should invalidate accessToken+refreshToken also in database
+
+    // Create a "success" status response
+    return StatusDTO.create(200);
+  }
+
+  /**
    * Requests a user's profile information. This endpoint is
    * protected and a valid access token must be attached in
-   * the `Authorization` request header.
+   * the `Authorization` request header, in signed cookies or
+   * in browser cookies.
+   * <br /><br />
+   * The request is secured using the {@link AuthGuard} guard
+   * which attaches a `payload` to the request object.
    *
-   * @see AuthGuard
    * @method GET
-   * @param req
-   * @returns
+   * @access protected
+   * @async
+   * @param   {Request}  req            An `express` request used to extract the authenticated user payload.
+   * @returns Promise<AccountDTO>       An authenticated user's profile information ("account" information).
    */
   @UseGuards(AuthGuard)
   @Get("me")
@@ -355,7 +458,18 @@ export class AuthController {
   })
   @ApiExtraModels(AccountDTO)
   @ApiOkResponse(HTTPResponses.MeResponseSchema)
-  protected getProfile(@NestRequest() req: Request) {
-    return req.user;
+  protected async getProfile(@NestRequest() req: Request): Promise<AccountDTO> {
+    // read and decode access token
+    const token: string = AuthService.extractToken(req);
+
+    // find profile information in database
+    const account: AccountDocument = await this.accountsService.findOne(
+      new AccountQuery({
+        accessToken: token,
+      } as AccountDocument),
+    );
+
+    // wrap into a safe transferable DTO
+    return Account.fillDTO(account, new AccountDTO());
   }
 }
