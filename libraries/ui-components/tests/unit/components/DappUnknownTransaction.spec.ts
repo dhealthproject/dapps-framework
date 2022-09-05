@@ -7,6 +7,7 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
 import {
   Address,
@@ -18,6 +19,8 @@ import {
   UInt64,
 } from "@dhealth/sdk";
 import { expect } from "chai";
+
+// internal dependencies
 import DappUnknownTransaction from "@/graphics/transactions/DappUnknownTransaction/DappUnknownTransaction.vue";
 import DappTreeView from "@/graphics/DappTreeView/DappTreeView.vue";
 

@@ -7,8 +7,11 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
 import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
+
+// internal dependencies
 import DappTitle from "@/texts/DappTitle/DappTitle.vue";
 
 // creates local vue instance for tests

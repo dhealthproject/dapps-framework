@@ -7,9 +7,12 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
 import { expect } from "chai";
 import { createLocalVue, mount, shallowMount, Wrapper } from "@vue/test-utils";
 import { TransactionType } from "@dhealth/sdk";
+
+// internal dependencies
 import DappTransactionGraphic from "@/widgets/DappTransactionGraphic/DappTransactionGraphic.vue";
 import DappTransferTransaction from "@/graphics/transactions/DappTransferTransaction/DappTransferTransaction.vue";
 import DappAbstractTransaction from "@/graphics/transactions/DappAbstractTransaction/DappAbstractTransaction.vue";
@@ -30,6 +33,7 @@ const transaction: any = {
     address: {
       address: "NASVGKMONTQRTSY3LG3V36XBZ5VLHWHDYRPSYXI",
       networkType: 104,
+      pretty: () => "NASVGKMONTQRTSY3LG3V36XBZ5VLHWHDYRPSYXI",
     },
   },
   transactionInfo: {

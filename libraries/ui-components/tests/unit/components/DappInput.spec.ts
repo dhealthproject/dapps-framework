@@ -7,8 +7,11 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
 import { expect } from "chai";
 import { createLocalVue, mount, shallowMount, Wrapper } from "@vue/test-utils";
+
+// internal dependencies
 import DappInput from "@/fields/DappInput/DappInput.vue";
 import DappIcon from "@/graphics/DappIcon/DappIcon.vue";
 

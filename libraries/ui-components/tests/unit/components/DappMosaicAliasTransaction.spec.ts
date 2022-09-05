@@ -7,6 +7,7 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
 import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
 import {
@@ -18,6 +19,8 @@ import {
   PublicAccount,
   TransactionType,
 } from "@dhealth/sdk";
+
+// internal dependencies
 import DappAccountAvatar from "@/graphics/DappAccountAvatar/DappAccountAvatar.vue";
 import DappTransactionArrow from "@/graphics/DappTransactionArrow/DappTransactionArrow.vue";
 import DappMosaicAliasTransaction from "@/graphics/transactions/DappMosaicAliasTransaction/DappMosaicAliasTransaction.vue";

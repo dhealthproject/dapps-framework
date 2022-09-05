@@ -7,9 +7,10 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
 import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
-import DappMessage from "@/fields/DappMessage/DappMessage.vue";
+import { VueConstructor } from "vue";
 import {
   EncryptedMessage,
   Message,
@@ -18,7 +19,9 @@ import {
   PlainMessage,
   RawMessage,
 } from "@dhealth/sdk";
-import { VueConstructor } from "vue";
+
+// internal dependencies
+import DappMessage from "@/fields/DappMessage/DappMessage.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();

@@ -7,15 +7,17 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
 import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
-import { PlainMessage, TransactionType } from "@dhealth/sdk";
+import { TransactionType } from "@dhealth/sdk";
+
+// internal dependencies
 import DappAccountAvatar from "@/graphics/DappAccountAvatar/DappAccountAvatar.vue";
 import DappTransactionArrow from "@/graphics/DappTransactionArrow/DappTransactionArrow.vue";
 import DappMessageCircle from "@/graphics/DappMessageCircle/DappMessageCircle.vue";
 import DappMosaicCircle from "@/graphics/DappMosaicCircle/DappMosaicCircle.vue";
 import DappTransferTransaction from "@/graphics/transactions/DappTransferTransaction/DappTransferTransaction.vue";
-import { Asset } from "@/types/Asset";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
@@ -54,16 +56,7 @@ const transaction = {
       amount: { lower: 5000000, higher: 0 },
     },
   ],
-  message: PlainMessage.create(JSON.stringify("non-contract transaction")),
-};
-
-const asset: Asset = {
-  mosaicId: "39E0C49FA322A459",
-  label: "DHP",
-  priceCurrency: "USD",
-  price: 0.01,
-  inputDecimals: 6,
-  outputDecimals: 2,
+  message: { type: 0, payload: "test create transfer tx - 1654274358763" },
 };
 const componentOptions = {
   localVue,
