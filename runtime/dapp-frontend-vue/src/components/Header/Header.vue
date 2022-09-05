@@ -120,7 +120,7 @@
       </ul>
     </nav>
     <div class="lg-max:hidden">
-      <DappButton
+      <DappButton @click="disconnectWallet()"
         >Disconnect Wallet
         <inline-svg
           :src="getImageUrl('icons/Plus-sign.svg')"
