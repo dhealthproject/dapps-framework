@@ -9,6 +9,14 @@
  */
 
 .dapp-login-screen {
+  // temporary fix for QR and DappButton bgcolor
+  .style-primary {
+    background-color: transparent !important;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+  
   .hero {
     background-image: url("../../assets/login-hero.png");
     background-size: cover;
