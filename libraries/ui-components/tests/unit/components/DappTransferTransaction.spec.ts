@@ -14,7 +14,7 @@ import DappAccountAvatar from "@/graphics/DappAccountAvatar/DappAccountAvatar.vu
 import DappTransactionArrow from "@/graphics/DappTransactionArrow/DappTransactionArrow.vue";
 import DappMessageCircle from "@/graphics/DappMessageCircle/DappMessageCircle.vue";
 import DappMosaicCircle from "@/graphics/DappMosaicCircle/DappMosaicCircle.vue";
-import DappTransferTransaction from "@/transaction-graphics/DappTransferTransaction/DappTransferTransaction.vue";
+import DappTransferTransaction from "@/graphics/transactions/DappTransferTransaction/DappTransferTransaction.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();

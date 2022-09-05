@@ -18,7 +18,7 @@ import {
   UInt64,
 } from "@dhealth/sdk";
 import { expect } from "chai";
-import DappUnknownTransaction from "@/transaction-graphics/DappUnknownTransaction/DappUnknownTransaction.vue";
+import DappUnknownTransaction from "@/graphics/transactions/DappUnknownTransaction/DappUnknownTransaction.vue";
 import DappTreeView from "@/graphics/DappTreeView/DappTreeView.vue";
 
 const localVue = createLocalVue();

@@ -13,10 +13,10 @@ import DappNamespaceUnlinkCircle from "@/graphics/DappNamespaceUnlinkCircle/Dapp
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
-const namespaces = {
+const namespaces = [{
   namespaceId: "9D8930CDBB417337",
   namespaceName: "dhp",
-};
+}];
 const componentOptions = {
   localVue,
   propsData: {
@@ -60,7 +60,7 @@ describe("DappNamespaceUnlinkCircle -->", () => {
     // title element
     expect(titleEl.exists()).to.be.true;
     expect(titleEl.text()).to.equals(
-      '{\n  "namespaceId": "9D8930CDBB417337",\n  "namespaceName": "dhp"\n}'
+      '[\n  {\n    "namespaceId": "9D8930CDBB417337",\n    "namespaceName": "dhp"\n  }\n]'
     );
     // defs element
     expect(defsEl.exists()).to.be.true;

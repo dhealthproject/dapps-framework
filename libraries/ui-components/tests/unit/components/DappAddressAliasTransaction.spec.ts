@@ -9,7 +9,7 @@
  */
 import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
-import DappAddressAliasTransaction from "@/transaction-graphics/DappAddressAliasTransaction/DappAddressAliasTransaction.vue";
+import DappAddressAliasTransaction from "@/graphics/transactions/DappAddressAliasTransaction/DappAddressAliasTransaction.vue";
 import {
   Address,
   AliasAction,

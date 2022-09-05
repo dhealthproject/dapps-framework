@@ -1,3 +1,12 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth UI Components
+ * @subpackage  Unit Tests
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
 import DappDate from "@/fields/DappDate/DappDate.vue";
 import sinon from "sinon";

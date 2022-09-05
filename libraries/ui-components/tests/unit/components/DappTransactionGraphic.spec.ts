@@ -11,8 +11,8 @@ import { expect } from "chai";
 import { createLocalVue, mount, shallowMount, Wrapper } from "@vue/test-utils";
 import { TransactionType } from "@dhealth/sdk";
 import DappTransactionGraphic from "@/widgets/DappTransactionGraphic/DappTransactionGraphic.vue";
-import DappTransferTransaction from "@/transaction-graphics/DappTransferTransaction/DappTransferTransaction.vue";
-import DappAbstractTransaction from "@/transaction-graphics/DappAbstractTransaction/DappAbstractTransaction.vue";
+import DappTransferTransaction from "@/graphics/transactions/DappTransferTransaction/DappTransferTransaction.vue";
+import DappAbstractTransaction from "@/graphics/transactions/DappAbstractTransaction/DappAbstractTransaction.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();

@@ -9,9 +9,9 @@
  */
 import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
-import DappAbstractTransaction from "@/transaction-graphics/DappAbstractTransaction/DappAbstractTransaction.vue";
+import DappAbstractTransaction from "@/graphics/transactions/DappAbstractTransaction/DappAbstractTransaction.vue";
 import { TransactionType } from "@dhealth/sdk";
-import DappTransferTransaction from "@/transaction-graphics/DappTransferTransaction/DappTransferTransaction.vue";
+import DappTransferTransaction from "@/graphics/transactions/DappTransferTransaction/DappTransferTransaction.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
