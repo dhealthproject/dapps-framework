@@ -7,5 +7,5 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-export { RequestHandler } from "./RequestHandler";
+export type { RequestHandler } from "./RequestHandler";
 export { HttpRequestHandler } from "./HttpRequestHandler";

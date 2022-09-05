@@ -37,7 +37,7 @@ Vue.use(Vuex);
 Vue.use(imageUrl);
 
 // initializes router
-import router from "./router";
+import { createRouter } from "./router";
 
 // initializes state
 import { createStore } from "./state/store/Store";
@@ -45,9 +45,38 @@ import { createStore } from "./state/store/Store";
 // defines App component
 import App from "./App.vue";
 
-// create app instance
-new Vue({
-  router,
-  store: createStore(),
-  render: (h) => h(App),
-}).$mount("#app");
+/**
+ * This helper creates a `vue` instance using a `vuex` store
+ * and a `vue-router` router. The {@link App} component when
+ * mounted, displays a `<router-view>` that initializes the
+ * navigation in-app.
+ * <br /><br />
+ * Note that *before creating the app*, we run the **root** state
+ * initialization action such that the app can be populated
+ * with the correct initialization state.
+ *
+ * @returns   {Vue}
+ */
+const createApp = async () => {
+  // creates the store instance
+  const store = createStore();
+
+  // waits for store state update, this *must* happen
+  // before the app is mounted, to avoid "flickering"
+  // into wrong route components due to unset auth.
+  // dispatches the *root* state initialization action
+  await store.dispatch("initialize");
+
+  // create a Vue instance
+  const app = new Vue({
+    router: createRouter(store),
+    store,
+    render: (h) => h(App),
+  });
+
+  // start mount process
+  app.$mount("#app");
+  return app;
+};
+
+createApp();

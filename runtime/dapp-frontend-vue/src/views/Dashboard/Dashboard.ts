@@ -11,10 +11,13 @@
 // external dependencies
 import { Component } from "vue-property-decorator";
 import InlineSvg from "vue-inline-svg";
+import { mapGetters } from "vuex";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import { DappButton } from "@dhealth/components";
+
+// child components
 import Card from "@/components/Card/Card.vue";
 import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
@@ -26,7 +29,6 @@ import Tabs from "@/components/Tabs/Tabs.vue";
 import QuickStats from "./components/QuickStats.vue";
 import Medals from "./components/Medals.vue";
 import FriendsList from "./components/FriendsList.vue";
-import { ProfileService } from "@/services/ProfileService";
 
 // style resource
 import "./Dashboard.scss";
@@ -45,16 +47,26 @@ import "./Dashboard.scss";
     Medals,
     FriendsList,
   },
+  computed: {
+    ...mapGetters({
+      currentUserAddress: "auth/getCurrentUserAddress",
+    }),
+  },
 })
 export default class Dashboard extends MetaView {
   /**
-   * This property is used for
-   * calling related API endpoints
+   * This property contains the authenticated user's dHealth Account
+   * Address. This field is populated using the Vuex Store after a
+   * successful request to the backend API's `/me` endpoint.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
    *
-   * @access private
-   * @var {service}
+   * @access public
+   * @var {string}
    */
-  private service = new ProfileService();
+  public currentUserAddress!: string;
 
   /**
    * Computed which defines configuration
@@ -241,12 +253,16 @@ export default class Dashboard extends MetaView {
     ];
   }
 
-  async mounted() {
-    try {
-      const me = await this.service.getMe();
-      console.log({ me });
-    } catch (err) {
-      console.log("Dashboard: ", err);
+  /**
+   *
+   */
+  protected async mounted() {
+    // in case we came here from log-in screen, we may
+    // not have a profile in the Vuex Store yet, fill now.
+    if (!this.currentUserAddress) {
+      await this.$store.dispatch("auth/fetchProfile");
     }
+
+    console.log("[Dashboard] User: ", this.currentUserAddress);
   }
 }

@@ -9,4 +9,3 @@
  */
 export * from "./BackendService";
 export * from "./AuthService";
-export * from "./ProfileService";

@@ -7,31 +7,27 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// internal dependencies
-import { AuthService } from "@/services/AuthService";
-
 /**
- * This method is used for handling user authentication
- * it checks if user is authenticated(has token in cookies) and current route protected or not
- *
- * 1. If token is available and route is protected - allow user to enter the route
- * 2. If token is not available and the route is protected - push user to "log-in" route
- * 3. If token is not available and the route isn't protected - allow user to enter the route
  *
  * @todo add referrer_url parameter to redirect after log-in.
- *
  * @param  {any} to
  * @param  {any} from
  * @param  {any} next
  * @returns {void}
  */
-export const authenticationHandler = ({ next, router }: any) => {
-  // protected pages
-  if (!AuthService.hasClientAuthorization()) {
+export const authenticationHandler = ({ next, router, $store }: any) => {
+  // read authentication state from vuex store
+  const isAuthenticated: boolean = $store.getters["auth/isAuthenticated"];
+
+  // routes using this middleware should redirect
+  // to /login given unauthenticated guest users.
+  if (!isAuthenticated) {
+    console.log("coming here");
     // Unauthorized: redirect to log-in
     // @todo add referrer_url parameter to redirect after log-in.
     return router.push({
       name: "app.login",
+      replace: true,
     });
   }
 

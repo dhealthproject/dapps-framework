@@ -23,7 +23,6 @@ import {
 } from "@dhealth/sdk";
 import { QRCode, QRCodeGenerator } from "@dhealth/qr-library";
 import { Component } from "vue-property-decorator";
-import Cookies from "js-cookie";
 import { mapGetters } from "vuex";
 
 // internal dependencies
@@ -79,8 +78,8 @@ export interface TutorialStepItem {
   },
   computed: {
     ...mapGetters({
+      isAuthenticated: "auth/isAuthenticated",
       authChallenge: "auth/getChallenge",
-      accessToken: "auth/getAccessToken",
     }),
   },
 })
@@ -104,25 +103,25 @@ export default class LoginScreen extends MetaView {
    * and the *public* access permits the Vuex Store to mutate this
    * value when it is necessary.
    *
-   * @access protected
+   * @access public
    * @var {string}
    */
   public authChallenge!: string;
 
   /**
-   * This property contains the *authentication challenge* as it
-   * is requested from the backend API. The end-user must then
-   * include this authentication challenge inside a transaction
-   * on dHealth Network.
+   * This property contains the *authentication state* as it
+   * is requested from the backend API. This property will be
+   * set to `true` given a valid and non-expired *access token*
+   * is available.
    * <br /><br />
    * The `!`-operator tells TypeScript that this value is required
    * and the *public* access permits the Vuex Store to mutate this
    * value when it is necessary.
    *
-   * @access protected
-   * @var {string}
+   * @access public
+   * @var {boolean}
    */
-  public accessToken!: string;
+  public isAuthenticated!: boolean;
 
   /**
    * Whether the QRCode has been fully prepared and loaded or not.
@@ -269,15 +268,21 @@ export default class LoginScreen extends MetaView {
    * @returns {void}
    */
   public async mounted() {
+    // do we already have an access token? then redirect
+    if (this.isAuthenticated) {
+      return this.$router.push({ name: "app.dashboard" });
+    }
+
     try {
       // @todo make sure referral code is saved
       if (this.$route.params.refCode) {
-        const refCode: string = this.$route.params.refCode;
-        Cookies.set("refCode", refCode, {
-          secure: false,
-          sameSite: "strict",
-          domain: process.env.VUE_APP_FRONTEND_DOMAIN,
-        });
+        // const refCode: string = this.$route.params.refCode;
+        // Cookies.set("ELEVATE:referralCode", refCode, {
+        //   secure: false,
+        //   sameSite: "strict",
+        //   domain: process.env.VUE_APP_FRONTEND_DOMAIN,
+        // });
+        // @todo the frontend must not set cookies, should be in backend
       }
 
       // now start requesting for an access token and refresh token
@@ -351,12 +356,6 @@ export default class LoginScreen extends MetaView {
    * @returns {void}
    */
   protected fetchAccessToken(): void {
-    // do we already have an access token? then redirect
-    const isAuth = Cookies.get("accessToken");
-    if (isAuth) {
-      this.$router.push({ name: "app.dashboard" });
-    }
-
     // we use an interval here because the backend API only returns
     // a HTTP200-Success response when the challenge has been found
     // inside a transfer transaction on dHealth Network
@@ -400,13 +399,18 @@ export default class LoginScreen extends MetaView {
         // try authenticating the user and requesting an access token
         // this will only succeed provided that the end-user attached
         // the authentication challenge in a transfer transaction
-        const response: AccessTokenDTO = await this.$store.dispatch(
+        const response: AccessTokenDTO | null = await this.$store.dispatch(
           "auth/fetchAccessToken"
         );
 
+        // if we could not fetch an access token, bail out
+        if (null === response) {
+          throw new Error("Unauthorized");
+        }
+
         // store the access token inside a browser cookie such that
         // it gets attached to future requests to the backend API
-        AuthService.setAccessToken(response.accessToken, response.refreshToken);
+        //AuthService.setAccessToken(response.accessToken, response.refreshToken);
 
         // no need to further try authentication, done here.
         if (undefined !== this.interval) {

@@ -69,12 +69,7 @@ export default class App extends MetaView {
   /**
    *
    */
-  public created() {
-    // dispatches the *root* initialization action
-    this.$store
-      .dispatch("initialize")
-      .catch((error) => console.log("[App] initialize error: ", error));
-
+  public async created() {
     console.log("[App] route: ", this.$route);
     console.log("[App] store: ", this.$store);
     console.log("[App] BACKEND_URL: ", process.env.VUE_APP_BACKEND_URL);

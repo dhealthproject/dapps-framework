@@ -18,68 +18,16 @@ import { authenticationHandler as auth } from "./middleware/Authentication";
 const appKernel = AppKernel.getInstance();
 const dynamicRoutes = appKernel.getRoutes();
 
-// configures the `vue-router` routes
-const router = new VueRouter({
-  mode: "history",
-  base: process.env.BASE_URL,
-  routes: [
-    ...dynamicRoutes,
-    {
-      path: "/",
-      name: "app.home",
-      meta: {
-        layout: "app/default",
-        middleware: [auth],
-      },
-      component: () => import("./views/Dashboard/Dashboard.vue"),
-    },
-    {
-      path: "/terms-of-service",
-      name: "legal.terms-of-service",
-      meta: { layout: "guest/default" },
-      component: () => import("./views/LegalDisclaimer/LegalDisclaimer.vue"),
-    },
-    {
-      path: "/terms-and-conditions",
-      name: "legal.terms-and-conditions",
-      meta: { layout: "guest/default" },
-      component: () => import("./views/LegalDisclaimer/LegalDisclaimer.vue"),
-    },
-    {
-      path: "/privacy-policy",
-      name: "legal.privacy-policy",
-      meta: { layout: "guest/default" },
-      component: () => import("./views/LegalDisclaimer/LegalDisclaimer.vue"),
-    },
-    {
-      path: "/login",
-      name: "app.login",
-      meta: { layout: "guest/split-horizontal" },
-      component: () => import("./views/LoginScreen/LoginScreen.vue"),
-      children: [
-        {
-          path: ":refCode",
-          name: "app.login.withRefCode",
-          meta: { layout: "guest/split-horizontal" },
-          component: () => import("./views/LoginScreen/LoginScreen.vue"),
-        },
-      ],
-    },
-    {
-      path: "/dashboard",
-      name: "app.dashboard",
-      meta: {
-        layout: "app/default",
-        middleware: [auth],
-      },
-      component: () => import("./views/Dashboard/Dashboard.vue"),
-    },
-  ],
-});
-
-// creates a `nextMiddleware()` function which not only
-// runs the default `next()` callback but also triggers
-// the subsequent Middleware function.
+/**
+ * This helper creates a `nextMiddleware()` function which not
+ * only runs the default `next()` callback but also triggers
+ * the subsequent Middleware functions.
+ *
+ * @param     {any}   context
+ * @param     {any}   middleware
+ * @param     {any}   index
+ * @returns   {()=>void}
+ */
 const nextFactory = (context: any, middleware: any, index: any) => {
   // if no subsequent Middleware exists,
   // the default `next()` callback is returned.
@@ -96,28 +44,105 @@ const nextFactory = (context: any, middleware: any, index: any) => {
   };
 };
 
-// attach middlewares when they are configured on each
-// route. This will run one middleware after the other
-// and as such *order matters*.
-router.beforeEach((to, from, next) => {
-  if (to?.meta?.middleware) {
-    const middleware = Array.isArray(to.meta.middleware)
-      ? to.meta.middleware
-      : [to.meta.middleware];
+/**
+ * This helper creates a `vue-router` instance using the `history`
+ * mode and a base URL using environment variables.
+ * <br /><br />
+ * Note that **components** are registered for routes using an
+ * `import()`-statement to permit *lazy-loading* of components
+ * only when they are necessary. Additionally, this statement
+ * tells *webpack* that separate chunks must be created which
+ * optimizes the LT (loading-time) and TTR (time-to-render).
+ *
+ * @param     {Vuex.Store}  $store
+ * @returns   {VueRouter}
+ */
+export const createRouter = ($store: any): VueRouter => {
+  // configures the `vue-router` routes
+  const router = new VueRouter({
+    mode: "history",
+    base: process.env.BASE_URL,
+    routes: [
+      ...dynamicRoutes,
+      {
+        path: "/",
+        name: "app.home",
+        meta: {
+          layout: "app/default",
+          middleware: [auth],
+        },
+        component: () => import("./views/Dashboard/Dashboard.vue"),
+      },
+      {
+        path: "/terms-of-service",
+        name: "legal.terms-of-service",
+        meta: { layout: "guest/default" },
+        component: () => import("./views/LegalDisclaimer/LegalDisclaimer.vue"),
+      },
+      {
+        path: "/terms-and-conditions",
+        name: "legal.terms-and-conditions",
+        meta: { layout: "guest/default" },
+        component: () => import("./views/LegalDisclaimer/LegalDisclaimer.vue"),
+      },
+      {
+        path: "/privacy-policy",
+        name: "legal.privacy-policy",
+        meta: { layout: "guest/default" },
+        component: () => import("./views/LegalDisclaimer/LegalDisclaimer.vue"),
+      },
+      {
+        path: "/login",
+        name: "app.login",
+        meta: { layout: "guest/split-horizontal" },
+        component: () => import("./views/LoginScreen/LoginScreen.vue"),
+        children: [
+          {
+            path: ":refCode",
+            name: "app.login.withRefCode",
+            meta: { layout: "guest/split-horizontal" },
+            component: () => import("./views/LoginScreen/LoginScreen.vue"),
+          },
+        ],
+      },
+      {
+        path: "/dashboard",
+        name: "app.dashboard",
+        meta: {
+          layout: "app/default",
+          middleware: [auth],
+        },
+        component: () => import("./views/Dashboard/Dashboard.vue"),
+      },
+    ],
+  });
 
-    const context = {
-      from,
-      next,
-      router,
-      to,
-    };
+  // attach middlewares when they are configured on each
+  // route. This will run one middleware after the other
+  // and as such *order matters*.
+  router.beforeEach((to, from, next) => {
+    if (to?.meta?.middleware) {
+      // accept individual middleware
+      const middleware = Array.isArray(to.meta.middleware)
+        ? to.meta.middleware
+        : [to.meta.middleware];
 
-    // executes middleware and "next" middleware
-    const nextMiddleware = nextFactory(context, middleware, 1);
-    return middleware[0]({ ...context, next: nextMiddleware });
-  }
+      // prepares middleware context
+      const context = {
+        from,
+        next,
+        to,
+        router,
+        $store,
+      };
 
-  return next();
-});
+      // executes middleware and "next" middleware
+      const nextMiddleware = nextFactory(context, middleware, 1);
+      return middleware[0]({ ...context, next: nextMiddleware });
+    }
 
-export default router;
+    return next();
+  });
+
+  return router;
+};

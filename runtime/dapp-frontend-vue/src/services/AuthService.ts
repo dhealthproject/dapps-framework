@@ -7,12 +7,10 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// external dependencies
-import Cookies from "js-cookie";
-
 // internal dependencies
 import { BackendService } from "./BackendService";
 import { HttpRequestHandler } from "@/kernel/remote/HttpRequestHandler";
+import { User } from "@/models/User";
 
 /**
  *
@@ -35,6 +33,8 @@ export interface AccessTokenDTO {
  *   console.log(auth.getAuthChallenge());
  * ```
  *
+ * @todo Should *randomly* select one of the multiple authentication registries
+ * @todo Should include the selected registry in the /auth/challenge request
  * @since v0.2.0
  */
 export class AuthService extends BackendService {
@@ -56,57 +56,22 @@ export class AuthService extends BackendService {
   }
 
   /**
+   * This method executes a backend API request to
+   * the endpoint `/auth/challenge` to generate an
+   * authentication challenge that is then attached
+   * to a QR Code to perform authentication on-chain.
    *
-   * @returns {boolean}
+   * @access public
+   * @async
+   * @returns {Promise<string>}
    */
-  public static hasClientAuthorization(): boolean {
-    const accessToken = AuthService.getAccessToken();
-    return !!accessToken && accessToken.length > 0;
-  }
-
-  /**
-   * Get authentication cookie
-   *
-   * @returns string | undefined
-   */
-  public static getAccessToken(): string {
-    return Cookies.get("accessToken") ?? "";
-  }
-
-  /**
-   * Set authentication cookie
-   *
-   * @returns void
-   */
-  public static setAccessToken(accessToken: string, refreshToken?: string) {
-    // @todo replace secure: false for the development purposes, should be true
-    const options: any = {
-      secure: false,
-      sameSite: "strict",
-      domain: process.env.VUE_APP_FRONTEND_DOMAIN,
-    };
-
-    // save the access token in browser cookie
-    Cookies.set("accessToken", accessToken, options);
-
-    // and if we also received a refreshToken, save it
-    if (undefined !== refreshToken) {
-      Cookies.set("refreshToken", refreshToken, options);
-    }
-  }
-
-  /**
-   * Api method for receiving message for QR code
-   *
-   * @returns {Promise}
-   */
-  public async getAuthChallenge(): Promise<string> {
+  public async getChallenge(): Promise<string> {
     // request an authentication challenge
     const response = await this.handler.call(
       this.getUrl("auth/challenge"),
-      "GET"
-      // no-body
-      // no-options
+      "GET",
+      undefined, // no-body
+      { withCredentials: true, credentials: "include" }
       // no-headers
     );
 
@@ -115,10 +80,18 @@ export class AuthService extends BackendService {
   }
 
   /**
-   * Api method for receiving auth token
+   * This method executes a backend API request to
+   * the endpoint `/auth/token` to retrieve a user's
+   * access/refresh token [pair].
+   * <br /><br />
+   * Note that this method will only be successful after
+   * an authentication challenge was included correctly
+   * inside a transaction on dHealth Network.
    *
-   * @param  {{authCode:string;address:string;}} config
-   * @returns Promise
+   * @access public
+   * @async
+   * @param   {string}    challenge     The authentication challenge that was used to perform sign-in (on-chain).
+   * @returns {Promise<AccessTokenDTO>}
    */
   public async login(challenge: string): Promise<AccessTokenDTO> {
     // request an access token for authenticated users
@@ -127,10 +100,8 @@ export class AuthService extends BackendService {
     const response = await this.handler.call(
       this.getUrl("auth/token"),
       "POST",
-      {
-        challenge,
-      }
-      // no-options
+      { challenge },
+      { withCredentials: true, credentials: "include" }
       // no-headers
     );
 
@@ -138,5 +109,46 @@ export class AuthService extends BackendService {
     // if this is the initial token creation for
     // an account, this will contain a `refreshToken`
     return response.data as AccessTokenDTO;
+  }
+
+  /**
+   * This method executes a backend API request to
+   * the endpoint `/auth/logout` to revoke the user's
+   * access token (sign-out / log-out).
+   *
+   * @returns {Promise<boolean>}
+   */
+  public async logout(): Promise<boolean> {
+    // request an authentication challenge
+    const response = await this.handler.call(
+      this.getUrl("auth/logout"),
+      "POST",
+      undefined, // no-body
+      { withCredentials: true, credentials: "include" }
+      // no-headers
+    );
+
+    return response.status === 200;
+  }
+
+  /**
+   * This method executes a backend API request to
+   * the endpoint `/me` and returns the authenticated
+   * user's profile information.
+   *
+   * @returns {Promise<User>}
+   */
+  public async getProfile(): Promise<User> {
+    // request an authentication challenge
+    const response = await this.handler.call(
+      this.getUrl("me"),
+      "GET",
+      undefined, // no-body
+      { withCredentials: true, credentials: "include" }
+      // no-headers
+    );
+
+    // responds with the user's profile
+    return response.data as User;
   }
 }

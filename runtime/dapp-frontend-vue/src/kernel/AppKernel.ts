@@ -161,7 +161,7 @@ export class AppKernel {
       });
     }
 
-    // instanciate configured app kernel
+    // create configured instance of app kernel
     return (AppKernel.INSTANCE = new AppKernel(registry, routes));
   }
 

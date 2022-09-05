@@ -36,7 +36,7 @@
         </ul>
       </nav>
       <div>
-        <DappButton
+        <DappButton @click="disconnectWallet()"
           >Disconnect Wallet
           <inline-svg
             :src="getImageUrl('icons/Plus-sign.svg')"

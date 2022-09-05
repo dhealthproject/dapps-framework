@@ -14,15 +14,18 @@ import { ActionContext } from "vuex";
 import { RootState } from "./Store";
 import { AccessTokenDTO, AuthService } from "@/services/AuthService";
 import { AwaitLock } from "../AwaitLock";
+import { User } from "../../models/User";
 
 /**
  *
  */
 export interface AuthState {
   initialized: boolean;
+  isAuthenticated: boolean;
   authChallenge?: string;
   accessToken?: string;
   refreshToken?: string;
+  currentUserAddress?: string;
 }
 
 /**
@@ -44,17 +47,22 @@ export const AuthModule = {
   namespaced: true,
   state: (): AuthState => ({
     initialized: false,
+    isAuthenticated: false,
     authChallenge: undefined,
     accessToken: undefined,
     refreshToken: undefined,
+    currentUserAddress: undefined,
   }),
 
   getters: {
     isLoading: (state: AuthState): boolean => !state.initialized,
+    isAuthenticated: (state: AuthState): boolean => state.isAuthenticated,
     getChallenge: (state: AuthState): string | undefined => state.authChallenge,
     getAccessToken: (state: AuthState): string | undefined => state.accessToken,
     getRefreshToken: (state: AuthState): string | undefined =>
       state.refreshToken,
+    getCurrentUserAddress: (state: AuthState): string | undefined =>
+      state.currentUserAddress,
   },
 
   mutations: {
@@ -67,6 +75,12 @@ export const AuthModule = {
     /**
      *
      */
+    setAuthenticated: (state: AuthState, payload: boolean): boolean =>
+      (state.isAuthenticated = payload),
+
+    /**
+     *
+     */
     setChallenge: (state: AuthState, challenge: string): string =>
       (state.authChallenge = challenge),
 
@@ -75,6 +89,18 @@ export const AuthModule = {
      */
     setAccessToken: (state: AuthState, accessToken: string): string =>
       (state.accessToken = accessToken),
+
+    /**
+     *
+     */
+    setRefreshToken: (state: AuthState, refreshToken: string): string =>
+      (state.refreshToken = refreshToken),
+
+    /**
+     *
+     */
+    setCurrentUserAddress: (state: AuthState, userAddress: string): string =>
+      (state.currentUserAddress = userAddress),
   },
 
   actions: {
@@ -83,11 +109,19 @@ export const AuthModule = {
      */
     async initialize(context: AuthContext): Promise<boolean> {
       const callback = async () => {
-        await context.dispatch("fetchChallenge");
+        // fetch a user profile (only works if signed cookie is present)
+        const profile: User | null = await context.dispatch("fetchProfile");
+
+        // fetch a challenge to permit sign-in if necessary
+        if (profile === null) {
+          await context.dispatch("fetchChallenge");
+        }
+
+        // initialization is done after fetch
         context.commit("setInitialized", true);
       };
 
-      // aquire async lock until initialized
+      // acquire async lock until initialized
       await Lock.initialize(callback, context);
       return true;
     },
@@ -97,7 +131,7 @@ export const AuthModule = {
      */
     async fetchChallenge(context: AuthContext): Promise<string> {
       const handler = new AuthService();
-      const challenge = await handler.getAuthChallenge();
+      const challenge = await handler.getChallenge();
 
       context.commit("setChallenge", challenge);
       return challenge;
@@ -118,14 +152,49 @@ export const AuthModule = {
         // the authentication challenge in a transfer transaction
         const response: AccessTokenDTO = await handler.login(authChallenge);
 
+        context.commit("setAuthenticated", true);
         context.commit("setAccessToken", response.accessToken);
+        context.commit("setRefreshToken", response.refreshToken);
         return response;
       } catch (e) {
         // because dHealth Network data storage is asynchronous, the
         // backend API returns a HTTP401-Unauthorized *until* it can
         // find the authentication challenge inside a transaction.
+        context.commit("setAuthenticated", false);
         return null;
       }
+    },
+
+    /**
+     *
+     */
+    async fetchProfile(context: AuthContext): Promise<User | null> {
+      try {
+        const handler = new AuthService();
+        const profile: User = await handler.getProfile();
+
+        console.log("[store/AuthModule] User: ", profile);
+        context.commit("setAuthenticated", true);
+        context.commit("setCurrentUserAddress", profile.address);
+        return profile;
+      } catch (e) {
+        context.commit("setAuthenticated", false);
+        return null;
+      }
+    },
+
+    /**
+     *
+     */
+    async logoutProfile(context: AuthContext): Promise<boolean> {
+      const handler = new AuthService();
+      await handler.logout();
+
+      context.commit("setAuthenticated", false);
+      context.commit("setAccessToken", undefined);
+      context.commit("setRefreshToken", undefined);
+      context.commit("setCurrentUserAddress", undefined);
+      return true;
     },
   },
 };

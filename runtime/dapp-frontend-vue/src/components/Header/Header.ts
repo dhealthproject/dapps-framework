@@ -11,19 +11,16 @@
 // external dependencies
 import { Component, Prop } from "vue-property-decorator";
 import InlineSvg from "vue-inline-svg";
+import { DappButton } from "@dhealth/components";
+
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
+
+// child components
 import ElevateLogo from "../ElevateLogo/ElevateLogo.vue";
-import { DappButton } from "@dhealth/components";
 
 // style resource
 import "./Header.scss";
-
-// meny svgs
-// import Apple from "../../assets/icons/Apple.svg";
-// import Home from "../../assets/icons/Apple.svg";
-// import Running from "../../assets/icons/Running.svg";
-// import Yoga from "../../assets/icons/Yoga.svg";
 
 export interface HeaderLink {
   path: string;
@@ -55,4 +52,15 @@ export default class Header extends MetaView {
    * @var {showIcons}
    */
   @Prop({ default: true }) protected showIcons?: boolean;
+
+  /**
+   * @todo ask the user for confirmation
+   */
+  protected async disconnectWallet() {
+    // update application state
+    await this.$store.dispatch("auth/logoutProfile");
+
+    // redirect to login
+    return this.$router.push({ name: "app.login" });
+  }
 }

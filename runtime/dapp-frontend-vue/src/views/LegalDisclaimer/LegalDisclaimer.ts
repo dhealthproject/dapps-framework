@@ -12,7 +12,6 @@ import { Component } from "vue-property-decorator";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
-import { ProfileService } from "@/services/ProfileService";
 import { DappButton } from "@dhealth/components";
 
 // style resource
@@ -30,16 +29,6 @@ interface PageData {
   },
 })
 export default class LegalDisclaimer extends MetaView {
-  private service = new ProfileService();
-  async mounted() {
-    try {
-      const me = await this.service.getMe();
-      console.log({ me });
-    } catch (err) {
-      console.log("Terms of use page: ", err);
-    }
-  }
-
   get legalDisclaimerData() {
     return {
       "terms-of-service": {
