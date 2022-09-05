@@ -12,6 +12,7 @@
 import { Component, Prop, Watch } from "vue-property-decorator";
 import InlineSvg from "vue-inline-svg";
 import { DappButton } from "@dhealth/components";
+import { mapGetters } from "vuex";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
@@ -22,7 +23,6 @@ import HamburgerButton from "../HamburgerButton/HamburgerButton.vue";
 
 // style resource
 import "./Header.scss";
-import Cookies from "js-cookie";
 
 export interface HeaderLink {
   path: string;
@@ -36,6 +36,11 @@ export interface HeaderLink {
     InlineSvg,
     DappButton,
     HamburgerButton,
+  },
+  computed: {
+    ...mapGetters({
+      isAuthenticated: "auth/isAuthenticated",
+    }),
   },
 })
 export default class Header extends MetaView {
@@ -67,6 +72,21 @@ export default class Header extends MetaView {
     return this.$router.push({ name: "app.login" });
   }
 
+  /**
+   * This property contains the *authentication state* as it
+   * is requested from the backend API. This property will be
+   * set to `true` given a valid and non-expired *access token*
+   * is available.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {boolean}
+   */
+  public isAuthenticated!: boolean;
+
   /* Data prop that defines state of mobile menu
    *
    * @access protected
@@ -81,11 +101,6 @@ export default class Header extends MetaView {
    */
   get hasBackButton(): boolean {
     return !!this.$slots["back-button"];
-  }
-
-  get isAuthenticated(): boolean {
-    const token = Cookies.get("accessToken");
-    return !!token;
   }
 
   @Watch("isMenuOpen")

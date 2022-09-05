@@ -26,7 +26,6 @@ import EventsCarousel from "./components/EventsCarousel.vue";
 import { BoardItem } from "./components/LeaderBoard";
 import LeaderBoard from "./components/LeaderBoard.vue";
 import Tabs from "@/components/Tabs/Tabs.vue";
-import { Profile } from "@/modules/Profile/Profile";
 import GenericList from "@/components/GenericList/GenericList.vue";
 
 @Component({
