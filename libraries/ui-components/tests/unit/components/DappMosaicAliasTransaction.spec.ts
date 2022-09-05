@@ -20,7 +20,7 @@ import {
 } from "@dhealth/sdk";
 import DappAccountAvatar from "@/graphics/DappAccountAvatar/DappAccountAvatar.vue";
 import DappTransactionArrow from "@/graphics/DappTransactionArrow/DappTransactionArrow.vue";
-import DappMosaicAliasTransaction from "@/transaction-graphics/DappMosaicAliasTransaction/DappMosaicAliasTransaction.vue";
+import DappMosaicAliasTransaction from "@/graphics/transactions/DappMosaicAliasTransaction/DappMosaicAliasTransaction.vue";
 import DappNamespaceCircle from "@/graphics/DappNamespaceCircle/DappNamespaceCircle.vue";
 import DappNamespaceUnlinkCircle from "@/graphics/DappNamespaceUnlinkCircle/DappNamespaceUnlinkCircle.vue";
 import DappMosaicIcon from "@/graphics/DappMosaicIcon/DappMosaicIcon.vue";

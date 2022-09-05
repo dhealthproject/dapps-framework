@@ -94,10 +94,10 @@ export default class DappMosaicIcon extends DappGraphicComponent {
    */
   @Prop({
     type: Object,
-    default: {
+    default: () => ({
       mosaicId: "",
       aliasName: "",
-    },
+    }),
   })
   protected mosaic?: { mosaicId: string; aliasName: string };
 

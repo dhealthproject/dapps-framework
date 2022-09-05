@@ -13,10 +13,12 @@ import DappNamespaceUnlinkCircle from "@/graphics/DappNamespaceUnlinkCircle/Dapp
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
-const namespaces = [{
-  namespaceId: "9D8930CDBB417337",
-  namespaceName: "dhp",
-}];
+const namespaces = [
+  {
+    namespaceId: "9D8930CDBB417337",
+    namespaceName: "dhp",
+  },
+];
 const componentOptions = {
   localVue,
   propsData: {
