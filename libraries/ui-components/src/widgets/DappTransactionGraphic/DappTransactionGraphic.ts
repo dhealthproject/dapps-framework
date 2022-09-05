@@ -10,6 +10,7 @@
 // external dependencies
 import {
   AggregateTransaction,
+  AggregateTransactionCosignature,
   PublicAccount,
   Transaction,
   TransactionType,
@@ -19,6 +20,8 @@ import { Component, Prop } from "vue-property-decorator";
 // internal dependencies
 import DappAbstractTransaction from "@/graphics/transactions/DappAbstractTransaction/DappAbstractTransaction.vue";
 import DappGraphicComponent from "@/graphics/DappGraphicComponent/DappGraphicComponent";
+
+// image resources
 import SignatureIcon from "@/assets/img/signature.png";
 
 /**
@@ -100,7 +103,8 @@ export default class DappTransactionGraphic extends DappGraphicComponent {
    */
   protected get isWidgetShown(): boolean {
     if (!this.transaction) return false;
-    return this.isTransactionTypeSupported(this.transaction.type);
+    //return this.isTransactionTypeSupported(this.transaction.type);
+    return true;
   }
 
   /**
@@ -155,7 +159,8 @@ export default class DappTransactionGraphic extends DappGraphicComponent {
       return [
         (this.transaction?.signer?.address as any).address,
         ...(this.transaction as AggregateTransaction).cosignatures.map(
-          (cosignature) => (cosignature.signer.address as any).address
+          (cosignature: AggregateTransactionCosignature) =>
+            (cosignature.signer.address as any).address
         ),
       ];
     }
@@ -174,15 +179,9 @@ export default class DappTransactionGraphic extends DappGraphicComponent {
   //   return this.$store.getters['ui/getNameByKey'](e);
   // }
 
-  /**
-   * Method that check whether a {@link TransactionType} is supported by this component.
-   *
-   * @param {TransactionType} type
-   * @returns {boolean}
-   */
-  protected isTransactionTypeSupported(type: TransactionType): boolean {
-    return !!(this as any).supportedTransactionTypes.find(
-      (transactionType: TransactionType) => transactionType === type
-    );
-  }
+  // protected isTransactionTypeSupported(type: TransactionType): boolean {
+  //   return !!(this as any).supportedTransactionTypes.find(
+  //     (transactionType: TransactionType) => transactionType === type
+  //   );
+  // }
 }

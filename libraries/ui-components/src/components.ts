@@ -35,7 +35,6 @@ import DappNamespaceUnlinkCircle from "./graphics/DappNamespaceUnlinkCircle/Dapp
 import DappAddCircle from "./graphics/DappAddCircle/DappAddCircle.vue";
 import DappEditCircle from "./graphics/DappEditCircle/DappEditCircle.vue";
 import DappTransactionArrow from "./graphics/DappTransactionArrow/DappTransactionArrow.vue";
-import DappTransferTransaction from "./graphics/transactions/DappTransferTransaction/DappTransferTransaction.vue";
 import DappUnknownTransaction from "./graphics/transactions/DappUnknownTransaction/DappUnknownTransaction.vue";
 import DappAbstractTransaction from "./graphics/transactions/DappAbstractTransaction/DappAbstractTransaction.vue";
 import DappTransactionGraphic from "./widgets/DappTransactionGraphic/DappTransactionGraphic.vue";
@@ -45,10 +44,12 @@ import DappMosaicAliasTransaction from "./graphics/transactions/DappMosaicAliasT
 import DappMosaicDefinitionTransaction from "./graphics/transactions/DappMosaicDefinitionTransaction/DappMosaicDefinitionTransaction.vue";
 import DappMosaicSupplyChangeTransaction from "./graphics/transactions/DappMosaicSupplyChangeTransaction/DappMosaicSupplyChangeTransaction.vue";
 import DappTransferTransaction from "./graphics/transactions/DappTransferTransaction/DappTransferTransaction.vue";
+import DappContractOperation from "./widgets/DappContractOperation/DappContractOperation.vue";
 
 // exports components as named-exports
 export {
   DappButton,
+  DappContractOperation,
   DappDate,
   DappIcon,
   DappInput,
@@ -67,7 +68,6 @@ export {
   DappEditCircle,
   DappTransactionArrow,
   DappMosaicIcon,
-  DappTransferTransaction,
   DappUnknownTransaction,
   DappAbstractTransaction,
   DappTransactionGraphic,

@@ -19,6 +19,7 @@ import {
   DappAccountAvatar,
   DappAccountCard,
   DappButton,
+  DappContractOperation,
   DappDate,
   DappIcon,
   DappInput,
@@ -35,7 +36,6 @@ import {
   DappEditCircle,
   DappTransactionArrow,
   DappMosaicIcon,
-  DappTransferTransaction,
   DappUnknownTransaction,
   DappAbstractTransaction,
   DappTransactionGraphic,
@@ -86,6 +86,7 @@ const install = (): void => {
   Vue.component("DappAccountAvatar", DappAccountAvatar);
   Vue.component("DappAccountCard", DappAccountCard);
   Vue.component("DappButton", DappButton);
+  Vue.component("DappContractOperation", DappContractOperation);
   Vue.component("DappDate", DappDate);
   Vue.component("DappIcon", DappIcon);
   Vue.component("DappInput", DappInput);
@@ -102,7 +103,6 @@ const install = (): void => {
   Vue.component("DappEditCircle", DappEditCircle);
   Vue.component("DappTransactionArrow", DappTransactionArrow);
   Vue.component("DappMosaicIcon", DappMosaicIcon);
-  Vue.component("DappTransferTransaction", DappTransferTransaction);
   Vue.component("DappUnknownTransaction", DappUnknownTransaction);
   Vue.component("DappAbstractTransaction", DappAbstractTransaction);
   Vue.component("DappTransactionGraphic", DappTransactionGraphic);
@@ -127,6 +127,7 @@ const allComponents = [
   DappAccountAvatar,
   DappAccountCard,
   DappButton,
+  DappContractOperation,
   DappDate,
   DappIcon,
   DappInput,
@@ -140,7 +141,6 @@ const allComponents = [
   DappNamespaceCircle,
   DappNamespaceUnlinkCircle,
   DappTransactionArrow,
-  DappTransferTransaction,
   DappUnknownTransaction,
   DappAbstractTransaction,
   DappTransactionGraphic,
@@ -176,6 +176,7 @@ export {
   DappAccountAvatar,
   DappAccountCard,
   DappButton,
+  DappContractOperation,
   DappDate,
   DappIcon,
   DappInput,
@@ -192,7 +193,6 @@ export {
   DappEditCircle,
   DappTransactionArrow,
   DappMosaicIcon,
-  DappTransferTransaction,
   DappUnknownTransaction,
   DappAbstractTransaction,
   DappTransactionGraphic,

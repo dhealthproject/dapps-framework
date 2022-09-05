@@ -8,88 +8,65 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
- -->
+-->
 <template>
-  <div class="dappTransferTransaction-mainDiv">
-    <div class="dappTransferTransaction-iconDiv">
-      <!-- Display a 19x22 DHP logo icon in svg format. Filled with #2970FF (sky blue). -->
-      <svg
-        width="19"
-        height="22"
-        viewBox="0 0 19 22"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M10.034 0.0916862C8.05174 0.550453 6.57157 1.65842 5.48091 3.49349C5.13467 4.0821 2.92739 7.94267 2.67637 8.41009C2.63309 8.50531 2.42534 8.85155 2.23491 9.18913C1.75018 10.0115 0.789362 11.7167 0.59893 12.0802C0.521026 12.236 0.347907 12.6862 0.226723 13.0757C0.0276348 13.6989 0.00166684 13.9153 0.00166684 15.1185C-0.00698915 16.3736 0.0103228 16.5121 0.244035 17.2392C0.68549 18.5809 1.51647 19.8014 2.55518 20.615C2.83218 20.8314 3.07454 21.0046 3.10051 21.0046C3.13514 21.0046 3.30826 21.0998 3.49869 21.221C3.68912 21.3421 4.20848 21.5672 4.64994 21.7144C5.39435 21.974 5.52419 21.9913 6.65813 22C8.08636 22 8.57976 21.8875 9.79159 21.2989C11.0727 20.667 11.9729 19.7494 12.8904 18.1481C13.0462 17.8884 13.4617 17.1526 13.8253 16.5208C14.1975 15.8889 14.4918 15.3522 14.4918 15.3349C14.4918 15.3089 14.5784 15.1445 14.6909 14.9627C15.0458 14.4 15.5045 13.621 15.7642 13.1276C15.9027 12.8679 16.0758 12.5563 16.1451 12.4351C16.4221 11.9937 17.4089 10.2105 17.5993 9.81236C18.0581 8.86886 18.2398 7.88208 18.1966 6.59234C18.136 4.69667 17.4868 3.19919 16.1451 1.88348C15.4353 1.18234 14.561 0.64567 13.557 0.299429C12.9078 0.0743732 12.6481 0.0397491 11.6786 0.00512505C10.9082 -0.0121861 10.3889 0.0137825 10.034 0.0916862ZM12.7866 1.39874C13.8945 1.68439 15.1064 2.48074 15.7556 3.35499C16.3355 4.13403 16.4913 4.43699 16.7424 5.3199C17.2098 6.92992 17.002 8.29757 16.0239 10.0547C15.721 10.6001 15.0977 11.6821 15.0544 11.7253C15.0458 11.734 14.6043 11.4916 14.0763 11.18C13.5483 10.8684 13.0982 10.6174 13.0809 10.6174C13.0636 10.6174 12.7 10.401 12.2759 10.1413C11.8517 9.88161 11.0207 9.39688 10.4235 9.05929C9.82622 8.72171 9.15105 8.32353 8.90868 8.17638C8.41529 7.87342 8.07771 7.8388 7.82668 8.06385C7.60163 8.26294 7.59297 8.80827 7.80937 8.99004C7.88728 9.05929 8.81347 9.61328 9.86084 10.2279C14.5178 12.9458 14.3966 12.8679 14.3446 13.0237C14.31 13.1016 14.2235 13.2661 14.1456 13.3873C14.059 13.5085 13.7214 14.0884 13.3925 14.6857C13.0549 15.283 12.6394 16.0187 12.4663 16.313C12.2932 16.616 12.1547 16.8843 12.1547 16.9016C12.1547 16.9189 12.0162 17.144 11.8517 17.4037C11.6873 17.6633 11.5488 17.9057 11.5488 17.9403C11.5488 17.975 11.393 18.2087 11.1939 18.4597C10.8217 18.9444 10.7697 18.9531 10.3369 18.6674C10.008 18.4424 8.25948 17.4296 7.43717 16.9882C7.34195 16.9362 7.16883 16.8324 7.04765 16.7545C5.82715 15.9754 4.0267 15.006 3.81896 15.006C3.49869 15.006 3.21304 15.3003 3.21304 15.6292C3.21304 15.9668 3.31691 16.088 4.00074 16.4775C4.31235 16.6593 4.7365 16.9016 4.93558 17.0228C5.66269 17.4469 6.64947 18.0269 7.09958 18.2779C9.15971 19.4638 9.63579 19.7581 9.64444 19.8447C9.64444 19.9832 8.57976 20.4506 7.94787 20.5977C5.68 21.1084 3.34288 20.1216 2.07911 18.1221C0.893234 16.2438 0.919202 13.9932 2.1397 11.9764C2.34744 11.6301 2.53787 11.2839 2.5725 11.1973C2.68502 10.903 2.89277 10.9376 3.69778 11.4137C4.13923 11.6821 4.97886 12.1754 5.57613 12.5217C6.17339 12.8679 6.83125 13.2574 7.04765 13.3873C8.90868 14.5126 9.60982 14.8675 9.85219 14.8069C10.259 14.703 10.4235 13.9846 10.0859 13.7162C9.93009 13.5777 9.03852 13.0497 6.61485 11.6561C4.04402 10.1759 3.42078 9.80371 3.41213 9.74312C3.41213 9.66521 6.70141 3.92629 6.82259 3.79645C6.93512 3.67527 6.96109 3.69258 8.40664 4.57549C8.70094 4.75727 8.96062 4.90442 8.97793 4.90442C9.0039 4.90442 9.36745 5.11216 9.79159 5.37184C10.2157 5.62286 10.7351 5.92582 10.9428 6.04701C11.1592 6.16819 11.6873 6.47115 12.1114 6.72218C13.4964 7.52718 13.6175 7.58777 13.7993 7.58777C14.0677 7.58777 14.4052 7.20691 14.4052 6.90395C14.4052 6.62696 14.1888 6.41922 13.479 6.02104C13.28 5.90851 12.7606 5.5969 12.3191 5.33722C11.8777 5.07754 11.4103 4.80054 11.2804 4.7313C11.1506 4.66205 10.7524 4.43699 10.4062 4.23791C8.41529 3.078 7.86996 2.74907 7.844 2.66252C7.77475 2.44612 9.21164 1.63245 10.0772 1.4074C10.7091 1.24293 12.1633 1.23428 12.7866 1.39874Z"
-          fill="#2970FF"
-        />
-      </svg>
-    </div>
-    <div
-      v-if="$data.contractType !== 'referral'"
-      class="dappTransferTransaction-addressDiv"
+  <div>
+    <svg
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      x="0px"
+      y="0px"
+      :width="getPixels(transactionGraphicWidth)"
+      :height="getPixels(transactionGraphicHeight)"
+      :viewBox="transactionGraphicViewbox"
+      xml:space="preserve"
     >
-      <span class="dappTransferTransaction-addressNameSpan">
-        {{ senderName }}
-      </span>
-      <span
-        v-if="displayAddresses"
-        class="dappTransferTransaction-addressAddressSpan"
+      <DappAccountAvatar
+        :x="subjectPositionX"
+        :y="subjectPositionY"
+        :width="subjectWidth"
+        :height="subjectHeight"
+        :address="signer"
+      />
+      <DappAccountAvatar
+        :x="objectPositionX"
+        :y="objectPositionY"
+        :width="subjectWidth"
+        :height="subjectHeight"
+        :address="recipient"
+      />
+      <DappTransactionArrow :x="arrowPositionX" :y="arrowPositionY" />
+      <DappMessageCircle
+        v-if="hasMessage"
+        :x="getCircleIconPositionX(0)"
+        :y="circleIconPositionY"
+        :message="message"
+      />
+      <DappMosaicCircle
+        v-if="hasMosaic"
+        id="target"
+        :x="getCircleIconPositionX(1)"
+        :y="circleIconPositionY"
+        :mosaics="mosaicList"
+      />
+      <!-- <NativeMosaicCircle
+        v-if="hasNativeMosaic"
+        id="target"
+        :x="getCircleIconPositionX(2)"
+        :y="circleIconPositionY"
+        :mosaics="[nativeMosaic]"
+      /> -->
+      <text
+        :x="transactionTypeTextPositionX"
+        :y="transactionTypeTextPositionY"
+        text-anchor="middle"
+        class="dappTransferTransaction-message"
       >
-        {{ senderAddress }}
-      </span>
-    </div>
-    <div
-      v-if="$data.contractType !== 'referral'"
-      class="dappTransferTransaction-arrow"
-    >
-      <!-- Display an arrow image in svg format. Filled with #198155 (medium green). -->
-      <svg
-        width="25"
-        height="25"
-        viewBox="0 0 25 25"
-        fill="#198155"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M13.5 16.6705L18.864 11.3065L20.278 12.7205L12.5 20.4985L4.722 12.7205L6.136 11.3065L11.5 16.6705V4.49854H13.5V16.6705Z"
-          fill="#198155"
-        />
-      </svg>
-    </div>
-    <div
-      v-if="$data.contractType !== 'auth'"
-      class="dappTransferTransaction-addressDiv"
-    >
-      <span class="dappTransferTransaction-addressNameSpan">
-        {{ recipientName }}
-      </span>
-      <span
-        v-if="displayAddresses"
-        class="dappTransferTransaction-addressAddressSpan"
-      >
-        {{ recipientAddress }}
-      </span>
-    </div>
-    <div class="dappTransferTransaction-amountDiv">
-      <div v-if="hasContract" class="dappTransferTransaction-contract">
-        <span class="dappTransferTransaction-amountContract">
-          {{ $data.contract }}
-        </span>
-      </div>
-      <div v-else class="dappTransferTransaction-amount">
-        <span class="dappTransferTransaction-amountToken">
-          {{ amountToken }}
-        </span>
-        <span class="dappTransferTransaction-amountTokenName">
-          {{ asset.label }}
-        </span>
-        <div class="dappTransferTransaction-amountFiat">
-          <span>{{ `≈ ${amountFiat} ${asset.priceCurrency}` }}</span>
-        </div>
-      </div>
-    </div>
+        {{ transactionType }}
+        <title>{{ transactionType }}</title>
+      </text>
+    </svg>
   </div>
 </template>
 

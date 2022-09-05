@@ -7,10 +7,13 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
 import { expect } from "chai";
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
-import DappAccountCard from "@/widgets/DappAccountCard/DappAccountCard.vue";
 import flushPromises from "flush-promises";
+
+// internal dependencies
+import DappAccountCard from "@/widgets/DappAccountCard/DappAccountCard.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();

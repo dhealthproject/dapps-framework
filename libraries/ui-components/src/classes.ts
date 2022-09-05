@@ -38,7 +38,6 @@ import DappNamespaceUnlinkCircle from "./graphics/DappNamespaceUnlinkCircle/Dapp
 import DappAddCircle from "./graphics/DappAddCircle/DappAddCircle";
 import DappEditCircle from "./graphics/DappEditCircle/DappEditCircle";
 import DappTransactionArrow from "./graphics/DappTransactionArrow/DappTransactionArrow";
-import DappTransferTransaction from "./graphics/transactions/DappTransferTransaction/DappTransferTransaction";
 import DappUnknownTransaction from "./graphics/transactions/DappUnknownTransaction/DappUnknownTransaction";
 import DappAbstractTransaction from "./graphics/transactions/DappAbstractTransaction/DappAbstractTransaction";
 import DappTransactionGraphic from "./widgets/DappTransactionGraphic/DappTransactionGraphic";
@@ -48,11 +47,13 @@ import DappMosaicAliasTransaction from "./graphics/transactions/DappMosaicAliasT
 import DappMosaicDefinitionTransaction from "./graphics/transactions/DappMosaicDefinitionTransaction/DappMosaicDefinitionTransaction";
 import DappMosaicSupplyChangeTransaction from "./graphics/transactions/DappMosaicSupplyChangeTransaction/DappMosaicSupplyChangeTransaction";
 import DappTransferTransaction from "./graphics/transactions/DappTransferTransaction/DappTransferTransaction";
+import DappContractOperation from "./widgets/DappContractOperation/DappContractOperation";
 
 // exports
 export type { Variant };
 export {
   DappButton,
+  DappContractOperation,
   DappDate,
   DappIcon,
   DappInput,
@@ -71,7 +72,6 @@ export {
   DappEditCircle,
   DappTransactionArrow,
   DappMosaicIcon,
-  DappTransferTransaction,
   DappUnknownTransaction,
   DappAbstractTransaction,
   DappTransactionGraphic,

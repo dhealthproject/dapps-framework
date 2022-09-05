@@ -7,12 +7,15 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
 import { createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
-import DappDate from "@/fields/DappDate/DappDate.vue";
 import sinon from "sinon";
 import { expect } from "chai";
 import moment from "moment";
 import { VueConstructor } from "vue";
+
+// internal dependencies
+import DappDate from "@/fields/DappDate/DappDate.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();

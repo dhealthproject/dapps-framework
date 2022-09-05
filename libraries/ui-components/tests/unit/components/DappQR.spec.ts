@@ -7,11 +7,13 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
 import { QRCodeGenerator } from "@dhealth/qr-library";
 import { createLocalVue, mount } from "@vue/test-utils";
 import { expect } from "chai";
 import flushPromises from "flush-promises";
 
+// internal dependencies
 import DappQR from "@/widgets/DappQR/DappQR.vue";
 import { mockObjectQR, mockObjectQRBase64 } from "../../mocks";
 
