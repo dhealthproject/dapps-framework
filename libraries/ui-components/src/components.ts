@@ -46,6 +46,8 @@ import DappMosaicSupplyChangeTransaction from "./graphics/transactions/DappMosai
 import DappTransferTransaction from "./graphics/transactions/DappTransferTransaction/DappTransferTransaction.vue";
 import DappContractOperation from "./widgets/DappContractOperation/DappContractOperation.vue";
 import DappTitleBar from "./widgets/DappTitleBar/DappTitleBar.vue";
+import DappDirectionTriangle from "./graphics/DappDirectionTriangle/DappDirectionTriangle.vue";
+import DappAccountDetails from "./graphics/DappAccountDetails/DappAccountDetails.vue";
 
 // exports components as named-exports
 export {
@@ -78,4 +80,6 @@ export {
   DappMosaicSupplyChangeTransaction,
   DappTransferTransaction,
   DappTitleBar,
+  DappDirectionTriangle,
+  DappAccountDetails,
 };

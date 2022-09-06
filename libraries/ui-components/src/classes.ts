@@ -49,6 +49,8 @@ import DappMosaicSupplyChangeTransaction from "./graphics/transactions/DappMosai
 import DappTransferTransaction from "./graphics/transactions/DappTransferTransaction/DappTransferTransaction";
 import DappContractOperation from "./widgets/DappContractOperation/DappContractOperation";
 import DappTitleBar from "./widgets/DappTitleBar/DappTitleBar";
+import DappDirectionTriangle from "./graphics/DappDirectionTriangle/DappDirectionTriangle";
+import DappAccountDetails from "./graphics/DappAccountDetails/DappAccountDetails";
 
 // exports
 export type { Variant };
@@ -82,4 +84,6 @@ export {
   DappMosaicSupplyChangeTransaction,
   DappTransferTransaction,
   DappTitleBar,
+  DappDirectionTriangle,
+  DappAccountDetails,
 };

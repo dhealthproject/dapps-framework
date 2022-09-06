@@ -1,0 +1,54 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth UI Components
+ * @subpackage  Components
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+.dappAccountDetails-base {
+  @apply flex items-center justify-center flex-row;
+
+  .dappAccountDetails-col-details,
+  .dappAccountDetails-col-amount,
+  .dappAccountDetails-col-actions {
+    @apply flex items-center flex-row;
+  }
+
+  .dappAccountDetails-col-details {
+    @apply flex-[3] min-w-[225px] justify-start text-lg font-bold;
+
+    > * {
+      @apply mr-2;
+    }
+
+    .dappAccountDetails-information {
+      @apply flex min-w-[100px] items-start justify-center flex-col;
+
+      .dappAccountDetails-accountName {
+        @apply flex font-medium text-base;
+      }
+
+      .dappAccountDetails-accountAddress {
+        @apply font-medium text-[12px] max-w-full;
+        @apply text-ellipsis overflow-hidden whitespace-nowrap;
+      }
+    }
+  }
+
+  .dappAccountDetails-col-amount {
+    @apply flex-1 justify-end;
+    @apply sm:min-w-[185px];
+
+    .dappAccountDetails-value {
+      @apply flex items-center justify-center flex-row;
+      @apply font-bold;
+      @apply sm:text-3xl;
+    }
+  }
+
+  .dappAccountDetails-col-actions {
+    @apply flex-1 justify-end;
+  }
+}

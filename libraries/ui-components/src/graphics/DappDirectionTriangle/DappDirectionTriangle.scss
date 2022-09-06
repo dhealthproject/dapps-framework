@@ -1,0 +1,24 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth UI Components
+ * @subpackage  Components
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+.dappDirectionTriangle {
+  &-base {
+    @apply flex items-center justify-center ml-[5px];
+  }
+
+  &-up {
+    @apply w-0 h-0;
+    @apply border-solid border-[0_6px_8px_6px] border-[transparent_transparent_#22e6ab_transparent];
+  }
+
+  &-down {
+    @apply w-0 h-0;
+    @apply border-solid border-[8px_6px_0_6px] border-[#e27857_transparent_transparent_transparent];
+  }
+}
