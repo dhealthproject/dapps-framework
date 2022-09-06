@@ -11,6 +11,7 @@
 import { Component, Prop } from "vue-property-decorator";
 import { MessageType, NetworkType, TransactionType } from "@dhealth/sdk";
 import DappGraphicComponent from "../DappGraphicComponent/DappGraphicComponent";
+import { ZoneId } from "@js-joda/core";
 
 /**
  * @class DappTreeView
@@ -105,7 +106,9 @@ export default class DappTreeView extends DappGraphicComponent {
       else return this.item.address;
     }
     if (this.item.adjustedValue)
-      return this.item.toLocalDateTime(1616978397).toString();
+      return this.item
+        .toLocalDateTimeGivenTimeZone(1616978397, ZoneId.UTC)
+        .toString();
     if (this.name === "id" && this.item.id) return this.item.id.toString();
     return this.item;
   }

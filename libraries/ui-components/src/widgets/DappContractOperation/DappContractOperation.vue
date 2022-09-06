@@ -86,7 +86,9 @@
           {{ asset.label }}
         </span>
         <div class="dappContractOperation-amountFiat">
-          <span>{{ `≈ ${amountFiat} ${asset.priceCurrency}` }}</span>
+          <span>{{
+            `≈ ${amountFiat} ${asset.priceInformation.priceCurrency}`
+          }}</span>
         </div>
       </div>
     </div>

@@ -76,8 +76,10 @@ export default class DappContractOperation extends Vue {
     default: () => ({
       mosaicId: "39E0C49FA322A459",
       label: "DHP",
-      priceCurrency: "USD",
-      price: 0.01,
+      priceInformation: {
+        priceCurrency: "USD",
+        price: 0.01,
+      },
       inputDecimals: 6,
       outputDecimals: 2,
     }),
@@ -169,7 +171,7 @@ export default class DappContractOperation extends Vue {
    * Implementation of this component's `mounted` lifecycle hook.
    * (@see https://vuejs.org/guide/essentials/lifecycle.html)
    *
-   * Fetch the current market price of DHP and the amount from transaction.
+   * Get the mosaic amount and message content (if plain) from the transaction.
    *
    * @access protected
    * @async
@@ -265,7 +267,10 @@ export default class DappContractOperation extends Vue {
    * @returns {number}
    */
   protected getTokenPrice(): number {
-    return this.asset ? this.asset.price : 0;
+    if (this.asset && this.asset.priceInformation) {
+      return this.asset.priceInformation.price;
+    }
+    return 0;
   }
 
   /**

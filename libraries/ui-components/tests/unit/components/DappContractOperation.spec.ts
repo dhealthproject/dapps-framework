@@ -65,8 +65,10 @@ const transaction = {
 const asset: Asset = {
   mosaicId: "39E0C49FA322A459",
   label: "DHP",
-  priceCurrency: "USD",
-  price: 0.01,
+  priceInformation: {
+    priceCurrency: "USD",
+    price: 0.01,
+  },
   inputDecimals: 6,
   outputDecimals: 2,
 };
@@ -119,22 +121,22 @@ describe("DappContractOperation -->", () => {
       transaction.message = message;
       widget = shallowMount(DappContractOperation as any, componentOptions);
       await widget.vm.$nextTick();
-      const mainDivElement = widget.find(".DappContractOperation-mainDiv");
+      const mainDivElement = widget.find(".dappContractOperation-mainDiv");
       expect(mainDivElement.exists()).to.be.true;
       const iconDivElement = mainDivElement.find(
-        ".DappContractOperation-iconDiv"
+        ".dappContractOperation-iconDiv"
       );
       testIconDiv(iconDivElement);
       const addressDivElements = mainDivElement.findAll(
-        ".DappContractOperation-addressDiv"
+        ".dappContractOperation-addressDiv"
       );
       testAddressDivs(addressDivElements);
       const arrowDivElement = mainDivElement.find(
-        ".DappContractOperation-arrow"
+        ".dappContractOperation-arrow"
       );
       testArrowDivarrowDivElement(arrowDivElement);
       const amountDivElement = mainDivElement.find(
-        ".DappContractOperation-amountDiv"
+        ".dappContractOperation-amountDiv"
       );
       testContractAmountDivElements(amountDivElement, index);
     });
@@ -170,12 +172,12 @@ function testAddressDivs(
   const senderAddressDivElement = addressDivElements.at(0);
   expect(senderAddressDivElement.exists()).to.be.true;
   const senderAddressNameSpanElement = senderAddressDivElement.find(
-    ".DappContractOperation-addressNameSpan"
+    ".dappContractOperation-addressNameSpan"
   );
   expect(senderAddressNameSpanElement.exists()).to.be.true;
   expect(senderAddressNameSpanElement.text()).to.equals("test-sender-name");
   const senderAddressSpanElement = senderAddressDivElement.find(
-    ".DappContractOperation-addressAddressSpan"
+    ".dappContractOperation-addressAddressSpan"
   );
   expect(senderAddressSpanElement.exists()).to.be.true;
   expect(senderAddressSpanElement.text()).to.equals(
@@ -185,14 +187,14 @@ function testAddressDivs(
   const recipientAddressDivElement = addressDivElements.at(1);
   expect(recipientAddressDivElement.exists()).to.be.true;
   const recipientAddressNameSpanElement = recipientAddressDivElement.find(
-    ".DappContractOperation-addressNameSpan"
+    ".dappContractOperation-addressNameSpan"
   );
   expect(recipientAddressNameSpanElement.exists()).to.be.true;
   expect(recipientAddressNameSpanElement.text()).to.equals(
     "test-recipient-name"
   );
   const recipientAddressSpanElement = recipientAddressDivElement.find(
-    ".DappContractOperation-addressAddressSpan"
+    ".dappContractOperation-addressAddressSpan"
   );
   expect(recipientAddressSpanElement.exists()).to.be.true;
   expect(recipientAddressSpanElement.text()).to.equals(
@@ -231,22 +233,22 @@ function testContractAmountDivElements(
   expect(amountDivElement.exists()).to.be.true;
   if (index > 0) {
     const contractDivElement = amountDivElement.find(
-      ".DappContractOperation-contract"
+      ".dappContractOperation-contract"
     );
     expect(contractDivElement.exists()).to.be.true;
     const contractSpanElement = contractDivElement.find(
-      ".DappContractOperation-amountContract"
+      ".dappContractOperation-amountContract"
     );
     expect(contractSpanElement.exists()).to.be.true;
     const contractType = JSON.parse(transaction.message.payload).contract;
     expect(contractSpanElement.text()).to.equals(contractType);
   } else {
     const amountInnerDivElement = amountDivElement.find(
-      ".DappContractOperation-amount"
+      ".dappContractOperation-amount"
     );
     expect(amountInnerDivElement.exists()).to.be.true;
     const amountTokenSpanElement = amountInnerDivElement.find(
-      ".DappContractOperation-amountToken"
+      ".dappContractOperation-amountToken"
     );
     expect(amountTokenSpanElement.exists()).to.be.true;
     const expectedAmount = (
@@ -254,12 +256,12 @@ function testContractAmountDivElements(
     ).toFixed(2);
     expect(amountTokenSpanElement.text()).to.equals(expectedAmount);
     const amountTokenNameSpanElement = amountInnerDivElement.find(
-      ".DappContractOperation-amountTokenName"
+      ".dappContractOperation-amountTokenName"
     );
     expect(amountTokenNameSpanElement.exists()).to.be.true;
     expect(amountTokenNameSpanElement.text()).to.equals("DHP");
     const amountFiatDivElement = amountInnerDivElement.find(
-      ".DappContractOperation-amountFiat"
+      ".dappContractOperation-amountFiat"
     );
     expect(amountFiatDivElement.exists()).to.be.true;
     const amountFiatSpanElement = amountFiatDivElement.find("span");

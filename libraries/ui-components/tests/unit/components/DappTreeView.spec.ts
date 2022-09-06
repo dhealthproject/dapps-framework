@@ -125,7 +125,7 @@ describe("DappTreeView -->", () => {
     const expectedTexts = [
       "type:  NAMESPACE_REGISTRATION",
       "networkType:  MAIN_NET",
-      "deadline:  2022-06-03T20:39:18.787",
+      "deadline:  2022-06-03T18:39:18.787",
       "maxFee:  0",
       "signer:  NASVGKMONTQRTSY3LG3V36XBZ5VLHWHDYRPSYXI",
       "height:  1242015",
