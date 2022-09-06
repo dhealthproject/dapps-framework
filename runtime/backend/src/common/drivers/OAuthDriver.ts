@@ -19,7 +19,7 @@ export interface OAuthDriver {
   /**
    *
    */
-  getAuthorizeURL(oauth_url: string, extra: string): string;
+  getAuthorizeURL(extra: string): string;
 
   /**
    *

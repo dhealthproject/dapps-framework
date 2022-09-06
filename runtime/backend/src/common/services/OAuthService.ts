@@ -13,10 +13,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 // internal dependencies
-import {
-  OAuthProvidersMap,
-  OAuthProviderParameters,
-} from "../models/OAuthConfig";
+import { OAuthProviderParameters } from "../models/OAuthConfig";
 import { OAuthDriver, BasicOAuthDriver, StravaOAuthDriver } from "../drivers";
 
 /**
@@ -42,23 +39,17 @@ export class OAuthService {
    * @param providerName
    * @returns
    */
-  private driverFactory(providerName: string): OAuthDriver {
-    // reads all OAuth providers from configuration
-    const providers = this.configService.get<OAuthProvidersMap>("providers");
-
-    if (!(providerName in providers)) {
-      throw new Error(`Invalid oauth provider "${providerName}".`);
-    }
-
-    // keeps the relevant provider configuration
-    const provider: OAuthProviderParameters = providers[providerName];
-
+  private driverFactory(
+    providerName: string,
+    providerConfig: OAuthProviderParameters,
+  ): OAuthDriver {
     // determine which **driver** must be used
     if ("strava" === providerName) {
-      return new StravaOAuthDriver(provider);
+      return new StravaOAuthDriver(providerConfig);
     }
 
-    return new BasicOAuthDriver(provider);
+    // for any unlisted provider, use basic OAuth
+    return new BasicOAuthDriver(providerConfig);
   }
 
   /**
@@ -68,20 +59,18 @@ export class OAuthService {
    * @param ref
    * @returns
    */
-  async getAuthorizeURL(
+  public getAuthorizeURL(
     providerName: string,
     dhealthAddress: string,
     referralCode?: string,
-  ) {
-    // reads OAuth providers from configuration
-    const providers = this.configService.get<OAuthProvidersMap>("providers");
-    const provider = providers[providerName];
+  ): string {
+    // reads OAuth provider from configuration
+    const provider = this.configService.get<OAuthProviderParameters>(
+      `providers.${providerName}`,
+    );
     if (undefined === provider) {
       throw new Error(`Invalid oauth provider "${providerName}".`);
     }
-
-    // get the basic OAuth authorization URL (typically remote)
-    const oauth_url = provider.oauth_url;
 
     // generates the "extras" part that attaches the dHealth
     // address and possibly a referral code to forward.
@@ -92,6 +81,6 @@ export class OAuthService {
 
     // creates a `OAuthDriver` depending on the provider name
     // and returns the remote *authorization URL* to link accounts
-    return this.driverFactory(providerName).getAuthorizeURL(oauth_url, extra);
+    return this.driverFactory(providerName, provider).getAuthorizeURL(extra);
   }
 }

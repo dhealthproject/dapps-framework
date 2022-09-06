@@ -35,14 +35,14 @@ export class BasicOAuthDriver implements OAuthDriver {
   /**
    *
    */
-  public getAuthorizeURL(scope: string, extra: string): string {
+  public getAuthorizeURL(extra: string): string {
     // prepare the OAuth "authorization" URL
     return (
       `${this.provider.oauth_url}` +
       // pass any extra(s) in "state" by default
       `${this.buildHttpQuery(extra)}` +
       // *always* pass a "scope" (OAuth Scope)
-      `&scope=${scope}`
+      `&scope=${this.provider.scope}`
     );
   }
 
@@ -51,10 +51,8 @@ export class BasicOAuthDriver implements OAuthDriver {
    */
   public buildHttpQuery(data: string): string {
     return (
-      `` +
-      `?` +
-      `client_id=${this.provider.client_id}` +
-      `&redirect_uri=${this.provider.callback_url}` +
+      `?client_id=${this.provider.client_id}` +
+      `&redirect_uri=${encodeURIComponent(this.provider.callback_url)}` +
       `&${this.dataField}=${data}`
     );
   }

@@ -14,12 +14,10 @@ export default () => ({
       client_id: process.env.STRAVA_CLIENT_ID,
       client_secret: process.env.STRAVA_CLIENT_SECRET,
       verify_token: process.env.STRAVA_VERIFY_TOKEN,
+      scope: "activity:read_all",
       oauth_url: "https://www.strava.com/oauth/authorize",
-      // @todo implement callback URI (/link)
       callback_url: process.env.FRONTEND_URL,
-      // @todo implement subscription handler
       subscribe_url: `${process.env.FRONTEND_URL}/subscribe`,
-      // @todo implement webhook handler
       webhook_url: `${process.env.FRONTEND_URL}/webhook`,
     }
   }
