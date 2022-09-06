@@ -48,18 +48,20 @@ describe("DappIcon -->", () => {
   });
 
   it("should add correct CSS class given different sizes", () => {
-    ["small", "medium", "large"].forEach((size: string) => {
-      // prepare
-      // overwrites "variant" property
-      widget = shallowMount(DappIcon as any, {
-        ...componentOptions,
-        propsData: { size },
-      });
+    ["small", "small-medium", "medium", "medium-large", "large"].forEach(
+      (size: string) => {
+        // prepare
+        // overwrites "variant" property
+        widget = shallowMount(DappIcon as any, {
+          ...componentOptions,
+          propsData: { size },
+        });
 
-      // assert
-      expect(widget.find("img").classes()).to.contain(
-        `dapp-icon-style-${size}`
-      );
-    });
+        // assert
+        expect(widget.find("img").classes()).to.contain(
+          `dapp-icon-style-${size}`
+        );
+      }
+    );
   });
 });

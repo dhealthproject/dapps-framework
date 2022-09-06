@@ -20,7 +20,9 @@ including them in the compiled CSS that is attached with this library.
     :alt="alt"
     :class="{
       'dapp-icon-style-small': size == 'small',
+      'dapp-icon-style-small-medium': size == 'small-medium',
       'dapp-icon-style-medium': size == 'medium',
+      'dapp-icon-style-medium-large': size == 'medium-large',
       'dapp-icon-style-large': size == 'large',
     }"
   />

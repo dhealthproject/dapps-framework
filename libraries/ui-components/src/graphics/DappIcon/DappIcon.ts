@@ -68,9 +68,11 @@ export default class DappIcon extends Vue {
    * In this component, the size definitions are:
    * | Value | Description |
    * | --- | --- |
-   * | `small`  | 20x20 px |
-   * | `medium` | 32x32 px |
-   * | `large`  | 64x64 px |
+   * | `small`          | 20x20 px |
+   * | `small-medium`   | 24x24 px |
+   * | `medium`         | 32x32 px |
+   * | `medium-large`   | 40x40 px |
+   * | `large`          | 64x64 px |
    *
    * @see {@link Size}
    * @access protected

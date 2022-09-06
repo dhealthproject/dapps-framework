@@ -26,10 +26,17 @@
  *
  * | Value | Description |
  * | --- | --- |
- * | `small` | The component uses the small size option. |
- * | `medium` | The component uses the medium size option. |
- * | `large` | The component uses the large size option. |
+ * | `small`          | The component uses the small size option.         |
+ * | `small-medium`   | The component uses the small-medium size option.  |
+ * | `medium`         | The component uses the medium size option.        |
+ * | `medium-large`   | The component uses the medium-large size option.  |
+ * | `large`          | The component uses the large size option.         |
  *
  * @since v0.1.0
  */
-export type Size = "small" | "medium" | "large";
+export type Size =
+  | "small"
+  | "small-medium"
+  | "medium"
+  | "medium-large"
+  | "large";

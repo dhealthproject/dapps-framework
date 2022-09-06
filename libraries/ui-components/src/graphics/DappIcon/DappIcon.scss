@@ -14,9 +14,19 @@
       @apply h-5;
     }
 
+    &-small-medium {
+      @apply w-6;
+      @apply h-6;
+    }
+
     &-medium {
       @apply w-8;
       @apply h-8;
+    }
+
+    &-medium-large {
+      @apply w-10;
+      @apply h-10;
     }
 
     &-large {
