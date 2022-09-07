@@ -55,6 +55,35 @@
   .dapp-card {
     margin-bottom: 30px;
   }
+
+  .dapp-activate-wrapper {
+    height: calc(100vh - 126px);
+    display: flex;
+
+    .dapp-activate-screen {
+      margin: auto;
+      max-width: 740px;
+      width: 100%;
+      padding: 40px;
+      background-color: #FFEFDA;
+      border: 1px solid #A05E03;
+
+      &__title {
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 28px;
+        color: #0A0433;
+        margin: 36px 0;
+      }
+
+      &__description {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 22px;
+        margin: 0 0 36px 0;
+      }
+    }
+  }
 }
 
 .vueperslides:not(.no-shadow):not(.vueperslides--3d)

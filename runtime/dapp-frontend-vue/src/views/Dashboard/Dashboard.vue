@@ -13,7 +13,7 @@
 <template>
   <div class="dapp-screen-dashboard">
     <div class="container">
-      <DividedScreen>
+      <DividedScreen v-if="isProviderAvailable">
         <template v-slot:left>
           <Card title="Upcoming Events">
             <template v-slot:content>
@@ -86,6 +86,24 @@
           ></Card>
         </template>
       </DividedScreen>
+      <div v-else class="dapp-activate-wrapper">
+        <div class="dapp-activate-screen text-center">
+          <img
+            :src="getImageUrl('add-provider.png')"
+            alt="Welcome to ELEVATE, this is the place where you can earn tokens for your activity"
+          />
+          <h2 class="dapp-activate-screen__title">
+            Welcome to ELEVATE, this is the place where you can earn tokens for
+            your activity
+          </h2>
+          <p class="dapp-activate-screen__description">
+            Start earning tokens by syncing your STRAVA account with ELEVATE
+          </p>
+          <DappButton @click="integrateStrava"
+            >Integrate with STRAVA</DappButton
+          >
+        </div>
+      </div>
     </div>
   </div>
 </template>

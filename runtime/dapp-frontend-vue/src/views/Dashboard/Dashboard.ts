@@ -11,7 +11,7 @@
 // external dependencies
 import { Component } from "vue-property-decorator";
 import InlineSvg from "vue-inline-svg";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
@@ -43,6 +43,7 @@ import GenericList from "@/components/GenericList/GenericList.vue";
   computed: {
     ...mapGetters({
       currentUserAddress: "auth/getCurrentUserAddress",
+      isProviderAvailable: "auth/isProviderAvailable",
     }),
   },
 })
@@ -272,5 +273,9 @@ export default class Dashboard extends MetaView {
     }
 
     console.log("[Dashboard] User: ", this.currentUserAddress);
+  }
+
+  async integrateStrava() {
+    await this.$store.dispatch("auth/integrate");
   }
 }
