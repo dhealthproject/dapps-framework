@@ -63,6 +63,7 @@ export const AuthModule = {
       state.refreshToken,
     getCurrentUserAddress: (state: AuthState): string | undefined =>
       state.currentUserAddress,
+    isProviderAvailable: (state: AuthState): boolean => false,
   },
 
   mutations: {
@@ -195,6 +196,10 @@ export const AuthModule = {
       context.commit("setRefreshToken", undefined);
       context.commit("setCurrentUserAddress", undefined);
       return true;
+    },
+
+    async integrate(context: AuthContext): Promise<void> {
+      console.log("test");
     },
   },
 };
