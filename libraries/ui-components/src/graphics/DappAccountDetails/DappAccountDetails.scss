@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 .dappAccountDetails-base {
-  @apply flex items-center justify-center flex-row;
+  @apply flex items-center justify-center flex-row w-full;
 
   .dappAccountDetails-col-details,
   .dappAccountDetails-col-amount,
