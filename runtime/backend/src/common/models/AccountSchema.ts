@@ -27,8 +27,6 @@ import { AccountDTO } from "./AccountDTO";
  * Note that this class uses the generic {@link Transferable} trait to
  * enable a `toDTO()` method on the model.
  *
- * @todo The {@link Account} model does not need fields to be **public**.
- * @todo Timestamp fields should be **numbers** to avoid timezone issues.
  * @since v0.3.0
  */
 @Schema({
@@ -44,10 +42,11 @@ export class Account extends Transferable<AccountDTO> {
    * to be *unique*.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true, unique: true, type: String })
-  public address: string;
+  public readonly address: string;
 
   /**
    * The account's total **transactions count**. Typically, this field
@@ -60,10 +59,11 @@ export class Account extends Transferable<AccountDTO> {
    * This field is **optional** and *not indexed*.
    *
    * @access public
+   * @readonly
    * @var {number}
    */
   @Prop()
-  public transactionsCount?: number;
+  public readonly transactionsCount?: number;
 
   /**
    * The account's first identified **transaction date**. Typically, this
@@ -73,10 +73,11 @@ export class Account extends Transferable<AccountDTO> {
    * This field is **optional** and *indexed*.
    *
    * @access public
-   * @var {Date}
+   * @readonly
+   * @var {number}
    */
   @Prop({ index: true, nullable: true })
-  public firstTransactionAt?: Date;
+  public readonly firstTransactionAt?: number;
 
   /**
    * The account's first identified **transaction block**. Typically, this
@@ -87,10 +88,11 @@ export class Account extends Transferable<AccountDTO> {
    *
    * @todo Note this is not protected for number overflows (but there is a long way until block numbers do overflow..)
    * @access public
+   * @readonly
    * @var {number}
    */
   @Prop()
-  public firstTransactionAtBlock?: number;
+  public readonly firstTransactionAtBlock?: number;
 
   /**
    * The JWT access token that can be attached in the **bearer
@@ -102,10 +104,11 @@ export class Account extends Transferable<AccountDTO> {
    * See more details in {@link AccessTokenDTO}.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
-  @Prop({ index: true, nullable: true, type: String })
-  public accessToken?: string;
+  @Prop({ index: true, type: String, nullable: true })
+  public readonly accessToken?: string;
 
   /**
    * The JWT refresh token that can be attached in the **bearer
@@ -117,10 +120,11 @@ export class Account extends Transferable<AccountDTO> {
    * See more details in {@link AccessTokenDTO}.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ index: true, nullable: true })
-  public refreshTokenHash?: string;
+  public readonly refreshTokenHash?: string;
 
   /**
    * The transaction hash that is/was attached to the **last**
@@ -129,10 +133,11 @@ export class Account extends Transferable<AccountDTO> {
    * This field is **optional** and *not indexed*.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ nullable: true })
-  public lastSessionHash?: string;
+  public readonly lastSessionHash?: string;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -140,10 +145,11 @@ export class Account extends Transferable<AccountDTO> {
    * cached database entry.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop({ index: true })
-  public createdAt?: Date;
+  public readonly createdAt?: Date;
 
   /**
    * The document's update timestamp. This field **does not** reflect the
@@ -151,10 +157,11 @@ export class Account extends Transferable<AccountDTO> {
    * cached database entry.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop()
-  public updatedAt?: Date;
+  public readonly updatedAt?: Date;
 
   /**
    * This method implements a specialized query format to query items

@@ -57,14 +57,14 @@ export class AccountDTO extends BaseDTO {
    * with this dApp on dHealth Network.
    *
    * @access public
-   * @var {Date}
+   * @var {number}
    */
   @ApiProperty({
     example: "2022-08-16T22:24:00.216Z",
     description:
       "The time at which this account first interacted with this dApp on dHealth Network",
   })
-  public firstTransactionAt?: Date;
+  public firstTransactionAt?: number;
 
   /**
    * The height of the block that included the transaction

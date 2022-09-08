@@ -50,7 +50,7 @@ describe("discovery/AccountsController", () => {
     it("should call correct method and respond with DTO", async () => {
       // prepare
       const accountDoc = new Account();
-      accountDoc.address = "fakeAddress";
+      (accountDoc as any).address = "fakeAddress";
       const expectToFetchDocuments = new PaginatedResultDTO<AccountDocument>(
         [accountDoc as AccountDocument], 
         { pageNumber: 1, pageSize: 20, total: 1 },

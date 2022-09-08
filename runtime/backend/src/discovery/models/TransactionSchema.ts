@@ -32,8 +32,6 @@ import { TransactionDTO } from "../models/TransactionDTO";
  * Note that this class uses the generic {@link Transferable} trait to
  * enable a `toDTO()` method on the model.
  *
- * @todo The {@link Transaction} model does not need fields to be **public**.
- * @todo Timestamp fields should be **numbers** to avoid timezone issues.
  * @since v0.2.0
  */
 @Schema({
@@ -47,10 +45,11 @@ export class Transaction extends Transferable<TransactionDTO> {
    * are issued.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public sourceAddress: string;
+  public readonly sourceAddress: string;
 
   /**
    * This is the signer's address. The signer corresponds to the
@@ -58,30 +57,33 @@ export class Transaction extends Transferable<TransactionDTO> {
    * with the discovery source address.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public signerAddress: string;
+  public readonly signerAddress: string;
 
   /**
    * This is the signer's public key. The signer corresponds to
    * the issuer of said transaction ("owner").
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public signerPublicKey: string;
+  public readonly signerPublicKey: string;
 
   /**
    * This is the recipient address. The recipient corresponds to the
    * destination of said transaction.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public recipientAddress: string;
+  public readonly recipientAddress: string;
 
   /**
    * This is the transaction mode and may contain one of the
@@ -94,10 +96,11 @@ export class Transaction extends Transferable<TransactionDTO> {
    *   this transaction was *sent from* the discovery source account.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true })
-  public transactionMode: string;
+  public readonly transactionMode: string;
 
   /**
    * This is the transaction type as defined in dApps. Typically,
@@ -105,10 +108,11 @@ export class Transaction extends Transferable<TransactionDTO> {
    * use transfer transactions to perform operations.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public transactionType: string;
+  public readonly transactionType: string;
 
   /**
    * This is the transaction hash as defined by dHealth Network. It
@@ -119,10 +123,11 @@ export class Transaction extends Transferable<TransactionDTO> {
    * transaction hash (64 characters in hexadecimal notation).
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true, unique: true, type: String })
-  public transactionHash: string;
+  public readonly transactionHash: string;
 
   /**
    * This is the transaction message as defined by dHealth Network. It
@@ -137,10 +142,11 @@ export class Transaction extends Transferable<TransactionDTO> {
    * heavily due to the potential of 1024 bytes in transfer messages.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ index: true, nullable: true })
-  public transactionMessage?: string;
+  public readonly transactionMessage?: string;
 
   /**
    * This is the contract payload as presented inside a dHealth
@@ -154,7 +160,7 @@ export class Transaction extends Transferable<TransactionDTO> {
    * @var {string}
    */
   @Prop({ required: true, type: [Object] })
-  public transactionAssets: ObjectLiteral[];
+  public readonly transactionAssets: ObjectLiteral[];
 
   /**
    * This is the transaction signature as defined by dHealth Network. It
@@ -165,10 +171,11 @@ export class Transaction extends Transferable<TransactionDTO> {
    * transaction hash (128 characters in hexadecimal notation).
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true })
-  public signature?: string;
+  public readonly signature?: string;
 
   /**
    * This is the transaction body as defined by the dApps Framework. This
@@ -187,10 +194,11 @@ export class Transaction extends Transferable<TransactionDTO> {
    * the other fields of this document.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop()
-  public encodedBody?: string;
+  public readonly encodedBody?: string;
 
   /**
    * The document's creation block number. This field **does** reflect the
@@ -199,10 +207,11 @@ export class Transaction extends Transferable<TransactionDTO> {
    *
    * @todo Note this is not protected for number overflows (but there is a long way until block numbers do overflow..)
    * @access public
+   * @readonly
    * @var {number}
    */
   @Prop()
-  public creationBlock?: number;
+  public readonly creationBlock?: number;
 
   /**
    * The document's discovery timestamp. This field **does not** reflect the
@@ -210,10 +219,11 @@ export class Transaction extends Transferable<TransactionDTO> {
    * cached database entry.
    *
    * @access public
-   * @var {Date}
+   * @readonly
+   * @var {number}
    */
   @Prop()
-  public discoveredAt?: Date;
+  public readonly discoveredAt?: number;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -223,10 +233,11 @@ export class Transaction extends Transferable<TransactionDTO> {
    * This field is added for consistency with the other database schema.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop({ index: true })
-  public createdAt: Date;
+  public readonly createdAt: Date;
 
   /**
    * The document's update timestamp. This field **does not** reflect the
@@ -234,10 +245,11 @@ export class Transaction extends Transferable<TransactionDTO> {
    * cached database entry.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop()
-  public updatedAt?: Date;
+  public readonly updatedAt?: Date;
 
   /**
    * This method implements a specialized query format to query items
