@@ -14,41 +14,41 @@
   margin-bottom: 40px;
 
   &.success {
-    background-color: #f9f8ff;
-    border: 1px solid #3d42b9;
+      background-color: #F9F8FF;
+      border: 1px solid #3D42B9;
 
-    * {
-      color: #3d42b9;
-    }
-
-    svg {
-      path {
-        fill: #3d42b9;
+      * {
+          color: #3D42B9;
       }
-    }
+
+      svg {
+          path {
+              fill: #3D42B9;
+          }
+      }
   }
 
   &.error {
-    background-color: #ffcad2;
-    border: 1px solid #bf0c27;
+      background-color: #ffcad2;
+      border: 1px solid #bf0c27;
 
-    * {
-      color: #bf0c27;
-    }
-
-    svg {
-      path {
-        fill: #bf0c27;
+      * {
+          color: #bf0c27;
       }
-    }
+
+      svg {
+          path {
+              fill: #bf0c27;
+          }
+      }
   }
 
   .icon {
-    display: inline-block;
-    padding-right: 12px;
+      display: inline-block;
+      padding-right: 12px;
   }
 
   .close {
-    cursor: pointer;
+      cursor: pointer;
   }
 }

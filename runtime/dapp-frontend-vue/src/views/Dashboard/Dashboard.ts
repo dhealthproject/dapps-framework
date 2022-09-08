@@ -52,6 +52,8 @@ export interface StatisticsTabItem {
   friends: OtherPlayer[];
 }
 
+type RouteParam = string | (string | null)[];
+
 @Component({
   components: {
     Card,
@@ -334,6 +336,15 @@ export default class Dashboard extends MetaView {
         ],
       },
     ];
+  }
+
+  get localIntegrations() {
+    const integrations = localStorage.getItem("integrations");
+    let availableIntegrations: any;
+    if (integrations) {
+      availableIntegrations = JSON.parse(integrations);
+    }
+    return availableIntegrations;
   }
 
   /**
