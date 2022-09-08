@@ -26,6 +26,7 @@ export interface AuthState {
   accessToken?: string;
   refreshToken?: string;
   currentUserAddress?: string;
+  isProviderIntegrated?: boolean;
 }
 
 /**
@@ -63,7 +64,6 @@ export const AuthModule = {
       state.refreshToken,
     getCurrentUserAddress: (state: AuthState): string | undefined =>
       state.currentUserAddress,
-    isProviderAvailable: (state: AuthState): boolean => false,
   },
 
   mutations: {
@@ -102,6 +102,9 @@ export const AuthModule = {
      */
     setCurrentUserAddress: (state: AuthState, userAddress: string): string =>
       (state.currentUserAddress = userAddress),
+
+    setIsProviderIntegrated: (state: AuthState, providerState: boolean) =>
+      (state.isProviderIntegrated = providerState),
   },
 
   actions: {
@@ -196,10 +199,6 @@ export const AuthModule = {
       context.commit("setRefreshToken", undefined);
       context.commit("setCurrentUserAddress", undefined);
       return true;
-    },
-
-    async integrate(context: AuthContext): Promise<void> {
-      console.log("test");
     },
   },
 };

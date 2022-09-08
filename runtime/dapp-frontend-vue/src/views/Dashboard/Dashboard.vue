@@ -13,7 +13,19 @@
 <template>
   <div class="dapp-screen-dashboard">
     <div class="container">
-      <DividedScreen v-if="isProviderAvailable">
+      <Snackbar
+        v-if="snackbarkShown"
+        :icon="getImageUrl('QR.svg')"
+        title="Great Job!"
+        description="We’ve integrated your account"
+        @snackbar-close="hideSnackbar"
+      />
+      <DividedScreen
+        v-if="
+          getIntegrations.length > 0 ||
+          (localIntegrations && localIntegrations.length > 0)
+        "
+      >
         <template v-slot:left>
           <Card title="Upcoming Events">
             <template v-slot:content>
@@ -99,9 +111,12 @@
           <p class="dapp-activate-screen__description">
             Start earning tokens by syncing your STRAVA account with ELEVATE
           </p>
-          <DappButton @click="integrateStrava"
-            >Integrate with STRAVA</DappButton
+          <button
+            class="dapp-activate-screen__integrate"
+            @click="integrateStrava"
           >
+            Integrate with STRAVA
+          </button>
         </div>
       </div>
     </div>

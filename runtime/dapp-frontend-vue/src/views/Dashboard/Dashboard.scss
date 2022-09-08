@@ -82,6 +82,16 @@
         line-height: 22px;
         margin: 0 0 36px 0;
       }
+
+      &__integrate {
+        padding: 12px 66px;
+        box-shadow: 2px 2px 0px 1px #000;
+        font-weight: 600;
+        font-size: 14px;
+        border-radius: 40px;
+        background-color: #fff;
+        outline: none;
+      }
     }
   }
 }
