@@ -118,6 +118,15 @@ export const createRouter = ($store: any): VueRouter => {
         },
         component: () => import("./views/Dashboard/Dashboard.vue"),
       },
+      {
+        path: "/settings",
+        name: "app.settings",
+        meta: {
+          layout: "app/default",
+          middleware: [auth],
+        },
+        component: () => import("./views/Settings/Settings.vue"),
+      },
     ],
   });
 

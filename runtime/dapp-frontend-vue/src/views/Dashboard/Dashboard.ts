@@ -11,7 +11,7 @@
 // external dependencies
 import { Component } from "vue-property-decorator";
 import InlineSvg from "vue-inline-svg";
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
@@ -28,6 +28,8 @@ import LeaderBoard from "./components/LeaderBoard.vue";
 import Tabs from "@/components/Tabs/Tabs.vue";
 import GenericList from "@/components/GenericList/GenericList.vue";
 
+type RouteParam = string | (string | null)[];
+
 @Component({
   components: {
     Card,
@@ -43,7 +45,7 @@ import GenericList from "@/components/GenericList/GenericList.vue";
   computed: {
     ...mapGetters({
       currentUserAddress: "auth/getCurrentUserAddress",
-      isProviderAvailable: "auth/isProviderAvailable",
+      getIntegrations: "integrations/getIntegrations",
     }),
   },
 })
@@ -61,6 +63,8 @@ export default class Dashboard extends MetaView {
    * @var {string}
    */
   public currentUserAddress!: string;
+
+  public snackbarkShown: boolean = false;
 
   /**
    * Computed which defines configuration
@@ -262,6 +266,15 @@ export default class Dashboard extends MetaView {
     ];
   }
 
+  get localIntegrations() {
+    const integrations = localStorage.getItem("integrations");
+    let availableIntegrations: any;
+    if (integrations) {
+      availableIntegrations = JSON.parse(integrations);
+    }
+    return availableIntegrations;
+  }
+
   /**
    *
    */
@@ -273,9 +286,46 @@ export default class Dashboard extends MetaView {
     }
 
     console.log("[Dashboard] User: ", this.currentUserAddress);
+
+    const { state, code, scope } = this.$route.query;
+
+    const integrations = localStorage.getItem("integrations");
+    let availableIntegrations: any;
+    if (integrations) {
+      availableIntegrations = JSON.parse(integrations);
+      this.$store.commit("integrations/setIntegrations", "strava");
+      console.log(availableIntegrations);
+      this.snackbarkShown = Boolean(localStorage.getItem("snackbarHidden"));
+    }
+
+    if (state && code && scope && !availableIntegrations) {
+      await this.triggerLinkStrava(state, code, scope);
+      localStorage.setItem("snackbarHidden", JSON.stringify(true));
+      await this.$router.replace({});
+    }
   }
 
   async integrateStrava() {
-    await this.$store.dispatch("auth/integrate");
+    window.location.href =
+      process.env.VUE_APP_BACKEND_URL +
+      `/oauth/strava?&dhealthAddress=${this.currentUserAddress}`;
+  }
+
+  async triggerLinkStrava(
+    state: RouteParam,
+    code: RouteParam,
+    scope: RouteParam
+  ) {
+    this.$store.dispatch("integrations/linkStrava", {
+      address: this.currentUserAddress,
+      code,
+      state,
+      scope,
+    });
+  }
+
+  hideSnackbar() {
+    this.snackbarkShown = false;
+    localStorage.setItem("snackbarHidden", "");
   }
 }

@@ -14,6 +14,7 @@ import Vuex, { ActionContext } from "vuex";
 import { AppModule } from "./AppModule";
 import { AuthModule } from "./AuthModule";
 import { AwaitLock } from "../AwaitLock";
+import { IntegrationsModule } from "./IntegrationsModule";
 
 /**
  *
@@ -49,6 +50,7 @@ export const createStore = () => {
     modules: {
       app: AppModule,
       auth: AuthModule,
+      integrations: IntegrationsModule,
     },
     state: (): RootState => ({
       initialized: false,
