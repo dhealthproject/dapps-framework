@@ -66,6 +66,12 @@ export default class Dashboard extends MetaView {
 
   public snackbarkShown: boolean = false;
 
+  public snackbarConfig = {
+    state: "success",
+    title: "Great Job!",
+    description: "We’ve integrated your account",
+  };
+
   /**
    * Computed which defines configuration
    * for vueper carousel
@@ -287,10 +293,22 @@ export default class Dashboard extends MetaView {
 
     console.log("[Dashboard] User: ", this.currentUserAddress);
 
-    const { state, code, scope } = this.$route.query;
+    const { state, code, scope, error } = this.$route.query;
 
     const integrations = localStorage.getItem("integrations");
     let availableIntegrations: any;
+
+    if (error) {
+      this.snackbarConfig = {
+        state: "error",
+        title: "Error!",
+        description: "Please click 'authorize' on strava screen",
+      };
+
+      this.snackbarkShown = Boolean(localStorage.getItem("snackbarHidden"));
+      localStorage.setItem("snackbarHidden", JSON.stringify(true));
+    }
+
     if (integrations) {
       availableIntegrations = JSON.parse(integrations);
       this.$store.commit("integrations/setIntegrations", "strava");

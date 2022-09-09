@@ -16,8 +16,9 @@
       <Snackbar
         v-if="snackbarkShown"
         :icon="getImageUrl('QR.svg')"
-        title="Great Job!"
-        description="We’ve integrated your account"
+        :title="snackbarConfig.title"
+        :description="snackbarConfig.description"
+        :state="snackbarConfig.state"
         @snackbar-close="hideSnackbar"
       />
       <DividedScreen
