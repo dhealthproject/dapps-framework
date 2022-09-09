@@ -9,6 +9,7 @@
  */
 // generics / interfaces
 export * from "./OAuthDriver";
+export * from "./HttpRequestHandler";
 
 // specialized driver implementations
 export * from "./BasicOAuthDriver";

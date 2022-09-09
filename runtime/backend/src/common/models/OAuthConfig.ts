@@ -18,7 +18,8 @@
  * {
  *   client_id: "123456",
  *   client_secret: "YourSecretFromProvider",
- *   oauth_url: "http://example.com/oauth",
+ *   oauth_url: "http://example.com/oauth/authorize",
+ *   token_url: "http://example.com/oauth/token",
  *   callback_url: "http://localhost:8080/oauth/callback",
  *   scope: "activity:read_all"
  * }
@@ -32,6 +33,7 @@ export interface OAuthProviderParameters {
   client_secret: string;
   verify_token?: string;
   oauth_url: string;
+  token_url: string;
   callback_url: string;
   subscribe_url?: string;
   webhook_url?: string;

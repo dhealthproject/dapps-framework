@@ -23,16 +23,21 @@ export class StravaOAuthDriver extends BasicOAuthDriver {
   /**
    *
    */
+  protected codeFieldName = "code";
+
+  /**
+   *
+   */
   public constructor(protected readonly provider: OAuthProviderParameters) {
-    super(provider);
+    super("strava", provider);
   }
 
   /**
    *
    */
-  buildHttpQuery(data: string): string {
+  protected buildAuthorizeQuery(data: string): string {
     return (
-      super.buildHttpQuery(data) +
+      super.buildAuthorizeQuery(data) +
       `&response_type=code` +
       `&approval_prompt=auto`
     );

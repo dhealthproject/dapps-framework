@@ -62,4 +62,18 @@ export class AccessTokenDTO extends BaseDTO {
       "The JWT refresh token that can be attached in the **bearer authorization header** of HTTP requests to `/auth/token` to indicate that a user's access token must be refreshed.",
   })
   public refreshToken?: string;
+
+  /**
+   * The JWT access token expiration timestamp. This timestamp
+   * uses the `UTC` timezone.
+   *
+   * @access public
+   * @var {number}
+   */
+  @ApiProperty({
+    example: 1662571893676,
+    description:
+      "The JWT access token expiration timestamp. This timestamp uses the `UTC` timezone.",
+  })
+  public expiresAt?: number;
 }

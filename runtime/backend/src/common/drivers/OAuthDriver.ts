@@ -7,6 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// internal dependencies
+import { AccessTokenDTO } from "../models/AccessTokenDTO";
+
 /**
  *
  */
@@ -19,10 +22,15 @@ export interface OAuthDriver {
   /**
    *
    */
+  get codeField(): string;
+
+  /**
+   *
+   */
   getAuthorizeURL(extra: string): string;
 
   /**
    *
    */
-  buildHttpQuery(data: string): string;
+  getAccessToken(code: string, data?: string): Promise<AccessTokenDTO>;
 }
