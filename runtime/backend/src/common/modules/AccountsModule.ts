@@ -15,6 +15,10 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { QueryModule } from "../../common/modules/QueryModule";
 import { AccountsService } from "../services/AccountsService";
 import { Account, AccountSchema } from "../models/AccountSchema";
+import {
+  AccountIntegration,
+  AccountIntegrationSchema,
+} from "../models/AccountIntegrationSchema";
 
 /**
  * @label COMMON
@@ -26,7 +30,10 @@ import { Account, AccountSchema } from "../models/AccountSchema";
 @Module({
   providers: [AccountsService],
   imports: [
-    MongooseModule.forFeature([{ name: Account.name, schema: AccountSchema }]),
+    MongooseModule.forFeature([
+      { name: Account.name, schema: AccountSchema },
+      { name: AccountIntegration.name, schema: AccountIntegrationSchema },
+    ]),
     QueryModule,
   ],
   exports: [AccountsService],

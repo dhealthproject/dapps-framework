@@ -13,3 +13,4 @@ export * from "./ChallengesService";
 export * from "./NetworkService";
 export * from "./QueryService";
 export * from "./StateService";
+export * from "./OAuthService";

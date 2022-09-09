@@ -255,7 +255,7 @@ export class AuthController {
     description:
       "Request an authenticated user's access token and refresh token. The access token is short-lived (1 hour) and the refresh token can be used to get a new access token after it expired.",
   })
-  @ApiExtraModels(AccessTokenDTO)
+  @ApiExtraModels(AccessTokenRequest, AccessTokenDTO)
   @ApiOkResponse(HTTPResponses.AuthTokenResponseSchema)
   protected async getAccessToken(
     @Body() body: AccessTokenRequest,
@@ -463,15 +463,8 @@ export class AuthController {
   @ApiExtraModels(AccountDTO)
   @ApiOkResponse(HTTPResponses.MeResponseSchema)
   protected async getProfile(@NestRequest() req: Request): Promise<AccountDTO> {
-    // read and decode access token
-    const token: string = AuthService.extractToken(req);
-
-    // find profile information in database
-    const account: AccountDocument = await this.accountsService.findOne(
-      new AccountQuery({
-        accessToken: token,
-      } as AccountDocument),
-    );
+    // read and decode access token, then find account in database
+    const account: AccountDocument = await this.authService.getAccount(req);
 
     // wrap into a safe transferable DTO
     return Account.fillDTO(account, new AccountDTO());

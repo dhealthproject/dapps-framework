@@ -154,11 +154,23 @@ export class AuthService {
     request: Request,
     cookieName: string = conf.dappName,
   ): string | null {
+    // private local helper function to extract
+    // a key from an object only if it is defined
+    const extract = (from: any, asKey: string): string | undefined => {
+      return from !== undefined && asKey in from ? from[asKey] : undefined;
+    };
+
+    // extract the access token with following precedence order:
+    // - Server Signed Cookies
+    // - Request/Browser Cookies
+    // - Request Authorization Header
+    const fromSignedCookies = extract(request.signedCookies, cookieName);
+    const fromRequestCookies = extract(request.cookies, cookieName);
+    const fromRequestHeaders = extract(request.headers, "Authorization");
+
+    // are we able to extract a token?
     let token: string =
-      request.signedCookies[cookieName] ??
-      request.cookies[cookieName] ??
-      request.headers["Authorization"] ??
-      null;
+      fromSignedCookies ?? fromRequestCookies ?? fromRequestHeaders ?? null;
 
     // remove Bearer prefix if extracting from (unsecure) header
     if (token && token.length && null !== token.match(/^Bearer: /)) {
@@ -227,6 +239,23 @@ export class AuthService {
     // which serves numbers's representation in ASCII
     const size: number = this.challengeSize;
     return ChallengesService.generateChallenge(size);
+  }
+
+  /**
+   *
+   * @param request
+   * @returns
+   */
+  public async getAccount(request: Request): Promise<AccountDocument> {
+    // read and decode access token
+    const token: string = AuthService.extractToken(request);
+
+    // find profile information in database
+    return await this.accountsService.findOne(
+      new AccountQuery({
+        accessToken: token,
+      } as AccountDocument),
+    );
   }
 
   /**
@@ -327,15 +356,11 @@ export class AuthService {
       refreshToken = account.refreshTokenHash ?? null;
     }
 
-    console.log("[AuthService] accessToken from db is: ", accessToken);
-    console.log("[AuthService] refreshToken from db is: ", refreshToken);
-
     // block: creating access token
     try {
       // if we don't have an active access token for this user
       // constructs a short-lived accessToken for the next hour
       if (undefined === accessToken || null === accessToken) {
-        console.log("[AuthService] creating accessToken");
         accessToken = this.jwtService.sign(payload, {
           // defines a symmetric secret key for signing tokens
           secret: this.authSecret,
@@ -345,7 +370,6 @@ export class AuthService {
       // if on the other hand, we already have an active access
       // token for the account, we verify that it hasn't expired
       else {
-        console.log("[AuthService] verifying accessToken");
         this.jwtService.verify(accessToken, {
           secret: this.authSecret,
           ignoreExpiration: false,
@@ -357,7 +381,6 @@ export class AuthService {
     } catch (e: any) {
       // token expired, we must to create a new one
       if ("name" in e && e.name === "TokenExpiredError") {
-        console.log("[AuthService] accessToken expired, creating");
         accessToken = this.jwtService.sign(payload, {
           // defines a symmetric secret key for signing tokens
           secret: this.authSecret,
@@ -366,7 +389,6 @@ export class AuthService {
       }
       // token is invalid / signature is invalid
       else {
-        console.log("[AuthService] accessToken invalid, erroring");
         throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
       }
     }
@@ -387,7 +409,6 @@ export class AuthService {
     // constructs a long-lived refreshToken for the next year
     // and store a copy of the created tokens in `accounts`
     if (undefined === refreshToken || null === refreshToken) {
-      console.log("[AuthService] creating refreshToken");
       refreshToken = this.jwtService.sign(payload, {
         // defines a symmetric secret key for signing tokens
         secret: this.authSecret,

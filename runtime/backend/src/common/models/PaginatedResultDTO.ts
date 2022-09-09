@@ -11,7 +11,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 // internal dependencies
-import { Transferable } from "../concerns/Transferable";
 import { Countable } from "../concerns/Countable";
 import { Pageable } from "../concerns/Pageable";
 

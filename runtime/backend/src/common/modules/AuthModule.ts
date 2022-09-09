@@ -17,6 +17,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { AccountsModule } from "../modules/AccountsModule";
 import { ChallengesModule } from "../modules/ChallengesModule";
 import { NetworkModule } from "../modules/NetworkModule";
+import { QueryModule } from "../modules/QueryModule";
 import { AuthService } from "../services/AuthService";
 import { AuthStrategy } from "../traits/AuthStrategy";
 import { AuthController } from "../routes/AuthController";
@@ -24,6 +25,10 @@ import {
   AuthChallenge,
   AuthChallengeSchema,
 } from "../models/AuthChallengeSchema";
+import {
+  AccountIntegration,
+  AccountIntegrationSchema,
+} from "../models/AccountIntegrationSchema";
 import { Account, AccountSchema } from "../models/AccountSchema";
 import { OAuthController } from "../routes/OAuthController";
 import { OAuthService } from "../services/OAuthService";
@@ -42,6 +47,7 @@ const auth = securityConfigLoader().auth;
 @Module({
   imports: [
     NetworkModule,
+    QueryModule,
     AccountsModule,
     ChallengesModule,
     PassportModule,
@@ -54,10 +60,11 @@ const auth = securityConfigLoader().auth;
     MongooseModule.forFeature([
       { name: AuthChallenge.name, schema: AuthChallengeSchema },
       { name: Account.name, schema: AccountSchema },
+      { name: AccountIntegration.name, schema: AccountIntegrationSchema },
     ]),
   ],
   controllers: [AuthController, OAuthController],
-  providers: [AuthService, OAuthService, AuthStrategy],
+  providers: [AuthService, AuthStrategy, OAuthService],
   exports: [AuthService, OAuthService],
 })
 export class AuthModule {}
