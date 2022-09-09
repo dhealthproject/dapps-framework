@@ -42,10 +42,11 @@ export class State extends Transferable<StateDTO> {
    * accordingly.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true, unique: true, type: String })
-  public name: string;
+  public readonly name: string;
 
   /**
    * The state cache document's actual **data**. Note that this field
@@ -55,10 +56,11 @@ export class State extends Transferable<StateDTO> {
    * would be updated to a strictly typed alternative.
    *
    * @access public
+   * @readonly
    * @var {StateData}
    */
   @Prop({ required: true, type: Object })
-  public data: StateData;
+  public readonly data: StateData;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -66,10 +68,11 @@ export class State extends Transferable<StateDTO> {
    * cached database entry.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop({ index: true })
-  public createdAt?: Date;
+  public readonly createdAt?: Date;
 
   /**
    * The document's update timestamp. This field **does not** reflect the
@@ -77,10 +80,11 @@ export class State extends Transferable<StateDTO> {
    * cached database entry.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop()
-  public updatedAt?: Date;
+  public readonly updatedAt?: Date;
 
   /**
    * This method implements a specialized query format to query items

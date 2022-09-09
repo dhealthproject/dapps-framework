@@ -45,10 +45,11 @@ export class Operation extends Transferable<OperationDTO> {
    * contract, this field shall contain the *recipient address*.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public userAddress: string;
+  public readonly userAddress: string;
 
   /**
    * This is the transaction hash as defined by dHealth Network. It
@@ -59,10 +60,11 @@ export class Operation extends Transferable<OperationDTO> {
    * transaction hash (64 characters in hexadecimal notation).
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true, unique: true, type: String })
-  public transactionHash: string;
+  public readonly transactionHash: string;
 
   /**
    * This is the contract signature as presented inside a dHealth
@@ -70,10 +72,11 @@ export class Operation extends Transferable<OperationDTO> {
    *
    * @example `"elevate:auth"`
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public contractSignature: string;
+  public readonly contractSignature: string;
 
   /**
    * This is the contract payload as presented inside a dHealth
@@ -84,10 +87,11 @@ export class Operation extends Transferable<OperationDTO> {
    *
    * @example `{ contract: "elevate:auth", version: 1, challenge: "abcdef12" }`
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, type: Object })
-  public contractPayload: ObjectLiteral;
+  public readonly contractPayload: ObjectLiteral;
 
   /**
    * The document's creation block number. This field **does** reflect the
@@ -96,10 +100,11 @@ export class Operation extends Transferable<OperationDTO> {
    *
    * @todo Note this is not protected for number overflows (but there is a long way until block numbers do overflow..)
    * @access public
+   * @readonly
    * @var {number}
    */
   @Prop()
-  public creationBlock?: number;
+  public readonly creationBlock?: number;
 
   /**
    * The document's processing timestamp. This field **does not** reflect the
@@ -107,10 +112,11 @@ export class Operation extends Transferable<OperationDTO> {
    * cached database entry.
    *
    * @access public
+   * @readonly
    * @var {number}
    */
   @Prop({ index: true })
-  public processedAt?: number;
+  public readonly processedAt?: number;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -120,10 +126,11 @@ export class Operation extends Transferable<OperationDTO> {
    * This field is added for consistency with the other database schema.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop({ index: true })
-  public createdAt: Date;
+  public readonly createdAt: Date;
 
   /**
    * The document's update timestamp. This field **does not** reflect the
@@ -131,10 +138,11 @@ export class Operation extends Transferable<OperationDTO> {
    * cached database entry.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop()
-  public updatedAt?: Date;
+  public readonly updatedAt?: Date;
 
   /**
    * This method implements a specialized query format to query items
