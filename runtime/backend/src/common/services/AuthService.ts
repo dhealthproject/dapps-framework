@@ -244,11 +244,15 @@ export class AuthService {
   /**
    *
    * @param request
+   * @param cookieName
    * @returns
    */
-  public async getAccount(request: Request): Promise<AccountDocument> {
+  public async getAccount(
+    request: Request,
+    cookieName: string = conf.dappName,
+  ): Promise<AccountDocument> {
     // read and decode access token
-    const token: string = AuthService.extractToken(request);
+    const token: string = AuthService.extractToken(request, cookieName);
 
     // find profile information in database
     return await this.accountsService.findOne(

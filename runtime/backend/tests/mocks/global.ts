@@ -96,6 +96,23 @@ export class MockModel {
   }
 }
 
+// Creates a HTTP Query Parameters parser that
+// is used to verify the presence of fields in
+// a string-formatted HTTP Query, e.g. "?test"
+export const httpQueryStringParser = (
+  search: string,
+  decode: boolean = true,
+): Record<string, string> => (search || '')
+  .replace(/^\?/g, '')
+  .split('&')
+  .reduce((acc, query) => {
+    const [key, value] = query.split('=');
+    if (key) {
+      acc[key] = decode ? decodeURIComponent(value) : value;
+    }
+    return acc;
+  }, {} as Record<string, string>);
+
 // sets mocked environment variables
 process.env.DB_USER = "fake-user";
 process.env.DB_PASS = "fake-pass";
