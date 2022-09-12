@@ -50,7 +50,7 @@
     height: 100%;
     top: 0;
     left: 0;
-    background-color: #DEFF58;
+    background-color: #deff58;
     z-index: 999;
     padding-top: 44px;
 
@@ -71,7 +71,7 @@
         font-weight: 600;
         line-height: 24px;
       }
-  
+
       .user-balance {
         font-size: 14px;
       }
@@ -97,63 +97,63 @@
             font-size: 24px;
             line-height: 36px;
             font-weight: 500;
-            color: #000
+            color: #000;
           }
         }
       }
     }
 
     &__footer {
-     margin-top: auto;
-     padding: 0 24px 18px 24px;
+      margin-top: auto;
+      padding: 0 24px 18px 24px;
 
-     button {
-      color: #09090A;
-      font-size: 14px;
-      padding: 14px 40px;
-      border-radius: 40px;
-      border: 1px solid #09090A;
-      font-weight: 700;
-      background-color: #fff;
-      box-shadow: 3px -2px 0px #09090a;
+      button {
+        color: #09090a;
+        font-size: 14px;
+        padding: 14px 40px;
+        border-radius: 40px;
+        border: 1px solid #09090a;
+        font-weight: 700;
+        background-color: #fff;
+        box-shadow: 3px -2px 0px #09090a;
 
-      svg {
-        display: inline-block;
-        margin-left: 8px;
-        
-        path {
-          fill: #09090A;
+        svg {
+          display: inline-block;
+          margin-left: 8px;
+
+          path {
+            fill: #09090a;
+          }
         }
       }
-     }
 
-     .legal-credentials {
-      padding-top: 17px;
-      display: flex;
-      align-items: center;
+      .legal-credentials {
+        padding-top: 17px;
+        display: flex;
+        align-items: center;
 
-      .powered {
-        font-size: 14px;
-        font-weight: 700;
-        color: #625E83;
+        .powered {
+          font-size: 14px;
+          font-weight: 700;
+          color: #625e83;
+        }
+
+        svg {
+          display: inline-block;
+          margin-left: 12px;
+        }
       }
 
-      svg {
-        display: inline-block;
-        margin-left: 12px;
+      .legal-links {
+        a {
+          font-size: 12px;
+          display: inline-block;
+          line-height: 22px;
+          color: #5d64ff;
+          margin-right: 8px;
+          text-decoration: underline;
+        }
       }
-     }
-
-     .legal-links {
-      a {
-        font-size: 12px;
-        display: inline-block;
-        line-height: 22px;
-        color: #5D64FF;
-        margin-right: 8px;
-        text-decoration: underline;
-      }
-     }
     }
 
     // > div {
