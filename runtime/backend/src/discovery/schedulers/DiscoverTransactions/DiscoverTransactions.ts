@@ -39,7 +39,7 @@ import {
   TransactionDocument,
   TransactionModel,
   TransactionQuery,
-} from "../../models/TransactionSchema";
+} from "../../../common/models/TransactionSchema";
 import { TransactionDiscoveryStateData } from "../../models/TransactionDiscoveryStateData";
 import { AssetDTO } from "../../models/AssetDTO";
 

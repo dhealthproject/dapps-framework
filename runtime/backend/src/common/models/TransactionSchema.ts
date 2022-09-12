@@ -17,10 +17,10 @@ import { Model } from "mongoose";
 import { ObjectLiteral } from "@dhealth/contracts";
 
 // internal dependencies
-import { Documentable } from "../../common/concerns/Documentable";
-import { Transferable } from "../../common/concerns/Transferable";
-import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
-import { TransactionDTO } from "../models/TransactionDTO";
+import { Documentable } from "../concerns/Documentable";
+import { Transferable } from "../concerns/Transferable";
+import { Queryable, QueryParameters } from "../concerns/Queryable";
+import { TransactionDTO } from "../../discovery/models/TransactionDTO";
 
 /**
  * @class Transaction

@@ -23,7 +23,7 @@ import {
   Transaction,
   TransactionDocument,
   TransactionQuery,
-} from "../models/TransactionSchema";
+} from "../../common/models/TransactionSchema";
 import { TransactionDTO } from "../models/TransactionDTO";
 import { TransactionsService } from "../services/TransactionsService";
 

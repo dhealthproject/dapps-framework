@@ -18,7 +18,7 @@ import {
   TransactionDocument,
   TransactionModel,
   TransactionQuery,
-} from "../models/TransactionSchema";
+} from "../../common/models/TransactionSchema";
 import { QueryService } from "../../common/services/QueryService";
 
 /**

@@ -31,13 +31,13 @@ import {
 } from "../../models/OperationSchema";
 import { OperationProcessorStateData } from "../../models/OperationProcessorStateData";
 import { OperationParameters } from "../../models/ProcessorConfig";
-
-// @todo processor scope *requires* presence of discovery scope
-import { TransactionsService } from "../../../discovery/services/TransactionsService";
 import {
+  Transaction,
   TransactionDocument,
+  TransactionModel,
   TransactionQuery,
-} from "@/discovery/models/TransactionSchema";
+} from "../../../common/models/TransactionSchema";
+import { QueryService } from "../../../common/services/QueryService";
 
 /**
  * @interface ProcessOperationsCommandOptions
@@ -122,10 +122,11 @@ export class ProcessOperations extends ProcessorCommand {
    */
   constructor(
     @InjectModel(Operation.name) protected readonly model: OperationModel,
+    @InjectModel(Transaction.name) protected readonly transactionModel: TransactionModel,
     protected readonly configService: ConfigService,
     protected readonly stateService: StateService,
     protected readonly networkService: NetworkService,
-    protected readonly transactionsService: TransactionsService,
+    protected readonly queriesService: QueryService<TransactionDocument, TransactionModel>,
     protected readonly operationsService: OperationsService,
   ) {
     // required super call
@@ -364,12 +365,13 @@ export class ProcessOperations extends ProcessorCommand {
       // fetches transaction entries for this page of transactions
       // this uses the `_id` field for sorting in "asc" direction
       const transactions: PaginatedResultDTO<TransactionDocument> =
-        await this.transactionsService.find(
+        await this.queriesService.find(
           new TransactionQuery(transactionQuery, {
             pageNumber: this.lastPageNumber,
             pageSize: 100,
             order: "asc",
           } as QueryParameters),
+          this.transactionModel,
         );
 
       // store transactions in memory during runtime

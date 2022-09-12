@@ -32,7 +32,7 @@ import { AccountDiscoveryStateData } from "../../models/AccountDiscoveryStateDat
 import {
   TransactionDocument,
   TransactionQuery,
-} from "../../models/TransactionSchema";
+} from "../../../common/models/TransactionSchema";
 
 /**
  * @class DiscoverAccounts

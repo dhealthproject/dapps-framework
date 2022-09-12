@@ -51,7 +51,7 @@ import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
 import { AccountDocument, AccountQuery } from "../../../../src/common/models/AccountSchema";
-import { TransactionDocument, TransactionQuery } from "../../../../src/discovery/models/TransactionSchema";
+import { TransactionDocument, TransactionQuery } from "../../../../src/common/models/TransactionSchema";
 import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
 import { DiscoverAccounts } from "../../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccounts";
 import { AccountDiscoveryStateData } from "../../../../src/discovery/models/AccountDiscoveryStateData";

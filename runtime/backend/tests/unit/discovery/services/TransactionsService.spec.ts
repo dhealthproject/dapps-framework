@@ -15,7 +15,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
-import { TransactionDocument, TransactionModel, TransactionQuery } from "../../../../src/discovery/models/TransactionSchema";
+import { TransactionDocument, TransactionModel, TransactionQuery } from "../../../../src/common/models/TransactionSchema";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 
 describe("discovery/TransactionsService", () => {

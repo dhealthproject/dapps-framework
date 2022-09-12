@@ -7,8 +7,8 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// @todo processor scope *requires* presence of discovery scope
-import { TransactionDocument } from "@/discovery/models/TransactionSchema";
+// internal dependencies
+import { TransactionDocument } from "../../common/models/TransactionSchema";
 
 /**
  * @label COMMON

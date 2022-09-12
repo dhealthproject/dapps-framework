@@ -16,7 +16,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { NetworkModule } from "../../../common/modules/NetworkModule";
 import { StateModule } from "../../../common/modules/StateModule";
 import { TransactionsModule } from "../../modules/TransactionsModule";
-import { Transaction, TransactionSchema } from "../../models/TransactionSchema";
+import { Transaction, TransactionSchema } from "../../../common/models/TransactionSchema";
 
 // private implementation
 import { DiscoverTransactions } from "./DiscoverTransactions";

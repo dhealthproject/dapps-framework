@@ -16,10 +16,8 @@ import { MongooseModule } from "@nestjs/mongoose";
 // common scope
 import { NetworkModule } from "../../../common/modules/NetworkModule";
 import { StateModule } from "../../../common/modules/StateModule";
-
-// discovery scope
-// @todo Decouple the operations module (processor) from the transactions module (discovery)
-import { TransactionsModule } from "../../../discovery/modules/TransactionsModule";
+import { QueryModule } from "../../../common/modules/QueryModule";
+import { Transaction, TransactionSchema } from "../../../common/models/TransactionSchema";
 
 // processor scope
 import { OperationsModule } from "../../modules/OperationsModule";
@@ -37,10 +35,11 @@ import { ProcessOperations } from "./ProcessOperations";
     ScheduleModule.forRoot(),
     StateModule,
     NetworkModule,
-    TransactionsModule,
     OperationsModule,
+    QueryModule,
     MongooseModule.forFeature([
       { name: Operation.name, schema: OperationSchema },
+      { name: Transaction.name, schema: TransactionSchema },
     ]),
   ],
   providers: [ProcessOperations],

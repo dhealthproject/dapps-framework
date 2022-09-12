@@ -15,7 +15,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { QueryModule } from "../../common/modules/QueryModule";
 import { TransactionsService } from "../services/TransactionsService";
 import { TransactionsController } from "../routes/TransactionsController";
-import { Transaction, TransactionSchema } from "../models/TransactionSchema";
+import { Transaction, TransactionSchema } from "../../common/models/TransactionSchema";
 
 /**
  * @class TransactionsModule
