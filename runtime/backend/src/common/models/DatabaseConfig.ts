@@ -12,15 +12,11 @@
  * @description This interface defines the required configuration of dApps
  * database connections.
  *
- * @todo The {@link port} property should likely be a `number | string`.
- * @todo Add relevant property documentation for {@link host}
- * @todo Add relevant property documentation for {@link port}
- * @todo Add relevant property documentation for {@link name}
- * @todo Add relevant property documentation for {@link user}
  * @since v0.2.0
  */
 export interface DatabaseConfig {
   /**
+   * The database's host name.
    *
    * @access public
    * @var {string}
@@ -28,13 +24,16 @@ export interface DatabaseConfig {
   host: string;
 
   /**
+   * The database's port number. This value can either be a string or a number.
+   * E.g. `27017` or `"27017"`.
    *
    * @access public
-   * @var {string}
+   * @var {number | string}
    */
-  port: string;
+  port: number | string;
 
   /**
+   * The database name to connect to.
    *
    * @access public
    * @var {string}
@@ -42,6 +41,7 @@ export interface DatabaseConfig {
   name: string;
 
   /**
+   * The username used to login to the database.
    *
    * @access public
    * @var {string}
