@@ -3,6 +3,49 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.3.1][0.3.1] - 12-Sep-2022
+
+#### Added
+
+- [@dhealth/components] feat(widgets): add dynamic SVG graphics for transaction parts
+- [@dhealth/components] feat(widgets): add transaction graphic for transfer
+- [@dhealth/components] feat(widgets): add base transaction graphic implementation
+- [@dhealth/components] feat(widgets): add namespace graphics components
+- [@dhealth/components] feat(widgets): add component DappAddressAliasTransaction
+- [@dhealth/components] feat(widgets): add transaction graphics to exports
+- [@dhealth/components] feat(base): create Helper class with RGB conversion helpers
+- [@dhealth/components] feat(widgets): add MosaicIcon as a graphic component, refactor with DappGraphicComponent
+- [@dhealth/components] feat(widgets): add DappMosaicAliasTransaction component
+- [@dhealth/components] feat(widgets): add DappAddCircle component
+- [@dhealth/components] feat(widgets): add DappMosaicDefinitionTransaction component
+- [@dhealth/components] feat(widgets): Add DappEditCircle as a graphic component
+- [@dhealth/components] feat(widgets): add DappMosaicSupplyChangeTransaction component
+- [@dhealth/components] feat(widgets): add DappTransferTransaction component
+- [@dhealth/components] feat(base): bind custom events for exported components
+- [@dhealth/components] feat(widgets): add DappTitleBar component
+
+#### Changed
+
+- [@dhealth/components] refactor(widgets): update widget names for consistency
+- [@dhealthdapps/frontend] refactor(base): use signed cookies (removes js-cookies), fix redirection flow with routes
+
+#### Fixed
+
+- [@dhealth/components] fix(widgets): update DappAccountAvatar to use correct checksum
+- [@dhealth/components] fix(docs): update documentation and fix unused imports
+- [@dhealth/components] fix(review): apply comments and review (#21)
+- [@dhealth/components] fix(test): update import path for refactored graphics widgets
+- [@dhealth/components] fix(build): apply linter with last changes
+- [@dhealth/components] fix(review): apply comments and reviews from PR (#24)
+- [@dhealth/components] fix(test): update import path for refactored graphics widgets, fix DappMosaicIcon warning
+- [@dhealth/components] fix(build): apply linter with last changes
+- [@dhealth/components] fix(review): apply comments and reviews from PR (#24)
+- [@dhealth/components] fix(test): update import path for refactored graphics widgets, fix DappMosaicIcon warning
+- [@dhealth/components] fix(review): apply comments and reviews from PR (#30)
+- [@dhealth/components] fix(widgets): add DappContractOperation component, fix DappTransferTransaction, fix linter/docs
+- [@dhealth/components] fix(build): add props initialization
+- [@dhealth/components] fix(build): dispatch base emit if not web component
+
 ## [0.3.0][0.3.0] - 01-Sep-2022
 
 #### Added
@@ -51,6 +94,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealth/components] feat(widgets): add implementation for DappQR base component
 
 
+[0.3.1]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0
 [0.2.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.1.0..v0.2.0
 [0.1.0]: https://github.com/dhealthproject/dapps-framework/releases/tag/v0.1.0

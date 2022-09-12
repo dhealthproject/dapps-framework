@@ -3,6 +3,29 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.3.1][0.3.1] - 12-Sep-2022
+
+#### Added
+
+- [@dhealthdapps/frontend] feat(elements): add first draft of navigation
+- [@dhealthdapps/frontend] feat(elements): add mobile navigation, fix carousel display on mobile
+
+#### Changed
+
+- [@dhealthdapps/frontend] refactor(base): use signed cookies (removes js-cookies), fix redirection flow with routes
+
+### Fixed
+
+- [@dhealthdapps/frontend] fix(elements): fix display of user details for guests
+- [@dhealthdapps/frontend] fix(widgets): create generic list component
+- [@dhealthdapps/frontend] fix(elements): fix styles of friend list
+- [@dhealthdapps/frontend] fix(screens): remove onboarding page, move pages to /pages folder, update paths
+- [@dhealthdapps/frontend] fix(screens): restore disconnect wallet
+- [@dhealthdapps/frontend] fix(screens): fix views rebase
+- [@dhealthdapps/frontend] fix(build): add correct style imports
+- [@dhealthdapps/frontend] fix(style): remove hover color for login QR
+- [@dhealthdapps/frontend] fix(build): fix linter for mobile navigation changes
+
 ## [0.3.0][0.3.0] - 01-Sep-2022
 
 #### Added
@@ -71,6 +94,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] feat(theme): adds tailwindcss@3.0.x and moves assets to resources/
 
 
+[0.3.1]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0
 [0.2.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.1.0..v0.2.0
 [0.1.0]: https://github.com/dhealthproject/dapps-framework/releases/tag/v0.1.0

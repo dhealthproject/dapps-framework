@@ -3,6 +3,25 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.3.1][0.3.1] - 12-Sep-2022
+
+#### Added
+
+- [@dhealthdapps/backend] fix: remove debug source code in authentication and add logging for transactions discovery
+- [@dhealthdapps/backend] feat(routes): add API namespace `/oauth/:provider` for authorization
+- [@dhealthdapps/backend] test(routes): add unit tests for oauth controller
+- [@dhealthdapps/backend] feat(api): add generic getAccessToken implementation
+- [@dhealthdapps/backend] feat(api): add implementation for OAuth authorization and callback, add account_integrations
+- [@dhealthdapps/backend] test(api): add unit tests for OAuthService and AuthService
+
+#### Changed
+
+- [@dhealthdapps/backend] refactor(api): use secure httpOnly cookies, add config fields for CORS and URLs
+
+#### Fixed
+
+- [@dhealthdapps/backend] fix: remove debug source code in authentication and add logging for transactions discovery
+
 ## [0.3.0][0.3.0] - 01-Sep-2022
 
 #### Added
@@ -53,6 +72,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: add implementation for schedulers enabled through scopes and more refactor (types)
 
 
+[0.3.1]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0
 [0.2.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.1.0..v0.2.0
 [0.1.0]: https://github.com/dhealthproject/dapps-framework/releases/tag/v0.1.0
