@@ -9,10 +9,13 @@
  */
 // external dependencies
 import { Component } from "vue-property-decorator";
+import InlineSvg from "vue-inline-svg";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import { DappButton } from "@dhealth/components";
+import NavPanel from "@/components/NavPanel/NavPanel.vue";
+import UiButton from "@/components/UiButton/UiButton.vue";
 
 // style resource
 import "./LegalDisclaimer.scss";
@@ -26,9 +29,14 @@ interface PageData {
 @Component({
   components: {
     DappButton,
+    NavPanel,
+    InlineSvg,
+    UiButton,
   },
 })
 export default class LegalDisclaimer extends MetaView {
+  legalAccepted = false;
+
   get legalDisclaimerData() {
     return {
       "terms-of-service": {

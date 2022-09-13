@@ -21,6 +21,8 @@ import DirectionTriangle from "./DirectionTriangle/DirectionTriangle.vue";
 import Tabs from "./Tabs/Tabs.vue";
 import GenericList from "./GenericList/GenericList.vue";
 import Snackbar from "./Snackbar/Snackbar.vue";
+import NavPanel from "./NavPanel/NavPanel.vue";
+import UiButton from "./UiButton/UiButton.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
@@ -34,6 +36,8 @@ export const AppComponents = {
   Tabs,
   GenericList,
   Snackbar,
+  NavPanel,
+  UiButton,
 };
 
 // scoped export of library-level components

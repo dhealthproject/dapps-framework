@@ -14,12 +14,15 @@
   <div class="dapp-divided-screen">
     <div class="dapp-divided-screen__columns">
       <div
-        :style="{ paddingRight: `${gap}px` }"
+        :style="{ paddingRight: `${gap}px`, maxWidth: columnsSize.left }"
         class="dapp-divided-screen__columns__column"
       >
         <slot name="left"></slot>
       </div>
-      <div class="dapp-divided-screen__columns__column">
+      <div
+        :style="{ maxWidth: columnsSize.right }"
+        class="dapp-divided-screen__columns__column"
+      >
         <slot name="right"></slot>
       </div>
     </div>

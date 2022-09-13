@@ -34,3 +34,20 @@ export const authenticationHandler = ({ next, router, $store }: any) => {
   // Access authorized
   return next();
 };
+
+export const guestHandler = ({ next, router, $store }: any) => {
+  // read authentication state from vuex store
+  const isAuthenticated: boolean = $store.getters["auth/isAuthenticated"];
+
+  // routes using this middleware should redirect
+  // to /dashboard given authenticated guest users.
+  if (isAuthenticated) {
+    return router.push({
+      name: "app.dashboard",
+      replace: true,
+    });
+  }
+
+  // Access unauthorized
+  return next();
+};

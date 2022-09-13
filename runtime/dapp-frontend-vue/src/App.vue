@@ -20,9 +20,9 @@
     </div>
     <!-- Guest default layout (non-authenticated) -->
     <div v-else-if="$route.meta.layout === 'guest/default'">
-      <Header />
+      <!-- <Header /> -->
       <router-view :key="$route.fullPath"></router-view>
-      <Footer layout="empty" :links="emptyFooterLinks" />
+      <!-- <Footer layout="empty" :links="emptyFooterLinks" /> -->
     </div>
     <!-- In-App layout (authenticated) -->
     <div v-else-if="$route.meta.layout === 'app/default'" class="layout-user">

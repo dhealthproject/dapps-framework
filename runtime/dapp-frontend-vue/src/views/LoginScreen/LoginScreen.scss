@@ -8,95 +8,185 @@
  * @license     LGPL-3.0
  */
 
+@import "../../vars.scss";
+
 .dapp-login-screen {
-  // temporary fix for QR and DappButton bgcolor
-  .style-primary {
-    background-color: transparent !important;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
 
-  .hero {
-    background-image: url("../../assets/login-hero.png");
-    background-size: cover;
-    background-position: center;
-  }
+  .mobile {
+    border-bottom: 1px solid $brand-navy-light;
+    // margin-bottom: auto;
+    padding: 16px !important;
 
-  .hero,
-  &__qr {
-    display: flex;
-    flex-direction: column;
-    padding: 76px 100px;
-    text-align: left;
-    height: 100vh;
-  }
+    .dapp-login-screen__title {
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 140%;
+      color:  $button-text-dark;
+    }
 
-  &__carousel,
-  &__button {
-    margin-top: auto;
-  }
+    svg {
+      width: 14px;
+      height: 16px;
+    }
 
-  .carousel-item {
-    &__title {
-      color: #fff;
-      font-weight: 600;
-      font-size: 42px;
-      margin: 0;
-      line-height: 58.8px;
+    @media screen and (min-width: 1024px) {
+      display: none;
     }
   }
 
-  .carousel-controls {
-    margin-top: 40px;
-    display: flex;
+  svg {
+    cursor: pointer;
 
-    &__item {
-      border-radius: 16px;
-      width: 16px;
-      height: 8px;
-      background-color: rgba(255, 255, 255, 0.6);
-      margin-inline-end: 8px;
+    path {
+      fill: $button-text-dark;
+    }
+  }
+
+  &__container {
+    width: 100%;
+    margin: auto;
+    max-width: 618px;
+
+    @media screen and (max-width: 580px) {
+      padding: 0 24px;
+    }
+  }
+
+  .dapp-nav-panel {
+    padding: 0 25px;
+    margin-bottom: 43px;
+
+    &.desktop {
+      @media screen and (max-width: 1024px) {
+        display: none;
+      }
+    }
+
+    .title {
+      font-weight: 700;
+      font-size: 30px;
+      line-height: 140%;
+      color:  $button-text-dark;
+    }
+  
+    .back {
       cursor: pointer;
-      transition: all 0.5s ease;
-
-      &.active {
-        background-color: #fff;
-        width: 48px;
+  
+      path {
+        fill: $button-text-dark;
       }
     }
   }
 
-  .steps {
-    margin: 40px 0;
+  .qr-wrapper {
+    border: 1px solid $button-text-dark;
+    border-radius: 16px;
+    padding: 24px 40px;
+    box-shadow: 4px 4px 1px 1px $black;
 
-    li {
-      margin-bottom: 12px;
-      font-size: 14px;
-      font-weight: 400;
-      color: #09090a;
+    &__title {
+      display: block;
+      margin-bottom: 16px;
+      color: $button-text-dark;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: left;
 
-      .number {
-        display: inline-flex;
-        margin-right: 16px;
-        border-radius: 50%;
-        width: 29px;
-        height: 29px;
-        align-items: center;
-        justify-content: center;
-        background-color: #d7dbe8;
-        color: #09090a;
-        font-weight: 700;
+      @media screen and (max-width: 580px) {
+        text-align: center;
+      }
+    }
+
+    &__list {
+      text-align: left;
+
+      li {
+        display: flex;
+        flex-direction: row;
+        font-weight: 400;
         font-size: 14px;
+        line-height: 140%;
+        color: $button-text-dark;
+        margin-bottom: 16px;
+        
+        .number {
+          width: 29px;
+          height: 29px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 14px;
+          border-radius: 50%;
+          border: 1px solid $black;
+          color: $button-text-dark;
+          margin-right: 16px;
+          flex-shrink: 0;
+        }
+      }
+    }
+
+    .tutorial {
+      color: $accent-green;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 130%;
+
+      @media screen and (max-width: 580px) {
+        justify-content: center;
       }
 
-      &:last-child {
-        margin-bottom: 0;
+      a {
+        text-decoration: underline;
+      }
+
+      img {
+        display: inline-block;
+        margin-right: 6px;
+      }
+    }
+
+    .base {
+      border: none;
+      background-color: transparent;
+
+      button {
+        display: none;
       }
     }
   }
 
-  footer {
-    margin-top: auto;
+  .on-mobile {
+    margin-top: 27px;
+
+    &__title {
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 140%;
+      color: $black;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    &__link {
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 130%;
+      color: $black;
+      margin-top: 16px;
+
+      a {
+        color: $accent-green;
+        text-decoration: underline;
+      }
+    }
   }
 }

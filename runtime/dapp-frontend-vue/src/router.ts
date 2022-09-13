@@ -12,7 +12,10 @@ import VueRouter from "vue-router";
 
 // setup a dynamic modules application kernel
 import { AppKernel } from "./kernel";
-import { authenticationHandler as auth } from "./middleware/Authentication";
+import {
+  authenticationHandler as auth,
+  guestHandler as guest,
+} from "./middleware/Authentication";
 
 // builds dynamic module routes
 const appKernel = AppKernel.getInstance();
@@ -68,10 +71,19 @@ export const createRouter = ($store: any): VueRouter => {
         path: "/",
         name: "app.home",
         meta: {
+          layout: "guest/split-horizontal",
+          middleware: [guest],
+        },
+        component: () =>
+          import("./views/OnboardingScreen/OnboardingScreen.vue"),
+      },
+      {
+        path: "/dashboard",
+        name: "app.dashboard",
+        meta: {
           layout: "app/default",
           middleware: [auth],
         },
-        component: () => import("./views/Dashboard/Dashboard.vue"),
       },
       {
         path: "/terms-of-service",
