@@ -101,12 +101,6 @@ export default class OnboardingScreen extends MetaView {
     return this.carouselItems[this.currentScreen];
   }
 
-  /**
-   * Increements value of currently selected screen or pushes to next route
-   *
-   * @returns void
-   * @access public
-   */
   handleStep() {
     if (this.currentScreen >= this.carouselItems.length - 1) {
       this.skipOnboarding();

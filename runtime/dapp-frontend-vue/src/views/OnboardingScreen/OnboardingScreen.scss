@@ -12,173 +12,164 @@
 
 .dapp-screen-onboarding {
   &__inner {
-    @media screen and (max-width: 580px) {
-      display: none;
-    }
+      @media screen and (max-width: 580px) {
+          display: none;
+      }
   }
 
   &__mobile {
-    height: 100vh;
-    position: relative;
-    background-size: cover;
-    background-position: center center;
+      height: 100vh;
+      position: relative;
+      background-size: cover;
+      background-position: center center;
 
-    &__gradient,
-    &__content {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-    }
-
-    &__content {
-      padding: 25px 33px 42px 33px;
-
-      .dapp-nav-panel {
-        width: 100%;
-        margin-bottom: auto;
+      &__gradient, &__content {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
       }
 
-      .dapp-screen-onboarding__mobile__actions {
-        .title {
-          color: $base-grey;
-          font-weight: 800;
-          font-size: 20px;
-          line-height: 150%;
-          margin-top: 32px;
-          margin-bottom: 10px;
-        }
+      &__content {
+          padding: 25px 33px 42px 33px;
 
-        .description {
-          font-weight: 600;
-          font-size: 16px;
-          line-height: 150%;
-          color: $base-grey-lighter;
-          margin-top: 0;
-          margin-bottom: 16px;
-        }
+          .dapp-nav-panel {
+              width: 100%;
+              margin-bottom: auto;
+          }
+
+          .dapp-screen-onboarding__mobile__actions {
+              .title {
+                  color: $base-grey;
+                  font-weight: 800;
+                  font-size: 20px;
+                  line-height: 150%;
+                  margin-top: 32px;
+                  margin-bottom: 10px;
+              }
+
+              .description {
+                  font-weight: 600;
+                  font-size: 16px;
+                  line-height: 150%;
+                  color:  $base-grey-lighter;
+                  margin-top: 0;
+                  margin-bottom: 16px;
+              }
+          }
       }
-    }
 
-    @media screen and (min-width: 580px) {
-      display: none;
-    }
+      @media screen and (min-width: 580px) {
+          display: block;
+      }
   }
 
   .hero {
-    height: 100vh;
-    position: relative;
-    transition: all 0.5s ease;
+      height: 100vh;
+      position: relative;
+      transition: all .5s ease;
 
-    * {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
+      * {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+      }
 
-    &__image {
-      background-size: cover;
-      background-position: center center;
-      background-repeat: no-repeat;
-      z-index: 0;
-    }
+      &__image {
+          background-size: cover;
+          background-position: center center;
+          background-repeat: no-repeat;
+          z-index: 0;
+      }
 
-    &__overlay {
-      z-index: 1;
-      background: linear-gradient(
-        180.02deg,
-        #000000 -5.36%,
-        rgba(44, 63, 81, 0) 36.6%,
-        #5d3981 94.27%,
-        #391fa4 128.92%
-      );
-    }
+      &__overlay {
+          z-index: 1;
+          background: linear-gradient(180.02deg, #000000 -5.36%, rgba(44, 63, 81, 0) 36.6%, #5D3981 94.27%, #391FA4 128.92%);
+      }
   }
 
   .onboarding-steps {
-    background-color: $login-dark;
-    height: 100vh;
-    padding: 25px 24px 0 34px;
+      background-color: $login-dark;
+      height: 100vh;
+      padding: 25px 24px 0 34px;
 
-    &__back {
-      cursor: pointer;
-    }
-
-    &__skip {
-      text-transform: uppercase;
-      color: $white;
-      font-weight: 500;
-      font-size: 12px;
-      cursor: pointer;
-      user-select: none;
-      font-weight: 500;
-    }
-
-    &__carousel {
-      height: calc(100vh - 72px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      padding: 0 50px;
-
-      .slide {
-        &__title {
-          color: $base-grey;
-          font-weight: 700;
-          font-size: 30px;
-          line-height: 140%;
-          letter-spacing: -1%;
-          margin-bottom: 16px;
-
-          @media screen and (max-width: 768px) {
-            font-size: 20px;
-            margin-bottom: 8px;
-          }
-        }
-
-        &__description {
-          font-size: 20px;
-          font-weight: 600;
-          letter-spacing: -0.01em;
-          color: $base-grey;
-          line-height: 150%;
-          margin-bottom: 24px;
-          @media screen and (max-width: 768px) {
-            font-size: 16px;
-          }
-        }
-
-        &__button {
-          margin-top: 24px;
-          margin: 24px;
-          width: 100%;
-        }
+      &__back {
+          cursor: pointer;
       }
-    }
+
+      &__skip {
+          text-transform: uppercase;
+          color: $white;
+          font-weight: 500;
+          font-size: 12px;
+          cursor: pointer;
+          user-select: none;
+          font-weight: 500;
+      }
+
+      &__carousel {
+          height: calc(100vh - 72px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          padding: 0 50px;
+
+          .slide {
+              &__title {
+                  color: $base-grey;
+                  font-weight: 700;
+                  font-size: 30px;
+                  line-height: 140%;
+                  letter-spacing: -1%;
+                  margin-bottom: 16px;
+
+                  @media screen and (max-width: 768px) {
+                      font-size: 20px;
+                      margin-bottom: 8px;
+                  }
+              }
+
+              &__description {
+                  font-size: 20px;
+                  font-weight: 600;
+                  letter-spacing: -0.01em;
+                  color: $base-grey;
+                  line-height: 150%;
+                  margin-bottom: 24px;
+                  @media screen and (max-width: 768px) {
+                      font-size: 16px;
+                  }
+              }
+
+              &__button {
+                  margin-bottom: 24px;
+              }
+          }
+      }
   }
 
   .steps-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 80px;
-    opacity: 0.5;
-    margin-right: 2px;
-    background-color: $white;
-    transition: all 0.5s ease;
-    display: inline-block;
-    cursor: pointer;
+      width: 8px;
+      height: 8px;
+      border-radius: 80px;
+      opacity: 0.5;
+      margin-right: 2px;
+      background-color: $white;
+      transition: all .5s ease;
+      display: inline-block;
+      cursor: pointer;
 
-    &.active {
-      width: 24px;
-      opacity: 1;
-    }
+      &.active {
+          width: 24px;
+          opacity: 1;
+      }
   }
 }

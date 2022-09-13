@@ -51,11 +51,6 @@ export default class LegalDisclaimer extends MetaView {
    */
   legalAccepted = false;
 
-  /**
-   * This computed returns available configrations for legal disclaimer
-   *
-   * @access public
-   */
   get legalDisclaimerData() {
     return {
       "terms-of-service": {

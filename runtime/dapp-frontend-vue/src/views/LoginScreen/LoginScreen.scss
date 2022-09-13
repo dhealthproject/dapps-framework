@@ -161,6 +161,11 @@
       border: none;
       background-color: transparent;
 
+      img {
+        display: inline-block;
+        margin-right: 6px;
+      }
+
       button {
         display: none;
       }
