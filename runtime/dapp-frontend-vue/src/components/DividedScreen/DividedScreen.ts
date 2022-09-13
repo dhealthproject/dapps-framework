@@ -30,4 +30,43 @@ export default class DividedScreen extends MetaView {
    * @var {number}
    */
   @Prop({ default: 20, required: false }) protected gap?: number;
+
+  /**
+   * Defines size of left part, accepts number and string,
+   * if provided number - width will be set with %
+   * in case of passing string value should be valid css value
+   *
+   * usage example:
+   * `left-size="20px"` |
+   * `left-size="30vh"`
+   *
+   * @access protected
+   * @var {number}
+   */
+  @Prop({ default: 50 }) protected leftSize?: string | number;
+
+  /**
+   * Defines size of right part, accepts number and string,
+   * if provided number - width will be set with %
+   * in case of passing string value should be valid css value
+   *
+   * usage example:
+   * `right-size="768px"` |
+   * `right-size="20ww"`
+   *
+   * @access protected
+   * @var {number}
+   */
+  @Prop({ default: 50 }) protected rightSize?: string | number;
+
+  get columnsSize() {
+    return {
+      left:
+        typeof this.leftSize === "number" ? this.leftSize + "%" : this.leftSize,
+      right:
+        typeof this.rightSize === "number"
+          ? this.rightSize + "%"
+          : this.rightSize,
+    };
+  }
 }

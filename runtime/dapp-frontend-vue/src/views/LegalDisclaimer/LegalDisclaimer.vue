@@ -11,19 +11,51 @@
 -->
 <template>
   <div class="dapp-screen-legal-disclaimer">
-    <h2
-      class="dapp-screen-legal-disclaimer__title"
-      v-html="currentData.title"
-    />
+    <NavPanel class="mobile">
+      <template v-slot:nav-left>
+        <inline-svg
+          :src="getImageUrl('icons/arrow-back.svg')"
+          alt="Back"
+          @click="$router.go(-1)"
+        />
+      </template>
+      <template v-slot:nav-center>
+        <h2
+          class="dapp-screen-legal-disclaimer__title"
+          v-html="currentData.title"
+        />
+      </template>
+    </NavPanel>
+
     <div class="dapp-screen-legal-disclaimer__consent">
-      <p class="dapp-screen-legal-disclaimer__text" v-html="currentData.text" />
+      <NavPanel class="desktop">
+        <template v-slot:nav-left>
+          <inline-svg
+            :src="getImageUrl('icons/arrow-back.svg')"
+            alt="Back"
+            @click="$router.go(-1)"
+          />
+        </template>
+        <template v-slot:nav-center>
+          <h2
+            class="dapp-screen-legal-disclaimer__title"
+            v-html="currentData.title"
+          />
+        </template>
+      </NavPanel>
       <div class="dapp-screen-legal-disclaimer__confirm">
         <div class="dapp-screen-legal-disclaimer__confirm__checkbox">
-          <input type="checkbox" id="accept" />
+          <p
+            class="dapp-screen-legal-disclaimer__text"
+            v-html="currentData.text"
+          />
+          <input v-model="legalAccepted" type="checkbox" id="accept" />
           <label for="accept" v-html="currentData.consent" />
         </div>
-        <DappButton v-html="currentData.button" />
       </div>
+      <UiButton :disabled="!legalAccepted" :to="{ name: 'app.login' }">{{
+        currentData.button
+      }}</UiButton>
     </div>
   </div>
 </template>

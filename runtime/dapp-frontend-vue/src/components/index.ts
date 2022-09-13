@@ -20,6 +20,8 @@ import Card from "./Card/Card.vue";
 import DirectionTriangle from "./DirectionTriangle/DirectionTriangle.vue";
 import Tabs from "./Tabs/Tabs.vue";
 import GenericList from "./GenericList/GenericList.vue";
+import NavPanel from "./NavPanel/NavPanel.vue";
+import UiButton from "./UiButton/UiButton.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
@@ -32,6 +34,8 @@ export const AppComponents = {
   DirectionTriangle,
   Tabs,
   GenericList,
+  NavPanel,
+  UiButton,
 };
 
 // scoped export of library-level components

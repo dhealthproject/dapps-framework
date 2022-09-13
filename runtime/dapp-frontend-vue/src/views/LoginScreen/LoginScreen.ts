@@ -10,7 +10,7 @@
 
 // external dependencies
 import { Auth as AuthContract } from "@dhealth/contracts";
-import { DappButton, DappQR } from "@dhealth/components";
+import { DappQR } from "@dhealth/components";
 import {
   TransferTransaction,
   Deadline,
@@ -24,12 +24,15 @@ import {
 import { QRCode, QRCodeGenerator } from "@dhealth/qr-library";
 import { Component } from "vue-property-decorator";
 import { mapGetters } from "vuex";
+import InlineSvg from "vue-inline-svg";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import ElevateLogo from "@/components/ElevateLogo/ElevateLogo.vue";
 import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
 import { AccessTokenDTO, AuthService } from "@/services/AuthService";
+import NavPanel from "@/components/NavPanel/NavPanel.vue";
+import UiButton from "@/components/UiButton/UiButton.vue";
 
 // style resource
 import "./LoginScreen.scss";
@@ -73,14 +76,17 @@ export interface TutorialStepItem {
   components: {
     ElevateLogo,
     DappQR,
-    DappButton,
+    UiButton,
     DividedScreen,
+    NavPanel,
+    InlineSvg,
   },
   computed: {
     ...mapGetters({
       isAuthenticated: "auth/isAuthenticated",
       authChallenge: "auth/getChallenge",
     }),
+    tutorialItems: () => ({}),
   },
 })
 export default class LoginScreen extends MetaView {

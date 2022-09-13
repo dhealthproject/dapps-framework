@@ -7,31 +7,51 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+
+ @import "../../vars.scss";
+
 .dapp-screen-legal-disclaimer {
-  height: calc(100vh - 207px);
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding-bottom: 75px;
+
+  svg {
+    cursor: pointer;
+
+    path {
+      fill: $button-text-dark;
+    }
+  }
 
   &__title {
-    font-size: 42px;
-    color: #0a0433;
+    font-size: 30px;
+    color: $button-text-dark;
     font-weight: 700;
-    margin-bottom: 40px;
   }
 
   &__text {
-    font-size: 14px;
-    line-height: 19.6px;
+    font-size: 16px;
+    line-height: 150%;
+    font-weight: 400;
     letter-spacing: 0.0125em;
-    max-width: 623px;
+    padding-bottom: 40px;
+    max-width: 598px;
     text-align: left;
+    color: $button-text-dark;
+
+    @media screen and (max-width: 768px) {
+      font-size: 12px;
+      line-height: 130%;
+      padding: 0 25px;
+    }
   }
 
   &__confirm {
     padding-top: 40px;
+    overflow-y: scroll;
+    height: 400px;
 
     &__checkbox {
       padding-bottom: 40px;
@@ -46,8 +66,42 @@
     }
   }
 
+  .dapp-ui-button {
+    padding-top: 25px;
+  }
+
+  .mobile {
+    border-bottom: 1px solid $brand-navy-light;
+    // margin-bottom: auto;
+    padding: 16px;
+
+    .dapp-screen-legal-disclaimer__title {
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 150%;
+    }
+
+    svg {
+      width: 14px;
+      height: 16px;
+    }
+
+    @media screen and (min-width: 1024px) {
+      display: none;
+    }
+  }
+
   &__consent {
-    overflow-y: scroll;
-    height: 400px;
+    @media screen and (max-width: 1024px) {
+      margin-bottom: auto;
+    }
+
+    .dapp-nav-panel {
+      margin-bottom: 37px;
+
+      @media screen and (max-width: 1024px) {
+        display: none;
+      }
+    }
   }
 }

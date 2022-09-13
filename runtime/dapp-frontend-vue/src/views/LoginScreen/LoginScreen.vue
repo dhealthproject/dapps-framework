@@ -10,56 +10,68 @@
  */
 -->
 <template>
-  <div class="dapp-login-screen bg-[#f5f5f5]">
-    <DividedScreen>
-      <template v-slot:left>
-        <div class="hero">
-          <ElevateLogo :width="212" />
-          <div
-            v-if="carouselItems.length > 0"
-            class="dapp-login-screen__carousel"
-          >
-            <div
-              v-for="(item, index) in carouselItems"
-              :key="item.id + index"
-              class="carousel-item"
-            >
-              <h2 v-if="index === selectedIndex" class="carousel-item__title">
+  <div class="dapp-login-screen bg-[#F3F1EE]">
+    <NavPanel class="mobile">
+      <template v-slot:nav-left>
+        <inline-svg
+          :src="getImageUrl('icons/arrow-back.svg')"
+          alt="Back"
+          @click="$router.go(-1)"
+        />
+      </template>
+      <template v-slot:nav-center>
+        <h2 class="dapp-login-screen__title" v-html="'Connect your Wallet'" />
+      </template>
+    </NavPanel>
+    <div class="dapp-login-screen__container">
+      <NavPanel class="desktop">
+        <template v-slot:nav-left>
+          <inline-svg
+            :src="getImageUrl('icons/arrow-back.svg')"
+            alt="Back"
+            class="back"
+            @click="$router.go(-1)"
+          />
+        </template>
+        <template v-slot:nav-center>
+          <h2 class="title">Connect your Wallet</h2>
+        </template>
+      </NavPanel>
+      <div class="qr-wrapper">
+        <DividedScreen :gap="32">
+          <template v-slot:left>
+            <DappQR :qrCode="createLoginQRCode()" />
+          </template>
+          <template v-slot:right>
+            <span class="qr-wrapper__title">In 4 easy steps...</span>
+            <ul class="qr-wrapper__list">
+              <li v-for="(item, index) in tutorialItems" :key="index + item.id">
+                <span class="number">{{ index + 1 }}</span>
                 {{ item.text }}
-              </h2>
-            </div>
-            <div class="carousel-controls">
-              <div
-                v-for="n in carouselItems.length"
-                :key="n"
-                :class="{ active: n - 1 === selectedIndex }"
-                @click="selectedIndex = n - 1"
-                class="carousel-controls__item"
-              />
-            </div>
-          </div>
-        </div>
-      </template>
-
-      <template v-slot:right>
-        <div class="dapp-login-screen__qr flex flex-column justify-center">
-          <DappQR :qrCode="createLoginQRCode()" />
-          <ul class="steps">
-            <li v-for="(tutorialItem, index) in tutorialItems" :key="index">
-              <span class="number">{{ index + 1 }}</span>
-              {{ tutorialItem.text }}
-            </li>
-          </ul>
-          <DappButton class="dapp-login-screen__button"
-            >Watch a video tutorial</DappButton
-          >
-          <footer>
-            © {{ new Date().getFullYear() }} dHealth. All Rights Reserved
-          </footer>
-        </div>
-      </template>
-    </DividedScreen>
+              </li>
+            </ul>
+            <span class="tutorial"
+              ><img
+                :src="getImageUrl('icons/play-icon.svg')"
+                alt="Need help? Watch a Video Tutorial"
+              />Need help? Watch a&nbsp;
+              <a target="_blank" href="#">Video Tutorial</a></span
+            >
+          </template>
+        </DividedScreen>
+      </div>
+      <div class="on-mobile">
+        <span class="on-mobile__title">Currently on a mobile device?</span>
+        <UiButton :accent="true">Connect with dHealth Wallet</UiButton>
+        <p class="on-mobile__link">
+          If you’re new to dHealth Network,
+          <a target="_blank" href="#">download dHealth Signer App</a>
+        </p>
+      </div>
+    </div>
   </div>
 </template>
 
-<script lang="ts" src="./LoginScreen.ts"></script>
+<script lang="ts" src="./LoginScreen.ts">
+import UiButton from "@/components/UiButton/UiButton.vue";
+</script>

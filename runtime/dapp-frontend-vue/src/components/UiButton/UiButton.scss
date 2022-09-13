@@ -1,0 +1,40 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth UI Components
+ * @subpackage  Components
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+
+@import "../../vars";
+
+ .dapp-ui-button {
+    &__component, &__link {
+        background-color: $white;
+        display: inline-block;
+        width: 100%;
+        color: $button-text-dark;
+        font-weight: 700;
+        font-size: 16px;
+        border: none;
+        border: 1px solid $button-text-dark;
+        border-radius: 8px;
+        max-width: 309px;
+        padding: 8px 0;
+        line-height: 150%;
+        box-shadow: 4px 4px 1px 1px $black;
+        outline: none;
+
+        &.disabled {
+            background-color: $grey-disabled;
+            color: $grey-disabled-text;
+            cursor: initial;
+        }
+
+        &.accent {
+            background-color: $accent-yellow;
+        }
+    }
+ }
