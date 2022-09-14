@@ -80,27 +80,20 @@ export default class UiPopup extends MetaView {
    * @returns {void}
    */
   protected handleFormSubmission() {
+    const formValues: any = {};
+
+    const inputs = Array.from(document.getElementsByClassName("dynamic-input"));
+
+    inputs.forEach((input) => {
+      const inputName = input.getAttribute("name");
+
+      if (inputName) {
+        formValues[inputName] = (<HTMLInputElement>input).value;
+      }
+    });
+
     if (this.config && this.config.submitCallback) {
-      this.config.submitCallback(this.formFields);
-    }
-  }
-
-  protected get isFormFilled() {
-    return !Object.values(this.formFields).includes("");
-  }
-
-  protected handleInput(event: any) {
-    console.log("handleInput");
-
-    const fieldName = event.currentTarget.getAttribute("name");
-    Vue.set(this.formFields, fieldName, event.target.value);
-  }
-
-  mounted() {
-    if (this.config?.fields) {
-      this.config.fields.forEach((field) => {
-        Vue.set(this.formFields, field.name, "");
-      });
+      this.config.submitCallback(formValues);
     }
   }
 }

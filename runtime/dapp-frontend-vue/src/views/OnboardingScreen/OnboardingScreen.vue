@@ -63,12 +63,6 @@
             >
               <h2 class="slide__title" v-html="item.title" />
               <p class="slide__description" v-html="item.text" />
-              <UiButton
-                :accent="currentScreen === 2"
-                @uiButton-click="handleStep"
-                class="slide__button"
-                >{{ item.button }}</UiButton
-              >
             </div>
             <div class="flex flex-row">
               <div
