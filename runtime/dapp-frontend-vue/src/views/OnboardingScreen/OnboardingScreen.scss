@@ -65,7 +65,7 @@
         }
 
         @media screen and (min-width: 580px) {
-            display: block;
+            display: none;
         }
     }
 
@@ -150,7 +150,9 @@
                 }
 
                 &__button {
-                    margin-bottom: 24px;
+                    margin-top: 24px;
+                    margin: 24px;
+                    width: 100%;
                 }
             }
         }

@@ -16,6 +16,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  background-color:  $grey-bg;
 
   svg {
     cursor: pointer;
@@ -97,8 +98,6 @@
     }
 
     .dapp-nav-panel {
-      margin-bottom: 37px;
-
       @media screen and (max-width: 1024px) {
         display: none;
       }

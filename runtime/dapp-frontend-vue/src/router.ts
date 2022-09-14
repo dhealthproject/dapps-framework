@@ -78,14 +78,6 @@ export const createRouter = ($store: any): VueRouter => {
           import("./views/OnboardingScreen/OnboardingScreen.vue"),
       },
       {
-        path: "/dashboard",
-        name: "app.dashboard",
-        meta: {
-          layout: "app/default",
-          middleware: [auth],
-        },
-      },
-      {
         path: "/terms-of-service",
         name: "legal.terms-of-service",
         meta: { layout: "guest/default" },

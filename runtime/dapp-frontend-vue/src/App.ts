@@ -17,6 +17,7 @@ import Assembler from "@/views/Assembler/Assembler.vue";
 import Header from "@/components/Header/Header.vue";
 import Footer from "@/components/Footer/Footer.vue";
 import Loader from "@/components/Loader/Loader.vue";
+import UiPopup from "./components/UiPopup/UiPopup.vue";
 
 // style resource
 import "./App.scss";
@@ -30,6 +31,7 @@ import packageConfig from "../package.json";
     Header,
     Footer,
     Loader,
+    UiPopup,
   },
 })
 export default class App extends MetaView {
@@ -57,6 +59,25 @@ export default class App extends MetaView {
   }
 
   /**
+   * State of the modal
+   * get's changed only in showModal() || hideModal()
+   *
+   * @protected {modalShown}
+   * @access protected
+   */
+  protected modalShown = false;
+
+  /**
+   * Popup configurations,
+   * getting set once "modal" event getting triggered
+   * recets to {} on "modal-close" evt
+   *
+   * @protected {modalConfig}
+   * @access protected
+   */
+  protected modalConfig: any = {};
+
+  /**
    *
    */
   protected get emptyFooterLinks() {
@@ -73,5 +94,24 @@ export default class App extends MetaView {
     console.log("[App] route: ", this.$route);
     console.log("[App] store: ", this.$store);
     console.log("[App] BACKEND_URL: ", process.env.VUE_APP_BACKEND_URL);
+    this.$root.$on("modal", this.showModal);
+    this.$root.$on("modal-close", this.hideModal);
+  }
+
+  showModal(modalConfig: any) {
+    this.modalShown = true;
+    this.modalConfig = modalConfig;
+    console.log("MODAL CALLED", modalConfig);
+  }
+
+  hideModal() {
+    this.modalShown = false;
+    this.modalConfig = {};
+    console.log("MODAL HIDDEN");
+  }
+
+  beforeDestoyed() {
+    this.$root.$off("modal", this.showModal);
+    this.$root.$off("modal-close", this.hideModal);
   }
 }

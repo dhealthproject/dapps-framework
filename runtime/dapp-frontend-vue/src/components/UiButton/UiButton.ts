@@ -46,6 +46,11 @@ export default class UiButton extends MetaView {
   })
   accent?: boolean;
 
+  @Prop({
+    default: "",
+  })
+  type?: "no-borders";
+
   onClick() {
     this.$emit("uiButton-click");
   }

@@ -51,10 +51,11 @@
               </li>
             </ul>
             <span class="tutorial"
-              ><img
-                :src="getImageUrl('icons/play-icon.svg')"
-                alt="Need help? Watch a Video Tutorial"
-              />Need help? Watch a&nbsp;
+              ><a target="_blank" href="#"
+                ><img
+                  :src="getImageUrl('icons/play-icon.svg')"
+                  alt="Need help? Watch a Video Tutorial" /></a
+              >Need help? Watch a&nbsp;
               <a target="_blank" href="#">Video Tutorial</a></span
             >
           </template>

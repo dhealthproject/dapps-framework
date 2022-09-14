@@ -14,7 +14,7 @@
   <div class="dapp-ui-button">
     <button
       v-if="!to"
-      :class="{ disabled: disabled, accent: accent }"
+      :class="{ disabled: disabled, accent: accent, 'no-borders': type }"
       :disabled="disabled"
       class="dapp-ui-button__component"
       @click="onClick"
@@ -25,7 +25,7 @@
       <button
         @click="navigate"
         :disabled="disabled"
-        :class="{ disabled: disabled, accent: accent }"
+        :class="{ disabled: disabled, accent: accent, 'no-borders': type }"
         class="dapp-ui-button__link"
       >
         <slot />

@@ -301,6 +301,18 @@ export default class LoginScreen extends MetaView {
     } finally {
       this.hasLoaded = true;
     }
+
+    setTimeout(() => {
+      this.$root.$emit("modal", {
+        overlayColor: "rgba(19, 30, 25, 0.7)",
+        type: "notification",
+        description:
+          "After you have scanned the QR code with your mobile wallet, please confirm your connection to the dApp.",
+        modalBg: "#6EE7EE",
+        width: 456,
+        illustration: "user-avatar.png",
+      });
+    }, 5000);
   }
 
   /**

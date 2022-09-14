@@ -22,6 +22,7 @@ import Tabs from "./Tabs/Tabs.vue";
 import GenericList from "./GenericList/GenericList.vue";
 import NavPanel from "./NavPanel/NavPanel.vue";
 import UiButton from "./UiButton/UiButton.vue";
+import UiPopup from "./UiPopup/UiPopup.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
@@ -36,6 +37,7 @@ export const AppComponents = {
   GenericList,
   NavPanel,
   UiButton,
+  UiPopup,
 };
 
 // scoped export of library-level components
