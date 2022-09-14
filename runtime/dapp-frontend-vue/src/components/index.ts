@@ -23,6 +23,7 @@ import GenericList from "./GenericList/GenericList.vue";
 import Snackbar from "./Snackbar/Snackbar.vue";
 import NavPanel from "./NavPanel/NavPanel.vue";
 import UiButton from "./UiButton/UiButton.vue";
+import UiPopup from "./UiPopup/UiPopup.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
@@ -38,6 +39,7 @@ export const AppComponents = {
   Snackbar,
   NavPanel,
   UiButton,
+  UiPopup,
 };
 
 // scoped export of library-level components

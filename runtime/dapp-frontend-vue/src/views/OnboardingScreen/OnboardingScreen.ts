@@ -32,6 +32,8 @@ import "./OnboardingScreen.scss";
 export default class OnboardingScreen extends MetaView {
   currentScreen = 0;
 
+  refCode: string | null = "";
+
   get carouselItems() {
     return [
       {
@@ -82,6 +84,39 @@ export default class OnboardingScreen extends MetaView {
 
   skipOnboarding() {
     this.$router.push({ name: "legal.terms-and-conditions" });
+  }
+
+  handleReferral() {
+    console.log("REFERRAL CLICK");
+    this.$root.$emit("modal", {
+      overlayColor: "rgba(19, 30, 25, 0.7)",
+      type: "form",
+      title: "Please enter your referral code below",
+      modalBg:
+        "linear-gradient(122.29deg, #0E0838 0%, #3B2660 45.62%, #8F6F5D 204.42%)",
+      width: 327,
+      fields: [
+        {
+          type: "text",
+          placeholder: "1988832",
+          name: "refCode",
+        },
+      ],
+      submitCallback: (values: any) => {
+        const { refCode } = values;
+
+        if (refCode) {
+          this.refCode = refCode;
+          localStorage.setItem("refCode", refCode);
+        }
+        this.$root.$emit("modal-close");
+      },
+    });
+  }
+
+  mounted() {
+    const code = localStorage.getItem("refCode");
+    this.refCode = code;
   }
 
   beforeDestroyed() {

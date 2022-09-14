@@ -16,11 +16,13 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
+  background-color:  $grey-bg;
 
   .mobile {
     border-bottom: 1px solid $brand-navy-light;
     // margin-bottom: auto;
     padding: 16px !important;
+    margin-bottom: 0 !important;
 
     .dapp-login-screen__title {
       font-weight: 700;
@@ -88,6 +90,7 @@
     border-radius: 16px;
     padding: 24px 40px;
     box-shadow: 4px 4px 1px 1px $black;
+    background-color: $base-grey;
 
     &__title {
       display: block;

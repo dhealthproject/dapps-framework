@@ -33,6 +33,16 @@
             cursor: initial;
         }
 
+        &.no-borders {
+            background-color: transparent;
+            color: $white;
+            text-decoration: underline;
+            font-weight: 500;
+            font-size: 14px;
+            box-shadow: none;
+            border: none;
+        }
+
         &.accent {
             background-color: $accent-yellow;
         }

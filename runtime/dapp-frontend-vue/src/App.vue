@@ -53,7 +53,11 @@
     <div v-else class="layout-default">
       <Loader />
     </div>
+
+    <UiPopup :config="modalConfig" :shown="modalShown" />
   </div>
 </template>
 
-<script lang="ts" src="./App.ts"></script>
+<script lang="ts" src="./App.ts">
+import UiPopup from "./components/UiPopup/UiPopup.vue";
+</script>

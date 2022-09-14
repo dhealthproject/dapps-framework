@@ -63,12 +63,6 @@
             >
               <h2 class="slide__title" v-html="item.title" />
               <p class="slide__description" v-html="item.text" />
-              <UiButton
-                :accent="currentScreen === 2"
-                @uiButton-click="handleStep"
-                class="slide__button"
-                >{{ item.button }}</UiButton
-              >
             </div>
             <div class="flex flex-row">
               <div
@@ -79,6 +73,18 @@
                 @click="currentScreen = n - 1"
               />
             </div>
+            <UiButton
+              :accent="currentScreen === 2"
+              @uiButton-click="handleStep"
+              class="slide__button"
+              >{{ currentItem.button }}</UiButton
+            >
+            <UiButton
+              v-if="!refCode"
+              :type="'no-borders'"
+              @uiButton-click="handleReferral"
+              >Enter a Referral Code</UiButton
+            >
           </div>
         </div>
       </template>
@@ -132,6 +138,12 @@
             @uiButton-click="handleStep"
             class="slide__button"
             >{{ currentItem.button }}</UiButton
+          >
+          <UiButton
+            v-if="!refCode"
+            :type="'no-borders'"
+            @uiButton-click="handleReferral"
+            >Enter a Referral Code</UiButton
           >
         </div>
       </div>
