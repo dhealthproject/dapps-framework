@@ -26,6 +26,13 @@ interface PageData {
   "terms-and-conditions": object;
 }
 
+/*
+ * @class LegalDisclaimer
+ * @description This class implements a Vue component to display
+ * legal related information
+ *
+ * @since v0.3.0
+ */
 @Component({
   components: {
     DappButton,
@@ -35,8 +42,20 @@ interface PageData {
   },
 })
 export default class LegalDisclaimer extends MetaView {
+  /**
+   * Property to display
+   * state of the acceptence disclaimer
+   *
+   * @access public
+   * @var {boolean}
+   */
   legalAccepted = false;
 
+  /**
+   * This computed returns available configrations for legal disclaimer
+   *
+   * @access public
+   */
   get legalDisclaimerData() {
     return {
       "terms-of-service": {
@@ -140,6 +159,11 @@ export default class LegalDisclaimer extends MetaView {
     };
   }
 
+  /**
+   * This computed returns configuration according to current legal page
+   *
+   * @access public
+   */
   get currentData() {
     const currentKey = this.$route.name?.split(".")[1];
     if (currentKey) {

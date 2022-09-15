@@ -14,5 +14,12 @@ import { Component } from "vue-property-decorator";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 
+/**
+ * @class NavPanel
+ * @description This class implements a Vue component to display
+ * navigation panel that can be populated with different values or stay empty
+ *
+ * @since v0.3.0
+ */
 @Component({})
 export default class NavPanel extends MetaView {}

@@ -21,6 +21,13 @@ import UiButton from "@/components/UiButton/UiButton.vue";
 // style resource
 import "./OnboardingScreen.scss";
 
+/*
+ * @class UiButton
+ * @description This class implements a Vue component to display
+ * OnboardingScreen
+ *
+ * @since v0.3.0
+ */
 @Component({
   components: { DividedScreen, NavPanel, ElevateLogo, UiButton },
   methods: {
@@ -30,11 +37,30 @@ import "./OnboardingScreen.scss";
   },
 })
 export default class OnboardingScreen extends MetaView {
-  currentScreen = 0;
+  /**
+   * This propery used for displaing
+   * currently selected screen
+   *
+   * @var {number}
+   * @access public
+   */
+  public currentScreen = 0;
 
-  refCode: string | null = "";
+  /**
+   * This propery used for displaing
+   * refCode
+   *
+   * @var {string | null}
+   * @access public
+   */
+  public refCode: string | null = "";
 
-  get carouselItems() {
+  /**
+   * Returns all available configurations of the screns
+   *
+   * @access public
+   */
+  public get carouselItems() {
     return [
       {
         id: "screen_1",
@@ -66,10 +92,21 @@ export default class OnboardingScreen extends MetaView {
     ];
   }
 
-  get currentItem() {
+  /**
+   * Returns configuration of currently available string
+   *
+   * @access public
+   */
+  public get currentItem() {
     return this.carouselItems[this.currentScreen];
   }
 
+  /**
+   * Increements value of currently selected screen or pushes to next route
+   *
+   * @returns void
+   * @access public
+   */
   handleStep() {
     if (this.currentScreen >= this.carouselItems.length - 1) {
       this.skipOnboarding();
@@ -78,16 +115,49 @@ export default class OnboardingScreen extends MetaView {
     }
   }
 
+  /**
+   * Decrements value of currently seelcted screen
+   *
+   * @returns void
+   * @access public
+   */
   handleBack() {
     this.currentScreen -= 1;
   }
 
+  /**
+   * Pushes user to next route after onboarding
+   *
+   * @returns void
+   * @access public
+   */
   skipOnboarding() {
     this.$router.push({ name: "legal.terms-and-conditions" });
   }
 
+  /**
+   * Sets refCode to the localStrorage, closes popup
+   *
+   * @returns void
+   * @access public
+   */
+  setRefcode(values: any) {
+    const { refCode } = values;
+
+    if (refCode) {
+      this.refCode = refCode;
+      localStorage.setItem("refCode", refCode);
+    }
+    this.$root.$emit("modal-close");
+  }
+
+  /**
+   * Opens referral pop-up with specific configration
+   *
+   * @returns void
+   * @access public
+   */
   handleReferral() {
-    console.log("REFERRAL CLICK");
     this.$root.$emit("modal", {
       overlayColor: "rgba(19, 30, 25, 0.7)",
       type: "form",
@@ -101,24 +171,39 @@ export default class OnboardingScreen extends MetaView {
           placeholder: "1988832",
           name: "refCode",
         },
+        {
+          type: "text",
+          placeholder: "test",
+          name: "qwe",
+        },
       ],
-      submitCallback: (values: any) => {
-        const { refCode } = values;
-
-        if (refCode) {
-          this.refCode = refCode;
-          localStorage.setItem("refCode", refCode);
-        }
-        this.$root.$emit("modal-close");
-      },
+      submitCallback: this.setRefcode,
     });
   }
 
+  /**
+   * Runs when component is getting mounted,
+   * reads, sets refCode
+   *
+   * @returns void
+   * @access public
+   */
   mounted() {
     const code = localStorage.getItem("refCode");
     this.refCode = code;
+
+    if (this.$route.query.refCode && !this.refCode) {
+      this.setRefcode(this.$route.query);
+    }
   }
 
+  /**
+   * Runs when route is getting left and component getting destroyed,
+   * resets current screen
+   *
+   * @returns void
+   * @access public
+   */
   beforeDestroyed() {
     this.currentScreen = 0;
   }

@@ -11,7 +11,7 @@
 -->
 
 <template>
-  <div v-if="shown" class="dapp-ui-popup">
+  <div class="dapp-ui-popup">
     <!-- Background overlay, as separate block in case hideOverlay === true -->
     <div
       class="dapp-ui-popup__overlay"
@@ -45,9 +45,12 @@
           type="text"
           :placeholder="field.placeholder"
           :name="field.name"
+          @input="handleInput"
         />
       </div>
-      <UiButton @uiButton-click="handleFormSubmission">Submit</UiButton>
+      <UiButton :disabled="!isFormFilled" @uiButton-click="handleFormSubmission"
+        >Submit</UiButton
+      >
     </div>
 
     <!-- Modal of type notification -->

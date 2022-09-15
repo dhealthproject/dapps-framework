@@ -88,7 +88,11 @@ export default class App extends MetaView {
   }
 
   /**
+   * Runs when component being created,
+   * enables event listeners for showing/hiding of pop-up
    *
+   * @returns void
+   * @access public
    */
   public async created() {
     console.log("[App] route: ", this.$route);
@@ -98,18 +102,37 @@ export default class App extends MetaView {
     this.$root.$on("modal-close", this.hideModal);
   }
 
+  /**
+   * Being called on @modal event, displays popup with provided configuration
+   *
+   * @returns void
+   * @access public
+   */
   showModal(modalConfig: any) {
     this.modalShown = true;
     this.modalConfig = modalConfig;
     console.log("MODAL CALLED", modalConfig);
   }
 
+  /**
+   * Being called on @modal-close event, hides popup
+   *
+   * @returns void
+   * @access public
+   */
   hideModal() {
     this.modalShown = false;
     this.modalConfig = {};
     console.log("MODAL HIDDEN");
   }
 
+  /**
+   * Runs when component being destroyed,
+   * disables event listeners for showing/hiding popup
+   *
+   * @returns void
+   * @access public
+   */
   beforeDestoyed() {
     this.$root.$off("modal", this.showModal);
     this.$root.$off("modal-close", this.hideModal);

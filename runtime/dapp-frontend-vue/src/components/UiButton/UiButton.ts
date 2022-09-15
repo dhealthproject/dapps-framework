@@ -18,6 +18,13 @@ import { DappButton } from "@dhealth/components";
 // styles source
 import "./UiButton.scss";
 
+/*
+ * @class UiButton
+ * @description This class implements a Vue component to display
+ * a cta button. This component is wrapper for <DappButton />
+ *
+ * @since v0.3.0
+ */
 @Component({
   components: { DappButton },
   props: {
@@ -31,27 +38,54 @@ import "./UiButton.scss";
   },
 })
 export default class UiButton extends MetaView {
+  /**
+   * This propery used for the setting URL to button.
+   * Usage example: `<UiButton :to='{name: "onboarding"}' />` -> button will be a link that leads to Onboarding Page
+   *
+   * @var {string | object}
+   */
   @Prop({
     default: "",
   })
   to?: string | object;
 
+  /**
+   * This propery used for the setting disabled state and disabled styles to the button
+   *
+   * @var {boolean}
+   */
   @Prop({
     default: false,
   })
   disabled?: boolean;
 
+  /**
+   * This propery used for the setting accent styles for button
+   *
+   * @var {boolean}
+   */
   @Prop({
     default: false,
   })
   accent?: boolean;
 
+  /**
+   * This propery used for the setting type of the button
+   *
+   * @var {boolean}
+   */
   @Prop({
     default: "",
   })
   type?: "no-borders";
 
-  onClick() {
+  /**
+   * This methods used for an emitting click above
+   *
+   * @access public
+   * @returns {void}
+   */
+  public onClick() {
     this.$emit("uiButton-click");
   }
 }
