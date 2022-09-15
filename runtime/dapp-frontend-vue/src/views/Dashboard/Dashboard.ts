@@ -326,7 +326,7 @@ export default class Dashboard extends MetaView {
   async integrateStrava() {
     window.location.href =
       process.env.VUE_APP_BACKEND_URL +
-      `/oauth/strava?&dhealthAddress=${this.currentUserAddress}`;
+      `/oauth/strava/authorize?&dhealthAddress=${this.currentUserAddress}`;
   }
 
   async triggerLinkStrava(

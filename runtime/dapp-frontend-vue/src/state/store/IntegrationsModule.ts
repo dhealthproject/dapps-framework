@@ -73,7 +73,12 @@ export const IntegrationsModule = {
     async linkStrava(context: IntegrationsContext, payload: any) {
       const handler = new IntegrationsService();
       context.commit("setIntegrations", "strava");
-      await handler.linkStrava(payload);
+
+      try {
+        await handler.linkStrava(payload);
+      } catch (e) {
+        console.log("Error during linking: ", e);
+      }
     },
   },
 };

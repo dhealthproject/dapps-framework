@@ -27,7 +27,7 @@ export class IntegrationsService extends BackendService {
 
   public async linkStrava(params: any) {
     return await this.handler.call(
-      this.getUrl("link/strava"),
+      this.getUrl("oauth/strava/callback"),
       "GET",
       {},
       {
