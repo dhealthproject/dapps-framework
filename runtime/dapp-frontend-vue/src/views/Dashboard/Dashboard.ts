@@ -19,6 +19,7 @@ import { DappButton } from "@dhealth/components";
 
 // child components
 import Card from "@/components/Card/Card.vue";
+import Snackbar from "@/components/Snackbar/Snackbar.vue";
 import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
 import { CarouselItem, CarouselConfig } from "./components/EventsCarousel";
@@ -41,6 +42,7 @@ type RouteParam = string | (string | null)[];
     LeaderBoard,
     Tabs,
     GenericList,
+    Snackbar,
   },
   computed: {
     ...mapGetters({

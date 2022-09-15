@@ -9,55 +9,55 @@
  */
 
 .dapp-screen-settings {
-    .settings-item {
-        .description {
-            background-color: #F6F6F6;
-            padding: 24px 32px;
+  .settings-item {
+    .description {
+      background-color: #f6f6f6;
+      padding: 24px 32px;
 
-            p {
-                font-size: 16px;
-                line-height: 24px;
-                margin: 0;
-            }
-        }
-
-        .setting {
-            padding: 16px 32px;
-            border-bottom: 1px solid #B2B3C9;
-            cursor: pointer;
-
-            .content {
-                img {
-                    display: inline-block;
-                    padding-right: 12px;
-                }
-
-                .text {
-                    .title {
-                        display: block;
-                        color: #09090A;
-                        font-size: 14px;
-                        font-weight: 600;
-                    }
-                    .descr {
-                        font-size: 12px;
-                        color: #7E7B93
-                    }
-                }
-            }
-
-            .state {
-                &__description {
-                    font-size: 12px;
-                    color: #4CD471;
-                    font-weight: 500;
-                }
-
-                img {
-                    display: inline-block;
-                    margin-left: 4px;
-                }
-            }
-        }
+      p {
+        font-size: 16px;
+        line-height: 24px;
+        margin: 0;
+      }
     }
+
+    .setting {
+      padding: 16px 32px;
+      border-bottom: 1px solid #b2b3c9;
+      cursor: pointer;
+
+      .content {
+        img {
+          display: inline-block;
+          padding-right: 12px;
+        }
+
+        .text {
+          .title {
+            display: block;
+            color: #09090a;
+            font-size: 14px;
+            font-weight: 600;
+          }
+          .descr {
+            font-size: 12px;
+            color: #7e7b93;
+          }
+        }
+      }
+
+      .state {
+        &__description {
+          font-size: 12px;
+          color: #4cd471;
+          font-weight: 500;
+        }
+
+        img {
+          display: inline-block;
+          margin-left: 4px;
+        }
+      }
+    }
+  }
 }

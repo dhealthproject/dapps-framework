@@ -8,47 +8,47 @@
  * @license     LGPL-3.0
  */
 
- .dapp-snackbar {
-    border-radius: 12px;
-    padding: 20px 24px 20px 16px;
-    margin-bottom: 40px;
+.dapp-snackbar {
+  border-radius: 12px;
+  padding: 20px 24px 20px 16px;
+  margin-bottom: 40px;
 
-    &.success {
-        background-color: #F9F8FF;
-        border: 1px solid #3D42B9;
+  &.success {
+    background-color: #f9f8ff;
+    border: 1px solid #3d42b9;
 
-        * {
-            color: #3D42B9;
-        }
-
-        svg {
-            path {
-                fill: #3D42B9;
-            }
-        }
+    * {
+      color: #3d42b9;
     }
 
-    &.error {
-        background-color: #ffcad2;
-        border: 1px solid #bf0c27;
+    svg {
+      path {
+        fill: #3d42b9;
+      }
+    }
+  }
 
-        * {
-            color: #bf0c27;
-        }
+  &.error {
+    background-color: #ffcad2;
+    border: 1px solid #bf0c27;
 
-        svg {
-            path {
-                fill: #bf0c27;
-            }
-        }
+    * {
+      color: #bf0c27;
     }
 
-    .icon {
-        display: inline-block;
-        padding-right: 12px;
+    svg {
+      path {
+        fill: #bf0c27;
+      }
     }
+  }
 
-    .close {
-        cursor: pointer;
-    }
- }
+  .icon {
+    display: inline-block;
+    padding-right: 12px;
+  }
+
+  .close {
+    cursor: pointer;
+  }
+}
