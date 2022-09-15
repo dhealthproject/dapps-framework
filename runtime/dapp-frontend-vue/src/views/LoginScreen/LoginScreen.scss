@@ -16,7 +16,7 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color:  $grey-bg;
+  background-color: $grey-bg;
 
   .mobile {
     border-bottom: 1px solid $brand-navy-light;
@@ -28,7 +28,7 @@
       font-weight: 700;
       font-size: 16px;
       line-height: 140%;
-      color:  $button-text-dark;
+      color: $button-text-dark;
     }
 
     svg {
@@ -73,12 +73,12 @@
       font-weight: 700;
       font-size: 30px;
       line-height: 140%;
-      color:  $button-text-dark;
+      color: $button-text-dark;
     }
-  
+
     .back {
       cursor: pointer;
-  
+
       path {
         fill: $button-text-dark;
       }
@@ -116,7 +116,7 @@
         line-height: 140%;
         color: $button-text-dark;
         margin-bottom: 16px;
-        
+
         .number {
           width: 29px;
           height: 29px;

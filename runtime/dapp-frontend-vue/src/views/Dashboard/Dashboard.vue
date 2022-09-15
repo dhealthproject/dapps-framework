@@ -55,7 +55,7 @@
                   <div class="dapp-screen-dashboard__section">
                     <GenericList
                       :items="props.tabData.quickStats"
-                      title="Quick Stats"
+                      :title="`Quick Stats for ${currentUserAddress}`"
                     >
                       <template v-slot:itemContent="props">
                         <div class="quick-stats__item">

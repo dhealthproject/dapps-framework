@@ -10,41 +10,42 @@
 
 @import "../../vars";
 
- .dapp-ui-button {
-    &__component, &__link {
-        background-color: $white;
-        display: inline-block;
-        width: 100%;
-        color: $button-text-dark;
-        font-weight: 700;
-        font-size: 16px;
-        border: none;
-        border: 1px solid $button-text-dark;
-        border-radius: 8px;
-        max-width: 309px;
-        padding: 8px 0;
-        line-height: 150%;
-        box-shadow: 4px 4px 1px 1px $black;
-        outline: none;
+.dapp-ui-button {
+  &__component,
+  &__link {
+    background-color: $white;
+    display: inline-block;
+    width: 100%;
+    color: $button-text-dark;
+    font-weight: 700;
+    font-size: 16px;
+    border: none;
+    border: 1px solid $button-text-dark;
+    border-radius: 8px;
+    max-width: 309px;
+    padding: 8px 0;
+    line-height: 150%;
+    box-shadow: 4px 4px 1px 1px $black;
+    outline: none;
 
-        &.disabled {
-            background-color: $grey-disabled;
-            color: $grey-disabled-text;
-            cursor: initial;
-        }
-
-        &.no-borders {
-            background-color: transparent;
-            color: $white;
-            text-decoration: underline;
-            font-weight: 500;
-            font-size: 14px;
-            box-shadow: none;
-            border: none;
-        }
-
-        &.accent {
-            background-color: $accent-yellow;
-        }
+    &.disabled {
+      background-color: $grey-disabled;
+      color: $grey-disabled-text;
+      cursor: initial;
     }
- }
+
+    &.no-borders {
+      background-color: transparent;
+      color: $white;
+      text-decoration: underline;
+      font-weight: 500;
+      font-size: 14px;
+      box-shadow: none;
+      border: none;
+    }
+
+    &.accent {
+      background-color: $accent-yellow;
+    }
+  }
+}

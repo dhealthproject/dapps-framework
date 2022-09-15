@@ -35,6 +35,15 @@ export const authenticationHandler = ({ next, router, $store }: any) => {
   return next();
 };
 
+/**
+ *
+ * @description this method used for handling authenticated state and pushing user from onboarding in case of existing authentication
+ *
+ * @param  {any} to
+ * @param  {any} from
+ * @param  {any} next
+ * @returns {void}
+ */
 export const guestHandler = ({ next, router, $store }: any) => {
   // read authentication state from vuex store
   const isAuthenticated: boolean = $store.getters["auth/isAuthenticated"];

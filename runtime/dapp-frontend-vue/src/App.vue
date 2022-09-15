@@ -54,7 +54,7 @@
       <Loader />
     </div>
 
-    <UiPopup :config="modalConfig" :shown="modalShown" />
+    <UiPopup v-if="modalShown" :config="modalConfig" />
   </div>
 </template>
 

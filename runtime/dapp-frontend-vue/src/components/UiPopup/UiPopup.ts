@@ -11,6 +11,7 @@
 // external dependencies
 import { Component, Prop } from "vue-property-decorator";
 import InlineSvg from "vue-inline-svg";
+import Vue from "vue";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
@@ -33,37 +34,73 @@ export interface ModalConfig {
 // styles source
 import "./UiPopup.scss";
 
+/*
+ * @class UiPopup
+ * @description This class implements a Vue component to display
+ * a popup with specific configuration
+ * `<br /><br />`
+ * usage example: `this.$root.$emit('modal', {title: "My awesome popup"})`
+ *
+ * @since v0.3.0
+ */
 @Component({
   components: { InlineSvg, UiButton },
 })
 export default class UiPopup extends MetaView {
-  @Prop({ default: false }) shown?: boolean;
-  /*
-    @Todo: specify interface for config
-  */
+  /**
+   * This propery used for configuring of displayed popup
+   *
+   * @var {ModalConfig}
+   */
   @Prop({ default: () => ({}) }) config?: ModalConfig;
 
+  protected formFields: any = {};
+
+  /**
+   * This method is used for hiding pop-up
+   * on overlay bg click,
+   * works only if `keepOnBgClick === false`
+   *
+   * @access public
+   * @returns {void}
+   */
   protected handleBgClick() {
     if (!this.config?.keepOnBgClick) {
       this.$root.$emit("modal-close");
     }
   }
 
+  /**
+   * This method is available when `config.type === 'form'`
+   * used for handling submitting of form
+   * gets all inputs values, creates object where key is input name,
+   * passes this object to `submitCallback`
+   *
+   * @access public
+   * @returns {void}
+   */
   protected handleFormSubmission() {
-    const formValues: any = {};
-
-    const inputs = Array.from(document.getElementsByClassName("dynamic-input"));
-
-    inputs.forEach((input) => {
-      const inputName = input.getAttribute("name");
-
-      if (inputName) {
-        formValues[inputName] = (<HTMLInputElement>input).value;
-      }
-    });
-
     if (this.config && this.config.submitCallback) {
-      this.config.submitCallback(formValues);
+      this.config.submitCallback(this.formFields);
+    }
+  }
+
+  protected get isFormFilled() {
+    return !Object.values(this.formFields).includes("");
+  }
+
+  protected handleInput(event: any) {
+    console.log("handleInput");
+
+    const fieldName = event.currentTarget.getAttribute("name");
+    Vue.set(this.formFields, fieldName, event.target.value);
+  }
+
+  mounted() {
+    if (this.config?.fields) {
+      this.config.fields.forEach((field) => {
+        Vue.set(this.formFields, field.name, "");
+      });
     }
   }
 }

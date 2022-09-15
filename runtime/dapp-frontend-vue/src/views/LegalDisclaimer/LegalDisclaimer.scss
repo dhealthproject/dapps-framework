@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 
- @import "../../vars.scss";
+@import "../../vars.scss";
 
 .dapp-screen-legal-disclaimer {
   height: 100vh;
@@ -16,7 +16,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background-color:  $grey-bg;
+  background-color: $grey-bg;
 
   svg {
     cursor: pointer;

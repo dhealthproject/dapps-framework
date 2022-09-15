@@ -18,7 +18,12 @@ import { MetaView } from "@/views/MetaView";
 import "./DividedScreen.scss";
 
 /**
+ * @class DividedScreen
+ * @description This class implements a Vue component to display
+ * divided by 2 screen, with proper configuration can display screens with different sizes
+ * by the default displays screens with 50%, 50% sizes
  *
+ * @since v0.3.0
  */
 @Component({})
 export default class DividedScreen extends MetaView {
@@ -41,7 +46,7 @@ export default class DividedScreen extends MetaView {
    * `left-size="30vh"`
    *
    * @access protected
-   * @var {number}
+   * @var {string | number}
    */
   @Prop({ default: 50 }) protected leftSize?: string | number;
 
@@ -55,11 +60,17 @@ export default class DividedScreen extends MetaView {
    * `right-size="20ww"`
    *
    * @access protected
-   * @var {number}
+   * @var {string | number}
    */
   @Prop({ default: 50 }) protected rightSize?: string | number;
 
-  get columnsSize() {
+  /**
+   * Computed which returns object with correct sizes
+   * based on values of leftSize, rightSize
+   *
+   * @access public
+   */
+  public get columnsSize() {
     return {
       left:
         typeof this.leftSize === "number" ? this.leftSize + "%" : this.leftSize,
