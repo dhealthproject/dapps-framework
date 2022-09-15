@@ -13,7 +13,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import dayjs from "dayjs";
 
 // internal dependencies
-import { activityPayload } from "../routes/HooksController";
+import { ActivityDTO } from "../models/ActivityDTO";
 
 /**
  * @class HooksService
@@ -33,7 +33,7 @@ export class HooksService {
    * @param data
    *
    */
-  async createUpdateActivities<T extends activityPayload>(data: T) {
+  async createOrUpdateActivities<T extends ActivityDTO>(data: T) {
     // @Todo: replace with .findOne when dev-processor will be merged
     const mockedUsers = [
       {

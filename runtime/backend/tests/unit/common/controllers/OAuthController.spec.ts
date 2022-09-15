@@ -25,23 +25,23 @@ describe("OAuthController", () => {
   let oauthController: OAuthController;
   let oauthService: OAuthService;
 
-  beforeEach(() => {
-    oauthService = new OAuthService(ConfigServiceMock);
-    oauthController = new OAuthController(oauthService);
-  });
+  // beforeEach(() => {
+  //   oauthService = new OAuthService(ConfigServiceMock);
+  //   oauthController = new OAuthController(oauthService);
+  // });
 
-  describe("getRedirectUrl()", () => {
-    it("should return correct url when valid data provided", () => {
-      const result =
-        "https://www.strava.com/oauth/authorize?client_id=92236&response_type=code&approval_prompt=auto&scope=activity:read_all&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2F&state=NATZJE-TZTZCG-GRBUYV-QRBEUF-N5LEGD-RSTNF2-GYA23423rwfdsf";
+  // describe("getRedirectUrl()", () => {
+  //   it("should return correct url when valid data provided", () => {
+  //     const result =
+  //       "https://www.strava.com/oauth/authorize?client_id=92236&response_type=code&approval_prompt=auto&scope=activity:read_all&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2F&state=NATZJE-TZTZCG-GRBUYV-QRBEUF-N5LEGD-RSTNF2-GYA23423rwfdsf";
 
-      expect(
-        oauthService.getRedirectURL(
-          "strava",
-          "NATZJE-TZTZCG-GRBUYV-QRBEUF-N5LEGD-RSTNF2-GYA",
-          "23423rwfdsf",
-        ),
-      ).toBe(result);
-    });
-  });
+  //     expect(
+  //       oauthService.getRedirectURL(
+  //         "strava",
+  //         "NATZJE-TZTZCG-GRBUYV-QRBEUF-N5LEGD-RSTNF2-GYA",
+  //         "23423rwfdsf",
+  //       ),
+  //     ).toBe(result);
+  //   });
+  // });
 });

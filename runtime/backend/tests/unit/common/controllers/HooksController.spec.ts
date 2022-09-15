@@ -33,7 +33,7 @@ describe("HooksController", () => {
   describe("createUpdateActivities()", () => {
     it("should return array with activities", () => {
       expect(
-        hooksService.createUpdateActivities({
+        hooksService.createOrUpdateActivities({
           object_type: "activity",
           object_id: "1",
           aspect_type: "create",
