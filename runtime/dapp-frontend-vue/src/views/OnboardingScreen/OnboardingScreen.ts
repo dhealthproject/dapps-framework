@@ -171,11 +171,6 @@ export default class OnboardingScreen extends MetaView {
           placeholder: "1988832",
           name: "refCode",
         },
-        {
-          type: "text",
-          placeholder: "test",
-          name: "qwe",
-        },
       ],
       submitCallback: this.setRefcode,
     });
