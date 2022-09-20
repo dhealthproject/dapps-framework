@@ -1,0 +1,31 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Vue Frontend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+
+ @import "../../vars.scss";
+
+ .dapp-user-balance {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 0px 1px $black;
+    border: 1px solid $black;
+    padding: 8px 26px;
+    border-radius: 8px;
+    background-color: $base-grey-balance;
+
+    svg {
+        margin-right: 8px;
+        
+        path {
+            fill: $button-text-dark;
+        }
+    }
+ }

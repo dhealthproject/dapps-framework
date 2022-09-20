@@ -26,6 +26,7 @@ import { Translations } from "@/kernel/i18n/Translations";
 // child components
 import Card from "@/components/Card/Card.vue";
 import Snackbar from "@/components/Snackbar/Snackbar.vue";
+import UiButton from "@/components/UiButton/UiButton.vue";
 import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
 import Tabs from "@/components/Tabs/Tabs.vue";
@@ -65,6 +66,7 @@ type RouteParam = string | (string | null)[];
     LeaderBoard,
     Tabs,
     GenericList,
+    UiButton,
     Snackbar,
   },
   computed: {
@@ -336,15 +338,6 @@ export default class Dashboard extends MetaView {
         ],
       },
     ];
-  }
-
-  get localIntegrations() {
-    const integrations = localStorage.getItem("integrations");
-    let availableIntegrations: any;
-    if (integrations) {
-      availableIntegrations = JSON.parse(integrations);
-    }
-    return availableIntegrations;
   }
 
   /**

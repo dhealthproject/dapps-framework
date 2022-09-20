@@ -97,7 +97,7 @@
       <div v-else class="dapp-activate-wrapper">
         <div class="dapp-activate-screen text-center">
           <img
-            :src="getImageUrl('add-provider.png')"
+            :src="getImageUrl('workout.png')"
             :alt="i18n.$t('dashboard_cta_strava_welcome_text')"
           />
           <h2 class="dapp-activate-screen__title">
@@ -112,6 +112,10 @@
           >
             {{ i18n.$t("dashboard_cta_strava_integrate_strava") }}
           </button>
+          <p class="add-strava">
+            {{ i18n.$t("dashboard_cta_strava_download_strava") }}
+            &nbsp;<a href="#" target="_blank">{{ i18n.$t("word_here") }}</a>
+          </p>
         </div>
       </div>
     </div>

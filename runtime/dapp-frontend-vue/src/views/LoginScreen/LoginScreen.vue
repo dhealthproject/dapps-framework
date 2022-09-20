@@ -73,6 +73,4 @@
   </div>
 </template>
 
-<script lang="ts" src="./LoginScreen.ts">
-import UiButton from "@/components/UiButton/UiButton.vue";
-</script>
+<script lang="ts" src="./LoginScreen.ts"></script>

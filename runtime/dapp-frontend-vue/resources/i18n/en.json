@@ -1,7 +1,8 @@
 {
   "langName": "en-US",
-  "dashboard_cta_strava_welcome_text": "Welcome to ELEVATE, this is the place where you can earn tokens for your activities",
-  "dashboard_cta_strava_start_earning": "Start earning tokens by syncing your STRAVA account with ELEVATE",
+  "dashboard_cta_strava_download_strava": "Don't have Strava? Download it",
+  "dashboard_cta_strava_welcome_text": "Welcome! Integrate an account to start earning tokens for your activities.",
+  "dashboard_cta_strava_start_earning": "At the moment, we only support STRAVA integration.",
   "dashboard_cta_strava_integrate_strava": "Integrate with STRAVA",
   "dashboard_statistics_tabs_alltime": "All time",
   "dashboard_statistics_tabs_today": "Today",
@@ -11,5 +12,6 @@
   "dashboard_statistics_label_friends_referred": "Friends referred",
   "dashboard_statistics_label_go1on1": "Go 1-on-1",
   "settings_integrations_description_text": "Allow ELEVATE to access your fitness data on your favorite applications to earn rewards",
-  "settings_integrations_description_strava": "Quick description of Strava"
+  "settings_integrations_description_strava": "Quick description of Strava",
+  "word_here": "here"
 }
