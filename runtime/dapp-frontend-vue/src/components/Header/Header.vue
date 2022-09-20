@@ -90,7 +90,7 @@
       <slot name="back-button" />
     </div>
     <div class="logo py-10 font-bold text-2xl">
-      <ElevateLogo :width="167" theme="dark" />
+      <ElevateLogo :width="138" theme="dark" />
     </div>
     <nav class="text-right">
       <HamburgerButton
@@ -102,31 +102,29 @@
         <li
           v-for="(link, index) in links"
           :key="index"
-          class="dapp-screen-header__link mx-3.5 inline-flex justify-center flex-row px-4 py-2 rounded-xl"
+          :class="`dapp-screen-header__link ${
+            index === links.length - 1 ? '' : 'mr-[20px]'
+          } inline-block px-4 py-2 rounded-xl`"
         >
-          <!-- <inline-svg
-            :src="getImageUrl(link.icon)"
-            :width="17"
-            class="dapp-screen-header__menu-icon inline-block mr-2 mt-0.5"
-          /> -->
-          <img
-            v-if="showIcons"
-            :src="getImageUrl(link.icon)"
-            alt=""
-            class="inline-block mr-2"
-          />
-          <router-link :to="link.path" v-html="link.text" />
+          <router-link
+            class="inline-flex items-center flex-row"
+            :to="link.path"
+          >
+            <inline-svg
+              :src="getImageUrl(link.icon)"
+              :width="17"
+              :class="`dapp-screen-header__menu-icon inline-block mr-[8px]`"
+            />
+            {{ link.text }}
+          </router-link>
         </li>
       </ul>
     </nav>
     <div class="lg-max:hidden">
-      <DappButton @click="disconnectWallet()"
-        >Disconnect Wallet
-        <inline-svg
-          :src="getImageUrl('icons/Plus-sign.svg')"
-          :width="17"
-          class="dapp-screen-header__button-icon inline-block"
-      /></DappButton>
+      <div class="dapp-screen-header__account-actions">
+        <Dropdown :items="dropDownItems" />
+        <UserBalance />
+      </div>
     </div>
   </div>
 </template>

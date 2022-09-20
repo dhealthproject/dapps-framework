@@ -24,6 +24,8 @@ import NavPanel from "./NavPanel/NavPanel.vue";
 import UiButton from "./UiButton/UiButton.vue";
 import UiPopup from "./UiPopup/UiPopup.vue";
 import Snackbar from "./Snackbar/Snackbar.vue";
+import Dropdown from "./Dropdown/Dropdown.vue";
+import UserBalance from "./UserBalance/UserBalance.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
@@ -40,6 +42,8 @@ export const AppComponents = {
   UiButton,
   UiPopup,
   Snackbar,
+  Dropdown,
+  UserBalance,
 };
 
 // scoped export of library-level components

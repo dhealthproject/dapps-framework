@@ -51,10 +51,14 @@ export default class App extends MetaView {
    */
   protected get headerLinks() {
     return [
-      { path: "#", text: "Home", icon: "icons/Home.svg" },
-      { path: "#1", text: "Fitness", icon: "icons/Running.svg" },
-      { path: "#2", text: "Mindfulness", icon: "icons/Yoga.svg" },
-      { path: "#3", text: "Wellness", icon: "icons/Apple.svg" },
+      {
+        path: { name: "app.dashboard" },
+        text: "Dashboard",
+        icon: "icons/menu-dashboard.svg",
+      },
+      { path: "#1", text: "Activity", icon: "icons/menu-activity.svg" },
+      { path: "#2", text: "Events", icon: "icons/menu-events.svg" },
+      { path: "#3", text: "Settings", icon: "icons/menu-settings.svg" },
     ];
   }
 

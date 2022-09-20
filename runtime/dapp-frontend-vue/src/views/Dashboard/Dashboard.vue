@@ -101,22 +101,22 @@
       <div v-else class="dapp-activate-wrapper">
         <div class="dapp-activate-screen text-center">
           <img
-            :src="getImageUrl('add-provider.png')"
+            :src="getImageUrl('workout.svg')"
             alt="Welcome to ELEVATE, this is the place where you can earn tokens for your activity"
           />
           <h2 class="dapp-activate-screen__title">
-            Welcome to ELEVATE, this is the place where you can earn tokens for
-            your activity
+            Welcome! Integrate an account to start earning tokens for your
+            activity.
           </h2>
           <p class="dapp-activate-screen__description">
-            Start earning tokens by syncing your STRAVA account with ELEVATE
+            At the moment, we only support STRAVA integration.
           </p>
-          <button
-            class="dapp-activate-screen__integrate"
-            @click="integrateStrava"
+          <UiButton :accent="true" @uiButton-click="integrateStrava"
+            >Integrate your STRAVA</UiButton
           >
-            Integrate with STRAVA
-          </button>
+          <p class="add-strava">
+            Don’t have Strava? Download it <a href="#" target="_blank">here</a>
+          </p>
         </div>
       </div>
     </div>

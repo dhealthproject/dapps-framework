@@ -27,6 +27,8 @@ import { BoardItem } from "./components/LeaderBoard";
 import LeaderBoard from "./components/LeaderBoard.vue";
 import Tabs from "@/components/Tabs/Tabs.vue";
 import GenericList from "@/components/GenericList/GenericList.vue";
+import UiButton from "@/components/UiButton/UiButton.vue";
+import Snackbar from "@/components/Snackbar/Snackbar.vue";
 
 type RouteParam = string | (string | null)[];
 
@@ -41,6 +43,8 @@ type RouteParam = string | (string | null)[];
     LeaderBoard,
     Tabs,
     GenericList,
+    UiButton,
+    Snackbar,
   },
   computed: {
     ...mapGetters({
@@ -308,7 +312,7 @@ export default class Dashboard extends MetaView {
   async integrateStrava() {
     window.location.href =
       process.env.VUE_APP_BACKEND_URL +
-      `/oauth/strava?&dhealthAddress=${this.currentUserAddress}`;
+      `/oauth/strava/authorize?&dhealthAddress=${this.currentUserAddress}`;
   }
 
   async triggerLinkStrava(

@@ -8,6 +8,8 @@
  * @license     LGPL-3.0
  */
 
+@import "../../vars.scss";
+
 .dapp-screen-dashboard {
   //   background-color: #e5e5e5;
   text-align: left;
@@ -64,33 +66,55 @@
       margin: auto;
       max-width: 740px;
       width: 100%;
-      padding: 40px;
-      background-color: #FFEFDA;
-      border: 1px solid #A05E03;
+      padding: 96px 138px;
+      background-color: $base-grey-dark;
+      border: 1px solid $button-text-dark;
+      box-shadow: 5px 5px 0px $black;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      @media screen and (max-width: 768px) {
+        padding: 16px 74px;
+      }
+
+      @media screen and (max-width: 580px) {
+        padding: 16px 24px;
+      }
 
       &__title {
+        margin: 24px 0;
         font-weight: 600;
         font-size: 20px;
-        line-height: 28px;
-        color: #0A0433;
-        margin: 36px 0;
+        line-height: 150%;
+        color: $white;
       }
 
       &__description {
         font-weight: 400;
         font-size: 16px;
-        line-height: 22px;
-        margin: 0 0 36px 0;
+        line-height: 150%;
+        color: $white;
+        margin: 24px 0;
       }
 
-      &__integrate {
-        padding: 12px 66px;
-        box-shadow: 2px 2px 0px 1px #000;
-        font-weight: 600;
-        font-size: 14px;
-        border-radius: 40px;
-        background-color: #fff;
-        outline: none;
+      .dapp-ui-button {
+        width: 100%;
+        max-width: 344px;
+        margin-bottom: 24px;
+      }
+
+      .add-strava {
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 130%;
+        color: $white;
+
+        a {
+          text-decoration: underline;
+        }
       }
     }
   }

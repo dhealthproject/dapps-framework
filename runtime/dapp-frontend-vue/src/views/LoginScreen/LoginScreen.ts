@@ -312,7 +312,7 @@ export default class LoginScreen extends MetaView {
         width: 456,
         illustration: "user-avatar.png",
       });
-    }, 5000);
+    }, 8000);
   }
 
   /**

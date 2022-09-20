@@ -8,6 +8,8 @@
  * @license     LGPL-3.0
  */
 
+ @import "../../vars.scss";
+
 .dapp-screen-header {
   justify-content: space-between;
   padding: 0 15px;
@@ -169,7 +171,13 @@
 
         &.router-link-exact-active {
           font-weight: 600;
-          color: #000;
+          color: $button-text-dark;
+
+          svg {
+            path {
+              fill: $button-text-dark;
+            }
+          }
         }
       }
 
@@ -178,6 +186,16 @@
           fill: #616262;
         }
       }
+    }
+  }
+
+  &__account-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .dapp-dropdown {
+      margin-right: 16px;
     }
   }
 }

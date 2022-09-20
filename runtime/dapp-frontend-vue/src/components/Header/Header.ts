@@ -20,6 +20,8 @@ import { MetaView } from "@/views/MetaView";
 // child components
 import ElevateLogo from "../ElevateLogo/ElevateLogo.vue";
 import HamburgerButton from "../HamburgerButton/HamburgerButton.vue";
+import Dropdown from "../Dropdown/Dropdown.vue";
+import UserBalance from "../UserBalance/UserBalance.vue";
 
 // style resource
 import "./Header.scss";
@@ -36,6 +38,8 @@ export interface HeaderLink {
     InlineSvg,
     DappButton,
     HamburgerButton,
+    Dropdown,
+    UserBalance,
   },
   computed: {
     ...mapGetters({
@@ -101,6 +105,16 @@ export default class Header extends MetaView {
    */
   get hasBackButton(): boolean {
     return !!this.$slots["back-button"];
+  }
+
+  get dropDownItems() {
+    return [
+      {
+        text: "Settings",
+        action: () => this.$router.push({ name: "app.settings" }),
+        icon: "icons/menu-settings.svg",
+      },
+    ];
   }
 
   @Watch("isMenuOpen")

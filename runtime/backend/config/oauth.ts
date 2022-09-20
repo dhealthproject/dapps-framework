@@ -17,9 +17,9 @@ export default () => ({
       scope: "activity:read_all",
       oauth_url: "https://www.strava.com/oauth/authorize",
       token_url: "https://www.strava.com/oauth/token",
-      callback_url: process.env.FRONTEND_URL,
+      callback_url: `${process.env.FRONTEND_URL}/dashboard`,
       subscribe_url: `${process.env.FRONTEND_URL}/subscribe`,
       webhook_url: `${process.env.FRONTEND_URL}/webhook`,
-    }
-  }
+    },
+  },
 });
