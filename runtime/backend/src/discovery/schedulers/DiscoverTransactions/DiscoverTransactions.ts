@@ -264,7 +264,7 @@ export class DiscoverTransactions extends DiscoveryCommand {
    */
   protected parseTransactionTypes(transactionTypes: string): TransactionType[] {
     // maps utility names to transaction types
-    if (transactionTypes.toLowerCase().indexOf("transfer")) {
+    if (transactionTypes.toLowerCase().indexOf("transfer") >= 0) {
       return [TransactionType.TRANSFER];
     }
 

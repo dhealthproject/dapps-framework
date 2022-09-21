@@ -423,7 +423,7 @@ export class QueryService<
       return (value === "true") as boolean;
     }
     // (2) number
-    else if (!isNaN(value)) {
+    else if (!Array.isArray(value) && !isNaN(value)) {
       return { $in: [+value, value] } as MongoQueryRoutine;
     }
     // (3) array

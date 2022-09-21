@@ -7,6 +7,13 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// Mocks the full `js-sha3` dependency to avoid
+// calls to actual SHA3/Keccak algorithms.
+const sha3_256_call = jest.fn().mockReturnValue("fakeHash");
+jest.mock("js-sha3", () => ({
+  sha3_256: sha3_256_call
+}));
+
 // external dependencies
 import { getModelToken } from "@nestjs/mongoose";
 import { HttpException } from "@nestjs/common";
@@ -66,6 +73,38 @@ describe("common/OAuthService", () => {
     expect(oauthService).toBeDefined();
   });
 
+  describe("getProvider()", () => {
+    it("should throw correct error if provider is unknown", () => {
+      // prepare
+      (oauthService as any).configService = {
+        get: jest.fn().mockReturnValue(undefined),
+      };
+      const expectedError = `Invalid oauth provider "test-provider".`;
+
+      // act
+      const provider = () => (oauthService as any).getProvider("test-provider");
+
+      // assert
+      expect(provider).toThrow(expectedError);
+    });
+  });
+
+  describe("getEncryptionSeed()", () => {
+    it("should return correct result", () => {
+      // prepare
+      (oauthService as any).configService = {
+        get: jest.fn().mockReturnValue("test-secret-"),
+      };
+
+      // act
+      const result = (oauthService as any).getEncryptionSeed({} as AccountIntegrationDocument);
+
+      // assert
+      expect(sha3_256_call).toHaveBeenCalledTimes(1);
+      expect(result).toBe("test-secret-fakeHash");
+    });
+  });
+
   describe("getAuthorizeURL()", () => {
     it("should result in correct URL with basic OAuth driver", () => {
       // prepare
@@ -90,6 +129,34 @@ describe("common/OAuthService", () => {
         "basic",
         "fake-address",
         "fake-referral",
+      );
+
+      // assert
+      expect(actual).toBe(expected);
+    });
+
+    it("should result in correct URL with no referral code", () => {
+      // prepare
+      (oauthService as any).configService = {
+        get: jest.fn().mockReturnValue({
+          client_id: "fake-id-3",
+          client_secret: "fake-secret-3",
+          oauth_url: "fake-oauth-url-3",
+          callback_url: "fake-callback-url-3",
+          scope: "fake-scope"
+        })
+      };
+      const expected =
+        "fake-oauth-url-3" + // L32
+        "?client_id=fake-id-3" +
+        "&redirect_uri=fake-callback-url-3" +
+        "&state=fake-address" +
+        "&scope=fake-scope";
+
+      // act
+      const actual = oauthService.getAuthorizeURL(
+        "basic",
+        "fake-address",
       );
 
       // assert
@@ -240,6 +307,46 @@ describe("common/OAuthService", () => {
 
       // assert
       expect(customFindOneMock).toHaveBeenCalledTimes(1);
+      expect(result).toBe(expectedResult);
+    });
+  });
+
+  describe("updateIntegrations()", () => {
+    it("should result in correct integration", async () => {
+      // prepare
+      const providerName: string = "test-provider-name";
+      const account: AccountDocument = {} as AccountDocument;
+      const data: Record<string, any> = { authorizeUrl: "test-url" };
+      const expectedResult = {} as AccountIntegrationDocument;
+      const queryServiceCreateOrUpdateCall = jest
+        .fn().mockResolvedValue(expectedResult);
+      (oauthService as any).queryService = {
+        createOrUpdate: queryServiceCreateOrUpdateCall,
+      };
+
+      // act
+      const result = await (oauthService as any).updateIntegration(
+        providerName, account, data
+      );
+
+      // assert
+      expect(queryServiceCreateOrUpdateCall).toHaveBeenNthCalledWith(
+        1,
+        {
+          document: {
+            address: undefined,
+            name: providerName,
+          },
+          filterQuery: undefined,
+          order: "asc",
+          pageNumber: 1,
+          pageSize: 20,
+          sort: "_id",
+        },
+        MockModel,
+        { authorizationHash: "fakeHash" },
+        {},
+      );
       expect(result).toBe(expectedResult);
     });
   });

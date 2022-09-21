@@ -104,6 +104,25 @@ jest.mock("../../../src/processor/ProcessorModule", () => {
   return { ProcessorModule: ProcessorModuleMock };
 });
 
+const mockDappConfig: DappConfig = {
+  dappName: "test-dappName",
+  dappPublicKey: "test-dappPublicKey",
+  scopes: [],
+  database: undefined,
+  frontendApp: {
+    url: "test-url",
+    host: "test-host",
+    port: "test-port",
+    https: false
+  },
+  backendApp: {
+    url: "test-url",
+    host: "test-host",
+    port: "test-port",
+    https: false
+  }
+};
+
 // internal dependencies
 import { ScopeFactory } from "../../../src/common/ScopeFactory";
 import { DappConfig } from "../../../src/common/models/DappConfig";
@@ -120,6 +139,28 @@ class MockFactory extends ScopeFactory {
 }
 
 describe("common/ScopeFactory", () => {
+  describe("create() -->", () => {
+    it("should return new instance", () => {
+      // act
+      const scopeFactory = ScopeFactory.create(mockDappConfig);
+
+      // assert
+      expect(scopeFactory).toBeDefined();
+    });
+
+    it("should return correct instance", () => {
+      // prepare
+      const testInstance = { key: "value" };
+      (ScopeFactory as any).$_INSTANCE = testInstance;
+
+      // act
+      const scopeFactory = ScopeFactory.create(mockDappConfig);
+
+      // assert
+      expect(scopeFactory).toEqual(testInstance);
+    });
+  });
+
   describe("getModules() -->", () => {
     it("should always include configuration module", () => {
       // prepare

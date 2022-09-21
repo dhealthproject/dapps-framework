@@ -12,15 +12,15 @@ import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
 
 // internal dependencies
-import { MockModel } from "../../../mocks/global";
+import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { QueryService } from "../../../../src/common/services/QueryService";
-import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
-import { TransactionDocument, TransactionModel, TransactionQuery } from "../../../../src/common/models/TransactionSchema";
+import { AuthChallengeDocument, AuthChallengeModel, AuthChallengeQuery } from "../../../../src/common/models/AuthChallengeSchema";
+import { MockModel } from "../../../mocks/global";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 
-describe("discovery/TransactionsService", () => {
-  let service: TransactionsService;
-  let queriesService: QueryService<TransactionDocument, TransactionModel>;
+describe("discovery/ChallengesService", () => {
+  let service: ChallengesService;
+  let queriesService: QueryService<AuthChallengeDocument, AuthChallengeModel>;
   let mockDate: Date;
 
   // for each AccountService test we create a testing module
@@ -31,20 +31,20 @@ describe("discovery/TransactionsService", () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TransactionsService,
+        ChallengesService,
         QueryService,
         {
-          provide: getModelToken("Transaction"),
+          provide: getModelToken("AuthChallenge"),
           useValue: MockModel,
         },
       ],
     }).compile();
 
-    service = module.get<TransactionsService>(TransactionsService);
-    queriesService = module.get<QueryService<TransactionDocument, TransactionModel>>(QueryService);
+    service = module.get<ChallengesService>(ChallengesService);
+    queriesService = module.get<QueryService<AuthChallengeDocument, AuthChallengeModel>>(QueryService);
   });
 
-  it("should be defined", () => {
+  it("should be defined -->", () => {
     expect(service).toBeDefined();
   });
 
@@ -57,10 +57,10 @@ describe("discovery/TransactionsService", () => {
         .mockResolvedValue(expectedResult);
 
       // act
-      const result = await service.count(new TransactionQuery());
+      const result = await service.count(new AuthChallengeQuery());
 
       // assert
-      expect(countMock).toBeCalledWith(new TransactionQuery(), MockModel);
+      expect(countMock).toBeCalledWith(new AuthChallengeQuery(), MockModel);
       expect(result).toEqual(expectedResult);
     });
   });
@@ -71,13 +71,13 @@ describe("discovery/TransactionsService", () => {
       const expectedResult = true;
       const findOneMock = jest
         .spyOn(queriesService, "findOne")
-        .mockResolvedValue({} as TransactionDocument);
+        .mockResolvedValue({} as AuthChallengeDocument);
 
       // act
-      const result = await service.exists(new TransactionQuery());
+      const result = await service.exists(new AuthChallengeQuery());
 
       // assert
-      expect(findOneMock).toBeCalledWith(new TransactionQuery(), MockModel, true);
+      expect(findOneMock).toBeCalledWith(new AuthChallengeQuery(), MockModel, true);
       expect(result).toEqual(expectedResult);
     });
   });
@@ -86,7 +86,7 @@ describe("discovery/TransactionsService", () => {
     it("should use QueryService.find() method with correct query", async () => {
       // prepare
       const expectedResult = new PaginatedResultDTO(
-        [{} as TransactionDocument],
+        [{} as AuthChallengeDocument],
         {
           pageNumber: 1,
           pageSize: 20,
@@ -98,10 +98,10 @@ describe("discovery/TransactionsService", () => {
         .mockResolvedValue(expectedResult);
 
       // act
-      const result = await service.find(new TransactionQuery());
+      const result = await service.find(new AuthChallengeQuery());
 
       // assert
-      expect(findMock).toBeCalledWith(new TransactionQuery(), MockModel);
+      expect(findMock).toBeCalledWith(new AuthChallengeQuery(), MockModel);
       expect(result).toEqual(expectedResult);
     });
   });
@@ -112,13 +112,13 @@ describe("discovery/TransactionsService", () => {
       const expectedResult = {};
       const findOneMock = jest
         .spyOn(queriesService, "findOne")
-        .mockResolvedValue({} as TransactionDocument);
+        .mockResolvedValue(expectedResult as AuthChallengeDocument);
 
       // act
-      const result = await service.findOne(new TransactionQuery());
+      const result = await service.findOne(new AuthChallengeQuery());
 
       // assert
-      expect(findOneMock).toBeCalledWith(new TransactionQuery(), MockModel);
+      expect(findOneMock).toBeCalledWith(new AuthChallengeQuery(), MockModel);
       expect(result).toEqual(expectedResult);
     });
   });
@@ -129,8 +129,8 @@ describe("discovery/TransactionsService", () => {
       const expectedResult = {};
       const createOrUpdateMock = jest
         .spyOn(queriesService, "createOrUpdate")
-        .mockResolvedValue({} as TransactionDocument);
-      const query = new TransactionQuery();
+        .mockResolvedValue(expectedResult as AuthChallengeDocument);
+      const query = new AuthChallengeQuery();
       const data = new MockModel();
 
       // act
@@ -141,13 +141,17 @@ describe("discovery/TransactionsService", () => {
 
       // assert
       expect(createOrUpdateMock).toBeCalledWith(
-        query, MockModel, data, {}
+        new AuthChallengeQuery(),
+        MockModel,
+        data,
+        {},
       );
       expect(result).toEqual(expectedResult);
     });
   });
 
   describe("updateBatch() -->", () => {
+
     // for each updateBatch() test we overwrite the
     // bulk operations functions from mongoose plugin
     let bulkMocks: any,
@@ -169,29 +173,29 @@ describe("discovery/TransactionsService", () => {
 
     it("should call collection.initializeUnorderedBulkOp() from model", async () => {
       // prepare
-      const transactionDoc = new MockModel({
-        signerAddress: "test-address",
-        transactionHash: "fakeHash1",
+      const challengeDoc = new MockModel({
+        challenge: "test-challenge",
+        transactionsCount: 1,
       });
-      (transactionDoc as any).toQuery = jest.fn();
+      (challengeDoc as any).toQuery = jest.fn();
 
       // act
-      await service.updateBatch([transactionDoc]);
+      await service.updateBatch([challengeDoc]);
 
       // assert
       expect(bulkMocks.find).toHaveBeenCalled();
     });
 
-    it("should call finder and pass correct query by signer and hash", async () => {
+    it("should call finder and pass correct query by challenge", async () => {
       // prepare
-      const transactionDoc = new MockModel({
-        signerAddress: "test-address",
-        transactionHash: "fakeHash1",
+      const challengeDoc = new MockModel({
+        challenge: "test-challenge",
+        transactionsCount: 1,
       });
-      (transactionDoc as any).toQuery = jest.fn();
+      (challengeDoc as any).toQuery = jest.fn();
 
       // act
-      await service.updateBatch([transactionDoc]);
+      await service.updateBatch([challengeDoc]);
 
       // assert
       expect(bulkMocks.find).toHaveBeenCalled();
@@ -199,23 +203,40 @@ describe("discovery/TransactionsService", () => {
 
     it("should modify updatedAt field in $set routine", async () => {
       // prepare
-      const transactionDoc = new MockModel({
-        signerAddress: "test-address",
-        transactionHash: "fakeHash1",
+      const challengeDoc = new MockModel({
+        challenge: "test-challenge",
+        transactionsCount: 1,
       });
-      (transactionDoc as any).toQuery = jest.fn();
+      (challengeDoc as any).toQuery = jest.fn();
 
       // act
-      await service.updateBatch([transactionDoc]);
+      await service.updateBatch([challengeDoc]);
 
       // assert
       expect(upsertMock.update).toHaveBeenCalled();
       expect(upsertMock.update).toHaveBeenCalledWith({
         $set: {
-          ...(transactionDoc),
+          ...(challengeDoc),
           updatedAt: mockDate,
         },
       });
+    });
+  });
+
+  describe("generateChallenge() -->", () => {
+    it("should use random function from Math lib in greatest radix (36) and slice result correctly", () => {
+      // prepare
+      const mathRandomCall = jest
+        .spyOn(Math, "random")
+        .mockReturnValue(0.7006047659103334); // 0.p7zez2y8j7
+      const expectedResult = "zez2y8j7";
+
+      // act
+      const result = ChallengesService.generateChallenge();
+
+      // assert
+      expect(mathRandomCall).toHaveBeenCalledTimes(1);
+      expect(result).toBe(expectedResult);
     });
   });
 });

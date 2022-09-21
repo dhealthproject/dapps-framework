@@ -36,7 +36,7 @@ jest.mock("@dhealth/sdk", () => ({
 }));
 
 // external dependencies
-import { Address } from "@dhealth/sdk"; // mocked!
+import { Address, NetworkType, PublicAccount } from "@dhealth/sdk"; // mocked!
 import { Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { getModelToken } from "@nestjs/mongoose";
@@ -45,7 +45,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 // internal dependencies
 import { createTransactionDocument, MockModel } from "../../../mocks/global";
 import { QueryParameters } from "../../../../src/common/concerns/Queryable";
-import { DappConfig } from "../../../../src/common/models/DappConfig";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
@@ -55,9 +54,7 @@ import { TransactionDocument, TransactionQuery } from "../../../../src/common/mo
 import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
 import { DiscoverAccounts } from "../../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccounts";
 import { AccountDiscoveryStateData } from "../../../../src/discovery/models/AccountDiscoveryStateData";
-
-// configuration resources
-import dappConfigLoader from "../../../../config/dapp";
+import { BaseCommand } from "../../../../src/worker/BaseCommand";
 
 // Mocks the actual discovery:DiscoverAccounts command to
 // allow testing of the `runWithOptions` method.
@@ -104,13 +101,7 @@ const fakeCreateTransactionDocuments = (
  */
 describe("discovery/DiscoverAccounts", () => {
   let service: MockDiscoverAccounts;
-  let configService: ConfigService;
-  let accountsService: AccountsService;
-  let transactionsService: TransactionsService;
-  let statesService: StateService;
-  let networkService: NetworkService;
   let logger: Logger;
-  let expectedDappConfig: DappConfig = dappConfigLoader();
 
   let mockDate: Date;
   beforeEach(async () => {
@@ -151,11 +142,6 @@ describe("discovery/DiscoverAccounts", () => {
     }).compile();
 
     service = module.get<MockDiscoverAccounts>(MockDiscoverAccounts);
-    configService = module.get<ConfigService>(ConfigService);
-    accountsService = module.get<AccountsService>(AccountsService);
-    transactionsService = module.get<TransactionsService>(TransactionsService);
-    statesService = module.get<StateService>(StateService);
-    networkService = module.get<NetworkService>(NetworkService);
     logger = module.get<Logger>(Logger);
 
     // overwrites the internal model (injected)
@@ -164,6 +150,33 @@ describe("discovery/DiscoverAccounts", () => {
 
   it("should be defined", () => {
     expect(service).toBeDefined();
+  });
+
+  describe("get command()", () => {
+    it("should return correct value", () => {
+      // prepare
+      const expectedResult = `DiscoverAccounts`;
+
+      // act
+      const result = (service as any).command;
+
+      // assert
+      expect(result).toBe(expectedResult);
+    });
+  });
+
+  describe("get signature()", () => {
+    it("should return correct value", () => {
+      // prepare
+      const expectedResult =
+        `DiscoverAccounts [` + `--source "SOURCE-ADDRESS-OR-PUBKEY"` + `]`;
+
+      // act
+      const result = (service as any).signature;
+
+      // assert
+      expect(result).toBe(expectedResult);
+    });
   });
 
   describe("getStateData()", () => {
@@ -176,6 +189,39 @@ describe("discovery/DiscoverAccounts", () => {
       expect("lastExecutedAt" in data).toBe(true);
       expect(data.lastExecutedAt).toBe(mockDate.valueOf());
       expect(data.lastPageNumber).toBe(1);
+    });
+  });
+
+  describe("runAsScheduler()", () => {
+    it("should run correctly", async () => {
+      // prepare
+      const configServiceGetCall = jest
+        .spyOn((service as any).configService, "get")
+        .mockReturnValueOnce("test-pubkey")
+        .mockReturnValueOnce(NetworkType.MAIN_NET);
+      const superRun = jest.spyOn(BaseCommand.prototype, "run");
+      jest
+        .spyOn(PublicAccount, "createFromPublicKey")
+        .mockReturnValue({
+          address: { plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY" }
+        } as any);
+
+      // act
+      await service.runAsScheduler();
+
+      // assert
+      expect(configServiceGetCall).toHaveBeenCalledTimes(2);
+      expect(configServiceGetCall).toHaveBeenCalledWith("dappPublicKey");
+      expect(configServiceGetCall).toHaveBeenCalledWith("network.networkIdentifier");
+      expect((service as any).lastExecutedAt).toBe(-23917532800000);
+      expect(superRun).toHaveBeenNthCalledWith(
+        1,
+        [],
+        {
+          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+          debug: false,
+        }
+      );
     });
   });
 
@@ -307,6 +353,48 @@ describe("discovery/DiscoverAccounts", () => {
       ));
     });
 
+    it("should get the latest transactions page number from state date if available", async () => {
+      // prepare
+      const lastPageNumber = 2;
+      (service as any).state = { data: { lastPageNumber } };
+
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      });
+
+      // assert
+      expect((service as any).lastPageNumber).toBe(lastPageNumber + 10);
+    });
+
+    it("should reset last page number if it doesn't match the total number of transactions", async () => {
+      // prepare
+      const lastPageNumber = 3;
+      (service as any).state = { data: { lastPageNumber } };
+      const stateServiceFindOneCall = jest
+        .fn()
+        .mockResolvedValue({ data: { totalNumberOfTransactions: 200 } });
+      (service as any).stateService.findOne = stateServiceFindOneCall;
+      const transactionsServiceFindCall = jest
+        .fn()
+        .mockResolvedValue({
+          data: fakeCreateTransactionDocuments(3), // page is not full
+        });
+      (service as any).transactionsService.find = transactionsServiceFindCall;
+
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      });
+
+      // assert
+      expect(stateServiceFindOneCall).toHaveBeenCalledTimes(1);
+      expect(transactionsServiceFindCall).toHaveBeenCalledTimes(10);
+      expect((service as any).lastPageNumber).toBe(12);
+    });
+
     it("should check for the existence of discovered address in mongo", async () => {
       // prepare
       (service as any).discoveredAddresses = ["NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY"];
@@ -339,6 +427,31 @@ describe("discovery/DiscoverAccounts", () => {
       // assert
       expect((service as any).model.createStub).toHaveBeenCalledTimes(1);
       expect((service as any).model.createStub).toHaveBeenCalledWith(expectedData);
+    });
+
+    it("should skip update for known accounts", async () => {
+      // prepare
+      const accountsServiceExistsCall = jest
+        .fn()
+        .mockResolvedValue(true);
+      (service as any).accountsService.exists = accountsServiceExistsCall;
+      const createCall = jest.spyOn(MockModel.prototype, "create");
+      const transactionsServiceFindCall = jest
+        .fn()
+        .mockResolvedValue({
+          data: fakeCreateTransactionDocuments(3), // page is not full
+        });
+      (service as any).transactionsService.find = transactionsServiceFindCall;
+
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      })
+
+      // assert
+      expect(accountsServiceExistsCall).toHaveBeenCalledTimes(3);
+      expect(createCall).toHaveBeenCalledTimes(0);
     });
   });
 });

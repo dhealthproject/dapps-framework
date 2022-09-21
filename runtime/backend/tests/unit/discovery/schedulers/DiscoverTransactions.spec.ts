@@ -37,9 +37,7 @@ import {
   Order,
   Transaction as SdkTransaction,
   TransactionGroup,
-  TransactionMapping,
   TransactionType,
-  TransferTransaction,
 } from "@dhealth/sdk"; // mocked above ^^^^
 import { Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -48,7 +46,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 
 // internal dependencies
 import { MockModel, createTransaction } from "../../../mocks/global";
-import { DappConfig } from "../../../../src/common/models/DappConfig";
 import { StateDocument, StateQuery } from "../../../../src/common/models/StateSchema";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { QueryService } from "../../../../src/common/services/QueryService";
@@ -57,7 +54,7 @@ import { TransactionsService } from "../../../../src/discovery/services/Transact
 import { DiscoverTransactions } from "../../../../src/discovery/schedulers/DiscoverTransactions/DiscoverTransactions";
 
 // configuration resources
-import dappConfigLoader from "../../../../config/dapp";
+import { TransactionDiscoveryStateData } from "@/discovery/models/TransactionDiscoveryStateData";
 
 // Mocks the actual discovery:DiscoverTransactions command to
 // allow testing of the `runWithOptions` method.
@@ -88,12 +85,8 @@ class MockDiscoverTransactions extends DiscoverTransactions {
  */
 describe("discovery/DiscoverTransactions", () => {
   let service: MockDiscoverTransactions;
-  let configService: ConfigService;
   let stateService: StateService;
-  let networkService: NetworkService;
-  let transactionService: TransactionsService;
   let logger: Logger;
-  let expectedDappConfig: DappConfig = dappConfigLoader();
 
   let mockDate: Date;
   beforeEach(async () => {
@@ -129,10 +122,7 @@ describe("discovery/DiscoverTransactions", () => {
     }).compile();
 
     service = module.get<MockDiscoverTransactions>(MockDiscoverTransactions);
-    configService = module.get<ConfigService>(ConfigService);
     stateService = module.get<StateService>(StateService);
-    networkService = module.get<NetworkService>(NetworkService);
-    transactionService = module.get<TransactionsService>(TransactionsService);
     logger = module.get<Logger>(Logger);
 
     // overwrites the internal model (injected)
@@ -244,6 +234,94 @@ describe("discovery/DiscoverTransactions", () => {
         // assert
         expect(logger.debug).toHaveBeenNthCalledWith(1, "Starting transactions discovery for source \"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\"");
         expect(logger.debug).toHaveBeenNthCalledWith(2, "Last discovery for \"discovery:DiscoverTransactions:NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\" ended with page: \"1\"");
+      });
+
+      it("should set totalNumberOfTransactions if exists", async () => {
+        // prepare
+        (service as any).state = {
+          data: {
+            totalNumberOfTransactions: 2,
+            lastPageNumber: 2,
+          }
+        };
+
+        // act
+        await service.discover({
+          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+          debug: true,
+        });
+
+        // assert
+        expect((service as any).totalNumberOfTransactions).toEqual(2);
+      });
+
+      it("should set totalNumberOfTransactions to 0 if null", async () => {
+        // prepare
+        (service as any).state = {
+          data: {
+            totalNumberOfTransactions: null,
+            lastPageNumber: null,
+          }
+        };
+
+        // act
+        await service.discover({
+          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+          debug: true,
+        });
+
+        // assert
+        expect((service as any).totalNumberOfTransactions).toEqual(0);
+      });
+
+      it("should set lastPageNumber if exists", async () => {
+        // prepare
+        const stateServiceFindOneCall = jest
+        .spyOn(stateService, "findOne")
+        .mockResolvedValue({
+          data: {
+            lastPageNumber: 2,
+          }
+        } as StateDocument);
+        ((service as any).stateService).findOne = stateServiceFindOneCall;
+        const stateQuerySrc = new StateQuery({
+          name: "discovery:DiscoverTransactions:NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY"
+        } as StateDocument);
+
+        // act
+        await service.discover({
+          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+          debug: true,
+        });
+
+        // assert
+        expect(stateServiceFindOneCall).toHaveBeenNthCalledWith(1, stateQuerySrc);
+        expect((service as any).lastPageNumber).toEqual(2);
+      });
+
+      it("should set lastPageNumber to 1 if null", async () => {
+        // prepare
+        const stateServiceFindOneCall = jest
+        .spyOn(stateService, "findOne")
+        .mockResolvedValue({
+          data: {
+            lastPageNumber: null,
+          }
+        } as StateDocument);
+        ((service as any).stateService).findOne = stateServiceFindOneCall;
+        const stateQuerySrc = new StateQuery({
+          name: "discovery:DiscoverTransactions:NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY"
+        } as StateDocument);
+
+        // act
+        await service.discover({
+          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+          debug: true,
+        });
+
+        // assert
+        expect(stateServiceFindOneCall).toHaveBeenNthCalledWith(1, stateQuerySrc);
+        expect((service as any).lastPageNumber).toEqual(1);
       });
 
       it("should include only confirmed transfer transactions by default", async () => {
@@ -359,10 +437,12 @@ describe("discovery/DiscoverTransactions", () => {
             isLastPage: false,
           }]),
         };
+      });
 
+      afterEach(() => {
         // clear database mocks
         (service as any).model.createStub.mockClear();
-      });
+      })
 
       it("should read 5 transaction pages from operating node", async () => {
         // act
@@ -433,6 +513,138 @@ describe("discovery/DiscoverTransactions", () => {
           }
         );
       });
+
+      it("should skip update for known transactions", async () => {
+        // prepare
+        const transactionsServiceExistsCall = jest
+          .fn()
+          .mockResolvedValue(true);
+        (service as any).transactionsService.exists = transactionsServiceExistsCall;
+        const createCall = jest.spyOn(MockModel.prototype, "create");
+
+        // act
+        await service.discover({
+          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+          debug: true,
+        })
+
+        // assert
+        expect(transactionsServiceExistsCall).toHaveBeenCalledTimes(3);
+        expect(createCall).toHaveBeenCalledTimes(0);
+      });
+
+      it("should progress exactly the same with outgoing transactionMode", async () => {
+        // prepare
+        (service as any).discoverySource.plain =
+          jest.fn().mockReturnValue("NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY");
+        const transactionServiceExistsCall = jest
+          .fn()
+          .mockResolvedValue(false);
+        (service as any).transactionsService.exists = transactionServiceExistsCall;
+        const stateIdentifier = "discovery:DiscoverTransactions:NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY";
+        const createCall = jest.spyOn(MockModel.prototype, "create");
+        const extractRecipientAddressCall = jest
+          .spyOn((service as any), "extractRecipientAddress")
+          .mockReturnValue("NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY");
+
+        // act
+        await service.discover({
+          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+          debug: true,
+        });
+
+        // assert
+        expect(createCall).toHaveBeenCalledTimes(3);
+        expect(extractRecipientAddressCall).toHaveBeenCalledTimes(3);
+        expect((service as any).stateService.updateOne).toHaveBeenCalled();
+        expect((service as any).stateService.updateOne).toHaveBeenCalledWith(
+          new StateQuery({ name: stateIdentifier } as StateDocument),
+          {
+            lastPageNumber: 6, // starts at page 1 and reads 5 pages
+            sync: false, // synchronization state is "not synchronized yet"
+          }
+        );
+      });
+    });
+  });
+
+  describe("signature()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const expectedResult = `DiscoverTransactions incoming|outgoing|both [` +
+      `--source "SOURCE-ADDRESS-OR-PUBKEY"` +
+      `--includeTypes "transfer"` +
+      `--includeUnconfirmed` +
+      `--includePartial` +
+      `]`;
+
+      // act
+      const signature = (service as any).signature;
+
+      // assert
+      expect(signature).toEqual(expectedResult);
+    });
+  });
+
+  describe("getStateData()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const lastUsedAccount = "test-last-used-account";
+      const totalNumberOfTransactions = 1;
+      const expectedResult = {
+        lastUsedAccount,
+        totalNumberOfTransactions,
+      } as TransactionDiscoveryStateData;
+      (service as any).lastUsedAccount = lastUsedAccount;
+      (service as any).totalNumberOfTransactions = totalNumberOfTransactions;
+
+      // act
+      const stateData = (service as any).getStateData();
+
+      // assert
+      expect(stateData).toEqual(expectedResult);
+    });
+  });
+
+  describe("parseTransactionTypes()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const expectedResults: any = [ [TransactionType.TRANSFER], [] ];
+      ["Transfer Transaction", "SomethingElse"].forEach((transactionType, index) => {
+        // act
+        const parsedTransactionType = (service as any).parseTransactionTypes(transactionType);
+
+        // assert
+        expect(parsedTransactionType).toEqual(expectedResults[index]);
+      });
+    });
+  });
+
+  describe("parseUnconfirmedFlag()", () => {
+    it("should return correct value", () => {
+      // prepare
+      const expectedResult = [true, false];
+      ["something", ""].forEach((unconfirmedOption, index) => {
+        // act
+        const result = (service as any).parseUnconfirmedFlag(unconfirmedOption);
+
+        // assert
+        expect(result).toBe(expectedResult[index]);
+      });
+    });
+  });
+
+  describe("parsePartialFlag()", () => {
+    it("should return correct value", () => {
+      // prepare
+      const expectedResult = [true, false];
+      ["something", ""].forEach((partialOption, index) => {
+        // act
+        const result = (service as any).parsePartialFlag(partialOption);
+
+        // assert
+        expect(result).toBe(expectedResult[index]);
+      });
     });
   });
 
@@ -466,6 +678,22 @@ describe("discovery/DiscoverTransactions", () => {
       configGetMock.mockClear();
       runMock.mockClear();
       getNextSourceMock.mockClear();
+    });
+
+    it("should bail out if configuration is empty", async () => {
+      // prepare
+      const configServiceGet = jest.fn().mockReturnValue(null);
+      (service as any).configService.get = configServiceGet;
+
+      const getNextSourceCall = jest
+        .spyOn((service as any), "getNextSource");
+
+      // act
+      await service.runAsScheduler();
+
+      // assert
+      expect(configServiceGet).toHaveBeenCalledTimes(1);
+      expect(getNextSourceCall).toHaveBeenCalledTimes(0);
     });
 
     it("should read configuration from configService", async () => {
@@ -629,5 +857,45 @@ describe("discovery/DiscoverTransactions", () => {
         expect(actual).toBe("a"); // <-- first source
       });
     });
+  });
+
+  describe("extractTransactionHash()", () => {
+    it("should return correct value", () => {
+      // prepare
+      [
+        { transactionInfo: { hash: "trasaction-info-hash" } },
+        { transactionInfo: { aggregateHash: "aggregate-transaction-info-hash" } }
+      ].forEach((transaction) => {
+        // act
+        const result = (service as any).extractTransactionHash(transaction);
+
+        // assert
+        expect(result).toBe(
+          transaction.transactionInfo.hash ?
+          transaction.transactionInfo.hash :
+          transaction.transactionInfo.aggregateHash
+        );
+      });
+    });
+  });
+
+  describe("extractTransactionMessage()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const expectedResults = ["test-message", null, null];
+      ["test-message", "", undefined].forEach((payload, index) => {
+        const transaction = {
+          message: {
+            payload,
+          }
+        };
+
+        // act
+        const result = (service as any).extractTransactionMessage(transaction);
+
+        // assert
+        expect(result).toBe(expectedResults[index]);
+      })
+    })
   });
 });

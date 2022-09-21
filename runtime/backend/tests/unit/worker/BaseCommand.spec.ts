@@ -119,6 +119,20 @@ describe("worker/BaseCommand -->", () => {
       expect((fakeCommand as any).debugLog).toHaveBeenCalled();
     });
 
+    it("should print debug information given passedParams length >= 1", async () => {
+      for(const passedParams of [["test"], ["test1", "test2"]]) {
+        // prepare
+        (fakeCommand as any).debugLog = jest.fn();
+        // act
+        await fakeCommand.run(passedParams, { debug: true });
+        // assert
+        expect((fakeCommand as any).debugLog).toHaveBeenCalledTimes(7);
+        expect((fakeCommand as any).debugLog).toHaveBeenCalledWith(
+          `Arguments received: ["${passedParams.join('", "')}"]`
+        );
+      }
+    });
+
     it("should print only timing information given disabled debug mode", async () => {
       // prepare
       (fakeCommand as any).debugLog = jest.fn();

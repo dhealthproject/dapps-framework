@@ -125,7 +125,8 @@
       "test-config",
       "interfaces",
       "jestGlobalMocks.ts",
-      "index.ts"
+      "index.ts",
+      "config"
     ]
   },
   "contributors": [

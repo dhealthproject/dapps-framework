@@ -44,9 +44,43 @@ describe("discovery/AccountsService", () => {
     queriesService = module.get<QueryService<AccountDocument, AccountModel>>(QueryService);
   });
 
-  it("should be defined", () => {
+  it("should be defined -->", () => {
     expect(service).toBeDefined();
   });
+
+  describe("count() -->", () => {
+    it("should use QueryService.count() method with correct query", async () => {
+      // prepare
+      const expectedResult = 2;
+      const countMock = jest
+        .spyOn(queriesService, "count")
+        .mockResolvedValue(expectedResult);
+
+      // act
+      const result = await service.count(new AccountQuery());
+
+      // assert
+      expect(countMock).toBeCalledWith(new AccountQuery(), MockModel);
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe("exists() -->", () => {
+    it("should use QueryService.findOne() method with correct query", async () => {
+      // prepare
+      const expectedResult = true;
+      const findOneMock = jest
+        .spyOn(queriesService, "findOne")
+        .mockResolvedValue({} as AccountDocument);
+
+      // act
+      const result = await service.exists(new AccountQuery());
+
+      // assert
+      expect(findOneMock).toBeCalledWith(new AccountQuery(), MockModel, true);
+      expect(result).toEqual(expectedResult);
+    });
+  })
 
   describe("find() -->", () => {
     it("should use QueryService.find() method with correct query", async () => {
@@ -62,12 +96,56 @@ describe("discovery/AccountsService", () => {
       const findMock = jest
         .spyOn(queriesService, "find")
         .mockResolvedValue(expectedResult);
-      
+
       // act
       const result = await service.find(new AccountQuery());
 
       // assert
       expect(findMock).toBeCalledWith(new AccountQuery(), MockModel);
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe("findOne() -->", () => {
+    it("should use QueryService.findOne() method with correct query", async () => {
+      // prepare
+      const expectedResult = {};
+      const findOneMock = jest
+        .spyOn(queriesService, "findOne")
+        .mockResolvedValue(expectedResult as AccountDocument);
+
+      // act
+      const result = await service.findOne(new AccountQuery());
+
+      // assert
+      expect(findOneMock).toBeCalledWith(new AccountQuery(), MockModel);
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe("createOrUpdate() -->", () => {
+    it("should use QueryService.createOrUpdate() method with correct query", async () => {
+      // prepare
+      const expectedResult = {};
+      const createOrUpdateMock = jest
+        .spyOn(queriesService, "createOrUpdate")
+        .mockResolvedValue(expectedResult as AccountDocument);
+      const query = new AccountQuery();
+      const data = new MockModel();
+
+      // act
+      const result = await service.createOrUpdate(
+        query,
+        data,
+      );
+
+      // assert
+      expect(createOrUpdateMock).toBeCalledWith(
+        new AccountQuery(),
+        MockModel,
+        data,
+        {},
+      );
       expect(result).toEqual(expectedResult);
     });
   });
@@ -144,7 +222,4 @@ describe("discovery/AccountsService", () => {
       });
     });
   });
-
-  // @todo Missing tests for method `AccountsService.findOne()`
-  // @todo Missing tests for method `AccountsService.updateOne()`
 });

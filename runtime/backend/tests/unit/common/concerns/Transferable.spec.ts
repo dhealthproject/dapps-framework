@@ -36,7 +36,17 @@ describe("concerns/Transferable", () => {
   });
 
   describe("fillDTO()", () => {
-    it("should transform into DTO object and keep known fields", () => {
+    it("should transform into DTO object and keep known fields when called from Transferable", () => {
+      // act
+      const dto: FakeDTO = Transferable.fillDTO(document, new FakeDTO());
+
+      // assert
+      expect(dto).toBeDefined();
+      expect("address" in dto).toEqual(true);
+      expect(dto.address).toEqual("fakeAddress");
+    });
+
+    it("should transform into DTO object and keep known fields when called from class", () => {
       // act
       const dto: FakeDTO = FakeSchema.fillDTO(document, new FakeDTO());
 
@@ -46,7 +56,7 @@ describe("concerns/Transferable", () => {
       expect(dto.address).toEqual("fakeAddress");
     });
 
-    it("should transform into DTO object and remove unknown fields", () => {
+    it("should transform into DTO object and remove unknown fields when called from class", () => {
       // prepare
       (document as any).unknownField = "noValue";
 

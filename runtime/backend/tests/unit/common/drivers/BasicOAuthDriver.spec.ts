@@ -250,5 +250,29 @@ describe("common/BasicOAuthDriver", () => {
         expectedParamsOther
       );
     });
+
+    it("should throw correct error when response code is not 200", async () => {
+      // prepare
+      const httpServiceCallMock = jest.fn().mockReturnValue({
+        status: 400,
+        data: {
+          access_token: "fake-access-token",
+          refresh_token: "fake-refresh-token",
+        }
+      });
+      (basicDriver as any).httpService = {
+        call: httpServiceCallMock
+      };
+      const expectedError = new Error(
+        `An error occurred requesting an access token ` +
+        `from "${basicDriver.providerName}". Please, try again later.`
+      );
+
+      // act
+      const methodPromise = basicDriver.getAccessToken("fake-code", "this-is-an-extra");
+
+      // assert
+      expect(methodPromise).rejects.toEqual(expectedError);
+    });
   });
 });
