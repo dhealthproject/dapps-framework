@@ -17,6 +17,7 @@ import InlineSvg from "vue-inline-svg";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import { DappButton } from "@dhealth/components";
+import UiButton from "@/components/UiButton/UiButton.vue";
 
 // eslint-disable-next-line prettier/prettier
 export interface CarouselItem {
@@ -47,6 +48,7 @@ export interface CarouselConfig {
     InlineSvg,
     VueperSlides,
     VueperSlide,
+    UiButton,
   },
 })
 export default class EventsCarousel extends MetaView {
@@ -76,4 +78,8 @@ export default class EventsCarousel extends MetaView {
    * @var {breakpoints}
    */
   @Prop({ default: () => ({}) }) readonly breakpoints?: any;
+
+  handleEventClick(evt: any, eventItem: any) {
+    console.log(eventItem);
+  }
 }

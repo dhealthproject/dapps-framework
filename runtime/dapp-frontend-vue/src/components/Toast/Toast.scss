@@ -8,22 +8,32 @@
  * @license     LGPL-3.0
  */
 
- .dapp-snackbar {
+ @import "../../vars.scss";
+
+ .dapp-toast {
     border-radius: 12px;
     padding: 20px 24px 20px 16px;
     margin-bottom: 40px;
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1376px;
+    text-align: left;
 
     &.success {
-        background-color: #F9F8FF;
-        border: 1px solid #3D42B9;
+        background-color: $toast-success-light;
+        border: 1px solid $toast-success;
+        box-shadow: 4px 4px 0px $toast-success;
 
         * {
-            color: #3D42B9;
+            color: $toast-success;
         }
 
         svg {
             path {
-                fill: #3D42B9;
+                fill: $toast-success;
             }
         }
     }

@@ -28,7 +28,6 @@ import LeaderBoard from "./components/LeaderBoard.vue";
 import Tabs from "@/components/Tabs/Tabs.vue";
 import GenericList from "@/components/GenericList/GenericList.vue";
 import UiButton from "@/components/UiButton/UiButton.vue";
-import Snackbar from "@/components/Snackbar/Snackbar.vue";
 import ProgressBar from "@/components/ProgressBar/ProgressBar.vue";
 
 type RouteParam = string | (string | null)[];
@@ -45,7 +44,6 @@ type RouteParam = string | (string | null)[];
     Tabs,
     GenericList,
     UiButton,
-    Snackbar,
     ProgressBar,
   },
   computed: {
@@ -69,8 +67,6 @@ export default class Dashboard extends MetaView {
    * @var {string}
    */
   public currentUserAddress!: string;
-
-  public snackbarkShown: boolean = false;
 
   public ref = "";
 
@@ -303,12 +299,10 @@ export default class Dashboard extends MetaView {
       availableIntegrations = JSON.parse(integrations);
       this.$store.commit("integrations/setIntegrations", "strava");
       console.log(availableIntegrations);
-      this.snackbarkShown = Boolean(localStorage.getItem("snackbarHidden"));
     }
 
     if (state && code && scope && !availableIntegrations) {
       await this.triggerLinkStrava(state, code, scope);
-      localStorage.setItem("snackbarHidden", JSON.stringify(true));
       await this.$router.replace({});
     }
 
@@ -326,17 +320,19 @@ export default class Dashboard extends MetaView {
     code: RouteParam,
     scope: RouteParam
   ) {
-    this.$store.dispatch("integrations/linkStrava", {
+    await this.$store.dispatch("integrations/linkStrava", {
       address: this.currentUserAddress,
       code,
       state,
       scope,
     });
-  }
-
-  hideSnackbar() {
-    this.snackbarkShown = false;
-    localStorage.setItem("snackbarHidden", "");
+    this.$root.$emit("toast", {
+      title: "Great job!",
+      description: "We’ve integrated your account",
+      state: "success",
+      icon: "icons/like-icon.svg",
+      dismissTimeout: 7000,
+    });
   }
 
   copyToClipBoard(evt: any, val: string) {

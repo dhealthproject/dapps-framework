@@ -55,6 +55,7 @@
     </div>
 
     <UiPopup v-if="modalShown" :config="modalConfig" />
+    <Toast v-if="toastShown" :config="toastConfig" />
   </div>
 </template>
 

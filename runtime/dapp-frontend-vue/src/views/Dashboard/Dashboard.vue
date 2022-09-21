@@ -87,7 +87,7 @@
           </Tabs>
         </template>
         <template v-slot:right>
-          <Card :title="'Invite friends'" class="invite" :showBorders="false">
+          <Card :title="'Invite friends'" :showBorders="false">
             <template v-slot:content>
               <div class="referral-box">
                 <img :src="getImageUrl('coins.png')" alt="Invite friends" />
@@ -95,13 +95,12 @@
                   Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et.
                 </p>
                 <div class="referral-box__input">
-                  <input type="text" readonly :value="ref" />
+                  <input type="text" readonly value="JOINFIT22" />
                   <div class="copy">
                     <span class="text">Copy referral code</span>
                     <img
                       :src="getImageUrl('copy-icon.svg')"
                       alt="Copy referral code"
-                      @click="copyToClipBoard($event, ref)"
                     />
                   </div>
                 </div>
@@ -116,21 +115,10 @@
             </template>
           </Card>
 
-          <Card :title="'Upcoming Events'" class="events" :showBorders="false">
+          <Card :title="'Invite friends'" :showBorders="false">
             <template v-slot:content>
-              <EventsCarousel
-                :items="carouselItems"
-                :config="sliderConfig"
-                :breakpoints="sliderBreakPoints"
-              />
-            </template>
-          </Card>
-
-          <Card :title="'Leaderboard'" :showBorders="false">
-            <template v-slot:content>
-              <LeaderBoard :items="boardItems" />
-            </template>
-          </Card>
+              <LeaderBoard :items="boardItems" /> </template
+          ></Card>
         </template>
       </DividedScreen>
       <div v-else class="dapp-activate-wrapper">
@@ -161,6 +149,7 @@
 <script lang="ts" src="./Dashboard.ts">
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
 import UiButton from "@/components/UiButton/UiButton.vue";
+import LeaderBoard from "./components/LeaderBoard.vue";
 </script>
 
 <style lang="scss">

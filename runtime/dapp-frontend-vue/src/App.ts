@@ -18,6 +18,7 @@ import Header from "@/components/Header/Header.vue";
 import Footer from "@/components/Footer/Footer.vue";
 import Loader from "@/components/Loader/Loader.vue";
 import UiPopup from "./components/UiPopup/UiPopup.vue";
+import Toast from "./components/Toast/Toast.vue";
 
 // style resource
 import "./App.scss";
@@ -32,6 +33,7 @@ import packageConfig from "../package.json";
     Footer,
     Loader,
     UiPopup,
+    Toast,
   },
 })
 export default class App extends MetaView {
@@ -72,6 +74,15 @@ export default class App extends MetaView {
   protected modalShown = false;
 
   /**
+   * State of the toast notification
+   * get's changed only in showToast() || hideToast()
+   *
+   * @protected {toastShown}
+   * @access protected
+   */
+  protected toastShown = false;
+
+  /**
    * Popup configurations,
    * getting set once "modal" event getting triggered
    * recets to {} on "modal-close" evt
@@ -80,6 +91,16 @@ export default class App extends MetaView {
    * @access protected
    */
   protected modalConfig: any = {};
+
+  /**
+   * Toast configurations,
+   * getting set once "toast" event getting triggered
+   * recets to {} on "toast-close" evt
+   *
+   * @protected {modalConfig}
+   * @access protected
+   */
+  protected toastConfig: any = {};
 
   /**
    *
@@ -104,6 +125,9 @@ export default class App extends MetaView {
     console.log("[App] BACKEND_URL: ", process.env.VUE_APP_BACKEND_URL);
     this.$root.$on("modal", this.showModal);
     this.$root.$on("modal-close", this.hideModal);
+
+    this.$root.$on("toast", this.showToast);
+    this.$root.$on("toast-close", this.hideToast);
   }
 
   /**
@@ -118,6 +142,12 @@ export default class App extends MetaView {
     console.log("MODAL CALLED", modalConfig);
   }
 
+  showToast(toastConfig: any) {
+    this.toastShown = true;
+    this.toastConfig = toastConfig;
+    console.log("TOAST CALLED", toastConfig);
+  }
+
   /**
    * Being called on @modal-close event, hides popup
    *
@@ -128,6 +158,18 @@ export default class App extends MetaView {
     this.modalShown = false;
     this.modalConfig = {};
     console.log("MODAL HIDDEN");
+  }
+
+  /**
+   * Being called on @toast-close event, hides popup
+   *
+   * @returns void
+   * @access public
+   */
+  hideToast() {
+    this.toastShown = false;
+    this.toastConfig = {};
+    console.log("TOAST HIDDEN");
   }
 
   /**
