@@ -27,6 +27,7 @@ import { Translations } from "@/kernel/i18n/Translations";
 import Card from "@/components/Card/Card.vue";
 import Snackbar from "@/components/Snackbar/Snackbar.vue";
 import UiButton from "@/components/UiButton/UiButton.vue";
+import ProgressBar from "@/components/ProgressBar/ProgressBar.vue";
 import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
 import Tabs from "@/components/Tabs/Tabs.vue";
@@ -53,8 +54,6 @@ export interface StatisticsTabItem {
   friends: OtherPlayer[];
 }
 
-type RouteParam = string | (string | null)[];
-
 @Component({
   components: {
     Card,
@@ -68,6 +67,7 @@ type RouteParam = string | (string | null)[];
     GenericList,
     UiButton,
     Snackbar,
+    ProgressBar,
   },
   computed: {
     ...mapGetters({
@@ -119,6 +119,8 @@ export default class Dashboard extends MetaView {
     title: "Great Job!",
     description: "We've integrated your account",
   };
+
+  public ref = "";
 
   /**
    * This computed property defines the configuration of the `vueper`
@@ -285,7 +287,7 @@ export default class Dashboard extends MetaView {
             direction: "down",
           },
         ],
-        medals: ["medal1.svg", "medal2.svg", "medal3.svg"],
+        medals: ["medal1.svg", "medal2.svg", "medal3.svg", "medal4.svg"],
         friends: [
           {
             avatar: "friend1.png",
@@ -376,6 +378,8 @@ export default class Dashboard extends MetaView {
       await this.oauthCallbackRedirect();
       await this.$router.replace({});
     }
+
+    this.ref = "JOINFIT22";
   }
 
   /**
@@ -432,5 +436,11 @@ export default class Dashboard extends MetaView {
    */
   protected hideSnackbar(): void {
     this.$store.dispatch("app/disableSnackBar");
+  }
+
+  copyToClipBoard(evt: any, val: string) {
+    navigator.clipboard
+      .writeText(val)
+      .then(() => console.log("copied", this.ref));
   }
 }

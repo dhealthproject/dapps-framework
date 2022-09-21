@@ -15,24 +15,10 @@ import { Component, Prop } from "vue-property-decorator";
 import { MetaView } from "@/views/MetaView";
 
 // style resource
-import "./Card.scss";
+import "./ProgressBar.scss";
 
 @Component({})
-export default class Card extends MetaView {
-  /**
-   * Title displayed on top of the card,
-   * defaults to ""
-   *
-   * @access readonly
-   * @var {title}
-   */
-  @Prop({ default: "" }) readonly title?: string;
-
-  /**
-   * Prop that defines showing of the borders of card
-   *
-   * @access readonly
-   * @var {showBorders}
-   */
-  @Prop({ default: true }) readonly showBorders?: boolean;
+export default class ProgressBar extends MetaView {
+  @Prop({ default: 0 }) steps?: number;
+  @Prop({ default: 0 }) completedSteps?: number;
 }

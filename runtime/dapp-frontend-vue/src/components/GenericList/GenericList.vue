@@ -13,7 +13,7 @@
 <template>
   <div class="list">
     <div class="dapp-list">
-      <h2 class="title">{{ title }}</h2>
+      <h2 v-if="title" class="title">{{ title }}</h2>
       <div
         v-if="hasCustomSlot"
         class="dapp-list__custom flex flex-row justify-between"

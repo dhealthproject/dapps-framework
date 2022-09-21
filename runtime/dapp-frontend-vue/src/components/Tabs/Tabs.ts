@@ -20,6 +20,14 @@ import "./Tabs.scss";
 @Component({})
 export default class Tabs extends MetaView {
   /**
+   * Prop which defines title of the tabs
+   *
+   * @access readonly
+   * @var {title}
+   */
+  @Prop({ default: "" }) readonly title?: string;
+
+  /**
    * Prop which defines list and content of tabs
    * .title - field which defines tab text
    *

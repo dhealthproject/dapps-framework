@@ -14,6 +14,179 @@
   //   background-color: #e5e5e5;
   text-align: left;
 
+  .referral-box {
+    background-color: #01a75d;
+    padding: 40px 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 16px;
+    border: 1px solid $black;
+    box-shadow: 5px 5px 0px $black;
+
+    img {
+      width: auto;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 140%;
+      color: $button-text-dark;
+      margin-bottom: 20px;
+    }
+
+    .dapp-ui-button img {
+      margin-bottom: 0;
+      margin-right: 8px;
+    }
+
+    .dapp-ui-button {
+      width: 100%;
+      margin-bottom: 20px;
+
+      button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 100%;
+      }
+    }
+
+    a {
+      color: $white;
+      text-decoration: underline;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 130%;
+    }
+
+    &__input {
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+
+      input {
+        padding: 12px 16px;
+        background-color: $white;
+        border-radius: 8px;
+        border: 1px solid $black;
+        color: $black;
+        outline: none;
+        width: 100%;
+      }
+
+      .copy {
+        position: absolute;
+        top: 0;
+        right: 16px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+
+        img {
+          margin-bottom: 0;
+          margin-left: 8px;
+          cursor: pointer;
+        }
+
+        .text {
+          color: $placeholder-grey;
+          font-weight: 400;
+          font-size: 12px;
+          line-height: 130%;
+        }
+      }
+    }
+  }
+
+  .empty-section {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 150%;
+    color: $black;
+  }
+
+  &__title {
+    color: $title-dark;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 140%;
+    margin-bottom: 30px;
+  }
+
+  .stats-card {
+    padding: 24px;
+    background-color: $white;
+    box-shadow: 4px 5px 0px $black;
+    border-radius: 16px;
+
+    .dapp-progress {
+      margin-bottom: 14px;
+    }
+
+    .progress-data {
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 150%;
+      color: $black;
+      width: 100%;
+
+      .reffered {
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 150%;
+        color: $black;
+      }
+
+      img {
+        display: inline-block;
+        margin-left: 8px;
+        cursor: pointer;
+      }
+    }
+
+    &__numbers {
+      display: flex;
+      flex-wrap: wrap;
+
+      .item {
+        flex: 1 0 50%;
+        margin-bottom: 20px;
+
+        .flex {
+          display: inline-flex;
+          align-items: center;
+        }
+
+        .title {
+          display: block;
+          color: $black;
+          font-weight: 500;
+          font-size: 14px;
+          line-height: 150%;
+        }
+
+        .amount {
+          display: inline-block;
+          color: $black;
+          font-weight: 700;
+          font-size: 24px;
+          line-height: 150%;
+          margin-right: 4px;
+        }
+
+        &:nth-child(even) {
+          text-align: right;
+        }
+      }
+    }
+  }
+
   @media screen and (max-width: 768px) {
     .dapp-list__custom {
       flex-direction: column;
@@ -21,6 +194,7 @@
   }
 
   .medals {
+    margin-top: 28px;
     display: inline-block;
 
     img {
@@ -56,6 +230,10 @@
 
   .dapp-card {
     margin-bottom: 30px;
+
+    &.events, &.invite {
+      margin-bottom: 0;
+    }
   }
 
   .dapp-activate-wrapper {
@@ -125,4 +303,8 @@
 .vueperslides:not(.no-shadow):not(.vueperslides--3d)
   .vueperslides__parallax-wrapper:before {
   box-shadow: none !important;
+}
+
+.vueperslides--fixed-height.vueperslides--bullets-outside {
+  margin-bottom: 0;
 }

@@ -13,15 +13,18 @@
 <template>
   <div class="dapp-tabs">
     <div class="dapp-tabs__buttons">
-      <button
-        v-for="(tab, index) in tabNames"
-        @click="selectedTab = index"
-        class="tab"
-        :class="{ active: selectedTab === index }"
-        :key="index"
-      >
-        {{ tab }}
-      </button>
+      <h2 v-if="title" class="dapp-tabs__title" v-html="title" />
+      <div class="inner">
+        <button
+          v-for="(tab, index) in tabNames"
+          @click="selectedTab = index"
+          class="tab"
+          :class="{ active: selectedTab === index }"
+          :key="index"
+        >
+          {{ tab }}
+        </button>
+      </div>
       <div
         v-for="(tabContentItem, index) in tabList"
         :key="index + tabContentItem"

@@ -11,15 +11,14 @@
 -->
 
 <template>
-  <div class="dapp-card">
-    <div v-if="title" class="dapp-card__header">
-      <span class="dapp-card__title" v-html="title" />
-      <slot name="button" />
-    </div>
-    <div :class="{ 'no-borders': !showBorders }" class="dapp-card__inner">
-      <slot name="content" />
-    </div>
+  <div class="dapp-progress">
+    <div
+      v-for="i in steps"
+      :key="i"
+      class="item"
+      :class="{ completed: i <= completedSteps }"
+    />
   </div>
 </template>
 
-<script lang="ts" src="./Card.ts"></script>
+<script lang="ts" src="./ProgressBar.ts"></script>

@@ -35,7 +35,7 @@ export default class GenericList extends MetaView {
    * @access readonly
    * @var {title}
    */
-  @Prop({ default: () => [] }) readonly title?: string;
+  @Prop({ default: "" }) readonly title?: string;
 
   /**
    * Computed that checks if custom slot available

@@ -23,7 +23,94 @@
       />
       <DividedScreen v-if="getIntegrations.length > 0">
         <template v-slot:left>
-          <Card title="Upcoming Events">
+          <Tabs :title="'Quick Stats'" :tab-list="tabs">
+            <template v-slot:tabContent="props">
+              <Card>
+                <template v-slot:content>
+                  <div class="stats-card">
+                    <div class="stats-card__numbers">
+                      <div
+                        v-for="(item, index) in props.tabData.quickStats"
+                        :key="index + item.title"
+                        class="item"
+                      >
+                        <div class="flex">
+                          <span class="amount" v-html="item.amount" />
+                          <DirectionTriangle :direction="item.direction" />
+                        </div>
+                        <span class="title" v-html="item.title" />
+                      </div>
+                    </div>
+                    <ProgressBar :steps="5" :completed-steps="2" />
+                    <div class="flex justify-around items-center">
+                      <div class="progress-data">4/10</div>
+                      <div class="progress-data">
+                        <div class="text-right">
+                          <span class="reffered">Friends Referred</span>
+                          <img
+                            :src="getImageUrl('icons/info-icon.svg')"
+                            alt="Friends reffered"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </Card>
+              <Card :title="'Your Sportscards'">
+                <template v-slot:content
+                  ><p class="empty-section">
+                    You currently don’t have any sportcards.
+                  </p></template
+                >
+              </Card>
+              <Card :title="'Your Medals'">
+                <template v-slot:content
+                  ><p class="empty-section">
+                    You currently don’t have any medals.
+                  </p>
+
+                  <GenericList :items="props.tabData.medals" class="medals">
+                    <template v-slot:itemContent="props">
+                      <img :src="getImageUrl(props.itemData)" alt="Medal 1" />
+                    </template>
+                  </GenericList>
+                </template>
+              </Card>
+            </template>
+          </Tabs>
+        </template>
+        <template v-slot:right>
+          <Card :title="'Invite friends'" class="invite" :showBorders="false">
+            <template v-slot:content>
+              <div class="referral-box">
+                <img :src="getImageUrl('coins.png')" alt="Invite friends" />
+                <p class="text-center">
+                  Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et.
+                </p>
+                <div class="referral-box__input">
+                  <input type="text" readonly :value="ref" />
+                  <div class="copy">
+                    <span class="text">Copy referral code</span>
+                    <img
+                      :src="getImageUrl('copy-icon.svg')"
+                      alt="Copy referral code"
+                      @click="copyToClipBoard($event, ref)"
+                    />
+                  </div>
+                </div>
+                <UiButton :accent="true">
+                  <img :src="getImageUrl('share-icon.svg')" alt="share" />
+                  <span>Share your link</span>
+                </UiButton>
+                <router-link :to="{ name: 'legal.terms-and-conditions' }">
+                  Terms & Conditions
+                </router-link>
+              </div>
+            </template>
+          </Card>
+
+          <Card :title="'Upcoming Events'" class="events" :showBorders="false">
             <template v-slot:content>
               <EventsCarousel
                 :items="carouselItems"
@@ -32,66 +119,12 @@
               />
             </template>
           </Card>
-          <Card title="Leaderboard">
+
+          <Card :title="'Leaderboard'" :showBorders="false">
             <template v-slot:content>
               <LeaderBoard :items="boardItems" />
             </template>
-            <template v-slot:button>
-              <DappButton
-                >Refer a Friend
-                <inline-svg
-                  :src="getImageUrl('icons/Plus-sign.svg')"
-                  :width="17"
-                  class="dapp-screen-header__button-icon inline-block"
-              /></DappButton>
-            </template>
           </Card>
-        </template>
-        <template v-slot:right>
-          <Card title="Your Stats" class="dapp-screen-dashboard__stats">
-            <template v-slot:content>
-              <Tabs :tab-list="statisticsTabs">
-                <template v-slot:tabContent="props">
-                  <div class="dapp-screen-dashboard__section">
-                    <GenericList
-                      :items="props.tabData.quickStats"
-                      :title="`Quick Stats for ${currentUserAddress}`"
-                    >
-                      <template v-slot:itemContent="props">
-                        <div class="quick-stats__item">
-                          <div class="flex flex-row items-center">
-                            <div class="number">
-                              {{ props.itemData.amount }}
-                            </div>
-                            <DirectionTriangle
-                              :direction="props.itemData.direction"
-                            />
-                          </div>
-                          <div class="title">{{ props.itemData.title }}</div>
-                        </div>
-                      </template>
-                    </GenericList>
-                  </div>
-                  <div class="dapp-screen-dashboard__section">
-                    <GenericList
-                      :items="props.tabData.medals"
-                      title="Your Medals"
-                      class="medals"
-                    >
-                      <template v-slot:itemContent="props">
-                        <img :src="getImageUrl(props.itemData)" alt="Medal 1" />
-                      </template>
-                    </GenericList>
-                  </div>
-                  <div class="dapp-screen-dashboard__section">
-                    <GenericList
-                      :items="props.tabData.friends"
-                      title="Your Friends"
-                    />
-                  </div>
-                </template>
-              </Tabs> </template
-          ></Card>
         </template>
       </DividedScreen>
       <div v-else class="dapp-activate-wrapper">
@@ -122,7 +155,10 @@
   </div>
 </template>
 
-<script lang="ts" src="./Dashboard.ts"></script>
+<script lang="ts" src="./Dashboard.ts">
+import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
+import UiButton from "@/components/UiButton/UiButton.vue";
+</script>
 
 <style lang="scss">
 @import "./Dashboard.scss";

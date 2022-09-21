@@ -27,6 +27,7 @@ import UiPopup from "./UiPopup/UiPopup.vue";
 import Snackbar from "./Snackbar/Snackbar.vue";
 import Dropdown from "./Dropdown/Dropdown.vue";
 import UserBalance from "./UserBalance/UserBalance.vue";
+import ProgressBar from "./ProgressBar/ProgressBar.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
@@ -46,6 +47,7 @@ export const AppComponents = {
   Snackbar,
   Dropdown,
   UserBalance,
+  ProgressBar,
 };
 
 // scoped export of library-level components
