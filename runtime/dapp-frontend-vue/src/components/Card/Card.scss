@@ -19,6 +19,10 @@
       display: inline-block;
       margin-right: 19px;
       color: $black;
+
+      @media screen and (max-width: 768px) {
+        font-size: 20px;
+      }
     }
   }
   &__inner {
