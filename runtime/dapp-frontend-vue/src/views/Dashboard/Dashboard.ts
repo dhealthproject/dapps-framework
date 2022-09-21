@@ -29,6 +29,7 @@ import Tabs from "@/components/Tabs/Tabs.vue";
 import GenericList from "@/components/GenericList/GenericList.vue";
 import UiButton from "@/components/UiButton/UiButton.vue";
 import Snackbar from "@/components/Snackbar/Snackbar.vue";
+import ProgressBar from "@/components/ProgressBar/ProgressBar.vue";
 
 type RouteParam = string | (string | null)[];
 
@@ -45,6 +46,7 @@ type RouteParam = string | (string | null)[];
     GenericList,
     UiButton,
     Snackbar,
+    ProgressBar,
   },
   computed: {
     ...mapGetters({
@@ -69,6 +71,8 @@ export default class Dashboard extends MetaView {
   public currentUserAddress!: string;
 
   public snackbarkShown: boolean = false;
+
+  public ref = "";
 
   /**
    * Computed which defines configuration
@@ -217,7 +221,7 @@ export default class Dashboard extends MetaView {
             direction: "down",
           },
         ],
-        medals: ["medal1.svg", "medal2.svg", "medal3.svg"],
+        medals: ["medal1.svg", "medal2.svg", "medal3.svg", "medal4.svg"],
         friends: [
           {
             avatar: "friend1.png",
@@ -307,6 +311,8 @@ export default class Dashboard extends MetaView {
       localStorage.setItem("snackbarHidden", JSON.stringify(true));
       await this.$router.replace({});
     }
+
+    this.ref = "JOINFIT22";
   }
 
   async integrateStrava() {
@@ -331,5 +337,11 @@ export default class Dashboard extends MetaView {
   hideSnackbar() {
     this.snackbarkShown = false;
     localStorage.setItem("snackbarHidden", "");
+  }
+
+  copyToClipBoard(evt: any, val: string) {
+    navigator.clipboard
+      .writeText(val)
+      .then(() => console.log("copied", this.ref));
   }
 }

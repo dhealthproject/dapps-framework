@@ -13,6 +13,8 @@
 .dapp-screen-header {
   justify-content: space-between;
   padding: 0 15px;
+  border-bottom: 1px solid $black;
+  margin-bottom: 32px !important;
 
   // temporary fix for QR and DappButton bgcolor
   .style-primary {

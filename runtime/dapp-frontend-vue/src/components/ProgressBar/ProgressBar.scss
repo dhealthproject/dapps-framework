@@ -1,0 +1,34 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Vue Frontend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+
+ @import "../../vars.scss";
+
+.dapp-progress {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .item {
+        border-radius: 40px 16px;
+        border: 1px solid $black;
+        background-color: $progress-grey;
+        height: 16px;
+        margin-right: 2px;
+        width: 100%;
+        box-shadow: 1px 1px 0px $black;
+        background-repeat: repeat-x;
+        background-position: center center;
+
+        &.completed {
+            background-image: url("../../assets/progressbar-bg.png");
+        }
+    }
+}
+ 

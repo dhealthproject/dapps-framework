@@ -89,10 +89,10 @@
     <div v-if="hasBackButton" class="dapp-screen-header__back-button">
       <slot name="back-button" />
     </div>
-    <div class="logo py-10 font-bold text-2xl">
+    <div class="logo font-bold text-2xl">
       <ElevateLogo :width="138" theme="dark" />
     </div>
-    <nav class="text-right">
+    <nav class="text-right p-0">
       <HamburgerButton
         :is-open="isMenuOpen"
         @menu-toggle="isMenuOpen = $event"
@@ -120,7 +120,7 @@
         </li>
       </ul>
     </nav>
-    <div class="lg-max:hidden">
+    <div class="lg-max:hidden py-6">
       <div class="dapp-screen-header__account-actions">
         <Dropdown :items="dropDownItems" />
         <UserBalance />
