@@ -24,7 +24,7 @@ import Snackbar from "./Snackbar/Snackbar.vue";
 import NavPanel from "./NavPanel/NavPanel.vue";
 import UiButton from "./UiButton/UiButton.vue";
 import UiPopup from "./UiPopup/UiPopup.vue";
-import Snackbar from "./Snackbar/Snackbar.vue";
+import Toast from "./Toast/Toast.vue";
 import Dropdown from "./Dropdown/Dropdown.vue";
 import UserBalance from "./UserBalance/UserBalance.vue";
 import ProgressBar from "./ProgressBar/ProgressBar.vue";
@@ -44,7 +44,7 @@ export const AppComponents = {
   NavPanel,
   UiButton,
   UiPopup,
-  Snackbar,
+  Toast,
   Dropdown,
   UserBalance,
   ProgressBar,

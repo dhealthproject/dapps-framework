@@ -16,16 +16,29 @@ import InlineSvg from "vue-inline-svg";
 import { MetaView } from "@/views/MetaView";
 
 // style resource
-import "./Snackbar.scss";
+import "./Toast.scss";
+
+export interface ToastConfig {
+  title?: string;
+  description?: string;
+  state: "success" | "error";
+  dismissTimeout?: number;
+  icon?: string;
+}
 
 @Component({
   components: {
     InlineSvg,
   },
 })
-export default class Snackbar extends MetaView {
+export default class Toast extends MetaView {
   @Prop({ default: "" }) readonly icon?: string;
-  @Prop({ required: true }) readonly title?: string;
-  @Prop({ required: true }) readonly description?: string;
-  @Prop({ default: "success" }) readonly state?: "success" | "error";
+  @Prop({ default: () => ({ dismissTimeout: 6000, state: "success" }) })
+  readonly config?: any;
+
+  mounted() {
+    setTimeout(() => {
+      this.$root.$emit("toast-close");
+    }, this.config.dismissTimeout);
+  }
 }

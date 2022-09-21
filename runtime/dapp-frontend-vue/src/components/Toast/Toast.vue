@@ -12,21 +12,21 @@
 
 <template>
   <div
-    class="dapp-snackbar flex flex-row justify-between items-center"
-    :class="`${state}`"
+    class="dapp-toast flex flex-row justify-between items-center"
+    :class="`${config.state}`"
   >
     <div class="flex flex-row justify-between items-center">
       <InlineSvg
-        v-if="icon"
-        :src="icon"
+        v-if="config.icon"
+        :src="getImageUrl(config.icon)"
         class="icon"
-        :alt="title"
+        :alt="config.title"
         width="40"
         height="40"
       />
-      <div class="dapp-snackbar-text">
-        <h2 v-html="title" />
-        <p v-html="description" />
+      <div class="dapp-toast-text">
+        <h2 v-html="config.title" />
+        <p v-html="config.description" />
       </div>
     </div>
     <div>
@@ -36,10 +36,10 @@
         class="close"
         width="20"
         height="20"
-        @click="$emit('snackbar-close')"
+        @click="$root.$emit('toast-close')"
       />
     </div>
   </div>
 </template>
 
-<script lang="ts" src="./Snackbar.ts"></script>
+<script lang="ts" src="./Toast.ts"></script>

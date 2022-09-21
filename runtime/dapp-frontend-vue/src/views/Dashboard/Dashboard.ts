@@ -25,7 +25,6 @@ import { Translations } from "@/kernel/i18n/Translations";
 
 // child components
 import Card from "@/components/Card/Card.vue";
-import Snackbar from "@/components/Snackbar/Snackbar.vue";
 import UiButton from "@/components/UiButton/UiButton.vue";
 import ProgressBar from "@/components/ProgressBar/ProgressBar.vue";
 import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
@@ -66,7 +65,6 @@ export interface StatisticsTabItem {
     Tabs,
     GenericList,
     UiButton,
-    Snackbar,
     ProgressBar,
   },
   computed: {
@@ -106,19 +104,6 @@ export default class Dashboard extends MetaView {
    * @var {Translations}
    */
   public i18n!: Translations;
-
-  /**
-   * This property contains configuration of a Snack-Bar on top of
-   * the window. This is often also referred to as a "Toast" message.
-   *
-   * @access protected
-   * @var {string}
-   */
-  protected snackbarConfig: SnackBarConfig = {
-    state: "success",
-    title: "Great Job!",
-    description: "We've integrated your account",
-  };
 
   public ref = "";
 
@@ -373,8 +358,14 @@ export default class Dashboard extends MetaView {
     // then we can now *query an access token* from the data provider
     // a redirection will happen after retrieval of the access token.
     if (state && code && scope) {
+      this.$root.$emit("toast", {
+        title: "Great job!",
+        description: "We’ve integrated your account",
+        state: "success",
+        icon: "icons/like-icon.svg",
+        dismissTimeout: 7000,
+      });
       this.$store.commit("oauth/setParameters", { code, state, scope });
-      this.$store.commit("app/enableSnackBar");
       await this.oauthCallbackRedirect();
       await this.$router.replace({});
     }
@@ -391,14 +382,13 @@ export default class Dashboard extends MetaView {
    * @returns {void}
    */
   protected displayErrorMessage(error: string): void {
-    // updates the snackbar configuration
-    this.snackbarConfig = {
-      state: "error",
+    this.$root.$emit("toast", {
       title: "Error!",
       description: error,
-    };
-
-    this.$store.commit("app/enableSnackBar");
+      state: "error",
+      icon: "icons/close-icon.svg",
+      dismissTimeout: 7000,
+    });
   }
 
   /**
@@ -424,18 +414,6 @@ export default class Dashboard extends MetaView {
   protected async oauthCallbackRedirect(): Promise<void> {
     // redirects the user to backend /oauth/strava/callback
     await this.$store.dispatch("oauth/callback", this.currentUserAddress);
-  }
-
-  /**
-   * This component method is used to *close the snack-bar* when it
-   * is displayed. This method is used as an event handler with the
-   * `Snackbar` component and the `@snackbar-close` event.
-   *
-   * @access protected
-   * @returns {void}
-   */
-  protected hideSnackbar(): void {
-    this.$store.dispatch("app/disableSnackBar");
   }
 
   copyToClipBoard(evt: any, val: string) {

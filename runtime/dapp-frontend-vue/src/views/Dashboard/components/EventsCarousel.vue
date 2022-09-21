@@ -53,13 +53,11 @@
                   >
                 </div>
                 <div class="item__footer__cta">
-                  <DappButton
-                    >Join
-                    <inline-svg
-                      :src="getImageUrl('icons/Plus-sign.svg')"
-                      :width="17"
-                      class="dapp-screen-header__button-icon inline-block"
-                  /></DappButton>
+                  <UiButton
+                    @uiButton-click="handleEventClick($event, carouselItem)"
+                    :accent="true"
+                    >Joined</UiButton
+                  >
                 </div>
               </div>
             </div>
