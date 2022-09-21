@@ -14,6 +14,17 @@
   //   background-color: #e5e5e5;
   text-align: left;
 
+  .dapp-divided-screen__columns {
+    @media screen and (max-width: 768px) {
+      flex-direction: column;
+
+      .dapp-divided-screen__columns__column {
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+    }
+  }
+
   .referral-box {
     background-color: #01a75d;
     padding: 40px 120px;
@@ -24,6 +35,10 @@
     border-radius: 16px;
     border: 1px solid $black;
     box-shadow: 5px 5px 0px $black;
+
+    @media screen and (max-width: 1024px) {
+      padding: 40px 24px;
+    }
 
     img {
       width: auto;
@@ -117,6 +132,11 @@
     font-size: 30px;
     line-height: 140%;
     margin-bottom: 30px;
+
+    @media screen and (max-width: 768px) {
+      font-size: 24px;
+      margin-bottom: 27px;
+    }
   }
 
   .stats-card {
@@ -197,9 +217,18 @@
     margin-top: 28px;
     display: inline-block;
 
+    .dapp-list__custom {
+      flex-direction: row !important;
+    }
+
     img {
       margin-right: 7px;
+      
+      @media screen and (max-width: 580px) {
+        max-width: 50px;
+      }
     }
+    
   }
 
   .quick-stats__item {
