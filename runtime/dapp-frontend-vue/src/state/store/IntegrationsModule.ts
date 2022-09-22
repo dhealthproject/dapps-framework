@@ -42,7 +42,18 @@ export const IntegrationsModule = {
   }),
 
   getters: {
-    getIntegrations: (state: IntegrationsState): string[] => state.integrations,
+    getIntegrations: (state: IntegrationsState): string[] => {
+      const integrations = localStorage.getItem("integrations");
+      let availableIntegrations: any;
+
+      if (integrations) {
+        availableIntegrations = JSON.parse(integrations);
+      }
+
+      return state.integrations.length
+        ? state.integrations
+        : availableIntegrations;
+    },
   },
 
   mutations: {

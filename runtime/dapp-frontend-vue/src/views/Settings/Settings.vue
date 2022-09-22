@@ -22,7 +22,7 @@
         </div>
       </div>
       <div
-        v-for="(integration, index) in storedIntegrations"
+        v-for="(integration, index) in getIntegrations"
         :key="integration + index"
         class="setting"
         @click="removeIntegration"
@@ -48,6 +48,12 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="feedback">
+        <h2>We appreciate your feedback!</h2>
+        <img :src="getImageUrl('feedback.png')" alt="Feedback" />
+        <p>Which are other applications you would like to connect to?</p>
+        <UiButton>Let us know</UiButton>
       </div>
     </div>
   </div>

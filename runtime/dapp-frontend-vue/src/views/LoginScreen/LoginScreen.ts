@@ -191,6 +191,10 @@ export default class LoginScreen extends MetaView {
         id: "tutorial_3",
         text: "Point your phone to the screen to capture the code",
       },
+      {
+        id: "tutorial_4",
+        text: "Confirm your connection  to the dApp on the mobile wallet.",
+      },
     ];
   }
 

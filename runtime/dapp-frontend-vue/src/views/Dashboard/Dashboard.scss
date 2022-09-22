@@ -26,7 +26,9 @@
   }
 
   .referral-box {
-    background-color: #01a75d;
+    background-image: url("../../assets/refer-bg.svg");
+    background-size: cover;
+    
     padding: 40px 120px;
     display: flex;
     align-items: center;
@@ -274,7 +276,9 @@
       max-width: 740px;
       width: 100%;
       padding: 96px 138px;
-      background-color: $base-grey-dark;
+      background-image: url("../../assets/no-integrations-bg.svg");
+      background-size: cover;
+      background-position: center center;
       border: 1px solid $button-text-dark;
       box-shadow: 5px 5px 0px $black;
       border-radius: 16px;
@@ -296,14 +300,14 @@
         font-weight: 600;
         font-size: 20px;
         line-height: 150%;
-        color: $white;
+        color: $button-text-dark;
       }
 
       &__description {
         font-weight: 400;
         font-size: 16px;
         line-height: 150%;
-        color: $white;
+        color: $button-text-dark;
         margin: 24px 0;
       }
 
@@ -317,7 +321,7 @@
         font-weight: 500;
         font-size: 12px;
         line-height: 130%;
-        color: $white;
+        color: $button-text-dark;
 
         a {
           text-decoration: underline;

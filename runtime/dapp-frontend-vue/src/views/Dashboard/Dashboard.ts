@@ -68,6 +68,8 @@ export default class Dashboard extends MetaView {
    */
   public currentUserAddress!: string;
 
+  public getIntegrations!: any[];
+
   public ref = "";
 
   /**
@@ -270,15 +272,6 @@ export default class Dashboard extends MetaView {
     ];
   }
 
-  get localIntegrations() {
-    const integrations = localStorage.getItem("integrations");
-    let availableIntegrations: any;
-    if (integrations) {
-      availableIntegrations = JSON.parse(integrations);
-    }
-    return availableIntegrations;
-  }
-
   /**
    *
    */
@@ -293,10 +286,8 @@ export default class Dashboard extends MetaView {
 
     const { state, code, scope } = this.$route.query;
 
-    const integrations = localStorage.getItem("integrations");
     let availableIntegrations: any;
-    if (integrations) {
-      availableIntegrations = JSON.parse(integrations);
+    if (this.getIntegrations) {
       this.$store.commit("integrations/setIntegrations", "strava");
       console.log(availableIntegrations);
     }

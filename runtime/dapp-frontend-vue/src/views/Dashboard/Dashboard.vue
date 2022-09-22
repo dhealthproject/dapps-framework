@@ -20,14 +20,12 @@
         description="We’ve integrated your account"
         @snackbar-close="hideSnackbar"
       /> -->
-      <h1 class="dapp-screen-dashboard__title" v-html="'Your dashboard'" />
-      <DividedScreen
-        v-if="
-          getIntegrations.length > 0 ||
-          (localIntegrations && localIntegrations.length > 0)
-        "
-        :gap="81"
-      >
+      <h1
+        v-if="getIntegrations"
+        class="dapp-screen-dashboard__title"
+        v-html="`${currentUserAddress} dashboard`"
+      />
+      <DividedScreen v-if="getIntegrations" :gap="81">
         <template v-slot:left>
           <Tabs :title="'Quick Stats'" :tab-list="tabs">
             <template v-slot:tabContent="props">
@@ -101,6 +99,7 @@
                     <img
                       :src="getImageUrl('copy-icon.svg')"
                       alt="Copy referral code"
+                      @click="copyToClipBoard($event, ref)"
                     />
                   </div>
                 </div>
