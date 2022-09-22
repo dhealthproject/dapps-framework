@@ -118,6 +118,13 @@ export default class Dashboard extends MetaView {
    */
   public getIntegrations!: string[];
 
+  /**
+   * This property contains refcode,
+   * that will be set to refCode input on the dashboard
+   * and copied to clipboard
+   *
+   * @var {string}
+   */
   public ref = "";
 
   /**
@@ -405,6 +412,7 @@ export default class Dashboard extends MetaView {
   }
 
   /**
+<<<<<<< HEAD
    * This component method is used to *redirect the user* to the OAuth
    * *authorization page* of a third-party data provider, e.g. Strava.
    *
@@ -429,6 +437,14 @@ export default class Dashboard extends MetaView {
     await this.$store.dispatch("oauth/callback", this.currentUserAddress);
   }
 
+  /**
+   * Method allows to copy refCode to user's clipboard
+   *
+   * @access public
+   * @param evt: any
+   * @param val: string
+   * @returns {void}
+   */
   copyToClipBoard(evt: any, val: string) {
     navigator.clipboard
       .writeText(val)

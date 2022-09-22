@@ -32,11 +32,26 @@ export interface ToastConfig {
   },
 })
 export default class Toast extends MetaView {
-  @Prop({ default: "" }) readonly icon?: string;
+  /**
+   * Prop that defines configuration of toast,
+   * example of usage: <br/><br/>
+   * `
+   * {
+    * title: "Success";
+    description: "Your action was completed successfully";
+    state: "success";
+    dismissTimeout: 10000;
+    icon: "icons/example.svg";
+    * }`
+   *
+   * @access public
+   * @var {ToastConfig}
+   */
   @Prop({ default: () => ({ dismissTimeout: 6000, state: "success" }) })
   readonly config?: any;
 
   mounted() {
+    /* Dismiss timeout after dismissTimeout passes, itially 6s */
     setTimeout(() => {
       this.$root.$emit("toast-close");
     }, this.config.dismissTimeout);

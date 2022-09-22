@@ -107,6 +107,12 @@ export default class Header extends MetaView {
     return !!this.$slots["back-button"];
   }
 
+  /**
+   * Computed that defines items for dropwdown,
+   * used in :items prop
+   *
+   * @access public
+   */
   get dropDownItems() {
     return [
       {
@@ -117,6 +123,12 @@ export default class Header extends MetaView {
     ];
   }
 
+  /**
+   * Watcher that sets overflowY hidden,
+   * to prevent scrolling of body when mobile menu opened
+   *
+   * @access public
+   */
   @Watch("isMenuOpen")
   onMenuChanged(newValue: boolean) {
     const body = document.getElementsByTagName("body")[0];

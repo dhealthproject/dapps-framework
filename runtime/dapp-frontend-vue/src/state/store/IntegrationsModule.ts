@@ -42,6 +42,9 @@ export const IntegrationsModule = {
   }),
 
   getters: {
+    /**
+     *
+     */
     getIntegrations: (state: IntegrationsState): string[] => {
       const integrations = localStorage.getItem("integrations");
       let availableIntegrations: any;
@@ -75,12 +78,18 @@ export const IntegrationsModule = {
       return state.integrations;
     },
 
+    /**
+     *
+     */
     assignIntegrations(state: IntegrationsState, payload: string[]) {
       state.integrations = payload;
     },
   },
 
   actions: {
+    /**
+     *
+     */
     async linkStrava(context: IntegrationsContext, payload: any) {
       const handler = new IntegrationsService();
       context.commit("setIntegrations", "strava");

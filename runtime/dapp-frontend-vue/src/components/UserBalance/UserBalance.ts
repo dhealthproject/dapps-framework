@@ -24,5 +24,10 @@ import "./UserBalance.scss";
   },
 })
 export default class UserBalance extends MetaView {
+  /**
+   * This property defines amount of balance that will be outputed
+   *
+   * @var {number}
+   */
   @Prop({ default: 0 }) userBalance?: number;
 }

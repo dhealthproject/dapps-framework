@@ -135,6 +135,7 @@ export default class App extends MetaView {
    *
    * @returns void
    * @access public
+   * @param modalConfig: any
    */
   showModal(modalConfig: any) {
     this.modalShown = true;
@@ -142,6 +143,13 @@ export default class App extends MetaView {
     console.log("MODAL CALLED", modalConfig);
   }
 
+  /**
+   * Being called on @toast event, displays toast with provided configuration
+   *
+   * @returns void
+   * @access public
+   * @param toastConfig: any
+   */
   showToast(toastConfig: any) {
     this.toastShown = true;
     this.toastConfig = toastConfig;

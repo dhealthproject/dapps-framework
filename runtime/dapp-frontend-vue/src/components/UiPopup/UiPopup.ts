@@ -71,6 +71,16 @@ export default class UiPopup extends MetaView {
   }
 
   /**
+   * Computed returns boolean according to value of all inputs in form
+   *
+   * @access protected
+   * @return boolean
+   */
+  protected get isFormFilled() {
+    return !Object.values(this.formFields).includes("");
+  }
+
+  /**
    * This method is available when `config.type === 'form'`
    * used for handling submitting of form
    * gets all inputs values, creates object where key is input name,
@@ -94,6 +104,15 @@ export default class UiPopup extends MetaView {
 
     if (this.config && this.config.submitCallback) {
       this.config.submitCallback(formValues);
+    }
+  }
+
+  mounted() {
+    // if fields property exists - set all input values to ""
+    if (this.config?.fields) {
+      this.config.fields.forEach((field) => {
+        Vue.set(this.formFields, field.name, "");
+      });
     }
   }
 }
