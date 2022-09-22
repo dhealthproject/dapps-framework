@@ -19,6 +19,19 @@ import "./ProgressBar.scss";
 
 @Component({})
 export default class ProgressBar extends MetaView {
+  /**
+   * Prop that defines whole amount of items in progress bar
+   *
+   * @access public
+   * @var {number}
+   */
   @Prop({ default: 0 }) steps?: number;
+
+  /**
+   * Prop that defines amount of items that are completed
+   *
+   * @access public
+   * @var {number}
+   */
   @Prop({ default: 0 }) completedSteps?: number;
 }

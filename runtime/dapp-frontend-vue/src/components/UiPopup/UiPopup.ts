@@ -85,10 +85,23 @@ export default class UiPopup extends MetaView {
     }
   }
 
+  /**
+   * Computed returns boolean according to value of all inputs in form
+   *
+   * @access protected
+   * @return boolean
+   */
   protected get isFormFilled() {
     return !Object.values(this.formFields).includes("");
   }
 
+  /**
+   * Method that sets fields of form fields object by input names
+   *
+   * @access protected
+   * @param event: any
+   * @return void
+   */
   protected handleInput(event: any) {
     console.log("handleInput");
 
@@ -97,6 +110,7 @@ export default class UiPopup extends MetaView {
   }
 
   mounted() {
+    // if fields property exists - set all input values to ""
     if (this.config?.fields) {
       this.config.fields.forEach((field) => {
         Vue.set(this.formFields, field.name, "");

@@ -25,6 +25,12 @@ export class IntegrationsService extends BackendService {
     return new HttpRequestHandler();
   }
 
+  /**
+   * This method implements /link call for
+   * strava api to make sure that current user will be able to work with strava activities
+   *
+   * @access protected
+   */
   public async linkStrava(params: any) {
     return await this.handler.call(
       this.getUrl("oauth/strava/callback"),

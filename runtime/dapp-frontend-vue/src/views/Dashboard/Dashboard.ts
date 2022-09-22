@@ -68,8 +68,22 @@ export default class Dashboard extends MetaView {
    */
   public currentUserAddress!: string;
 
-  public getIntegrations!: any[];
+  /**
+   * This property contains available
+   * user integrations, getting populated with Vuex Store
+   *
+   * @access public
+   * @var {string[]}
+   */
+  public getIntegrations!: string[];
 
+  /**
+   * This property contains refcode,
+   * that will be set to refCode input on the dashboard
+   * and copied to clipboard
+   *
+   * @var {string}
+   */
   public ref = "";
 
   /**
@@ -300,12 +314,24 @@ export default class Dashboard extends MetaView {
     this.ref = "JOINFIT22";
   }
 
+  /**
+   * Redirect user to backend get url that redirects user to strava authorization page
+   *
+   * @access public
+   * @returns {void}
+   */
   async integrateStrava() {
     window.location.href =
       process.env.VUE_APP_BACKEND_URL +
       `/oauth/strava/authorize?&dhealthAddress=${this.currentUserAddress}`;
   }
 
+  /**
+   * This method triggers action which calls linkStrava() method
+   *
+   * @access public
+   * @returns {Promise<void>}
+   */
   async triggerLinkStrava(
     state: RouteParam,
     code: RouteParam,
@@ -326,6 +352,14 @@ export default class Dashboard extends MetaView {
     });
   }
 
+  /**
+   * Method allows to copy refCode to user's clipboard
+   *
+   * @access public
+   * @param evt: any
+   * @param val: string
+   * @returns {void}
+   */
   copyToClipBoard(evt: any, val: string) {
     navigator.clipboard
       .writeText(val)

@@ -29,8 +29,19 @@ import "./Settings.scss";
   },
 })
 export default class Settings extends MetaView {
+  /**
+   * This property contains Vuex Getter,
+   * Store field gets populated on Dashboard mounted() hook or from localstorage directly
+   *
+   * @var {any}
+   */
   public getIntegrations: any;
 
+  /**
+   * This computed returns available integrations, currently available ony strava
+   *
+   * @access public
+   */
   get integrationsList() {
     return [
       {
@@ -42,6 +53,12 @@ export default class Settings extends MetaView {
     ];
   }
 
+  /**
+   * This method triggers Store acion which clears integrations state field and recets it payload(currently []), clears localStorage
+   *
+   * @access public
+   * @return void
+   */
   removeIntegration() {
     localStorage.removeItem("integrations");
     this.$store.commit("integrations/assignIntegrations", []);
