@@ -14,7 +14,7 @@ import { Component, Prop } from "vue-property-decorator";
 import { MetaView } from "@/views/MetaView";
 
 @Component({})
-export default class HamburgerButton extends MetaView {
+export default class MobileNavigationButton extends MetaView {
   @Prop({ default: false }) isOpen?: boolean;
 
   get iconPath() {

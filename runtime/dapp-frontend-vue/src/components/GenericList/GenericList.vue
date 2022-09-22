@@ -20,7 +20,7 @@
       >
         <div
           v-for="(item, index) in items"
-          :key="index + item"
+          :key="index"
           class="dapp-list__custom__item"
         >
           <slot name="itemContent" :itemData="item" />
@@ -30,7 +30,7 @@
       <div v-else class="dapp-list__default flex flex-row">
         <div
           v-for="(item, index) in items"
-          :key="index + item.name"
+          :key="index + `${item.name}`"
           class="dapp-friends-list__item text-center mx-[10px]"
         >
           <img

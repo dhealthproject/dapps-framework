@@ -23,7 +23,7 @@
                 <ElevateLogo :width="122" theme="dark" />
               </div>
               <div class="flex-auto text-right">
-                <HamburgerButton
+                <MobileNavigationButton
                   :is-open="isMenuOpen"
                   @menu-toggle="isMenuOpen = $event"
                   class="dapp-screen-header__hamburger"
@@ -94,7 +94,7 @@
         <ElevateLogo :width="138" theme="dark" />
       </div>
       <nav class="text-right p-0">
-        <HamburgerButton
+        <MobileNavigationButton
           :is-open="isMenuOpen"
           @menu-toggle="isMenuOpen = $event"
           class="dapp-screen-header__hamburger"
