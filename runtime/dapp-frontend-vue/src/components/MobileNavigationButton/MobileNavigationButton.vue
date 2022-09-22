@@ -11,9 +11,12 @@
 -->
 
 <template>
-  <div @click="$emit('menu-toggle', !isOpen)" class="cursor-pointer">
+  <div
+    @click="$emit('menu-toggle', !isOpen)"
+    class="dapp-mobile-navigation-button cursor-pointer"
+  >
     <img :src="getImageUrl(iconPath)" alt="Menu" />
   </div>
 </template>
 
-<script lang="ts" src="./HamburgerButton.ts"></script>
+<script lang="ts" src="./MobileNavigationButton.ts"></script>

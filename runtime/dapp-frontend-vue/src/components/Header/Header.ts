@@ -19,7 +19,7 @@ import { MetaView } from "@/views/MetaView";
 
 // child components
 import ElevateLogo from "../ElevateLogo/ElevateLogo.vue";
-import HamburgerButton from "../HamburgerButton/HamburgerButton.vue";
+import MobileNavigationButton from "../MobileNavigationButton/MobileNavigationButton.vue";
 import Dropdown from "../Dropdown/Dropdown.vue";
 import UserBalance from "../UserBalance/UserBalance.vue";
 
@@ -37,7 +37,7 @@ export interface HeaderLink {
     ElevateLogo,
     InlineSvg,
     DappButton,
-    HamburgerButton,
+    MobileNavigationButton,
     Dropdown,
     UserBalance,
   },
