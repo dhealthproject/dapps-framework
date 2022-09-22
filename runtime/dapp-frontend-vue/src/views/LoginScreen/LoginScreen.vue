@@ -40,7 +40,7 @@
       <div class="qr-wrapper">
         <DividedScreen :gap="32">
           <template v-slot:left>
-            <DappQR :qrCode="createLoginQRCode()" />
+            <DappQR :qrCode="createLoginQRCode()" class="qr-code" />
           </template>
           <template v-slot:right>
             <span class="qr-wrapper__title">In 4 easy steps...</span>
@@ -62,8 +62,8 @@
         </DividedScreen>
       </div>
       <div class="on-mobile">
-        <span class="on-mobile__title">Currently on a mobile device?</span>
-        <UiButton :accent="true">Connect with dHealth Wallet</UiButton>
+        <!-- <span class="on-mobile__title">Currently on a mobile device?</span>
+        <UiButton :accent="true">Connect with dHealth Wallet</UiButton> -->
         <p class="on-mobile__link">
           If you’re new to dHealth Network,
           <a target="_blank" href="#">download dHealth Signer App</a>

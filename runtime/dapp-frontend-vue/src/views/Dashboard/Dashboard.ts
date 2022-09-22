@@ -15,7 +15,6 @@ import { DappButton } from "@dhealth/components";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
-import { SnackBarConfig } from "@/models/SnackBarConfig";
 import {
   CarouselItem,
   CarouselConfig,
@@ -104,6 +103,20 @@ export default class Dashboard extends MetaView {
    * @var {Translations}
    */
   public i18n!: Translations;
+
+  /**
+   * This property contains the list of integrations for current user.
+   * This field is populated using the Vuex Store after a successful
+   * setup of the oauth module.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {string[]}
+   */
+  public getIntegrations!: string[];
 
   public ref = "";
 

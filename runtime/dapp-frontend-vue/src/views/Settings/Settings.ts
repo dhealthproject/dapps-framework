@@ -15,10 +15,14 @@ import { mapGetters } from "vuex";
 // internal dependencies
 import { Translations } from "@/kernel/i18n/Translations";
 import { MetaView } from "@/views/MetaView";
+import UiButton from "@/components/UiButton/UiButton.vue";
 
 import "./Settings.scss";
 
 @Component({
+  components: {
+    UiButton,
+  },
   computed: {
     ...mapGetters({
       i18n: "app/i18n",
@@ -40,6 +44,20 @@ export default class Settings extends MetaView {
    * @var {Translations}
    */
   public i18n!: Translations;
+
+  /**
+   * This property contains the list of integrations for current user.
+   * This field is populated using the Vuex Store after a successful
+   * setup of the oauth module.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {string[]}
+   */
+  public getIntegrations!: string[];
 
   /**
    * This computed property defines a list of *integrated* OAuth providers.
