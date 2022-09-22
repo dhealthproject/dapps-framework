@@ -15,7 +15,6 @@ import { Cron } from "@nestjs/schedule";
 import {
   Address,
   AggregateTransactionInfo,
-  MessageType,
   Order,
   Page,
   Transaction as SdkTransaction,
@@ -23,12 +22,15 @@ import {
   TransactionInfo,
   TransactionType,
   TransferTransaction,
+  UInt64,
 } from "@dhealth/sdk";
+import { ObjectLiteral } from "@dhealth/contracts";
 
 // internal dependencies
+import { AssetParameters } from "../../../common/models/AssetsConfig";
+import { StateDocument, StateQuery } from "../../../common/models/StateSchema";
 import { StateService } from "../../../common/services/StateService";
 import { NetworkService } from "../../../common/services/NetworkService";
-import { StateDocument, StateQuery } from "../../../common/models/StateSchema";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
 import { TransactionsService } from "../../../discovery/services/TransactionsService";
 import { getTransactionType } from "../../../discovery/models/TransactionTypes";
@@ -39,6 +41,7 @@ import {
   TransactionQuery,
 } from "../../models/TransactionSchema";
 import { TransactionDiscoveryStateData } from "../../models/TransactionDiscoveryStateData";
+import { AssetDTO } from "../../models/AssetDTO";
 
 /**
  * @interface DiscoverTransactionsCommandOptions
@@ -95,6 +98,35 @@ export interface DiscoverTransactionsCommandOptions
  */
 @Injectable()
 export class DiscoverTransactions extends DiscoveryCommand {
+  /**
+   * Memory store for the *fees asset configuration* object. This
+   * object defines which assets are *discoverable* on dHealth Network
+   * and used to pay for *transaction fees*.
+   * <br /><br />
+   * This asset configuration is referred to as the **base asset**
+   * used in a specific dApp. The reason for this is that transactions
+   * on the underlying dHealth Network are always paid with one and the
+   * same asset.
+   *
+   * @access protected
+   * @var {DiscoverableAssetsMap}
+   */
+  //protected baseAsset: AssetParameters;
+
+  /**
+   * Memory store for the *earn asset configuration* object. This
+   * object defines which assets are *discoverable* on dHealth Network
+   * and used to *tokenize a particular operation*.
+   * <br /><br />
+   * This asset configuration is referred to as the **earn asset**
+   * used in a specific dApp. The reason for this is that individual
+   * dApps may want their end-users to earn a custom asset, or not.
+   *
+   * @access protected
+   * @var {DiscoverableAssetsMap}
+   */
+  //protected earnAsset: AssetParameters;
+
   /**
    * Memory store for *all* transactions processed in one run of this
    * command. Note that it contains **only transfer** transactions as
@@ -154,6 +186,10 @@ export class DiscoverTransactions extends DiscoveryCommand {
     // sets default state data
     this.lastPageNumber = 1;
     this.totalNumberOfTransactions = 0;
+
+    // setup assets discovery
+    //this.baseAsset = this.configService.get<AssetParameters>("assets.base");
+    //this.earnAsset = this.configService.get<AssetParameters>("assets.earn");
   }
 
   /**
@@ -463,10 +499,12 @@ export class DiscoverTransactions extends DiscoveryCommand {
         signerPublicKey: this.extractSignerPublicKey(transaction),
         transactionType: this.extractTransactionType(transaction),
         transactionMessage: this.extractTransactionMessage(transaction),
+        transactionAssets: this.extractAssets(transaction),
         signature: this.extractTransactionSignature(transaction),
         encodedBody: this.extractTransactionBody(transaction),
         creationBlock: this.extractTransactionBlock(transaction),
       });
+
       nCreated++;
     }
 
@@ -806,5 +844,25 @@ export class DiscoverTransactions extends DiscoveryCommand {
 
     // db field transactionMessage is nullable
     return null;
+  }
+
+  /**
+   * Helper method to extract the assets attached in a `Transaction`
+   * instance.
+   *
+   * @param {Transaction} transaction
+   * @returns {string}
+   */
+  protected extractAssets(transaction: SdkTransaction): ObjectLiteral[] {
+    const transfer = transaction as TransferTransaction;
+    return transfer.mosaics
+      .filter((m) => !m.amount.equals(UInt64.fromUint(0)))
+      .map(
+        (m) =>
+          ({
+            mosaicId: m.id.toHex(),
+            amount: m.amount.compact(),
+          } as ObjectLiteral),
+      );
   }
 }

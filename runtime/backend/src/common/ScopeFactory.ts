@@ -23,6 +23,7 @@ import networkConfigLoader from "../../config/network";
 import securityConfigLoader from "../../config/security";
 import processorConfigLoader from "../../config/processor";
 import oauthConfigLoader from "../../config/oauth";
+import assetsConfigLoader from "../../config/assets";
 
 /**
  * @label COMMON
@@ -82,6 +83,7 @@ export class ScopeFactory {
           securityConfigLoader,
           processorConfigLoader,
           oauthConfigLoader,
+          assetsConfigLoader,
         ],
         isGlobal: true,
         envFilePath: [".env", ".env-sample"],

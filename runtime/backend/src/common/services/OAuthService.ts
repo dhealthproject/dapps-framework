@@ -79,9 +79,15 @@ export class OAuthService {
   }
 
   /**
+   * This method reads an OAuth provider configuration
+   * from the runtime configuration file `config/oauth.ts`
+   * and returns a {@link OAuthProviderParameters} object.
    *
+   * @access public
+   * @param   {string}    providerName   Contains the identifier of the OAuth Provider, e.g. "strava".
+   * @returns {OAuthProviderParameters}
    */
-  private getProvider(providerName: string): OAuthProviderParameters {
+  public getProvider(providerName: string): OAuthProviderParameters {
     // reads OAuth provider from configuration
     const provider = this.configService.get<OAuthProviderParameters>(
       `providers.${providerName}`,

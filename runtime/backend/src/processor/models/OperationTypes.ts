@@ -12,9 +12,23 @@ import { PlainMessage } from "@dhealth/sdk";
 import { Contract, Factory } from "@dhealth/contracts";
 
 /**
+ * @function getOperation
+ * @description This helper function parses a transfer transaction
+ * message into an *operation*, a.k.a "a contract".
+ * <br /><br />
+ * For purposes of backwards compatibility, this function permits
+ * to parse **Health2Earn v0** messages as well and maps them to
+ * the `elevate:earn` operation.
+ * <br /><br />
+ * Note that this method will return `null` given a plain
+ * message that cannot be parsed into a contracts object.
  *
+ * @param   {string|PlainMessage}   plainMessage    The contract's JSON payload.
+ * @returns {Contract|null}
  */
-export const getOperation = (plainMessage: PlainMessage | string): Contract => {
+export const getOperation = (
+  plainMessage: PlainMessage | string,
+): Contract | null => {
   // flatten plain message to a string
   const plain: string =
     plainMessage instanceof PlainMessage ? plainMessage.payload : plainMessage;
@@ -60,7 +74,12 @@ export const getOperation = (plainMessage: PlainMessage | string): Contract => {
  * For purposes of backwards compatibility, this function permits
  * to parse **Health2Earn v0** messages as well and maps them to
  * the `elevate:earn` operation type.
+ * <br /><br />
+ * Note that this method will return `"elevate:base"` given a plain
+ * message that cannot be parsed into a contracts object.
  *
+ * @param   {string|PlainMessage}   plainMessage    The contract's JSON payload.
+ * @returns {string}
  * @since v0.3.0
  */
 export const getOperationType = (
@@ -75,11 +94,7 @@ export const getOperationType = (
     return "elevate:base";
   }
 
+  // tries parsing a contract from the message
   const operation: Contract = getOperation(plainMessage);
-
-  // @todo add `elevate:referral` and `elevate:welcome`
-  // @todo make sure to cover every type of contract that could be passed here
-  // @todo the above must be *thoroughly tested* to make sure
-
   return operation === null ? "elevate:base" : operation.signature;
 };

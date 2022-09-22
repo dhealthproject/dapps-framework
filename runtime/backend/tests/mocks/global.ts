@@ -42,6 +42,8 @@ const mockUnsignedTransferTransaction =
   + "59A422A39FC4E03940420F0000000000007468697320697320746865206D6573"
   + "73616765";
 
+const mockMosaicId = "fake-mosaic-id";
+
 // Mocks a **transaction** factory for internal
 // integrations of `@dhealth/sdk` and working with
 // signatures, payloads and serialized transactions.
@@ -55,6 +57,15 @@ export const createTransaction = (
   type,
   serialize: jest.fn().mockReturnValue(mockUnsignedTransferTransaction),
   message: { payload: "fakePayload" },
+  mosaics: [
+    {
+      id: { toHex: jest.fn().mockReturnValue(mockMosaicId) },
+      amount: {
+        compact: jest.fn(),
+        equals: jest.fn().mockReturnValue(false),
+      },
+    }
+  ]
 });
 
 // Mocks a **model** class for nestjs internal

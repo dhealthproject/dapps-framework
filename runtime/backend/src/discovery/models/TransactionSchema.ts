@@ -14,6 +14,7 @@ import {
 } from "@dhealth/sdk";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { ObjectLiteral } from "@dhealth/contracts";
 
 // internal dependencies
 import { Documentable } from "../../common/concerns/Documentable";
@@ -140,6 +141,20 @@ export class Transaction extends Transferable<TransactionDTO> {
    */
   @Prop({ index: true, nullable: true })
   public transactionMessage?: string;
+
+  /**
+   * This is the contract payload as presented inside a dHealth
+   * Transfer Transaction. Typically, the contract payload is made
+   * of the `contract` and `version` fields, adding to it the body
+   * of the contract instance, i.e. the `Auth` contract would here
+   * also include a `challenge` field.
+   *
+   * @example `{ contract: "elevate:auth", version: 1, challenge: "abcdef12" }`
+   * @access public
+   * @var {string}
+   */
+  @Prop({ required: true, type: [Object] })
+  public transactionAssets: ObjectLiteral[];
 
   /**
    * This is the transaction signature as defined by dHealth Network. It

@@ -500,20 +500,4 @@ export class ProcessOperations extends ProcessorCommand {
   protected extractTransactionBlock(transaction: TransactionDocument): number {
     return transaction.creationBlock;
   }
-
-  /**
-   * Helper method to extract the contract of a mongo document
-   * in the `transactions` collection.
-   * <br /><br />
-   * WARNING: This method does not execute *any* error handling around
-   * contract payloads validation. It is important to note this assumes
-   * that the {@link transaction} parameter contains a **validated** JSON
-   * contract payload.
-   *
-   * @param   {TransactionDocument}   transaction   The transaction document of which the "transactionMessage" field contains a contract payload.
-   * @returns {ObjectLiteral}   A *contract payload* using type {@link ObjectLiteral}.
-   */
-  protected extractContract(transaction: TransactionDocument): Contract {
-    return Factory.createFromJSON(transaction.transactionMessage);
-  }
 }
