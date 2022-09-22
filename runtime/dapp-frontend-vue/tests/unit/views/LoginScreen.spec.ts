@@ -28,6 +28,17 @@ const componentOptions = {
   mocks: {
     getImageUrl,
     $route: { params: {} },
+    $router: {
+      push: jest.fn(),
+    },
+    $store: {
+      dispatch: jest.fn(),
+      commit: jest.fn(),
+      getters: {
+        "auth/isAuthenticated": true,
+        "auth/getChallenge": "rwrwer",
+      },
+    },
   },
 };
 
