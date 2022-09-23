@@ -105,7 +105,7 @@ describe("discovery/DiscoverAccounts", () => {
 
   let mockDate: Date;
   beforeEach(async () => {
-    mockDate = new Date(1212, 1, 1);
+    mockDate = new Date(2022, 1, 1); // UTC 1643670000000
     jest.useFakeTimers("modern");
     jest.setSystemTime(mockDate);
 
@@ -213,7 +213,7 @@ describe("discovery/DiscoverAccounts", () => {
       expect(configServiceGetCall).toHaveBeenCalledTimes(2);
       expect(configServiceGetCall).toHaveBeenCalledWith("dappPublicKey");
       expect(configServiceGetCall).toHaveBeenCalledWith("network.networkIdentifier");
-      expect((service as any).lastExecutedAt).toBe(-23917532800000);
+      expect((service as any).lastExecutedAt).toBe(1643670000000);
       expect(superRun).toHaveBeenNthCalledWith(
         1,
         [],
@@ -353,7 +353,7 @@ describe("discovery/DiscoverAccounts", () => {
       ));
     });
 
-    it("should get the latest transactions page number from state date if available", async () => {
+    it("should read last page number from state data if available", async () => {
       // prepare
       const lastPageNumber = 2;
       (service as any).state = { data: { lastPageNumber } };
@@ -365,10 +365,10 @@ describe("discovery/DiscoverAccounts", () => {
       });
 
       // assert
-      expect((service as any).lastPageNumber).toBe(lastPageNumber + 10);
+      expect((service as any).lastPageNumber).toBe(lastPageNumber);
     });
 
-    it("should reset last page number if it doesn't match the total number of transactions", async () => {
+    it("should reset last page number given sync state reached", async () => {
       // prepare
       const lastPageNumber = 3;
       (service as any).state = { data: { lastPageNumber } };
@@ -391,8 +391,8 @@ describe("discovery/DiscoverAccounts", () => {
 
       // assert
       expect(stateServiceFindOneCall).toHaveBeenCalledTimes(1);
-      expect(transactionsServiceFindCall).toHaveBeenCalledTimes(10);
-      expect((service as any).lastPageNumber).toBe(12);
+      expect(transactionsServiceFindCall).toHaveBeenCalledTimes(1);
+      expect((service as any).lastPageNumber).toBe(2);
     });
 
     it("should check for the existence of discovered address in mongo", async () => {
@@ -450,7 +450,7 @@ describe("discovery/DiscoverAccounts", () => {
       })
 
       // assert
-      expect(accountsServiceExistsCall).toHaveBeenCalledTimes(3);
+      expect(accountsServiceExistsCall).toHaveBeenCalledTimes(1); // addresses are unique
       expect(createCall).toHaveBeenCalledTimes(0);
     });
   });

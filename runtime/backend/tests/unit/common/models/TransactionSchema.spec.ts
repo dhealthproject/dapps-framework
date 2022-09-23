@@ -12,17 +12,17 @@ import { TransactionDTO } from "@/discovery/models/TransactionDTO";
 import { TransactionMapping } from "@dhealth/sdk";
 
 // internal dependencies
-import { Transaction, TransactionDocument } from "../../../../src/discovery/models/TransactionSchema";
+import { Transaction, TransactionDocument } from "../../../../src/common/models/TransactionSchema";
 
 describe("discovery/AccountIntegrationSchema", () => {
   describe("get toQuery() -->", () => {
     it("should add properties from schema to query", () => {
       // prepare
       const transaction = new Transaction();
-      transaction.signerAddress = "test-signerAddress";
-      transaction.recipientAddress = "test-recipientAddress";
-      transaction.transactionHash = "test-transactionHash";
-      transaction.transactionMessage = "test-transactionMessage";
+      (transaction as any).signerAddress = "test-signerAddress";
+      (transaction as any).recipientAddress = "test-recipientAddress";
+      (transaction as any).transactionHash = "test-transactionHash";
+      (transaction as any).transactionMessage = "test-transactionMessage";
 
       // act
       const result = transaction.toQuery;
