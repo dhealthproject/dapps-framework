@@ -37,6 +37,11 @@ jest.mock("../../../src/discovery/modules/TransactionsModule", () => {
   return { TransactionsModule: TransactionsModuleMock };
 });
 
+const AssetsModuleMock: any = jest.fn();
+jest.mock("../../../src/discovery/modules/AssetsModule", () => {
+  return { AssetsModule: AssetsModuleMock };
+});
+
 const DiscoveryModuleMock: any = jest.fn();
 jest.mock("../../../src/discovery/DiscoveryModule", () => {
   return { DiscoveryModule: DiscoveryModuleMock };
@@ -65,6 +70,11 @@ jest.mock("../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCo
 const DiscoverTransactionsCommandMock: any = jest.fn();
 jest.mock("../../../src/discovery/schedulers/DiscoverTransactions/DiscoverTransactionsCommand", () => {
   return { DiscoverTransactionsCommand: DiscoverTransactionsCommandMock };
+});
+
+const DiscoverAssetsCommandMock: any = jest.fn();
+jest.mock("../../../src/discovery/schedulers/DiscoverAssets/DiscoverAssetsCommand", () => {
+  return { DiscoverAssetsCommand: DiscoverAssetsCommandMock };
 });
 
 const ProcessOperationsCommandMock: any = jest.fn();

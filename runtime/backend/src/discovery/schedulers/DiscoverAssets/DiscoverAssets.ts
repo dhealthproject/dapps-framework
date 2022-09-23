@@ -19,42 +19,43 @@ import { QueryParameters } from "../../../common/concerns/Queryable";
 import { StateService } from "../../../common/services/StateService";
 import { StateDocument, StateQuery } from "../../../common/models/StateSchema";
 import { NetworkService } from "../../../common/services/NetworkService";
-import { AccountsService } from "../../../common/services/AccountsService";
-import {
-  Account,
-  AccountDocument,
-  AccountModel,
-  AccountQuery,
-} from "../../../common/models/AccountSchema";
-import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
 import { TransactionsService } from "../../../discovery/services/TransactionsService";
-import { AccountDiscoveryStateData } from "../../models/AccountDiscoveryStateData";
 import {
   TransactionDocument,
   TransactionQuery,
 } from "../../models/TransactionSchema";
+import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
+import {
+  Asset,
+  AssetDocument,
+  AssetModel,
+  AssetQuery,
+} from "../../../discovery/models/AssetSchema";
+import { AssetDTO } from "../../../discovery/models/AssetDTO";
+import { AssetsService } from "../../../discovery/services/AssetsService";
+import { AssetDiscoveryStateData } from "../../models/AssetDiscoveryStateData";
 
 /**
- * @class DiscoverAccounts
- * @description The implementation for the accounts discovery
+ * @class DiscoverAssets
+ * @description The implementation for the assets discovery
  * scheduler. Contains source code for the execution logic of a
- * command with name: `discovery:DiscoverAccounts`.
+ * command with name: `discovery:DiscoverAssets`.
  *
  * @todo This discovery should use a specific **discovery**
  * @todo config field instead of dappPublicKey
  * @todo (similar to getNextSource in DiscoverTransactions)
- * @since v0.1.0
+ * @since v0.3.2
  */
 @Injectable()
-export class DiscoverAccounts extends DiscoveryCommand {
+export class DiscoverAssets extends DiscoveryCommand {
   /**
-   * Memory store of addresses that have been discovered as recipient
+   * Memory store of assets that have been discovered as mosaics
    * of transfer transactions issued from the dApp's main account.
    *
    * @access protected
-   * @var {string[]}
+   * @var {AssetDTO[]}
    */
-  protected discoveredAddresses: string[] = [];
+  protected discoveredAssets: AssetDTO[] = [];
 
   /**
    * Memory store for the last page number being read. This is used
@@ -78,17 +79,19 @@ export class DiscoverAccounts extends DiscoveryCommand {
    * The constructor of this class.
    * Params will be automatically injected upon called.
    *
+   * @param {AssetModel}   model
    * @param {ConfigService}   configService
    * @param {StateService}   statesService
    * @param {NetworkService}  networkService
-   * @param {AccountsService} accountsService
+   * @param {AssetsService} assetsService
+   * @param {TransactionsService} transactionsService
    */
   constructor(
-    @InjectModel(Account.name) protected readonly model: AccountModel,
+    @InjectModel(Asset.name) protected readonly model: AssetModel,
     protected readonly configService: ConfigService,
     protected readonly statesService: StateService,
     protected readonly networkService: NetworkService,
-    protected readonly accountsService: AccountsService,
+    protected readonly assetsService: AssetsService,
     protected readonly transactionsService: TransactionsService,
   ) {
     // required super call
@@ -114,7 +117,7 @@ export class DiscoverAccounts extends DiscoveryCommand {
    * @returns {string}
    */
   protected get command(): string {
-    return `DiscoverAccounts`;
+    return `DiscoverAssets`;
   }
 
   /**
@@ -148,11 +151,11 @@ export class DiscoverAccounts extends DiscoveryCommand {
    * @access protected
    * @returns {StateData}
    */
-  protected getStateData(): AccountDiscoveryStateData {
+  protected getStateData(): AssetDiscoveryStateData {
     return {
       lastPageNumber: this.lastPageNumber,
       lastExecutedAt: this.lastExecutedAt,
-    } as AccountDiscoveryStateData;
+    } as AssetDiscoveryStateData;
   }
 
   /**
@@ -167,6 +170,7 @@ export class DiscoverAccounts extends DiscoveryCommand {
    * <br /><br />
    * This scheduler is registered to run **every 2 minutes**.
    *
+   * @todo This discovery should use a specific **discovery** config field instead of dappPublicKey
    * @see BaseCommand
    * @access public
    * @async
@@ -174,9 +178,10 @@ export class DiscoverAccounts extends DiscoveryCommand {
    * @param   {BaseCommandOptions}  options
    * @returns {Promise<void>}
    */
-  @Cron("0 */2 * * * *", { name: "discovery:cronjobs:accounts" })
+  @Cron("0 */2 * * * *", { name: "discovery:cronjobs:assets" })
   public async runAsScheduler(): Promise<void> {
-    // accounts discovery cronjob always read the dApp's main account
+    // CAUTION:
+    // assets discovery cronjob always read the dApp's main account
     const dappPubKey = this.configService.get<string>("dappPublicKey");
     const networkType = this.configService.get<NetworkType>(
       "network.networkIdentifier",
@@ -194,19 +199,19 @@ export class DiscoverAccounts extends DiscoveryCommand {
     // executes the actual command logic (this will call discover())
     await super.run([], {
       source: publicAcct.address.plain(),
-      debug: false,
+      debug: true,
     } as DiscoveryCommandOptions);
   }
 
   /**
    * This method implements the discovery logic for this command
    * that will find relevant *subjects*. Subjects in this command
-   * are **accounts** that have previously *received* a transaction
-   * from the dApp's main account.
+   * are **assets** that are attached to a transfer transaction
+   * and sent to an end-user from the dApp's main account.
    * <br /><br />
    * Discovery is done in 2 steps as described below:
-   * - Step 1: Reads a batch of 1000 transactions and discover addresses
-   * - Step 2: Find or create a corresponding document in `accounts`
+   * - Step 1: Reads a batch of 1000 transactions and discover assets
+   * - Step 2: Find or create a corresponding document in `assets`
    *
    * @access public
    * @async
@@ -216,9 +221,7 @@ export class DiscoverAccounts extends DiscoveryCommand {
   public async discover(options?: DiscoveryCommandOptions): Promise<void> {
     // display starting moment information in debug mode
     if (options.debug && !options.quiet) {
-      this.debugLog(
-        `Starting accounts discovery for source "${options.source}"`,
-      );
+      this.debugLog(`Starting assets discovery for source "${options.source}"`);
     }
 
     // get the latest transactions page number
@@ -245,7 +248,7 @@ export class DiscoverAccounts extends DiscoveryCommand {
 
     // if we reached the end of transactions, we want
     // to continue *only* with recent transactions in
-    // the next runs of accounts discovery
+    // the next runs of assets discovery
     if (
       countTransactions > 0 &&
       this.lastPageNumber * 100 > countTransactions
@@ -256,12 +259,12 @@ export class DiscoverAccounts extends DiscoveryCommand {
     // display debug information about configuration
     if (options.debug && !options.quiet) {
       this.debugLog(
-        `Last accounts discovery ended with page: "${this.lastPageNumber}"`,
+        `Last assets discovery ended with page: "${this.lastPageNumber}"`,
       );
     }
 
     // (1) each round queries a page of 100 transactions *from the database*
-    // and discovers addresses that are involved in said transactions
+    // and discovers assets that are attached in said transactions
     for (
       let i = this.lastPageNumber, max = this.lastPageNumber + 10;
       i < max;
@@ -278,44 +281,68 @@ export class DiscoverAccounts extends DiscoveryCommand {
         ),
       );
 
-      // proceeds to extracting accounts from transactions
-      this.discoveredAddresses = this.discoveredAddresses
+      // proceeds to extracting assets from transactions
+      this.discoveredAssets = this.discoveredAssets
         .concat(
-          transactions.data.map((t: TransactionDocument) => t.recipientAddress),
+          transactions.data
+            .map((t: TransactionDocument) =>
+              t.transactionAssets.map(
+                (a) =>
+                  ({
+                    ...a,
+                    assetId: a.mosaicId,
+                    transactionHash: t.transactionHash,
+                    userAddress:
+                      t.transactionMode === "outgoing"
+                        ? t.recipientAddress
+                        : t.signerAddress,
+                    creationBlock: t.creationBlock,
+                  } as AssetDTO),
+              ),
+            )
+            .reduce((p, c) => c, []),
         )
         .filter((v, i, s) => s.indexOf(v) === i); // unique
     }
 
     if (options.debug && !options.quiet) {
       this.debugLog(
-        `Found ${this.discoveredAddresses.length} new accounts from transactions`,
+        `Found ${this.discoveredAssets.length} new asset entries from transactions`,
       );
     }
 
-    // (2) each round creates or finds 1 `accounts` document
+    // (2) each round creates or finds 1 `assets` document
     let nSkipped = 0;
-    for (let i = 0, max = this.discoveredAddresses.length; i < max; i++) {
+    for (let i = 0, max = this.discoveredAssets.length; i < max; i++) {
+      const assetEntry: AssetDTO = this.discoveredAssets[i];
+
       // retrieve existence information
-      const documentExists: boolean = await this.accountsService.exists(
-        new AccountQuery({
-          address: this.discoveredAddresses[i],
-        } as AccountDocument),
+      const documentExists: boolean = await this.assetsService.exists(
+        new AssetQuery({
+          transactionHash: assetEntry.transactionHash,
+          userAddress: assetEntry.userAddress,
+          mosaicId: assetEntry.assetId,
+        } as AssetDocument),
       );
 
-      // skip update for known accounts
+      // skip update for known assets
       if (true === documentExists) {
         nSkipped++;
         continue;
       }
 
-      // store the discovered address in `accounts`
+      // store the discovered asset in `assets`
       await this.model.create({
-        address: this.discoveredAddresses[i],
+        transactionHash: assetEntry.transactionHash,
+        userAddress: assetEntry.userAddress,
+        mosaicId: assetEntry.assetId,
+        amount: assetEntry.amount,
+        creationBlock: assetEntry.creationBlock,
       });
     }
 
     if (options.debug && !options.quiet) {
-      this.debugLog(`Skipped ${nSkipped} account(s) that already exist`);
+      this.debugLog(`Skipped ${nSkipped} asset entries that already exist`);
     }
 
     // a per-command state update is *not* necessary here because

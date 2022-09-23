@@ -10,10 +10,17 @@
 // internal dependencies
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
+import { JwtService } from "@nestjs/jwt";
+import { getModelToken } from "@nestjs/mongoose";
 
 // internal dependencies
+import { MockModel } from "../mocks/global";
 import { AppController } from "../../src/AppController";
-import { AppService } from "../../src/AppService";
+import { AccountsService } from "../../src/common/services/AccountsService";
+import { ChallengesService } from "../../src/common/services/ChallengesService";
+import { NetworkService } from "../../src/common/services/NetworkService";
+import { AuthService } from "../../src/common/services/AuthService";
+import { QueryService } from "../../src/common/services/QueryService";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -26,16 +33,32 @@ class MockAppController extends AppController {
 
 describe("AppController", () => {
   let appController: MockAppController;
-  let configService: ConfigService;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [MockAppController],
-      providers: [AppService, ConfigService],
+      providers: [
+        ConfigService, // requirement from AuthService
+        NetworkService, // requirement from AuthService
+        QueryService, // requirement from AccountsService
+        AccountsService, // requirement from AuthService
+        ChallengesService, // requirement from AccountsService
+        JwtService, // requirement from AuthService
+        AuthService,
+        {
+          provide: getModelToken("Account"),
+          useValue: MockModel, // test/mocks/global.ts
+        }, // requirement from AccountsService
+        {
+          provide: getModelToken("AuthChallenge"),
+          useValue: MockModel,
+        }, // requirement from AuthService
+      ],
     }).compile();
 
     appController = app.get<MockAppController>(MockAppController);
-    configService = app.get<ConfigService>(ConfigService);
+    authService = app.get<AuthService>(AuthService);
   });
 
   describe("getHello() -->", () => {

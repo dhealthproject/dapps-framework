@@ -35,6 +35,11 @@ jest.mock("../../../src/discovery/modules/AccountsModule", () => {
   return { AccountsModule: AccountsModuleMock };
 });
 
+const AssetsModuleMock: any = jest.fn();
+jest.mock("../../../src/discovery/modules/AssetsModule", () => {
+  return { AssetsModule: AssetsModuleMock };
+});
+
 const TransactionsModuleMock: any = jest.fn();
 jest.mock("../../../src/discovery/modules/TransactionsModule", () => {
   return { TransactionsModule: TransactionsModuleMock };
@@ -65,6 +70,14 @@ jest.mock(
   "../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand",
   () => {
     return { DiscoverAccountsCommand: DiscoverAccountsCommandMock };
+  },
+);
+
+const DiscoverAssetsCommandMock: any = jest.fn();
+jest.mock(
+  "../../../src/discovery/schedulers/DiscoverAssets/DiscoverAssetsCommand",
+  () => {
+    return { DiscoverAssetsCommand: DiscoverAssetsCommandMock };
   },
 );
 
@@ -221,8 +234,10 @@ describe("common/ScopeFactory", () => {
         ConfigModuleMock,
         MongooseModuleMock,
         AccountsModuleMock,
+        AssetsModuleMock,
         TransactionsModuleMock,
         DiscoverAccountsCommandMock,
+        DiscoverAssetsCommandMock,
         DiscoverTransactionsCommandMock,
       ]);
     });
@@ -246,8 +261,10 @@ describe("common/ScopeFactory", () => {
         ConfigModuleMock,
         MongooseModuleMock,
         AccountsModuleMock,
+        AssetsModuleMock,
         TransactionsModuleMock,
         DiscoverAccountsCommandMock,
+        DiscoverAssetsCommandMock,
         DiscoverTransactionsCommandMock,
       ]);
     });

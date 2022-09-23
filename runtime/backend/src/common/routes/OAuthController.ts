@@ -20,9 +20,10 @@ import {
 } from "@nestjs/common";
 import {
   ApiExtraModels,
+  ApiMovedPermanentlyResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiMovedPermanentlyResponse,
+  ApiTags,
   getSchemaPath,
 } from "@nestjs/swagger";
 import { Request, Response } from "express";
@@ -60,13 +61,23 @@ namespace HTTPResponses {
 
 /**
  * @class OAuthController
- * @description The OAuth controller of the app.
- * Performs connection, linking user accounts
- * to fintess apps(appleHealth, Strava, etc.)
+ * @description The OAuth controller of the app. Handles requests
+ * about *third-party authentication* using the **OAuth** standard.
+ * <br /><br />
+ * These request handlers can be used to *link* OAuth-compatible
+ * third-party (remote) accounts such as a user's Strava or Apple
+ * Health account.
+ * <br /><br />
+ * This controller defines the following routes:
+ * | URI | HTTP method | Class method | Description |
+ * | --- | --- | --- | --- |
+ * | `/oauth/:provider/authorize` | **`GET`** | {@link OAuthController.authorize} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Server cookie or Bearer authorization header). Redirects the user to the third-party provider OAuth Authorization URL for valid requests. |
+ * | `/oauth/:provider/callback` | **`GET`** | {@link OAuthController.callback} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Server cookie or Bearer authorization header). Requests an *access token* and *refresh token* from the third-party provider and finalizes the authorization process. |
  *
  * @since v0.3.0
  */
-@Controller()
+@ApiTags("OAuth")
+@Controller("oauth")
 export class OAuthController {
   /**
    * Constructs an instance of this controller.
@@ -92,7 +103,7 @@ export class OAuthController {
    * @returns
    */
   @UseGuards(AuthGuard)
-  @Get("oauth/:provider/authorize")
+  @Get(":provider/authorize")
   @ApiOperation({
     summary: "Provider OAuth Authorization (Step 1)",
     description:
@@ -145,7 +156,7 @@ export class OAuthController {
    * @returns
    */
   @UseGuards(AuthGuard)
-  @Get("oauth/:provider/callback")
+  @Get(":provider/callback")
   @ApiOperation({
     summary: "Provider OAuth Callback (Step 2)",
     description:

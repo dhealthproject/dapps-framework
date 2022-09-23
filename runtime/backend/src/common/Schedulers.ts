@@ -13,8 +13,10 @@ import { MongooseModule } from "@nestjs/mongoose";
 // internal dependencies
 // discovery scope
 import { AccountsModule } from "../discovery/modules/AccountsModule";
+import { AssetsModule } from "../discovery/modules/AssetsModule";
 import { TransactionsModule } from "../discovery/modules/TransactionsModule";
 import { DiscoverAccountsCommand } from "../discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand";
+import { DiscoverAssetsCommand } from "../discovery/schedulers/DiscoverAssets/DiscoverAssetsCommand";
 import { DiscoverTransactionsCommand } from "../discovery/schedulers/DiscoverTransactions/DiscoverTransactionsCommand";
 
 // processor scope
@@ -41,8 +43,10 @@ const db = dappConfigLoader().database;
  * information table:
  * | Scope | Scheduler | Description |
  * | --- | --- | --- |
- * | `discovery` | {@link DiscoverTransactions} | A discovery command that retrieves transactions information from the network. |
- * | `discovery` | {@link DiscoverAccounts} | A discovery command that retrieves accounts information from the database using discovered transactions. |
+ * | `discovery` | {@link DiscoverTransactions:DISCOVERY} | A discovery command that retrieves transactions information from the network. |
+ * | `discovery` | {@link DiscoverAccounts:DISCOVERY} | A discovery command that retrieves accounts information from the database using discovered transactions. |
+ * | `discovery` | {@link DiscoverAssets:DISCOVERY} | A discovery command that retrieves assets information from the database using discovered transactions. |
+ * | `processor` | {@link ProcessOperations:PROCESSOR} | A processor command that interprets discovered transactions and maps them to dApp operations. |
  * <br /><br />
  *
  * @var {[key: string]: any[]}
@@ -56,8 +60,10 @@ export const Schedulers: { [key: string]: any[] } = {
   ],
   discovery: [
     AccountsModule,
+    AssetsModule,
     TransactionsModule,
     DiscoverAccountsCommand,
+    DiscoverAssetsCommand,
     DiscoverTransactionsCommand,
   ],
   payout: [],

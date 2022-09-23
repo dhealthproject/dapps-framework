@@ -7,7 +7,7 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-
+// @todo should use pascalCase for configuration fields
 export default () => ({
   providers: {
     strava: {

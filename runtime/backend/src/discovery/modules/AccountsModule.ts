@@ -9,7 +9,6 @@
  */
 // external dependencies
 import { Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import { AccountsModule as CommonAccountsModule } from "../../common/modules/AccountsModule";
@@ -18,7 +17,11 @@ import { AccountsController } from "../routes/AccountsController";
 /**
  * @label DISCOVERY
  * @class AccountsModule
- * @description The main definition for the Accounts module.
+ * @description The main definition for the Accounts module. Note that
+ * this module extends the {@link AccountsModule:COMMON} from the common scope
+ * to *include* database *entities and schema definition*.
+ * <br /><br />
+ * This module *enables* routes (API) to query accounts.
  *
  * @since v0.3.0
  */

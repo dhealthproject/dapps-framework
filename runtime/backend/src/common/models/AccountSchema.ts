@@ -75,7 +75,7 @@ export class Account extends Transferable<AccountDTO> {
    * @access public
    * @var {Date}
    */
-  @Prop({ index: true })
+  @Prop({ index: true, nullable: true })
   public firstTransactionAt?: Date;
 
   /**
@@ -104,7 +104,7 @@ export class Account extends Transferable<AccountDTO> {
    * @access public
    * @var {string}
    */
-  @Prop({ index: true, unique: true, type: String, nullable: true })
+  @Prop({ index: true, nullable: true, type: String })
   public accessToken?: string;
 
   /**

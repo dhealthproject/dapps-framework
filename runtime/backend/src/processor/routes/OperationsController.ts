@@ -30,7 +30,7 @@ import { OperationsService } from "../services/OperationsService";
 namespace HTTPResponses {
   // creates a variable that we include in a namespace
   // and configure the OpenAPI schema for the response
-  // maps to the HTTP response of `/auth/challenge`
+  // maps to the HTTP response of `/operations`
   export const OperationSearchResponseSchema = {
     schema: {
       allOf: [

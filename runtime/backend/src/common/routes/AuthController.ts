@@ -28,7 +28,6 @@ import { Request, Response } from "express";
 import { sha3_256 } from "js-sha3";
 
 // internal dependencies
-import { AccountDTO } from "../../common/models/AccountDTO";
 import { AuthenticationPayload, AuthService } from "../services/AuthService";
 import { AuthGuard } from "../traits/AuthGuard";
 import { RefreshGuard } from "../traits/RefreshGuard";
@@ -37,11 +36,7 @@ import { AccessTokenRequest } from "../requests/AccessTokenRequest";
 import { AuthChallengeDTO } from "../models/AuthChallengeDTO";
 import { StatusDTO } from "../models/StatusDTO";
 import { AccountsService } from "../services/AccountsService";
-import {
-  Account,
-  AccountDocument,
-  AccountQuery,
-} from "../models/AccountSchema";
+import { AccountDocument, AccountQuery } from "../models/AccountSchema";
 
 namespace HTTPResponses {
   // creates a variable that we include in a namespace
@@ -100,24 +95,6 @@ namespace HTTPResponses {
 
   // creates a variable that we include in a namespace
   // and configure the OpenAPI schema for the response
-  // maps to the HTTP response of `/me`
-  export const MeResponseSchema = {
-    schema: {
-      allOf: [
-        {
-          properties: {
-            data: {
-              type: "array",
-              items: { $ref: getSchemaPath(AccountDTO) },
-            },
-          },
-        },
-      ],
-    },
-  };
-
-  // creates a variable that we include in a namespace
-  // and configure the OpenAPI schema for the response
   // maps to the HTTP response of `/auth/logout`
   export const AuthLogoutResponseSchema = {
     schema: {
@@ -148,16 +125,13 @@ namespace HTTPResponses {
  * | `/auth/challenge` | **`GET`** | {@link AuthController.getAuthCode} | Responds with an *authentication challenge* that **MUST** be attached on-chain for a successful authentication. |
  * | `/auth/token` | **`POST`** | {@link AuthController.getAccessToken} | Accepts a `challenge` in the request body and validates it using {@link AuthService:COMMON} |
  * | `/auth/refresh` | **`GET`** | {@link AuthController.refreshTokens} | Uses the {@link RefreshGuard:COMMON} to validate the required **refresh token** (Bearer authorization header) and *creates* a new access token, extending a session's lifetime. |
- * | `/me` | **`GET`** | {@link AuthController.getProfile} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Bearer authorization header) and displays the authenticated user information for valid (authenticated) requests. |
+ * | `/auth/logout` | **`GET`** | {@link AuthController.logout} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Server cookie or Bearer authorization header). Revokes a user's access token (invalidate). The access token cannot be used anymore, a new access token must be requested instead. |
  * <br /><br />
  *
- * @todo Add `refreshToken` logic in method {@link AuthController.getAccessToken}.
- * @todo Add request parameters documentation, see {@link AccountsController}.
- * @todo Add response documentation, see {@link AccountsController}.
  * @since v0.2.0
  */
 @ApiTags("Authentication")
-@Controller()
+@Controller("auth")
 export class AuthController {
   /**
    * Constructs an instance of this controller.
@@ -196,7 +170,7 @@ export class AuthController {
    * @async
    * @returns Promise<AuthChallengeDTO>   A freshly-created authentication challenge.
    */
-  @Get("auth/challenge")
+  @Get("challenge")
   @ApiOperation({
     summary: "Get an authentication challenge",
     description:
@@ -249,7 +223,7 @@ export class AuthController {
    * @returns Promise<AccessTokenDTO>   An access/refresh token pair or an access token, or HTTP401-Unauthorized.
    * @throws  {HttpException}   Given an *invalid* authentication challenge which could not be found in recent transactions on dHealth Network.
    */
-  @Post("auth/token")
+  @Post("token")
   @ApiOperation({
     summary: "Get an authenticated user's access tokens",
     description:
@@ -331,7 +305,7 @@ export class AuthController {
    * @throws  {HttpException}   Given an *invalid* refresh token or address or an invalid combination of both.
    */
   @UseGuards(RefreshGuard)
-  @Get("auth/refresh")
+  @Get("refresh")
   @ApiOperation({
     summary: "Refresh an authenticated user's expired access token",
     description:
@@ -404,7 +378,7 @@ export class AuthController {
    * @returns Promise<StatusDTO>        An execution *status* DTO. Contains a HTTP status code and a `status` boolean property.
    */
   @UseGuards(AuthGuard)
-  @Post("auth/logout")
+  @Post("logout")
   @ApiOperation({
     summary: "Sign-out a user to invalidate access token",
     description:
@@ -436,37 +410,5 @@ export class AuthController {
 
     // Create a "success" status response
     return StatusDTO.create(200);
-  }
-
-  /**
-   * Requests a user's profile information. This endpoint is
-   * protected and a valid access token must be attached in
-   * the `Authorization` request header, in signed cookies or
-   * in browser cookies.
-   * <br /><br />
-   * The request is secured using the {@link AuthGuard} guard
-   * which attaches a `payload` to the request object.
-   *
-   * @method GET
-   * @access protected
-   * @async
-   * @param   {Request}  req            An `express` request used to extract the authenticated user payload.
-   * @returns Promise<AccountDTO>       An authenticated user's profile information ("account" information).
-   */
-  @UseGuards(AuthGuard)
-  @Get("me")
-  @ApiOperation({
-    summary: "Get an authenticated user's profile details",
-    description:
-      "Request an authenticated user's profile details. This request will only succeed given a valid access token in the bearer authorization header of the request.",
-  })
-  @ApiExtraModels(AccountDTO)
-  @ApiOkResponse(HTTPResponses.MeResponseSchema)
-  protected async getProfile(@NestRequest() req: Request): Promise<AccountDTO> {
-    // read and decode access token, then find account in database
-    const account: AccountDocument = await this.authService.getAccount(req);
-
-    // wrap into a safe transferable DTO
-    return Account.fillDTO(account, new AccountDTO());
   }
 }

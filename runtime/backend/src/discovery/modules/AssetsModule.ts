@@ -12,29 +12,31 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
+import { AuthModule } from "../../common/modules/AuthModule";
 import { QueryModule } from "../../common/modules/QueryModule";
-import { TransactionsService } from "../services/TransactionsService";
-import { TransactionsController } from "../routes/TransactionsController";
-import { Transaction, TransactionSchema } from "../models/TransactionSchema";
+import { AssetsService } from "../services/AssetsService";
+import { AssetsController } from "../routes/AssetsController";
+import { Asset, AssetSchema } from "../models/AssetSchema";
 
 /**
- * @class TransactionsModule
- * @description The main definition for the Transactions module.
+ * @class AssetsModule
+ * @description The main definition for the Assets module.
  *
  * @since v0.1.0
  */
 @Module({
-  controllers: [TransactionsController],
-  providers: [TransactionsService],
+  controllers: [AssetsController],
+  providers: [AssetsService],
   imports: [
     MongooseModule.forFeature([
       {
-        name: Transaction.name,
-        schema: TransactionSchema,
+        name: Asset.name,
+        schema: AssetSchema,
       },
     ]),
+    AuthModule,
     QueryModule,
   ],
-  exports: [TransactionsService],
+  exports: [AssetsService],
 })
-export class TransactionsModule {}
+export class AssetsModule {}

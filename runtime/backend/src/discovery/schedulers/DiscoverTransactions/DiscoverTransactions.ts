@@ -854,6 +854,7 @@ export class DiscoverTransactions extends DiscoveryCommand {
    * @returns {string}
    */
   protected extractAssets(transaction: SdkTransaction): ObjectLiteral[] {
+    // @todo should check for possible "namespace id" and replace
     const transfer = transaction as TransferTransaction;
     return transfer.mosaics
       .filter((m) => !m.amount.equals(UInt64.fromUint(0)))

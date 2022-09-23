@@ -396,7 +396,7 @@ export class ProcessOperations extends ProcessorCommand {
           // do we have the *relevant* contract signature?
           return contract !== null && contract.signature === options.contract;
         } catch (e) {
-          console.log("Error parsing: ", e);
+          //console.log("Error parsing: ", e);
           return false;
         }
       });

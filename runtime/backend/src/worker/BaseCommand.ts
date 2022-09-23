@@ -190,7 +190,7 @@ export abstract class BaseCommand extends StatefulModule {
       this.debugLog(
         `` +
           `Initializing command "${this.command}"` +
-          `${this.argv.length ? "with: " + this.argv.join() : ""}`,
+          `${this.argv.length ? " with: " + this.argv.join() : ""}`,
       );
     }
 
