@@ -14,10 +14,10 @@
     @apply w-full h-full flex flex-col items-center justify-center text-[#7E7B93] gap-[10px];
 
     /* Responsive */
-    @apply sm:w-auto sm:py-2 sm:px-4 sm:flex-row sm:text-[#7E7B93];
+    @apply lg:w-auto lg:py-2 lg:px-4 lg:flex-row lg:text-[#7E7B93];
 
     .dappNavigationItem-svg {
-      @apply fill-[#7E7B93] sm:fill-[#7E7B93];
+      @apply fill-[#7E7B93] lg:fill-[#7E7B93];
     }
   }
 }
@@ -40,11 +40,11 @@
 
 .active {
   .dappNavigationItem-svg {
-    @apply sm:fill-[#000000] !important;
+    @apply lg:fill-[#000000] !important;
   }
 
   .dappNavigationItem-mainDiv {
-    @apply sm:text-[#000000] sm:font-semibold sm:bg-[#D8DAFF] sm:rounded-[80px] !important;
-    @apply sm:py-2 sm:px-6 !important;
+    @apply lg:text-[#000000] lg:font-semibold lg:bg-[#D8DAFF] lg:rounded-[80px] !important;
+    @apply lg:py-2 lg:px-6 !important;
   }
 }

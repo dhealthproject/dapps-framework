@@ -44,7 +44,9 @@ import DappTitle from "@/texts/DappTitle/DappTitle.vue";
  *      <DappNavigationItem slot="menuItem2" icon="/img/icons/activity.svg" label="Activity" @click="this.$router.push({name: 'activity'}) class="active" />
  *      <DappNavigationItem slot="menuItem3" icon="/img/icons/events.svg" label="Events" @click="this.$router.push({name: 'events'})/>
  *      <DappNavigationItem slot="menuItem4" icon="/img/icons/rewards.svg" label="Rewards" @click="this.$router.push({name: 'rewards'})/>
- *      <span slot="end">End of navigation bar</span>
+ *      <div slot="end" class="flex items-center justify-center flex-row">
+ *        <DappButton variant="tertiary">Disconnect wallet</DappButton>
+ *      </div>
  *    </DappNavigation>
  * </template>
  * ```
@@ -89,4 +91,13 @@ export default class DappNavigation extends Vue {
    */
   @Prop({ type: Number, default: 0 })
   protected noOfMenuItems?: number;
+
+  /**
+   * The internal property to keep track of drawer status.
+   * Returns true if drawer is currently visible. Default is always `false`.
+   *
+   * @access protected
+   * @var {boolean}
+   */
+  protected drawerVisible = false;
 }

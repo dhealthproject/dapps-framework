@@ -7,28 +7,111 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-.dappTitleBar {
+.dappNavigation {
   &-base {
     @apply flex items-center justify-center flex-row w-full;
+    @apply border-b-[#09090A] border-b-[0.5px] border-solid lg:border-none;
 
     .dappNavigation-menuItems {
-      @apply hidden sm:flex sm:items-center sm:justify-center sm:flex-row sm:w-full;
+      @apply hidden lg:flex lg:items-center lg:justify-center lg:flex-row lg:w-full;
 
       .dappNavigation-menuItem {
-        @apply flex-1 h-full flex items-center justify-center flex-col;
+        @apply flex-1 h-full flex items-center justify-center flex-col w-full;
       }
     }
 
     .dappNavigation-title {
-      @apply sm:hidden flex items-center justify-center flex-row w-full;
+      @apply lg:hidden flex items-center justify-center flex-row w-full;
     }
 
-    .dappNavigation-end-sm {
-      @apply hidden sm:flex sm:items-center sm:justify-center sm:flex-row;
+    .dappNavigation-end-lg {
+      @apply hidden lg:flex lg:items-center lg:justify-center lg:flex-row;
     }
 
     .dappNavigation-end {
-      @apply flex sm:hidden;
+      @apply flex lg:hidden;
+    }
+  }
+}
+
+.right-drawer {
+  @apply absolute top-0 right-0 w-0 overflow-hidden h-[100vh] pl-0;
+  @apply border-l-[1px] border-solid border-l-[whitesmoke];
+  @apply bg-white z-[200] transition-all;
+
+  .drawer-mask {
+    @apply absolute left-0 top-0 w-0 h-full;
+    @apply bg-[#000] opacity-[0.3] z-[199] transition-opacity;
+  }
+
+  .drawer-header {
+    @apply flex flex-row items-center py-[18px] px-6 gap-3;
+    @apply absolute w-full h-[60px] right-0 top-0;
+    @apply border-b-[0.5px] border-solid border-b-[#09090a];
+
+    .close {
+      @apply bg-white border-0 cursor-pointer text-[#1d1843] font-bold;
+    }
+  }
+
+  .drawer-content {
+    @apply flex flex-col items-start p-6 gap-7;
+    @apply absolute w-full min-h-[377px] left-0 top-[60px];
+
+    .dappNavigation-menuItem {
+      @apply flex-1 h-full flex items-center justify-center flex-col w-full;
+    }
+
+    .dappNavigationItem-base {
+      @apply w-full box-border;
+      @apply flex flex-row items-center py-2 px-4 gap-2;
+      @apply w-full h-10 flex-none order-none self-stretch grow-0;
+    }
+
+    .dappNavigationItem-svg {
+      @apply !fill-[#000000];
+    }
+
+    .dappNavigationItem-mainDiv {
+      @apply !flex-row !justify-start !text-[#000000];
+    }
+
+    .active {
+      @apply bg-[#f7f7f7] border-l-[5px] border-solid border-l-[#7161d5];
+
+      .dappNavigationItem-mainDiv {
+        @apply !font-semibold;
+      }
+    }
+  }
+
+  .drawer-footer {
+    @apply flex flex-col justify-center items-center py-3 px-[10px] gap-2;
+    @apply absolute w-full h-[82px] -left-1 bottom-0 bg-[#f7f7f7];
+
+    .power-div {
+      @apply flex items-center justify-center;
+
+      .power-span {
+        @apply w-20 h-[17px] not-italic	font-semibold text-[14px] leading-[120%];
+        @apply tracking-[-0.01em] text-[#625e83] flex-none order-none flex-grow-0;
+      }
+
+      .dhealth-span {
+        @apply w-[132px] h-7 not-italic font-semibold text-lg leading-7;
+        @apply text-[#150867] flex-none order-1 flex-grow-0;
+      }
+    }
+
+    .policy-div a {
+      @apply font-["Roboto"] not-italic font-normal text-[12px] leading-[22px];
+      @apply tracking-[-0.408px] underline text-[#5d64ff];
+      @apply flex-none order-none flex-grow-0;
+    }
+
+    .power-div > *,
+    .policy-div > * {
+      @apply mx-[3.5px];
     }
   }
 }
