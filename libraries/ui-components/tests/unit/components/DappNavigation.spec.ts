@@ -133,7 +133,7 @@ describe("DappNavigation -->", () => {
     expect(titleSlotElement.exists()).to.be.true;
     const dappTitleElement = titleSlotElement.findComponent(DappTitle);
     expect(dappTitleElement.exists()).to.be.true;
-    const nonMobileEndSlotElement = dappTitleBar.find(".dappNavigation-end-sm");
+    const nonMobileEndSlotElement = dappTitleBar.find(".dappNavigation-end-lg");
     expect(nonMobileEndSlotElement.exists()).to.be.true;
     const mobileEndSlotElement = dappTitleBar.find(".dappNavigation-end");
     expect(mobileEndSlotElement.exists()).to.be.true;

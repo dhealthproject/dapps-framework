@@ -87,7 +87,7 @@
 
   .drawer-footer {
     @apply flex flex-col justify-center items-center py-3 px-[10px] gap-2;
-    @apply absolute w-full h-[82px] -left-1 bottom-0 bg-[#f7f7f7];
+    @apply absolute w-full h-[82px] left-0 bottom-0 bg-[#f7f7f7];
 
     .power-div {
       @apply flex items-center justify-center;
