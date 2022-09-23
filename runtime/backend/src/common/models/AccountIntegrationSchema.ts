@@ -43,57 +43,83 @@ export class AccountIntegration extends Transferable<AccountIntegrationDTO> {
    * This field is **required** and *indexed*.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public address: string;
+  public readonly address: string;
 
   /**
+   * The OAuth integration *provider name*. This is usually
+   * the name of the platform of which an account is being
+   * linked to the dApp.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public name: string;
+  public readonly name: string;
 
   /**
+   * This field is used in a *verification* step to make
+   * sure that only the owner of an OAuth integration can
+   * update this integration.
+   * <br /><br />
+   * The authorization URL is built using the end-user's
+   * address and a possible referral code.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public authorizationHash: string;
+  public readonly authorizationHash: string;
 
   /**
+   * This field contains the *remote identifier*. This is
+   * usually the *identifier* of the account on the third
+   * party platform, e.g. the athlete identifier in Strava.
+   * <br /><br />
+   * This field is **optional** and *indexed*.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ index: true })
-  public remoteIdentifier?: string;
+  public readonly remoteIdentifier?: string;
 
   /**
-   *
+   * This field contains an *encrypted* access token which
+   * uses the seed in {@link OAuthService.getEncryptionSeed}.
    * <br /><br />
    * This field is **optional** and *not indexed*.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop({ nullable: true })
-  public encAccessToken?: string;
+  public readonly encAccessToken?: string;
 
   /**
-   *
+   * This field contains an *encrypted* refresh token which
+   * uses the seed in {@link OAuthService.getEncryptionSeed}.
    * <br /><br />
    * This field is **optional** and *not indexed*.
    *
    * @todo Note this is not protected for number overflows (but there is a long way until block numbers do overflow..)
    * @access public
+   * @readonly
    * @var {number}
    */
   @Prop({ nullable: true })
-  public encRefreshToken?: string;
+  public readonly encRefreshToken?: string;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -101,10 +127,11 @@ export class AccountIntegration extends Transferable<AccountIntegrationDTO> {
    * cached database entry.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop({ index: true })
-  public createdAt?: Date;
+  public readonly createdAt?: Date;
 
   /**
    * The document's update timestamp. This field **does not** reflect the
@@ -112,10 +139,11 @@ export class AccountIntegration extends Transferable<AccountIntegrationDTO> {
    * cached database entry.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop()
-  public updatedAt?: Date;
+  public readonly updatedAt?: Date;
 
   /**
    * This method implements a specialized query format to query items

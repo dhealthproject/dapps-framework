@@ -263,7 +263,8 @@ export class DiscoverAssets extends DiscoveryCommand {
       countTransactions > 0 &&
       this.lastPageNumber * this.usePageSize > countTransactions
     ) {
-      this.lastPageNumber = Math.floor(countTransactions / this.usePageSize) + 1;
+      this.lastPageNumber =
+        Math.floor(countTransactions / this.usePageSize) + 1;
     }
 
     // display debug information about configuration

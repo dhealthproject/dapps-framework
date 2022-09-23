@@ -36,29 +36,32 @@ export class AuthChallenge extends Transferable<AuthChallengeDTO> {
    * to a transfer transaction sent to the dApp's auth autority.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true, unique: true, type: String })
-  public challenge: string;
+  public readonly challenge: string;
 
   /**
    * The *address* of the user that used this authentication token.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public usedBy: string;
+  public readonly usedBy: string;
 
   /**
    * The timestamp at which this authentication token was used, this
    * may be referred to as the *time of consumption* of a token.
    *
    * @access public
+   * @readonly
    * @var {number}
    */
   @Prop({ required: true, index: true })
-  public usedAt: number;
+  public readonly usedAt: number;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -66,10 +69,11 @@ export class AuthChallenge extends Transferable<AuthChallengeDTO> {
    * cached database entry.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop({ index: true })
-  public createdAt?: Date;
+  public readonly createdAt?: Date;
 
   /**
    * The document's update timestamp. This field **does not** reflect the
@@ -77,10 +81,11 @@ export class AuthChallenge extends Transferable<AuthChallengeDTO> {
    * cached database entry.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop()
-  public updatedAt?: Date;
+  public readonly updatedAt?: Date;
 
   /**
    * This method implements a specialized query format to query items

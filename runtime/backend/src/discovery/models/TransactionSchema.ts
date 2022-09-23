@@ -157,6 +157,7 @@ export class Transaction extends Transferable<TransactionDTO> {
    *
    * @example `{ contract: "elevate:auth", version: 1, challenge: "abcdef12" }`
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, type: [Object] })

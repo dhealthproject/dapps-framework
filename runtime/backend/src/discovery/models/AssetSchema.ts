@@ -43,20 +43,22 @@ export class Asset extends Transferable<AssetDTO> {
    * The destination address can be found in {@link userAddress}.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public transactionHash: string;
+  public readonly transactionHash: string;
 
   /**
    * This is the user's address. The user corresponds to the
    * owner of said **assets**.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public userAddress: string;
+  public readonly userAddress: string;
 
   /**
    * This is the dHealth Network Mosaic ID that characterizes the assets
@@ -65,10 +67,11 @@ export class Asset extends Transferable<AssetDTO> {
    * dHealth Network.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public mosaicId: string;
+  public readonly mosaicId: string;
 
   /**
    * This is the **absolute** amount of assets that are transferred. An
@@ -85,10 +88,11 @@ export class Asset extends Transferable<AssetDTO> {
    * that can be present in dHealth Network transfers: `8999999999999999`.
    *
    * @access public
+   * @readonly
    * @var {string}
    */
   @Prop({ required: true })
-  public amount: number;
+  public readonly amount: number;
 
   /**
    * The document's creation block number. This field **does** reflect the
@@ -97,10 +101,11 @@ export class Asset extends Transferable<AssetDTO> {
    *
    * @todo Note this is not protected for number overflows (but there is a long way until block numbers do overflow..)
    * @access public
+   * @readonly
    * @var {number}
    */
   @Prop({ required: true, index: true })
-  public creationBlock: number;
+  public readonly creationBlock: number;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -110,10 +115,11 @@ export class Asset extends Transferable<AssetDTO> {
    * This field is added for consistency with the other database schema.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop({ index: true })
-  public createdAt: Date;
+  public readonly createdAt: Date;
 
   /**
    * The document's update timestamp. This field **does not** reflect the
@@ -121,10 +127,11 @@ export class Asset extends Transferable<AssetDTO> {
    * cached database entry.
    *
    * @access public
+   * @readonly
    * @var {Date}
    */
   @Prop()
-  public updatedAt?: Date;
+  public readonly updatedAt?: Date;
 
   /**
    * This method implements a specialized query format to query items
