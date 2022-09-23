@@ -122,11 +122,15 @@ export class ProcessOperations extends ProcessorCommand {
    */
   constructor(
     @InjectModel(Operation.name) protected readonly model: OperationModel,
-    @InjectModel(Transaction.name) protected readonly transactionModel: TransactionModel,
+    @InjectModel(Transaction.name)
+    protected readonly transactionModel: TransactionModel,
     protected readonly configService: ConfigService,
     protected readonly stateService: StateService,
     protected readonly networkService: NetworkService,
-    protected readonly queriesService: QueryService<TransactionDocument, TransactionModel>,
+    protected readonly queriesService: QueryService<
+      TransactionDocument,
+      TransactionModel
+    >,
     protected readonly operationsService: OperationsService,
   ) {
     // required super call

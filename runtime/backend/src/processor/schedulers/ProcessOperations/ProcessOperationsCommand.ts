@@ -17,7 +17,10 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { NetworkModule } from "../../../common/modules/NetworkModule";
 import { StateModule } from "../../../common/modules/StateModule";
 import { QueryModule } from "../../../common/modules/QueryModule";
-import { Transaction, TransactionSchema } from "../../../common/models/TransactionSchema";
+import {
+  Transaction,
+  TransactionSchema,
+} from "../../../common/models/TransactionSchema";
 
 // processor scope
 import { OperationsModule } from "../../modules/OperationsModule";

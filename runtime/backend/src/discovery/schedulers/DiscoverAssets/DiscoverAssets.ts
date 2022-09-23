@@ -19,11 +19,11 @@ import { QueryParameters } from "../../../common/concerns/Queryable";
 import { StateService } from "../../../common/services/StateService";
 import { StateDocument, StateQuery } from "../../../common/models/StateSchema";
 import { NetworkService } from "../../../common/services/NetworkService";
-import { TransactionsService } from "../../../discovery/services/TransactionsService";
 import {
   TransactionDocument,
   TransactionQuery,
-} from "../../models/TransactionSchema";
+} from "../../../common/models/TransactionSchema";
+import { TransactionsService } from "../../../discovery/services/TransactionsService";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
 import {
   Asset,

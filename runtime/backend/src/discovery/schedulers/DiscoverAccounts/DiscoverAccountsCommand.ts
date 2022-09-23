@@ -18,7 +18,10 @@ import { StateModule } from "../../../common/modules/StateModule";
 import { Account, AccountSchema } from "../../../common/models/AccountSchema";
 import { AccountsModule } from "../../modules/AccountsModule";
 import { TransactionsModule } from "../../modules/TransactionsModule";
-import { Transaction, TransactionSchema } from "../../../common/models/TransactionSchema";
+import {
+  Transaction,
+  TransactionSchema,
+} from "../../../common/models/TransactionSchema";
 
 // private implementation
 import { DiscoverAccounts } from "./DiscoverAccounts";

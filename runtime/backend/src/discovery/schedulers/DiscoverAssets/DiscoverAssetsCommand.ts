@@ -15,10 +15,13 @@ import { MongooseModule } from "@nestjs/mongoose";
 // internal dependencies
 import { NetworkModule } from "../../../common/modules/NetworkModule";
 import { StateModule } from "../../../common/modules/StateModule";
+import {
+  Transaction,
+  TransactionSchema,
+} from "../../../common/models/TransactionSchema";
 import { Asset, AssetSchema } from "../../models/AssetSchema";
 import { AssetsModule } from "../../modules/AssetsModule";
 import { TransactionsModule } from "../../modules/TransactionsModule";
-import { Transaction, TransactionSchema } from "../../models/TransactionSchema";
 
 // private implementation
 import { DiscoverAssets } from "./DiscoverAssets";
