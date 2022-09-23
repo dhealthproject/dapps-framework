@@ -75,6 +75,16 @@ export class DiscoverAccounts extends DiscoveryCommand {
   private lastExecutedAt: number;
 
   /**
+   * Configuration field for the page size to be read. This is used
+   * to determine how many transactions are queried per page from
+   * the database.
+   *
+   * @access private
+   * @var {number}
+   */
+  private usePageSize = 100;
+
+  /**
    * The constructor of this class.
    * Params will be automatically injected upon called.
    *
@@ -248,9 +258,9 @@ export class DiscoverAccounts extends DiscoveryCommand {
     // the next runs of accounts discovery
     if (
       countTransactions > 0 &&
-      this.lastPageNumber * 100 > countTransactions
+      this.lastPageNumber * this.usePageSize > countTransactions
     ) {
-      this.lastPageNumber = Math.floor(countTransactions / 100);
+      this.lastPageNumber = Math.floor(countTransactions / this.usePageSize);
     }
 
     // display debug information about configuration
@@ -273,10 +283,17 @@ export class DiscoverAccounts extends DiscoveryCommand {
           {} as TransactionDocument, // queries *any* transaction
           {
             pageNumber: i, // in batches of 100 per page
-            pageSize: 100,
+            pageSize: this.usePageSize,
+            sort: "createdAt",
+            order: "asc",
           } as QueryParameters,
         ),
       );
+
+      // if we don't get anything, stop querying transactions for now
+      if (!transactions.data.length) {
+        break;
+      }
 
       // proceeds to extracting accounts from transactions
       this.discoveredAddresses = this.discoveredAddresses
@@ -284,12 +301,27 @@ export class DiscoverAccounts extends DiscoveryCommand {
           transactions.data.map((t: TransactionDocument) => t.recipientAddress),
         )
         .filter((v, i, s) => s.indexOf(v) === i); // unique
+
+      // stop and restart at same page if the page was not full
+      if (transactions.data.length < this.usePageSize) {
+        break;
+      }
     }
 
     if (options.debug && !options.quiet) {
       this.debugLog(
         `Found ${this.discoveredAddresses.length} new accounts from transactions`,
       );
+    }
+
+    // bail out if no addresses could be discovered
+    if (!this.discoveredAddresses.length) {
+      // a per-command state update is *not* necessary here because
+      // the `BaseCommand` class' `run` method automatically updates
+      // the per-command state with updated values *after* executing
+      // this discovery method.
+
+      return; // (void)
     }
 
     // (2) each round creates or finds 1 `accounts` document

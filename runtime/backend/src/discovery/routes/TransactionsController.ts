@@ -99,8 +99,19 @@ export class TransactionsController {
   public async find(
     @Query() query: TransactionQuery,
   ): Promise<PaginatedResultDTO<TransactionDTO>> {
+    // destructure to create correct query
+    // this permits to skip the `document[]`
+    const { pageNumber, pageSize, sort, order, ...rest } = query;
+
     // reads from database
-    const data = await this.transactionsService.find(query);
+    const data = await this.transactionsService.find(
+      new TransactionQuery(
+        {
+          ...rest,
+        } as TransactionDocument,
+        { pageNumber, pageSize, sort, order },
+      ),
+    );
 
     // wraps for transport
     return new PaginatedResultDTO<TransactionDTO>(

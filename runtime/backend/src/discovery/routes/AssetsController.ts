@@ -129,8 +129,19 @@ export class AssetsController {
   public async find(
     @Query() query: AssetQuery,
   ): Promise<PaginatedResultDTO<AssetDTO>> {
+    // destructure to create correct query
+    // this permits to skip the `document[]`
+    const { pageNumber, pageSize, sort, order, ...rest } = query;
+
     // reads from database
-    const data = await this.assetsService.find(query);
+    const data = await this.assetsService.find(
+      new AssetQuery(
+        {
+          ...rest,
+        } as AssetDocument,
+        { pageNumber, pageSize, sort, order },
+      ),
+    );
 
     // wraps for transport
     return new PaginatedResultDTO<AssetDTO>(
@@ -170,12 +181,19 @@ export class AssetsController {
     // read and decode access token, then find account in database
     const account: AccountDocument = await this.authService.getAccount(req);
 
+    // destructure to create correct query
+    // this permits to skip the `document[]`
+    const { pageNumber, pageSize, sort, order, ...rest } = query;
+
     // make sure to *never* allow querying assets of someone else
     // than the currently logged in user (using `AuthGuard`)
-    const safeQuery: AssetQuery = new AssetQuery({
-      ...query.document,
-      userAddress: account.address,
-    } as AssetDocument);
+    const safeQuery: AssetQuery = new AssetQuery(
+      {
+        ...rest,
+        userAddress: account.address,
+      } as AssetDocument,
+      { pageNumber, pageSize, sort, order },
+    );
 
     // reads assets from database
     const data = await this.assetsService.find(safeQuery);

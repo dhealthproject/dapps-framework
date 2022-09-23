@@ -99,8 +99,19 @@ export class OperationsController {
   public async find(
     @Query() query: OperationQuery,
   ): Promise<PaginatedResultDTO<OperationDTO>> {
+    // destructure to create correct query
+    // this permits to skip the `document[]`
+    const { pageNumber, pageSize, sort, order, ...rest } = query;
+
     // reads from database
-    const data = await this.operationsService.find(query);
+    const data = await this.operationsService.find(
+      new OperationQuery(
+        {
+          ...rest,
+        } as OperationDocument,
+        { pageNumber, pageSize, sort, order },
+      ),
+    );
 
     // wraps for transport
     return new PaginatedResultDTO<OperationDTO>(

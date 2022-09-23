@@ -43,7 +43,7 @@ import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
 
 // internal dependencies
-import { MockModel } from "../../../mocks/global";
+import { createTransactionDocument, MockModel } from "../../../mocks/global";
 import { QueryParameters } from "../../../../src/common/concerns/Queryable";
 import { DappConfig } from "../../../../src/common/models/DappConfig";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
@@ -84,6 +84,18 @@ class MockDiscoverAccounts extends DiscoverAccounts {
 
   // mocks **getters** for protected properties
   public getDiscoveredAddresses(): string[] { return this.discoveredAddresses; }
+}
+
+// Mocks a transaction factory to create valid and
+// invalid transaction pages from database queries.
+const fakeCreateTransactionDocuments = (
+  x: number = 20,
+): TransactionDocument[] => {
+  const output: TransactionDocument[] = [];
+  for (let i = 0; i < x; i++) {
+    output.push(createTransactionDocument(`fakeHash${i+1}`));
+  }
+  return output;
 }
 
 /**
@@ -187,10 +199,86 @@ describe("discovery/DiscoverAccounts", () => {
       expect(logger.debug).toHaveBeenNthCalledWith(1, "Starting accounts discovery for source \"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\"");
       expect(logger.debug).toHaveBeenNthCalledWith(2, "Last accounts discovery ended with page: \"1\"");
       expect(logger.debug).toHaveBeenNthCalledWith(3, "Found 0 new accounts from transactions");
-      expect(logger.debug).toHaveBeenNthCalledWith(4, "Skipped 0 account(s) that already exist");
     });
 
-    it("should query 10 batches of 100 transactions of any type", async () => {
+    it("should stop querying batches of transactions given an empty page", async () => {
+      // prepare
+      (service as any).transactionsService.find = jest.fn().mockReturnValueOnce({
+        data: fakeCreateTransactionDocuments(100), // full page ONCE
+      }).mockReturnValueOnce({
+        data: [], // empty page
+      });
+
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      });
+
+      // assert
+      expect((service as any).transactionsService.find).toHaveBeenCalledTimes(2); // breaks after 2nd
+      expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(1, new TransactionQuery(
+        {} as TransactionDocument, // queries *any* transaction
+        {
+          pageNumber: 1,
+          pageSize: 100, // in batches of 100 per page
+          sort: "createdAt",
+          order: "asc",
+        } as QueryParameters,
+      ));
+      expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(2, new TransactionQuery(
+        {} as TransactionDocument, // queries *any* transaction
+        {
+          pageNumber: 2,
+          pageSize: 100, // in batches of 100 per page
+          sort: "createdAt",
+          order: "asc",
+        } as QueryParameters,
+      ));
+    });
+
+    it("should stop querying batches of transactions given a non-full page", async () => {
+      // prepare
+      (service as any).transactionsService.find = jest.fn().mockReturnValueOnce({
+        data: fakeCreateTransactionDocuments(100), // full page ONCE
+      }).mockReturnValueOnce({
+        data: fakeCreateTransactionDocuments(20), // not full
+      });
+
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      });
+
+      // assert
+      expect((service as any).transactionsService.find).toHaveBeenCalledTimes(2); // breaks after 2nd
+      expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(1, new TransactionQuery(
+        {} as TransactionDocument, // queries *any* transaction
+        {
+          pageNumber: 1,
+          pageSize: 100, // in batches of 100 per page
+          sort: "createdAt",
+          order: "asc",
+        } as QueryParameters,
+      ));
+      expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(2, new TransactionQuery(
+        {} as TransactionDocument, // queries *any* transaction
+        {
+          pageNumber: 2,
+          pageSize: 100, // in batches of 100 per page
+          sort: "createdAt",
+          order: "asc",
+        } as QueryParameters,
+      ));
+    });
+
+    it("should query 10 batches of 100 transactions given full pages", async () => {
+      // prepare
+      (service as any).transactionsService.find = jest.fn().mockReturnValue({
+        data: fakeCreateTransactionDocuments(100), // full page
+      });
+
       // act
       await service.discover({
         source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
@@ -204,6 +292,8 @@ describe("discovery/DiscoverAccounts", () => {
         {
           pageNumber: 1,
           pageSize: 100, // in batches of 100 per page
+          sort: "createdAt",
+          order: "asc",
         } as QueryParameters,
       ));
       expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(2, new TransactionQuery(
@@ -211,6 +301,8 @@ describe("discovery/DiscoverAccounts", () => {
         {
           pageNumber: 2,
           pageSize: 100, // in batches of 100 per page
+          sort: "createdAt",
+          order: "asc",
         } as QueryParameters,
       ));
     });

@@ -68,6 +68,22 @@ export const createTransaction = (
   ]
 });
 
+// Mocks a **transaction document** factory for internal
+// integrations of database transactions and working with
+// database copies of assets and users.
+export const createTransactionDocument = (
+  hash: string = "fakeHash1"
+): any => ({
+  transactionHash: hash,
+  sourceAddress: "fake-source",
+  signerAddress: "fake-signer",
+  signerPublicKey: "fake-signer-public-key",
+  recipientAddress: "fake-recipient",
+  transactionMode: "fake-mode",
+  transactionType: "fake-type",
+  transactionAssets: [],
+});
+
 // Mocks a **model** class for nestjs internal
 // mongoose integration with FIND, CREATE, UPDATE
 // and AGGREGATE logic mocked out and spied on.

@@ -76,6 +76,16 @@ export class DiscoverAssets extends DiscoveryCommand {
   private lastExecutedAt: number;
 
   /**
+   * Configuration field for the page size to be read. This is used
+   * to determine how many transactions are queried per page from
+   * the database.
+   *
+   * @access private
+   * @var {number}
+   */
+  private usePageSize = 100;
+
+  /**
    * The constructor of this class.
    * Params will be automatically injected upon called.
    *
@@ -210,7 +220,7 @@ export class DiscoverAssets extends DiscoveryCommand {
    * and sent to an end-user from the dApp's main account.
    * <br /><br />
    * Discovery is done in 2 steps as described below:
-   * - Step 1: Reads a batch of 1000 transactions and discover assets
+   * - Step 1: Reads a batch of 2000 transactions and discover assets
    * - Step 2: Find or create a corresponding document in `assets`
    *
    * @access public
@@ -251,9 +261,9 @@ export class DiscoverAssets extends DiscoveryCommand {
     // the next runs of assets discovery
     if (
       countTransactions > 0 &&
-      this.lastPageNumber * 100 > countTransactions
+      this.lastPageNumber * this.usePageSize > countTransactions
     ) {
-      this.lastPageNumber = Math.floor(countTransactions / 100);
+      this.lastPageNumber = Math.floor(countTransactions / this.usePageSize) + 1;
     }
 
     // display debug information about configuration
@@ -266,7 +276,7 @@ export class DiscoverAssets extends DiscoveryCommand {
     // (1) each round queries a page of 100 transactions *from the database*
     // and discovers assets that are attached in said transactions
     for (
-      let i = this.lastPageNumber, max = this.lastPageNumber + 10;
+      let i = this.lastPageNumber, max = this.lastPageNumber + 20;
       i < max;
       i++, this.lastPageNumber++
     ) {
@@ -276,10 +286,17 @@ export class DiscoverAssets extends DiscoveryCommand {
           {} as TransactionDocument, // queries *any* transaction
           {
             pageNumber: i, // in batches of 100 per page
-            pageSize: 100,
+            pageSize: this.usePageSize,
+            sort: "createdAt",
+            order: "asc",
           } as QueryParameters,
         ),
       );
+
+      // if we don't get anything, stop querying transactions for now
+      if (!transactions.data.length) {
+        break;
+      }
 
       // proceeds to extracting assets from transactions
       this.discoveredAssets = this.discoveredAssets
@@ -289,8 +306,8 @@ export class DiscoverAssets extends DiscoveryCommand {
               t.transactionAssets.map(
                 (a) =>
                   ({
-                    ...a,
                     assetId: a.mosaicId,
+                    amount: a.amount,
                     transactionHash: t.transactionHash,
                     userAddress:
                       t.transactionMode === "outgoing"
@@ -302,13 +319,32 @@ export class DiscoverAssets extends DiscoveryCommand {
             )
             .reduce((p, c) => c, []),
         )
-        .filter((v, i, s) => s.indexOf(v) === i); // unique
+        // and now make this array unique
+        .filter(
+          (v, i, a) =>
+            i === a.findIndex((f) => v.transactionHash === f.transactionHash),
+        );
+
+      // stop and restart at same page if the page was not full
+      if (transactions.data.length < this.usePageSize) {
+        break;
+      }
     }
 
     if (options.debug && !options.quiet) {
       this.debugLog(
         `Found ${this.discoveredAssets.length} new asset entries from transactions`,
       );
+    }
+
+    // bail out if no assets could be discovered
+    if (!this.discoveredAssets.length) {
+      // a per-command state update is *not* necessary here because
+      // the `BaseCommand` class' `run` method automatically updates
+      // the per-command state with updated values *after* executing
+      // this discovery method.
+
+      return; // (void)
     }
 
     // (2) each round creates or finds 1 `assets` document

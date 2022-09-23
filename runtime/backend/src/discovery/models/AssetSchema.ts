@@ -87,6 +87,7 @@ export class Asset extends Transferable<AssetDTO> {
    * @access public
    * @var {string}
    */
+  @Prop({ required: true })
   public amount: number;
 
   /**
@@ -98,7 +99,7 @@ export class Asset extends Transferable<AssetDTO> {
    * @access public
    * @var {number}
    */
-  @Prop()
+  @Prop({ required: true, index: true })
   public creationBlock: number;
 
   /**

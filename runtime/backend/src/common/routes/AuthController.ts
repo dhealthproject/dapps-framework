@@ -179,20 +179,8 @@ export class AuthController {
   @ApiExtraModels(AuthChallengeDTO)
   @ApiOkResponse(HTTPResponses.AuthChallengeResponseSchema)
   protected async getAuthCode(): Promise<AuthChallengeDTO> {
-    // generates cookie configuration (depends on dApp)
-    //const authCookie = this.authService.getCookie();
-
     // generates a *random* authentication challenge
     const authChallenge = this.authService.getChallenge();
-
-    // set authentication challenge as the value of the
-    // cookie. This will be replaced by the accessToken
-    // and refreshToken when authentication is successful.
-    // response.cookie(authCookie.name, authChallenge, {
-    //   httpOnly: true,
-    //   domain: authCookie.domain,
-    //   signed: true,
-    // });
 
     // serves the authentication challenge
     return { challenge: authChallenge } as AuthChallengeDTO;

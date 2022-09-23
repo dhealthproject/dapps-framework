@@ -64,9 +64,9 @@ describe("discovery/AccountsController", () => {
         .mockResolvedValue(expectToFetchDocuments);
 
       // act
-      const result = await controller.find(new AccountQuery(
-        { address: "fakeAddress" } as AccountDocument,
-      ));
+      const result = await controller.find({
+        address: "fakeAddress"
+      } as any);
 
       // assert
       expect(serviceFindMock).toBeCalledTimes(1);

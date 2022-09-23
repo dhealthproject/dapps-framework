@@ -86,9 +86,8 @@ export class PaginatedResultDTO<TData> {
    */
   public isLastPage(): boolean {
     return (
-      this.data.length < this.pagination.pageSize ||
       this.pagination.pageNumber * this.pagination.pageSize >=
-        (this.pagination.total ?? 0)
+      (this.pagination.total ?? 0)
     );
   }
 }

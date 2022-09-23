@@ -99,9 +99,19 @@ export class AccountsController {
   public async find(
     @Query() query: AccountQuery,
   ): Promise<PaginatedResultDTO<AccountDTO>> {
+    // destructure to create correct query
+    // this permits to skip the `document[]`
+    const { pageNumber, pageSize, sort, order, ...rest } = query;
+
     // reads from database
-    const data: PaginatedResultDTO<AccountDocument> =
-      await this.accountsService.find(query);
+    const data = await this.accountsService.find(
+      new AccountQuery(
+        {
+          ...rest,
+        } as AccountDocument,
+        { pageNumber, pageSize, sort, order },
+      ),
+    );
 
     // wraps for transport
     return new PaginatedResultDTO<AccountDTO>(
