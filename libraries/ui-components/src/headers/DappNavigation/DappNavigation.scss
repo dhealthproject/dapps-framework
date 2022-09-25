@@ -34,29 +34,56 @@
   }
 }
 
-.right-drawer {
+.dappNavigation-right-drawer {
   @apply absolute top-0 right-0 w-0 overflow-hidden h-[100vh] pl-0;
   @apply border-l-[1px] border-solid border-l-[whitesmoke];
   @apply bg-white z-[200] transition-all;
 
-  .drawer-mask {
+  .dappNavigation-visible {
+    @apply w-full;
+  }
+
+  .dappNavigation-hidden {
+    @apply w-0;
+  }
+
+  .dappNavigation-drawer-mask {
     @apply absolute left-0 top-0 w-0 h-full;
     @apply bg-[#000] opacity-[0.3] z-[199] transition-opacity;
   }
 
-  .drawer-header {
+  .dappNavigation-drawer-header {
     @apply flex flex-row items-center py-[18px] px-6 gap-3;
-    @apply absolute w-full h-[60px] right-0 top-0;
+    @apply absolute w-full h-[70px] right-0 top-0;
     @apply border-b-[0.5px] border-solid border-b-[#09090a];
 
-    .close {
-      @apply bg-white border-0 cursor-pointer text-[#1d1843] font-bold;
+    .dappNavigation-logo-div {
+      @apply flex items-center justify-start flex-1;
+    }
+
+    .dappNavigation-close-div {
+      @apply text-right m-[5px] flex items-center justify-end flex-[2];
+
+      .dappNavigation-close {
+        @apply bg-white border-0 cursor-pointer text-[#1d1843] font-bold;
+      }
     }
   }
 
-  .drawer-content {
-    @apply flex flex-col items-start p-6 gap-7;
-    @apply absolute w-full min-h-[377px] left-0 top-[60px];
+  .dappNavigation-drawer-info {
+    @apply w-full h-[103.5px] border-b-[1px] border-solid border-b-[#7E7B93] top-[70px];
+    @apply absolute flex items-center justify-center;
+
+    .dappNavigation-drawer-info-details {
+      @apply flex flex-row items-center py-4 px-0 gap-6;
+      @apply absolute w-full h-[72px] left-6;
+    }
+  }
+
+  .dappNavigation-drawer-content {
+    @apply flex flex-col items-start p-0 gap-4;
+    @apply absolute w-full left-6 top-[211px];
+    @apply flex-none order-none flex-grow-0;
 
     .dappNavigation-menuItem {
       @apply flex-1 h-full flex items-center justify-center flex-col w-full;
@@ -64,53 +91,51 @@
 
     .dappNavigationItem-base {
       @apply w-full box-border;
-      @apply flex flex-row items-center py-2 px-4 gap-2;
+      @apply flex flex-row items-center py-2 gap-2;
       @apply w-full h-10 flex-none order-none self-stretch grow-0;
     }
 
     .dappNavigationItem-svg {
-      @apply !fill-[#000000];
+      @apply !fill-[#1D1843];
     }
 
     .dappNavigationItem-mainDiv {
-      @apply !flex-row !justify-start !text-[#000000];
+      @apply !flex-row !justify-start !text-[#09090A];
     }
 
-    .active {
-      @apply bg-[#f7f7f7] border-l-[5px] border-solid border-l-[#7161d5];
+    .dappNavigation-active {
+      .dappNavigationItem-svg {
+        @apply !fill-[#09090A];
+      }
 
       .dappNavigationItem-mainDiv {
-        @apply !font-semibold;
+        @apply !font-semibold !underline;
       }
     }
   }
 
-  .drawer-footer {
-    @apply flex flex-col justify-center items-center py-3 px-[10px] gap-2;
-    @apply absolute w-full h-[82px] left-0 bottom-0 bg-[#f7f7f7];
+  .dappNavigation-drawer-footer {
+    @apply flex flex-col justify-center items-center py-3 px-[24px] gap-2;
+    @apply absolute w-full h-[82px] left-0 bottom-0;
 
-    .power-div {
-      @apply flex items-center justify-center;
-
-      .power-span {
-        @apply w-20 h-[17px] not-italic	font-semibold text-[14px] leading-[120%];
-        @apply tracking-[-0.01em] text-[#625e83] flex-none order-none flex-grow-0;
-      }
-
-      .dhealth-span {
-        @apply w-[132px] h-7 not-italic font-semibold text-lg leading-7;
-        @apply text-[#150867] flex-none order-1 flex-grow-0;
-      }
+    .dappNavigation-power-div,
+    .dappNavigation-policy-div {
+      @apply flex items-center justify-start w-full;
     }
 
-    .policy-div a {
-      @apply font-["Roboto"] not-italic font-normal text-[12px] leading-[22px];
-      @apply tracking-[-0.408px] underline text-[#5d64ff];
+    .dappNavigation-power-div span {
+      @apply h-[22px] not-italic font-medium text-[16px] leading-[22px];
+      @apply flex items-center text-[#09090a] flex-none order-none flex-grow-0;
+    }
+
+    .dappNavigation-policy-div a {
+      @apply h-[22px] not-italic font-normal text-[12px] leading-[22px];
+      @apply flex items-center underline text-[#09090a];
       @apply flex-none order-none flex-grow-0;
     }
 
-    .power-div > *,
-    .policy-div > * {
+    .dappNavigation-power-div > *,
+    .dappNavigation-policy-div > * {
       @apply mx-[3.5px];
     }
   }
