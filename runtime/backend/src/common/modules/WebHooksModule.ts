@@ -12,11 +12,11 @@
 import { Module } from "@nestjs/common";
 
 // internal dependencies
-import { HooksController } from "../routes/HooksController";
-import { HooksService } from "../services/HooksService";
+import { WebHooksController } from "../routes/WebHooksController";
+import { WebHooksService } from "../services/WebHooksService";
 
 @Module({
-  providers: [HooksService],
-  controllers: [HooksController],
+  providers: [WebHooksService],
+  controllers: [WebHooksController],
 })
-export class ProvidersModule {}
+export class WebHooksModule {}

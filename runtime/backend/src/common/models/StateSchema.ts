@@ -28,7 +28,7 @@ import type { StateData } from "./StateData";
  * Note that this class uses the generic {@link Transferable:COMMON} trait to
  * enable a `toDTO()` method on the model.
  *
- * @todo The {@link State} model does not need fields to be **public**.
+ * @todo Timestamp fields should be **numbers** to avoid timezone issues.
  * @since v0.2.0
  */
 @Schema({

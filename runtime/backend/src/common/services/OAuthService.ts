@@ -85,7 +85,7 @@ export class OAuthService {
    *
    * @access public
    * @param   {string}    providerName   Contains the identifier of the OAuth Provider, e.g. "strava".
-   * @returns {OAuthProviderParameters}
+   * @returns {OAuthProviderParameters}  The OAuth provider parameters, i.e. URLs and configuration.
    */
   public getProvider(providerName: string): OAuthProviderParameters {
     // reads OAuth provider from configuration
@@ -161,7 +161,10 @@ export class OAuthService {
     request: OAuthCallbackRequest,
   ): Promise<AccountIntegrationDocument> {
     // first make sure we actually have an authorization
-    const integration = await this.getIntegration(providerName, account);
+    const integration = await this.getIntegration(
+      providerName,
+      request.identifier,
+    );
     if (!integration || !("address" in integration)) {
       throw new HttpException(`Forbidden`, 403);
     }
@@ -249,12 +252,12 @@ export class OAuthService {
    */
   public async getIntegration(
     provider: string,
-    account: AccountDocument,
+    remoteIdentifier: string,
   ): Promise<AccountIntegrationDocument> {
     return await this.queryService.findOne(
       new AccountIntegrationQuery({
-        address: account.address,
         name: provider,
+        remoteIdentifier: remoteIdentifier,
       } as AccountIntegrationDocument),
       this.model,
     );

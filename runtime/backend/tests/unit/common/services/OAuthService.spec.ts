@@ -247,14 +247,14 @@ describe("common/OAuthService", () => {
       // act
       oauthService.getIntegration(
         "strava",
-        { address: "fake-address" } as AccountDocument,
+        "fake-remote-identifier",
       );
 
       // assert
       expect(findOneMock).toHaveBeenCalledTimes(1);
       expect(findOneMock).toHaveBeenCalledWith(new AccountIntegrationQuery({
-        address: "fake-address",
-        name: "strava"
+        name: "strava",
+        remoteIdentifier: "fake-remote-identifier",
       } as AccountIntegrationDocument), (oauthService as any).model);
     });
 
@@ -262,29 +262,29 @@ describe("common/OAuthService", () => {
       // act
       oauthService.getIntegration(
         "other",
-        { address: "fake-address" } as AccountDocument,
+        "fake-remote-identifier",
       );
 
       // assert
       expect(findOneMock).toHaveBeenCalledTimes(1);
       expect(findOneMock).toHaveBeenCalledWith(new AccountIntegrationQuery({
-        address: "fake-address",
-        name: "other"
+        name: "other",
+        remoteIdentifier: "fake-remote-identifier",
       } as AccountIntegrationDocument), (oauthService as any).model);
     });
 
-    it("should accept any address in string format", () => {
+    it("should accept any remote identifier in string format", () => {
       // act
       oauthService.getIntegration(
         "other",
-        { address: "another-fake-address" } as AccountDocument,
+        "another-remote-identifier",
       );
 
       // assert
       expect(findOneMock).toHaveBeenCalledTimes(1);
       expect(findOneMock).toHaveBeenCalledWith(new AccountIntegrationQuery({
-        address: "another-fake-address",
-        name: "other"
+        name: "other",
+        remoteIdentifier: "another-remote-identifier",
       } as AccountIntegrationDocument), (oauthService as any).model);
     });
 
@@ -302,7 +302,7 @@ describe("common/OAuthService", () => {
       // act
       const result = await oauthService.getIntegration(
         "strava",
-        { address: "fake-address" } as AccountDocument,
+        "fake-remote-identifier",
       );
 
       // assert

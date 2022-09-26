@@ -14,11 +14,11 @@ import { DynamicModule, Logger, Module } from "@nestjs/common";
 import { AuthModule } from "./common/modules/AuthModule";
 import { AccountsModule } from "./common/modules/AccountsModule";
 import { ChallengesModule } from "./common/modules/ChallengesModule";
+import { WebHooksModule } from "./common/modules/WebHooksModule";
 import { AppController } from "./AppController";
 import { AppService } from "./AppService";
 import { ScopeFactory } from "./common/ScopeFactory";
 import { DappConfig } from "./common/models/DappConfig";
-import { ProvidersModule } from "./common/modules/ProvidersModule";
 
 // configuration resources
 import dappConfigLoader from "../config/dapp";
@@ -36,7 +36,7 @@ import dappConfigLoader from "../config/dapp";
  * @since v0.1.0
  */
 @Module({
-  imports: [AccountsModule, AuthModule, ChallengesModule, ProvidersModule],
+  imports: [AccountsModule, AuthModule, ChallengesModule, WebHooksModule],
 })
 export class AppModule {
   /**

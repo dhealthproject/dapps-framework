@@ -37,6 +37,7 @@ export class AssetDTO extends BaseDTO {
    * @var {string}
    */
   @ApiProperty({
+    type: "string",
     example: "4288A7ACF51A04AEFFBAA3DC96BCB96F20BA95671C19C3EE9E0443BC0FB79A61",
     description:
       "This is the transaction hash as defined by dHealth Network. It contains an *immutable* sha3-256 hash created from the transaction body.",
@@ -52,6 +53,7 @@ export class AssetDTO extends BaseDTO {
    * @var {string}
    */
   @ApiProperty({
+    type: "string",
     example: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
     description:
       "This is the user's address. The user corresponds to the account that has *executed* said operation, a.k.a. the originator.",
@@ -68,6 +70,7 @@ export class AssetDTO extends BaseDTO {
    * @var {number}
    */
   @ApiProperty({
+    type: "number",
     example: 123456,
     description:
       "The height of the block that included the transaction executing this asset assignment on dHealth Network",
@@ -84,6 +87,7 @@ export class AssetDTO extends BaseDTO {
    * @var {string}
    */
   @ApiProperty({
+    type: "string",
     example: "39E0C49FA322A459",
     description:
       "This is the asset identifier on dHealth Network (Mosaic ID). It consists of a hexadecimal identifier and is unique on dHealth Network.",
@@ -107,5 +111,11 @@ export class AssetDTO extends BaseDTO {
    * @access public
    * @var {string}
    */
+  @ApiProperty({
+    type: "number",
+    example: 123,
+    description:
+      "This is the amount of this asset as attached on dHealth Network. It consists of a number and is attached in transfer transaction on dHealth Network.",
+  })
   public amount: number;
 }

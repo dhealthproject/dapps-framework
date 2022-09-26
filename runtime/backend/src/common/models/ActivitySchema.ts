@@ -15,14 +15,14 @@ import { Model } from "mongoose";
 import { Documentable } from "../concerns/Documentable";
 import { Transferable } from "../concerns/Transferable";
 import { Queryable, QueryParameters } from "../concerns/Queryable";
-import { AccountIntegrationDTO } from "./AccountIntegrationDTO";
+import { ActivityDTO } from "./ActivityDTO";
 
 /**
- * @class AccountIntegration
+ * @class Activity
  * @description This class defines the **exact** fields that are
  * stored in the corresponding MongoDB documents. It should be
  * used whenever database *documents* are being handled or read
- * for the `account_integrations` collection.
+ * for the `activities` collection.
  * <br /><br />
  * Note that this class uses the generic {@link Transferable} trait to
  * enable a `toDTO()` method on the model.
@@ -33,7 +33,7 @@ import { AccountIntegrationDTO } from "./AccountIntegrationDTO";
 @Schema({
   timestamps: true,
 })
-export class AccountIntegration extends Transferable<AccountIntegrationDTO> {
+export class Activity extends Transferable<ActivityDTO> {
   /**
    * The account's **address**. An address typically refers to a
    * human-readable series of 39 characters, starting either with
@@ -49,9 +49,22 @@ export class AccountIntegration extends Transferable<AccountIntegrationDTO> {
   public readonly address: string;
 
   /**
-   * The OAuth integration *provider name*. This is usually
-   * the name of the platform of which an account is being
-   * linked to the dApp.
+   * The activity slug is composed of the date of the activity,
+   * the index of it on a daily basis, and the athlete identifier.
+   * <br /><br />
+   * This field is **required** and *indexed* and must hold
+   * a *unique* value.
+   *
+   * @access public
+   * @readonly
+   * @var {string}
+   */
+  @Prop({ required: true, index: true, unique: true, type: String })
+  public readonly slug: string;
+
+  /**
+   * The activity's *date slug* consists of a `YYYYMMDD` formatted
+   * date and is used to *prefix* individual activity slugs.
    * <br /><br />
    * This field is **required** and *indexed*.
    *
@@ -60,65 +73,20 @@ export class AccountIntegration extends Transferable<AccountIntegrationDTO> {
    * @var {string}
    */
   @Prop({ required: true, index: true })
-  public readonly name: string;
+  public readonly dateSlug: string;
 
   /**
-   * This field is used in a *verification* step to make
-   * sure that only the owner of an OAuth integration can
-   * update this integration.
+   * The OAuth provider name. This is usually the name of the
+   * platform of which an account has completed an activity.
    * <br /><br />
-   * The authorization URL is built using the end-user's
-   * address and a possible referral code.
-   * <br /><br />
-   * This field is **required** and *indexed*.
+   * This field is **required** and *not indexed*.
    *
    * @access public
    * @readonly
    * @var {string}
    */
-  @Prop({ required: true, index: true })
-  public readonly authorizationHash: string;
-
-  /**
-   * This field contains the *remote identifier*. This is
-   * usually the *identifier* of the account on the third
-   * party platform, e.g. the athlete identifier in Strava.
-   * <br /><br />
-   * This field is **optional** and *indexed*.
-   *
-   * @access public
-   * @readonly
-   * @var {string}
-   */
-  @Prop({ index: true })
-  public readonly remoteIdentifier?: string;
-
-  /**
-   * This field contains an *encrypted* access token which
-   * uses the seed in {@link OAuthService.getEncryptionSeed}.
-   * <br /><br />
-   * This field is **optional** and *not indexed*.
-   *
-   * @access public
-   * @readonly
-   * @var {Date}
-   */
-  @Prop({ nullable: true })
-  public readonly encAccessToken?: string;
-
-  /**
-   * This field contains an *encrypted* refresh token which
-   * uses the seed in {@link OAuthService.getEncryptionSeed}.
-   * <br /><br />
-   * This field is **optional** and *not indexed*.
-   *
-   * @todo Note this is not protected for number overflows (but there is a long way until block numbers do overflow..)
-   * @access public
-   * @readonly
-   * @var {number}
-   */
-  @Prop({ nullable: true })
-  public readonly encRefreshToken?: string;
+  @Prop({ required: true })
+  public readonly provider: string;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -156,40 +124,38 @@ export class AccountIntegration extends Transferable<AccountIntegrationDTO> {
       address: this.address, // always present
     };
 
-    if (undefined !== this.name) query["name"] = this.name;
+    if (undefined !== this.slug) query["slug"] = this.slug;
+    if (undefined !== this.dateSlug) query["dateSlug"] = this.dateSlug;
 
     return query;
   }
 
   /**
-   * This *static* method populates a {@link AccountIntegrationDTO} object from the
-   * values of a {@link AccountIntegrationDocument} as presented by mongoose queries.
+   * This *static* method populates a {@link ActivityDTO} object from the
+   * values of a {@link ActivityDocument} as presented by mongoose queries.
    *
    * @access public
    * @static
-   * @param   {AccountIntegrationDocument}   doc   The document as received from mongoose.
-   * @param   {AccountIntegrationDTO}        dto   The DTO object that will be populated with values.
-   * @returns {AccountIntegrationDTO}        The `dto` object with fields set.
+   * @param   {ActivityDocument}   doc   The document as received from mongoose.
+   * @param   {ActivityDTO}        dto   The DTO object that will be populated with values.
+   * @returns {ActivityDTO}        The `dto` object with fields set.
    */
-  public static fillDTO(
-    doc: AccountIntegrationDocument,
-    dto: AccountIntegrationDTO,
-  ): AccountIntegrationDTO {
+  public static fillDTO(doc: ActivityDocument, dto: ActivityDTO): ActivityDTO {
     dto.address = doc.address;
-    dto.name = doc.name;
+    dto.slug = doc.slug;
     return dto;
   }
 }
 
 /**
- * @type AccountIntegrationDocument
+ * @type ActivityDocument
  * @description This type is used to interface entities of the
  * `account_integrations` collection with *mongoose* and permits to
  * instanciate objects representing these entities.
  * <br /><br />
- * e.g. alongside {@link AccountIntegrationSchema}, we also define
- * `AccountIntegrationDocument` which is a mixin that comprises of
- * {@link AccountIntegration} and this `Documentable` class.
+ * e.g. alongside {@link ActivitySchema}, we also define
+ * `ActivityDocument` which is a mixin that comprises of
+ * {@link Activity} and this `Documentable` class.
  * <br /><br />
  * In class {@link Queryable:COMMON}, the first generic accepted
  * permits to use *documents* that are typed with this, to filter
@@ -197,23 +163,23 @@ export class AccountIntegration extends Transferable<AccountIntegrationDTO> {
  *
  * @since v0.3.0
  */
-export type AccountIntegrationDocument = AccountIntegration & Documentable;
+export type ActivityDocument = Activity & Documentable;
 
 /**
- * @class AccountIntegrationModel
+ * @class ActivityModel
  * @description This class defines the **model** or individual
  * **document** for one collection ("schema"). This class can
  * be *automatically* injected in services using the `@InjectModel`
  * decorator of `nestjs/mongoose`.
  * <br /><br />
- * @example Injecting and using the `AccountIntegrationModel`
+ * @example Injecting and using the `ActivityModel`
  * ```typescript
  *   import { InjectModel } from "@nestjs/mongoose";
- *   import { Account, AccountIntegrationModel } from "./AccountSchema";
+ *   import { Account, ActivityModel } from "./AccountSchema";
  *
  *   class MyAccountService {
  *     public constructor(
- *       @InjectModel(Account.name) private readonly model: AccountIntegrationModel
+ *       @InjectModel(Account.name) private readonly model: ActivityModel
  *     )
  *
  *     public addEntry(data: Record<string, any>) {
@@ -224,10 +190,10 @@ export type AccountIntegrationDocument = AccountIntegration & Documentable;
  *
  * @since v0.3.0
  */
-export class AccountIntegrationModel extends Model<AccountIntegrationDocument> {}
+export class ActivityModel extends Model<ActivityDocument> {}
 
 /**
- * @class AccountIntegrationQuery
+ * @class ActivityQuery
  * @description This class augments {@link Queryable} objects enabling
  * *accounts* to be queried **by `address`** and **by `transactionsCount`.**
  * <br /><br />
@@ -236,16 +202,16 @@ export class AccountIntegrationModel extends Model<AccountIntegrationDocument> {
  *
  * @since v0.3.0
  */
-export class AccountIntegrationQuery extends Queryable<AccountIntegrationDocument> {
+export class ActivityQuery extends Queryable<ActivityDocument> {
   /**
    * Copy constructor for pageable queries in `account_integrations` collection.
    *
    * @see Queryable
-   * @param   {AccountIntegrationDocument|undefined}     document          The *document* instance (defaults to `undefined`) (optional).
+   * @param   {ActivityDocument|undefined}     document          The *document* instance (defaults to `undefined`) (optional).
    * @param   {QueryParameters|undefined}     queryParameters   The query parameters including as defined in {@link QueryParameters} (optional).
    */
   public constructor(
-    document?: AccountIntegrationDocument,
+    document?: ActivityDocument,
     queryParams: QueryParameters = undefined,
   ) {
     super(document, queryParams);
@@ -253,17 +219,16 @@ export class AccountIntegrationQuery extends Queryable<AccountIntegrationDocumen
 }
 
 /**
- * @export AccountIntegrationSchema
+ * @export ActivitySchema
  * @description This export creates a mongoose schema using the custom
- * {@link AccountIntegration} class and should be used mainly when *inferring* the
+ * {@link Activity} class and should be used mainly when *inferring* the
  * type of fields in a document for the corresponding collection.
  *
  * @since v0.3.0
  */
-export const AccountIntegrationSchema =
-  SchemaFactory.createForClass(AccountIntegration);
+export const ActivitySchema = SchemaFactory.createForClass(Activity);
 
 // This call to **loadClass** on the schema object enables instance
-// methods on the {@link AccountIntegration} class to be called when the model gets
+// methods on the {@link Activity} class to be called when the model gets
 // instanciated by `mongoose` directly, e.g. as the result of a query.
-AccountIntegrationSchema.loadClass(AccountIntegration, true);
+ActivitySchema.loadClass(Activity, true);

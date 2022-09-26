@@ -18,8 +18,8 @@ export default () => ({
       oauth_url: "https://www.strava.com/oauth/authorize",
       token_url: "https://www.strava.com/oauth/token",
       callback_url: process.env.FRONTEND_URL,
-      subscribe_url: `${process.env.BACKEND_URL}/subscribe`,
-      webhook_url: `${process.env.BACKEND_URL}/webhook`,
+      subscribe_url: `${process.env.BACKEND_URL}/webhook/strava`,
+      webhook_url: `${process.env.BACKEND_URL}/webhook/strava`,
     }
   }
 });

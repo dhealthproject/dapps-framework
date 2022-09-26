@@ -24,6 +24,7 @@ import { AuthChallengeDTO } from "../models/AuthChallengeDTO";
  * used whenever database *documents* are being handled or read
  * for the `authChallenges` collection.
  *
+ * @todo Timestamp fields should be **numbers** to avoid timezone issues.
  * @since v0.3.0
  */
 @Schema({

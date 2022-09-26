@@ -91,9 +91,8 @@ export class OAuthController {
   ) {}
 
   /**
-   * Returns redirect to provider authentication page.
-   * This endpoint is used to prompt user info
-   * in selected provider.
+   * Request an authorization from a registered OAuth provider
+   * by redirecting the user to the provider authorization page.
    *
    * @method GET
    * @param response

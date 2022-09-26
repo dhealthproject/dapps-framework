@@ -7,12 +7,12 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// generics / interfaces
-export * from "./OAuthDriver";
-export * from "./HttpRequestHandler";
+// generics
+export * from "./StravaWebHookSubscriptionFields";
 
-// specialized driver implementations
-export * from "./BasicOAuthDriver";
-export * from "./StravaOAuthDriver";
+// requests
+export * from "./StravaWebHookSubscriptionRequest";
+export * from "./StravaWebHookEventRequest";
 
-// specialized driver requests/responses
+// responses
+export * from "./StravaWebHookSubscriptionResponse";
