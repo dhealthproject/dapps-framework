@@ -126,7 +126,8 @@
       "interfaces",
       "jestGlobalMocks.ts",
       "index.ts",
-      "config"
+      "config",
+      "tests/e2e"
     ]
   },
   "contributors": [

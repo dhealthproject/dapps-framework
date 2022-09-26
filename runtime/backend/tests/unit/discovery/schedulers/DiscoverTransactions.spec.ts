@@ -545,7 +545,7 @@ describe("discovery/DiscoverTransactions", () => {
         const createCall = jest.spyOn(MockModel.prototype, "create");
         const extractRecipientAddressCall = jest
           .spyOn((service as any), "extractRecipientAddress")
-          .mockReturnValue("NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY");
+          .mockReturnValue("NC33F3ZRIIM6UHHIMKU5HGJEFL3MQKCYWG2H45Y");
 
         // act
         await service.discover({

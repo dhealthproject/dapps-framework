@@ -105,7 +105,7 @@ describe("discovery/DiscoverAccounts", () => {
 
   let mockDate: Date;
   beforeEach(async () => {
-    mockDate = new Date(2022, 1, 1); // UTC 1643670000000
+    mockDate = new Date(2022, 1, 1); // UTC 1643648400000
     jest.useFakeTimers("modern");
     jest.setSystemTime(mockDate);
 
@@ -213,7 +213,7 @@ describe("discovery/DiscoverAccounts", () => {
       expect(configServiceGetCall).toHaveBeenCalledTimes(2);
       expect(configServiceGetCall).toHaveBeenCalledWith("dappPublicKey");
       expect(configServiceGetCall).toHaveBeenCalledWith("network.networkIdentifier");
-      expect((service as any).lastExecutedAt).toBe(1643670000000);
+      expect((service as any).lastExecutedAt).toBe(1643648400000);
       expect(superRun).toHaveBeenNthCalledWith(
         1,
         [],

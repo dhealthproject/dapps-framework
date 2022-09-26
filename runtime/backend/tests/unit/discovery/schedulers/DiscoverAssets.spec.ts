@@ -36,7 +36,7 @@ jest.mock("@dhealth/sdk", () => ({
 }));
 
 // external dependencies
-import { Address } from "@dhealth/sdk"; // mocked!
+import { Address, PublicAccount } from "@dhealth/sdk"; // mocked!
 import { Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { getModelToken } from "@nestjs/mongoose";
@@ -56,6 +56,8 @@ import { AssetDTO } from "../../../../src/discovery/models/AssetDTO";
 import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
 import { DiscoverAssets } from "../../../../src/discovery/schedulers/DiscoverAssets/DiscoverAssets";
 import { AssetDiscoveryStateData } from "../../../../src/discovery/models/AssetDiscoveryStateData";
+import { DiscoveryCommand } from "../../../../src/discovery/schedulers/DiscoveryCommand";
+import { StateDocument } from "../../../../src/common/models/StateSchema";
 
 // configuration resources
 import dappConfigLoader from "../../../../config/dapp";
@@ -91,10 +93,11 @@ class MockDiscoverAssets extends DiscoverAssets {
 // invalid transaction pages from database queries.
 const fakeCreateTransactionDocuments = (
   x: number = 20,
+  transactionMode?: string,
 ): TransactionDocument[] => {
   const output: TransactionDocument[] = [];
   for (let i = 0; i < x; i++) {
-    output.push(createTransactionDocument(`fakeHash${i+1}`));
+    output.push(createTransactionDocument(`fakeHash${i+1}`, transactionMode));
   }
   return output;
 }
@@ -115,7 +118,7 @@ describe("discovery/DiscoverAssets", () => {
 
   let mockDate: Date;
   beforeEach(async () => {
-    mockDate = new Date(1212, 1, 1);
+    mockDate = new Date(2022, 1, 1);
     jest.useFakeTimers("modern");
     jest.setSystemTime(mockDate);
 
@@ -167,6 +170,32 @@ describe("discovery/DiscoverAssets", () => {
     expect(service).toBeDefined();
   });
 
+  describe("get command()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const expectedResult = "DiscoverAssets";
+
+      // act
+      const result = (service as any).command;
+
+      // assert
+      expect(result).toBe(expectedResult);
+    });
+  });
+
+  describe("get signature()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const expectedResult = `DiscoverAssets [--source "SOURCE-ADDRESS-OR-PUBKEY"]`;
+
+      // act
+      const result = (service as any).signature;
+
+      // assert
+      expect(result).toBe(expectedResult);
+    });
+  });
+
   describe("getStateData()", () => {
     it("should use correct asset discovery state values", () => {
       // act
@@ -177,6 +206,41 @@ describe("discovery/DiscoverAssets", () => {
       expect("lastExecutedAt" in data).toBe(true);
       expect(data.lastExecutedAt).toBe(mockDate.valueOf());
       expect(data.lastPageNumber).toBe(1);
+    });
+  });
+
+  describe("runAsScheduler()", () => {
+    it("should call correct methods", async () => {
+      // prepare
+      const configServiceGetCall = jest
+        .spyOn(configService, "get")
+        .mockReturnValueOnce("test-pubkey")
+        .mockReturnValue(104);
+
+      const createFromPublicKeyCall = jest
+        .spyOn(PublicAccount, "createFromPublicKey")
+        .mockReturnValue({
+          address: { plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY" }
+        } as PublicAccount);
+
+      const superRunCall = jest
+        .spyOn(DiscoveryCommand.prototype, "run")
+        .mockResolvedValue();
+
+      // act
+      await service.runAsScheduler();
+
+      // assert
+      expect(configServiceGetCall).toHaveBeenCalledTimes(2);
+      expect(createFromPublicKeyCall).toHaveBeenCalledTimes(1);
+      expect(superRunCall).toHaveBeenNthCalledWith(
+        1,
+        [],
+        {
+          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+          debug: true,
+        }
+      );
     });
   });
 
@@ -202,10 +266,74 @@ describe("discovery/DiscoverAssets", () => {
       expect(logger.debug).toHaveBeenNthCalledWith(3, "Found 0 new asset entries from transactions");
     });
 
+    it("should set lastPageNumber if state data is available", async () => {
+      // prepare
+      (service as any).state = {
+        data: {
+          lastPageNumber: 1
+        }
+      };
+
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      });
+
+      // assert
+      expect((service as any).lastPageNumber).toBe(1);
+    });
+
+    it("should set correct lastPageNumber based on totalNumberOfTransactions", async () => {
+      // prepare
+      const statesServiceFindOneCall = jest
+        .fn()
+        .mockResolvedValue({
+          data: {
+            totalNumberOfTransactions: 200,
+          }
+        } as StateDocument);
+      (service as any).stateService.findOne = statesServiceFindOneCall;
+      (service as any).lastPageNumber = 3;
+      (service as any).lastPageNumber = 100;
+
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      });
+
+      // assert
+      expect(statesServiceFindOneCall).toHaveBeenCalledTimes(1);
+      expect((service as any).lastPageNumber).toBe(3);
+    });
+
+    it("should skip update for known assets if document exists", async () => {
+      // prepare
+      (service as any).transactionsService.find = jest.fn().mockReturnValueOnce({
+        data: fakeCreateTransactionDocuments(100, "outgoing"), // full page ONCE
+      }).mockReturnValueOnce({
+        data: [], // empty page
+      });
+      const existsCall = (service as any).assetsService.exists = jest.fn().mockResolvedValue(true);
+      const debugLogCall = jest.spyOn((service as any), "debugLog");
+      const expectedDebugLog = `Skipped 1 asset entries that already exist`
+
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      });
+
+      // assert
+      expect(existsCall).toHaveBeenCalledTimes(1);
+      expect(debugLogCall).toHaveBeenLastCalledWith(expectedDebugLog);
+    });
+
     it("should stop querying batches of transactions given an empty page", async () => {
       // prepare
       (service as any).transactionsService.find = jest.fn().mockReturnValueOnce({
-        data: fakeCreateTransactionDocuments(100), // full page ONCE
+        data: fakeCreateTransactionDocuments(100, "outgoing"), // full page ONCE
       }).mockReturnValueOnce({
         data: [], // empty page
       });

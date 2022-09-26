@@ -24,6 +24,8 @@ import { QueryService } from "../../src/common/services/QueryService";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
+import { AccountDocument } from "../../src/common/models/AccountSchema";
+import { AccountDTO } from "../../src/common/models/AccountDTO";
 
 // Mocks the AppController to permit testing of 
 // protected methods such as getHello
@@ -64,6 +66,33 @@ describe("AppController", () => {
   describe("getHello() -->", () => {
     it('should return "Hello, world of dAppName!"', () => {
       expect(appController.fakeGetHello()).toBe(`Hello, world of ${dappConfigLoader().dappName}!`);
+    });
+  });
+
+  describe("getProfile() -->", () => {
+    it("should return correct value", async () => {
+      // prepare
+      const getAccountCall = jest
+        .spyOn(authService, "getAccount")
+        .mockResolvedValue({} as AccountDocument);
+
+      // act
+      const result = await (appController as any).getProfile({
+        address: "test-address",
+        firstTransactionAt: 2,
+        firstTransactionAtBlock: 3,
+        transactionsCount: 1
+      });
+
+      // assert
+      expect(getAccountCall).toHaveBeenCalledTimes(1);
+      expect(result instanceof AccountDTO).toBe(true);
+      expect(result).toEqual({
+        address: undefined,
+        firstTransactionAt: undefined,
+        firstTransactionAtBlock: undefined,
+        transactionsCount: undefined,
+      } as AccountDTO);
     });
   });
 });
