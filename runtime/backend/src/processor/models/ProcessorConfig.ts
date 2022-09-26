@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // @todo processor scope *requires* presence of discovery scope
-import { TransactionDocument } from "@/discovery/models/TransactionSchema";
+import { TransactionDocument } from "../../discovery/models/TransactionSchema";
 
 /**
  * @label COMMON

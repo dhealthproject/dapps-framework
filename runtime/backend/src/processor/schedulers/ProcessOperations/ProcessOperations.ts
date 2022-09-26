@@ -37,7 +37,7 @@ import { TransactionsService } from "../../../discovery/services/TransactionsSer
 import {
   TransactionDocument,
   TransactionQuery,
-} from "@/discovery/models/TransactionSchema";
+} from "../../../discovery/models/TransactionSchema";
 
 /**
  * @interface ProcessOperationsCommandOptions
