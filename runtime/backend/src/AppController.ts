@@ -28,6 +28,8 @@ import { AuthService } from "./common/services/AuthService";
 import { AuthGuard } from "./common/traits/AuthGuard";
 import { AccountDTO } from "./common/models/AccountDTO";
 import { Account, AccountDocument } from "./common/models/AccountSchema";
+import { ProfileDTO } from "./common/models/ProfileDTO";
+import { OAuthService } from "./classes";
 
 // configuration resources
 import dappConfigLoader from "../config/dapp";
@@ -43,7 +45,7 @@ namespace HTTPResponses {
           properties: {
             data: {
               type: "array",
-              items: { $ref: getSchemaPath(AccountDTO) },
+              items: { $ref: getSchemaPath(ProfileDTO) },
             },
           },
         },
@@ -83,7 +85,10 @@ export class AppController {
    * @constructor
    * @param {AuthService} authService
    */
-  constructor(private readonly authService: AuthService) {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly oauthService: OAuthService,
+  ) {
     // read from configuration fields
     this.dappName = dappConfigLoader().dappName;
   }
@@ -122,13 +127,18 @@ export class AppController {
     description:
       "Request an authenticated user's profile details. This request will only succeed given a valid and secure server cookie or an access token in the bearer authorization header of the request.",
   })
-  @ApiExtraModels(AccountDTO)
+  @ApiExtraModels(ProfileDTO)
   @ApiOkResponse(HTTPResponses.MeResponseSchema)
-  protected async getProfile(@NestRequest() req: Request): Promise<AccountDTO> {
+  protected async getProfile(@NestRequest() req: Request): Promise<ProfileDTO> {
     // read and decode access token, then find account in database
     const account: AccountDocument = await this.authService.getAccount(req);
 
     // wrap into a safe transferable DTO
-    return Account.fillDTO(account, new AccountDTO());
+    // return Account.fillDTO(account, new AccountDTO());
+
+    let accountDto: AccountDTO = Account.fillDTO(account, new ProfileDTO());
+    const integrations = this.oauthService.getIntegrations(account);
+
+    return { ...accountDto, integrations } as ProfileDTO;
   }
 }

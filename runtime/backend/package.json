@@ -107,7 +107,8 @@
     "moduleFileExtensions": [
       "ts",
       "js",
-      "json"
+      "json",
+      "d.ts"
     ],
     "testRegex": "tests/.*\\.spec\\.ts$",
     "transform": {
