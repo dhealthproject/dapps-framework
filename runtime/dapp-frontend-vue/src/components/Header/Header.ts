@@ -22,6 +22,7 @@ import ElevateLogo from "../ElevateLogo/ElevateLogo.vue";
 import MobileNavigationButton from "../MobileNavigationButton/MobileNavigationButton.vue";
 import Dropdown from "../Dropdown/Dropdown.vue";
 import UserBalance from "../UserBalance/UserBalance.vue";
+import UiButton from "../UiButton/UiButton.vue";
 
 // style resource
 import "./Header.scss";
@@ -40,6 +41,7 @@ export interface HeaderLink {
     MobileNavigationButton,
     Dropdown,
     UserBalance,
+    UiButton,
   },
   computed: {
     ...mapGetters({

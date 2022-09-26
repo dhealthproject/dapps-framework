@@ -21,11 +21,18 @@
   border-radius: 8px;
   background-color: $base-grey-balance;
 
-  svg {
-    margin-right: 8px;
+    @media screen and (max-width: 580px) {
+        max-width: 147px;
+        font-size: 16px;
+        background-color: #fff;
+      }
 
-    path {
-      fill: $button-text-dark;
+    svg {
+        margin-right: 8px;
+        
+        path {
+            fill: $button-text-dark;
+        }
     }
   }
 }

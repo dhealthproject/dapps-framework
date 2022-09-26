@@ -20,7 +20,7 @@
           <div class="dapp-screen-header__menu-overlay__actions">
             <div class="flex items-center">
               <div class="flex-auto text-left">
-                <ElevateLogo :width="122" theme="dark" />
+                <ElevateLogo :width="92" theme="dark" />
               </div>
               <div class="flex-auto text-right">
                 <MobileNavigationButton
@@ -35,50 +35,43 @@
             v-if="isAuthenticated"
             class="dapp-screen-header__menu-overlay__profile-stats"
           >
-            <div class="flex items-center pb-[16px] inner">
-              <div class="pr-[24px]">
-                <img
-                  class="w-[64px] h-[64px]"
-                  :src="getImageUrl('profile-avatar.png')"
-                  alt="User avatar"
-                />
+            <div class="flex items-center pb-[31px] inner">
+              <div class="flex items-center justify-center pr-[16px]">
+                <Dropdown :items="dropDownItems" />
               </div>
               <div class="flex flex-col flex-auto text-left">
-                <span class="user-name">User Name</span>
-                <span class="user-balance">User balance: <b>$0.00</b></span>
+                <UserBalance />
               </div>
             </div>
           </div>
           <div class="dapp-screen-header__menu-overlay__nav-links">
             <ul>
               <li v-for="(link, index) in links" :key="link.text + index">
-                <img
+                <inline-svg
                   v-if="showIcons"
                   :src="getImageUrl(link.icon)"
+                  :class="{
+                    'icon-active': link.path.name === $route.name,
+                  }"
                   alt=""
-                  class="inline-block mr-4 w-[24px] h-[24px]"
+                  class="inline-block mr-[16px] w-[24px] h-[24px]"
                 />
                 <router-link :to="link.path" v-html="link.text" />
               </li>
             </ul>
+            <UiButton :accent="true">
+              <img :src="getImageUrl('icons/chain-icon.svg')" alt="Refer" />
+              Refer a Friend
+            </UiButton>
           </div>
           <div class="dapp-screen-header__menu-overlay__footer text-left">
-            <button>
-              Disconnect Wallet
-              <inline-svg
-                :src="getImageUrl('disconnect.svg')"
-                :width="16"
-                :height="16"
-              />
-            </button>
-
             <div class="legal-credentials">
-              <span class="powered">Powered by </span>
-              <inline-svg :src="getImageUrl('dhealth-logo.svg')" />
+              <span class="powered">© dHealth Foundation, 2022</span>
             </div>
 
             <div class="legal-links">
               <router-link :to="{}" v-html="'Privacy Policy'" />
+              <span class="divider">|</span>
               <router-link
                 :to="{ name: 'legal.terms-of-service' }"
                 v-html="'Terms of Service'"
@@ -91,7 +84,7 @@
         <slot name="back-button" />
       </div>
       <div class="logo font-bold text-2xl">
-        <ElevateLogo :width="138" theme="dark" />
+        <ElevateLogo theme="dark" />
       </div>
       <nav class="text-right p-0">
         <MobileNavigationButton
@@ -131,4 +124,6 @@
   </div>
 </template>
 
-<script lang="ts" src="./Header.ts"></script>
+<script lang="ts" src="./Header.ts">
+import UiButton from "../UiButton/UiButton.vue";
+</script>
