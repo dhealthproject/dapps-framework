@@ -39,6 +39,13 @@
         width: 122px;
       }
     }
+
+    @media screen and (max-width: 580px) {
+      padding: 14px 0 0 0;
+      svg {
+        width: 92px;
+      }
+    }
   }
 
   &__hamburger {
@@ -55,21 +62,18 @@
     height: 100%;
     top: 0;
     left: 0;
-    background-color: #deff58;
+    background-color: $white;
     z-index: 999;
-    padding-top: 44px;
+    padding-top: 14px;
 
     &__actions {
       border-bottom: 1px solid #000;
-      padding: 0 24px 18px 18px;
+      padding: 0 24px 4px 24px;
     }
 
     &__profile-stats {
-      padding: 41px 24px 0 24px;
-
-      .inner {
-        border-bottom: 1px solid #000;
-      }
+      padding: 31px 24px 0 24px;
+      border-bottom: 1px solid #000;
 
       .user-name {
         font-size: 16px;
@@ -84,7 +88,7 @@
 
     &__nav-links {
       text-align: left;
-      padding: 48px 24px 0 24px;
+      padding: 16px 24px 0 24px;
       height: 310px;
       overflow-y: scroll;
 
@@ -92,19 +96,39 @@
         li {
           display: flex;
           align-items: center;
-          padding-bottom: 38px;
-
-          &:last-child {
-            padding-bottom: 0;
-          }
+          padding-bottom: 32px;
 
           a {
-            font-size: 24px;
-            line-height: 36px;
+            font-size: 20px;
+            line-height: 150%;
             font-weight: 500;
-            color: #000;
+            color: $grey-disabled-text;
+
+            &.router-link-active {
+              color: $button-text-dark;
+            }
           }
+
+          svg {
+            path {
+              fill: $grey-disabled-text;
+            }
+
+            &.icon-active {
+              path {
+                fill: $button-text-dark;
+              }
+            }
+          }
+
         }
+      }
+
+      .dapp-ui-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 162px;
       }
     }
 
@@ -138,25 +162,30 @@
         align-items: center;
 
         .powered {
-          font-size: 14px;
-          font-weight: 700;
-          color: #625e83;
-        }
-
-        svg {
-          display: inline-block;
-          margin-left: 12px;
+          font-weight: 500;
+          font-size: 16px;
+          line-height: 22px;
+          color: $button-text-dark;
         }
       }
 
       .legal-links {
         a {
+          font-weight: 400;
           font-size: 12px;
-          display: inline-block;
           line-height: 22px;
-          color: #5d64ff;
-          margin-right: 8px;
+          display: inline-block;
+          color: $button-text-dark;
           text-decoration: underline;
+        }
+
+        .divider {
+          font-weight: 400;
+          font-size: 12px;
+          line-height: 22px;
+          display: inline-block;
+          color: $button-text-dark;
+          margin: 0 8px;
         }
       }
     }
