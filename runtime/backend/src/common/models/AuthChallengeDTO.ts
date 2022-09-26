@@ -38,6 +38,7 @@ export class AuthChallengeDTO extends BaseDTO {
    * @var {string}
    */
   @ApiProperty({
+    type: "string",
     example: "abc12def",
     description:
       "The authentication challenge that can be used to authenticate a user to the dApp.",

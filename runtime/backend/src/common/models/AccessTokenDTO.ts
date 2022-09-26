@@ -37,6 +37,7 @@ export class AccessTokenDTO extends BaseDTO {
    * @var {string}
    */
   @ApiProperty({
+    type: "string",
     example:
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
     description:
@@ -56,6 +57,7 @@ export class AccessTokenDTO extends BaseDTO {
    * @var {string}
    */
   @ApiProperty({
+    type: "string",
     example:
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
     description:
@@ -71,6 +73,7 @@ export class AccessTokenDTO extends BaseDTO {
    * @var {number}
    */
   @ApiProperty({
+    type: "number",
     example: 1662571893676,
     description:
       "The JWT access token expiration timestamp. This timestamp uses the `UTC` timezone.",

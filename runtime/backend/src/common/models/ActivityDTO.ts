@@ -15,56 +15,60 @@ import { BaseDTO } from "./BaseDTO";
 
 /**
  * @class ActivityDTO
- * @description A DTO class that consists of an activity.
- * <br /><br />
- * - Frontend will receive object, will contain fields from DTO,
- * but not limited to that
+ * @description A DTO class that consists of the *transferable* properties
+ * of an account's [remote] activity.
  *
  * @since v0.3.0
  */
 export class ActivityDTO extends BaseDTO {
   /**
-   * Object type, example: object_type: "activitity"
+   * The Address of this account on dHealth Network. The
+   * account's **address** typically refers to a human-readable
+   * series of 39 characters, starting either with a `T`, for
+   * TESTNET addresses, or with a `N`, for MAINNET addresses.
    *
+   * @example `"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY"`
    * @access public
    * @var {string}
    */
   @ApiProperty({
-    example: "activitity",
-    description: "Type of onject to create",
+    type: "string",
+    example: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+    description: "The Address of the linked account on dHealth Network",
   })
-  public object_type: string;
+  public address: string;
+
   /**
-   * Object id, example: object_type: "11111"
+   * The activity slug is composed of the date of the activity,
+   * the index of it on a daily basis, and the athlete identifier.
    *
+   * @example `"20220910-1-123456"`
    * @access public
-   * @var {string}
+   * @var {number}
    */
   @ApiProperty({
-    example: "11111",
-    description: "Id of created object",
+    type: "string",
+    example: "20220910-1-123456",
+    description:
+      "The activity slug is composed of the date of the activity, the index of it on a daily basis, and the athlete identifier.",
   })
-  public object_id: string;
+  public slug: string;
+
   /**
-   * Aspect type, example: object_type: "create"
+   * The OAuth provider name. This is usually the name of the
+   * platform of which an account has completed an activity.
+   * <br /><br />
+   * This field is **required** and *not indexed*.
    *
+   * @example `"strava"`
    * @access public
    * @var {string}
    */
   @ApiProperty({
-    example: "create",
-    description: "Aspect type",
+    type: "string",
+    example: "strava",
+    description:
+      "The OAuth provider name. This is usually the name of the platform of which an account has completed an activity.",
   })
-  public aspect_type: string;
-  /**
-   * Owner id, example: owner_id: "QQQQQQ-WWWWWW-RRRRRR-TTTTTT-YYYYYY-UUUUUU-III"
-   *
-   * @access public
-   * @var {string}
-   */
-  @ApiProperty({
-    example: "QQQQQQ-WWWWWW-RRRRRR-TTTTTT-YYYYYY-UUUUUU-III",
-    description: "User's hash address",
-  })
-  public owner_id: string;
+  public provider: string;
 }

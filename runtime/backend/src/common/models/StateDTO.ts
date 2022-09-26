@@ -11,7 +11,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 // internal dependencies
-import type { StateData } from "./StateData";
+import { StateData } from "./StateData";
 import { BaseDTO } from "./BaseDTO";
 
 /**
@@ -39,6 +39,7 @@ export class StateDTO extends BaseDTO {
    * @var {string}
    */
   @ApiProperty({
+    type: "string",
     example: "discovery:DiscoverTransactions",
     description:
       "The identifier of the state entry. Typically, this holds a unique identifier that determines for which module state is being saved.",
@@ -58,6 +59,7 @@ export class StateDTO extends BaseDTO {
    * @var {string}
    */
   @ApiProperty({
+    type: Object,
     example: { stateKey1: 1, stateKey2: "value2", stateKey3: true },
     description:
       "Contains the actual state cache data. This field is usually populated or updated within a service class.",

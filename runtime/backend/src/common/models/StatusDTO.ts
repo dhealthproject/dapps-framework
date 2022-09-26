@@ -33,6 +33,7 @@ export class StatusDTO extends BaseDTO {
    * @var {number}
    */
   @ApiProperty({
+    type: "number",
     example: 200,
     description: "The HTTP status code sent with the response.",
   })
@@ -46,6 +47,7 @@ export class StatusDTO extends BaseDTO {
    * @var {string}
    */
   @ApiProperty({
+    type: "boolean",
     example: true,
     description:
       "Contains `true` given a successful request, or false otherwise.",

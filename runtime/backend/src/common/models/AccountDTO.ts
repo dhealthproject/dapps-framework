@@ -27,12 +27,17 @@ import { BaseDTO } from "./BaseDTO";
  */
 export class AccountDTO extends BaseDTO {
   /**
-   * The Address of this account on dHealth Network.
+   * The Address of this account on dHealth Network. The
+   * account's **address** typically refers to a human-readable
+   * series of 39 characters, starting either with a `T`, for
+   * TESTNET addresses, or with a `N`, for MAINNET addresses.
    *
+   * @example `"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY"`
    * @access public
    * @var {string}
    */
   @ApiProperty({
+    type: "string",
     example: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
     description: "The Address of this account on dHealth Network",
   })
@@ -46,6 +51,7 @@ export class AccountDTO extends BaseDTO {
    * @var {number}
    */
   @ApiProperty({
+    type: "number",
     example: 1,
     description:
       "The total number of transactions discovered for this account on dHealth Network",
@@ -60,6 +66,7 @@ export class AccountDTO extends BaseDTO {
    * @var {number}
    */
   @ApiProperty({
+    type: "number",
     example: "2022-08-16T22:24:00.216Z",
     description:
       "The time at which this account first interacted with this dApp on dHealth Network",
@@ -76,6 +83,7 @@ export class AccountDTO extends BaseDTO {
    * @var {number}
    */
   @ApiProperty({
+    type: "number",
     example: 123456,
     description:
       "The height of the block that included the transaction with which this account first interacted with this dApp on dHealth Network",

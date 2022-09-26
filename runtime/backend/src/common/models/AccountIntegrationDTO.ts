@@ -22,24 +22,33 @@ import { BaseDTO } from "./BaseDTO";
  */
 export class AccountIntegrationDTO extends BaseDTO {
   /**
-   * The Address of this account on dHealth Network.
+   * The Address of this account on dHealth Network. The
+   * account's **address** typically refers to a human-readable
+   * series of 39 characters, starting either with a `T`, for
+   * TESTNET addresses, or with a `N`, for MAINNET addresses.
    *
+   * @example `"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY"`   *
    * @access public
    * @var {string}
    */
   @ApiProperty({
+    type: "string",
     example: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
     description: "The Address of the linked account on dHealth Network",
   })
   public address: string;
 
   /**
-   * The OAuth provider name.
+   * The OAuth integration *provider name*. This is usually
+   * the name of the platform of which an account is being
+   * linked to the dApp.
    *
+   * @example `"strava"`
    * @access public
    * @var {number}
    */
   @ApiProperty({
+    type: "string",
     example: "strava",
     description:
       "The name of the OAuth provider that an account has authorized.",
