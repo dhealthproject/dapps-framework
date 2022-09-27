@@ -11,7 +11,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 // internal dependencies
-import { BaseDTO } from "./BaseDTO";
+import { BaseDTO } from "../../common/models/BaseDTO";
 
 /**
  * @class ActivityDTO

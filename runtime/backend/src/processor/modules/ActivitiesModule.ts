@@ -13,16 +13,16 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import { QueryModule } from "../../common/modules/QueryModule";
-import { Activity, ActivitySchema } from "../../common/models/ActivitySchema";
+import { Activity, ActivitySchema } from "../models/ActivitySchema";
 import { ActivitiesController } from "../routes/ActivitiesController";
 import { ActivitiesService } from "../services/ActivitiesService";
 
 /**
- * @label COMMON
+ * @label PROCESSOR
  * @class ActivitiesModule
  * @description The main definition for the Activities module.
  *
- * @since v0.3.0
+ * @since v0.3.2
  */
 @Module({
   controllers: [ActivitiesController],

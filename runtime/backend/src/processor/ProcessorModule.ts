@@ -11,7 +11,9 @@
 import { Module } from "@nestjs/common";
 
 // internal dependencies
+import { ActivitiesModule } from "./modules/ActivitiesModule";
 import { OperationsModule } from "./modules/OperationsModule";
+import { WebHooksModule } from "./modules/WebHooksModule";
 
 /**
  * @label ProcessorModule
@@ -24,6 +26,8 @@ import { OperationsModule } from "./modules/OperationsModule";
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
  * | {@link OperationsModule:PROCESSOR} | `operations` | `/operations` | Module with schedulers, collections and routes around **dApp operations**. |
+ * | {@link ActivitiesModule:PROCESSOR} | `activities` | `/activities` | Module with schedulers, collections and routes around **activities**. |
+ * | {@link WebHooksModule:PROCESSOR} | N/A | `/webhook/:provider` | Module with schedulers, collections and routes around **Web Hooks**. |
  * <br /><br />
  * Note also that in {@link Schedulers:COMMON}, we map the following **schedulers**
  * to this module:
@@ -35,6 +39,8 @@ import { OperationsModule } from "./modules/OperationsModule";
   imports: [
     // imports routes and DTOs
     OperationsModule,
+    ActivitiesModule,
+    WebHooksModule,
   ],
 })
 export class ProcessorModule {}

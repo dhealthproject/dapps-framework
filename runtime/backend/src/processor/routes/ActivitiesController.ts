@@ -29,15 +29,19 @@ import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
 import { AccountDocument } from "../../common/models/AccountSchema";
 import { AuthService } from "../../common/services/AuthService";
 import { AuthGuard } from "../../common/traits/AuthGuard";
-import { Asset, AssetDocument, AssetQuery } from "../models/AssetSchema";
-import { AssetDTO } from "../models/AssetDTO";
-import { AssetsService } from "../services/AssetsService";
+import { ActivitiesService } from "../services/ActivitiesService";
+import { ActivityDTO } from "../models/ActivityDTO";
+import {
+  Activity,
+  ActivityDocument,
+  ActivityQuery,
+} from "../models/ActivitySchema";
 
 namespace HTTPResponses {
   // creates a variable that we include in a namespace
   // and configure the OpenAPI schema for the response
-  // maps to the HTTP response of `/assets`
-  export const AssetSearchResponseSchema = {
+  // maps to the HTTP response of `/activities`
+  export const ActivitySearchResponseSchema = {
     schema: {
       allOf: [
         { $ref: getSchemaPath(PaginatedResultDTO) },
@@ -45,7 +49,7 @@ namespace HTTPResponses {
           properties: {
             data: {
               type: "array",
-              items: { $ref: getSchemaPath(AssetDTO) },
+              items: { $ref: getSchemaPath(ActivityDTO) },
             },
           },
         },
@@ -55,8 +59,8 @@ namespace HTTPResponses {
 
   // creates a variable that we include in a namespace
   // and configure the OpenAPI schema for the response
-  // maps to the HTTP response of `/assets/:address`
-  export const UserAssetSearchResponseSchema = {
+  // maps to the HTTP response of `/activities/:address`
+  export const UserActivitySearchResponseSchema = {
     schema: {
       allOf: [
         { $ref: getSchemaPath(PaginatedResultDTO) },
@@ -64,7 +68,7 @@ namespace HTTPResponses {
           properties: {
             data: {
               type: "array",
-              items: { $ref: getSchemaPath(AssetDTO) },
+              items: { $ref: getSchemaPath(ActivityDTO) },
             },
           },
         },
@@ -74,84 +78,86 @@ namespace HTTPResponses {
 }
 
 /**
- * @label DISCOVERY
- * @class AssetsController
- * @description The assets controller of the app. Handles requests
- * about *assets* that are available in the database.
+ * @label PROCESSOR
+ * @class ActivitiesController
+ * @description The activities controller of the app. Handles requests
+ * about *activities* that are available in the database.
  * <br /><br />
  * This controller defines the following routes:
  * | URI | HTTP method | Class method | Description |
  * | --- | --- | --- | --- |
- * | `/assets` | **`GET`** | {@link AssetsController.find} | Responds with a pageable {@link PaginatedResultDTO} that contains {@link AssetDTO} objects. |
- * | `/assets/:address` | **`GET`** | {@link AssetsController.findByUser} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Server cookie or Bearer authorization header). Responds with a pageable {@link PaginatedResultDTO} that contains {@link AssetDTO} objects. |
+ * | `/activities` | **`GET`** | {@link ActivitiesController.find} | Responds with a pageable {@link PaginatedResultDTO} that contains {@link ActivityDTO} objects. |
+ * | `/activities/:address` | **`GET`** | {@link ActivitiesController.findByUser} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Server cookie or Bearer authorization header). Responds with a pageable {@link PaginatedResultDTO} that contains {@link ActivityDTO} objects. |
  * <br /><br />
  *
- * @since v0.3.0
+ * @since v0.3.2
  */
-@ApiTags("Assets")
-@Controller("assets")
-export class AssetsController {
+@ApiTags("Activities")
+@Controller("activities")
+export class ActivitiesController {
   /**
    * Constructs an instance of this controller.
    *
    * @constructor
    * @param {AuthService} authService
-   * @param {AssetsService} assetsService
+   * @param {ActivitiesService} activitiesService
    */
   constructor(
     private readonly authService: AuthService,
-    private readonly assetsService: AssetsService,
+    private readonly activitiesService: ActivitiesService,
   ) {}
 
   /**
-   * Handler of the `/assets` endpoint. Returns all assets  that match
+   * Handler of the `/activities` endpoint. Returns all activities that match
    * the request query. If the query is null or not specified, returns
-   * all documents in DTO format using {@link AssetDTO}.
+   * all documents in DTO format using {@link ActivityDTO}.
    * <br /><br />
    * The result of this endpoint can be paginated using query
    * parameters: `pageSize`, `pageNumber`. Also, it can be sorted
    * with query parameters: `sort`, `order`.
    *
-   * @async
-   * @access protected
    * @method  GET
-   * @param   {AssetQuery} query
-   * @returns {Promise<PaginatedResultDTO<AssetDTO>>}
+   * @access protected
+   * @async
+   * @param   {ActivityQuery} query
+   * @returns {Promise<PaginatedResultDTO<ActivityDTO>>}
    */
   @Get()
   @ApiOperation({
-    summary: "Search assets",
+    summary: "Search activities",
     description:
-      "Search for assets using custom filters. The resulting iterable contains only matching assets.",
+      "Search for activities using custom filters. The resulting iterable contains only matching activities.",
   })
-  @ApiExtraModels(AssetDTO, PaginatedResultDTO)
-  @ApiOkResponse(HTTPResponses.AssetSearchResponseSchema)
+  @ApiExtraModels(ActivityDTO, PaginatedResultDTO)
+  @ApiOkResponse(HTTPResponses.ActivitySearchResponseSchema)
   protected async find(
-    @Query() query: AssetQuery,
-  ): Promise<PaginatedResultDTO<AssetDTO>> {
+    @Query() query: ActivityQuery,
+  ): Promise<PaginatedResultDTO<ActivityDTO>> {
     // destructure to create correct query
     // this permits to skip the `document[]`
     const { pageNumber, pageSize, sort, order, ...rest } = query;
 
     // reads from database
-    const data = await this.assetsService.find(
-      new AssetQuery(
+    const data = await this.activitiesService.find(
+      new ActivityQuery(
         {
           ...rest,
-        } as AssetDocument,
+        } as ActivityDocument,
         { pageNumber, pageSize, sort, order },
       ),
     );
 
     // wraps for transport
-    return new PaginatedResultDTO<AssetDTO>(
-      data.data.map((d: AssetDocument) => Asset.fillDTO(d, new AssetDTO())),
+    return new PaginatedResultDTO<ActivityDTO>(
+      data.data.map((d: ActivityDocument) =>
+        Activity.fillDTO(d, new ActivityDTO()),
+      ),
       data.pagination,
     );
   }
 
   /**
-   * Requests a user's `assets` entries. This endpoint is protected and a
+   * Requests a user's `activities` entries. This endpoint is protected and a
    * valid access token must be attached in the `Authorization` request
    * header, in signed cookies or in browser cookies.
    * <br /><br />
@@ -162,21 +168,21 @@ export class AssetsController {
    * @access protected
    * @async
    * @param   {Request}  req            An `express` request used to extract the authenticated user payload.
-   * @returns {Promise<PaginatedResultDTO<AssetDTO>>}       An authenticated user's owned assets.
+   * @returns {Promise<PaginatedResultDTO<ActivityDTO>>}       An authenticated user's completed activities.
    */
   @UseGuards(AuthGuard)
   @Get(":address")
   @ApiOperation({
-    summary: "Get an authenticated user's owned assets",
+    summary: "Get an authenticated user's completed activities",
     description:
-      "Request an authenticated user's owned assets. This request will only succeed given a valid and secure server cookie or an access token in the bearer authorization header of the request.",
+      "Request an authenticated user's completed activities. This request will only succeed given a valid and secure server cookie or an access token in the bearer authorization header of the request.",
   })
-  @ApiExtraModels(AssetDTO, PaginatedResultDTO)
-  @ApiOkResponse(HTTPResponses.UserAssetSearchResponseSchema)
+  @ApiExtraModels(ActivityDTO, PaginatedResultDTO)
+  @ApiOkResponse(HTTPResponses.UserActivitySearchResponseSchema)
   protected async findByUser(
     @NestRequest() req: Request,
-    @Query() query: AssetQuery,
-  ): Promise<PaginatedResultDTO<AssetDTO>> {
+    @Query() query: ActivityQuery,
+  ): Promise<PaginatedResultDTO<ActivityDTO>> {
     // read and decode access token, then find account in database
     const account: AccountDocument = await this.authService.getAccount(req);
 
@@ -186,20 +192,22 @@ export class AssetsController {
 
     // make sure to *never* allow querying assets of someone else
     // than the currently logged in user (using `AuthGuard`)
-    const safeQuery: AssetQuery = new AssetQuery(
+    const safeQuery: ActivityQuery = new ActivityQuery(
       {
         ...rest,
-        userAddress: account.address,
-      } as AssetDocument,
+        address: account.address,
+      } as ActivityDocument,
       { pageNumber, pageSize, sort, order },
     );
 
     // reads assets from database
-    const data = await this.assetsService.find(safeQuery);
+    const data = await this.activitiesService.find(safeQuery);
 
-    // wraps for transport using AssetDTO
-    return new PaginatedResultDTO<AssetDTO>(
-      data.data.map((d: AssetDocument) => Asset.fillDTO(d, new AssetDTO())),
+    // wraps for transport using ActivityDTO
+    return new PaginatedResultDTO<ActivityDTO>(
+      data.data.map((d: ActivityDocument) =>
+        Activity.fillDTO(d, new ActivityDTO()),
+      ),
       data.pagination,
     );
   }

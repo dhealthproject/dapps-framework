@@ -14,7 +14,6 @@ import { DynamicModule, Logger, Module } from "@nestjs/common";
 import { AuthModule } from "./common/modules/AuthModule";
 import { AccountsModule } from "./common/modules/AccountsModule";
 import { ChallengesModule } from "./common/modules/ChallengesModule";
-import { WebHooksModule } from "./common/modules/WebHooksModule";
 import { AppController } from "./AppController";
 import { AppService } from "./AppService";
 import { ScopeFactory } from "./common/ScopeFactory";
@@ -35,12 +34,11 @@ import dappConfigLoader from "../config/dapp";
  * | {@link AccountsModule:COMMON} | `accounts` | `/accounts` | Module with schedulers, collections and routes around **dApp accounts**. |
  * | {@link AuthModule:COMMON} | N/A | `/auth` | Module with schedulers, collections and routes around **dApp authentication**. |
  * | {@link ChallengesModule:COMMON} | `authchallenges` | `/auth/challenge` | Module with schedulers, collections and routes around **authentication challenges**. |
- * | {@link WebHooksModule:COMMON} | N/A | `/webhook/:provider` | Module with schedulers, collections and routes around **Web Hooks**. |
  *
  * @since v0.1.0
  */
 @Module({
-  imports: [AccountsModule, AuthModule, ChallengesModule, WebHooksModule],
+  imports: [AccountsModule, AuthModule, ChallengesModule],
 })
 export class AppModule {
   /**

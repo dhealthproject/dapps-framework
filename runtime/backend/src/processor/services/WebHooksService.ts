@@ -7,20 +7,14 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-
 // external dependencies
-import { HttpException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import dayjs from "dayjs";
 
 // internal dependencies
-import { ActivityDTO } from "../models/ActivityDTO";
-import { OAuthProviderParameters } from "../models/OAuthConfig";
-import { AccountsService } from "../services/AccountsService";
-import { OAuthService } from "../services/OAuthService";
-import { QueryService } from "../services/QueryService";
-import { StravaWebHookEventRequest } from "../drivers/strava/StravaWebHookEventRequest";
-import { AccountDocument, AccountQuery } from "../models/AccountSchema";
+import { StravaWebHookEventRequest } from "../../common/drivers/strava/StravaWebHookEventRequest";
+import { QueryService } from "../../common/services/QueryService";
 import {
   Activity,
   ActivityDocument,
@@ -77,7 +71,7 @@ export class WebHooksService {
     userAddress: string,
     data: StravaWebHookEventRequest,
   ): Promise<ActivityDocument> {
-    // destructures obligatory fields for validation
+    // destructure obligatory fields for validation
     const { object_type, object_id, aspect_type, owner_id, event_time } = data;
 
     // make sure we have all obligatory fields

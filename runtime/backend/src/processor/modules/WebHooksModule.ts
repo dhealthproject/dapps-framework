@@ -15,6 +15,13 @@ import { Module } from "@nestjs/common";
 import { WebHooksController } from "../routes/WebHooksController";
 import { WebHooksService } from "../services/WebHooksService";
 
+/**
+ * @label PROCESSOR
+ * @class OperationsModule
+ * @description The main definition for the Web Hooks module.
+ *
+ * @since v0.3.2
+ */
 @Module({
   providers: [WebHooksService],
   controllers: [WebHooksController],

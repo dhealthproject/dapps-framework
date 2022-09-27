@@ -13,8 +13,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 
 // internal dependencies
 import { QueryService } from "../../../../src/common/services/QueryService";
-import { WebHooksService } from "../../../../src/common/services/WebHooksService";
-import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/common/models/ActivitySchema";
+import { WebHooksService } from "../../../../src/processor/services/WebHooksService";
+import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/processor/models/ActivitySchema";
 import { StravaWebHookEventRequest } from "../../../../src/common/drivers/strava/StravaWebHookEventRequest";
 
 describe("common/WebHooksService", () => {
