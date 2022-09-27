@@ -83,8 +83,25 @@ describe("AppController", () => {
   });
 
   describe("getProfile() -->", () => {
-    it("should call correct method and respond with DTO", () => {
-      expect(appController.fakeGetProfile({})).toBe(new ProfileDTO());
+    it("should call correct method and respond with DTO", async () => {
+      (appController as any).authService = {
+        getAccount: jest.fn().mockReturnValue({
+          address: "fakeAddress",
+          firstTransactionAt: "test",
+          firstTransactionAtBlock: "test2",
+          transactionsCount: "qwe",
+        }),
+      };
+      (appController as any).oauthService = {
+        getIntegrations: jest.fn().mockReturnValue("strava"),
+      };
+      expect(await appController.fakeGetProfile({})).toStrictEqual({
+        address: "fakeAddress",
+        firstTransactionAt: "test",
+        firstTransactionAtBlock: "test2",
+        integrations: "strava",
+        transactionsCount: "qwe",
+      });
     });
 
     // it("should call getIntegrations with correct parameters", () => {});
