@@ -66,12 +66,14 @@ export class WebHooksService {
    *
    * @access public
    * @async
+   * @param     {string}                      providerName  The OAuth provider name. This is the name of the third-party data provider, e.g. "strava".
    * @param     {string}                      userAddress   The dHealth Address of the account that belongs to the activity owner.
    * @param     {StravaWebHookEventRequest}   data          The activity's **headers**. Importantly, Strava does not share full details here.
    * @returns   {Promise<ActivityDocument>}   The created document that was added to `activities`.
    * @throws    {Error}                       Given invalid event payload, incompatible event payload or given any other error occurs while processing.
    */
   public async eventHandler(
+    providerName: string,
     userAddress: string,
     data: StravaWebHookEventRequest,
   ): Promise<ActivityDocument> {
@@ -121,6 +123,7 @@ export class WebHooksService {
         {
           dateSlug: eventDate,
           createdAt: eventTime,
+          provider: providerName.toLowerCase(),
         },
         {},
       );

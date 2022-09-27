@@ -96,15 +96,15 @@ export class StravaWebHookEventRequest {
    * created by Strava or other third-party data providers.
    *
    * @access public
-   * @var {string}
+   * @var {number}
    */
   @ApiProperty({
-    type: "string",
-    example: "12345",
+    type: "number",
+    example: 12345,
     description:
       "The identifier of the webhook subscription. This consists of a Strava-owned webhook subscription identifier.",
   })
-  public subscription_id: string;
+  public subscription_id: number;
 
   /**
    * The time of the event being served. This consists of a UTC
@@ -115,7 +115,7 @@ export class StravaWebHookEventRequest {
    * January 1st of 1970, *not milliseconds* as usual with `Date`.
    *
    * @access public
-   * @var {string}
+   * @var {number}
    */
   @ApiProperty({
     type: "number",
