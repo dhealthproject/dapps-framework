@@ -198,7 +198,11 @@ export class WebHooksController {
       }
 
       // creates the activity using the webhook *event handler*
-      await this.webhooksService.eventHandler(integration.address, data);
+      await this.webhooksService.eventHandler(
+        providerName,
+        integration.address,
+        data,
+      );
 
       // responds with status 200 and success message
       return response.status(200).send(SUCCESS_MESSAGE);
