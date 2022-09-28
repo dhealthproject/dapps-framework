@@ -15,6 +15,7 @@ import { AppModule } from "./AppModule";
 import { AuthModule } from "./AuthModule";
 import { AwaitLock } from "../AwaitLock";
 import { OAuthModule } from "./OAuthModule";
+import { LeaderBoardModule } from "./LeaderBoardModule";
 
 /**
  *
@@ -51,6 +52,7 @@ export const createStore = () => {
       app: AppModule,
       auth: AuthModule,
       oauth: OAuthModule,
+      leaderboard: LeaderBoardModule,
     },
     state: (): RootState => ({
       initialized: false,

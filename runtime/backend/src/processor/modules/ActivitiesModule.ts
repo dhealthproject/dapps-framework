@@ -34,9 +34,9 @@ import { ActivitiesService } from "../services/ActivitiesService";
         name: Activity.name,
         schema: ActivitySchema,
       },
-    ]), // requirement from ActivitiesService
-    AuthModule, // requirement from ActivitiesController
-    QueryModule, // requirement from ActivitiesService
+    ]),
+    QueryModule,
+    AuthModule,
   ],
   exports: [ActivitiesService],
 })
