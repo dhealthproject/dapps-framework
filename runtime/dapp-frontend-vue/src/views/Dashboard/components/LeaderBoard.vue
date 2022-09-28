@@ -12,30 +12,34 @@
 
 <template>
   <div class="dapp-leaderboard-table">
-    <div v-for="(item, index) in items" class="board-item" :key="index">
+    <div
+      v-for="(item, index) in getLeaderBoardItems"
+      class="board-item"
+      :key="index"
+    >
       <div class="board-item__left">
-        <span class="number">#{{ index + 1 }}</span>
+        <span class="number">#{{ item.position }}</span>
         <div class="avatar">
           <img
             v-if="item.avatar"
             :src="getImageUrl(item.avatar)"
-            :alt="item.nickname"
+            :alt="item.address"
           />
           <div
-            v-else
+            v-else-if="items.color"
             class="colored-avatar"
-            :style="{ 'background-color': item.color }"
+            :style="{ 'background-color': items.color }"
           />
         </div>
         <div class="text-data">
           <div>
-            <span class="nickname">{{ item.nickname }}</span>
-            <DirectionTriangle :direction="item.direction" />
+            <span class="nickname">{{ items[index].nickname }}</span>
+            <DirectionTriangle :direction="item.trendline" />
           </div>
-          <span class="hash">{{ item.hash }}</span>
+          <span class="hash">{{ item.address }}</span>
         </div>
       </div>
-      <div class="board-item__right">{{ item.amount }} $FIT</div>
+      <div class="board-item__right">{{ item.assets }} $FIT</div>
     </div>
   </div>
 </template>

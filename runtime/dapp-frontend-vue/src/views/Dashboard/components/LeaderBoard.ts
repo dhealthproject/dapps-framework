@@ -10,10 +10,12 @@
 
 // external dependencies
 import { Component, Prop } from "vue-property-decorator";
+import { mapGetters } from "vuex";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
+import { LeaderBoardItem } from "@/services/LeaderBoardService";
 
 export interface LeaderBoardItem {
   avatar?: string;
@@ -28,8 +30,14 @@ export interface LeaderBoardItem {
   components: {
     DirectionTriangle,
   },
+  computed: {
+    ...mapGetters({
+      getLeaderBoardItems: "leaderboard/getLeaderBoardItems",
+    }),
+  },
 })
 export default class LeaderBoard extends MetaView {
+  public getLeaderBoardItems: LeaderBoardItem[] | undefined;
   /**
    * Prop which defines list of items in leaderboard table
    *
@@ -37,4 +45,13 @@ export default class LeaderBoard extends MetaView {
    * @var {items}
    */
   @Prop({ default: () => [] }) readonly items?: LeaderBoardItem[];
+
+  async mounted() {
+    if (!this.getLeaderBoardItems?.length) {
+      await this.$store.dispatch("leaderboard/fetchLedaderBoard", {
+        which: "running",
+        period: "weekly",
+      });
+    }
+  }
 }

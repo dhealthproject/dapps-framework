@@ -9,7 +9,11 @@
  */
 
 // external dependencies
+import { AuthModule } from "@/common/modules/AuthModule";
+import { QueryModule } from "@/common/modules/QueryModule";
 import { Module } from "@nestjs/common";
+import { MongooseModule } from "@nestjs/mongoose";
+import { Activity, ActivitySchema } from "../models/ActivitySchema";
 
 // internal dependencies
 import { WebHooksController } from "../routes/WebHooksController";
@@ -25,5 +29,15 @@ import { WebHooksService } from "../services/WebHooksService";
 @Module({
   providers: [WebHooksService],
   controllers: [WebHooksController],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Activity.name,
+        schema: ActivitySchema,
+      },
+    ]),
+    QueryModule,
+    AuthModule,
+  ],
 })
 export class WebHooksModule {}
