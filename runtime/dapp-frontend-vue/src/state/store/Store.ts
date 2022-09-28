@@ -14,7 +14,7 @@ import Vuex, { ActionContext } from "vuex";
 import { AppModule } from "./AppModule";
 import { AuthModule } from "./AuthModule";
 import { AwaitLock } from "../AwaitLock";
-import { IntegrationsModule } from "./IntegrationsModule";
+import { OAuthModule } from "./OAuthModule";
 
 /**
  *
@@ -50,7 +50,7 @@ export const createStore = () => {
     modules: {
       app: AppModule,
       auth: AuthModule,
-      integrations: IntegrationsModule,
+      oauth: OAuthModule,
     },
     state: (): RootState => ({
       initialized: false,
@@ -71,7 +71,16 @@ export const createStore = () => {
        */
       async initialize(context: RootContext): Promise<boolean> {
         const callback = async () => {
+          // dispatches for i18n and backend config
+          await context.dispatch("app/initialize");
+
+          // dispatches for authentication (access token)
           await context.dispatch("auth/initialize");
+
+          // dispatches for integrations (OAuth, e.g. Strava)
+          await context.dispatch("oauth/initialize");
+
+          // done initializing
           context.commit("setInitialized", true);
         };
 

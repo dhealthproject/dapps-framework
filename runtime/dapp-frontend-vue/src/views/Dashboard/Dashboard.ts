@@ -7,29 +7,50 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-
 // external dependencies
 import { Component } from "vue-property-decorator";
 import InlineSvg from "vue-inline-svg";
 import { mapGetters } from "vuex";
+import { DappButton } from "@dhealth/components";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
-import { DappButton } from "@dhealth/components";
+import { SnackBarConfig } from "@/models/SnackBarConfig";
+import {
+  CarouselItem,
+  CarouselConfig,
+} from "@/views/Dashboard/components/EventsCarousel";
+import { LeaderBoardItem } from "@/views/Dashboard/components/LeaderBoard";
+import { Translations } from "@/kernel/i18n/Translations";
 
 // child components
 import Card from "@/components/Card/Card.vue";
 import Snackbar from "@/components/Snackbar/Snackbar.vue";
 import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
-import { CarouselItem, CarouselConfig } from "./components/EventsCarousel";
-import EventsCarousel from "./components/EventsCarousel.vue";
-import { BoardItem } from "./components/LeaderBoard";
-import LeaderBoard from "./components/LeaderBoard.vue";
 import Tabs from "@/components/Tabs/Tabs.vue";
 import GenericList from "@/components/GenericList/GenericList.vue";
+import EventsCarousel from "@/views/Dashboard/components/EventsCarousel.vue";
+import LeaderBoard from "@/views/Dashboard/components/LeaderBoard.vue";
 
-type RouteParam = string | (string | null)[];
+export interface OtherPlayer {
+  avatar: string;
+  name: string;
+  action: string;
+}
+
+export interface StatisticsNumberWithTrend {
+  title: string;
+  amount: number;
+  direction: "up" | "down";
+}
+
+export interface StatisticsTabItem {
+  title: string;
+  quickStats: StatisticsNumberWithTrend[];
+  medals: string[];
+  friends: OtherPlayer[];
+}
 
 @Component({
   components: {
@@ -46,8 +67,10 @@ type RouteParam = string | (string | null)[];
   },
   computed: {
     ...mapGetters({
+      i18n: "app/i18n",
+      hasSnackBar: "app/hasSnackBar",
       currentUserAddress: "auth/getCurrentUserAddress",
-      getIntegrations: "integrations/getIntegrations",
+      getIntegrations: "oauth/getIntegrations",
     }),
   },
 })
@@ -66,21 +89,41 @@ export default class Dashboard extends MetaView {
    */
   public currentUserAddress!: string;
 
-  public snackbarkShown: boolean = false;
+  /**
+   * This property contains the translator `Translations` instance.
+   * This field is populated using the Vuex Store after a successful
+   * setup of the internationalization features.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {Translations}
+   */
+  public i18n!: Translations;
 
-  public snackbarConfig = {
+  /**
+   * This property contains configuration of a Snack-Bar on top of
+   * the window. This is often also referred to as a "Toast" message.
+   *
+   * @access protected
+   * @var {string}
+   */
+  protected snackbarConfig: SnackBarConfig = {
     state: "success",
     title: "Great Job!",
-    description: "We’ve integrated your account",
+    description: "We've integrated your account",
   };
 
   /**
-   * Computed which defines configuration
-   * for vueper carousel
+   * This computed property defines the configuration of the `vueper`
+   * Carousel Widget that is displayed on this screen.
    *
+   * @access protected
    * @returns {CarouselConfig}
    */
-  get sliderConfig(): CarouselConfig {
+  protected get sliderConfig(): CarouselConfig {
     return {
       arrows: false,
       bullets: false,
@@ -91,11 +134,14 @@ export default class Dashboard extends MetaView {
   }
 
   /**
-   * Media queried slider configuration
+   * This computed property defines *custom media queries* to further
+   * configure the `vueper` Carousel. It defines breakpoints to know
+   * how many slides can be displayed completely.
    *
+   * @access protected
    * @returns {any}
    */
-  get sliderBreakPoints(): any {
+  protected get sliderBreakPoints(): any {
     return {
       768: {
         visibleSlides: 1,
@@ -104,11 +150,16 @@ export default class Dashboard extends MetaView {
   }
 
   /**
-   * Computed which defines list of carousel items
+   * This computed property defines the *list* of slides that are
+   * displayed inside the `vueper` Carousel.
    *
+   * @deprecated This method must be deprecated in favor the actual carousel
+   * items discovery implementation using the backend runtime.
+   *
+   * @access protected
    * @returns {CarouselItem[]}
    */
-  get carouselItems(): CarouselItem[] {
+  protected get carouselItems(): CarouselItem[] {
     return [
       {
         image: "footballbg.jpg",
@@ -145,11 +196,16 @@ export default class Dashboard extends MetaView {
   }
 
   /**
-   * Computed which defines list of users in leaderboard table
+   * This computed property defines the *list* of players that are
+   * displayed inside the *leaderboard*.
    *
-   * @returns {BoardItem[]}
+   * @deprecated This method must be deprecated in favor the actual leaderboard
+   * discovery implementation using the backend runtime.
+   *
+   * @access protected
+   * @returns {LeaderBoardItem[]}
    */
-  get boardItems(): BoardItem[] {
+  protected get leaderboardItems(): LeaderBoardItem[] {
     return [
       {
         avatar: "avatar1.png",
@@ -190,33 +246,37 @@ export default class Dashboard extends MetaView {
   }
 
   /**
-   * Computed which defines
-   * list of tabs and structure inside of them
+   * This computed property defines the *statistics tabs* for the currently
+   * authenticated player.
    *
-   * @returns {BoardItem[]}
+   * @deprecated This method must be deprecated in favor the actual list of
+   * tabs as defined by the UI team.
+   *
+   * @access protected
+   * @returns {StatisticsTabItem[]}
    */
-  get tabs() {
+  protected get statisticsTabs(): StatisticsTabItem[] {
     return [
       {
-        title: "All time",
+        title: this.i18n.$t("dashboard_statistics_tabs_alltime"),
         quickStats: [
           {
-            title: "Minutes Exercised",
+            title: this.i18n.$t("dashboard_statistics_label_minutes_practiced"),
             amount: 3099,
             direction: "up",
           },
           {
-            title: "$FIT earned",
+            title: this.i18n.$t("dashboard_statistics_label_fit_earned"),
             amount: 560,
             direction: "down",
           },
           {
-            title: "Calories Burnt",
+            title: this.i18n.$t("dashboard_statistics_label_calories_burnt"),
             amount: 1094,
             direction: "down",
           },
           {
-            title: "Friends Referred",
+            title: this.i18n.$t("dashboard_statistics_label_friends_referred"),
             amount: 5,
             direction: "down",
           },
@@ -226,35 +286,35 @@ export default class Dashboard extends MetaView {
           {
             avatar: "friend1.png",
             name: "Yoga Maestro",
-            cta: "Go 1-on-1",
+            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
           },
           {
             avatar: "friend2.png",
             name: "Terminator",
-            cta: "Go 1-on-1",
+            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
           },
         ],
       },
       {
-        title: "Today",
+        title: this.i18n.$t("dashboard_statistics_tabs_today"),
         quickStats: [
           {
-            title: "Minutes Exercised",
+            title: this.i18n.$t("dashboard_statistics_label_minutes_practiced"),
             amount: 520,
             direction: "down",
           },
           {
-            title: "$FIT earned",
+            title: this.i18n.$t("dashboard_statistics_label_fit_earned"),
             amount: 350,
             direction: "down",
           },
           {
-            title: "Calories Burnt",
+            title: this.i18n.$t("dashboard_statistics_label_calories_burnt"),
             amount: 2035,
             direction: "up",
           },
           {
-            title: "Friends Referred",
+            title: this.i18n.$t("dashboard_statistics_label_friends_referred"),
             amount: 5,
             direction: "down",
           },
@@ -264,88 +324,109 @@ export default class Dashboard extends MetaView {
           {
             avatar: "friend1.png",
             name: "Yoga Maestro",
+            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
           },
           {
             avatar: "friend2.png",
             name: "Terminator",
+            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
           },
         ],
       },
     ];
   }
 
-  get localIntegrations() {
-    const integrations = localStorage.getItem("integrations");
-    let availableIntegrations: any;
-    if (integrations) {
-      availableIntegrations = JSON.parse(integrations);
-    }
-    return availableIntegrations;
-  }
-
   /**
+   * This hook is called upon mounting the component on the App. It
+   * should handle the *initialization* of the screen and interpret
+   * the request query if necessary.
    *
+   * @access protected
+   * @async
+   * @returns {Promise<void>}
    */
-  protected async mounted() {
+  protected async mounted(): Promise<void> {
     // in case we came here from log-in screen, we may
     // not have a profile in the Vuex Store yet, fill now.
     if (!this.currentUserAddress) {
       await this.$store.dispatch("auth/fetchProfile");
     }
 
-    console.log("[Dashboard] User: ", this.currentUserAddress);
-
-    const { state, code, scope, error } = this.$route.query;
-
-    const integrations = localStorage.getItem("integrations");
-    let availableIntegrations: any;
-
-    if (error) {
-      this.snackbarConfig = {
-        state: "error",
-        title: "Error!",
-        description: "Please click 'authorize' on strava screen",
-      };
-
-      this.snackbarkShown = Boolean(localStorage.getItem("snackbarHidden"));
-      localStorage.setItem("snackbarHidden", JSON.stringify(true));
+    // handles "denial" of user authorization on the third-party platform
+    if (this.$route.query && "error" in this.$route.query) {
+      this.displayErrorMessage(
+        `Please click "authorize" on the Strava authorization`
+      );
     }
 
-    if (integrations) {
-      availableIntegrations = JSON.parse(integrations);
-      this.$store.commit("integrations/setIntegrations", "strava");
-      console.log(availableIntegrations);
-      this.snackbarkShown = Boolean(localStorage.getItem("snackbarHidden"));
-    }
+    // extracts "callback" parameters for when the user comes back
+    // from the authorization process on the third-party platform
+    const { state, code, scope } = this.$route.query;
 
-    if (state && code && scope && !availableIntegrations) {
-      await this.triggerLinkStrava(state, code, scope);
-      localStorage.setItem("snackbarHidden", JSON.stringify(true));
+    // if we come back to dashboard FROM the OAuth Authorization,
+    // then we can now *query an access token* from the data provider
+    // a redirection will happen after retrieval of the access token.
+    if (state && code && scope) {
+      this.$store.commit("oauth/setParameters", { code, state, scope });
+      this.$store.commit("app/enableSnackBar");
+      await this.oauthCallbackRedirect();
       await this.$router.replace({});
     }
   }
 
-  async integrateStrava() {
-    window.location.href =
-      process.env.VUE_APP_BACKEND_URL +
-      `/oauth/strava/authorize?&dhealthAddress=${this.currentUserAddress}`;
+  /**
+   * This component method is used internally to display a *pre-configured*
+   * snack-bar that contains an *error message*.
+   *
+   * @access protected
+   * @param   {string}    error     The error message
+   * @returns {void}
+   */
+  protected displayErrorMessage(error: string): void {
+    // updates the snackbar configuration
+    this.snackbarConfig = {
+      state: "error",
+      title: "Error!",
+      description: error,
+    };
+
+    this.$store.commit("app/enableSnackBar");
   }
 
-  async triggerLinkStrava(
-    state: RouteParam,
-    code: RouteParam,
-    scope: RouteParam
-  ) {
-    this.$store.dispatch("integrations/linkStrava", {
-      address: this.currentUserAddress,
-      code,
-      state,
-      scope,
-    });
+  /**
+   * This component method is used to *redirect the user* to the OAuth
+   * *authorization page* of a third-party data provider, e.g. Strava.
+   *
+   * @access protected
+   * @returns {void}
+   */
+  protected oauthAuthorizeRedirect(): void {
+    // redirects the user to backend /oauth/strava/authorize
+    this.$store.dispatch("oauth/authorize", this.currentUserAddress);
   }
 
-  hideSnackbar() {
-    this.snackbarkShown = false;
-    localStorage.setItem("snackbarHidden", "");
+  /**
+   * This component method is used to *request an access token* from a
+   * third-party OAuth provider, e.g. Strava.
+   *
+   * @access protected
+   * @async
+   * @returns {Promise<void>}
+   */
+  protected async oauthCallbackRedirect(): Promise<void> {
+    // redirects the user to backend /oauth/strava/callback
+    await this.$store.dispatch("oauth/callback", this.currentUserAddress);
+  }
+
+  /**
+   * This component method is used to *close the snack-bar* when it
+   * is displayed. This method is used as an event handler with the
+   * `Snackbar` component and the `@snackbar-close` event.
+   *
+   * @access protected
+   * @returns {void}
+   */
+  protected hideSnackbar(): void {
+    this.$store.dispatch("app/disableSnackBar");
   }
 }

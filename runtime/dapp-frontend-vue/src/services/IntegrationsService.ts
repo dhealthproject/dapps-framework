@@ -25,17 +25,36 @@ export class IntegrationsService extends BackendService {
     return new HttpRequestHandler();
   }
 
-  public async linkStrava(params: any) {
+  /**
+   *
+   * @param provider
+   */
+  public authorize(provider: string, address: string): void {
+    // prepares backend request
+    // @todo should add compatibility with referral code
+    const query: string = `?dhealthAddress=${address}`;
+
+    // CAUTION: this uses `window.location` to redirect the
+    // user *forcefully* using the backend runtime to authorize.
+    window.location.href = this.getUrl(`/oauth/${provider}/authorize${query}`);
+  }
+
+  /**
+   *
+   * @param params
+   * @returns
+   */
+  public async callback(params: any) {
     return await this.handler.call(
       this.getUrl("oauth/strava/callback"),
       "GET",
-      {},
+      undefined, // no-body
       {
         withCredentials: true,
         credentials: "include",
         params,
       },
-      {}
+      {} // no-headers
     );
   }
 }

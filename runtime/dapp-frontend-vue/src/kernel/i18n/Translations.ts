@@ -134,13 +134,24 @@ export class Translations {
 
     // finds translation key in dataset
     const translations = this.data[language];
+    const fallbackI18n = this.data[Translations.defaultLanguage];
     if (
+      translations !== undefined &&
       translationKey in translations &&
       translations[translationKey] !== null &&
       translations[translationKey] !== undefined
     ) {
       // returns translated
       return translations[translationKey];
+    }
+    // or try to fallback to default language
+    else if (
+      translationKey in fallbackI18n &&
+      fallbackI18n[translationKey] !== null &&
+      fallbackI18n[translationKey] !== undefined
+    ) {
+      // returns translated using fallback
+      return fallbackI18n[translationKey];
     }
 
     // warn about missing translation and returs *untranslated*

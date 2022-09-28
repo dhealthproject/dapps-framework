@@ -16,16 +16,15 @@
       <div class="description">
         <div class="container text-left">
           <p>
-            Allow ELEVATE T to access your fitness data on your favorite
-            appplications to earn rewards
+            {{ i18n.$t("settings_integrations_description_text") }}
           </p>
         </div>
       </div>
       <div
-        v-for="(integration, index) in storedIntegrations"
-        :key="integration + index"
+        v-for="(integration, index) in integrationsList"
+        :key="integration.id + index"
         class="setting"
-        @click="removeIntegration"
+        @click="removeIntegration(integration.id)"
       >
         <div class="container text-left">
           <div class="text-left flex flex-row justify-between items-center">

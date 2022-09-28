@@ -13,6 +13,7 @@ import { ActionContext } from "vuex";
 // internal dependencies
 import { RootState } from "./Store";
 import { AwaitLock } from "../AwaitLock";
+import { Translations } from "../../kernel/i18n/Translations";
 
 // configuration
 import packageConfig from "../../../package.json";
@@ -22,10 +23,13 @@ import dappConfig from "../../../config/dapp.json";
  *
  */
 export interface AppState {
+  initialized: boolean;
   name: string;
   version: string;
   language: string;
   backendUrl: string;
+  displaySnackBar: boolean;
+  i18n: Translations;
 }
 
 /**
@@ -46,17 +50,55 @@ export const AppModule = {
   // mutation, getter or action, i.e. "app/getName".
   namespaced: true,
   state: (): AppState => ({
+    initialized: false,
     name: dappConfig.name,
     version: packageConfig.version,
     language: dappConfig.i18n.locale,
-    backendUrl: process.env.BACKEND_URL ?? "http://localhost:7903",
+    backendUrl: process.env.VUE_APP_BACKEND_URL ?? "http://localhost:7903",
+    displaySnackBar: false,
+    i18n: new Translations(Translations.defaultLanguage),
   }),
 
   getters: {
+    isLoading: (state: AppState): boolean => !state.initialized,
+    hasSnackBar: (state: AppState): boolean => state.displaySnackBar,
     getName: (state: AppState): string => state.name,
     getVersion: (state: AppState): string => state.version,
     getLanguage: (state: AppState): string => state.language,
     getBackendURL: (state: AppState): string => state.backendUrl,
+    i18n: (state: AppState): Translations => state.i18n,
+  },
+
+  mutations: {
+    /**
+     *
+     */
+    setInitialized: (state: AppState, payload: boolean): boolean =>
+      (state.initialized = payload),
+
+    /**
+     *
+     */
+    setLanguage: (state: AppState, payload: string): string =>
+      (state.language = payload),
+
+    /**
+     *
+     */
+    setTranslator: (state: AppState, payload: Translations): Translations =>
+      (state.i18n = payload),
+
+    /**
+     *
+     */
+    enableSnackBar: (state: AppState): boolean =>
+      (state.displaySnackBar = true),
+
+    /**
+     *
+     */
+    disableSnackBar: (state: AppState): boolean =>
+      (state.displaySnackBar = false),
   },
 
   actions: {
@@ -65,12 +107,35 @@ export const AppModule = {
      */
     async initialize(context: AppContext): Promise<boolean> {
       const callback = async () => {
+        // loads custom language settings
+        await context.dispatch("fetchLanguage");
+
+        // initialization is done after setup
         context.commit("setInitialized", true);
       };
 
-      // aquire async lock until initialized
+      // acquire async lock until initialized
       await Lock.initialize(callback, context);
       return true;
+    },
+
+    /**
+     *
+     */
+    fetchLanguage(context: AppContext): string {
+      // reads language from localStorage
+      const language = localStorage.getItem(Translations.storageKey) ?? "en";
+      context.commit("setLanguage", language);
+      context.commit("setTranslator", new Translations(language));
+      return language;
+    },
+
+    /**
+     *
+     */
+    translate(context: AppContext, key: string): string {
+      const i18n = context.getters["i18n"];
+      return i18n.$t(key);
     },
   },
 };

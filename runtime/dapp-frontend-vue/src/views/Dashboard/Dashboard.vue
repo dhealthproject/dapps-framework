@@ -14,19 +14,14 @@
   <div class="dapp-screen-dashboard">
     <div class="container">
       <Snackbar
-        v-if="snackbarkShown"
+        v-if="hasSnackBar"
         :icon="getImageUrl('QR.svg')"
         :title="snackbarConfig.title"
         :description="snackbarConfig.description"
         :state="snackbarConfig.state"
         @snackbar-close="hideSnackbar"
       />
-      <DividedScreen
-        v-if="
-          getIntegrations.length > 0 ||
-          (localIntegrations && localIntegrations.length > 0)
-        "
-      >
+      <DividedScreen v-if="getIntegrations.length > 0">
         <template v-slot:left>
           <Card title="Upcoming Events">
             <template v-slot:content>
@@ -55,7 +50,7 @@
         <template v-slot:right>
           <Card title="Your Stats" class="dapp-screen-dashboard__stats">
             <template v-slot:content>
-              <Tabs :tab-list="tabs">
+              <Tabs :tab-list="statisticsTabs">
                 <template v-slot:tabContent="props">
                   <div class="dapp-screen-dashboard__section">
                     <GenericList
@@ -103,20 +98,19 @@
         <div class="dapp-activate-screen text-center">
           <img
             :src="getImageUrl('add-provider.png')"
-            alt="Welcome to ELEVATE, this is the place where you can earn tokens for your activity"
+            :alt="i18n.$t('dashboard_cta_strava_welcome_text')"
           />
           <h2 class="dapp-activate-screen__title">
-            Welcome to ELEVATE, this is the place where you can earn tokens for
-            your activity
+            {{ i18n.$t("dashboard_cta_strava_welcome_text") }}
           </h2>
           <p class="dapp-activate-screen__description">
-            Start earning tokens by syncing your STRAVA account with ELEVATE
+            {{ i18n.$t("dashboard_cta_strava_start_earning") }}
           </p>
           <button
             class="dapp-activate-screen__integrate"
-            @click="integrateStrava"
+            @click="oauthAuthorizeRedirect"
           >
-            Integrate with STRAVA
+            {{ i18n.$t("dashboard_cta_strava_integrate_strava") }}
           </button>
         </div>
       </div>

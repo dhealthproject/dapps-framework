@@ -177,7 +177,6 @@ export const AuthModule = {
         const handler = new AuthService();
         const profile: User = await handler.getProfile();
 
-        console.log("[store/AuthModule] User: ", profile);
         context.commit("setAuthenticated", true);
         context.commit("setCurrentUserAddress", profile.address);
         return profile;

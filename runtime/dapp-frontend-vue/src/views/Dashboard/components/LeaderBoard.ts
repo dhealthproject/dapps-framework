@@ -15,7 +15,7 @@ import { Component, Prop } from "vue-property-decorator";
 import { MetaView } from "@/views/MetaView";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
 
-export interface BoardItem {
+export interface LeaderBoardItem {
   avatar?: string;
   nickname: string;
   hash: string;
@@ -36,5 +36,5 @@ export default class LeaderBoard extends MetaView {
    * @access readonly
    * @var {items}
    */
-  @Prop({ default: () => [] }) readonly items?: BoardItem[];
+  @Prop({ default: () => [] }) readonly items?: LeaderBoardItem[];
 }
