@@ -13,6 +13,7 @@ import { mount, createLocalVue } from "@vue/test-utils";
 
 // components page being tested
 import LoginScreen from "@/views/LoginScreen/LoginScreen.vue";
+import { nextTick } from "vue-inline-svg";
 
 // mocks the AuthService completely
 jest.mock("@/services/AuthService");
@@ -53,15 +54,21 @@ describe("LoginScreen -->", () => {
     expect(widget.find(".dapp-divided-screen").exists()).to.be.true;
   });
 
-  it("should display logo", () => {
-    expect(widget.find(".dapp-logo").exists()).to.be.true;
-  });
-
-  it("should display carousel", () => {
-    expect(widget.find(".dapp-login-screen__carousel").exists()).to.be.true;
-  });
-
   it("should display list of steps", () => {
-    expect(widget.find(".steps").exists()).to.be.true;
+    expect(widget.find(".qr-wrapper__list").exists()).to.be.true;
+  });
+
+  it("should display nav panel", () => {
+    expect(widget.find(".dapp-nav-panel").exists()).to.be.true;
+  });
+
+  it("should display back button inside of nav panel", () => {
+    expect(widget.find(".dapp-nav-panel__left").exists()).to.be.true;
+  });
+
+  it("should display qr code", () => {
+    // await widget.vm.$nextTick();
+    // expect(widget.find(".qr-code").exists()).to.be.true;
+    expect(widget.vm.createLoginQRCode()).to.be.not.null;
   });
 });

@@ -58,6 +58,4 @@
   </div>
 </template>
 
-<script lang="ts" src="./App.ts">
-import UiPopup from "./components/UiPopup/UiPopup.vue";
-</script>
+<script lang="ts" src="./App.ts"></script>
