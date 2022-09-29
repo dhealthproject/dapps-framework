@@ -54,7 +54,7 @@
                 </div>
                 <div class="item__footer__cta">
                   <UiButton
-                    @uiButton-click="handleEventClick($event, carouselItem)"
+                    @click="handleEventClick($event, carouselItem)"
                     :accent="true"
                     >Joined</UiButton
                   >

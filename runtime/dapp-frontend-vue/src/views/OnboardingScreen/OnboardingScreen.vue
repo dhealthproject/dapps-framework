@@ -75,14 +75,14 @@
             </div>
             <UiButton
               :accent="currentScreen === 2"
-              @uiButton-click="handleStep"
+              @click="handleStep"
               class="slide__button"
               >{{ currentItem.button }}</UiButton
             >
             <UiButton
               v-if="!refCode"
               :type="'no-borders'"
-              @uiButton-click="handleReferral"
+              @click="handleReferral"
               >Enter a Referral Code</UiButton
             >
           </div>
@@ -135,14 +135,11 @@
           <p class="description" v-html="currentItem.text" />
           <UiButton
             :accent="currentScreen === 2"
-            @uiButton-click="handleStep"
+            @click="handleStep"
             class="slide__button"
             >{{ currentItem.button }}</UiButton
           >
-          <UiButton
-            v-if="!refCode"
-            :type="'no-borders'"
-            @uiButton-click="handleReferral"
+          <UiButton v-if="!refCode" :type="'no-borders'" @click="handleReferral"
             >Enter a Referral Code</UiButton
           >
         </div>

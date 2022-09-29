@@ -48,7 +48,7 @@
           @input="handleInput"
         />
       </div>
-      <UiButton :disabled="!isFormFilled" @uiButton-click="handleFormSubmission"
+      <UiButton :disabled="!isFormFilled" @click="handleFormSubmission"
         >Submit</UiButton
       >
     </div>

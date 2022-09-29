@@ -14,13 +14,13 @@
   <div class="dapp-screen-dashboard">
     <div class="container">
       <h1
-        v-if="getIntegrations"
+        v-if="getIntegrations && getIntegrations.length"
         class="dapp-screen-dashboard__title"
         v-html="`${currentUserAddress} dashboard`"
       />
-      <DividedScreen v-if="getIntegrations" :gap="81">
+      <DividedScreen v-if="getIntegrations && getIntegrations.length" :gap="81">
         <template v-slot:left>
-          <Tabs :title="'Quick Stats'" :tab-list="tabs">
+          <Tabs :title="'Quick Stats'" :tab-list="statisticsTabs">
             <template v-slot:tabContent="props">
               <Card>
                 <template v-slot:content>
@@ -109,31 +109,34 @@
 
           <Card :title="'Invite friends'" :showBorders="false">
             <template v-slot:content>
-              <LeaderBoard :items="boardItems" /> </template
+              <LeaderBoard :items="leaderboardItems" /> </template
           ></Card>
         </template>
       </DividedScreen>
       <div v-else class="dapp-activate-wrapper">
         <div class="dapp-activate-screen text-center">
           <img
-            :src="getImageUrl('workout.png')"
-            :alt="i18n.$t('dashboard_cta_strava_welcome_text')"
+            :src="getImageUrl('workout.svg')"
+            :alt="i18n.$t('dashboard_cta_strava_welcome_text', 'en-US')"
           />
           <h2 class="dapp-activate-screen__title">
-            {{ i18n.$t("dashboard_cta_strava_welcome_text") }}
+            {{ i18n.$t("dashboard_cta_strava_welcome_text", "en-US") }}
           </h2>
           <p class="dapp-activate-screen__description">
-            {{ i18n.$t("dashboard_cta_strava_start_earning") }}
+            {{ i18n.$t("dashboard_cta_strava_start_earning", "en-US") }}
           </p>
-          <button
+          <UiButton
+            :accent="true"
             class="dapp-activate-screen__integrate"
             @click="oauthAuthorizeRedirect"
           >
-            {{ i18n.$t("dashboard_cta_strava_integrate_strava") }}
-          </button>
+            {{ i18n.$t("dashboard_cta_strava_integrate_strava", "en-US") }}
+          </UiButton>
           <p class="add-strava">
-            {{ i18n.$t("dashboard_cta_strava_download_strava") }}
-            &nbsp;<a href="#" target="_blank">{{ i18n.$t("word_here") }}</a>
+            {{ i18n.$t("dashboard_cta_strava_download_strava", "en-US") }}
+            &nbsp;<a href="#" target="_blank">{{
+              i18n.$t("word_here", "en-US")
+            }}</a>
           </p>
         </div>
       </div>

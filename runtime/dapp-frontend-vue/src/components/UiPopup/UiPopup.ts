@@ -71,6 +71,20 @@ export default class UiPopup extends MetaView {
   }
 
   /**
+   * Method that sets fields of form fields object by input names
+   *
+   * @access protected
+   * @param event: any
+   * @return void
+   */
+  protected handleInput(event: any) {
+    console.log("handleInput");
+
+    const fieldName = event.currentTarget.getAttribute("name");
+    Vue.set(this.formFields, fieldName, event.target.value);
+  }
+
+  /**
    * Computed returns boolean according to value of all inputs in form
    *
    * @access protected

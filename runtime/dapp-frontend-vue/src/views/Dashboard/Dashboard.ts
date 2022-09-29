@@ -269,25 +269,37 @@ export default class Dashboard extends MetaView {
   protected get statisticsTabs(): StatisticsTabItem[] {
     return [
       {
-        title: this.i18n.$t("dashboard_statistics_tabs_alltime"),
+        title: this.i18n.$t("dashboard_statistics_tabs_alltime", "en-US"),
         quickStats: [
           {
-            title: this.i18n.$t("dashboard_statistics_label_minutes_practiced"),
+            title: this.i18n.$t(
+              "dashboard_statistics_label_minutes_practiced",
+              "en-US"
+            ),
             amount: 3099,
             direction: "up",
           },
           {
-            title: this.i18n.$t("dashboard_statistics_label_fit_earned"),
+            title: this.i18n.$t(
+              "dashboard_statistics_label_fit_earned",
+              "en-US"
+            ),
             amount: 560,
             direction: "down",
           },
           {
-            title: this.i18n.$t("dashboard_statistics_label_calories_burnt"),
+            title: this.i18n.$t(
+              "dashboard_statistics_label_calories_burnt",
+              "en-US"
+            ),
             amount: 1094,
             direction: "down",
           },
           {
-            title: this.i18n.$t("dashboard_statistics_label_friends_referred"),
+            title: this.i18n.$t(
+              "dashboard_statistics_label_friends_referred",
+              "en-US"
+            ),
             amount: 5,
             direction: "down",
           },
@@ -297,35 +309,47 @@ export default class Dashboard extends MetaView {
           {
             avatar: "friend1.png",
             name: "Yoga Maestro",
-            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
+            action: this.i18n.$t("dashboard_statistics_label_go1on1", "en-US"),
           },
           {
             avatar: "friend2.png",
             name: "Terminator",
-            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
+            action: this.i18n.$t("dashboard_statistics_label_go1on1", "en-US"),
           },
         ],
       },
       {
-        title: this.i18n.$t("dashboard_statistics_tabs_today"),
+        title: this.i18n.$t("dashboard_statistics_tabs_today", "en-US"),
         quickStats: [
           {
-            title: this.i18n.$t("dashboard_statistics_label_minutes_practiced"),
+            title: this.i18n.$t(
+              "dashboard_statistics_label_minutes_practiced",
+              "en-US"
+            ),
             amount: 520,
             direction: "down",
           },
           {
-            title: this.i18n.$t("dashboard_statistics_label_fit_earned"),
+            title: this.i18n.$t(
+              "dashboard_statistics_label_fit_earned",
+              "en-US"
+            ),
             amount: 350,
             direction: "down",
           },
           {
-            title: this.i18n.$t("dashboard_statistics_label_calories_burnt"),
+            title: this.i18n.$t(
+              "dashboard_statistics_label_calories_burnt",
+              "en-US"
+            ),
             amount: 2035,
             direction: "up",
           },
           {
-            title: this.i18n.$t("dashboard_statistics_label_friends_referred"),
+            title: this.i18n.$t(
+              "dashboard_statistics_label_friends_referred",
+              "en-US"
+            ),
             amount: 5,
             direction: "down",
           },
@@ -335,12 +359,12 @@ export default class Dashboard extends MetaView {
           {
             avatar: "friend1.png",
             name: "Yoga Maestro",
-            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
+            action: this.i18n.$t("dashboard_statistics_label_go1on1", "en-US"),
           },
           {
             avatar: "friend2.png",
             name: "Terminator",
-            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
+            action: this.i18n.$t("dashboard_statistics_label_go1on1", "en-US"),
           },
         ],
       },

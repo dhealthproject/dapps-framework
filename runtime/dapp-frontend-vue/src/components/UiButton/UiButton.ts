@@ -86,6 +86,6 @@ export default class UiButton extends MetaView {
    * @returns {void}
    */
   public onClick() {
-    this.$emit("uiButton-click");
+    this.$emit("click");
   }
 }
