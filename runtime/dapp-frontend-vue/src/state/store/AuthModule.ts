@@ -179,6 +179,9 @@ export const AuthModule = {
 
         context.commit("setAuthenticated", true);
         context.commit("setCurrentUserAddress", profile.address);
+        context.commit("oauth/setIntegrations", profile.integrations, {
+          root: true,
+        });
         return profile;
       } catch (e) {
         context.commit("setAuthenticated", false);

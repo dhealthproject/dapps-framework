@@ -78,7 +78,7 @@ export class Translations {
    *
    */
   protected data: TranslationDataset = {
-    "en-US": translationsEn,
+    en: translationsEn,
   };
 
   /**
@@ -127,6 +127,8 @@ export class Translations {
     customLanguage?: string | undefined
   ): string {
     // determines which dataset must be used
+    console.log({ data: this.data });
+
     const language =
       !!customLanguage && customLanguage in this.data
         ? customLanguage
@@ -146,6 +148,7 @@ export class Translations {
     }
     // or try to fallback to default language
     else if (
+      fallbackI18n !== undefined &&
       translationKey in fallbackI18n &&
       fallbackI18n[translationKey] !== null &&
       fallbackI18n[translationKey] !== undefined

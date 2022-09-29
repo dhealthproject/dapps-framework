@@ -117,26 +117,24 @@
         <div class="dapp-activate-screen text-center">
           <img
             :src="getImageUrl('workout.svg')"
-            :alt="i18n.$t('dashboard_cta_strava_welcome_text', 'en-US')"
+            :alt="i18n.$t('dashboard_cta_strava_welcome_text')"
           />
           <h2 class="dapp-activate-screen__title">
-            {{ i18n.$t("dashboard_cta_strava_welcome_text", "en-US") }}
+            {{ i18n.$t("dashboard_cta_strava_welcome_text") }}
           </h2>
           <p class="dapp-activate-screen__description">
-            {{ i18n.$t("dashboard_cta_strava_start_earning", "en-US") }}
+            {{ i18n.$t("dashboard_cta_strava_start_earning") }}
           </p>
           <UiButton
             :accent="true"
             class="dapp-activate-screen__integrate"
             @click="oauthAuthorizeRedirect"
           >
-            {{ i18n.$t("dashboard_cta_strava_integrate_strava", "en-US") }}
+            {{ i18n.$t("dashboard_cta_strava_integrate_strava") }}
           </UiButton>
           <p class="add-strava">
-            {{ i18n.$t("dashboard_cta_strava_download_strava", "en-US") }}
-            &nbsp;<a href="#" target="_blank">{{
-              i18n.$t("word_here", "en-US")
-            }}</a>
+            {{ i18n.$t("dashboard_cta_strava_download_strava") }}
+            &nbsp;<a href="#" target="_blank">{{ i18n.$t("word_here") }}</a>
           </p>
         </div>
       </div>

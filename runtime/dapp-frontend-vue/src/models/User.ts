@@ -32,4 +32,5 @@ export interface User {
   transactionsCount?: number;
   firstTransactionAt?: Date;
   firstTransactionAtBlock?: number;
+  integrations?: string[];
 }

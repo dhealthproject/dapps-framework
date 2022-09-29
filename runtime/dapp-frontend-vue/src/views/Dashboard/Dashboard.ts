@@ -269,37 +269,25 @@ export default class Dashboard extends MetaView {
   protected get statisticsTabs(): StatisticsTabItem[] {
     return [
       {
-        title: this.i18n.$t("dashboard_statistics_tabs_alltime", "en-US"),
+        title: this.i18n.$t("dashboard_statistics_tabs_alltime"),
         quickStats: [
           {
-            title: this.i18n.$t(
-              "dashboard_statistics_label_minutes_practiced",
-              "en-US"
-            ),
+            title: this.i18n.$t("dashboard_statistics_label_minutes_practiced"),
             amount: 3099,
             direction: "up",
           },
           {
-            title: this.i18n.$t(
-              "dashboard_statistics_label_fit_earned",
-              "en-US"
-            ),
+            title: this.i18n.$t("dashboard_statistics_label_fit_earned"),
             amount: 560,
             direction: "down",
           },
           {
-            title: this.i18n.$t(
-              "dashboard_statistics_label_calories_burnt",
-              "en-US"
-            ),
+            title: this.i18n.$t("dashboard_statistics_label_calories_burnt"),
             amount: 1094,
             direction: "down",
           },
           {
-            title: this.i18n.$t(
-              "dashboard_statistics_label_friends_referred",
-              "en-US"
-            ),
+            title: this.i18n.$t("dashboard_statistics_label_friends_referred"),
             amount: 5,
             direction: "down",
           },
@@ -309,47 +297,35 @@ export default class Dashboard extends MetaView {
           {
             avatar: "friend1.png",
             name: "Yoga Maestro",
-            action: this.i18n.$t("dashboard_statistics_label_go1on1", "en-US"),
+            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
           },
           {
             avatar: "friend2.png",
             name: "Terminator",
-            action: this.i18n.$t("dashboard_statistics_label_go1on1", "en-US"),
+            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
           },
         ],
       },
       {
-        title: this.i18n.$t("dashboard_statistics_tabs_today", "en-US"),
+        title: this.i18n.$t("dashboard_statistics_tabs_today"),
         quickStats: [
           {
-            title: this.i18n.$t(
-              "dashboard_statistics_label_minutes_practiced",
-              "en-US"
-            ),
+            title: this.i18n.$t("dashboard_statistics_label_minutes_practiced"),
             amount: 520,
             direction: "down",
           },
           {
-            title: this.i18n.$t(
-              "dashboard_statistics_label_fit_earned",
-              "en-US"
-            ),
+            title: this.i18n.$t("dashboard_statistics_label_fit_earned"),
             amount: 350,
             direction: "down",
           },
           {
-            title: this.i18n.$t(
-              "dashboard_statistics_label_calories_burnt",
-              "en-US"
-            ),
+            title: this.i18n.$t("dashboard_statistics_label_calories_burnt"),
             amount: 2035,
             direction: "up",
           },
           {
-            title: this.i18n.$t(
-              "dashboard_statistics_label_friends_referred",
-              "en-US"
-            ),
+            title: this.i18n.$t("dashboard_statistics_label_friends_referred"),
             amount: 5,
             direction: "down",
           },
@@ -359,12 +335,12 @@ export default class Dashboard extends MetaView {
           {
             avatar: "friend1.png",
             name: "Yoga Maestro",
-            action: this.i18n.$t("dashboard_statistics_label_go1on1", "en-US"),
+            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
           },
           {
             avatar: "friend2.png",
             name: "Terminator",
-            action: this.i18n.$t("dashboard_statistics_label_go1on1", "en-US"),
+            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
           },
         ],
       },
@@ -411,7 +387,7 @@ export default class Dashboard extends MetaView {
       });
       this.$store.commit("oauth/setParameters", { code, state, scope });
       await this.oauthCallbackRedirect();
-      await this.$router.replace({});
+      await this.$router.replace({ name: "app.dashboard" });
     }
 
     this.ref = "JOINFIT22";
@@ -436,7 +412,6 @@ export default class Dashboard extends MetaView {
   }
 
   /**
-<<<<<<< HEAD
    * This component method is used to *redirect the user* to the OAuth
    * *authorization page* of a third-party data provider, e.g. Strava.
    *
