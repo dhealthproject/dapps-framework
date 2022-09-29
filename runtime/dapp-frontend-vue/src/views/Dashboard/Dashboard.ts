@@ -20,7 +20,7 @@ import {
   CarouselItem,
   CarouselConfig,
 } from "@/views/Dashboard/components/EventsCarousel";
-import { LeaderBoardItem } from "@/views/Dashboard/components/LeaderBoard";
+import { BoardItem } from "@/views/Dashboard/components/LeaderBoard";
 import { Translations } from "@/kernel/i18n/Translations";
 
 // child components
@@ -203,9 +203,9 @@ export default class Dashboard extends MetaView {
    * discovery implementation using the backend runtime.
    *
    * @access protected
-   * @returns {LeaderBoardItem[]}
+   * @returns {BoardItem[]}
    */
-  protected get leaderboardItems(): LeaderBoardItem[] {
+  protected get leaderboardItems(): BoardItem[] {
     return [
       {
         avatar: "avatar1.png",

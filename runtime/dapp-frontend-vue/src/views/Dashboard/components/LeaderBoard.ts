@@ -17,7 +17,8 @@ import { MetaView } from "@/views/MetaView";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
 import { LeaderBoardItem } from "@/services/LeaderBoardService";
 
-export interface LeaderBoardItem {
+// BoardItem used temporary, as a fallback, once GET /leaderboard will be pushed, BoardItem - will be removed
+export interface BoardItem {
   avatar?: string;
   nickname: string;
   hash: string;
@@ -36,7 +37,7 @@ export interface LeaderBoardItem {
     }),
   },
 })
-export default class LeaderBoard extends MetaView {
+export class LeaderBoard extends MetaView {
   public getLeaderBoardItems: LeaderBoardItem[] | undefined;
   /**
    * Prop which defines list of items in leaderboard table
@@ -44,7 +45,7 @@ export default class LeaderBoard extends MetaView {
    * @access readonly
    * @var {items}
    */
-  @Prop({ default: () => [] }) readonly items?: LeaderBoardItem[];
+  @Prop({ default: () => [] }) readonly items?: BoardItem[];
 
   async mounted() {
     if (!this.getLeaderBoardItems?.length) {
