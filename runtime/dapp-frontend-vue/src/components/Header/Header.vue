@@ -84,7 +84,7 @@
         <slot name="back-button" />
       </div>
       <div class="logo font-bold text-2xl">
-        <ElevateLogo theme="dark" />
+        <ElevateLogo :width="138" theme="dark" />
       </div>
       <nav class="text-right p-0">
         <MobileNavigationButton
