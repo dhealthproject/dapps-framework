@@ -14,6 +14,7 @@ import { ActionContext } from "vuex";
 // internal dependencies
 import { RootState } from "./Store";
 import { AwaitLock } from "../AwaitLock";
+import { IntegrationsService } from "../../services/IntegrationsService";
 
 // creates an "async"-lock for state of pending initialization
 // this will be kept *locally* to this store module implementation
@@ -27,10 +28,6 @@ export interface OAuthParameters {
   state: string;
   scope: string;
 }
-
-/**
- *
- */
 export interface OAuthModuleState {
   initialized: boolean;
   integrations: string[];
@@ -142,15 +139,23 @@ export const OAuthModule = {
     /**
      *
      */
-    callback(context: OAuthModuleContext, address: string): void {
+    async callback(
+      context: OAuthModuleContext,
+      address: string
+    ): Promise<void> {
       if (!address || !address.length) {
         throw new Error(`Invalid user address, must not be empty.`);
       }
 
-      context.commit("setIntegrating", true);
-      window.location.href =
-        process.env.VUE_APP_BACKEND_URL +
-        `/oauth/strava/authorize?&dhealthAddress=${address}`;
+      const service = new IntegrationsService();
+      const parameters = context.state.oauthParameters;
+      try {
+        // strava is the only provider currently
+        await service.callback("strava", parameters);
+        console.log("Provider linked successfully");
+      } catch (err) {
+        console.log("[store/OAuthModule] Error in callback action: ", err);
+      }
     },
 
     /**

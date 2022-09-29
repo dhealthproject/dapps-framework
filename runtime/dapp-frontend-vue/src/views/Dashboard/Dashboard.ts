@@ -414,6 +414,9 @@ export default class Dashboard extends MetaView {
   /**
    * This component method is used to *redirect the user* to the OAuth
    * *authorization page* of a third-party data provider, e.g. Strava.
+   * <br /><br />
+   * This is the **first step** (Step 1) of the Strava authorization
+   * process.
    *
    * @access protected
    * @returns {void}
@@ -426,6 +429,9 @@ export default class Dashboard extends MetaView {
   /**
    * This component method is used to *request an access token* from a
    * third-party OAuth provider, e.g. Strava.
+   * <br /><br />
+   * This is the **second step** (Step 2) of the Strava authorization
+   * process.
    *
    * @access protected
    * @async

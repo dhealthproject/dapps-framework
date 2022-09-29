@@ -11,6 +11,7 @@
 // internal dependencies
 import { BackendService } from "./BackendService";
 import { HttpRequestHandler } from "@/kernel/remote/HttpRequestHandler";
+import { OAuthParameters } from "@/state/store/OAuthModule";
 
 export class IntegrationsService extends BackendService {
   /**
@@ -44,9 +45,9 @@ export class IntegrationsService extends BackendService {
    * @param params
    * @returns
    */
-  public async callback(params: any) {
+  public async callback(provider: string, params: OAuthParameters) {
     return await this.handler.call(
-      this.getUrl("oauth/strava/callback"),
+      this.getUrl(`oauth/${provider}/callback`),
       "GET",
       undefined, // no-body
       {
