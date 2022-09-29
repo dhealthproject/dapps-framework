@@ -122,6 +122,11 @@ export default class Header extends MetaView {
         action: () => this.$router.push({ name: "app.settings" }),
         icon: "icons/menu-settings.svg",
       },
+      {
+        text: "Disconnect wallet",
+        action: () => this.disconnectWallet(),
+        icon: "icons/menu-settings.svg",
+      },
     ];
   }
 
