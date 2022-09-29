@@ -13,7 +13,6 @@ import { mount, createLocalVue } from "@vue/test-utils";
 
 // components page being tested
 import LoginScreen from "@/views/LoginScreen/LoginScreen.vue";
-import { nextTick } from "vue-inline-svg";
 
 // mocks the AuthService completely
 jest.mock("@/services/AuthService");

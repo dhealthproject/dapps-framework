@@ -20,7 +20,6 @@ import Card from "./Card/Card.vue";
 import DirectionTriangle from "./DirectionTriangle/DirectionTriangle.vue";
 import Tabs from "./Tabs/Tabs.vue";
 import GenericList from "./GenericList/GenericList.vue";
-import Snackbar from "./Snackbar/Snackbar.vue";
 import NavPanel from "./NavPanel/NavPanel.vue";
 import UiButton from "./UiButton/UiButton.vue";
 import UiPopup from "./UiPopup/UiPopup.vue";
@@ -40,7 +39,6 @@ export const AppComponents = {
   DirectionTriangle,
   Tabs,
   GenericList,
-  Snackbar,
   NavPanel,
   UiButton,
   UiPopup,

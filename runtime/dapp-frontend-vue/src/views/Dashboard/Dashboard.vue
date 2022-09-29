@@ -141,11 +141,7 @@
   </div>
 </template>
 
-<script lang="ts" src="./Dashboard.ts">
-import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
-import UiButton from "@/components/UiButton/UiButton.vue";
-import LeaderBoard from "./components/LeaderBoard.vue";
-</script>
+<script lang="ts" src="./Dashboard.ts"></script>
 
 <style lang="scss">
 @import "./Dashboard.scss";

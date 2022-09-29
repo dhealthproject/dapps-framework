@@ -23,7 +23,7 @@ const componentOptions = {
   stubs: ["router-link"],
   mocks: {
     $route: { params: {} },
-    getImageUrl: jest.fn(),
+    getImageUrl: jest.fn().mockReturnValue("fake-src"),
   },
   propsData: {
     config: () => ({
@@ -37,7 +37,7 @@ const componentOptions = {
   slots: {},
 };
 
-describe("ProgressBar -->", () => {
+describe("Toast -->", () => {
   let widget: any;
 
   beforeEach(() => {
