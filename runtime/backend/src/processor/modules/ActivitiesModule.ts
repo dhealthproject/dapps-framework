@@ -12,6 +12,7 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
+import { AuthModule } from "../../common/modules/AuthModule";
 import { QueryModule } from "../../common/modules/QueryModule";
 import { Activity, ActivitySchema } from "../models/ActivitySchema";
 import { ActivitiesController } from "../routes/ActivitiesController";
@@ -33,8 +34,9 @@ import { ActivitiesService } from "../services/ActivitiesService";
         name: Activity.name,
         schema: ActivitySchema,
       },
-    ]),
-    QueryModule,
+    ]), // requirement from ActivitiesService
+    AuthModule, // requirement from ActivitiesController
+    QueryModule, // requirement from ActivitiesService
   ],
   exports: [ActivitiesService],
 })
