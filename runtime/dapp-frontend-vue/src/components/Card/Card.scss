@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 
- @import "../../vars.scss";
+@import "../../vars.scss";
 
 .dapp-card {
   &__header {
@@ -27,7 +27,7 @@
   }
   &__inner {
     padding: 28px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, .15);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 
     &.no-borders {
       border-bottom: none;

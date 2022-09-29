@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 
- @import "../../vars.scss";
+@import "../../vars.scss";
 
 .dapp-tabs {
   .tab-content {
@@ -22,7 +22,6 @@
     display: inline-block;
     margin-right: 19px;
     color: $black;
-
 
     @media screen and (max-width: 768px) {
       font-size: 20px;
@@ -51,7 +50,7 @@
         @media screen and (max-width: 768px) {
           font-size: 14px;
         }
-    
+
         &.active {
           background-color: $white;
           font-weight: 700;

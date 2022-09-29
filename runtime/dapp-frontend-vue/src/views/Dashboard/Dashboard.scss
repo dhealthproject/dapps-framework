@@ -28,7 +28,7 @@
   .referral-box {
     background-image: url("../../assets/refer-bg.svg");
     background-size: cover;
-    
+
     padding: 40px 120px;
     display: flex;
     align-items: center;
@@ -225,12 +225,11 @@
 
     img {
       margin-right: 7px;
-      
+
       @media screen and (max-width: 580px) {
         max-width: 50px;
       }
     }
-    
   }
 
   .quick-stats__item {
@@ -262,7 +261,8 @@
   .dapp-card {
     margin-bottom: 30px;
 
-    &.events, &.invite {
+    &.events,
+    &.invite {
       margin-bottom: 0;
     }
   }
