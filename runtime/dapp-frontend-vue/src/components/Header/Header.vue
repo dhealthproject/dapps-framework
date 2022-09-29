@@ -124,6 +124,4 @@
   </div>
 </template>
 
-<script lang="ts" src="./Header.ts">
-import UiButton from "../UiButton/UiButton.vue";
-</script>
+<script lang="ts" src="./Header.ts"></script>
