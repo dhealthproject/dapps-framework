@@ -14,28 +14,30 @@ import { ApiProperty } from "@nestjs/swagger";
 import { AccountDTO } from "./AccountDTO";
 
 /**
- * @class AccountDTO
+ * @class ProfileDTO
  * @description A DTO class that consists of the *transferable* properties
- * of an account. Typically this includes information *that is already made
- * public* or is known from dHealth Network.
+ * of an augmented account, a "profile".
  * <br /><br />
  * This class shall be used in **HTTP responses** to avoid any additional
  * data about accounts to be revealed.
  *
- * @todo The transaction timestamp in `firstTransactionAt` should probably be a **number** to avoid timezone issues.
- * @since v0.1.0
+ * @since v0.3.2
  */
 export class ProfileDTO extends AccountDTO {
   /**
-   * This property stores list of
-   * user integrated providers
+   * The OAuth *integrations* that are enabled for one {@link AccountDTO}
+   * object. This array contains *provider identifiers*, e.g. `"strava".
    *
+   * @example `["strava"]`
    * @access public
-   * @var {any}
+   * @var {string[]}
    */
   @ApiProperty({
-    example: "['strava']",
-    description: "List of integrations of current account",
+    type: "string",
+    isArray: true,
+    example: ["strava"],
+    description:
+      "The OAuth integrations that are enabled for one account. This array should contain provider identifiers, e.g. 'strava'.",
   })
-  public integrations: any;
+  public integrations: string[];
 }

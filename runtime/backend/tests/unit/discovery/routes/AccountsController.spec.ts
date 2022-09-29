@@ -69,7 +69,7 @@ describe("discovery/AccountsController", () => {
 
       // act
       const result = await controller.find(
-        new AccountQuery({ address: "fakeAddress" } as AccountDocument),
+        { address: "fakeAddress" } as any as AccountQuery,
       );
 
       // assert

@@ -134,11 +134,15 @@ export class AppController {
     const account: AccountDocument = await this.authService.getAccount(req);
 
     // wrap into a safe transferable DTO
-    // return Account.fillDTO(account, new AccountDTO());
+    const accountDto: AccountDTO = Account.fillDTO(account, new ProfileDTO());
 
-    let accountDto: AccountDTO = Account.fillDTO(account, new ProfileDTO());
-    const integrations = this.oauthService.getIntegrations(account);
+    // fills additional profile information
+    const integrations = await this.oauthService.getIntegrations(account);
 
-    return { ...accountDto, integrations } as ProfileDTO;
+    // returns wrapped `ProfileDTO`
+    return {
+      ...accountDto,
+      integrations: integrations.data.map((i) => i.name),
+    } as ProfileDTO;
   }
 }
