@@ -78,6 +78,10 @@ export default class Header extends MetaView {
     return this.$router.push({ name: "app.login" });
   }
 
+  protected closeMenu() {
+    this.isMenuOpen = false;
+  }
+
   /**
    * This property contains the *authentication state* as it
    * is requested from the backend API. This property will be
@@ -143,6 +147,13 @@ export default class Header extends MetaView {
       body.style.overflowY = "hidden";
     } else {
       body.style.overflowY = "initial";
+    }
+  }
+
+  @Watch("$route.name")
+  onRouteChange(newRoute: string, oldRoute: string) {
+    if (newRoute !== oldRoute) {
+      this.isMenuOpen = false;
     }
   }
 }

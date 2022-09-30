@@ -127,8 +127,6 @@ export class Translations {
     customLanguage?: string | undefined
   ): string {
     // determines which dataset must be used
-    console.log({ data: this.data });
-
     const language =
       !!customLanguage && customLanguage in this.data
         ? customLanguage
