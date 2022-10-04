@@ -137,29 +137,21 @@ export class QueryService<
     model: TModel,
   ): Promise<PaginatedResultDTO<TDocument>> {
     // wrap pagination+query to be mongo-compatible
-    const { queryCursor, querySorter, searchQuery } =
-      this.getQueryConfig(query);
+    const { queryCursor } = this.getQueryConfig(query);
+
+    // prepare an *aggregate* query compatible with
+    // the *mongoose* `Model`'s `aggregate()` method
+    // undefined is used to disable *union query mode*.
+    const aggregateQuery = this.getAggregateFindQuery(query, undefined, [
+      { $count: "total" },
+    ]);
 
     // execute Mongo query
     // @todo this *aggregate* query should be moved to a new method `findWithTotal`.
     // @todo fallback to `mongoose` Model.find method instead for performance.
-    const [{ data, metadata }] = await model
-      .aggregate([
-        { $match: searchQuery as FilterQuery<TDocument> },
-        {
-          $facet: {
-            data: [
-              { $skip: queryCursor.skip },
-              { $limit: queryCursor.limit },
-              { $sort: querySorter },
-            ],
-            metadata: [{ $count: "total" }],
-          },
-        },
-      ])
-      .exec();
+    const [{ data, metadata }] = await model.aggregate(aggregateQuery).exec();
 
-    // build pagination details
+    // build pagination details for PaginatedResultDTO
     const pagination = {
       pageNumber: queryCursor.page + 1,
       pageSize: queryCursor.limit,
@@ -309,6 +301,90 @@ export class QueryService<
   }
 
   /**
+   * Create a generic *union search query* that is compatible with Mongo. The
+   * returned {@link PaginatedResultDto} contains a `data` field and a
+   * `pagination` field to permit multiple queries to be sequenced.
+   * <br /><br />
+   * This method also *executes* the search query using the Mongo service
+   * connected to handle {@param model}.
+   * <br /><br />
+   * This method is different {@link find} in that it permits to execute a
+   * **union query**, effectively *combining multiple collections* in the
+   * result set.   *
+   * <br /><br />
+   * Note that this method takes *three generics* that **must**
+   * extend the {@link Documentable} class and **must** also
+   * contain a `collectionName`, e.g. in {@link Account}. Only
+   * the *first* of these generics is *obligatory*, others can
+   * be used when handling more complex union queries and by default
+   * may be omitted.
+   *
+   * @access public
+   * @async
+   * @param   {Queryable<TDocument>}   query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {TModel}        model           The model *class instance* used for the resulting document.
+   * @param   {Map<string, Queryable<T2ndDocument|T3rdDocument|T4thDocument>>}  unionWith  (Optional) This parameter should contain a map of {@link Queryable} objects - defaults to empty union specification (no union).
+   * @param   {MongoRoutineCount[]}    metadata   (Optional) This parameter should contain one or more `$count` pipeline stage(s) - defaults to empty metadata.
+   * @returns {MongoQueryPipeline}    The resulting *aggregate search query* specification that is compatible with *Mongo aggregate queries*.
+   */
+  public async union<
+    T2ndDocument extends Documentable & { collectionName: string },
+    T3rdDocument extends Documentable & { collectionName: string } = any,
+    T4thDocument extends Documentable & { collectionName: string } = any,
+  >(
+    query: Queryable<TDocument>,
+    model: TModel,
+    unionWith: Map<
+      string,
+      Queryable<T2ndDocument | T3rdDocument | T4thDocument>
+    >,
+    metadata?: MongoRoutineCount[],
+  ): Promise<
+    PaginatedResultDTO<TDocument & T2ndDocument & T3rdDocument & T4thDocument>
+  > {
+    // wrap pagination+query to be mongo-compatible
+    const { queryCursor } = this.getQueryConfig(query);
+
+    // prepare an *aggregate* query compatible with
+    // the *mongoose* `Model`'s `aggregate()` method
+    // this will always contain a `$unionWith` stage
+    const aggregateQuery = this.getAggregateFindQuery(
+      query,
+      unionWith,
+      metadata, // metadata
+    );
+
+    // execute Mongo query
+    // @todo this *aggregate* query should be moved to a new method `findWithTotal`.
+    // @todo fallback to `mongoose` Model.find method instead for performance.
+    const [{ data, metadata: resultMeta }] = await model
+      .aggregate(aggregateQuery)
+      .exec();
+
+    // build pagination details for PaginatedResultDTO
+    const pagination = {
+      pageNumber: queryCursor.page + 1,
+      pageSize: queryCursor.limit,
+      total: resultMeta.length > 0 ? resultMeta[0].total : 0,
+    };
+
+    // internal type used to return a *combination* of
+    // multiple *document types*, i.e. multiple mongo documents.
+    type TResultDocument = TDocument &
+      T2ndDocument &
+      T3rdDocument &
+      T4thDocument;
+
+    // returns wrapped entity page
+    // @todo move to static factory
+    const result: PaginatedResultDTO<TResultDocument> =
+      new PaginatedResultDTO<TResultDocument>();
+    result.data = data;
+    result.pagination = pagination;
+    return result;
+  }
+
+  /**
    * Format the search query parameters to a Mongo compatible
    * documents search query. The resulting object can be used
    * to configure an executable Mongo aggregation or query.
@@ -357,6 +433,113 @@ export class QueryService<
   }
 
   /**
+   * Format the search query parameters to a Mongo compatible
+   * aggregate search query. The resulting object can be used
+   * to configure an executable Mongo aggregation or query.
+   * <br /><br/>
+   * Note that pagination parameters can be omitted with the
+   * following defaults being used: `sort="_id"`, `order="asc"`,
+   * `pageNumber=1`, `pageSize=20`.
+   * <br /><br />
+   * Note that this method takes *three generics* that **must**
+   * extend the {@link Documentable} class and **must** also
+   * contain a `collectionName`, e.g. in {@link Account}. Only
+   * the *first* of these generics is *obligatory*, others can
+   * be used when handling more complex union queries.
+   *
+   * @access protected
+   * @param   {Queryable<TDocument>}   query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {Map<string, Queryable<T2ndDocument|T3rdDocument|T4thDocument>>}  unionWith  (Optional) This parameter should contain a map of {@link Queryable} objects - defaults to empty union specification (no union).
+   * @param   {MongoRoutineCount[]}    metadata   (Optional) This parameter should contain one or more `$count` pipeline stage(s) - defaults to empty metadata.
+   * @returns {MongoQueryPipeline}    The resulting *aggregate search query* specification that is compatible with *Mongo aggregate queries*.
+   */
+  protected getAggregateFindQuery<
+    T2ndDocument extends Documentable & { collectionName: string },
+    T3rdDocument extends Documentable & { collectionName: string } = any,
+    T4thDocument extends Documentable & { collectionName: string } = any,
+  >(
+    query: Queryable<TDocument>,
+    unionWith?: Map<
+      string,
+      Queryable<T2ndDocument | T3rdDocument | T4thDocument>
+    >,
+    metadata?: MongoRoutineCount[],
+  ): MongoQueryPipeline {
+    // wrap pagination+query to be mongo-compatible
+    const { queryCursor, querySorter, searchQuery } =
+      this.getQueryConfig(query);
+
+    // prepares the returned pipeline stages
+    const stages: MongoQueryPipeline = [];
+
+    // prepare the `$facet` routines for pagination
+    // and potential metadata about the result set
+    let facetPipelineStage: MongoPipelineFacet = {
+      $facet: {
+        data: [
+          { $skip: queryCursor.skip },
+          { $limit: queryCursor.limit },
+          { $sort: querySorter },
+        ],
+      },
+    };
+
+    // currently *only supports* the `$count` operator
+    if (metadata !== undefined && metadata.length) {
+      facetPipelineStage = {
+        $facet: {
+          ...facetPipelineStage.$facet,
+          metadata: metadata,
+        },
+      };
+    }
+
+    // additional **unions** can be specified in `unionWith`
+    (unionWith ?? []).forEach((union, group) => {
+      // wrap pagination+query to be mongo-compatible
+      const {
+        searchQuery: unionSearchQuery,
+        queryCursor: unionQueryCursor,
+        querySorter: unionQuerySorter,
+      } = this.getQueryConfig(union);
+
+      // appends the union query specification
+      stages.push({
+        $unionWith: {
+          coll: union.document.collectionName,
+          pipeline: [
+            {
+              $match: unionSearchQuery as FilterQuery<typeof union.document>,
+            },
+            {
+              $facet: {
+                data: [
+                  { $skip: unionQueryCursor.skip },
+                  { $limit: unionQueryCursor.limit },
+                  { $sort: unionQuerySorter },
+                ],
+                // @todo does not support `metadata[]` for union
+              },
+            },
+            {
+              $group: { _id: group },
+            },
+          ],
+        },
+      });
+    });
+
+    // adds a `$match`- and `$facet` pipeline stages
+    // note that this uses `upshift` to prepend the
+    // $match and $facet stages to the pipeline
+    stages.unshift(facetPipelineStage);
+    stages.unshift({ $match: searchQuery as FilterQuery<TDocument> });
+
+    // returns a pipeline with currently only 2 possible stages
+    return stages;
+  }
+
+  /**
    * This method sanitizes a search query and returns a mongo
    * compatible query that can be executed and uses the correct
    * types for its conditions (and field values).
@@ -379,7 +562,7 @@ export class QueryService<
     // each search query field gets type-cast
     for (const field in searchQuery) {
       // queries may not use undefined
-      if (undefined === searchQuery[field]) {
+      if ("collectionName" === field || undefined === searchQuery[field]) {
         continue;
       }
 

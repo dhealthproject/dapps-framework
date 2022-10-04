@@ -50,7 +50,6 @@ export type MongoQueryPipeline = (MongoQueryPipelineStage | MongoQueryUnion)[];
 export type MongoQueryUnion = {
   $unionWith: {
     coll: string; // collection name
-    pipeline: MongoQueryPipelineStage[];
+    pipeline: (MongoQueryPipelineStage | { $group: any & { _id: string } })[];
   };
-  $group: any & { _id: string }; // `_id` is obligatory
 };
