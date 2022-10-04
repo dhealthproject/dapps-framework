@@ -35,6 +35,20 @@ import { ActivityDTO } from "./ActivityDTO";
 })
 export class Activity extends Transferable<ActivityDTO> {
   /**
+   * This field contains the *mongo collection name* for entries
+   * that are stored using {@link AccountIntegrationDocument} or the model
+   * {@link AccountIntegrationModel}.
+   * <br /><br />
+   * Note that this field **is not** part of document properties
+   * and used only internally to perform queries that refer to
+   * an individual collection name, e.g. `$unionWith`.
+   *
+   * @access public
+   * @var {string}
+   */
+  public collectionName = "activities";
+
+  /**
    * The account's **address**. An address typically refers to a
    * human-readable series of 39 characters, starting either with
    * a `T`, for TESTNET addresses, or with a `N`, for MAINNET addresses.

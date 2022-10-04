@@ -36,6 +36,20 @@ import { AssetDTO } from "./AssetDTO";
 })
 export class Asset extends Transferable<AssetDTO> {
   /**
+   * This field contains the *mongo collection name* for entries
+   * that are stored using {@link AccountIntegrationDocument} or the model
+   * {@link AccountIntegrationModel}.
+   * <br /><br />
+   * Note that this field **is not** part of document properties
+   * and used only internally to perform queries that refer to
+   * an individual collection name, e.g. `$unionWith`.
+   *
+   * @access public
+   * @var {string}
+   */
+  public collectionName = "assets";
+
+  /**
    * This is the transaction hash that refers to a transaction which
    * included said asset(s) and transferred them over to the target
    * (destination) account.

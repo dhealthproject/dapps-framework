@@ -37,6 +37,20 @@ import { OperationDTO } from "../models/OperationDTO";
 })
 export class Operation extends Transferable<OperationDTO> {
   /**
+   * This field contains the *mongo collection name* for entries
+   * that are stored using {@link AccountIntegrationDocument} or the model
+   * {@link AccountIntegrationModel}.
+   * <br /><br />
+   * Note that this field **is not** part of document properties
+   * and used only internally to perform queries that refer to
+   * an individual collection name, e.g. `$unionWith`.
+   *
+   * @access public
+   * @var {string}
+   */
+  public collectionName = "operations";
+
+  /**
    * This is the user's address. The user corresponds to the
    * issuer of said **operation** ("owner"). Note that this may
    * correspond to different fields inside a transaction, depending

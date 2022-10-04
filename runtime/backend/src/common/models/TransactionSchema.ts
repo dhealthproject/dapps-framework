@@ -40,6 +40,20 @@ import { TransactionDTO } from "../../discovery/models/TransactionDTO";
 })
 export class Transaction extends Transferable<TransactionDTO> {
   /**
+   * This field contains the *mongo collection name* for entries
+   * that are stored using {@link TransactionDocument} or the model
+   * {@link TransactionModel}.
+   * <br /><br />
+   * Note that this field **is not** part of document properties
+   * and used only internally to perform queries that refer to
+   * an individual collection name, e.g. `$unionWith`.
+   *
+   * @access public
+   * @var {string}
+   */
+  public collectionName = "transactions";
+
+  /**
    * This is the discovery source's address, not to be confused
    * with the signer address. A discovery source is an address
    * owned by the dApp itself and *from/to which* transactions

@@ -36,6 +36,20 @@ import type { StateData } from "./StateData";
 })
 export class State extends Transferable<StateDTO> {
   /**
+   * This field contains the *mongo collection name* for entries
+   * that are stored using {@link StateDocument} or the model
+   * {@link StateModel}.
+   * <br /><br />
+   * Note that this field **is not** part of document properties
+   * and used only internally to perform queries that refer to
+   * an individual collection name, e.g. `$unionWith`.
+   *
+   * @access public
+   * @var {string}
+   */
+  public collectionName = "states";
+
+  /**
    * The state cache document's **name**. Note that this field must
    * contain dynamic module names, e.g. `"discovery"` or `"payout",
    * such that state cache for each individual module can be tracked

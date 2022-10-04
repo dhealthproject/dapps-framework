@@ -32,6 +32,20 @@ import { AuthChallengeDTO } from "../models/AuthChallengeDTO";
 })
 export class AuthChallenge extends Transferable<AuthChallengeDTO> {
   /**
+   * This field contains the *mongo collection name* for entries
+   * that are stored using {@link AuthChallengeDocument} or the model
+   * {@link AuthChallengeModel}.
+   * <br /><br />
+   * Note that this field **is not** part of document properties
+   * and used only internally to perform queries that refer to
+   * an individual collection name, e.g. `$unionWith`.
+   *
+   * @access public
+   * @var {string}
+   */
+  public collectionName = "authchallenges";
+
+  /**
    * The authentication code that is randomly generated for users
    * to use during authentication. This challenge must be attached
    * to a transfer transaction sent to the dApp's auth autority.
