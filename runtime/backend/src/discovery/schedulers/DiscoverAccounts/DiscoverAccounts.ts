@@ -237,7 +237,7 @@ export class DiscoverAccounts extends DiscoveryCommand {
       !!this.state.data &&
       "lastPageNumber" in this.state.data
     ) {
-      this.lastPageNumber = this.state.data.lastPageNumber;
+      this.lastPageNumber = this.state.data.lastPageNumber ?? 1;
     }
 
     // check for the total number of transactions
@@ -260,7 +260,8 @@ export class DiscoverAccounts extends DiscoveryCommand {
       countTransactions > 0 &&
       this.lastPageNumber * this.usePageSize > countTransactions
     ) {
-      this.lastPageNumber = Math.floor(countTransactions / this.usePageSize);
+      this.lastPageNumber =
+        Math.floor(countTransactions / this.usePageSize) ?? 1;
     }
 
     // display debug information about configuration
