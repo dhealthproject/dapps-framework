@@ -13,17 +13,94 @@ import { Model } from "mongoose";
 
 // internal dependencies
 import { QueryService } from "../../../../src/common/services/QueryService";
-import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
-import { AccountDocument, AccountModel, AccountQuery } from "../../../../src/common/models/AccountSchema";
-import { Queryable, QueryParameters } from "../../../../src/common/concerns/Queryable";
+import { Documentable } from "../../../../src/common/concerns/Documentable";
+import { 
+  PaginatedResultDTO,
+} from "../../../../src/common/models/PaginatedResultDTO";
+import {
+  Queryable,
+  QueryParameters,
+} from "../../../../src/common/concerns/Queryable";
+import {
+  AccountDocument,
+  AccountModel,
+  AccountQuery,
+} from "../../../../src/common/models/AccountSchema";
+import {
+  StateDocument,
+  StateQuery,
+} from "../../../../src/common/models/StateSchema";
+import {
+  MongoPipelineFacet,
+  MongoQueryPipeline,
+  MongoQueryUnion,
+  MongoRoutineCount,
+} from "../../../../src/common/types";
 
 // Mock the query service to enable *testing* of protected
-// methods such as `typecastField`.
+// methods such as `sanitizeSearchQuery` and `getAggregateFindQuery`
 class MockQueryService extends QueryService<AccountDocument, AccountModel> {
   public sanitizeSearchQuery(searchQuery: any): any {
     return super.sanitizeSearchQuery(searchQuery);
   }
+
+  public getAggregateFindQuery<
+    T2ndDocument extends Documentable & { collectionName: string; },
+    T3rdDocument extends Documentable & { collectionName: string; } = any,
+    T4thDocument extends Documentable & { collectionName: string; } = any
+  >(
+    query: Queryable<AccountDocument>,
+    unionWith?: Map<string, Queryable<T2ndDocument|T3rdDocument|T4thDocument>>,
+    metadata?: MongoRoutineCount[]
+  ): MongoQueryPipeline {
+    return super.getAggregateFindQuery(query, unionWith, metadata);
+  }
 }
+
+// Mock the *aggregate()* model function so that it returns
+// different types of query results, e.g. an empty result set,
+// a populated result set and a combined result set
+let baseAggregateFn = jest.fn((param) => {
+  return {
+    param: () => param,
+    exec: () =>
+      Promise.resolve([
+        {
+          data: [{} as AccountDocument],
+          metadata: [{ total: 1 }],
+        },
+      ]),
+  };
+});
+
+let emptyAggregateFn = jest.fn((param) => {
+  return {
+    param: () => param,
+    exec: () =>
+      Promise.resolve([
+        {
+          data: [], // <-- WARNING: empties the data array
+          metadata: [],
+        },
+      ]),
+  };
+});
+
+let mixinAggregateFn = jest.fn((param) => {
+  return {
+    param: () => param,
+    exec: () =>
+      Promise.resolve([
+        {
+          data: [{
+            address: "fake-address1",
+            name: "fake-state"
+          } as AccountDocument & StateDocument],
+          metadata: [{ total: 1 }],
+        },
+      ]),
+  };
+});;
 
 /**
  * @todo extract mocks to mocks concern
@@ -34,18 +111,13 @@ describe("common/QueryService", () => {
   let testModel: Model<any>;
 
   let data: any, saveFn: any, initializeUnorderedBulkOpFn: any;
-  let aggregateFn = jest.fn((param) => {
-    return {
-      param: () => param,
-      exec: () =>
-        Promise.resolve([
-          {
-            data: [{} as AccountDocument],
-            metadata: [{ total: 1 }],
-          },
-        ]),
-    };
-  });
+
+  // CAUTION [INIT]
+  // initializing aggregateFn with a single-document
+  let aggregateFn = baseAggregateFn;
+
+  // @todo this class must be removed, and use MockModel
+  // @todo MockModel class exported in global mocks
   class MockModel {
     constructor(dto?: any) {
       data = dto;
@@ -97,6 +169,8 @@ describe("common/QueryService", () => {
 
     service = module.get<MockQueryService>(MockQueryService);
     testModel = new MockModel() as any;
+
+    aggregateFn.mockClear();
   });
 
   it("should be defined", () => {
@@ -137,6 +211,11 @@ describe("common/QueryService", () => {
   });
 
   describe("find() -->", () => {
+    beforeEach(() => {
+      aggregateFn = baseAggregateFn;
+      aggregateFn.mockClear();
+    });
+
     it("should call aggregate() from model", async () => {
       await service.find(new AccountQuery({ id: "non-existing" } as AccountDocument), testModel);
       expect(aggregateFn).toHaveBeenCalled();
@@ -179,6 +258,7 @@ describe("common/QueryService", () => {
     });
 
     it("should have correct result when data is empty", async () => {
+      // prepare
       const expectedResult: PaginatedResultDTO<AccountDocument> = new PaginatedResultDTO(
         [],
         {
@@ -187,41 +267,19 @@ describe("common/QueryService", () => {
           total: 0,
         },
       );
-      aggregateFn = jest.fn((param) => {
-        return {
-          param: () => param,
-          exec: () =>
-            Promise.resolve([
-              {
-                data: [], // <-- WARNING: empties the data array
-                metadata: [],
-              },
-            ]),
-        };
-      });
+
+      // overwrites the aggregate() mock to return empty result set
+      aggregateFn = emptyAggregateFn;
+
+      // act
       const result = await service.find(
         new AccountQuery({ id: "non-existing" } as AccountDocument),
         testModel,
       );
+
+      // assert
       expect(result).toStrictEqual(expectedResult);
     });
-
-// CAUTION
-// intermitent testing bug because of above in-test overwrite of `aggregateFn`.
-// @todo This should use the `jest.fn`'s process to *reset* a stub in the beforeEach().
-// CAUTION
-    aggregateFn = jest.fn((param) => {
-      return {
-        param: () => param,
-        exec: () =>
-          Promise.resolve([
-            {
-              data: [{} as AccountDocument],
-              metadata: [{ total: 1 }],
-            },
-          ]),
-      };
-    })
 
     it("should have correct sort: address", async () => {
       await service.find(
@@ -454,6 +512,329 @@ describe("common/QueryService", () => {
     });
   });
 
+  describe("union() -->", () => {
+    let fakeGroup1: [string, Queryable<any>],
+        fakeGroup2: [string, Queryable<any>],
+        fakeGroup3: [string, Queryable<any>];
+    beforeEach(() => {
+      fakeGroup1 = [
+        "fake-group1",
+        new AccountQuery(
+          {
+            id: "non-existing1",
+            address: "fake-address1",
+            collectionName: "fake-collection1",
+          } as AccountDocument,
+        ),
+      ];
+      fakeGroup2 = [
+        "fake-group2",
+        new AccountQuery(
+          {
+            id: "non-existing2",
+            address: "fake-address2",
+            collectionName: "fake-collection2",
+          } as AccountDocument,
+        ),
+      ];
+      fakeGroup3 = [
+        "fake-group3", new StateQuery(
+          {
+            id: "non-existing3",
+            name: "fake-state",
+            collectionName: "fake-collection3",
+          } as StateDocument,
+        ),
+      ];
+
+      aggregateFn = mixinAggregateFn;
+      aggregateFn.mockClear();
+    });
+
+    it("should create correct spec and no metadata by default", async () => {
+      // act
+      await service.union<StateDocument>(
+        new AccountQuery({ id: "non-existing1" } as AccountDocument),
+        testModel,
+        new Map([fakeGroup3]),
+        undefined,
+      );
+
+      // assert
+      expect(aggregateFn).toHaveBeenCalledWith([
+        { $match: { id: "non-existing1" } }, // fake query (not tested here)
+        {
+          $facet: {
+            data: [{ $skip: 0 }, { $limit: 20 }, { $sort: { _id: 1 } }],
+          },
+        },
+        {
+          $unionWith: {
+            coll: "fake-collection3",
+            pipeline: [
+              { $match: { id: "non-existing3", name: "fake-state" } }, // fakeGroup3 (L503)
+              {
+                $facet: {
+                  // default "main document pagination"
+                  data: [{ $skip: 0 }, { $limit: 20 }, { $sort: { _id: 1 } }],
+                },
+              },
+              { $group: { _id: "fake-group3" }}, // fakeGroup3 (L503)
+            ]
+          }
+        },
+      ]);
+    });
+
+    it("should add $facet metadata spec given metadata parameter", async () => {
+      // act
+      await service.union<StateDocument>(
+        new AccountQuery({ id: "non-existing1" } as AccountDocument),
+        testModel,
+        new Map([fakeGroup3]),
+        [{ $count: "total" }],
+      );
+
+      // assert
+      expect(aggregateFn).toHaveBeenCalledWith([
+        { $match: { id: "non-existing1" } }, // fake query (not tested here)
+        {
+          $facet: {
+            data: [{ $skip: 0 }, { $limit: 20 }, { $sort: { _id: 1 } }],
+            metadata: [{ $count: "total"} ],
+          },
+        },
+        {
+          $unionWith: {
+            coll: "fake-collection3",
+            pipeline: [
+              { $match: { id: "non-existing3", name: "fake-state" } },
+              {
+                $facet: {
+                  // default "main document pagination"
+                  data: [{ $skip: 0 }, { $limit: 20 }, { $sort: { _id: 1 } }],
+                },
+              },
+              { $group: { _id: "fake-group3" }}, // fakeGroup3 (L503)
+            ]
+          }
+        },
+      ]);
+    });
+
+    it("should create a correctly typed combination of documents", async () => {
+      // prepare
+      type TResultDocument = AccountDocument & StateDocument;
+
+      // act
+      const result: PaginatedResultDTO<TResultDocument> =
+        await service.union<StateDocument>(
+          new AccountQuery({ id: "non-existing" } as AccountDocument),
+          testModel,
+          new Map([fakeGroup3]),
+          undefined,
+        );
+
+      // assert
+      expect(result.data).toBeDefined();
+      expect(result.data.length).toBe(1); // fake content from mock
+      expect("address" in result.data[0]).toBe(true); // L518
+      expect("name" in result.data[0]).toBe(true); // L518
+      expect(result.data[0].address).toBe("fake-address1");
+      expect(result.data[0].name).toBe("fake-state");
+    });
+
+    it("should use default query cursor given no cursor", async () => {
+      // prepare
+      type TResultDocument = AccountDocument & StateDocument;
+
+      // act
+      const result: PaginatedResultDTO<TResultDocument> =
+        await service.union<StateDocument>(
+          new AccountQuery({ id: "non-existing1" } as AccountDocument),
+          testModel,
+          new Map([fakeGroup3]),
+          undefined,
+        );
+
+      // assert
+      expect(aggregateFn).toHaveBeenCalledWith([
+        { $match: { id: "non-existing1" } }, // fake query (not tested here)
+        {
+          $facet: {
+            data: [{ $skip: 0 }, { $limit: 20 }, { $sort: { _id: 1 } }],
+          },
+        },
+        {
+          $unionWith: {
+            coll: "fake-collection3",
+            pipeline: [
+              { $match: { id: "non-existing3", name: "fake-state" } }, // fakeGroup3 (L503)
+              {
+                $facet: {
+                  // default "main document pagination"
+                  data: [{ $skip: 0 }, { $limit: 20 }, { $sort: { _id: 1 } }],
+                },
+              },
+              { $group: { _id: "fake-group3" }}, // fakeGroup3 (L503)
+            ]
+          }
+        },
+      ]);
+
+      expect(result.pagination).toBeDefined();
+      expect("pageNumber" in result.pagination).toBe(true);
+      expect("pageSize" in result.pagination).toBe(true);
+      expect(result.pagination.pageNumber).toBe(1);
+      expect(result.pagination.pageSize).toBe(20);
+    });
+
+    it("should permit query cursor overwrite given query", async () => {
+      // prepare
+      type TResultDocument = AccountDocument & StateDocument;
+
+      // act
+      const result: PaginatedResultDTO<TResultDocument> =
+        await service.union<StateDocument>(
+          new AccountQuery(
+            { id: "non-existing1" } as AccountDocument,
+            { pageSize: 100, pageNumber: 5, sort: "address", order: "desc" },
+          ),
+          testModel,
+          new Map([fakeGroup3]),
+          undefined,
+        );
+
+      // assert
+      expect(aggregateFn).toHaveBeenCalledWith([
+        { $match: { id: "non-existing1" } }, // fake query (not tested here)
+        {
+          $facet: {
+            data: [{ $skip: 400 }, { $limit: 100 }, { $sort: { address: -1 } }],
+          },
+        },
+        {
+          $unionWith: {
+            coll: "fake-collection3",
+            pipeline: [
+              { $match: { id: "non-existing3", name: "fake-state" } }, // fakeGroup3 (L503)
+              {
+                $facet: {
+                  // default "main document pagination"
+                  data: [{ $skip: 0 }, { $limit: 20 }, { $sort: { _id: 1 } }],
+                },
+              },
+              { $group: { _id: "fake-group3" }}, // fakeGroup3 (L503)
+            ]
+          }
+        },
+      ]);
+
+      expect(result.pagination).toBeDefined();
+      expect("pageNumber" in result.pagination).toBe(true);
+      expect("pageSize" in result.pagination).toBe(true);
+      expect(result.pagination.pageNumber).toBe(5); // L683
+      expect(result.pagination.pageSize).toBe(100); // L683
+    });
+
+    it("should use default query cursor for union group given no cursor", async () => {
+      // prepare
+      type TResultDocument = AccountDocument & StateDocument;
+
+      // act
+      const result: PaginatedResultDTO<TResultDocument> =
+        await service.union<StateDocument>(
+          new AccountQuery({ id: "non-existing1" } as AccountDocument),
+          testModel,
+          new Map([fakeGroup3]),
+          undefined,
+        );
+
+      // assert
+      expect(aggregateFn).toHaveBeenCalledWith([
+        { $match: { id: "non-existing1" } }, // fake query (not tested here)
+        {
+          $facet: {
+            data: [{ $skip: 0 }, { $limit: 20 }, { $sort: { _id: 1 } }],
+          },
+        },
+        {
+          $unionWith: {
+            coll: "fake-collection3",
+            pipeline: [
+              { $match: { id: "non-existing3", name: "fake-state" } }, // fakeGroup3 (L503)
+              {
+                $facet: {
+                  data: [{ $skip: 0 }, { $limit: 20 }, { $sort: { _id: 1 } }],
+                },
+              },
+              { $group: { _id: "fake-group3" }}, // fakeGroup3 (L503)
+            ]
+          }
+        },
+      ]);
+    });
+
+    it("should permit query cursor overwrite for union groups", async () => {
+      // prepare
+      type TResultDocument = AccountDocument & StateDocument;
+      const fakeGroup4: [string, Queryable<any>] = [
+        "fake-group4",
+        new AccountQuery(
+          {
+            id: "non-existing4",
+            address: "fake-address4",
+            collectionName: "fake-collection4",
+          } as AccountDocument,
+          { pageSize: 100, pageNumber: 5, sort: "address", order: "desc" },
+        ),
+      ];
+
+      // act
+      const result: PaginatedResultDTO<TResultDocument> =
+        await service.union<StateDocument>(
+          new AccountQuery(
+            { id: "non-existing1" } as AccountDocument,
+          ), // default query cursor
+          testModel,
+          new Map([fakeGroup4]),
+          undefined,
+        );
+
+      // assert
+      expect(aggregateFn).toHaveBeenCalledWith([
+        { $match: { id: "non-existing1" } }, // fake query (not tested here)
+        {
+          $facet: {
+            // default "main document pagination"
+            data: [{ $skip: 0 }, { $limit: 20 }, { $sort: { _id: 1 } }],
+          },
+        },
+        {
+          $unionWith: {
+            coll: "fake-collection4", // L787
+            pipeline: [
+              { $match: { id: "non-existing4", address: "fake-address4" } }, // fakeGroup3 (L503)
+              {
+                $facet: {
+                  // custom union pagination and sort
+                  data: [{ $skip: 400 }, { $limit: 100 }, { $sort: { address: -1 } }],
+                },
+              }, // fakeGroup4 (L758)
+              { $group: { _id: "fake-group4" }}, // fakeGroup3 (L503)
+            ]
+          }
+        },
+      ]);
+
+      expect(result.pagination).toBeDefined();
+      expect("pageNumber" in result.pagination).toBe(true);
+      expect("pageSize" in result.pagination).toBe(true);
+      expect(result.pagination.pageNumber).toBe(1); // default main navigation
+      expect(result.pagination.pageSize).toBe(20); // default main navigation
+    });
+  });
+
   describe("sanitizeSearchQuery() -->", () => {
     it("should bypass fields that are undefined", () => {
       // prepare
@@ -493,6 +874,153 @@ describe("common/QueryService", () => {
         testBoolean: true,
         testArray: { $in: ["abc", 2, "2", true] },
         testEmptyInnerArray: { $in: [] },
+      });
+    });
+  });
+
+  describe("getAggregateFindQuery() -->", () => {
+    let fakeGroup1: [string, Queryable<any>],
+        fakeGroup2: [string, Queryable<any>];
+    beforeEach(() => {
+      fakeGroup1 = [
+        "fake-group1",
+        new AccountQuery(
+          {
+            id: "non-existing1",
+            collectionName: "fake-collection1",
+          } as AccountDocument,
+        ),
+      ];
+      fakeGroup2 = [
+        "fake-group2",
+        new AccountQuery(
+          {
+            id: "non-existing2",
+            collectionName: "fake-collection2",
+          } as AccountDocument,
+        ),
+      ];
+    });
+
+    it("should always contain $match and $facet", () => {
+      // act
+      const query: MongoQueryPipeline = service.getAggregateFindQuery(
+        new AccountQuery({ id: "non-existing" } as AccountDocument),
+        undefined,
+        undefined,
+      );
+
+      // assert
+      expect(query.length).toBe(2);
+      expect("$match" in query.at(0)).toBe(true); // match always first
+      expect("$facet" in query.at(1)).toBe(true); // facet always second
+    });
+
+    it("should not contain metadata by default", () => {
+      // act
+      const query: MongoQueryPipeline = service.getAggregateFindQuery(
+        new AccountQuery({ id: "non-existing" } as AccountDocument),
+        undefined,
+        undefined,
+      );
+
+      // assert
+      expect(query.length).toBe(2);
+      expect("$facet" in query.at(1)).toBe(true); // facet always second
+      expect("metadata" in query.at(1)).toBe(false); // metadata part of facet
+    });
+
+    it("should contain total metadata given metadata", () => {
+      // act
+      const query: MongoQueryPipeline = service.getAggregateFindQuery(
+        new AccountQuery({ id: "non-existing" } as AccountDocument),
+        undefined,
+        [{$count: "total"}],
+      );
+
+      // assert
+      expect(query.length).toBe(2);
+      expect("$facet" in query.at(1)).toBe(true); // facet always second
+
+      const facetStage = (query.at(1) as MongoPipelineFacet); // shortcut
+      expect(facetStage.$facet).toBeDefined();
+      expect("metadata" in facetStage.$facet).toBe(true); // metadata part of facet
+      expect(facetStage.$facet.metadata).toBeDefined();
+      expect(facetStage.$facet.metadata.length).toBe(1);
+    });
+
+    it("should contain union queries given union specification", () => {
+      // act
+      const query: MongoQueryPipeline = service.getAggregateFindQuery(
+        new AccountQuery({ id: "non-existing" } as AccountDocument),
+        new Map([fakeGroup1, fakeGroup2]),
+        undefined,
+      );
+
+      // assert
+      expect(query.length).toBe(4); // match + facet + 2 union groups
+      expect("$unionWith" in query.at(2)).toBe(true); // union always third
+      expect("$unionWith" in query.at(3)).toBe(true); // union also in fourth
+
+      const unionStage1 = (query.at(2) as MongoQueryUnion); // shortcut
+      const unionStage2 = (query.at(3) as MongoQueryUnion); // shortcut
+      expect(unionStage1.$unionWith).toBeDefined();
+      expect(unionStage2.$unionWith).toBeDefined();
+
+      [unionStage1, unionStage2].forEach(stage => {
+        expect("coll" in stage.$unionWith).toBe(true);
+        expect("pipeline" in stage.$unionWith).toBe(true);
+        expect(stage.$unionWith.pipeline).toBeDefined();
+        expect(stage.$unionWith.pipeline.length).toBe(3); // match + union
+        expect("$group" in stage.$unionWith.pipeline[2]).toBe(true); // group always second
+      });
+    });
+
+    it("should contain correct groups and collection given union", () => {
+      // act
+      const query: MongoQueryPipeline = service.getAggregateFindQuery(
+        new AccountQuery(
+          {
+            id: "non-existing0",
+            collectionName: "fake-collection0",
+          } as AccountDocument
+        ),
+        new Map([fakeGroup1, fakeGroup2]),
+        undefined,
+      );
+
+      // assert
+      expect(query.length).toBe(4); // match + facet + 2 union groups
+
+      // shortcuts
+      type TStageSpec = {
+        coll: string,
+        group: string,
+        union: MongoQueryUnion,
+      };
+      const stagesSpecification: TStageSpec[] = [
+        {
+          coll: "fake-collection1",
+          group: "fake-group1",
+          union: (query.at(2) as MongoQueryUnion),
+        },
+        {
+          coll: "fake-collection2",
+          group: "fake-group2",
+          union: (query.at(3) as MongoQueryUnion),
+        },
+      ];
+
+      // assert
+      stagesSpecification.forEach((stageSpec: TStageSpec) => {
+        expect("coll" in stageSpec.union.$unionWith).toBe(true);
+        expect("pipeline" in stageSpec.union.$unionWith).toBe(true);
+        expect(stageSpec.union.$unionWith.pipeline).toBeDefined();
+        expect(stageSpec.union.$unionWith.pipeline.length).toBe(3); // match + union
+        expect(stageSpec.union.$unionWith.coll).toBe(stageSpec.coll); // uses Account class
+        expect("$group" in stageSpec.union.$unionWith.pipeline[2]).toBe(true); // group always third
+        expect("_id" in (stageSpec.union.$unionWith.pipeline[2] as any).$group).toBe(true);
+        expect((stageSpec.union.$unionWith.pipeline[2] as any).$group._id).toBe(stageSpec.group);
       });
     });
   });
