@@ -71,7 +71,8 @@ export default () => ({
     "database",
     "discovery",
     "payout",
-    "processor"
+    "processor",
+    "statistics",
   ],
 
   /**

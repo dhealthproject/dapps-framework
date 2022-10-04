@@ -9,7 +9,7 @@
  */
 // external dependencies
 import { Injectable } from "@nestjs/common";
-import { Model, FilterQuery } from "mongoose";
+import { Model, FilterQuery, PipelineStage, Aggregate } from "mongoose";
 
 // internal dependencies
 import { Documentable } from "../concerns/Documentable";
@@ -550,6 +550,26 @@ export class QueryService<
 
     // returns a pipeline with currently only 2 possible stages
     return stages;
+  }
+
+  /**
+   * This method performs an aggregate query and returns a mongo
+   * aggregate result which consists of a collection of the provided
+   * model's items.
+   * <br /><br />
+   * This method also *executes* the search query using the Mongo service
+   * connected to handle {@param model}.
+   *
+   * @access public
+   * @param {PipelineStage[]} query
+   * @param {TModel} model
+   * @returns {Aggregate<TModel[]>}
+   */
+  public async aggregate(
+    query: PipelineStage[],
+    model: TModel,
+  ): Promise<Aggregate<TModel[]>> {
+    return await model.aggregate(query).exec();
   }
 
   /**

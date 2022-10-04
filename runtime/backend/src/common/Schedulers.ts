@@ -18,10 +18,14 @@ import { TransactionsModule } from "../discovery/modules/TransactionsModule";
 import { DiscoverAccountsCommand } from "../discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand";
 import { DiscoverAssetsCommand } from "../discovery/schedulers/DiscoverAssets/DiscoverAssetsCommand";
 import { DiscoverTransactionsCommand } from "../discovery/schedulers/DiscoverTransactions/DiscoverTransactionsCommand";
+import { DiscoverBlocksCommand } from "../discovery/schedulers/DiscoverBlocks/DiscoverBlocksCommand";
 
 // processor scope
 import { OperationsModule } from "../processor/modules/OperationsModule";
 import { ProcessOperationsCommand } from "../processor/schedulers/ProcessOperations/ProcessOperationsCommand";
+
+// statistics scope
+import { LeaderboardsAggregationCommand } from "../statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -47,6 +51,7 @@ const db = dappConfigLoader().database;
  * | `discovery` | {@link DiscoverAccounts:DISCOVERY} | A discovery command that retrieves accounts information from the database using discovered transactions. |
  * | `discovery` | {@link DiscoverAssets:DISCOVERY} | A discovery command that retrieves assets information from the database using discovered transactions. |
  * | `processor` | {@link ProcessOperations:PROCESSOR} | A processor command that interprets discovered transactions and maps them to dApp operations. |
+ * | `statistics`| {@link LeaderboardAggregation:STATISTICS} | A statistics command that aggregates and sorts user rewards for activities. |
  * <br /><br />
  *
  * @var {[key: string]: any[]}
@@ -65,7 +70,9 @@ export const Schedulers: { [key: string]: any[] } = {
     DiscoverAccountsCommand,
     DiscoverAssetsCommand,
     DiscoverTransactionsCommand,
+    DiscoverBlocksCommand,
   ],
   payout: [],
   processor: [OperationsModule, ProcessOperationsCommand],
+  statistics: [LeaderboardsAggregationCommand],
 };

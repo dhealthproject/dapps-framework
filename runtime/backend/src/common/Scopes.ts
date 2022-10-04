@@ -14,6 +14,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { DiscoveryModule } from "../discovery/DiscoveryModule";
 import { PayoutModule } from "../payout/PayoutModule";
 import { ProcessorModule } from "../processor/ProcessorModule";
+import { StatisticsModule } from "../statistics/StatisticsModule";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -37,6 +38,7 @@ const db = dappConfigLoader().database;
  * | `discovery` | {@link DiscoveryModule} | A state discovery scope that consists in caching data and reading operations using network nodes. |
  * | `payout`| {@link PayoutModule} | A payout scope that encapsulates payout mechanisms that are executed in background processes. |
  * | `processor` | {@link ProcessorModule} | A processing scope that consists in detecting invoice updates and processing payments. |
+ * | `statistics` | {@link StatisticsModule} | A statistics scope that consists in aggregate data into meaningful statistics and measurements. |
  * <br /><br />
  * A `scheduler` scope is also included with {@link SchedulerModule} but
  * this one executes in a *parallel* process and thereby should not be
@@ -55,4 +57,5 @@ export const Scopes: { [key: string]: any } = {
   discovery: DiscoveryModule,
   payout: PayoutModule,
   processor: ProcessorModule,
+  statistics: StatisticsModule,
 };
