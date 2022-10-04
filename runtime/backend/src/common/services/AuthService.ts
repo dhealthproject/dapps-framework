@@ -25,9 +25,9 @@ import { Auth, Contract, Factory } from "@dhealth/contracts";
 import { Request } from "express";
 
 // internal dependencies
-import { NetworkService } from "../services/NetworkService";
-import { AccountsService } from "../services/AccountsService";
-import { ChallengesService } from "../services/ChallengesService";
+import { NetworkService } from "./NetworkService";
+import { AccountsService } from "./AccountsService";
+import { ChallengesService } from "./ChallengesService";
 import { AccountDocument, AccountQuery } from "../models/AccountSchema";
 import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import {

@@ -24,5 +24,6 @@ export * from "./common/requests";
 export * from "./common/routes";
 export * from "./common/services";
 export * from "./common/traits";
+export * from "./common/types";
 
 // @todo Include `index.ts` in subfolders of source code to generate documentation.

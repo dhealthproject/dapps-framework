@@ -9,42 +9,20 @@
  */
 // external dependencies
 import { Injectable } from "@nestjs/common";
-import { Model, FilterQuery } from "mongoose";
+import { Model, FilterQuery, DocumentSetOptions } from "mongoose";
 
 // internal dependencies
 import { Documentable } from "../concerns/Documentable";
 import { Queryable } from "../concerns/Queryable";
 import { PaginatedResultDTO } from "../models/PaginatedResultDTO";
-
-/// block to-refactor
-// the following types permit a "no-implicit-any" ruling on the repository
-// but will be refactored to further extend the *abstraction layer* around
-// queries and make it compatible with 1. Mongo Queries and 2. HTTP Queries
-// such that the query service can be used as a middleware to build queries
-export type UnknownFieldValue = boolean | number | string | any[] | null | any;
-
-export type UnsafeQueryConditions = {
-  [key: string]: UnknownFieldValue;
-};
-
-export type MongoQueryCursor = {
-  page: number;
-  limit: number;
-  skip: number;
-};
-
-export type MongoQueryRoutine = { $in: number[] | string[] };
-export type MongoQueryConditionValue =
-  | boolean
-  | number
-  | string
-  | any[]
-  | MongoQueryRoutine;
-
-export type MongoQueryConditions = {
-  [key: string]: MongoQueryConditionValue;
-};
-/// end-block to-refactor
+import { UnknownFieldValue } from "../types/UnknownFieldValue";
+import { UnsafeQueryConditions } from "../types/UnsafeQueryConditions";
+import { MongoQueryConditions } from "../types/MongoQueryConditions";
+import { MongoQueryConditionValue } from "../types/MongoQueryConditionValue";
+import { MongoRoutineCount, MongoRoutineIn } from "../types/MongoQueryRoutines";
+import { MongoQueryCursor } from "../types/MongoQueryCursor";
+import { MongoQueryPipeline } from "../types/MongoQueryPipeline";
+import { MongoPipelineFacet } from "../types/MongoPipelineStages";
 
 /**
  * @type SearchQuery
@@ -98,11 +76,16 @@ export class QueryService<
    * to execute. It is preferred to use pro-active statistics with
    * collections that contain one document with a counter.
    *
+   * @access public
+   * @async
    * @param   {Queryable<TDocument>}  query
    * @param   {TModel}                model
    * @returns {Promise<number>}   The number of matching documents.
    */
-  async count(query: Queryable<TDocument>, model: TModel): Promise<number> {
+  public async count(
+    query: Queryable<TDocument>,
+    model: TModel,
+  ): Promise<number> {
     return await model.count(query);
   }
 
@@ -114,11 +97,16 @@ export class QueryService<
    * properties of the returned document are *reduced* to
    * only the `"_id"` field.
    *
+   * @access public
+   * @async
    * @param   {Queryable<TDocument>}  query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @param   {TModel}  model     The model *class instance* used for matching documents.
    * @returns {Promise<boolean>}  Whether a document exists which validates the passed query.
    */
-  async exists(query: Queryable<TDocument>, model: TModel): Promise<boolean> {
+  public async exists(
+    query: Queryable<TDocument>,
+    model: TModel,
+  ): Promise<boolean> {
     // executes a *lean* mongoose findOne query
     const document: TDocument = await this.findOne(
       query,
@@ -227,6 +215,7 @@ export class QueryService<
    * any columns of the document.
    * <br /><br />
    *
+   * @access public
    * @async
    * @param   {Queryable<TDocument>}             query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @param   {TModel}      model   The model *class instance* used for the resulting document.
@@ -277,9 +266,10 @@ export class QueryService<
    * a field `updatedAt` to the time of execution of the query.
    *
    * @todo Currently the `$set` parameters use `new Date()`, probably a mongo/mongoose routine for "now" is more adequate.
+   * @access public
    * @async
-   * @param   {TModel}    model
-   * @param   {TDocument[]}         documents
+   * @param   {TModel}        model           The model *class instance* used for the resulting document.
+   * @param   {TDocument[]}   documents       The list of *matching documents* that must be updated with this batch operation.
    * @returns {Promise<number>}   The number of documents **affected** by the update queries.
    */
   public async updateBatch(
@@ -326,23 +316,24 @@ export class QueryService<
    * Note that pagination parameters can be omitted with the
    * following defaults being used: `sort="_id"`, `order="asc"`,
    * `pageNumber=1`, `pageSize=20`.
+   * <br /><br />
+   * Note that the generic `TQueryDocument` should usually be
+   * an object that extends {@link Documentable}, this is the
+   * case for example with {@link AccountDocument} and it will
+   * also contain a `collectionName` as defined in {@link Account}.
    *
    * @access protected
    * @param   {Queryable<TDocument>}   query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @returns {SearchQuery}   The configured {@link SearchQuery} with pagination parameters and sanitized Mongo query.
    */
-  protected getQueryConfig(query: Queryable<TDocument>): SearchQuery {
+  protected getQueryConfig<TQueryDocument extends Documentable>(
+    query: Queryable<TQueryDocument>,
+  ): SearchQuery {
     // destructures query parameters
     const { sort, order, pageNumber, pageSize } = query;
 
     // wrap search query and validate/fix query fields
-    const { searchQuery } = (({
-      sort,
-      order,
-      pageNumber,
-      pageSize,
-      document,
-    }) => ({
+    const { searchQuery } = (({ document }) => ({
       searchQuery: this.sanitizeSearchQuery({ ...document }), // destructuring
     }))(query);
 
@@ -424,7 +415,7 @@ export class QueryService<
     }
     // (2) number
     else if (!Array.isArray(value) && !isNaN(value)) {
-      return { $in: [+value, value] } as MongoQueryRoutine;
+      return { $in: [+value, value] } as MongoRoutineIn;
     }
     // (3) array
     else if (Array.isArray(value)) {
@@ -440,7 +431,7 @@ export class QueryService<
         // then the routine values should be returned
         if (Object.keys(sanitizedItem).includes("$in")) {
           // cast the internal routine values
-          const val: number[] | string[] = (sanitizedItem as MongoQueryRoutine)[
+          const val: number[] | string[] = (sanitizedItem as MongoRoutineIn)[
             "$in"
           ];
           return !(val as any[]).length
@@ -454,7 +445,7 @@ export class QueryService<
       });
 
       // the condition value is a $in routine
-      return { $in: newValues.flat() } as MongoQueryRoutine;
+      return { $in: newValues.flat() } as MongoRoutineIn;
     }
 
     // otherwise return without changes
