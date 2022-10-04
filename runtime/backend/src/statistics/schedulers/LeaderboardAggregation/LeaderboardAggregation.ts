@@ -306,7 +306,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
         type: this.TYPE,
         periodFormat: this.periodFormat,
         period,
-        address: result._id, // L380
+        address: result._id, // L392
         position,
         amount: result.amount,
       };
