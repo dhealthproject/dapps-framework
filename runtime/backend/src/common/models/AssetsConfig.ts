@@ -51,6 +51,21 @@ export type AssetType = string | "base" | "earn";
 
 /**
  * @label COMMON
+ * @type BoosterGroup
+ * @description This interface consists of a set of configuration
+ * fields that must be provided to configure a booster asset.
+ * <br /><br />
+ * Note that newly implemented boosters **must** be added to this
+ * type such that they are correctly understood and configured
+ * for the backend runtime endpoints.
+ *
+ * @link AssetsConfig:COMMON
+ * @since v0.3.0
+ */
+export type BoosterGroup = string | "referral" | "progress";
+
+/**
+ * @label COMMON
  * @type DiscoverableAssetsMap
  * @description A discoverable asset configuration object.
  * This configuration field consists of a key as listed
@@ -62,6 +77,21 @@ export type AssetType = string | "base" | "earn";
  */
 export type DiscoverableAssetsMap = {
   [key: AssetType]: AssetParameters;
+};
+
+/**
+ * @label COMMON
+ * @type BoosterAssetsMap
+ * @description A discoverable asset configuration object.
+ * This configuration field consists of a key as listed
+ * in {@link BoosterGroup} and a configuration object as
+ * defined by {@link DiscoverableAssetsMap}.
+ *
+ * @link AssetsConfig:COMMON
+ * @since v0.3.0
+ */
+export type BoosterAssetsMap = {
+  [key: BoosterGroup]: DiscoverableAssetsMap;
 };
 
 /**
@@ -96,4 +126,29 @@ export interface AssetsConfig {
    * @var {DiscoverableAssetsMap}
    */
   assets: DiscoverableAssetsMap;
+
+  /**
+   * A payable *booster* assets configuration object.
+   * This configuration field consists of a *booster group*
+   * and {@link AssetParameters} map.
+   * <br /><br />
+   * @example Example boosters configuration object
+   * ```json
+   * {
+   *   boosters: {
+   *     referral: {
+   *       boost5: { ... },
+   *       boost10: { ... },
+   *       boost15: { ... }
+   *     }
+   *   }
+   * }
+   * ```
+   *
+   * @link BoosterGroup:COMMON
+   * @link DiscoverableAssetsMap:COMMON
+   * @access public
+   * @var {BoosterAssetsMap}
+   */
+  boosters?: BoosterAssetsMap;
 }

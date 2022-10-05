@@ -20,8 +20,14 @@ import {
   AssetModel,
   AssetQuery,
 } from "../models/AssetSchema";
-import { AssetParameters } from "../../common/models/AssetsConfig";
+import {
+  AssetParameters,
+  AssetsConfig,
+} from "../../common/models/AssetsConfig";
 import { QueryService } from "../../common/services/QueryService";
+
+// configuration resources
+import assetsConfigLoader from "../../../config/assets";
 
 /**
  * @class AssetsService
@@ -145,19 +151,63 @@ export class AssetsService {
   }
 
   /**
+   * Static API
+   */
+  /**
+   * This helper method serves as a *parser* for account
+   * public keys and addresses.
+   * <br /><br />
+   * This *static* method can be used for any inputs that
+   * require to *identify* a participant [account]. Accounts
+   * can always be referred to by their public key as it can
+   * be used to generate the resulting identifier (address).
+   *
+   * @access public
+   * @static
+   * @param     {string}  publicKeyOrAddress     Must contain one of an account public key or an account address.
+   * @returns   {string}  A mosaic identifier corresponding to a given namespace identifier (if any).
+   */
+  public static formatMosaicId(mosaicOrNamespaceId: string): string {
+    // read assets configuration
+    const baseAsset = AssetsService.getAssetParameters("base");
+    const earnAsset = AssetsService.getAssetParameters("earn");
+
+    // the following if-else conditions block permits to
+    // always work with *mosaic id* instead of *namespace id*
+    // BASE asset
+    if (
+      "namespaceId" in baseAsset &&
+      mosaicOrNamespaceId === baseAsset.namespaceId
+    ) {
+      return baseAsset.mosaicId;
+    }
+    // EARN asset
+    else if (
+      "namespaceId" in earnAsset &&
+      mosaicOrNamespaceId === earnAsset.namespaceId
+    ) {
+      return earnAsset.mosaicId;
+    }
+
+    // by default, keeps the input value
+    return mosaicOrNamespaceId;
+  }
+
+  /**
    * This method reads a discoverable asset configuration
    * from the runtime configuration file `config/assets.ts`
    * and returns a {@link AssetParameters} object.
    *
-   * @access public
+   * @access protected
+   * @static
    * @param   {string}    assetType   Contains the type of asset, one of: "base" or "earn".
    * @returns {AssetParameters}
+   * @throws  {Error}     Given unknown or invalid `assetType` parameter.
    */
-  public getAssetParameters(assetType: string): AssetParameters {
+  protected static getAssetParameters(assetType: string): AssetParameters {
     // reads discoverable asset from configuration
-    const asset = this.configService.get<AssetParameters>(
-      `assets.${assetType}`,
-    );
+    const assetsConfig = assetsConfigLoader() as AssetsConfig;
+    const asset = assetsConfig.assets[assetType];
 
     // throw an error if the asset is unknown
     if (undefined === asset) {

@@ -7,23 +7,49 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// mocks the `()`-operator when importing configuration resources
+// mocks the assets configuration resource with valid configuration
+// CAUTION this mock must precede any import-statements in this file
+const mockAssetsLoaderCall = jest.fn().mockReturnValue({
+  assets: {
+    base: {
+      mosaicId: "fake-base-mosaic-id",
+      namespaceId: "fake-base-namespace-id",
+      divisibility: 6,
+      symbol: "fake-base-symbol"
+    },
+
+    earn: {
+      mosaicId: "fake-earn-mosaic-id",
+      divisibility: 6,
+      symbol: "fake-earn-symbol"
+    }
+  },
+} as AssetsConfig);
+jest.mock("../../../../config/assets", 
+  () => mockAssetsLoaderCall,
+);
+
 // external dependencies
 import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
+import { ConfigService } from "@nestjs/config";
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
 import { QueryService } from "../../../../src/common/services/QueryService";
-import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
-import { TransactionDocument, TransactionModel, TransactionQuery } from "../../../../src/common/models/TransactionSchema";
+import { AssetsService } from "../../../../src/discovery/services/AssetsService";
+import { AssetDocument, AssetModel, AssetQuery } from "../../../../src/discovery/models/AssetSchema";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
+import { AssetsConfig } from "../../../../src/common/models/AssetsConfig";
 
-describe("discovery/TransactionsService", () => {
-  let service: TransactionsService;
-  let queriesService: QueryService<TransactionDocument, TransactionModel>;
+describe("discovery/AssetsService", () => {
+  let service: AssetsService;
+  let configService: ConfigService;
+  let queriesService: QueryService<AssetDocument, AssetModel>;
   let mockDate: Date;
 
-  // for each TransactionsService test we create a testing module
+  // for each AssetsService test we create a testing module
   beforeEach(async () => {
     mockDate = new Date(1212, 1, 1);
     jest.useFakeTimers("modern");
@@ -31,17 +57,21 @@ describe("discovery/TransactionsService", () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TransactionsService,
+        AssetsService,
+        ConfigService,
         QueryService,
         {
-          provide: getModelToken("Transaction"),
+          provide: getModelToken("Asset"),
           useValue: MockModel,
         },
       ],
     }).compile();
 
-    service = module.get<TransactionsService>(TransactionsService);
-    queriesService = module.get<QueryService<TransactionDocument, TransactionModel>>(QueryService);
+    service = module.get<AssetsService>(AssetsService);
+    configService = module.get<ConfigService>(ConfigService);
+    queriesService = module.get<QueryService<AssetDocument, AssetModel>>(QueryService);
+
+    mockAssetsLoaderCall.mockClear();
   });
 
   it("should be defined", () => {
@@ -57,10 +87,10 @@ describe("discovery/TransactionsService", () => {
         .mockResolvedValue(expectedResult);
 
       // act
-      const result = await service.count(new TransactionQuery());
+      const result = await service.count(new AssetQuery());
 
       // assert
-      expect(countMock).toBeCalledWith(new TransactionQuery(), MockModel);
+      expect(countMock).toBeCalledWith(new AssetQuery(), MockModel);
       expect(result).toEqual(expectedResult);
     });
   });
@@ -71,13 +101,13 @@ describe("discovery/TransactionsService", () => {
       const expectedResult = true;
       const findOneMock = jest
         .spyOn(queriesService, "findOne")
-        .mockResolvedValue({} as TransactionDocument);
+        .mockResolvedValue({} as AssetDocument);
 
       // act
-      const result = await service.exists(new TransactionQuery());
+      const result = await service.exists(new AssetQuery());
 
       // assert
-      expect(findOneMock).toBeCalledWith(new TransactionQuery(), MockModel, true);
+      expect(findOneMock).toBeCalledWith(new AssetQuery(), MockModel, true);
       expect(result).toEqual(expectedResult);
     });
   });
@@ -86,7 +116,7 @@ describe("discovery/TransactionsService", () => {
     it("should use QueryService.find() method with correct query", async () => {
       // prepare
       const expectedResult = new PaginatedResultDTO(
-        [{} as TransactionDocument],
+        [{} as AssetDocument],
         {
           pageNumber: 1,
           pageSize: 20,
@@ -98,10 +128,10 @@ describe("discovery/TransactionsService", () => {
         .mockResolvedValue(expectedResult);
 
       // act
-      const result = await service.find(new TransactionQuery());
+      const result = await service.find(new AssetQuery());
 
       // assert
-      expect(findMock).toBeCalledWith(new TransactionQuery(), MockModel);
+      expect(findMock).toBeCalledWith(new AssetQuery(), MockModel);
       expect(result).toEqual(expectedResult);
     });
   });
@@ -112,13 +142,13 @@ describe("discovery/TransactionsService", () => {
       const expectedResult = {};
       const findOneMock = jest
         .spyOn(queriesService, "findOne")
-        .mockResolvedValue({} as TransactionDocument);
+        .mockResolvedValue({} as AssetDocument);
 
       // act
-      const result = await service.findOne(new TransactionQuery());
+      const result = await service.findOne(new AssetQuery());
 
       // assert
-      expect(findOneMock).toBeCalledWith(new TransactionQuery(), MockModel);
+      expect(findOneMock).toBeCalledWith(new AssetQuery(), MockModel);
       expect(result).toEqual(expectedResult);
     });
   });
@@ -129,8 +159,8 @@ describe("discovery/TransactionsService", () => {
       const expectedResult = {};
       const createOrUpdateMock = jest
         .spyOn(queriesService, "createOrUpdate")
-        .mockResolvedValue({} as TransactionDocument);
-      const query = new TransactionQuery();
+        .mockResolvedValue({} as AssetDocument);
+      const query = new AssetQuery();
       const data = new MockModel();
 
       // act
@@ -216,6 +246,87 @@ describe("discovery/TransactionsService", () => {
           updatedAt: mockDate,
         },
       });
+    });
+  });
+
+  describe("getAssetParameters() -->", () => {
+    it("should call assetsConfigLoader to retrieve assets", () => {
+      // act
+      (AssetsService as any).getAssetParameters("base");
+
+      // assert
+      expect(mockAssetsLoaderCall).toHaveBeenCalledTimes(1);
+    });
+
+    it("should throw an error given unknown asset type", () => {
+      // act+assert
+      expect(() => (AssetsService as any).getAssetParameters("fake-asset1"))
+        .toThrow(`Invalid discoverable asset "fake-asset1".`);
+      expect(() => (AssetsService as any).getAssetParameters("fake-asset2"))
+        .toThrow(`Invalid discoverable asset "fake-asset2".`);
+    });
+
+    it("should return a parameters object with correct values", () => {
+      // act
+      const assetBase = (AssetsService as any).getAssetParameters("base");
+      const assetEarn = (AssetsService as any).getAssetParameters("earn");
+
+      // assert
+      // BASE asset
+      expect(assetBase).toBeDefined();
+      expect("mosaicId" in assetBase).toBe(true);
+      expect("namespaceId" in assetBase).toBe(true);
+      expect("symbol" in assetBase).toBe(true);
+      expect(assetBase.mosaicId).toBe("fake-base-mosaic-id");
+      expect(assetBase.namespaceId).toBe("fake-base-namespace-id");
+      expect(assetBase.symbol).toBe("fake-base-symbol");
+
+       // EARN asset
+      expect("mosaicId" in assetEarn).toBe(true);
+      expect("namespaceId" in assetEarn).toBe(false);
+      expect("symbol" in assetEarn).toBe(true);
+      expect(assetEarn.mosaicId).toBe("fake-earn-mosaic-id");
+      expect(assetEarn.namespaceId).toBe(undefined);
+      expect(assetEarn.symbol).toBe("fake-earn-symbol");
+    });
+  });
+
+  describe("formatMosaicId() -->", () => {
+    it("should return the input given no knowledge of identifier", () => {
+      // prepare
+      const expectedId = "123456789";
+
+      // act
+      const result: string = AssetsService.formatMosaicId(expectedId);
+
+      // assert
+      expect(result).toBeDefined();
+      expect(result).toBe(expectedId)
+    });
+
+    it("should return mosaic id given known namespaceId", () => {
+      // prepare
+      const namespaceId = "fake-base-namespace-id";
+      const expectedId = "fake-base-mosaic-id"; // <-- overwrites with MosaicId
+
+      // act
+      const result: string = AssetsService.formatMosaicId(namespaceId);
+
+      // assert
+      expect(result).toBeDefined();
+      expect(result).toBe(expectedId); // <-- overwrites with MosaicId
+    });
+
+    it("should return input given no namespaceId configuration", () => {
+      // prepare
+      const expectedId = "fake-earn-mosaic-id"; // EARN does not have namespaceId
+
+      // act
+      const result: string = AssetsService.formatMosaicId(expectedId);
+
+      // assert
+      expect(result).toBeDefined();
+      expect(result).toBe(expectedId); // <-- returns untouched
     });
   });
 });

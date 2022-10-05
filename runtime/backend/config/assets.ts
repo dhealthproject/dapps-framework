@@ -22,5 +22,24 @@ export default () => ({
       divisibility: 6,
       symbol: "FIT"
     }
-  }
+  },
+  boosters: {
+    referral: {
+      boost5: {
+        mosaicId: "55E3CA759248A895",
+        divisibility: 0,
+        symbol: "BOOST"
+      },
+      boost10: {
+        mosaicId: "2CAA578DEE9043C4",
+        divisibility: 0,
+        symbol: "BOOST"
+      },
+      boost15: {
+        mosaicId: "002CE74736C839FE",
+        divisibility: 0,
+        symbol: "BOOST"
+      },
+    }
+  },
 });
