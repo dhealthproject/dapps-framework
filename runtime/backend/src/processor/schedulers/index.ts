@@ -7,6 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-export * from "./AccessTokenRequest";
-export * from "./OAuthAuthorizeRequest";
-export * from "./OAuthCallbackRequest";
+// abstract processor command
+export * from "./ProcessorCommand";
+
+// process operations schedulers
+export * from "./ProcessOperations/ProcessOperations";
+export * from "./ProcessOperations/ProcessOperationsCommand";

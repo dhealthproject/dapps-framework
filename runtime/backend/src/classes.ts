@@ -11,6 +11,9 @@
 export { AppModule } from "./AppModule";
 export { AppService } from "./AppService";
 
+// worker / application-level
+export * from "./worker";
+
 // common scope / general-level
 export { Scopes } from "./common/Scopes";
 export { ScopeFactory } from "./common/ScopeFactory";
@@ -26,4 +29,35 @@ export * from "./common/services";
 export * from "./common/traits";
 export * from "./common/types";
 
-// @todo Include `index.ts` in subfolders of source code to generate documentation.
+// discovery scope / general-level
+export * from "./discovery/DiscoveryModule";
+
+// discovery classes
+export * from "./discovery/models";
+export * from "./discovery/modules";
+export * from "./discovery/routes";
+export * from "./discovery/schedulers";
+export * from "./discovery/services";
+
+// payout scope / general-level
+export * from "./payout/PayoutModule";
+
+// processor scope / general-level
+export * from "./processor/ProcessorModule";
+
+// processor classes
+export * from "./processor/models";
+export * from "./processor/modules";
+export * from "./processor/routes";
+export * from "./processor/schedulers";
+export * from "./processor/services";
+
+// statistics scoper / general-level
+export * from "./statistics/StatisticsModule";
+
+// statistics classes
+export * from "./statistics/models";
+export * from "./statistics/modules";
+export * from "./statistics/routes";
+export * from "./statistics/schedulers";
+export * from "./statistics/services";

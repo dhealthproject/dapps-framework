@@ -7,6 +7,10 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-export * from "./AccessTokenRequest";
-export * from "./OAuthAuthorizeRequest";
-export * from "./OAuthCallbackRequest";
+// modules index
+export * from "./AccountsModule";
+export * from "./AuthModule";
+export * from "./ChallengesModule";
+export * from "./NetworkModule";
+export * from "./QueryModule";
+export * from "./StateModule";

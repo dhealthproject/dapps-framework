@@ -7,6 +7,11 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-export * from "./AccessTokenRequest";
-export * from "./OAuthAuthorizeRequest";
-export * from "./OAuthCallbackRequest";
+// database models
+export * from "./StatisticsSchema";
+
+// generic types / utilities
+export * from "./LeaderboardAggregationStateData";
+
+// specialized data transfer objects
+export * from "./StatisticsDTO";

@@ -7,6 +7,10 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-export * from "./AccessTokenRequest";
-export * from "./OAuthAuthorizeRequest";
-export * from "./OAuthCallbackRequest";
+// main worker process bootstrap
+export * from "./main";
+
+// worker classes
+export * from "./BaseCommand";
+export * from "./BaseScheduler";
+export * from "./WorkerModule";

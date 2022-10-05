@@ -8,16 +8,21 @@
  * @license     LGPL-3.0
  */
 // configuration models
+export * from "./AssetsConfig";
 export * from "./DappConfig";
 export * from "./DatabaseConfig";
 export * from "./DiscoveryConfig";
 export * from "./NetworkConfig";
+export * from "./OAuthConfig";
 export * from "./SecurityConfig";
+export * from "./StatisticsConfig";
 
 // database models
+export * from "./AccountIntegrationSchema";
 export * from "./AccountSchema";
 export * from "./AuthChallengeSchema";
 export * from "./StateSchema";
+export * from "./TransactionSchema";
 
 // generic types / utilities
 export * from "./BaseDTO";
@@ -28,6 +33,8 @@ export * from "./StateData";
 // specialized data transfer objects
 export * from "./AccessTokenDTO";
 export * from "./AccountDTO";
+export * from "./AccountIntegrationDTO";
 export * from "./AuthChallengeDTO";
+export * from "./ProfileDTO";
 export * from "./StateDTO";
 export * from "./StatusDTO";

@@ -16,3 +16,5 @@ export * from "./BasicOAuthDriver";
 export * from "./StravaOAuthDriver";
 
 // specialized driver requests/responses
+// strava
+export * from "./strava";
