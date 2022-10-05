@@ -47,6 +47,22 @@ async function bootstrap(): Promise<void> {
   const logger = new Logger(dappConfig.dappName);
   logger.debug(`Starting ${packageJson.name} at v${packageJson.version}`);
 
+  // configures the request listener (HTTP server)
+  const appPort = dappConfig.backendApp.port;
+  const appUrl: string = dappConfig.backendApp.url;
+  const appName = `${dappConfig.dappName} API`;
+
+  // init OpenAPI documentation with information from package.json
+  const docConfig = new DocumentBuilder()
+    .setTitle(dappConfig.dappName)
+    .setDescription(packageJson.description)
+    .setVersion(packageJson.version)
+    .addTag(`${packageJson.name} v${packageJson.version}`)
+    .addServer(`${appUrl}`, appName)
+    .build();
+  const document = SwaggerModule.createDocument(app, docConfig);
+  SwaggerModule.setup("api", app, document);
+
   // enable CORS only when desired
   const allowedOrigins = securityConfig.cors.origin;
 
@@ -68,22 +84,6 @@ async function bootstrap(): Promise<void> {
   // enable throttle and *secured* cookie parser
   app.use(helmet());
   app.use(cookieParser(securityConfig.auth.secret));
-
-  // configures the request listener (HTTP server)
-  const appPort = dappConfig.backendApp.port;
-  const appUrl: string = dappConfig.backendApp.url;
-  const appName = `${dappConfig.dappName} API`;
-
-  // init OpenAPI documentation with information from package.json
-  const docConfig = new DocumentBuilder()
-    .setTitle(dappConfig.dappName)
-    .setDescription(packageJson.description)
-    .setVersion(packageJson.version)
-    .addTag(`${packageJson.name} v${packageJson.version}`)
-    .addServer(`${appUrl}`, appName)
-    .build();
-  const document = SwaggerModule.createDocument(app, docConfig);
-  SwaggerModule.setup("api", app, document);
 
   // start the worker
   logger.debug(`Starting the worker process...`);
