@@ -93,6 +93,9 @@ export class MockModel {
   constructor(dto?: any) {
     this.data = dto;
   }
+  static create(data: any) {
+    return jest.fn(() => data);
+  }
   create(data: any) {
     return this.createStub(data);
   }
@@ -101,6 +104,16 @@ export class MockModel {
   }
   findOne() {
     return jest.fn(() => this.data);
+  }
+  static findOne() {
+    return {
+      exec: () => jest.fn(),
+    };
+  }
+  static findOneAndUpdate() {
+    return {
+      exec: () => jest.fn(),
+    };
   }
   find() {
     return {

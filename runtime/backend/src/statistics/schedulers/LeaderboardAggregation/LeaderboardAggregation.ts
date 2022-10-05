@@ -362,9 +362,11 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
     const leaderboardConfig = this.configService.get<LeaderboardConfig>(
       "statistics.leaderboards",
     );
-    for (const scoreSchedulerConfig of Object.values(leaderboardConfig)) {
-      if (scoreSchedulerConfig.type === this.periodFormat) {
-        this._config = scoreSchedulerConfig;
+    if (!this._config) {
+      for (const scoreSchedulerConfig of Object.values(leaderboardConfig)) {
+        if (scoreSchedulerConfig.type === this.periodFormat) {
+          this._config = scoreSchedulerConfig;
+        }
       }
     }
     return this._config;

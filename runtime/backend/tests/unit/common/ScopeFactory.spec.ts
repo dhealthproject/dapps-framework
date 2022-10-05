@@ -240,7 +240,7 @@ describe("common/ScopeFactory", () => {
       const configDto: DappConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
-        scopes: ["discovery", "payout", "processor"],
+        scopes: ["discovery", "payout", "processor", "statistics"],
         database: {
           host: "fake",
           port: "1",
@@ -270,6 +270,7 @@ describe("common/ScopeFactory", () => {
         DiscoveryModuleMock,
         PayoutModuleMock,
         ProcessorModuleMock,
+        StatisticsModuleMock,
       ]);
     });
 
