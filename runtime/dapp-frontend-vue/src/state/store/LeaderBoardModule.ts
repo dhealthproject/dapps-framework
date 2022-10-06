@@ -22,7 +22,7 @@ import {
  *
  */
 export interface LeaderBoardState {
-  liderBoardItems: LeaderBoardItem[];
+  leaderBoardItems: LeaderBoardItem[];
 }
 
 export interface LeaderBoardPayload {
@@ -48,12 +48,12 @@ export const LeaderBoardModule = {
   // mutation, getter or action, i.e. "app/getName".
   namespaced: true,
   state: (): LeaderBoardState => ({
-    liderBoardItems: [],
+    leaderBoardItems: [],
   }),
 
   getters: {
     getLeaderBoardItems: (state: LeaderBoardState): LeaderBoardItem[] =>
-      state.liderBoardItems,
+      state.leaderBoardItems,
   },
 
   mutations: {
@@ -63,10 +63,10 @@ export const LeaderBoardModule = {
     setLeaderBoardItems: (
       state: LeaderBoardState,
       leaderBoardItems: LeaderBoardItem[]
-    ): any[] => (state.liderBoardItems = leaderBoardItems),
+    ): any[] => (state.leaderBoardItems = leaderBoardItems),
 
     addLeaderBoardItem: (state: LeaderBoardState, item: LeaderBoardItem) =>
-      state.liderBoardItems.push(item),
+      state.leaderBoardItems.push(item),
   },
 
   actions: {
@@ -92,8 +92,10 @@ export const LeaderBoardModule = {
             address: "addressGoesHere",
             position: 1,
             assets: 2050,
-            avatar: "avatar1.png",
+            avatar: "avatar3.png",
             trendline: "up",
+            userName: "IWKAD",
+            activities: ["running", "cycling"],
           },
           {
             type: "leaderboard",
@@ -101,8 +103,10 @@ export const LeaderBoardModule = {
             address: "addressGoesHere",
             position: 2,
             assets: 1905,
-            avatar: "avatar2.png",
+            avatar: "avatar4.png",
             trendline: "down",
+            userName: "YEIVJ",
+            activities: ["swimming", "running"],
           },
           {
             type: "leaderboard",
@@ -110,8 +114,10 @@ export const LeaderBoardModule = {
             address: "addressGoesHere",
             position: 3,
             assets: 930,
-            avatar: "friend1.png",
+            avatar: "avatar5.png",
             trendline: "up",
+            userName: "NMWID",
+            activities: ["running"],
           },
           {
             type: "leaderboard",
@@ -119,17 +125,128 @@ export const LeaderBoardModule = {
             address: "addressGoesHere",
             position: 4,
             assets: 543,
-            avatar: "friend2.png",
+            avatar: "avatar6.png",
             trendline: "both",
+            userName: "OWLFS",
+            activities: ["swimming", "running", "cycling"],
           },
           {
             type: "leaderboard",
             period: "weekly",
             address: "addressGoesHere",
-            position: 4,
+            position: 5,
             assets: 102,
-            avatar: "avatar1.png",
+            avatar: "avatar7.png",
             trendline: "up",
+            userName: "UENFA",
+          },
+          {
+            type: "leaderboard",
+            period: "weekly",
+            address: "addressGoesHere",
+            position: 6,
+            assets: 2050,
+            avatar: "avatar3.png",
+            trendline: "up",
+            userName: "IWKAD",
+            activities: ["running", "cycling"],
+          },
+          {
+            type: "leaderboard",
+            period: "weekly",
+            address: "addressGoesHere",
+            position: 7,
+            assets: 1905,
+            avatar: "avatar4.png",
+            trendline: "down",
+            userName: "YEIVJ",
+            activities: ["swimming", "running"],
+          },
+          {
+            type: "leaderboard",
+            period: "weekly",
+            address: "addressGoesHere",
+            position: 8,
+            assets: 930,
+            avatar: "avatar5.png",
+            trendline: "up",
+            userName: "NMWID",
+            activities: ["running"],
+          },
+          {
+            type: "leaderboard",
+            period: "weekly",
+            address: "addressGoesHere",
+            position: 9,
+            assets: 543,
+            avatar: "avatar6.png",
+            trendline: "both",
+            userName: "OWLFS",
+            activities: ["swimming", "running", "cycling"],
+          },
+          {
+            type: "leaderboard",
+            period: "weekly",
+            address: "addressGoesHere",
+            position: 10,
+            assets: 102,
+            avatar: "avatar7.png",
+            trendline: "up",
+            userName: "UENFA",
+          },
+          {
+            type: "leaderboard",
+            period: "weekly",
+            address: "addressGoesHere",
+            position: 11,
+            assets: 2050,
+            avatar: "avatar3.png",
+            trendline: "up",
+            userName: "IWKAD",
+            activities: ["running", "cycling"],
+          },
+          {
+            type: "leaderboard",
+            period: "weekly",
+            address: "addressGoesHere",
+            position: 12,
+            assets: 1905,
+            avatar: "avatar4.png",
+            trendline: "down",
+            userName: "YEIVJ",
+            activities: ["swimming", "running"],
+          },
+          {
+            type: "leaderboard",
+            period: "weekly",
+            address: "addressGoesHere",
+            position: 13,
+            assets: 930,
+            avatar: "avatar5.png",
+            trendline: "up",
+            userName: "NMWID",
+            activities: ["running"],
+          },
+          {
+            type: "leaderboard",
+            period: "weekly",
+            address: "addressGoesHere",
+            position: 14,
+            assets: 543,
+            avatar: "avatar6.png",
+            trendline: "both",
+            userName: "OWLFS",
+            activities: ["swimming", "running", "cycling"],
+          },
+          {
+            type: "leaderboard",
+            period: "weekly",
+            address: "addressGoesHere",
+            position: 15,
+            assets: 102,
+            avatar: "avatar7.png",
+            trendline: "up",
+            userName: "UENFA",
           },
         ];
         items = mockedLeaderBoardItems;

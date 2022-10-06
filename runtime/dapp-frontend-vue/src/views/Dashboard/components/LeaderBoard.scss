@@ -8,61 +8,25 @@
  * @license     LGPL-3.0
  */
 
+@import "../../../vars.scss";
+
 .dapp-leaderboard-table {
-  .board-item {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  // Place Wrapper related styles
+  // styles related to leader board item will be in
 
-    &__left {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
+  .dapp-tabs {
+    margin-bottom: 32px;
+  }
 
-      .number,
-      .avatar {
-        font-size: 16px;
-        font-weight: 700;
-        color: #000;
-        display: inline-block;
-        padding-right: 8px;
+  .dapp-leaderboard-item {
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.5);
 
-        img {
-          width: 40px;
-          height: 40px;
-        }
-      }
-
-      .colored-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        padding-right: 8px;
-      }
-
-      .text-data {
-        display: flex;
-        flex-direction: column;
-
-        .nickname {
-          font-size: 14px;
-          font-weight: 500;
-          display: inline-block;
-          margin-right: 8px;
-        }
-
-        .hash {
-          font-size: 12px;
-        }
-      }
+    &:last-child {
+      border-bottom: none;
     }
+  }
 
-    &__right {
-      font-weight: 700;
-      font-size: 24px;
-    }
+  .current-player {
+    margin-bottom: 32px;
   }
 }

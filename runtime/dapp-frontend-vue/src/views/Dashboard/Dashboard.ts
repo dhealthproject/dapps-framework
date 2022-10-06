@@ -19,7 +19,6 @@ import {
   CarouselItem,
   CarouselConfig,
 } from "@/views/Dashboard/components/EventsCarousel";
-import { LeaderBoardItem } from "@/views/Dashboard/components/LeaderBoard";
 import { Translations } from "@/kernel/i18n/Translations";
 
 // child components
@@ -77,7 +76,7 @@ export interface StatisticsTabItem {
 })
 export default class Dashboard extends MetaView {
   /**
-   * This property contains the authenticated user's dHealth Account
+   * This property contains the authenticated user's dHealth Accountsd
    * Address. This field is populated using the Vuex Store after a
    * successful request to the backend API's `/me` endpoint.
    * <br /><br />
@@ -202,56 +201,6 @@ export default class Dashboard extends MetaView {
           title: "24/7 HIIT",
           participants: "29,988",
         },
-      },
-    ];
-  }
-
-  /**
-   * This computed property defines the *list* of players that are
-   * displayed inside the *leaderboard*.
-   *
-   * @deprecated This method must be deprecated in favor the actual leaderboard
-   * discovery implementation using the backend runtime.
-   *
-   * @access protected
-   * @returns {LeaderBoardItem[]}
-   */
-  protected get leaderboardItems(): LeaderBoardItem[] {
-    return [
-      {
-        avatar: "avatar1.png",
-        nickname: "Yoga Master",
-        hash: "2994-2399-WGHD-WDHF",
-        amount: 698,
-        direction: "up",
-      },
-      {
-        avatar: "avatar2.png",
-        nickname: "Terminator",
-        hash: "2994-2399-WGHD-WDHF",
-        amount: 330,
-        direction: "up",
-      },
-      {
-        color: "#A990E0",
-        nickname: "Purple Master",
-        hash: "2994-2399-WGHD-WDHF",
-        amount: 330,
-        direction: "down",
-      },
-      {
-        avatar: "avatar2.png",
-        nickname: "Terminator",
-        hash: "2994-2399-WGHD-WDHF",
-        amount: 330,
-        direction: "down",
-      },
-      {
-        color: "#A990E0",
-        nickname: "Purple Master",
-        hash: "2994-2399-WGHD-WDHF",
-        amount: 330,
-        direction: "both",
       },
     ];
   }

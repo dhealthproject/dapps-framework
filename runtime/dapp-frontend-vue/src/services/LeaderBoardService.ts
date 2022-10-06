@@ -20,7 +20,10 @@ export interface LeaderBoardItem {
   position: number;
   assets: number;
   avatar: string;
-  trendline: string;
+  trendline?: string;
+  color?: string;
+  userName?: string;
+  activities?: string[];
 }
 
 /**

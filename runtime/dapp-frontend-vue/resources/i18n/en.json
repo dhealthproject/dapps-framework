@@ -13,5 +13,8 @@
   "dashboard_statistics_label_go1on1": "Go 1-on-1",
   "settings_integrations_description_text": "Allow ELEVATE to access your fitness data on your favorite applications to earn rewards",
   "settings_integrations_description_strava": "Quick description of Strava",
-  "word_here": "here"
+  "word_here": "here",
+  "leaderboard_title": "Leaderboard",
+  "leaderboard_tab_all": "All Time",
+  "leaderboard_tab_week": "This Week"
 }

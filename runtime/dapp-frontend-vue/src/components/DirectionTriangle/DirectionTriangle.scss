@@ -8,6 +8,8 @@
  * @license     LGPL-3.0
  */
 
+@import "../../vars.scss";
+
 .dapp-triangle {
   display: inline-block;
 
@@ -19,7 +21,7 @@
       height: 0;
       border-style: solid;
       border-width: 0 6px 8px 6px;
-      border-color: transparent transparent #22e6ab transparent;
+      border-color: transparent transparent $trendline-positive transparent;
     }
 
     &.down {
@@ -27,7 +29,7 @@
       height: 0;
       border-style: solid;
       border-width: 8px 6px 0 6px;
-      border-color: #e27857 transparent transparent transparent;
+      border-color: $trendline-negative transparent transparent transparent;
     }
   }
 

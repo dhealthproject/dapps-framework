@@ -12,35 +12,27 @@
 
 <template>
   <div class="dapp-leaderboard-table">
-    <div
-      v-for="(item, index) in getLeaderBoardItems"
-      class="board-item"
-      :key="index"
-    >
-      <div class="board-item__left">
-        <span class="number">#{{ item.position }}</span>
-        <div class="avatar">
-          <img
-            v-if="item.avatar"
-            :src="getImageUrl(item.avatar)"
-            :alt="item.address"
-          />
-          <div
-            v-else-if="items.color"
-            class="colored-avatar"
-            :style="{ 'background-color': items.color }"
-          />
-        </div>
-        <div class="text-data">
-          <div>
-            <span class="nickname">{{ items[index].nickname }}</span>
-            <DirectionTriangle :direction="item.trendline" />
-          </div>
-          <span class="hash">{{ item.address }}</span>
-        </div>
-      </div>
-      <div class="board-item__right">{{ item.assets }} $FIT</div>
-    </div>
+    <Tabs
+      :tab-list="leaderBoardTabs"
+      :as-switcher="true"
+      :spaced-title="true"
+      title="Leaderboard"
+      @tabChange="onTabChange"
+    />
+    <LeaderBoardRow :data="getLeaderBoardItems[3]" :current-player="true" />
+    <LeaderBoardRow
+      v-for="(leader, index) in splicedItems"
+      :key="leader.avatar + index"
+      :data="leader"
+    />
+
+    <!-- Custom LeaderBoardItem item markup usage example -->
+    <!-- <LeaderBoardRow :data="getLeaderBoardItems[2]">
+      <template v-slot:default="props">
+        test v-slot
+        {{ props }}
+      </template>
+    </LeaderBoardRow> -->
   </div>
 </template>
 

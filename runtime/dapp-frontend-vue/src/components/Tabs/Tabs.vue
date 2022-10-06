@@ -12,12 +12,19 @@
 
 <template>
   <div class="dapp-tabs">
-    <div class="dapp-tabs__buttons">
+    <div
+      :class="{
+        flex: spacedTitle,
+        'justify-between': spacedTitle,
+        'items-center': spacedTitle,
+      }"
+      class="dapp-tabs__buttons"
+    >
       <h2 v-if="title" class="dapp-tabs__title" v-html="title" />
       <div class="inner">
         <button
           v-for="(tab, index) in tabNames"
-          @click="selectedTab = index"
+          @click="handleSwitch($event, tabList[index], index)"
           class="tab"
           :class="{ active: selectedTab === index }"
           :key="index"
@@ -25,23 +32,25 @@
           {{ tab }}
         </button>
       </div>
-      <div
-        v-for="(tabContentItem, index) in tabList"
-        :key="index + tabContentItem"
-        class="dapp-tabs__content"
-      >
-        <!-- Pass in this slot markup, which will represent tab content -->
+      <div v-if="!asSwitcher" class="content-wrapper">
+        <div
+          v-for="(tabContentItem, index) in tabList"
+          :key="index + tabContentItem"
+          class="dapp-tabs__content"
+        >
+          <!-- Pass in this slot markup, which will represent tab content -->
 
-        <!-- USAGE EXAMPLE -->
-        <!-- <Tabs :tab-list="tabs">
+          <!-- USAGE EXAMPLE -->
+          <!-- <Tabs :tab-list="tabs">
                 <template v-slot:tabContent="props"> -- content of the current tab(tabList[index]) is scoped to tabContentProp
                 </template>
               </Tabs> -->
-        <slot
-          v-if="selectedTab === index"
-          name="tabContent"
-          :tabData="tabContentItem"
-        />
+          <slot
+            v-if="selectedTab === index"
+            name="tabContent"
+            :tabData="tabContentItem"
+          />
+        </div>
       </div>
     </div>
   </div>

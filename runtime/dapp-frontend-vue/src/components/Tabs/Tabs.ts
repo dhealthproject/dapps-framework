@@ -46,6 +46,24 @@ export default class Tabs extends MetaView {
   @Prop({}) readonly initialTab?: number;
 
   /**
+   * Prop which defines how tabs are used:
+   * 1. As switcher with buttons
+   * 2. As tabs with related tab content screens
+   *
+   * @access readonly
+   * @var {asSwitcher}
+   */
+  @Prop({ default: false }) readonly asSwitcher?: boolean;
+
+  /**
+   * Prop which defines existing of space between title and tabs
+   *
+   * @access readonly
+   * @var {spacedTitle}
+   */
+  @Prop({ default: false }) readonly spacedTitle?: boolean;
+
+  /**
    * Property which defines currently selected tab
    *
    * @access public
@@ -62,6 +80,19 @@ export default class Tabs extends MetaView {
    */
   get tabNames() {
     return this.tabList?.map((tabItem: any) => tabItem.title);
+  }
+
+  /**
+   * This method sets number of currently shown tab
+   * if {asSwitcher} prop is true - emits event with value from tab
+   *
+   * @access public
+   */
+  handleSwitch($event: any, tab: any, index: number) {
+    if (this.asSwitcher) {
+      this.$emit("tabChange", tab);
+    }
+    this.selectedTab = index;
   }
 
   mounted() {

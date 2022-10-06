@@ -107,9 +107,8 @@
             </template>
           </Card>
 
-          <Card :title="'Invite friends'" :showBorders="false">
-            <template v-slot:content>
-              <LeaderBoard :items="leaderboardItems" /> </template
+          <Card :title="''" :showBorders="false">
+            <template v-slot:content> <LeaderBoard /> </template
           ></Card>
         </template>
       </DividedScreen>
