@@ -96,6 +96,7 @@ export const LeaderBoardModule = {
             trendline: "up",
             userName: "IWKAD",
             activities: ["running", "cycling"],
+            color: "#EEC52A",
           },
           {
             type: "leaderboard",
@@ -107,6 +108,7 @@ export const LeaderBoardModule = {
             trendline: "down",
             userName: "YEIVJ",
             activities: ["swimming", "running"],
+            color: "#06A65B",
           },
           {
             type: "leaderboard",
@@ -118,6 +120,7 @@ export const LeaderBoardModule = {
             trendline: "up",
             userName: "NMWID",
             activities: ["running"],
+            color: "#6EE7EE",
           },
           {
             type: "leaderboard",

@@ -22,7 +22,10 @@
       <div class="dapp-leaderboard-item__position">
         <span v-html="'#' + pad(`${data.position}`, 2)" />
       </div>
-      <div class="dapp-leaderboard-item__avatar">
+      <div
+        :style="{ 'border-color': data.color }"
+        class="dapp-leaderboard-item__avatar"
+      >
         <img
           v-if="data && data.avatar"
           :src="getImageUrl(data.avatar)"
