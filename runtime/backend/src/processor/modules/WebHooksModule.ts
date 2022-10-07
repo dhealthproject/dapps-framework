@@ -9,11 +9,8 @@
  */
 
 // external dependencies
-import { AuthModule } from "@/common/modules/AuthModule";
-import { QueryModule } from "@/common/modules/QueryModule";
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { Activity, ActivitySchema } from "../models/ActivitySchema";
 
 // internal dependencies
 import { QueryModule } from "../../common/modules/QueryModule";
@@ -35,15 +32,19 @@ import { Activity, ActivitySchema } from "../models/ActivitySchema";
  */
 @Module({
   controllers: [WebHooksController],
+  providers: [WebHooksService, OAuthService],
   imports: [
     MongooseModule.forFeature([
       {
+        name: AccountIntegration.name,
+        schema: AccountIntegrationSchema,
+      }, // requirement from OAuthService
+      {
         name: Activity.name,
         schema: ActivitySchema,
-      },
+      }, // requirement from WebHooksService
     ]),
     QueryModule,
-    AuthModule,
   ],
 })
 export class WebHooksModule {}
