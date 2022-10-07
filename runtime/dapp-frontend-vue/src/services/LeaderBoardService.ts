@@ -22,7 +22,6 @@ export interface LeaderBoardItem {
   avatar: string;
   trendline?: string;
   color?: string;
-  userName?: string;
   activities?: string[];
 }
 
@@ -70,7 +69,7 @@ export class LeaderBoardService extends BackendService {
     period: string
   ): Promise<LeaderBoardItem[]> {
     const response = await this.handler.call(
-      this.getUrl(`/leaderboard/${which}/${period}`),
+      this.getUrl(`leaderboard/${which}/${period}`),
       "GET",
       {}, // no-body
       {} // no-headers

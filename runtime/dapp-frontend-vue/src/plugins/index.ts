@@ -8,3 +8,4 @@
  * @license     LGPL-3.0
  */
 export * from "./imageUrl";
+export * from "./formatAddress";

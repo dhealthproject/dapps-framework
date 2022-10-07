@@ -1,3 +1,5 @@
+import formatAddress from '@/plugins/formatAddress';
+
 <!--
 /**
  * This file is part of dHealth dApps Framework shared under LGPL-3.0
@@ -16,11 +18,61 @@
       <h1
         v-if="getIntegrations && getIntegrations.length"
         class="dapp-screen-dashboard__title"
-        v-html="`${currentUserAddress} dashboard`"
+        v-html="`${formatAddress(currentUserAddress, 'dashes')} dashboard`"
       />
       <DividedScreen v-if="getIntegrations && getIntegrations.length" :gap="81">
         <template v-slot:left>
-          <Tabs :title="'Quick Stats'" :tab-list="statisticsTabs">
+          <Card :title="'Quick Stats'">
+            <template v-slot:content>
+              <div class="stats-card">
+                <div class="stats-card__numbers">
+                  <div
+                    v-for="(item, index) in statisticsTabs[0].quickStats"
+                    :key="index + item.title"
+                    class="item"
+                  >
+                    <div class="flex">
+                      <span class="amount" v-html="item.amount" />
+                      <DirectionTriangle :direction="item.direction" />
+                    </div>
+                    <span class="title" v-html="item.title" />
+                  </div>
+                </div>
+                <ProgressBar :steps="5" :completed-steps="2" />
+                <div class="flex justify-around items-center">
+                  <div class="progress-data">4/10</div>
+                  <div class="progress-data">
+                    <div class="text-right">
+                      <span class="reffered">Friends Referred</span>
+                      <img
+                        :src="getImageUrl('icons/info-icon.svg')"
+                        alt="Friends reffered"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </Card>
+          <Card :title="'Your Sportscards'">
+            <template v-slot:content
+              ><p class="empty-section">
+                You currently don’t have any sportcards.
+              </p></template
+            >
+          </Card>
+          <Card :title="'Your Medals'">
+            <template v-slot:content
+              ><p class="empty-section">You currently don’t have any medals.</p>
+
+              <GenericList :items="statisticsTabs[0].medals" class="medals">
+                <template v-slot:itemContent="props">
+                  <img :src="getImageUrl(props.itemData)" alt="Medal 1" />
+                </template>
+              </GenericList>
+            </template>
+          </Card>
+          <!-- <Tabs :title="'Quick Stats'" :tab-list="statisticsTabs">
             <template v-slot:tabContent="props">
               <Card>
                 <template v-slot:content>
@@ -75,7 +127,7 @@
                 </template>
               </Card>
             </template>
-          </Tabs>
+          </Tabs> -->
         </template>
         <template v-slot:right>
           <Card :title="'Invite friends'" :showBorders="false">

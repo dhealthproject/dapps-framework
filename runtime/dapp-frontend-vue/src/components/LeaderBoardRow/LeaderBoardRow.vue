@@ -1,3 +1,5 @@
+import formatAddress from '@/plugins/formatAddress';
+
 <!--
 /**
  * This file is part of dHealth dApps Framework shared under LGPL-3.0
@@ -29,12 +31,12 @@
         <img
           v-if="data && data.avatar"
           :src="getImageUrl(data.avatar)"
-          :alt="data.userName || data.address"
+          :alt="data.address"
         />
       </div>
       <div class="dapp-leaderboard-item__user-info">
         <div class="flex flex-row items-center">
-          <span class="name" v-html="data.userName || data.address" />
+          <span class="name" v-html="formatAddress(data.address)" />
           <DirectionTriangle
             v-if="data.trendline"
             :direction="data.trendline"
@@ -58,11 +60,11 @@
     </div>
     <div v-else class="dapp-leaderboard-item__custom">
       <!-- USAGE EXAMPLE -->
-      <!-- <LeaderBoardItem :data="yourData">
+      <!-- <LeaderBoardRow :data="yourData">
             <template v-slot:default="props"> -- content of the data is scoped to props.itemData
               <h1>{{ props.itemData.title }}</h1>
             </template>
-          </LeaderBoardItem> -->
+          </LeaderBoardRow> -->
       <slot :itemData="data" />
     </div>
   </div>

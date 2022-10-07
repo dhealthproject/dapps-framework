@@ -19,6 +19,7 @@ import internalComponentsInstaller from "@dhealth/components";
 
 // internal plugins
 import imageUrl from "@/plugins/imageUrl";
+import formatAddress from "./plugins/formatAddress";
 
 // importing compiled tailwind styles
 // triggers a build when adding classes
@@ -35,6 +36,7 @@ Vue.use(Vuex);
 
 // importing internal Vue plugins
 Vue.use(imageUrl);
+Vue.use(formatAddress);
 
 // initializes router
 import { createRouter } from "./router";
