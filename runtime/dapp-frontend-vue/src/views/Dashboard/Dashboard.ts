@@ -222,22 +222,22 @@ export default class Dashboard extends MetaView {
         quickStats: [
           {
             title: this.i18n.$t("dashboard_statistics_label_minutes_practiced"),
-            amount: 3099,
+            amount: 0,
             direction: "up",
           },
           {
             title: this.i18n.$t("dashboard_statistics_label_fit_earned"),
-            amount: 560,
+            amount: 0,
             direction: "down",
           },
           {
             title: this.i18n.$t("dashboard_statistics_label_calories_burnt"),
-            amount: 1094,
+            amount: 0,
             direction: "down",
           },
           {
             title: this.i18n.$t("dashboard_statistics_label_friends_referred"),
-            amount: 5,
+            amount: 0,
             direction: "down",
           },
         ],
@@ -260,22 +260,22 @@ export default class Dashboard extends MetaView {
         quickStats: [
           {
             title: this.i18n.$t("dashboard_statistics_label_minutes_practiced"),
-            amount: 520,
+            amount: 0,
             direction: "down",
           },
           {
             title: this.i18n.$t("dashboard_statistics_label_fit_earned"),
-            amount: 350,
+            amount: 0,
             direction: "down",
           },
           {
             title: this.i18n.$t("dashboard_statistics_label_calories_burnt"),
-            amount: 2035,
+            amount: 0,
             direction: "up",
           },
           {
             title: this.i18n.$t("dashboard_statistics_label_friends_referred"),
-            amount: 5,
+            amount: 0,
             direction: "down",
           },
         ],
