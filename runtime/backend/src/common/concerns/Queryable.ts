@@ -37,8 +37,21 @@ export interface QueryParameters extends Pageable, Sortable {
  * @interface Queryable
  * @description This concern requires the presence of fields that
  * consist in delivering *queryable* information.
+ * <br /><br />
+ * @example Extending and using the `Queryable`
+ * ```typescript
+ *  import { Queryable } from "./Queryable";
  *
- * @todo Add usage example, for example as illustrated in {@link StateSchema}.
+ *  export class ExampleQuery extends Queryable<ExampleDocument> {
+ *    public constructor(
+ *      document?: ExampleDocument,
+ *      queryParams: QueryParameters = undefined,
+ *    ) {
+ *      super(document, queryParams);
+ *    }
+ *  }
+ * ```
+ *
  * @since v0.2.0
  */
 export class Queryable<TDocument extends Documentable>

@@ -24,9 +24,24 @@ import { BaseDTO } from "../models/BaseDTO";
  * We provide a base implementation for the {@link toDTO} method to
  * standardize the retrieval and formatting of DTOs from their
  * origin database documents.
+ * <br /><br />
+ * @example Extending and using the `Transferable`
+ * ```typescript
+ *  import { Transferable } from "./Transferable";
+ *
+ *  class Example extends Transferable<ExampleDTO> {
+ *    @Prop()
+ *    testProp: string;
+ *
+ *    // Overrides from Transferable
+ *    public static fillDTO(doc: ExampleDocument, dto: ExampleDTO) {
+ *      dto.testProp = doc.testProp;
+ *      return dto;
+ *    }
+ *  }
+ * ```
  *
  * @abstract
- * @todo Add usage example, for example as illustrated in {@link StateSchema}.
  * @since v0.2.0
  */
 export abstract class Transferable<TDTOType extends BaseDTO> {

@@ -38,7 +38,34 @@ import {
  * extra node requests to be issued *before* connection can be
  * established.
  *
- * @todo Add usage example
+ * @example Example network connection payload object for dHealth Network
+ * ```typescript
+ *  import { Currency } from "@dhealth/sdk";
+ *
+ *  const networkConnectionPayload = {
+ *    nodePublicKey: "5172C98BD61DF32F447C501DE8090A9D7096F9E71975D788D67F7A82B8C04EFA",
+ *    generationHash: "ED5761EA890A096C50D3F50B7C2F0CCB4B84AFC9EA870F381E84DDE36D04EF16",
+ *    epochAdjustment: "1616978397",
+ *    networkIdentifier: 104,
+ *    networkCurrencies: {
+ *      new Currency({
+ *        mosaicId: new MosaicId("39E0C49FA322A459"),
+ *        divisibility: 6,
+ *        transferable: true,
+ *        supplyMutable: false,
+ *        restrictable: false,
+ *      }),
+ *      new Currency({
+ *        mosaicId: new MosaicId("39E0C49FA322A459"),
+ *        divisibility: 6,
+ *        transferable: true,
+ *        supplyMutable: false,
+ *        restrictable: false,
+ *      });
+ *    }
+ *  } as NetworkConnectionPayload;
+ * ```
+ *
  * @since v0.1.0
  */
 export type NetworkConnectionPayload = {

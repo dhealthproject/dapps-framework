@@ -60,8 +60,26 @@ export type SearchQuery = {
  * <br /><br />
  * Note that you must pass a *document class* to the generic `TDocument`
  * template of this class, e.g. QueryService<StateDocument>.
+ * <br /><br />
+ * @example Inject and use the QueryService in another class
+ * ```typescript
+ *  import { QueryService } from "./QueryService";
  *
- * @todo add example in class documentation
+ *  @Injectable()
+ *  export class ExampleService {
+ *    // inject QueryService
+ *    constructor(
+ *      @InjectModel(Example.name) private readonly model: ExampleModel,
+ *      private readonly queryService: QueryService<ExampleDocument, ExampleModel>,
+ *    ) {}
+ *
+ *    // example usage
+ *    async findOne(query: ExampleQuery): Promise<ExampleDocument> {
+ *      return await this.queryService.findOne(query, this.model);
+ *    }
+ *  }
+ * ```
+ *
  * @todo add handler abstraction logic
  * @todo Method `typecastField` does not permit *simple* arithmetical operations like `<><==>` on numbers.
  * @todo Method `typecastField` is most likely incompatible with complex class objects, must be handled.
