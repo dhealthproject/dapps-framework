@@ -7,21 +7,20 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// internal dependencies
-import { MongoRoutineIn, MongoRoutineRegex } from "./MongoQueryRoutines";
-
 /**
- * @type MongoQueryConditionValue
+ * @type MongoQueryOperationValue
  * @description A type that represents *mongo query conditions* individually
  * and is used to perform **safe** database queries with typed conditions.
  *
  * @since v0.3.2
  */
-export type MongoQueryConditionValue =
+export type MongoQueryOperationValue =
   | boolean
+  | boolean[]
   | number
+  | number[]
   | string
+  | string[]
   | Date
-  | any[]
-  | MongoRoutineIn
-  | MongoRoutineRegex;
+  | null
+  | any[];

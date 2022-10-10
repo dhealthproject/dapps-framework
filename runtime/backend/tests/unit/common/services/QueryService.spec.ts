@@ -912,8 +912,8 @@ describe("common/QueryService", () => {
 
       // assert
       expect(query.length).toBe(2);
-      expect("$match" in query.at(0)).toBe(true); // match always first
-      expect("$facet" in query.at(1)).toBe(true); // facet always second
+      expect("$match" in query[0]).toBe(true); // match always first
+      expect("$facet" in query[1]).toBe(true); // facet always second
     });
 
     it("should not contain metadata by default", () => {
@@ -926,8 +926,8 @@ describe("common/QueryService", () => {
 
       // assert
       expect(query.length).toBe(2);
-      expect("$facet" in query.at(1)).toBe(true); // facet always second
-      expect("metadata" in query.at(1)).toBe(false); // metadata part of facet
+      expect("$facet" in query[1]).toBe(true); // facet always second
+      expect("metadata" in query[1]).toBe(false); // metadata part of facet
     });
 
     it("should contain total metadata given metadata", () => {
@@ -940,9 +940,9 @@ describe("common/QueryService", () => {
 
       // assert
       expect(query.length).toBe(2);
-      expect("$facet" in query.at(1)).toBe(true); // facet always second
+      expect("$facet" in query[1]).toBe(true); // facet always second
 
-      const facetStage = (query.at(1) as MongoPipelineFacet); // shortcut
+      const facetStage = (query[1] as MongoPipelineFacet); // shortcut
       expect(facetStage.$facet).toBeDefined();
       expect("metadata" in facetStage.$facet).toBe(true); // metadata part of facet
       expect(facetStage.$facet.metadata).toBeDefined();
@@ -959,11 +959,11 @@ describe("common/QueryService", () => {
 
       // assert
       expect(query.length).toBe(4); // match + facet + 2 union groups
-      expect("$unionWith" in query.at(2)).toBe(true); // union always third
-      expect("$unionWith" in query.at(3)).toBe(true); // union also in fourth
+      expect("$unionWith" in query[2]).toBe(true); // union always third
+      expect("$unionWith" in query[3]).toBe(true); // union also in fourth
 
-      const unionStage1 = (query.at(2) as MongoQueryUnion); // shortcut
-      const unionStage2 = (query.at(3) as MongoQueryUnion); // shortcut
+      const unionStage1 = (query[2] as MongoQueryUnion); // shortcut
+      const unionStage2 = (query[3] as MongoQueryUnion); // shortcut
       expect(unionStage1.$unionWith).toBeDefined();
       expect(unionStage2.$unionWith).toBeDefined();
 
@@ -1002,12 +1002,12 @@ describe("common/QueryService", () => {
         {
           coll: "fake-collection1",
           group: "fake-group1",
-          union: (query.at(2) as MongoQueryUnion),
+          union: (query[2] as MongoQueryUnion),
         },
         {
           coll: "fake-collection2",
           group: "fake-group2",
-          union: (query.at(3) as MongoQueryUnion),
+          union: (query[3] as MongoQueryUnion),
         },
       ];
 

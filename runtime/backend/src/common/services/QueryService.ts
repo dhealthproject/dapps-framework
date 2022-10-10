@@ -9,7 +9,7 @@
  */
 // external dependencies
 import { Injectable } from "@nestjs/common";
-import { Model, FilterQuery, DocumentSetOptions } from "mongoose";
+import { Model, FilterQuery } from "mongoose";
 
 // internal dependencies
 import { Documentable } from "../concerns/Documentable";
@@ -19,10 +19,12 @@ import { UnknownFieldValue } from "../types/UnknownFieldValue";
 import { UnsafeQueryConditions } from "../types/UnsafeQueryConditions";
 import { MongoQueryConditions } from "../types/MongoQueryConditions";
 import { MongoQueryConditionValue } from "../types/MongoQueryConditionValue";
-import { MongoRoutineCount, MongoRoutineIn } from "../types/MongoQueryRoutines";
 import { MongoQueryCursor } from "../types/MongoQueryCursor";
 import { MongoQueryPipeline } from "../types/MongoQueryPipeline";
+import { MongoRoutineCount, MongoRoutineIn } from "../types/MongoQueryRoutines";
 import { MongoPipelineFacet } from "../types/MongoPipelineStages";
+import { MongoQueryOperation, MongoQueryOperationSpec } from "../types/MongoQueryOperation";
+import { MongoQueryOperations } from "../types/MongoQueryOperations";
 
 /**
  * @type SearchQuery
@@ -135,6 +137,7 @@ export class QueryService<
   public async find(
     query: Queryable<TDocument>,
     model: TModel,
+    ops: MongoQueryOperations = undefined,
   ): Promise<PaginatedResultDTO<TDocument>> {
     // wrap pagination+query to be mongo-compatible
     const { queryCursor } = this.getQueryConfig(query);
@@ -146,10 +149,19 @@ export class QueryService<
       { $count: "total" },
     ]);
 
+    // add operations to query, e.g. `$ne`, `eq`, `$exists`
+    if (ops !== undefined) {
+      Object.keys(ops).forEach(
+        (k: string, ix: number) => aggregateQuery[ix] = ops[k],
+      );
+    };
+
     // execute Mongo query
     // @todo this *aggregate* query should be moved to a new method `findWithTotal`.
     // @todo fallback to `mongoose` Model.find method instead for performance.
-    const [{ data, metadata }] = await model.aggregate(aggregateQuery).exec();
+    const [{ data, metadata }] = await model.aggregate(
+      [...aggregateQuery] as any, // any for mongoose' `PipelineStage`
+    ).exec();
 
     // build pagination details for PaginatedResultDTO
     const pagination = {
@@ -219,7 +231,7 @@ export class QueryService<
     query: Queryable<TDocument>,
     model: TModel,
     data: Record<string, any>,
-    ops: Record<string, any> = {},
+    ops: MongoQueryOperations = {},
   ): Promise<TDocument> {
     // wrap pagination+query to be mongo-compatible
     const { searchQuery } = this.getQueryConfig(query);
@@ -229,6 +241,7 @@ export class QueryService<
 
     // adds *operations* to updated data, only for custom queries
     // this covers the use of: "$inc", "$dec", "$set", etc.
+    // CAUTION this method automatically *wraps* `data` in a `$set` operation.
     const operations: Record<string, any> = {
       ...data,
       ...ops,
@@ -310,7 +323,7 @@ export class QueryService<
    * <br /><br />
    * This method is different {@link find} in that it permits to execute a
    * **union query**, effectively *combining multiple collections* in the
-   * result set.   *
+   * result set.
    * <br /><br />
    * Note that this method takes *three generics* that **must**
    * extend the {@link Documentable} class and **must** also
@@ -358,7 +371,7 @@ export class QueryService<
     // @todo this *aggregate* query should be moved to a new method `findWithTotal`.
     // @todo fallback to `mongoose` Model.find method instead for performance.
     const [{ data, metadata: resultMeta }] = await model
-      .aggregate(aggregateQuery)
+      .aggregate([...aggregateQuery] as any)
       .exec();
 
     // build pagination details for PaginatedResultDTO

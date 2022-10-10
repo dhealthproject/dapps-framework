@@ -12,6 +12,7 @@ import {
   MongoPipelineMatch,
   MongoPipelineSet,
 } from "./MongoPipelineStages";
+import { MongoQueryOperation } from "./MongoQueryOperation";
 
 /**
  * @type MongoQueryPipelineStage
@@ -24,7 +25,8 @@ import {
 export type MongoQueryPipelineStage =
   | MongoPipelineMatch
   | MongoPipelineFacet
-  | MongoPipelineSet;
+  | MongoPipelineSet
+  | MongoQueryOperation;
 
 /**
  * @type MongoQueryPipeline
