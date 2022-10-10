@@ -19,6 +19,7 @@ import { AssetsController } from "../routes/AssetsController";
 import { Asset, AssetSchema } from "../models/AssetSchema";
 
 /**
+ * @label DISCOVERY
  * @class AssetsModule
  * @description The main definition for the Assets module.
  *

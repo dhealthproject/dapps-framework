@@ -37,7 +37,7 @@ import {
  * @class LeaderboardAggregationCommand
  * @description The main definition for the Leaderboard Aggregation module.
  *
- * @since v0.2.0
+ * @since v0.3.2
  */
 @Module({
   imports: [

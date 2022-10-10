@@ -21,6 +21,7 @@ import {
 } from "../../common/models/TransactionSchema";
 
 /**
+ * @label DISCOVERY
  * @class TransactionsModule
  * @description The main definition for the Transactions module.
  *

@@ -25,7 +25,7 @@ import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
  * @class LeaderboardsService
  * @description The main service of the Leaderboards module.
  *
- * @since v0.2.0
+ * @since v0.3.2
  */
 @Injectable()
 export class LeaderboardsService {

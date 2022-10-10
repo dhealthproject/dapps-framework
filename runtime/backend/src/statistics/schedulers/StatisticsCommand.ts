@@ -21,7 +21,7 @@ import { BaseCommand, BaseCommandOptions } from "../../worker/BaseCommand";
  * with their own specification of arguments.
  *
  * @see BaseCommandOptions
- * @since v0.3.0
+ * @since v0.3.2
  */
 export interface StatisticsCommandOptions extends BaseCommandOptions {
   /**
@@ -47,7 +47,7 @@ export interface StatisticsCommandOptions extends BaseCommandOptions {
  * implemented in this class as {@link runWithOptions}.
  *
  * @abstract
- * @since v0.3.0
+ * @since v0.3.2
  */
 export abstract class StatisticsCommand extends BaseCommand {
   /**

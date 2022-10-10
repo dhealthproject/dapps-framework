@@ -18,10 +18,11 @@ import { Block, BlockSchema } from "../models/BlockSchema";
 import { BlocksService } from "../services/BlocksService";
 
 /**
+ * @label DISCOVERY
  * @class BlocksModule
  * @description The main definition for the Blocks module.
  *
- * @since v0.1.0
+ * @since v0.3.2
  */
 @Module({
   providers: [BlocksService],
