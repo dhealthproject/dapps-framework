@@ -72,7 +72,7 @@ export class WeeklyScoreAggregation extends LeaderboardAggregation {
       configService,
     );
     this.periodFormat = "W";
-    this.addCronJob("*/1 * * * *");
+    this.addCronJob("0 0 0 */3 * *"); // every 3 days (3 times per week)
   }
 
   /**

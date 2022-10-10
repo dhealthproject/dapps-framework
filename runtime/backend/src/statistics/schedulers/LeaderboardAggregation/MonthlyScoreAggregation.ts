@@ -72,7 +72,7 @@ export class MonthlyScoreAggregation extends LeaderboardAggregation {
       configService,
     );
     this.periodFormat = "M";
-    this.addCronJob("*/1 * * * *");
+    this.addCronJob("0 0 0 */3 * *"); // every 3 days (up to 12 times per month)
   }
 
   /**

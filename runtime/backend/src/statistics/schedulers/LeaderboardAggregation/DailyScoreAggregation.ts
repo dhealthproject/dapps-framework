@@ -72,7 +72,7 @@ export class DailyScoreAggregation extends LeaderboardAggregation {
       configService,
     );
     this.periodFormat = "D";
-    this.addCronJob("*/1 * * * *");
+    this.addCronJob("0 0 */3 * * *"); // every 3 hours (8 times per day)
   }
 
   /**
