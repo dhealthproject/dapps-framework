@@ -42,7 +42,7 @@ export class HttpRequestHandler {
    * @param   {any}      body       A configuration object that is forwarded to `axios` as the request body (POST requests).
    * @param   {any}      options    A configuration object that is forwarded to `axios` as the request options.
    * @param   {any}      headers    A configuration object that is forwarded to `axios` as the request headers.
-   * @returns {Promise<AxiosResponse<any, any>>}
+   * @returns {Promise<AxiosResponse<any, any>>}  The {@link Promise} that contains the result {@link AxiosResponse}.
    */
   public async call(
     url: string,

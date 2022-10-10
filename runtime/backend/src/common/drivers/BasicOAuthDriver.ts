@@ -54,8 +54,8 @@ export class BasicOAuthDriver implements OAuthDriver {
    * Constructs an instance of this driver.
    *
    * @constructor
-   * @param {string} name
-   * @param {OAuthProviderParameters} provider
+   * @param {string} name This driver's provider name.
+   * @param {OAuthProviderParameters} provider  The config parameters of this driver's provider.
    */
   public constructor(
     protected readonly name: string,
@@ -68,7 +68,7 @@ export class BasicOAuthDriver implements OAuthDriver {
    * Getter of this driver's provider name.
    *
    * @access public
-   * @var {string}
+   * @returns {string}  This driver's provider name.
    */
   public get providerName(): string {
     return this.name;
@@ -78,7 +78,7 @@ export class BasicOAuthDriver implements OAuthDriver {
    * Getter of this driver's data field name.
    *
    * @access public
-   * @var {string}
+   * @returns {string}  This driver's data field name.
    */
   public get dataField(): string {
     return this.dataFieldName;
@@ -88,7 +88,7 @@ export class BasicOAuthDriver implements OAuthDriver {
    * Getter of this driver's code field name.
    *
    * @access public
-   * @var {string}
+   * @returns {string}  This driver's code field name.
    */
   public get codeField(): string {
     return this.codeFieldName;
@@ -98,7 +98,8 @@ export class BasicOAuthDriver implements OAuthDriver {
    * Method to return the authorize url of this driver's provider.
    *
    * @access public
-   * @var {string}
+   * @param   {string}  extra   The `data` value to include in this query.
+   * @returns {string}          The full authorize url to send request to.
    */
   public getAuthorizeURL(extra: string): string {
     // prepare the OAuth "authorization" URL
