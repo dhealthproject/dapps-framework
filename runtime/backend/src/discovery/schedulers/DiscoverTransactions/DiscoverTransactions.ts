@@ -27,11 +27,11 @@ import {
 import { ObjectLiteral } from "@dhealth/contracts";
 
 // internal dependencies
-import { AssetParameters } from "../../../common/models/AssetsConfig";
 import { StateDocument, StateQuery } from "../../../common/models/StateSchema";
 import { StateService } from "../../../common/services/StateService";
 import { NetworkService } from "../../../common/services/NetworkService";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
+import { AssetsService } from "../../../discovery/services/AssetsService";
 import { TransactionsService } from "../../../discovery/services/TransactionsService";
 import { getTransactionType } from "../../../discovery/models/TransactionTypes";
 import {
@@ -41,7 +41,6 @@ import {
   TransactionQuery,
 } from "../../../common/models/TransactionSchema";
 import { TransactionDiscoveryStateData } from "../../models/TransactionDiscoveryStateData";
-import { AssetDTO } from "../../models/AssetDTO";
 
 /**
  * @interface DiscoverTransactionsCommandOptions
@@ -861,7 +860,7 @@ export class DiscoverTransactions extends DiscoveryCommand {
       .map(
         (m) =>
           ({
-            mosaicId: m.id.toHex(),
+            mosaicId: AssetsService.formatMosaicId(m.id.toHex()),
             amount: m.amount.compact(),
           } as ObjectLiteral),
       );

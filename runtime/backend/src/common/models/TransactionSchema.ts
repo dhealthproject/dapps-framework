@@ -164,19 +164,20 @@ export class Transaction extends Transferable<TransactionDTO> {
   public readonly transactionMessage?: string;
 
   /**
-   * This is the contract payload as presented inside a dHealth
-   * Transfer Transaction. Typically, the contract payload is made
-   * of the `contract` and `version` fields, adding to it the body
-   * of the contract instance, i.e. the `Auth` contract would here
-   * also include a `challenge` field.
+   * This is the transaction mosaics as defined by dHealth Network. It
+   * contains an array of `ObjectLiteral` objects that consist of both
+   * a *mosaicId* and *amount* field.
+   * <br /><br />
+   * CAUTION: This indexed field *must* be analyzed as it *could* grow
+   * heavily due to the potential of 1024 bytes in transfer messages.
    *
    * @example `{ contract: "elevate:auth", version: 1, challenge: "abcdef12" }`
    * @access public
    * @readonly
    * @var {string}
    */
-  @Prop({ required: true, type: [Object] })
-  public readonly transactionAssets: ObjectLiteral[];
+  @Prop({ type: [Object], nullable: true })
+  public readonly transactionAssets?: ObjectLiteral[];
 
   /**
    * This is the transaction signature as defined by dHealth Network. It

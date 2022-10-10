@@ -122,7 +122,7 @@ export class Account extends Transferable<AccountDTO> {
    * @readonly
    * @var {string}
    */
-  @Prop({ index: true, type: String, nullable: true })
+  @Prop({ required: false, nullable: true })
   public readonly accessToken?: string;
 
   /**

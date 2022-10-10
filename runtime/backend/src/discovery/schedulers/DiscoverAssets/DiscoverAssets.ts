@@ -307,7 +307,7 @@ export class DiscoverAssets extends DiscoveryCommand {
               t.transactionAssets.map(
                 (a) =>
                   ({
-                    assetId: a.mosaicId,
+                    assetId: AssetsService.formatMosaicId(a.mosaicId),
                     amount: a.amount,
                     transactionHash: t.transactionHash,
                     userAddress:
