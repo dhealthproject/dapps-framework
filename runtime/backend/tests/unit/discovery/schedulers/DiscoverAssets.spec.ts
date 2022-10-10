@@ -358,5 +358,25 @@ describe("discovery/DiscoverAssets", () => {
       expect((service as any).model.createStub).toHaveBeenCalledTimes(1);
       expect((service as any).model.createStub).toHaveBeenCalledWith(expectedData);
     });
+
+    it("should check for the existence of discovered assets in mongo", async () => {
+      // prepare
+      (service as any).discoveredAssets = [
+        { transactionHash: "fake-hash", assetId: "fake-asset-id", amount: 1 }
+      ];
+      const expectedQuery = new AssetQuery({
+        transactionHash: "fake-hash",
+        mosaicId: "fake-asset-id",
+      } as AssetDocument);
+
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      });
+
+      // assert
+      expect((service as any).assetsService.exists).toHaveBeenCalledWith(expectedQuery);
+    });
   });
 });
