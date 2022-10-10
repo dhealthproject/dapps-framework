@@ -35,7 +35,7 @@ import { LeaderboardAggregationStateData } from "../../models/LeaderboardAggrega
  * @class LeaderboardAggregation
  * @description The abstract implementation for the score aggregation
  * scheduler. Contains source code for the execution logic of a
- * command with name: `Statistics:LeaderboardAggregation`.
+ * command with name: `statistics:LeaderboardAggregation/(D|M|W)`.
  *
  * @since v0.3.2
  */
@@ -115,7 +115,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    * @returns {string}
    */
   protected get command(): string {
-    return `LeaderboardAggregation`;
+    return `LeaderboardAggregation/${this.periodFormat}`;
   }
 
   /**
@@ -165,11 +165,24 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    * @returns {void}
    */
   protected addCronJob(cronExpression: string): void {
-    const job = new CronJob(cronExpression, this.runAsScheduler.bind(this));
+    // initialize a dynamic cronjob
+    const job = new CronJob(
+      cronExpression, // cronTime
+      this.runAsScheduler.bind(this), // onTick
+      undefined, // empty onComplete
+      false, // "startNow" (done with L183)
+      undefined, // timeZone
+      undefined, // empty resolves to default context
+      true, // "runOnInit"
+    );
+
+    // also register in nestjs schedulers
     this.schedulerRegistry.addCronJob(
-      `statistics:cronjobs:leaderboard-aggregation:${this.periodFormat}`,
+      `statistics:cronjobs:leaderboards:${this.periodFormat}`,
       job,
     );
+
+    // also, always *schedule* when initialized
     job.start();
   }
 
@@ -190,9 +203,9 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    * @returns {Promise<void>}
    */
   public async runAsScheduler(): Promise<void> {
-    // prepares execution logger
+    // setup debug logger
     this.logger = new Logger(
-      `${this.scope}/${this.command}/${this.periodFormat}`,
+      `${this.scope}/${this.command}`, // includes /(D|M|W)
     );
 
     // display starting moment information in debug mode
@@ -236,7 +249,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
 
     // display starting moment information in debug mode
     if (options.debug && !options.quiet) {
-      this.debugLog("Starting leaderboard aggregation");
+      this.debugLog(`Starting leaderboard aggregation type: ${this.periodFormat}`);
     }
 
     // get the latest blocks page number
@@ -275,6 +288,15 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
       queryModel,
     );
 
+    // debug information about upcoming database operations
+    if (options.debug && !options.quiet && results.entries.length > 0) {
+      this.debugLog(`Found ${results.entries.length} leaderboard subjects`);
+    }
+    // also display debug message when no operations are executed
+    else if (options.debug && !options.quiet && !results.entries.length) {
+      this.debugLog(`No leaderboard subjects found`);
+    }
+
     // for each asset in result
     const period = this.generatePeriod(dateNow);
     let position = 1;
@@ -284,7 +306,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
         type: this.TYPE,
         periodFormat: this.periodFormat,
         period,
-        address: result._id,
+        address: result._id, // L380
         position,
         amount: result.amount,
       };
