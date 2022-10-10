@@ -7,4 +7,5 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// modules index
 export * from "./LeaderboardsModule";

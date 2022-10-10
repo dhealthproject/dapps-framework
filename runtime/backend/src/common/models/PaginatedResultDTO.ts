@@ -50,7 +50,11 @@ export class PaginatedResultDTO<TData> {
   public pagination: Pageable & Countable;
 
   /**
+   * Constructs an instance of this DTO.
    *
+   * @constructor
+   * @param {TData[]} data
+   * @param {Pageable & Countable} pagination
    */
   public constructor(
     data: TData[] = [],
@@ -82,7 +86,11 @@ export class PaginatedResultDTO<TData> {
   }
 
   /**
+   * Method to validate whether an instance of this DTO is the last
+   * page of the (paginated) result.
    *
+   * @access public
+   * @var {boolean}
    */
   public isLastPage(): boolean {
     return (

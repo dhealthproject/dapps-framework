@@ -55,7 +55,12 @@ export class StatusDTO extends BaseDTO {
   public status: boolean;
 
   /**
+   * Creates an object instance of this DTO.
    *
+   * @access public
+   * @static
+   * @param   {number}      code   The HTTP status code sent with the response object.
+   * @returns {StatusDTO}          The created instance of this class, with provided `code`.
    */
   public static create(code: number): StatusDTO {
     const result = new StatusDTO();

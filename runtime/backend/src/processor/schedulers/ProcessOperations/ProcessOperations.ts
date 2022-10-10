@@ -12,7 +12,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
-import { Contract, Factory } from "@dhealth/contracts";
+import { Contract } from "@dhealth/contracts";
 
 // internal dependencies
 import { QueryParameters } from "../../../common/concerns/Queryable";

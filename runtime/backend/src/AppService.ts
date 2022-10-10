@@ -10,7 +10,7 @@
 // external dependencies
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { /*NetworkType,*/ PublicAccount } from "@dhealth/sdk";
+import { PublicAccount } from "@dhealth/sdk";
 
 /**
  * @class AppService

@@ -7,6 +7,7 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// internal dependencies
 import type { StateData } from "../../common/models/StateData";
 
 /**

@@ -1,11 +1,22 @@
-import { LeaderboardsService } from '../../../../src/statistics/services/LeaderboardsService';
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Backend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+// external dependencies
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
+
+// internal dependencies
+import { LeaderboardsService } from '../../../../src/statistics/services/LeaderboardsService';
 import { MockModel } from '../../../mocks/global';
 import { StatisticsDocument, StatisticsModel, StatisticsQuery } from '../../../../src/statistics/models/StatisticsSchema';
 import { QueryService } from '../../../../src/common/services/QueryService';
 import { PaginatedResultDTO } from '../../../../src/common/models/PaginatedResultDTO';
-import { QueryParameters } from '@/classes';
 
 describe('statistics/LeaderboardService', () => {
   let service: LeaderboardsService;

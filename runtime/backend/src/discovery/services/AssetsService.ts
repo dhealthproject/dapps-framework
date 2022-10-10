@@ -9,7 +9,6 @@
  */
 // external dependencies
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 
 // internal dependencies
@@ -46,7 +45,6 @@ export class AssetsService {
    */
   constructor(
     @InjectModel(Asset.name) private readonly model: AssetModel,
-    private readonly configService: ConfigService,
     private readonly queriesService: QueryService<AssetDocument, AssetModel>,
   ) {}
 

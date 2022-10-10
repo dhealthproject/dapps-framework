@@ -14,26 +14,48 @@ import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import { HttpRequestHandler } from "./HttpRequestHandler";
 
 /**
+ * @class BasicOAuthDriver
+ * @description The dApp basic OAuth driver. This class is used
+ * to determine communication, transport and process that are
+ * used to connect and integrate to custom providers.
  *
+ * @since v0.3.0
  */
 export class BasicOAuthDriver implements OAuthDriver {
   /**
+   * The driver's **dataFieldName**. This field indicates the name
+   * of the data field in this driver. Its value should always be 'state'.
    *
+   * @access protected
+   * @var {string}
    */
   protected dataFieldName = "state";
 
   /**
+   * The driver's **codeFieldName**. This field indicates the name
+   * of the code field in this driver. Its value should always be 'code'.
    *
+   * @access protected
+   * @var {string}
    */
   protected codeFieldName = "code";
 
   /**
+   * The driver's HTTP service. It's a handler for HTTP requests and contains
+   * methods for executing *remote* API calls, e.g. calling a `GET` HTTP API
+   * endpoint.
    *
+   * @access protected
+   * @var {HttpRequestHandler}
    */
   protected httpService: HttpRequestHandler;
 
   /**
+   * Constructs an instance of this driver.
    *
+   * @constructor
+   * @param {string} name
+   * @param {OAuthProviderParameters} provider
    */
   public constructor(
     protected readonly name: string,
@@ -43,28 +65,40 @@ export class BasicOAuthDriver implements OAuthDriver {
   }
 
   /**
+   * Getter of this driver's provider name.
    *
+   * @access public
+   * @var {string}
    */
   public get providerName(): string {
     return this.name;
   }
 
   /**
+   * Getter of this driver's data field name.
    *
+   * @access public
+   * @var {string}
    */
   public get dataField(): string {
     return this.dataFieldName;
   }
 
   /**
+   * Getter of this driver's code field name.
    *
+   * @access public
+   * @var {string}
    */
   public get codeField(): string {
     return this.codeFieldName;
   }
 
   /**
+   * Method to return the authorize url of this driver's provider.
    *
+   * @access public
+   * @var {string}
    */
   public getAuthorizeURL(extra: string): string {
     // prepare the OAuth "authorization" URL
@@ -78,7 +112,16 @@ export class BasicOAuthDriver implements OAuthDriver {
   }
 
   /**
+   * Method to return the authorize query to this driver's provider.
+   * This is the query parameters that will be included after the
+   * authorized url.
+   * <br /><br />
+   * Note that it contain 3 fields `client_id`, `redirect_uri` and
+   * `state` (this driver's `dataField`).
    *
+   * @access protected
+   * @param   {string}  data  The `data` value to include in this query.
+   * @returns {string}        The full query parameters.
    */
   protected buildAuthorizeQuery(data: string): string {
     return (
@@ -89,7 +132,17 @@ export class BasicOAuthDriver implements OAuthDriver {
   }
 
   /**
+   * Method to return the remote access token.
+   * The result is an access/refresh token pair or an access token.
+   * <br /><br />
+   * These access tokens are always signed with the dApp's auth secret and expire
+   * after 1 hour (one hour).
    *
+   * @access public
+   * @async
+   * @param   {string}      code        The required `code` field value.
+   * @param   {string}      data        The required `data` field value.
+   * @returns {Promise<AccessTokenDTO>} A promise containing the result {@link AccessTokenDTO}.
    */
   public async getAccessToken(
     code: string,

@@ -21,7 +21,10 @@
  */
 export class BaseDTO {
   /**
+   * Constructs an instance of this DTO.
    *
+   * @constructor
+   * @param {any | Record<string, unknown>} data
    */
   public constructor(data: any | Record<string, unknown> = {}) {}
 }

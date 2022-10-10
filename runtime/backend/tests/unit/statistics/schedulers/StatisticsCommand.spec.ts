@@ -7,8 +7,6 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// external dependencies
-
 // internal dependencies
 import { StateService } from "../../../../src/common/services/StateService";
 import { StatisticsCommand, StatisticsCommandOptions } from "../../../../src/statistics/schedulers/StatisticsCommand";

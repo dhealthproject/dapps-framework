@@ -7,9 +7,51 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// @todo should use pascalCase for configuration fields
+/**
+ * @label CONFIG
+ * @module OAuthConfig
+ * @description The dApp OAuth configuration. This configuration
+ * object is used to determine communication, transport and process
+ * that are used to connect and integrate to custom providers.
+ *
+ * @todo should use pascalCase for configuration fields
+ * @since v0.3.2
+ */
 export default () => ({
+  /**
+   * An OAuth Providers configuration object. This configuration
+   * field consists of a key as listed in {@link ProviderType} and a
+   * parameters object as defined by {@link ProviderParameters}.
+   *
+   * @example Example providers configuration object
+   * ```json
+   * {
+   *   providers: {
+   *     strava: { ... }
+   *   }
+   * }
+   * ```
+   * @var {OAuthProvidersMap}
+   */
   providers: {
+    /**
+     * The `Strava` provider configuration object. This object consists
+     * of the configuration fields that are required for this dApp to
+     * connect and integrate to the `Strava` provider.
+     *
+     * @example Using the `OAuthProviderParameters` type to configure OAuth providers
+     * ```json
+     * {
+     *   client_id: "123456",
+     *   client_secret: "YourSecretFromProvider",
+     *   oauth_url: "http://example.com/oauth/authorize",
+     *   token_url: "http://example.com/oauth/token",
+     *   callback_url: "http://localhost:8080/oauth/callback",
+     *   scope: "activity:read_all"
+     * }
+     * ```
+     * @var {OAuthProviderParameters}
+     */
     strava: {
       client_id: process.env.STRAVA_CLIENT_ID,
       client_secret: process.env.STRAVA_CLIENT_SECRET,

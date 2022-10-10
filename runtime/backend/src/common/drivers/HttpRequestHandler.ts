@@ -11,7 +11,11 @@
 import axios, { AxiosResponse } from "axios";
 
 /**
+ * @type HttpMethod
+ * @description The HTTP method name, e.g. `"GET"`. This type is used
+ * to execute to HTTP requests using the `axios` dependency.
  *
+ * @since v0.3.0
  */
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH";
 

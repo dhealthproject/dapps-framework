@@ -11,7 +11,16 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
+ * @class StravaWebHookSubscriptionFields
+ * @description This class consists of the required fields in order to
+ * establish a connection and *webhook subscription process* with
+ * third-party data providers.
+ * <br /><br />
+ * This class is used in {@link StravaWebHookSubscriptionRequest.hub} and
+ * {@link StravaWebHookSubscriptionResponse.hub} to validate webhook
+ * subscription.
  *
+ * @since v0.3.2
  */
 export class StravaWebHookSubscriptionFields {
   /**

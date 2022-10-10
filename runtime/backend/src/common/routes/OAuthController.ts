@@ -148,7 +148,10 @@ export class OAuthController {
   }
 
   /**
+   * Request a remote access token and refresh token from an
+   * authorized OAuth provider and return a status response.
    *
+   * @method GET
    * @param req
    * @param provider
    * @param query

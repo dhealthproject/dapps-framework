@@ -139,8 +139,8 @@ export class OperationsService {
    * `operations` collection.
    *
    * @async
-   * @param   {OperationModel[]} documents
-   * @returns {Promise<number>}
+   * @param   {OperationModel[]} documents The documents to be *created* or *update*.
+   * @returns {Promise<number>} The number of documents *created* or *updated*.
    */
   async updateBatch(documents: OperationModel[]): Promise<number> {
     return await this.queriesService.updateBatch(this.model, documents);

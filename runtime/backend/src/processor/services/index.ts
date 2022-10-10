@@ -7,6 +7,7 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// services index
 export * from "./ActivitiesService";
 export * from "./OperationsService";
 export * from "./WebHooksService";

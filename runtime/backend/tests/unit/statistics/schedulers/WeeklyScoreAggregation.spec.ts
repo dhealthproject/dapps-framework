@@ -49,7 +49,7 @@ import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
 import { MockModel } from "../../../mocks/global";
-import { StatisticsDocument, StatisticsModel } from "@/statistics/models/StatisticsSchema";
+import { StatisticsDocument, StatisticsModel } from "../../../../src/statistics/models/StatisticsSchema";
 
 describe("statistics/MonthlyScoreAggregation", () => {
   let service: WeeklyScoreAggregation;

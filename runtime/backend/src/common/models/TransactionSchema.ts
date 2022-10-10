@@ -294,7 +294,10 @@ export class Transaction extends Transferable<TransactionDTO> {
   }
 
   /**
+   * Converts this class' instance to a {@link SdkTransaction} instance.
    *
+   * @access public
+   * @returns {SdkTransaction}  The `SdkTransaction` object with payload set.
    */
   public toSDK(): SdkTransaction {
     //XXX this assumes "encodedBody" contains the *full* payload.

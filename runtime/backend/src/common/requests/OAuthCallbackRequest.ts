@@ -23,7 +23,13 @@ import { ApiProperty } from "@nestjs/swagger";
  */
 export class OAuthCallbackRequest {
   /**
-   *
+   * The remote user identifier as attached by Strava in their
+   * callback request. i.e. with the Strava OAuth Provider, this
+   * field represents the *athlete identifier*.
+   * <br /><br />
+   * Note that this field is required and that it is forwarded to
+   * a *subsequent request to the provider* which requests a pair
+   * of accessToken/refreshToken for the user.
    *
    * @access public
    * @var {string}
@@ -75,13 +81,21 @@ export class OAuthCallbackRequest {
   public code?: string;
 
   /**
+   * The state that Strava or other providers *may* attach to
+   * their callback request. This should be forwarded from the
+   * frontend to the backend as to *verify* the authenticity
+   * of the callback request.
+   * <br /><br />
+   * Note that this field is optional, and when it is provided,
+   * it will be forwarded to a *subsequent request to the provider*
+   * which requests a pair of accessToken/refreshToken for the user.
    *
    * @access public
    * @var {string}
    */
   @ApiProperty({
     example: "abc12def",
-    description: "",
+    description: "The authorization state as attached by Strava in their callback request. This should be forwarded from the frontend to the backend as to *verify* the authenticity of the callback request.",
   })
   public state?: string;
 }

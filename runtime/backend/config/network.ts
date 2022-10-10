@@ -108,11 +108,63 @@ export default () => ({
      * @var {string}
      */
     namespaceName: "dhealth.dhp",
+
+    /**
+     * The mosaic Id that is used to identify dHealth Network's
+     * **currency asset**. The *currency asset* is used to pay fees
+     * when sending transactions.
+     *
+     * @example `"39E0C49FA322A459"`
+     * @var {string}
+     */
     mosaicId: "39E0C49FA322A459",
+
+    /**
+     * The namespace Id that is used to identify dHealth Network's
+     * **currency asset**. The *currency asset* is used to pay fees
+     * when sending transactions.
+     *
+     * @example `"9D8930CDBB417337"`
+     * @var {string}
+     */
     namespaceId: "9D8930CDBB417337",
+
+    /**
+     * The divisibility of dHealth Network's **currency asset**.
+     * The *currency asset* is used to pay fees when sending
+     * transactions.
+     *
+     * @example `6`
+     * @var {number}
+     */
     divisibility: 6,
+
+    /**
+     * The network identifier number of dHealth. This network type
+     * can be MAIN_NET (104) or TEST_NET (152), a network identifier
+     * that is used as a security against transaction replays.
+     *
+     * @example `104`
+     * @var {number}
+     */
     networkIdentifier: 104,
+
+    /**
+     * The dHealth Network's starting epoch (UTC timestamp).
+     * This is used to convert network timestamp to UTC timestamp and vice versa.
+     *
+     * @example `123456`
+     * @var {number}
+     */
     epochAdjustment: 1616978397,
+
+    /**
+     * The dHealth Network's generation hash. This is used to validate whether the
+     * current connected network is the correct network.
+     *
+     * @example "1234567890ABC"
+     * @var {string}
+     */
     generationHash: "ED5761EA890A096C50D3F50B7C2F0CCB4B84AFC9EA870F381E84DDE36D04EF16"
   }
 });

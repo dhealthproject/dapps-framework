@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { PublicAccount, Address, NetworkType } from "@dhealth/sdk";
+import { Address } from "@dhealth/sdk";
 
 // internal dependencies
 import { Scope } from "../../common/models/Scope";

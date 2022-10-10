@@ -136,7 +136,12 @@ export class AuthService {
   protected challengeSize: number;
 
   /**
+   * Contains the *authentication secret* as set in `config.security.ts`.
+   * It defines a symmetric secret key and is used for signing access
+   * tokens.
    *
+   * @access private
+   * @var {string}
    */
   private authSecret: string;
 
@@ -242,10 +247,12 @@ export class AuthService {
   }
 
   /**
+   * This method **extract** an access token from the {@link AuthService}
+   * class and use it to query the owner account from the database.
    *
-   * @param request
-   * @param cookieName
-   * @returns
+   * @param   {Request}     request      An `express` Request object.
+   * @param   {string}      cookieName   The name of the cookie to perform access token extraction from.
+   * @returns {Promise<AccountDocument>} The account that has the provided `cookie`.
    */
   public async getAccount(
     request: Request,

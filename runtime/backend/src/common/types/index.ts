@@ -7,6 +7,7 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// types index
 export * from "./MongoPipelineStages";
 export * from "./MongoQueryConditions";
 export * from "./MongoQueryConditionValue";

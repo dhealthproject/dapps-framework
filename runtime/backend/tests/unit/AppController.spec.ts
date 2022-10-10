@@ -25,7 +25,6 @@ import { OAuthService } from "../../src/common/services/OAuthService";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
-import { ProfileDTO } from "../../src/common/models/ProfileDTO";
 
 // Mocks the AppController to permit testing of
 // protected methods such as getHello

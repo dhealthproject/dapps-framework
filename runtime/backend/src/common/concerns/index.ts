@@ -7,6 +7,7 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// concerns index
 export * from "./Countable";
 export * from "./Documentable";
 export * from "./Pageable";

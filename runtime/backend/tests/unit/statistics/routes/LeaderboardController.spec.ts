@@ -1,19 +1,31 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Backend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+// external dependencies
+import { Test, TestingModule } from '@nestjs/testing';
+import { getModelToken } from '@nestjs/mongoose';
+import { ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { Account } from '@dhealth/sdk';
+
+// internal dependencies
 import { AuthService } from '../../../../src/common/services/AuthService';
 import { LeaderboardsService } from '../../../../src/statistics/services/LeaderboardsService';
-import { Test, TestingModule } from '@nestjs/testing';
 import { LeaderboardsController } from '../../../../src/statistics/routes/LeaderboardsController';
-import { getModelToken } from '@nestjs/mongoose';
 import { MockModel } from '../../../mocks/global';
 import { QueryService } from '../../../../src/common/services/QueryService';
 import { Statistics, StatisticsDocument, StatisticsModel, StatisticsQuery } from '../../../../src/statistics/models/StatisticsSchema';
-import { ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
 import { AccountsService } from '../../../../src/common/services/AccountsService';
 import { NetworkService } from '../../../../src/common/services/NetworkService';
 import { ChallengesService } from '../../../../src/common/services/ChallengesService';
 import { PaginatedResultDTO } from '../../../../src/common/models/PaginatedResultDTO';
 import { StatisticsDTO } from '../../../../src/statistics/models/StatisticsDTO';
-import { Account } from '@dhealth/sdk';
 import { AccountDocument } from '../../../../src/common/models/AccountSchema';
 
 describe('statistics/LeaderboardController', () => {

@@ -7,7 +7,6 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-
 // internal dependencies
 import { HttpException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
@@ -60,10 +59,14 @@ export class OAuthService {
   ) {}
 
   /**
+   * This method determines and creates an OAuth driver
+   * from the inputs' provider name and config and returns
+   * a {@link OAuthDriver} object.
    *
-   * @param providerName
-   * @param providerConfig
-   * @returns
+   * @access private
+   * @param   {string}  providerName  Contains the identifier of the OAuth Provider, e.g. "strava".
+   * @param   {OAuthProviderParameters}  providerConfig The OAuth provider parameters, i.e. URLs and configuration.
+   * @returns {OAuthDriver} The created driver instance.
    */
   private driverFactory(
     providerName: string,
@@ -103,7 +106,13 @@ export class OAuthService {
   }
 
   /**
+   * Generate an encryption password (seed) to protect the access
+   * token using a combination of the authentication secret, the
+   * user address and Strava-owned authentication details.
    *
+   * @access private
+   * @param   {AccountIntegrationDocument}  integration   The *document* of OAuth *integration*.
+   * @returns {string}  The generated encryption seed.
    */
   private getEncryptionSeed(integration: AccountIntegrationDocument): string {
     // protect the access token using a combination of
@@ -123,11 +132,14 @@ export class OAuthService {
   }
 
   /**
+   * Method to returns the remote *authorization URL* to link
+   * accounts e.g. "Strava OAuth URL".
    *
-   * @param provider
-   * @param dhealthAddress
-   * @param referralCode
-   * @returns
+   * @access public
+   * @param   {string}  providerName    Contains the identifier of the OAuth Provider, e.g. "strava".
+   * @param   {string}  dhealthAddress  The Address of the user account on dHealth Network.
+   * @param   {string}  referralCode    The provided referral code.
+   * @returns {string}  The remote *authorization URL* to link accounts.
    */
   public getAuthorizeURL(
     providerName: string,
@@ -153,7 +165,19 @@ export class OAuthService {
   }
 
   /**
+   * This method sends an OAuth callback request to the provider and
+   * stores the integration result's details in database.
+   * <br /><br />
+   * Note that this process includes requesting an access/refresh token
+   * from the provider and creating an *encryption password* that will be
+   * used to sign the access/refresh tokens pair.
    *
+   * @access public
+   * @async
+   * @param   {string}  providerName  Contains the identifier of the OAuth Provider, e.g. "strava".
+   * @param   {AccountDocument}  account  The account document to be integrated with access/refresh tokens.
+   * @param   {OAuthCallbackRequest}  request The OAuth callback request.
+   * @returns {Promise<AccountIntegrationDocument>} The result account integration document that has been saved.
    */
   public async oauthCallback(
     providerName: string,
@@ -198,7 +222,14 @@ export class OAuthService {
   }
 
   /**
+   * Method to update the {@link AccountIntegrationDocument} in database.
    *
+   * @access public
+   * @async
+   * @param   {string}    providerName    Contains the identifier of the OAuth Provider, e.g. "strava".
+   * @param   {AccountDocument}    account    The account document to be integrated with access/refresh tokens.
+   * @param   {Record<string, any>}    data   The update data content to be applied.
+   * @returns {Promise<AccountIntegrationDocument>}   The updated account integration document.
    */
   public async updateIntegration(
     providerName: string,
@@ -229,9 +260,13 @@ export class OAuthService {
   }
 
   /**
+   * Method to find {@link AccountIntegrationDocument} from the
+   * database by querying with fields of an {@link AccountDocument}.
    *
-   * @param account
-   * @returns
+   * @access public
+   * @async
+   * @param   {AccountDocument}  account  The account document to query the corresponding integration document from the database.
+   * @returns {Promise<PaginatedResultDTO<AccountIntegrationDocument>>} The paginated result of the account integration documents.
    */
   public async getIntegrations(
     account: AccountDocument,
@@ -245,10 +280,14 @@ export class OAuthService {
   }
 
   /**
+   * Method to find one {@link AccountIntegrationDocument} from the
+   * database by querying with *provider name* and *remote identifier*.
    *
-   * @param account
-   * @param provider
-   * @returns
+   * @access public
+   * @async
+   * @param   {string}  provider  Contains the identifier of the OAuth Provider, e.g. "strava".
+   * @param   {string}  remoteIdentifier  The remote identifier to query account integration document from.
+   * @returns {Promise<AccountIntegrationDocument>} The result account integration document.
    */
   public async getIntegration(
     provider: string,
