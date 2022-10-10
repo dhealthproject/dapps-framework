@@ -11,6 +11,7 @@
 import { Module } from "@nestjs/common";
 
 // internal dependencies
+import { AccountsModule } from "../common/modules/AccountsModule";
 import { LeaderboardsModule } from "./modules/LeaderboardsModule";
 
 /**
@@ -19,6 +20,6 @@ import { LeaderboardsModule } from "./modules/LeaderboardsModule";
  * @description The statistics scope's main module.
  */
 @Module({
-  imports: [LeaderboardsModule],
+  imports: [AccountsModule, LeaderboardsModule],
 })
 export class StatisticsModule {}

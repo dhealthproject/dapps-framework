@@ -9,9 +9,13 @@
  */
 // external dependencies
 import { Module } from "@nestjs/common";
+import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
+import { Account, AccountSchema } from "../../common/models/AccountSchema";
+import { QueryModule } from "../../common/modules/QueryModule";
 import { AccountsModule as CommonAccountsModule } from "../../common/modules/AccountsModule";
+import { AccountsService } from "../../common/services/AccountsService";
 import { AccountsController } from "../routes/AccountsController";
 
 /**
@@ -26,6 +30,13 @@ import { AccountsController } from "../routes/AccountsController";
  * @since v0.3.0
  */
 @Module({
+  providers: [AccountsService],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Account.name, schema: AccountSchema },
+    ]),
+    QueryModule,
+  ],
   controllers: [AccountsController],
 })
 export class AccountsModule extends CommonAccountsModule {}

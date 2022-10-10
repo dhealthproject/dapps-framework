@@ -7,6 +7,7 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependency mock
 const configForRootCall: any = jest.fn(() => ConfigModuleMock);
 const ConfigModuleMock: any = { forRoot: configForRootCall };
 jest.mock("@nestjs/config", () => {
@@ -30,9 +31,21 @@ jest.mock("@nestjs/schedule", () => {
 });
 
 // internal dependency mocks
-const AccountsModuleMock: any = jest.fn();
+// common scope
+const CommonAccountsModuleMock: any = jest.fn();
+jest.mock("../../../src/common/modules/AccountsModule", () => {
+  return { AccountsModule: CommonAccountsModuleMock };
+});
+
+// discovery scope
+const DiscoveryModuleMock: any = jest.fn();
+jest.mock("../../../src/discovery/DiscoveryModule", () => {
+  return { DiscoveryModule: DiscoveryModuleMock };
+});
+
+const AccountsDiscoveryModuleMock: any = jest.fn();
 jest.mock("../../../src/discovery/modules/AccountsModule", () => {
-  return { AccountsModule: AccountsModuleMock };
+  return { AccountsModule: AccountsDiscoveryModuleMock };
 });
 
 const AssetsModuleMock: any = jest.fn();
@@ -45,19 +58,15 @@ jest.mock("../../../src/discovery/modules/TransactionsModule", () => {
   return { TransactionsModule: TransactionsModuleMock };
 });
 
-const DiscoveryModuleMock: any = jest.fn();
-jest.mock("../../../src/discovery/DiscoveryModule", () => {
-  return { DiscoveryModule: DiscoveryModuleMock };
+const BlocksModuleMock: any = jest.fn();
+jest.mock("../../../src/discovery/modules/BlocksModule", () => {
+  return { BlocksModule: BlocksModuleMock };
 });
 
-const StateModuleMock: any = jest.fn();
-jest.mock("../../../src/common/modules/StateModule", () => {
-  return { StateModule: StateModuleMock };
-});
-
-const NetworkModuleMock: any = jest.fn();
-jest.mock("../../../src/common/modules/NetworkModule", () => {
-  return { NetworkModule: NetworkModuleMock };
+// processor scope
+const ProcessorModuleMock: any = jest.fn();
+jest.mock("../../../src/processor/ProcessorModule", () => {
+  return { ProcessorModule: ProcessorModuleMock };
 });
 
 const OperationsModuleMock: any = jest.fn();
@@ -65,6 +74,24 @@ jest.mock("../../../src/processor/modules/OperationsModule", () => {
   return { OperationsModule: OperationsModuleMock };
 });
 
+// payout scope
+const PayoutModuleMock: any = jest.fn();
+jest.mock("../../../src/payout/PayoutModule", () => {
+  return { PayoutModule: PayoutModuleMock };
+});
+
+// statistics scope
+const StatisticsModuleMock: any = jest.fn();
+jest.mock("../../../src/statistics/StatisticsModule", () => {
+  return { StatisticsModule: StatisticsModuleMock };
+});
+
+const LeaderboardsModuleMock: any = jest.fn();
+jest.mock("../../../src/statistics/modules/LeaderboardsModule", () => {
+  return { LeaderboardsModule: LeaderboardsModuleMock };
+});
+
+// schedulers
 const DiscoverAccountsCommandMock: any = jest.fn();
 jest.mock(
   "../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand",
@@ -89,6 +116,14 @@ jest.mock(
   },
 );
 
+const DiscoverBlocksCommandMock: any = jest.fn();
+jest.mock(
+  "../../../src/discovery/schedulers/DiscoverBlocks/DiscoverBlocksCommand",
+  () => {
+    return { DiscoverBlocksCommand: DiscoverBlocksCommandMock };
+  },
+);
+
 const ProcessOperationsCommandMock: any = jest.fn();
 jest.mock(
   "../../../src/processor/schedulers/ProcessOperations/ProcessOperationsCommand",
@@ -97,15 +132,13 @@ jest.mock(
   },
 );
 
-const PayoutModuleMock: any = jest.fn();
-jest.mock("../../../src/payout/PayoutModule", () => {
-  return { PayoutModule: PayoutModuleMock };
-});
-
-const ProcessorModuleMock: any = jest.fn();
-jest.mock("../../../src/processor/ProcessorModule", () => {
-  return { ProcessorModule: ProcessorModuleMock };
-});
+const LeaderboardsAggregationCommandMock: any = jest.fn();
+jest.mock(
+  "../../../src/statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand",
+  () => {
+    return { LeaderboardsAggregationCommand: LeaderboardsAggregationCommandMock };
+  },
+);
 
 const mockDappConfig: DappConfig = {
   dappName: "test-dappName",
@@ -352,12 +385,14 @@ describe("common/ScopeFactory", () => {
       expect(result3).toEqual([
         ConfigModuleMock,
         MongooseModuleMock,
-        AccountsModuleMock,
+        AccountsDiscoveryModuleMock,
         AssetsModuleMock,
         TransactionsModuleMock,
+        BlocksModuleMock,
         DiscoverAccountsCommandMock,
         DiscoverAssetsCommandMock,
         DiscoverTransactionsCommandMock,
+        DiscoverBlocksCommandMock,
       ]);
     });
 
@@ -391,15 +426,17 @@ describe("common/ScopeFactory", () => {
       const result = MockFactory.create(configDto).getSchedulers();
 
       // assert
-      expect(result).toEqual([
+      expect(result).toStrictEqual([
         ConfigModuleMock,
         MongooseModuleMock,
-        AccountsModuleMock,
+        AccountsDiscoveryModuleMock,
         AssetsModuleMock,
         TransactionsModuleMock,
+        BlocksModuleMock,
         DiscoverAccountsCommandMock,
         DiscoverAssetsCommandMock,
         DiscoverTransactionsCommandMock,
+        DiscoverBlocksCommandMock,
       ]);
     });
 

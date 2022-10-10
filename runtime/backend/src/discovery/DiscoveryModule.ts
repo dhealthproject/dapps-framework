@@ -14,6 +14,7 @@ import { Module } from "@nestjs/common";
 import { AccountsModule } from "./modules/AccountsModule";
 import { AssetsModule } from "./modules/AssetsModule";
 import { TransactionsModule } from "./modules/TransactionsModule";
+import { BlocksModule } from "./modules/BlocksModule";
 
 /**
  * @label DISCOVERY
@@ -28,12 +29,14 @@ import { TransactionsModule } from "./modules/TransactionsModule";
  * | {@link TransactionsModule:DISCOVERY} | `transactions` | `/transactions` | Module with schedulers, collections and routes around **dApp transactions**. |
  * | {@link AccountsModule:DISCOVERY} | `accounts` | `/accounts` | Module with schedulers, collections and routes around **dApp accounts**. |
  * | {@link AssetsModule:DISCOVERY} | `assets` | `/assets` | Module with schedulers, collections and routes around **dApp assets**. |
+ * | {@link BlocksModule:DISCOVERY} | `blocks` | `/blocks` | Module with schedulers, collections and routes around **network blocks**. |
  * <br /><br />
  * Note also that in {@link Schedulers:COMMON}, we map the following **schedulers**
  * to this module:
  * - A {@link DiscoverTransactions:DISCOVERY} *scheduler* that discovers transactions in the background every minute.
  * - A {@link DiscoverAccounts:DISCOVERY} *scheduler* that discovers accounts in the background every two minutes.
  * - A {@link DiscoverAssets:DISCOVERY} *scheduler* that discovers assets in the background every two minutes.
+ * - A {@link DiscoverBlocks:DISCOVERY} *scheduler* that discovers assets in the background every two minutes.
  *
  * @since v0.1.0
  */
@@ -43,6 +46,7 @@ import { TransactionsModule } from "./modules/TransactionsModule";
     AccountsModule,
     TransactionsModule,
     AssetsModule,
+    BlocksModule,
   ],
 })
 export class DiscoveryModule {}
