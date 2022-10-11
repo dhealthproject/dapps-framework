@@ -23,7 +23,10 @@ import { MongoQueryCursor } from "../types/MongoQueryCursor";
 import { MongoQueryPipeline } from "../types/MongoQueryPipeline";
 import { MongoRoutineCount, MongoRoutineIn } from "../types/MongoQueryRoutines";
 import { MongoPipelineFacet } from "../types/MongoPipelineStages";
-import { MongoQueryOperation, MongoQueryOperationSpec } from "../types/MongoQueryOperation";
+import {
+  MongoQueryOperation,
+  MongoQueryOperationSpec,
+} from "../types/MongoQueryOperation";
 import { MongoQueryOperations } from "../types/MongoQueryOperations";
 
 /**
@@ -152,16 +155,18 @@ export class QueryService<
     // add operations to query, e.g. `$ne`, `eq`, `$exists`
     if (ops !== undefined) {
       Object.keys(ops).forEach(
-        (k: string, ix: number) => aggregateQuery[ix] = ops[k],
+        (k: string, ix: number) => (aggregateQuery[ix] = ops[k]),
       );
-    };
+    }
 
     // execute Mongo query
     // @todo this *aggregate* query should be moved to a new method `findWithTotal`.
     // @todo fallback to `mongoose` Model.find method instead for performance.
-    const [{ data, metadata }] = await model.aggregate(
-      [...aggregateQuery] as any, // any for mongoose' `PipelineStage`
-    ).exec();
+    const [{ data, metadata }] = await model
+      .aggregate(
+        [...aggregateQuery] as any, // any for mongoose' `PipelineStage`
+      )
+      .exec();
 
     // build pagination details for PaginatedResultDTO
     const pagination = {

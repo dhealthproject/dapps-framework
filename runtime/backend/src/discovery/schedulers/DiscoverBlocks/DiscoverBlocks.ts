@@ -227,7 +227,8 @@ export class DiscoverBlocks extends DiscoveryCommand {
       this.totalNumberOfBlocks > 0 &&
       this.lastPageNumber * this.usePageSize > this.totalNumberOfBlocks
     ) {
-      this.lastPageNumber = Math.floor(this.totalNumberOfBlocks / this.usePageSize) + 1;
+      this.lastPageNumber =
+        Math.floor(this.totalNumberOfBlocks / this.usePageSize) + 1;
     }
 
     // display debug information about configuration

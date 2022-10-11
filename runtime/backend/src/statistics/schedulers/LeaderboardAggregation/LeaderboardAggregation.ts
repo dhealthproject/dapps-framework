@@ -27,7 +27,10 @@ import {
 } from "../../../discovery/models/AssetSchema";
 import { NetworkService } from "../../../common/services/NetworkService";
 import { StatisticsModel } from "../../models/StatisticsSchema";
-import { LeaderboardConfig, ScoreSchedulerConfig } from "../../../common/models/StatisticsConfig";
+import {
+  LeaderboardConfig,
+  ScoreSchedulerConfig,
+} from "../../../common/models/StatisticsConfig";
 import { ActivityDocument } from "../../../processor/models/ActivitySchema";
 import { LeaderboardAggregationStateData } from "../../models/LeaderboardAggregationStateData";
 
@@ -149,7 +152,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    * @access protected
    * @returns {StateData}
    */
-   protected getStateData(): LeaderboardAggregationStateData {
+  protected getStateData(): LeaderboardAggregationStateData {
     return {
       lastExecutedAt: this.lastExecutedAt,
     } as LeaderboardAggregationStateData;
@@ -214,13 +217,10 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
     );
 
     // executes the actual command logic (this will call aggregate())
-    await this.run(
-      [ this.periodFormat ],
-      {
-        debug: true,
-        quiet: false,
-      }
-    );
+    await this.run([this.periodFormat], {
+      debug: true,
+      quiet: false,
+    });
   }
 
   /**
@@ -249,7 +249,9 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
 
     // display starting moment information in debug mode
     if (options.debug && !options.quiet) {
-      this.debugLog(`Starting leaderboard aggregation type: ${this.periodFormat}`);
+      this.debugLog(
+        `Starting leaderboard aggregation type: ${this.periodFormat}`,
+      );
     }
 
     // get the latest blocks page number

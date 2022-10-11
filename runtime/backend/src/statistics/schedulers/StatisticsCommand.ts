@@ -32,7 +32,7 @@ export interface StatisticsCommandOptions extends BaseCommandOptions {
    * @var {string}
    */
   periodFormat: "D" | "W" | "M";
-};
+}
 
 /**
  * @class StatisticsCommand

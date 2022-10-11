@@ -32,7 +32,7 @@ export type MongoOperationEqual = {
  *
  * @since v0.3.2
  */
- export type MongoOperationNotEqual = {
+export type MongoOperationNotEqual = {
   $ne: MongoQueryOperationValue;
 };
 

@@ -30,7 +30,7 @@ export class BlockDiscoveryStateData implements StateData {
    * @access public
    * @var {number}
    */
-   public lastPageNumber: number;
+  public lastPageNumber: number;
 
   /**
    * Contains the timestamp of the last execution of the
@@ -41,7 +41,7 @@ export class BlockDiscoveryStateData implements StateData {
    */
   public lastExecutedAt: number;
 
-   /**
+  /**
    * Contains the **total number of blocks** that have
    * been discovered using the *block* discovery. This
    * data field can be used to avoid count queries.

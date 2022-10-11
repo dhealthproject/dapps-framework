@@ -12,9 +12,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 // common scope
-import {
-  AccountsModule as CommonAccountsModule,
-} from "../common/modules/AccountsModule";
+import { AccountsModule as CommonAccountsModule } from "../common/modules/AccountsModule";
 
 // discovery scope
 import { AccountsModule } from "../discovery/modules/AccountsModule";

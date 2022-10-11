@@ -32,9 +32,7 @@ import { AccountsController } from "../routes/AccountsController";
 @Module({
   providers: [AccountsService],
   imports: [
-    MongooseModule.forFeature([
-      { name: Account.name, schema: AccountSchema },
-    ]),
+    MongooseModule.forFeature([{ name: Account.name, schema: AccountSchema }]),
     QueryModule,
   ],
   controllers: [AccountsController],
