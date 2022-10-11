@@ -58,9 +58,12 @@ export default class App extends MetaView {
         text: "Dashboard",
         icon: "icons/menu-dashboard.svg",
       },
-      { path: "#1", text: "Activity", icon: "icons/menu-activity.svg" },
-      { path: "#2", text: "Events", icon: "icons/menu-events.svg" },
-      { path: "#3", text: "Settings", icon: "icons/menu-settings.svg" },
+      { path: "#1", text: "Rewards", icon: "icons/menu-rewards.svg" },
+      {
+        path: { name: "app.settings" },
+        text: "Settings",
+        icon: "icons/menu-settings.svg",
+      },
     ];
   }
 

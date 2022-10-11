@@ -19,6 +19,10 @@
     box-shadow: 5px 5px 0px $tab-dark;
     padding: 16px;
     border-radius: 8px;
+
+    .name {
+      font-weight: 700;
+    }
   }
 
   &__position {
@@ -26,6 +30,10 @@
     font-weight: 700;
     font-size: 16px;
     line-height: 150%;
+
+    @media screen and (max-width: 768px) {
+      font-size: 14px;
+    }
   }
 
   &__avatar {
@@ -33,9 +41,18 @@
     margin: 0 12px;
     border: 2px solid transparent;
 
+    @media screen and (max-width: 768px) {
+      margin: 0 8px;
+    }
+
     img {
       width: 50px;
       height: 50px;
+
+      @media screen and (max-width: 768px) {
+        width: 40px;
+        height: 40px;
+      }
     }
   }
 
@@ -47,6 +64,10 @@
       line-height: 150%;
       display: inline-block;
       margin-right: 8px;
+
+      @media screen and (max-width: 768px) {
+        font-size: 14px;
+      }
     }
 
     .activities {
@@ -56,6 +77,18 @@
       li {
         display: inline-block;
         margin-inline-end: 12px;
+
+        @media screen and (max-width: 768px) {
+          margin-inline-end: 4px;
+        }
+
+        img {
+          width: 32px;
+
+          @media screen and (max-width: 768px) {
+            width: 24px;
+          }
+        }
       }
     }
   }
@@ -68,6 +101,10 @@
       font-size: 16px;
       line-height: 150%;
       color: $tab-dark;
+
+      @media screen and (max-width: 768px) {
+        font-size: 14px;
+      }
     }
   }
 }
