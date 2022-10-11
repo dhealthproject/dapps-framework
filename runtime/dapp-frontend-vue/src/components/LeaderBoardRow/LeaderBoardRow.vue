@@ -19,7 +19,7 @@ import formatAddress from '@/plugins/formatAddress';
   >
     <div
       v-if="!isCustom"
-      class="dapp-leaderboard-item dapp-leaderboard-item__default flex flex-row items-center justify-between"
+      class="dapp-leaderboard-item__default flex flex-row items-center justify-between"
     >
       <div class="dapp-leaderboard-item__position">
         <span v-html="'#' + pad(`${data.position}`, 2)" />
