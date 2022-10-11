@@ -224,18 +224,78 @@ describe("common/NetworkService", () => {
       });
       (service as any).nodeRepository = {
         getNodeHealth: getNodeHealthCall,
-      }
+      };
+      const httpServiceCallMock = jest
+        .fn()
+        .mockResolvedValue({
+          data: {
+            data: [{ host: "test-url", port: 7903 }]
+          }
+        });
+      (service as any).httpService = {
+        call: httpServiceCallMock,
+      };
 
       // act
       const result = await (service as any).getNextAvailableNode();
 
       // assert
-      expect(configServiceGetCall).toHaveBeenCalledTimes(1);
+      expect(configServiceGetCall).toHaveBeenCalledTimes(2);
       expect(getNodeUrlCall).toHaveBeenCalledTimes(1);
       expect(connectToNodeCall).toHaveBeenCalledTimes(1);
       expect(toPromiseCall).toHaveBeenCalledTimes(1);
       expect(getNodeHealthCall).toHaveBeenCalledTimes(1);
+      expect(httpServiceCallMock).toHaveBeenCalledTimes(0);
       expect(result).toStrictEqual({ node: 1 });
+    });
+
+    it("should query healthy nodes of network-api if all nodes are unhealthy", async () => {
+      // prepare
+      const configServiceGetCall = jest
+        .fn()
+        .mockReturnValue([{ node: 1 }, { node: 2 }]);
+      (service as any).configService = {
+        get: configServiceGetCall,
+      };
+      const getNodeUrlCall = jest
+        .spyOn((service as any), "getNodeUrl")
+        .mockReturnValue("test-url");
+      const connectToNodeCall = jest
+        .spyOn((service as any), "connectToNode")
+        .mockResolvedValue(true);
+      const toPromiseCall = jest.fn().mockResolvedValue({
+        apiNode: "down",
+        db: "down",
+      });
+      const getNodeHealthCall = jest.fn().mockReturnValue({
+        toPromise: toPromiseCall,
+      });
+      (service as any).nodeRepository = {
+        getNodeHealth: getNodeHealthCall,
+      };
+      const expectedResult = { url: "test-url", port: 7903 };
+      const httpServiceCallMock = jest
+        .fn()
+        .mockResolvedValue({
+          data: {
+            data: [{ host: "test-url", port: 7903 }]
+          }
+        });
+      (service as any).httpService = {
+        call: httpServiceCallMock,
+      };
+
+      // act
+      const result = await (service as any).getNextAvailableNode();
+
+      // assert
+      expect(configServiceGetCall).toHaveBeenCalledTimes(2);
+      expect(getNodeUrlCall).toHaveBeenCalledTimes(2);
+      expect(connectToNodeCall).toHaveBeenCalledTimes(2);
+      expect(toPromiseCall).toHaveBeenCalledTimes(2);
+      expect(getNodeHealthCall).toHaveBeenCalledTimes(2);
+      expect(httpServiceCallMock).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(expectedResult);
     });
 
     it("should fallback to current node if all nodes are unhealthy", async () => {
@@ -264,16 +324,27 @@ describe("common/NetworkService", () => {
       };
       const expectedResult = { node: "expected" };
       (service as any).currentNode = expectedResult;
+      const httpServiceCallMock = jest
+        .fn()
+        .mockResolvedValue({
+          data: {
+            data: []
+          }
+        });
+      (service as any).httpService = {
+        call: httpServiceCallMock,
+      };
 
       // act
       const result = await (service as any).getNextAvailableNode();
 
       // assert
-      expect(configServiceGetCall).toHaveBeenCalledTimes(1);
+      expect(configServiceGetCall).toHaveBeenCalledTimes(2);
       expect(getNodeUrlCall).toHaveBeenCalledTimes(2);
       expect(connectToNodeCall).toHaveBeenCalledTimes(2);
       expect(toPromiseCall).toHaveBeenCalledTimes(2);
       expect(getNodeHealthCall).toHaveBeenCalledTimes(2);
+      expect(httpServiceCallMock).toHaveBeenCalledTimes(1);
       expect(result).toBe(expectedResult);
     });
   });

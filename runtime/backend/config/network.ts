@@ -68,6 +68,20 @@ export default () => ({
   ],
 
   /**
+   * The `network-api` url. This is the url to the currently running
+   * `network-api` instance.
+   * <br /><br />
+   * The dHealth network api is an open api that allows network
+   * monitoring and statistics measurement on dHealth blockchain.
+   * <br /><br />
+   * @see https://docs.dhealth.com/reference/open-source-software#dhealth-network-api
+   *
+   * @example `"http://peers.dhealth.cloud:7903"`
+   * @var {string}
+   */
+  networkApi: "http://peers.dhealth.cloud:7903",
+
+  /**
    * A network configuration object. This consists of parameters that
    * are necessary to connect to *operating nodes* on dHealth Network.
    * This configuration option uses the {@link NetworkParameters:COMMON}

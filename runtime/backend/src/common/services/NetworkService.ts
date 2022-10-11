@@ -29,6 +29,7 @@ import {
   NetworkParameters,
   NodeConnectionPayload,
 } from "../models/NetworkConfig";
+import { HttpRequestHandler } from "../drivers/HttpRequestHandler";
 
 /**
  * @type NetworkConnectionPayload
@@ -160,6 +161,16 @@ export class NetworkService {
   public nodeRepository: NodeRepository;
 
   /**
+   * This class' HTTP service. It's a handler for HTTP requests and contains
+   * methods for executing *remote* API calls, e.g. calling a `GET` HTTP API
+   * endpoint.
+   *
+   * @access protected
+   * @var {HttpRequestHandler}
+   */
+   protected httpService: HttpRequestHandler;
+
+  /**
    * Constructs an instance of the network service and connects
    * to the **configured** `defaultNode` (config/network.json). Note
    * that connection handling is currently *automatic* and executed
@@ -181,6 +192,9 @@ export class NetworkService {
       // information to avoid extra node requests.
       this.connectToNode(defaultNode, this.currentNetwork);
     }
+
+    // initializes this class' http service
+    this.httpService = new HttpRequestHandler();
   }
 
   /**
@@ -335,7 +349,6 @@ export class NetworkService {
    * added to the runtime configuration will be iterated in a
    * sequential and ascending order.
    *
-   * @todo implement network-api interface to query healthy nodes
    * @async
    * @access protected
    * @returns {NodeConnectionPayload}
@@ -344,6 +357,7 @@ export class NetworkService {
     // reads configuration
     const otherNodes =
       this.configService.get<NodeConnectionPayload[]>("apiNodes");
+    const networkApiUrl = this.configService.get<string>("networkApi");
 
     // iterates through all nodes that are listed in the
     // configuration and checks for their healthiness to
@@ -378,7 +392,27 @@ export class NetworkService {
     // none of the configured nodes is currently in a healthy
     // state, we will now use the network-api to query for a
     // healthy and available node instead
-    // @todo implement network-api interface to query health nodes
+    const healthyNodesResponse = await this.httpService
+    .call(
+      `${networkApiUrl}/network/nodes?health.apiNode=up&health.db=up`,
+      "GET"
+    );
+
+    // get data from query response
+    const healthyNodesResponseData =
+      healthyNodesResponse.data.data as Record<string, string>[];
+
+    // convert data to a list of NodeConnectionPayload
+    const healthyNodes: NodeConnectionPayload[] = healthyNodesResponseData
+      .map((response: Record<string, string>) => ({
+        url: response.host,
+        port: response.port,
+      } as NodeConnectionPayload));
+
+    // if there exists a node, return it
+    if (healthyNodes.length > 0) {
+      return healthyNodes[0];
+    }
 
     // fallback to current node
     return this.currentNode;
