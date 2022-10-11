@@ -69,10 +69,10 @@ export class LeaderBoardService extends BackendService {
     period: string
   ): Promise<LeaderBoardItem[]> {
     const response = await this.handler.call(
-      this.getUrl(`leaderboard/${which}/${period}`),
+      this.getUrl(`statistics/leaderboards/${which}?period=${period}`),
       "GET",
       {}, // no-body
-      {} // no-headers
+      { withCredentials: true, credentials: "include" }
     );
 
     // responds with array of leaderboard items

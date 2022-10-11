@@ -19,21 +19,27 @@
       title="Leaderboard"
       @tabChange="onTabChange"
     />
-    <LeaderBoardRow :data="getLeaderBoardItems[3]" :current-player="true" />
-    <LeaderBoardRow
-      v-for="(leader, index) in splicedItems"
-      :key="leader.avatar + index"
-      :data="leader"
-    />
+    <div v-if="getLeaderBoardItems.length">
+      <LeaderBoardRow :data="currentUserItem" :current-player="true" />
+      <LeaderBoardRow
+        v-for="(leader, index) in splicedItems"
+        :key="leader.avatar + index"
+        :data="leader"
+      />
+    </div>
 
-    <!-- Custom LeaderBoardItem item markup usage example -->
-    <!-- <LeaderBoardRow :data="getLeaderBoardItems[2]">
+    <div v-else class="no-items flex items-center justify-center">
+      <p>Failed to load items</p>
+    </div>
+  </div>
+
+  <!-- Custom LeaderBoardItem item markup usage example -->
+  <!-- <LeaderBoardRow :data="getLeaderBoardItems[2]">
       <template v-slot:default="props">
         test v-slot
         {{ props }}
       </template>
     </LeaderBoardRow> -->
-  </div>
 </template>
 
 <script lang="ts" src="./LeaderBoard.ts"></script>

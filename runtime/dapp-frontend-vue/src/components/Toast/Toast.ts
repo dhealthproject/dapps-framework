@@ -51,7 +51,7 @@ export default class Toast extends MetaView {
   readonly config?: any;
 
   mounted() {
-    /* Dismiss timeout after dismissTimeout passes, itially 6s */
+    /* Dismiss timeout after dismissTimeout passes, initially 6s */
     setTimeout(() => {
       this.$root.$emit("toast-close");
     }, this.config.dismissTimeout);

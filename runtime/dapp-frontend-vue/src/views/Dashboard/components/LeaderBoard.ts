@@ -26,7 +26,6 @@ export interface LeaderBoardTab {
   title: string;
   value: string;
 }
-
 @Component({
   components: {
     DirectionTriangle,
@@ -37,6 +36,7 @@ export interface LeaderBoardTab {
     ...mapGetters({
       getLeaderBoardItems: "leaderboard/getLeaderBoardItems",
       i18n: "app/i18n",
+      currentUserAddress: "auth/getCurrentUserAddress",
     }),
   },
 })
@@ -62,6 +62,20 @@ export default class LeaderBoard extends MetaView {
    * @var {Translations}
    */
   public i18n!: Translations;
+
+  /**
+   * This property contains the authenticated user's dHealth Accountsd
+   * Address. This field is populated using the Vuex Store after a
+   * successful request to the backend API's `/me` endpoint.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {string}
+   */
+  public currentUserAddress!: string;
 
   /**
    * Prop which defines list of items in leaderboard table
@@ -104,6 +118,27 @@ export default class LeaderBoard extends MetaView {
   }
 
   /**
+   * This computed property is mock for "current player" leaderboard object
+   *
+   * @access public
+   * @returns {LeaderBoardItem}
+   * @deprecated should be deleted after api will provide user for leaderboard
+   */
+
+  get currentUserItem() {
+    return {
+      type: "leaderboard",
+      period: "weekly",
+      address: this.currentUserAddress,
+      position: 89,
+      assets: 300,
+      avatar: "avatar4.png",
+      trendline: "up",
+      activities: ["running", "cycling"],
+    };
+  }
+
+  /**
    * This computed property defines amount of items that will be shown,
    * by the default shows 10 items, can be changed via itemsToShow prop
    *
@@ -122,17 +157,19 @@ export default class LeaderBoard extends MetaView {
   }
 
   async onTabChange(data: LeaderBoardTab) {
-    await this.$store.dispatch("leaderboard/fetchLedaderBoard", {
+    await this.$store.dispatch("leaderboard/fetchLeaderBoard", {
       which: "running",
       period: data.value,
+      vm: this,
     });
   }
 
   async mounted() {
     if (!this.getLeaderBoardItems?.length) {
-      await this.$store.dispatch("leaderboard/fetchLedaderBoard", {
+      await this.$store.dispatch("leaderboard/fetchLeaderBoard", {
         which: "running",
         period: "weekly",
+        vm: this,
       });
     }
   }

@@ -14,6 +14,19 @@
   // Place Wrapper related styles
   // styles related to leader board item will be in
 
+  .title {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 150%;
+    display: inline-block;
+    margin-right: 19px;
+    color: $black;
+  }
+
+  .no-items {
+    height: 200px;
+  }
+
   .dapp-tabs {
     margin-bottom: 32px;
   }
