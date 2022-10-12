@@ -35,6 +35,7 @@ export type ScoreSchedulerConfig = {
  * @since v0.3.2
  */
 export type LeaderboardConfig = {
+  [key: string]: ScoreSchedulerConfig;
   daily_score: ScoreSchedulerConfig;
   weekly_score: ScoreSchedulerConfig;
   monthly_score: ScoreSchedulerConfig;

@@ -77,7 +77,7 @@ export class Statistics extends Transferable<StatisticsDTO> {
    * @access public
    * @var {string}
    */
-  @Prop({ required: true })
+  @Prop({ required: true, type: String, index: true })
   public readonly period: string;
 
   /**
@@ -91,7 +91,7 @@ export class Statistics extends Transferable<StatisticsDTO> {
    * @readonly
    * @var {string}
    */
-  @Prop({ required: true, index: true })
+  @Prop({ required: true, type: String, index: true })
   public readonly address: string;
 
   /**
@@ -103,7 +103,7 @@ export class Statistics extends Transferable<StatisticsDTO> {
    * @access public
    * @var {number}
    */
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   public readonly position: number;
 
   /**
@@ -114,7 +114,7 @@ export class Statistics extends Transferable<StatisticsDTO> {
    * @access public
    * @var{number}
    */
-  @Prop({ required: true, index: true })
+  @Prop({ required: true })
   public readonly amount: number;
 
   /**
@@ -150,13 +150,9 @@ export class Statistics extends Transferable<StatisticsDTO> {
    */
   public get toQuery(): Record<string, unknown> {
     const query: Record<string, any> = {};
-    if (undefined !== this.type) query["type"] = this.type;
-    if (undefined !== this.periodFormat)
-      query["periodFormat"] = this.periodFormat;
     if (undefined !== this.period) query["period"] = this.period;
     if (undefined !== this.address) query["address"] = this.address;
     if (undefined !== this.position) query["position"] = this.position;
-    if (undefined !== this.amount) query["amount"] = this.amount;
     return query;
   }
 

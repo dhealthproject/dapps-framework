@@ -26,18 +26,12 @@ describe("discovery/AssetSchema", () => {
       const statisticsToQuery = statistics.toQuery;
 
       // assert
-      expect("type" in statisticsToQuery).toBe(true);
-      expect("periodFormat" in statisticsToQuery).toBe(true);
       expect("period" in statisticsToQuery).toBe(true);
       expect("address" in statisticsToQuery).toBe(true);
       expect("position" in statisticsToQuery).toBe(true);
-      expect("amount" in statisticsToQuery).toBe(true);
-      expect(statisticsToQuery.type).toBe(statistics.type);
-      expect(statisticsToQuery.periodFormat).toBe(statistics.periodFormat);
       expect(statisticsToQuery.period).toBe(statistics.period);
       expect(statisticsToQuery.address).toBe(statistics.address);
       expect(statisticsToQuery.position).toBe(statistics.position);
-      expect(statisticsToQuery.amount).toBe(statistics.amount);
     });
   });
 });
