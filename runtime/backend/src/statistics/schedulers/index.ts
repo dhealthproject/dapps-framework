@@ -11,7 +11,7 @@
 export * from "./StatisticsCommand";
 
 // leaderboard command module
-export * from "./LeaderboardAggregation/LeaderboardsAggregationCommand"
+export * from "./LeaderboardAggregation/LeaderboardsAggregationCommand";
 
 // leaderboard abstract command module
 export * from "./LeaderboardAggregation/LeaderboardAggregation";

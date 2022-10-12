@@ -51,3 +51,8 @@ export * from "./statistics/modules";
 export * from "./statistics/routes";
 export * from "./statistics/schedulers";
 export * from "./statistics/services";
+
+// worker scope
+export * from "./worker/WorkerModule";
+export * from "./worker/BaseCommand";
+export * from "./worker/BaseScheduler";
