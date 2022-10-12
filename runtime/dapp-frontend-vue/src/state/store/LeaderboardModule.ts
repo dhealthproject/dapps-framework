@@ -12,79 +12,77 @@ import { ActionContext } from "vuex";
 
 // internal dependencies
 import { RootState } from "./Store";
-import { AwaitLock } from "../AwaitLock";
 import {
-  LeaderBoardItem,
-  LeaderBoardService,
-} from "../../services/LeaderBoardService";
+  LeaderboardItem,
+  LeaderboardService,
+} from "../../services/LeaderboardService";
 
 /**
- *
+ * @todo missing interface documentation
  */
-export interface LeaderBoardState {
-  leaderBoardItems: LeaderBoardItem[];
+export interface LeaderboardState {
+  leaderboardItems: LeaderboardItem[];
 }
 
-export interface LeaderBoardPayload {
+/**
+ * @todo missing interface documentation
+ */
+export interface LeaderboardPayload {
   which: string;
   period: string;
   vm?: any; // for a calling $root.$emit in case of error
 }
 
 /**
- *
+ * @todo missing interface documentation
  */
-export type LeaderBoardContext = ActionContext<LeaderBoardState, RootState>;
-
-// creates an "async"-lock for state of pending initialization
-// this will be kept *locally* to this store module implementation
-const Lock = AwaitLock.create();
+export type LeaderboardContext = ActionContext<LeaderboardState, RootState>;
 
 /**
- *
+ * @todo missing interface documentation
  */
-export const LeaderBoardModule = {
+export const LeaderboardModule = {
   // this store module is namespaced, meaning the
   // module name must be included when calling a
   // mutation, getter or action, i.e. "app/getName".
   namespaced: true,
-  state: (): LeaderBoardState => ({
-    leaderBoardItems: [],
+  state: (): LeaderboardState => ({
+    leaderboardItems: [],
   }),
 
   getters: {
-    getLeaderBoardItems: (state: LeaderBoardState): LeaderBoardItem[] =>
-      state.leaderBoardItems,
+    getLeaderboardItems: (state: LeaderboardState): LeaderboardItem[] =>
+      state.leaderboardItems,
   },
 
   mutations: {
     /**
      *
      */
-    setLeaderBoardItems: (
-      state: LeaderBoardState,
-      leaderBoardItems: LeaderBoardItem[]
-    ): any[] => (state.leaderBoardItems = leaderBoardItems),
+    setLeaderboardItems: (
+      state: LeaderboardState,
+      leaderboardItems: LeaderboardItem[]
+    ): any[] => (state.leaderboardItems = leaderboardItems),
 
-    addLeaderBoardItem: (state: LeaderBoardState, item: LeaderBoardItem) =>
-      state.leaderBoardItems.push(item),
+    addLeaderboardItem: (state: LeaderboardState, item: LeaderboardItem) =>
+      state.leaderboardItems.push(item),
   },
 
   actions: {
     /**
      *
      */
-    async fetchLeaderBoard(
-      context: LeaderBoardContext,
-      payload: LeaderBoardPayload
-    ): Promise<LeaderBoardItem[]> {
-      const handler = new LeaderBoardService();
-      let items: LeaderBoardItem[] = [];
+    async fetchLeaderboard(
+      context: LeaderboardContext,
+      payload: LeaderboardPayload
+    ): Promise<LeaderboardItem[]> {
+      const handler = new LeaderboardService();
+      let items: LeaderboardItem[] = [];
 
       try {
-        items = await handler.getLeaderBoard(payload.which, payload.period);
+        items = await handler.getLeaderboard(payload.which, payload.period);
       } catch (err) {
-        console.log("fetchLeaderBoard", err);
+        console.log("fetchLeaderboard", err);
         payload.vm.$root.$emit("toast", {
           state: "error",
           title: "Error appeared",
@@ -93,8 +91,8 @@ export const LeaderBoardModule = {
         });
       }
 
-      // Temporary set items for state property untill get /leaderboard will provide some real data
-      const mockedLeaderBoardItems = [
+      // Temporary set items for state property until get /leaderboard will provide some real data
+      const mockedLeaderboardItems = [
         {
           type: "leaderboard",
           period: "weekly",
@@ -246,9 +244,9 @@ export const LeaderBoardModule = {
           trendline: "up",
         },
       ];
-      items = mockedLeaderBoardItems;
+      items = mockedLeaderboardItems;
 
-      context.commit("setLeaderBoardItems", items);
+      context.commit("setLeaderboardItems", items);
       return items;
     },
   },

@@ -19,9 +19,9 @@
       title="Leaderboard"
       @tabChange="onTabChange"
     />
-    <div v-if="getLeaderBoardItems.length">
-      <LeaderBoardRow :data="currentUserItem" :current-player="true" />
-      <LeaderBoardRow
+    <div v-if="getLeaderboardItems.length">
+      <LeaderboardRow :data="currentUserItem" :current-player="true" />
+      <LeaderboardRow
         v-for="(leader, index) in splicedItems"
         :key="leader.avatar + index"
         :data="leader"
@@ -33,17 +33,17 @@
     </div>
   </div>
 
-  <!-- Custom LeaderBoardItem item markup usage example -->
-  <!-- <LeaderBoardRow :data="getLeaderBoardItems[2]">
+  <!-- Custom LeaderboardItem item markup usage example -->
+  <!-- <LeaderboardRow :data="getLeaderboardItems[2]">
       <template v-slot:default="props">
         test v-slot
         {{ props }}
       </template>
-    </LeaderBoardRow> -->
+    </LeaderboardRow> -->
 </template>
 
-<script lang="ts" src="./LeaderBoard.ts"></script>
+<script lang="ts" src="./Leaderboard.ts"></script>
 
 <style lang="scss">
-@import "./LeaderBoard.scss";
+@import "./Leaderboard.scss";
 </style>

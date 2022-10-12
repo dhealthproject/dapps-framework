@@ -15,17 +15,17 @@ import { AppModule } from "./AppModule";
 import { AuthModule } from "./AuthModule";
 import { AwaitLock } from "../AwaitLock";
 import { OAuthModule } from "./OAuthModule";
-import { LeaderBoardModule } from "./LeaderBoardModule";
+import { LeaderboardModule } from "./LeaderboardModule";
 
 /**
- *
+ * @todo missing interface documentation
  */
 export interface RootState {
   initialized: boolean;
 }
 
 /**
- *
+ * @todo missing interface documentation
  */
 export type RootContext = ActionContext<any, RootState>;
 
@@ -34,6 +34,7 @@ export type RootContext = ActionContext<any, RootState>;
 const Lock = AwaitLock.create();
 
 /**
+ * @todo missing function documentation
  *
  * @param Vue
  * @returns
@@ -52,7 +53,7 @@ export const createStore = () => {
       app: AppModule,
       auth: AuthModule,
       oauth: OAuthModule,
-      leaderboard: LeaderBoardModule,
+      leaderboard: LeaderboardModule,
     },
     state: (): RootState => ({
       initialized: false,

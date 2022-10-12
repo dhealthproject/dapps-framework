@@ -160,7 +160,7 @@ import formatAddress from '@/plugins/formatAddress';
           </Card>
 
           <Card :title="''" :showBorders="false">
-            <template v-slot:content> <LeaderBoard /> </template
+            <template v-slot:content> <Leaderboard /> </template
           ></Card>
         </template>
       </DividedScreen>

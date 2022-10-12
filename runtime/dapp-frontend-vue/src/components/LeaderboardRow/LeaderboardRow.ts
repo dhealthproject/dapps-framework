@@ -18,14 +18,28 @@ import { MetaView } from "@/views/MetaView";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
 
 // style resource
-import "./LeaderBoardRow.scss";
+import "./LeaderboardRow.scss";
 
+/**
+ * @todo missing component documentation
+ *
+ * @example Using the LeaderboardRow component
+ * ```html
+ * <LeaderboardRow :data="yourData">
+ *   <template v-slot:default="props">
+ *     <h1>{{ props.itemData.title }}</h1>
+ *   </template>
+ * </LeaderboardRow>
+ * ```
+ *
+ * @since v0.3.2
+ */
 @Component({
   components: {
     DirectionTriangle,
   },
 })
-export default class LeaderBoardRow extends MetaView {
+export default class LeaderboardRow extends MetaView {
   /**
    * Configuration for current leader board item
    *

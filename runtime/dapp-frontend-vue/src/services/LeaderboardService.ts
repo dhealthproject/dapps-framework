@@ -13,7 +13,7 @@ import { HttpRequestHandler } from "@/kernel/remote/HttpRequestHandler";
 /**
  *
  */
-export interface LeaderBoardItem {
+export interface LeaderboardItem {
   type: string;
   period: string;
   address: string;
@@ -42,7 +42,7 @@ export interface LeaderBoardItem {
  * @todo Should include the selected registry in the /auth/challenge request
  * @since v0.2.0
  */
-export class LeaderBoardService extends BackendService {
+export class LeaderboardService extends BackendService {
   /**
    * This property sets the request handler used for the implemented
    * requests. This handler forwards the execution of the request to
@@ -56,18 +56,18 @@ export class LeaderBoardService extends BackendService {
   }
 
   /**
-   * Get request for receiving list of the items for leaderboard
+   * Get request for receiving list of the items for Leaderboard
 
    * @access public
    * @async
-   * @param   {string}    which     Type of the leaderboard
-   * @param   {string}    period    Period of time for leaderboard(monthly, weekly) 
-   * @returns {Promise<LeaderBoardItem[]>}
+   * @param   {string}    which     Type of the Leaderboard
+   * @param   {string}    period    Period of time for Leaderboard(monthly, weekly) 
+   * @returns {Promise<LeaderboardItem[]>}
    */
-  public async getLeaderBoard(
+  public async getLeaderboard(
     which: string,
     period: string
-  ): Promise<LeaderBoardItem[]> {
+  ): Promise<LeaderboardItem[]> {
     const response = await this.handler.call(
       this.getUrl(`statistics/leaderboards/${which}?period=${period}`),
       "GET",
@@ -75,7 +75,7 @@ export class LeaderBoardService extends BackendService {
       { withCredentials: true, credentials: "include" }
     );
 
-    // responds with array of leaderboard items
-    return response.data as LeaderBoardItem[];
+    // responds with array of Leaderboard items
+    return response.data as LeaderboardItem[];
   }
 }

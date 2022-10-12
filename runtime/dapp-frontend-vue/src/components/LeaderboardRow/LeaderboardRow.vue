@@ -59,15 +59,9 @@ import formatAddress from '@/plugins/formatAddress';
       </div>
     </div>
     <div v-else class="dapp-leaderboard-item__custom">
-      <!-- USAGE EXAMPLE -->
-      <!-- <LeaderBoardRow :data="yourData">
-            <template v-slot:default="props"> -- content of the data is scoped to props.itemData
-              <h1>{{ props.itemData.title }}</h1>
-            </template>
-          </LeaderBoardRow> -->
       <slot :itemData="data" />
     </div>
   </div>
 </template>
 
-<script lang="ts" src="./LeaderBoardRow.ts"></script>
+<script lang="ts" src="./LeaderboardRow.ts"></script>

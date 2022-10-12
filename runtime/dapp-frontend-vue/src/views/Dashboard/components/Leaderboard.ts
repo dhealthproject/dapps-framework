@@ -15,14 +15,14 @@ import { mapGetters } from "vuex";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
-import { LeaderBoardItem } from "@/services/LeaderBoardService";
+import { LeaderboardItem } from "@/services/LeaderboardService";
 import { Translations } from "@/kernel/i18n/Translations";
 
 // child components
 import Tabs from "@/components/Tabs/Tabs.vue";
-import LeaderBoardRow from "@/components/LeaderBoardRow/LeaderBoardRow.vue";
+import LeaderboardRow from "@/components/LeaderboardRow/LeaderboardRow.vue";
 
-export interface LeaderBoardTab {
+export interface LeaderboardTab {
   title: string;
   value: string;
 }
@@ -30,24 +30,24 @@ export interface LeaderBoardTab {
   components: {
     DirectionTriangle,
     Tabs,
-    LeaderBoardRow,
+    LeaderboardRow,
   },
   computed: {
     ...mapGetters({
-      getLeaderBoardItems: "leaderboard/getLeaderBoardItems",
+      getLeaderboardItems: "leaderboard/getLeaderboardItems",
       i18n: "app/i18n",
       currentUserAddress: "auth/getCurrentUserAddress",
     }),
   },
 })
-export default class LeaderBoard extends MetaView {
+export default class Leaderboard extends MetaView {
   /**
    * Leader board items getter
    *
    * @access public
-   * @var {getLeaderBoardItems}
+   * @var {getLeaderboardItems}
    */
-  public getLeaderBoardItems: LeaderBoardItem[] | undefined;
+  public getLeaderboardItems: LeaderboardItem[] | undefined;
 
   /**
    * This property contains the translator `Translations` instance.
@@ -83,16 +83,19 @@ export default class LeaderBoard extends MetaView {
    * @access readonly
    * @var {items}
    */
-  @Prop({ default: () => [] }) readonly items?: LeaderBoardItem[];
+  @Prop({ default: () => [] }) readonly items?: LeaderboardItem[];
 
   /**
-   * Prop which defines amount of items to be shown
-   * defaults to 10
+   * Prop which defines amount of items to be shown, defaults to 10.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
    *
    * @access readonly
    * @var {itemsToShow}
    */
-  @Prop({ default: 10 }) readonly itemsToShow?: number;
+  @Prop({ default: 10 }) readonly itemsToShow!: number;
 
   /**
    * This computed property defines the *leaderboard tabs* for the currently
@@ -102,9 +105,9 @@ export default class LeaderBoard extends MetaView {
    * tabs as defined by the UI team.
    *
    * @access protected
-   * @returns {LeaderBoardTab[]}
+   * @returns {LeaderboardTab[]}
    */
-  protected get leaderBoardTabs(): LeaderBoardTab[] {
+  protected get leaderBoardTabs(): LeaderboardTab[] {
     return [
       {
         title: this.i18n.$t("leaderboard_tab_week"),
@@ -121,7 +124,7 @@ export default class LeaderBoard extends MetaView {
    * This computed property is mock for "current player" leaderboard object
    *
    * @access public
-   * @returns {LeaderBoardItem}
+   * @returns {LeaderboardItem}
    * @deprecated should be deleted after api will provide user for leaderboard
    */
 
@@ -143,30 +146,36 @@ export default class LeaderBoard extends MetaView {
    * by the default shows 10 items, can be changed via itemsToShow prop
    *
    * @access public
-   * @returns {LeaderBoardItem[]}
+   * @returns {LeaderboardItem[]}
    */
   get splicedItems() {
     if (
-      this.getLeaderBoardItems &&
-      this.itemsToShow! > this.getLeaderBoardItems?.length
+      this.getLeaderboardItems &&
+      this.itemsToShow > this.getLeaderboardItems?.length
     ) {
-      return this.getLeaderBoardItems;
+      return this.getLeaderboardItems;
     } else {
-      return this.getLeaderBoardItems?.splice(0, this.itemsToShow);
+      return this.getLeaderboardItems?.splice(0, this.itemsToShow);
     }
   }
 
-  async onTabChange(data: LeaderBoardTab) {
-    await this.$store.dispatch("leaderboard/fetchLeaderBoard", {
+  /**
+   * @todo missing method documentation
+   */
+  async onTabChange(data: LeaderboardTab) {
+    await this.$store.dispatch("leaderboard/fetchLeaderboard", {
       which: "running",
       period: data.value,
       vm: this,
     });
   }
 
+  /**
+   * @todo missing method documentation
+   */
   async mounted() {
-    if (!this.getLeaderBoardItems?.length) {
-      await this.$store.dispatch("leaderboard/fetchLeaderBoard", {
+    if (!this.getLeaderboardItems?.length) {
+      await this.$store.dispatch("leaderboard/fetchLeaderboard", {
         which: "running",
         period: "weekly",
         vm: this,

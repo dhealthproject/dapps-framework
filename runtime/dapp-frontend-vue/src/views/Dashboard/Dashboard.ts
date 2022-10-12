@@ -30,7 +30,7 @@ import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.
 import Tabs from "@/components/Tabs/Tabs.vue";
 import GenericList from "@/components/GenericList/GenericList.vue";
 import EventsCarousel from "@/views/Dashboard/components/EventsCarousel.vue";
-import LeaderBoard from "@/views/Dashboard/components/LeaderBoard.vue";
+import Leaderboard from "@/views/Dashboard/components/Leaderboard.vue";
 
 export interface OtherPlayer {
   avatar: string;
@@ -59,7 +59,7 @@ export interface StatisticsTabItem {
     InlineSvg,
     DirectionTriangle,
     EventsCarousel,
-    LeaderBoard,
+    Leaderboard,
     Tabs,
     GenericList,
     UiButton,

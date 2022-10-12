@@ -21,7 +21,7 @@ import { IntegrationsService } from "../../services/IntegrationsService";
 const Lock = AwaitLock.create();
 
 /**
- *
+ * @todo missing interface documentation
  */
 export interface OAuthParameters {
   code: string;
@@ -36,10 +36,13 @@ export interface OAuthModuleState {
 }
 
 /**
- *
+ * @todo missing interface documentation
  */
 export type OAuthModuleContext = ActionContext<OAuthModuleState, RootState>;
 
+/**
+ * @todo missing interface documentation
+ */
 export const OAuthModule = {
   // this store module is namespaced, meaning the
   // module name must be included when calling a

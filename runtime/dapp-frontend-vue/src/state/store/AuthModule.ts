@@ -17,7 +17,7 @@ import { AwaitLock } from "../AwaitLock";
 import { User } from "../../models/User";
 
 /**
- *
+ * @todo missing interface documentation
  */
 export interface AuthState {
   initialized: boolean;
@@ -30,7 +30,7 @@ export interface AuthState {
 }
 
 /**
- *
+ * @todo missing interface documentation
  */
 export type AuthContext = ActionContext<AuthState, RootState>;
 
@@ -39,7 +39,7 @@ export type AuthContext = ActionContext<AuthState, RootState>;
 const Lock = AwaitLock.create();
 
 /**
- *
+ * @todo missing interface documentation
  */
 export const AuthModule = {
   // this store module is namespaced, meaning the

@@ -11,4 +11,4 @@ export * from "./AwaitLock";
 export * from "./store/Store";
 export * from "./store/AppModule";
 export * from "./store/AuthModule";
-export * from "./store/LeaderBoardModule";
+export * from "./store/LeaderboardModule";

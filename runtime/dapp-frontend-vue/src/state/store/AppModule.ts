@@ -20,7 +20,7 @@ import packageConfig from "../../../package.json";
 import dappConfig from "../../../config/dapp.json";
 
 /**
- *
+ * @todo missing interface documentation
  */
 export interface AppState {
   initialized: boolean;
@@ -33,7 +33,7 @@ export interface AppState {
 }
 
 /**
- *
+ * @todo missing interface documentation
  */
 export type AppContext = ActionContext<AppState, RootState>;
 
@@ -42,7 +42,7 @@ export type AppContext = ActionContext<AppState, RootState>;
 const Lock = AwaitLock.create();
 
 /**
- *
+ * @todo missing interface documentation
  */
 export const AppModule = {
   // this store module is namespaced, meaning the
