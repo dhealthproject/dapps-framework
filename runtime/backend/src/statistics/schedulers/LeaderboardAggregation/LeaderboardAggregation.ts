@@ -64,14 +64,6 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
   protected periodFormat: string;
 
   /**
-   * The score scheduler config values for the period format.
-   *
-   * @access private
-   * var {ScoreSchedulerConfig}
-   */
-  private _config: ScoreSchedulerConfig;
-
-  /**
    * Memory store for the last time of execution. This is used
    * in {@link getStateData} to update the latest execution state.
    *
@@ -137,7 +129,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    * @returns {string}
    */
   protected get signature(): string {
-    return `${this.command} D|W|M`;
+    return `LeaderboardAggregation/(D|W|M)`;
   }
 
   /**
@@ -361,17 +353,29 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    * @returns {ScoreSchedulerConfig}
    */
   protected get config(): ScoreSchedulerConfig {
+    // read from `statistics` configuration resource
     const leaderboardConfig = this.configService.get<LeaderboardConfig>(
       "statistics.leaderboards",
     );
-    if (!this._config) {
-      for (const scoreSchedulerConfig of Object.values(leaderboardConfig)) {
-        if (scoreSchedulerConfig.type === this.periodFormat) {
-          this._config = scoreSchedulerConfig;
-        }
-      }
+
+    // discover leaderboard config keys
+    const keys: string[] = Object.keys(leaderboardConfig);
+
+    // find the correct leaderboard config
+    const schedulerConfig: string = keys.find(
+      (c: string) => leaderboardConfig[c].type === this.periodFormat,
+    );
+
+    // disallow using unspecified leaderboards
+    if (undefined === schedulerConfig) {
+      throw new Error(
+        `Configuration for aggregation of type ` +
+          `${this.periodFormat} is missing.`,
+      );
     }
-    return this._config;
+
+    // returns an individual leaders config
+    return leaderboardConfig[schedulerConfig];
   }
 
   /**

@@ -7,25 +7,63 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependency mock
+const configGetCallMock: any = jest.fn().mockReturnValue({
+  daily_score: {
+    type: "D",
+    collection: "assets",
+    fields: ["amount"],
+  },
+  weekly_score: {
+    type: "W",
+    collection: "assets",
+    fields: ["amount"],
+  },
+  monthly_score: {
+    type: "M",
+    collection: "assets",
+    fields: ["amount"],
+  },
+});
+
+// mock cron dependency
+const jobStartCall = jest.fn();
+jest.mock('cron', () => {
+  return {
+    CronJob: jest.fn().mockImplementation(() => {
+      return { start: jobStartCall };
+    })
+  };
+});
+
 // external dependencies
 import { getModelToken } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule/dist/scheduler.registry";
 import { Test, TestingModule } from "@nestjs/testing";
+import { ConfigService } from "@nestjs/config";
+import { Logger } from "@nestjs/common";
 
 // internal dependencies
 import { WeeklyScoreAggregation } from "../../../../src/statistics/schedulers/LeaderboardAggregation/WeeklyScoreAggegation";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
-import { ConfigService } from "@nestjs/config";
 import { MockModel } from "../../../mocks/global";
 import { StatisticsDocument, StatisticsModel } from "@/statistics/models/StatisticsSchema";
 
 describe("statistics/MonthlyScoreAggregation", () => {
   let service: WeeklyScoreAggregation;
   let queriesService: QueryService<StatisticsDocument, StatisticsModel>;
+  let statesService: StateService;
+  let configService: ConfigService;
+  let logger: Logger;
 
+  let mockDate: Date;
+  let module: TestingModule;
   beforeEach(async () => {
+    mockDate = new Date(Date.UTC(2022, 1, 1)); // UTC 1643673600000
+    jest.useFakeTimers("modern");
+    jest.setSystemTime(mockDate);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -51,11 +89,30 @@ describe("statistics/MonthlyScoreAggregation", () => {
           provide: getModelToken("State"),
           useValue: MockModel,
         },
+        {
+          provide: Logger,
+          useValue: {
+            log: jest.fn(),
+            debug: jest.fn(),
+            error: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<WeeklyScoreAggregation>(WeeklyScoreAggregation);
     queriesService = module.get<QueryService<StatisticsDocument, StatisticsModel>>(QueryService);
+    statesService = module.get<StateService>(StateService);
+    configService = module.get<ConfigService>(ConfigService);
+    logger = module.get<Logger>(Logger);
+
+    (service as any).configService = {
+      get: configGetCallMock,
+    }
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe("createQueryDates()", () => {

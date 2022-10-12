@@ -7,10 +7,30 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependency mock
+const configGetCallMock: any = jest.fn().mockReturnValue({
+  daily_score: {
+    type: "D",
+    collection: "assets",
+    fields: ["amount"],
+  },
+  weekly_score: {
+    type: "W",
+    collection: "assets",
+    fields: ["amount"],
+  },
+  monthly_score: {
+    type: "M",
+    collection: "assets",
+    fields: ["amount"],
+  },
+});
+
 // external dependencies
 import { getModelToken } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule/dist/scheduler.registry";
 import { Test, TestingModule } from "@nestjs/testing";
+import { ConfigService } from "@nestjs/config";
 import { Logger } from "@nestjs/common";
 
 // mock cron dependency
@@ -29,7 +49,6 @@ import { DailyScoreAggregation } from "../../../../src/statistics/schedulers/Lea
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
-import { ConfigService } from "@nestjs/config";
 import { MockModel } from "../../../mocks/global";
 import { StatisticsDocument, StatisticsModel } from "../../../../src/statistics/models/StatisticsSchema";
 import { WeeklyScoreAggregation } from "../../../../src/statistics/schedulers/LeaderboardAggregation/WeeklyScoreAggegation";
@@ -91,6 +110,10 @@ describe("statistics/LeaderboardAggregation", () => {
     statesService = module.get<StateService>(StateService);
     configService = module.get<ConfigService>(ConfigService);
     logger = module.get<Logger>(Logger);
+
+    (service as any).configService = {
+      get: configGetCallMock,
+    }
   });
 
   afterEach(() => {
@@ -103,7 +126,7 @@ describe("statistics/LeaderboardAggregation", () => {
       const result = (service as any).command;
 
       // assert
-      expect(result).toBe("LeaderboardAggregation");
+      expect(result).toBe("LeaderboardAggregation/D");
     });
   });
 
@@ -113,7 +136,7 @@ describe("statistics/LeaderboardAggregation", () => {
       const result = (service as any).signature;
 
       // assert
-      expect(result).toBe("LeaderboardAggregation D|W|M");
+      expect(result).toBe("LeaderboardAggregation/(D|W|M)");
     });
   });
 
@@ -215,7 +238,7 @@ describe("statistics/LeaderboardAggregation", () => {
       );
 
       // assert
-      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(1, "Starting leaderboard aggregation");
+      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(1, "Starting leaderboard aggregation type: D");
       expect(serviceDebugLogCall).toHaveBeenNthCalledWith(2, `Last leaderboard aggregation executed at: "1643673600000"`);
     });
 
@@ -286,65 +309,52 @@ describe("statistics/LeaderboardAggregation", () => {
   });
 
   describe("get config", () => {
+    // clear mocks everytime for this group
+    beforeEach(() => configGetCallMock.mockClear());
+
     it("should return correct config value", () => {
       // prepare
-      jest.clearAllMocks();
       const expectedConfig = {
         daily_score: {
           type: "D",
-          collection: "daily_collection",
-          fields: ["daily_field"],
+          collection: "assets",
+          fields: ["amount"],
         },
         weekly_score: {
           type: "W",
-          collection: "weekly_collection",
-          fields: ["weekly_field"],
+          collection: "assets",
+          fields: ["amount"],
         },
         monthly_score: {
           type: "M",
-          collection: "monthly_collection",
-          fields: ["monthly_field"],
+          collection: "assets",
+          fields: ["amount"],
         },
       };
-      const types = [
-        DailyScoreAggregation,
-        WeeklyScoreAggregation,
-        MonthlyScoreAggregation,
-      ]
       const expectedResults = [
         expectedConfig.daily_score,
         expectedConfig.weekly_score,
         expectedConfig.monthly_score
       ];
+
+      // act
       ["D", "W", "M"].forEach((periodFormat, index) => {
+        // prepare
+        configGetCallMock.mockClear();
         (service as any).periodFormat = periodFormat;
-        const configServiceGetCall = jest
-          .spyOn(configService, "get")
-          .mockReturnValue(expectedConfig);
 
         // act
-        service = module.get<LeaderboardAggregation>(types[index]);
         const result = (service as any).config;
 
         // assert
-        expect(configServiceGetCall).toHaveBeenCalled();
-        expect(result).toBe(expectedResults[index]);
+        expect(configGetCallMock).toHaveBeenCalledTimes(1);
+        expect(result).toStrictEqual(expectedResults[index]);
       });
     });
   });
 
   describe("createAggregationQuery()", () => {
-    it("should return correct result", () => {
-      // prepare
-      const config = {
-        type: "D",
-        collection: "daily_collection",
-        fields: ["daily_field"],
-      };
-      const serviceConfigCall = jest
-        .spyOn((service as any), "config", "get")
-        .mockReturnValue(config);
-
+    it("should return correct database aggregate query", () => {
       // act
       const result = (service as any).createAggregationQuery(
         mockDate,
@@ -352,7 +362,7 @@ describe("statistics/LeaderboardAggregation", () => {
       );
 
       // assert
-      expect(serviceConfigCall).toHaveBeenCalledTimes(1);
+      expect(configGetCallMock).toHaveBeenCalledTimes(1);
       expect(result).toEqual([
         {
           $match: {
@@ -365,10 +375,10 @@ describe("statistics/LeaderboardAggregation", () => {
         {
           $group: {
             _id: "$userAddress",
-            daily_field: { $sum: "$daily_field" },
+            amount: { $sum: "$amount" },
           },
         },
-        { $sort: { daily_field: -1 } },
+        { $sort: { amount: -1 } },
       ])
     });
   });
