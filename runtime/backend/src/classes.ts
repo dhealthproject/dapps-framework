@@ -11,15 +11,15 @@
 export { AppModule } from "./AppModule";
 export { AppService } from "./AppService";
 
-// worker / application-level
+// application layer
+// worker
 export * from "./worker";
 
-// common scope / general-level
+// api layer
+// common scope
 export { Scopes } from "./common/Scopes";
 export { ScopeFactory } from "./common/ScopeFactory";
 export { Schedulers } from "./common/Schedulers";
-
-// common concerns / traits / classes
 export * from "./common/concerns";
 export * from "./common/drivers";
 export * from "./common/models";
@@ -29,33 +29,27 @@ export * from "./common/services";
 export * from "./common/traits";
 export * from "./common/types";
 
-// discovery scope / general-level
+// discovery scope
 export * from "./discovery/DiscoveryModule";
-
-// discovery classes
 export * from "./discovery/models";
 export * from "./discovery/modules";
 export * from "./discovery/routes";
 export * from "./discovery/schedulers";
 export * from "./discovery/services";
 
-// payout scope / general-level
+// payout scope
 export * from "./payout/PayoutModule";
 
-// processor scope / general-level
+// processor scope
 export * from "./processor/ProcessorModule";
-
-// processor classes
 export * from "./processor/models";
 export * from "./processor/modules";
 export * from "./processor/routes";
 export * from "./processor/schedulers";
 export * from "./processor/services";
 
-// statistics scoper / general-level
-export * from "./statistics/StatisticsModule";
-
-// statistics classes
+// statistics scope
+export * from "./statistics/modules/LeaderboardsModule";
 export * from "./statistics/models";
 export * from "./statistics/modules";
 export * from "./statistics/routes";
