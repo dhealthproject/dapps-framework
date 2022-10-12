@@ -7,13 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// main / application-level
+// application-layer
 export { AppModule } from "./AppModule";
 export { AppService } from "./AppService";
-
-// application layer
-// worker
-export * from "./worker";
 
 // api layer
 // common scope
