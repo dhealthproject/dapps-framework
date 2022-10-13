@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
- import type { StateData } from "../../common/models/StateData";
+import type { StateData } from "../../common/models/StateData";
 
 /**
  * @class LeaderboardAggregationStateData
