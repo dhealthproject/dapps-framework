@@ -26,21 +26,19 @@ export interface LeaderboardItem {
 }
 
 /**
- * @class Auth
+ * @class LeaderboardService
  * @description This class handles managing
- * of authentication related actions.
+ * of leaderboard related actions
  * <br /><br />
- * Currently includes 2 methods which
- * are responsible for getting QR code authCode and accessToken
- * @example Using the Auth class
+ * Currently includes 1 method,
+ * which is responsible for fetching of leaders list, which will be rendered in <Leaderboard /> component
+ * @example Using the LeaderboardService class
  * ```typescript
- *   const auth = new Auth();
- *   console.log(auth.getAuthChallenge());
+ *   const leaderBoardService = new LeaderboardService();
+ *   console.log(leaderBoardService.getLeaderboard());
  * ```
  *
- * @todo Should *randomly* select one of the multiple authentication registries
- * @todo Should include the selected registry in the /auth/challenge request
- * @since v0.2.0
+ * @since v0.3.2
  */
 export class LeaderboardService extends BackendService {
   /**

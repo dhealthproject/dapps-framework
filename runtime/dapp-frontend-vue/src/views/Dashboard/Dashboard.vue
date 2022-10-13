@@ -1,5 +1,3 @@
-import formatAddress from '@/plugins/formatAddress';
-
 <!--
 /**
  * This file is part of dHealth dApps Framework shared under LGPL-3.0

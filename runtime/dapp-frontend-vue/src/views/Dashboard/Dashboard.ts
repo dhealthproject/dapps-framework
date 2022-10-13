@@ -76,7 +76,7 @@ export interface StatisticsTabItem {
 })
 export default class Dashboard extends MetaView {
   /**
-   * This property contains the authenticated user's dHealth Accountsd
+   * This property contains the authenticated user's dHealth Account
    * Address. This field is populated using the Vuex Store after a
    * successful request to the backend API's `/me` endpoint.
    * <br /><br />
