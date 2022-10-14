@@ -8,11 +8,14 @@
  * @license     LGPL-3.0
  */
 // external dependencies
+import { ActivitiesModule } from "@/processor/modules/ActivitiesModule";
 import { Module } from "@nestjs/common";
 
 // internal dependencies
 import { AccountsModule } from "../common/modules/AccountsModule";
 import { LeaderboardsModule } from "./modules/LeaderboardsModule";
+import { StatisticsController } from "./routes/StatisticsController";
+import { StatisticsService } from "./services/StatisticsService";
 
 /**
  * @label STATISTICS
@@ -35,6 +38,8 @@ import { LeaderboardsModule } from "./modules/LeaderboardsModule";
  * @since v0.3.2
  */
 @Module({
-  imports: [AccountsModule, LeaderboardsModule],
+  imports: [AccountsModule, LeaderboardsModule, ActivitiesModule],
+  controllers: [StatisticsController],
+  providers: [StatisticsService],
 })
 export class StatisticsModule {}

@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { mongoMigrateCli } from 'mongo-migrate-ts';
+import { mongoMigrateCli } from "mongo-migrate-ts";
 import dotenv from "dotenv";
 import fs from "fs";
 
@@ -19,16 +19,18 @@ import { DatabaseConfig } from "src/common/models/DatabaseConfig";
 // @todo permit to overwrite the default deployment
 // @todo strategy that uses a root folder with all projects
 // @todo and a `runtime/backend/` subfolder for the backend
-let rootFolderPath = undefined !== process.env && "PWD" in process.env
-  ? `${process.env["PWD"]}/../..` // runtime/backend
-  : `${__dirname}/../../..`; // runtime/backend/config
+let rootFolderPath =
+  undefined !== process.env && "PWD" in process.env
+    ? `${process.env["PWD"]}/../..` // runtime/backend
+    : `${__dirname}/../../..`; // runtime/backend/config
 
 // environment configuration
 const envFilePath = `${rootFolderPath}/.env`;
 if (!fs.existsSync(envFilePath)) {
   throw new Error(
     `An error occurred configuring the database migrations. ` +
-    `A ".env" file was not found in ${envFilePath}`);
+      `A ".env" file was not found in ${envFilePath}`,
+  );
 }
 
 // environment setup necessary due to mongo-migrate
@@ -36,7 +38,9 @@ if (!fs.existsSync(envFilePath)) {
 // this will load the `.env` in `process.env`.
 const { parsed: env, error } = dotenv.config({ path: envFilePath });
 if (undefined === env || error !== undefined) {
-  throw new Error(`Could not load configuration from ${envFilePath}: ${error}.`);
+  throw new Error(
+    `Could not load configuration from ${envFilePath}: ${error}.`,
+  );
 }
 
 // configuration resources

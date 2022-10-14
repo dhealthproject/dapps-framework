@@ -27,6 +27,7 @@ import Toast from "./Toast/Toast.vue";
 import Dropdown from "./Dropdown/Dropdown.vue";
 import UserBalance from "./UserBalance/UserBalance.vue";
 import ProgressBar from "./ProgressBar/ProgressBar.vue";
+import Stats from "./Stats/Stats.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
@@ -46,6 +47,7 @@ export const AppComponents = {
   Dropdown,
   UserBalance,
   ProgressBar,
+  Stats,
 };
 
 // scoped export of library-level components

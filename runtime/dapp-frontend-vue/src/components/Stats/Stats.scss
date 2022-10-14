@@ -1,0 +1,88 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Vue Frontend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+
+ @import "../../vars.scss";
+
+ .dapp-stats {
+    padding: 16px 32px;
+    background-color: $white;
+    border-radius: 16px;
+    box-shadow: 4px 5px 0px $black;
+    border: 1px solid $login-dark;
+
+    &__total-earned {
+        background-color: $stats-teal-light;
+        padding: 16px 16px 12px;
+        border-radius: 12px;
+        text-align: center;
+
+        .amount-big {
+            font-weight: 700;
+            font-size: 72px;
+            line-height: 100%;
+
+            .dark {
+                color: $button-text-dark;
+            }
+
+            .light {
+                color: $stats-teal-main;
+            }
+        }
+
+        .amount-small {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 263px;
+            margin: 8px auto 0 auto;
+
+            svg {
+                display: inline-block;
+                cursor: pointer;
+
+                path {
+                    fill: $button-text-dark;
+                }
+            }
+
+            span {
+                font-weight: 500;
+                font-size: 12px;
+                line-height: 150%;
+                color: $button-text-dark;
+            }
+        }
+    }
+
+    &__other {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: row;
+
+        .minutes {
+            &__amount {
+                color: $black;
+                font-weight: 700;
+                font-size: 32px;
+                line-height: 140%;
+                display: block;
+            }
+        }
+
+        &__label {
+            color: $stats-teal-dark;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 150%;
+        }
+    }
+}

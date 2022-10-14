@@ -20,6 +20,7 @@ import {
   CarouselConfig,
 } from "@/views/Dashboard/components/EventsCarousel";
 import { Translations } from "@/kernel/i18n/Translations";
+import { StatsConfig } from "@/components/Stats/Stats";
 
 // child components
 import Card from "@/components/Card/Card.vue";
@@ -31,6 +32,7 @@ import Tabs from "@/components/Tabs/Tabs.vue";
 import GenericList from "@/components/GenericList/GenericList.vue";
 import EventsCarousel from "@/views/Dashboard/components/EventsCarousel.vue";
 import Leaderboard from "@/views/Dashboard/components/Leaderboard.vue";
+import Stats from "@/components/Stats/Stats.vue";
 
 export interface OtherPlayer {
   avatar: string;
@@ -64,6 +66,7 @@ export interface StatisticsTabItem {
     GenericList,
     UiButton,
     ProgressBar,
+    Stats,
   },
   computed: {
     ...mapGetters({
@@ -71,6 +74,7 @@ export interface StatisticsTabItem {
       hasSnackBar: "app/hasSnackBar",
       currentUserAddress: "auth/getCurrentUserAddress",
       getIntegrations: "oauth/getIntegrations",
+      stats: "stats/getConfiguration",
     }),
   },
 })
@@ -116,6 +120,16 @@ export default class Dashboard extends MetaView {
    * @var {string[]}
    */
   public getIntegrations!: string[];
+
+  /**
+   * This property contains configuration object
+   * for Stats component :data prop
+   * setup of the stats module.
+   *
+   * @access public
+   * @var {StatsConfig}
+   */
+  public stats!: StatsConfig;
 
   /**
    * This property contains refcode,

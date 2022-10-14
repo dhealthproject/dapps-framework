@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+      "module": "commonjs",
+      "target": "es2017",
+      "strict": true,
+      "jsx": "preserve",
+      "moduleResolution": "node",
+      "experimentalDecorators": true,
+      "skipLibCheck": true,
+      "resolveJsonModule": true,
+      "esModuleInterop": true,
+      "allowJs": false,
+      "removeComments": true,
+      "allowSyntheticDefaultImports": true,
+      "forceConsistentCasingInFileNames": false,
+      "useDefineForClassFields": true,
+      "sourceMap": true,
+      "baseUrl": ".",
+      "declaration": true,
+      "outDir": "./dist",
+      "types": [
+        "node",
+        "jest"
+      ],
+      "typeRoots": ["node_modules/@types"],
+      "paths": {
+        "@/*": ["./src/*"]
+      },
+      "incremental": true,
+      "emitDecoratorMetadata": true,
+      "strictBindCallApply": false,
+      "strictNullChecks": false
+    },
+    "include": ["src/", "config/", "migrations/", "tests/"],
+    "exclude": ["node_modules", "dist"]
+  }
+  
