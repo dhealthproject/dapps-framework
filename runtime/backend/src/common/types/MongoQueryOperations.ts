@@ -13,9 +13,6 @@ import {
   MongoQueryOperationSpec,
 } from "./MongoQueryOperation";
 
-// internal type to wrap *any* operation specification
-type ValidSpecs = MongoQueryOperationSpec | string;
-
 /**
  * @type MongoQueryOperations
  * @description A type that consists of a *container* for multiple
@@ -26,5 +23,5 @@ type ValidSpecs = MongoQueryOperationSpec | string;
  * @since v0.3.2
  */
 export type MongoQueryOperations = {
-  [key: ValidSpecs]: MongoQueryOperation;
+  [key: MongoQueryOperationSpec | string]: MongoQueryOperation;
 };
