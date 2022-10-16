@@ -105,16 +105,17 @@ describe("discovery/DiscoverBlocks", () => {
 
   describe("getStateData()", () => {
     it("should use correct block discovery state values", () => {
+      // prepare
+      const expectedResult = new BlockDiscoveryStateData();
+      expectedResult.lastPageNumber = 1;
+      expectedResult.lastExecutedAt = new Date().valueOf();
+      expectedResult.totalNumberOfBlocks = 0;
+
       // act
       const data: BlockDiscoveryStateData = (service as any).getStateData();
 
       // assert
-      expect("lastPageNumber" in data).toBe(true);
-      expect("lastExecutedAt" in data).toBe(true);
-      expect("totalNumberOfBlocks" in data).toBe(true);
-      expect(data.lastExecutedAt).toBe(mockDate.valueOf());
-      expect(data.lastPageNumber).toBe(1);
-      expect(data.totalNumberOfBlocks).toBe(0);
+      expect(data).toEqual(expectedResult);
     });
   });
 

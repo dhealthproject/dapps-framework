@@ -81,7 +81,13 @@ export const createTransactionDocument = (
   recipientAddress: "fake-recipient",
   transactionMode: "fake-mode",
   transactionType: "fake-type",
-  transactionAssets: [],
+  creationBlock: 1,
+  transactionAssets: [{
+    mosaicId: "testMosaicId",
+    amount: 1,
+    transactionHash: "testTransactionHash",
+  }],
+
 });
 
 // Mocks a **model** class for nestjs internal
@@ -90,11 +96,12 @@ export const createTransactionDocument = (
 export class MockModel {
   public data: Record<string, any>;
   public createStub: any = jest.fn(() => this.data);
+  public static createStub: any = jest.fn((data) => data);
   constructor(dto?: any) {
     this.data = dto;
   }
   static create(data: any) {
-    return jest.fn(() => data);
+    return MockModel.createStub(data);
   }
   create(data: any) {
     return this.createStub(data);

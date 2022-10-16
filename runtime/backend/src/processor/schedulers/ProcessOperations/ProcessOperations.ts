@@ -205,7 +205,7 @@ export class ProcessOperations extends ProcessorCommand {
    */
   protected parseOperationTypes(operationTypes: string): string[] {
     // maps utility names to operation types
-    if (operationTypes.toLowerCase().indexOf("elevate:")) {
+    if (operationTypes.toLowerCase().indexOf("elevate:") > -1) {
       return [operationTypes];
     }
 

@@ -36,7 +36,7 @@ jest.mock("@dhealth/sdk", () => ({
 }));
 
 // external dependencies
-import { Address } from "@dhealth/sdk"; // mocked!
+import { Address, PublicAccount } from "@dhealth/sdk"; // mocked!
 import { Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { getModelToken } from "@nestjs/mongoose";
@@ -56,6 +56,7 @@ import { AssetDTO } from "../../../../src/discovery/models/AssetDTO";
 import { TransactionsService } from "../../../../src/discovery/services/TransactionsService";
 import { DiscoverAssets } from "../../../../src/discovery/schedulers/DiscoverAssets/DiscoverAssets";
 import { AssetDiscoveryStateData } from "../../../../src/discovery/models/AssetDiscoveryStateData";
+import { DiscoveryCommand } from "../../../../src/discovery/schedulers/DiscoveryCommand";
 
 // configuration resources
 import dappConfigLoader from "../../../../config/dapp";
@@ -167,16 +168,70 @@ describe("discovery/DiscoverAssets", () => {
     expect(service).toBeDefined();
   });
 
+  describe("get command()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const expectedResult = "DiscoverAssets";
+
+      // act
+      const result = (service as any).command;
+
+      // assert
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe("get signature()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const expectedResult = `DiscoverAssets [--source "SOURCE-ADDRESS-OR-PUBKEY"]`;
+
+      // act
+      const result = (service as any).signature;
+
+      // assert
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
   describe("getStateData()", () => {
     it("should use correct asset discovery state values", () => {
+      // prepare
+      const expectedResult = new AssetDiscoveryStateData();
+      expectedResult.lastPageNumber = 1;
+      expectedResult.lastExecutedAt = new Date().valueOf();
+
       // act
       const data: AssetDiscoveryStateData = (service as any).getStateData();
 
       // assert
-      expect("lastPageNumber" in data).toBe(true);
-      expect("lastExecutedAt" in data).toBe(true);
-      expect(data.lastExecutedAt).toBe(mockDate.valueOf());
-      expect(data.lastPageNumber).toBe(1);
+      expect(data).toEqual(expectedResult);
+    });
+  });
+
+  describe("runAsScheduler()", () => {
+    it("should call correct methods", async () => {
+      // prepare
+      const configServiceGetCall = jest
+        .spyOn(configService, "get")
+        .mockReturnValueOnce("test-dappPubKey")
+        .mockReturnValueOnce(104);
+      const PublicAccountCreateFromPublicKeyCall = jest
+        .spyOn(PublicAccount, "createFromPublicKey")
+        .mockReturnValue({
+          address: { plain: () => "testAddress" },
+        } as PublicAccount);
+      const serviceRunCall = jest
+        .spyOn(DiscoveryCommand.prototype, "run")
+        .mockResolvedValue();
+
+      // act
+      await (service as any).runAsScheduler();
+
+      // assert
+      expect(configServiceGetCall).toHaveBeenCalledTimes(2);
+      expect(PublicAccountCreateFromPublicKeyCall).toHaveBeenCalledTimes(1);
+      expect(serviceRunCall).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -201,6 +256,36 @@ describe("discovery/DiscoverAssets", () => {
       expect(logger.debug).toHaveBeenNthCalledWith(2, "Last assets discovery ended with page: \"1\"");
       expect(logger.debug).toHaveBeenNthCalledWith(3, "Found 0 new asset entries from transactions");
     });
+
+    it("should have correct lastPageNumber", async () => {
+      // prepare
+      const states = [
+        {
+          data: {
+            lastPageNumber: 10
+          }
+        },
+        {
+          data: {
+            lastPageNumber: null
+          },
+        },
+      ];
+      const expectedResults = [ 10, 1 ];
+      for(const state of states) {
+        const index = states.indexOf(state);
+        (service as any).state = state;
+
+        // act
+        await service.discover({
+          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+          debug: true,
+        });
+
+        // assert
+        expect((service as any).lastPageNumber).toBe(expectedResults[index]);
+      };
+    })
 
     it("should stop querying batches of transactions given an empty page", async () => {
       // prepare
@@ -276,9 +361,61 @@ describe("discovery/DiscoverAssets", () => {
 
     it("should query 20 batches of 100 transactions given full pages", async () => {
       // prepare
+      (service as any).stateService.findOne = jest.fn().mockResolvedValue({
+        data: {
+          totalNumberOfTransactions: 100,
+        }
+      });
+      (service as any).lastPageNumber = 3;
+      (service as any).usePageSize = 100;
       (service as any).transactionsService.find = jest.fn().mockReturnValue({
         data: fakeCreateTransactionDocuments(100), // full page
       });
+
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      });
+
+      // assert
+      expect((service as any).transactionsService.find).toHaveBeenCalledTimes(20); // reads 20 pages
+      expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(1, new TransactionQuery(
+        {} as TransactionDocument, // queries *any* transaction
+        {
+          pageNumber: 1,
+          pageSize: 100, // in batches of 100 per page
+          sort: "createdAt",
+          order: "asc",
+        } as QueryParameters,
+      ));
+      expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(2, new TransactionQuery(
+        {} as TransactionDocument, // queries *any* transaction
+        {
+          pageNumber: 2,
+          pageSize: 100, // in batches of 100 per page
+          sort: "createdAt",
+          order: "asc",
+        } as QueryParameters,
+      ));
+    });
+
+    it("should have lastPageNumber equal 1 if Math.floor() is null or undefined", async () => {
+      // prepare
+      (service as any).stateService.findOne = jest.fn().mockResolvedValue({
+        data: {
+          totalNumberOfTransactions: 100,
+        }
+      });
+      (service as any).lastPageNumber = 3;
+      (service as any).usePageSize = 100;
+      const testData = fakeCreateTransactionDocuments(100);
+      (testData[0] as any).transactionMode = "outgoing";
+      (service as any).transactionsService.find = jest.fn().mockReturnValue({
+        data: testData, // full page
+      });
+      jest.spyOn(Math, "floor").mockReturnValue(null);
+      (service as any).assetsService.exists = jest.fn().mockResolvedValue(true);
 
       // act
       await service.discover({

@@ -38,7 +38,7 @@ describe("common/AuthChallengeSchema", () => {
       // act
       const result = AuthChallenge.fillDTO(
         authChallenge as AuthChallengeDocument,
-        {} as AuthChallengeDTO
+        new AuthChallengeDTO(),
       );
 
       // assert

@@ -132,6 +132,32 @@ describe("common/WebHooksService", () => {
       }
     });
 
+    it("should throw an error if any error was caught", async () => {
+      // prepare
+      const eventDate = mockDate;
+      const eventTime = eventDate.valueOf() / 1000
+      const expectedErrorMsg = "test-error";
+      const queryServiceCountCall = jest
+        .spyOn(queryService, "count")
+        .mockRejectedValue(new Error(expectedErrorMsg));
+
+      // act
+      const resut = service.eventHandler("strava", "fake-address", {
+        object_type: "activity",
+        aspect_type: "create",
+        object_id: "12345",
+        owner_id: "67890",
+        subscription_id: 1,
+        event_time: eventTime,
+      });
+
+      // prepare
+      expect(queryServiceCountCall).toHaveBeenCalledTimes(1);
+      expect(resut).rejects.toThrowError(
+        new Error(`An error occurred while handling event 12345: Error: ${expectedErrorMsg}`)
+      );
+    });
+
     it ("should count previous daily activities for user", async () => {
       // prepare
       const countMock = jest.fn();

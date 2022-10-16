@@ -53,6 +53,7 @@ import { MockModel } from "../../../mocks/global";
 import { StatisticsDocument, StatisticsModel } from "../../../../src/statistics/models/StatisticsSchema";
 import { WeeklyScoreAggregation } from "../../../../src/statistics/schedulers/LeaderboardAggregation/WeeklyScoreAggegation";
 import { MonthlyScoreAggregation } from "../../../../src/statistics/schedulers/LeaderboardAggregation/MonthlyScoreAggregation";
+import { LeaderboardAggregationStateData } from "../../../../src/statistics/models/LeaderboardAggregationStateData";
 
 describe("statistics/LeaderboardAggregation", () => {
   let service: LeaderboardAggregation;
@@ -142,6 +143,10 @@ describe("statistics/LeaderboardAggregation", () => {
 
   describe("getStateData()", () => {
     it("should return correct object", () => {
+      // prepare
+      const expectedResut = new LeaderboardAggregationStateData();
+      expectedResut.lastExecutedAt = new Date().valueOf();
+
       // act
       const result = (service as any).getStateData();
 
@@ -225,6 +230,45 @@ describe("statistics/LeaderboardAggregation", () => {
       jest.spyOn((service as any), "createAggregationQuery")
         .mockReturnValue({});
       jest.spyOn(queriesService, "aggregate")
+        .mockResolvedValue([{ _id: "test-id", amount: 1 }] as any);
+      jest.spyOn((service as any), "generatePeriod")
+        .mockReturnValue("test-period-string");
+
+      // act
+      await service.aggregate(
+        {
+          periodFormat: "D",
+          debug: true,
+          quiet: false,
+        }
+      );
+
+      // assert
+      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(1, "Starting leaderboard aggregation type: D");
+      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(2, `Last leaderboard aggregation executed at: "1643673600000"`);
+      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(3, "Found 1 leaderboard subjects");
+    });
+
+    it("should use correct configuration and logging when if no leaderboard found", async () => {
+      // prepare
+      (service as any).logger = logger;
+      (service as any).state = {
+        data: {
+          lastExecutedAt: new Date().valueOf()
+        }
+      }
+      jest.spyOn((service as any), "config", "get").mockReturnValue({
+        type: "D",
+        collection: "assets",
+        fields: ["amount"],
+      });
+      const serviceDebugLogCall = jest
+        .spyOn((service as any), "debugLog");
+      jest.spyOn((service as any), "createQueryDates")
+        .mockReturnValue({ startDate: new Date(), endDate: new Date()});
+      jest.spyOn((service as any), "createAggregationQuery")
+        .mockReturnValue({});
+      jest.spyOn(queriesService, "aggregate")
         .mockResolvedValue([] as any);
       jest.spyOn((service as any), "generatePeriod")
         .mockReturnValue("test-period-string");
@@ -233,13 +277,15 @@ describe("statistics/LeaderboardAggregation", () => {
       await service.aggregate(
         {
           periodFormat: "D",
-          debug: true
+          debug: true,
+          quiet: false,
         }
       );
 
       // assert
       expect(serviceDebugLogCall).toHaveBeenNthCalledWith(1, "Starting leaderboard aggregation type: D");
       expect(serviceDebugLogCall).toHaveBeenNthCalledWith(2, `Last leaderboard aggregation executed at: "1643673600000"`);
+      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(3, "No leaderboard subjects found");
     });
 
     it("should run correctly", async () => {
@@ -350,6 +396,22 @@ describe("statistics/LeaderboardAggregation", () => {
         expect(configGetCallMock).toHaveBeenCalledTimes(1);
         expect(result).toStrictEqual(expectedResults[index]);
       });
+    });
+
+    it("should throw correct error if no schedulerConfig found", () => {
+      // prepare
+      configGetCallMock.mockClear();
+      (service as any).periodFormat = "Y";
+      const expectedError = new Error(
+        `Configuration for aggregation of type Y is missing.`,
+      );
+
+      // act
+      const result = () => (service as any).config;
+
+      // assert
+      expect(result).toThrowError(expectedError);
+      expect(configGetCallMock).toHaveBeenCalledTimes(1);
     });
   });
 

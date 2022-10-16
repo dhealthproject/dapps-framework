@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
-import { AccountIntegrationDTO } from "@/common/models/AccountIntegrationDTO";
+import { AccountIntegrationDTO } from "../../../../src/common/models/AccountIntegrationDTO";
 import { AccountIntegration, AccountIntegrationDocument } from "../../../../src/common/models/AccountIntegrationSchema";
 
 describe("common/AccountIntegrationSchema", () => {
@@ -55,7 +55,7 @@ describe("common/AccountIntegrationSchema", () => {
       // act
       const result = AccountIntegration.fillDTO(
         accountIntegration as AccountIntegrationDocument,
-        {} as AccountIntegrationDTO
+        new AccountIntegrationDTO(),
       );
 
       // assert

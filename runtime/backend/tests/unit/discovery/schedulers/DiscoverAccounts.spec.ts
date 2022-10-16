@@ -105,7 +105,7 @@ describe("discovery/DiscoverAccounts", () => {
 
   let mockDate: Date;
   beforeEach(async () => {
-    mockDate = new Date(2022, 1, 1); // UTC 1643670000000
+    mockDate = new Date(Date.UTC(2022, 1, 1)); // UTC 1643673600000
     jest.useFakeTimers("modern");
     jest.setSystemTime(mockDate);
 
@@ -213,7 +213,7 @@ describe("discovery/DiscoverAccounts", () => {
       expect(configServiceGetCall).toHaveBeenCalledTimes(2);
       expect(configServiceGetCall).toHaveBeenCalledWith("dappPublicKey");
       expect(configServiceGetCall).toHaveBeenCalledWith("network.networkIdentifier");
-      expect((service as any).lastExecutedAt).toBe(1643670000000);
+      expect((service as any).lastExecutedAt).toBe(1643673600000);
       expect(superRun).toHaveBeenNthCalledWith(
         1,
         [],
@@ -368,6 +368,25 @@ describe("discovery/DiscoverAccounts", () => {
       expect((service as any).lastPageNumber).toBe(lastPageNumber);
     });
 
+    it("should has correct lastPageNumber if not available in state data", async () => {
+      // prepare
+      const lastPageNumber: any = null;
+      (service as any).state = {
+        data: {
+          lastPageNumber,
+        }
+      }
+
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      });
+
+      // assert
+      expect((service as any).lastPageNumber).toBe(1);
+    });
+
     it("should reset last page number given sync state reached", async () => {
       // prepare
       const lastPageNumber = 3;
@@ -393,6 +412,33 @@ describe("discovery/DiscoverAccounts", () => {
       expect(stateServiceFindOneCall).toHaveBeenCalledTimes(1);
       expect(transactionsServiceFindCall).toHaveBeenCalledTimes(1);
       expect((service as any).lastPageNumber).toBe(2);
+    });
+
+    it("should has correct lastPageNumber if Math.floor is not defined", async () => {
+      // prepare
+      const lastPageNumber: any = 2;
+      (service as any).state = {
+        data: {
+          lastPageNumber,
+        }
+      };
+      const accountDiscoveryStateData = new AccountDiscoveryStateData();
+      (accountDiscoveryStateData as any).totalNumberOfTransactions = 100;
+      (service as any).stateService = {
+        findOne: jest.fn().mockResolvedValue({
+          data: accountDiscoveryStateData,
+        }),
+      };
+      jest.spyOn(Math, "floor").mockReturnValue(null);
+
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      });
+
+      // assert
+      expect((service as any).lastPageNumber).toBe(1);
     });
 
     it("should check for the existence of discovered address in mongo", async () => {

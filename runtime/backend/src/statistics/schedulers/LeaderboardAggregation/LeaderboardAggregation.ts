@@ -283,11 +283,11 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
     );
 
     // debug information about upcoming database operations
-    if (options.debug && !options.quiet && results.entries.length > 0) {
-      this.debugLog(`Found ${results.entries.length} leaderboard subjects`);
+    if (options.debug && !options.quiet && results.length > 0) {
+      this.debugLog(`Found ${results.length} leaderboard subjects`);
     }
     // also display debug message when no operations are executed
-    else if (options.debug && !options.quiet && !results.entries.length) {
+    else if (options.debug && !options.quiet && !results.length) {
       this.debugLog(`No leaderboard subjects found`);
     }
 

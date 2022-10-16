@@ -54,7 +54,7 @@ import { TransactionsService } from "../../../../src/discovery/services/Transact
 import { DiscoverTransactions } from "../../../../src/discovery/schedulers/DiscoverTransactions/DiscoverTransactions";
 
 // configuration resources
-import { TransactionDiscoveryStateData } from "@/discovery/models/TransactionDiscoveryStateData";
+import { TransactionDiscoveryStateData } from "../../../../src/discovery/models/TransactionDiscoveryStateData";
 
 // Mocks the actual discovery:DiscoverTransactions command to
 // allow testing of the `runWithOptions` method.
@@ -545,7 +545,7 @@ describe("discovery/DiscoverTransactions", () => {
         const createCall = jest.spyOn(MockModel.prototype, "create");
         const extractRecipientAddressCall = jest
           .spyOn((service as any), "extractRecipientAddress")
-          .mockReturnValue("NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY");
+          .mockReturnValue("NC33F3ZRIIM6UHHIMKU5HGJEFL3MQKCYWG2H45Y");
 
         // act
         await service.discover({
@@ -591,10 +591,9 @@ describe("discovery/DiscoverTransactions", () => {
       // prepare
       const lastUsedAccount = "test-last-used-account";
       const totalNumberOfTransactions = 1;
-      const expectedResult = {
-        lastUsedAccount,
-        totalNumberOfTransactions,
-      } as TransactionDiscoveryStateData;
+      const expectedResult = new TransactionDiscoveryStateData();
+      expectedResult.lastUsedAccount = lastUsedAccount;
+      expectedResult.totalNumberOfTransactions = totalNumberOfTransactions;
       (service as any).lastUsedAccount = lastUsedAccount;
       (service as any).totalNumberOfTransactions = totalNumberOfTransactions;
 

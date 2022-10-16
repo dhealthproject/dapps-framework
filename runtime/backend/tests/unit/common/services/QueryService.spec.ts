@@ -350,6 +350,29 @@ describe("common/QueryService", () => {
         },
       ]);
     });
+
+    it("should add operations to query", async () => {
+      // act
+      await service.find(
+        new AccountQuery(
+          { id: "non-existing" } as AccountDocument,
+          { pageNumber: 2, pageSize: 17 } as QueryParameters,
+        ),
+        testModel,
+        { $exists: { $eq: "a" } },
+      );
+
+      // assert
+      expect(aggregateFn).toHaveBeenCalledWith([
+        { $eq: "a" },
+        {
+          $facet: {
+            data: [{ $skip: 17 }, { $limit: 17 }, { $sort: { _id: 1 } }],
+            metadata: [{ $count: "total" }],
+          },
+        },
+      ]);
+    });
   });
 
   describe("findOne() -->", () => {
@@ -552,6 +575,20 @@ describe("common/QueryService", () => {
     });
 
     it("should create correct spec and no metadata by default", async () => {
+      // prepare
+      aggregateFn = jest.fn((param) => {
+        return {
+          param: () => param,
+          exec: () =>
+            Promise.resolve([
+              {
+                data: [],
+                metadata: [],
+              },
+            ]),
+        };
+      });
+
       // act
       await service.union<StateDocument>(
         new AccountQuery({ id: "non-existing1" } as AccountDocument),
@@ -832,6 +869,13 @@ describe("common/QueryService", () => {
       expect("pageSize" in result.pagination).toBe(true);
       expect(result.pagination.pageNumber).toBe(1); // default main navigation
       expect(result.pagination.pageSize).toBe(20); // default main navigation
+    });
+  });
+
+  describe("aggregate() -->", () => {
+    it("should call aggregate() from model", async () => {
+      await service.aggregate([], testModel);
+      expect(aggregateFn).toHaveBeenCalled();
     });
   });
 

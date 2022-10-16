@@ -23,10 +23,13 @@ import { ChallengesService } from "../../../../src/common/services/ChallengesSer
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { ActivitiesService } from "../../../../src/processor/services/ActivitiesService";
 import { ActivitiesController } from "../../../../src/processor/routes/ActivitiesController";
+import { ActivityDocument } from "../../../../src/processor/models/ActivitySchema";
+import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 
-describe("/activities", () => {
+describe("processor/ActivitiesController", () => {
   let controller: ActivitiesController;
   let activitiesService: ActivitiesService;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -57,9 +60,85 @@ describe("/activities", () => {
 
     controller = module.get<ActivitiesController>(ActivitiesController);
     activitiesService = module.get<ActivitiesService>(ActivitiesService);
+    authService = module.get<AuthService>(AuthService);
   });
 
   it("should be defined", () => {
     expect(controller).toBeDefined();
+  });
+
+  describe("find()", () => {
+    it("should call correct methods and return correct result", async () => {
+      // prepare
+      const activitiesServiceFindCall = jest
+        .spyOn(activitiesService, "find")
+        .mockResolvedValue({
+          data: [{} as ActivityDocument],
+          pagination: {
+            pageNumber: 1,
+            pageSize: 100,
+            total: 1
+          },
+          isLastPage: () => true,
+        });
+      const expectedResult = {
+        data: [{} as ActivityDocument],
+        pagination: {
+          pageNumber: 1,
+          pageSize: 100,
+          total: 1
+        },
+      };
+
+      // act
+      const result = await (controller as any).find({
+        pageNumber: 1
+      });
+
+      // assert
+      expect(activitiesServiceFindCall).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe("findByUser()", () => {
+    it("should call correct methods and return correct result", async () => {
+      // prepare
+      const authServiceGetAccountCall = jest
+        .spyOn(authService, "getAccount")
+        .mockResolvedValue({} as AccountDocument);
+      const activitiesServiceFindCall = jest
+        .spyOn(activitiesService, "find")
+        .mockResolvedValue({
+          data: [{} as ActivityDocument],
+          pagination: {
+            pageNumber: 1,
+            pageSize: 100,
+            total: 1
+          },
+          isLastPage: () => true,
+        });
+      const expectedResult = {
+        data: [{} as ActivityDocument],
+        pagination: {
+          pageNumber: 1,
+          pageSize: 100,
+          total: 1
+        },
+      };
+
+      // act
+      const result = await (controller as any).findByUser(
+        {},
+        {
+          pageNumber: 1
+        }
+      );
+
+      // assert
+      expect(authServiceGetAccountCall).toHaveBeenCalledTimes(1);
+      expect(activitiesServiceFindCall).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(expectedResult);
+    });
   });
 });

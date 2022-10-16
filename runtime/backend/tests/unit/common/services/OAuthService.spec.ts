@@ -36,6 +36,7 @@ import {
   AccountIntegrationDocument,
   AccountIntegrationQuery,
 } from "../../../../src/common/models/AccountIntegrationSchema";
+import { AccessTokenDTO } from "../../../../src/common/models/AccessTokenDTO";
 
 describe("common/OAuthService", () => {
   let oauthService: OAuthService;
@@ -578,6 +579,11 @@ describe("common/OAuthService", () => {
     });
 
     it("should update integration entry with encrypted tokens", async () => {
+      // prepare
+      const expectedAccessTokenDTO = new AccessTokenDTO();
+      expectedAccessTokenDTO.accessToken = undefined;  // mocked Crypto.encrypt
+      expectedAccessTokenDTO.refreshToken = undefined; // mocked Crypto.encrypt
+
       // act
       await oauthService.oauthCallback(
         "fake-provider",
@@ -590,10 +596,7 @@ describe("common/OAuthService", () => {
       expect(updateIntegrationMock).toHaveBeenCalledWith(
         "fake-provider",
         "fake-address",
-        {
-          encAccessToken: undefined, // mocked Crypto.encrypt
-          encRefreshToken: undefined, // mocked Crypto.encrypt
-        }
+        expectedAccessTokenDTO
       );
     });
   });

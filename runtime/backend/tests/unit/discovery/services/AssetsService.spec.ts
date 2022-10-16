@@ -21,6 +21,7 @@ const mockAssetsLoaderCall = jest.fn().mockReturnValue({
 
     earn: {
       mosaicId: "fake-earn-mosaic-id",
+      namespaceId: "fake-earn-namespace-id",
       divisibility: 6,
       symbol: "fake-earn-symbol"
     }
@@ -283,10 +284,10 @@ describe("discovery/AssetsService", () => {
 
        // EARN asset
       expect("mosaicId" in assetEarn).toBe(true);
-      expect("namespaceId" in assetEarn).toBe(false);
+      expect("namespaceId" in assetEarn).toBe(true);
       expect("symbol" in assetEarn).toBe(true);
       expect(assetEarn.mosaicId).toBe("fake-earn-mosaic-id");
-      expect(assetEarn.namespaceId).toBe(undefined);
+      expect(assetEarn.namespaceId).toBe("fake-earn-namespace-id");
       expect(assetEarn.symbol).toBe("fake-earn-symbol");
     });
   });
@@ -308,6 +309,19 @@ describe("discovery/AssetsService", () => {
       // prepare
       const namespaceId = "fake-base-namespace-id";
       const expectedId = "fake-base-mosaic-id"; // <-- overwrites with MosaicId
+
+      // act
+      const result: string = AssetsService.formatMosaicId(namespaceId);
+
+      // assert
+      expect(result).toBeDefined();
+      expect(result).toBe(expectedId); // <-- overwrites with MosaicId
+    });
+
+    it("should return mosaic id given known namespaceId of earnAsset", () => {
+      // prepare
+      const namespaceId = "fake-earn-namespace-id";
+      const expectedId = "fake-earn-mosaic-id"; // <-- overwrites with MosaicId
 
       // act
       const result: string = AssetsService.formatMosaicId(namespaceId);

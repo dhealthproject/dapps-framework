@@ -38,7 +38,7 @@ describe("common/StateSchema", () => {
       const expectedResult = { name, data };
 
       // act
-      const result = State.fillDTO(state as StateDocument, {} as StateDTO);
+      const result = State.fillDTO(state as StateDocument, new StateDTO());
 
       // assert
       expect(result).toEqual(expectedResult);
