@@ -39,9 +39,10 @@ export class StatisticsService {
       periodFormat: "D",
       totalPracticedMinutes: 1600,
       totalEarned: 3.92,
-      topActivities: ["running", "walking"],
+      topActivities: ["running", "cycling"],
       totalReferral: 5,
       levelReferral: 2,
+      friendsReferred: 20150,
     };
   }
 }

@@ -15,10 +15,14 @@ import { Component, Prop } from "vue-property-decorator";
 import { MetaView } from "@/views/MetaView";
 import InlineSvg from "vue-inline-svg";
 
+// child components
+import TopActivities from "../TopActivities/TopActivities.vue";
+import ProgressBar from "../ProgressBar/ProgressBar.vue";
+
 // style resource
 import "./Stats.scss";
 
-export type KnownActivities = "running" | "swimming" | "walking";
+export type KnownActivities = "running" | "swimming" | "cycling";
 
 export interface StatsConfig {
   address: string;
@@ -29,11 +33,14 @@ export interface StatsConfig {
   topActivities: KnownActivities[];
   totalReferral: number;
   levelReferral: number;
+  friendsReferred: number;
 }
 
 @Component({
   components: {
     InlineSvg,
+    TopActivities,
+    ProgressBar,
   },
 })
 export default class Stats extends MetaView {

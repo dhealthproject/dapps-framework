@@ -1,0 +1,24 @@
+<!--
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Vue Frontend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+-->
+
+<template>
+  <ul v-if="items && items.length" class="dapp-activities">
+    <li v-for="(activity, index) in items" :key="activity + index">
+      <img
+        :src="getImageUrl(`activities-icons/${activity}.svg`)"
+        :alt="activity"
+      />
+    </li>
+  </ul>
+</template>
+
+<script lang="ts" src="./TopActivities.ts"></script>

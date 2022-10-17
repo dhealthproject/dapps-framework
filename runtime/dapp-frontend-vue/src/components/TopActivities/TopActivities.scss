@@ -1,0 +1,31 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Vue Frontend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+
+.dapp-activities {
+    margin-top: 4px;
+    display: block;
+
+    li {
+      display: inline-block;
+      margin-inline-end: 12px;
+
+      @media screen and (max-width: 768px) {
+        margin-inline-end: 4px;
+      }
+
+      img {
+        width: 32px;
+
+        @media screen and (max-width: 768px) {
+          width: 24px;
+        }
+      }
+    }
+  }

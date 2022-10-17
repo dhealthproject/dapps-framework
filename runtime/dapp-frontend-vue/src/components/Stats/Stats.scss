@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 
- @import "../../vars.scss";
+ @import "@/vars.scss";
 
  .dapp-stats {
     padding: 16px 32px;
@@ -16,6 +16,10 @@
     border-radius: 16px;
     box-shadow: 4px 5px 0px $black;
     border: 1px solid $login-dark;
+
+    @include devices(mobile) {
+        background-color: red;
+    }
 
     &__total-earned {
         background-color: $stats-teal-light;
@@ -64,9 +68,14 @@
     }
 
     &__other {
-        margin-top: 20px;
+        margin: 20px 0;
         display: flex;
         flex-direction: row;
+        justify-content: space-between;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
 
         .minutes {
             &__amount {
@@ -75,7 +84,12 @@
                 font-size: 32px;
                 line-height: 140%;
                 display: block;
+                color: $black;
             }
+        }
+
+        .dapp-activities {
+            margin-top: 5px;
         }
 
         &__label {
@@ -84,5 +98,39 @@
             font-size: 14px;
             line-height: 150%;
         }
+
+        .referred {
+            .amount {
+                color: $black;
+                font-weight: 400;
+                font-size: 24px;
+                line-height: 150%;
+            }
+
+            .get-more {
+                font-weight: 500;
+                font-size: 12px;
+                line-height: 150%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                margin-top: 4px;
+
+                svg {
+                    display: inline-block;
+                    margin-left: 8px;
+                    cursor: pointer;
+
+                    path {
+                        fill: $black;
+                    }
+                }
+            }
+        }
+    }
+
+    &__referred {
+        margin-bottom: 20px;
     }
 }

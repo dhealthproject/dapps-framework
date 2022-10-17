@@ -23,8 +23,6 @@
           <Card :title="'Key stats'" :showBorders="false">
             <template v-slot:content><Stats :data="stats" /></template
           ></Card>
-        </template>
-        <template v-slot:right>
           <Card :title="'Invite friends'" :showBorders="false">
             <template v-slot:content>
               <div class="referral-box">
@@ -53,7 +51,8 @@
               </div>
             </template>
           </Card>
-
+        </template>
+        <template v-slot:right>
           <Card :title="''" :showBorders="false">
             <template v-slot:content> <Leaderboard /> </template
           ></Card>

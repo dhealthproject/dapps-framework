@@ -34,4 +34,12 @@ export default class ProgressBar extends MetaView {
    * @var {number}
    */
   @Prop({ default: 0 }) completedSteps?: number;
+
+  /**
+   * Prop that defines icon at the end of progress bar
+   *
+   * @access public
+   * @var {string}
+   */
+  @Prop({ default: "" }) endIcon?: string;
 }

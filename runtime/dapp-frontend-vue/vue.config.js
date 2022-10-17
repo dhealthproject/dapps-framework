@@ -24,6 +24,15 @@ const metaConfig = require("./config/meta.json");
  * @see https://vuejs.org/api/application.html#app-config
  */
 module.exports = {
+  // css: {
+  //   loaderOptions: {
+  //     scss: {
+  //       additionalData: `
+  //               @import "@/_media.scss";
+  //           `,
+  //     },
+  //   },
+  // },
   // inlines vue-meta
   transpileDependencies: ["vue-meta"],
 
@@ -72,7 +81,14 @@ module.exports = {
         {
           test: /\.s[ac]ss$/,
           exclude: /node_modules/,
-          use: ["sass-loader"],
+          use: [
+            {
+              loader: "sass-loader",
+              options: {
+                additionalData: '@import "@/_media.scss";',
+              },
+            },
+          ],
         },
       ],
     },

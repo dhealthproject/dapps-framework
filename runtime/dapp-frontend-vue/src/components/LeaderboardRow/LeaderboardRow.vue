@@ -40,17 +40,7 @@
             :direction="data.trendline"
           />
         </div>
-        <ul v-if="data && data.activities" class="activities">
-          <li
-            v-for="(activity, index) in data.activities"
-            :key="activity + index"
-          >
-            <img
-              :src="getImageUrl(`activities-icons/${activity}.svg`)"
-              :alt="activity"
-            />
-          </li>
-        </ul>
+        <TopActivities :items="data.activities" />
       </div>
       <div class="dapp-leaderboard-item__amount text-right">
         <span v-html="`$${data.assets} FIT`" />

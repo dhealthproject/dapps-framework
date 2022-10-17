@@ -22,7 +22,6 @@ import Toast from "./components/Toast/Toast.vue";
 
 // style resource
 import "./App.scss";
-
 // configuration
 import packageConfig from "../package.json";
 

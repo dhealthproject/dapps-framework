@@ -18,6 +18,12 @@
       class="item"
       :class="{ completed: i <= completedSteps }"
     />
+    <img
+      v-if="endIcon"
+      :src="getImageUrl(endIcon)"
+      class="icon end"
+      alt="50 friends referred"
+    />
   </div>
 </template>
 

@@ -69,28 +69,6 @@
         font-size: 14px;
       }
     }
-
-    .activities {
-      margin-top: 4px;
-      display: block;
-
-      li {
-        display: inline-block;
-        margin-inline-end: 12px;
-
-        @media screen and (max-width: 768px) {
-          margin-inline-end: 4px;
-        }
-
-        img {
-          width: 32px;
-
-          @media screen and (max-width: 768px) {
-            width: 24px;
-          }
-        }
-      }
-    }
   }
 
   &__amount {

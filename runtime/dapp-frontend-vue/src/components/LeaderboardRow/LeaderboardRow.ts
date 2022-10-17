@@ -16,6 +16,7 @@ import { MetaView } from "@/views/MetaView";
 
 // child components
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
+import TopActivities from "../TopActivities/TopActivities.vue";
 
 // style resource
 import "./LeaderboardRow.scss";
@@ -37,6 +38,7 @@ import "./LeaderboardRow.scss";
 @Component({
   components: {
     DirectionTriangle,
+    TopActivities,
   },
 })
 export default class LeaderboardRow extends MetaView {

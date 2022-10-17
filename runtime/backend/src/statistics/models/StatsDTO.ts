@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 
-export type KnownActivities = "running" | "swimming" | "walking";
+export type KnownActivities = "running" | "swimming" | "cycling";
 
 export interface StatsDTO {
   address: string;
@@ -19,4 +19,5 @@ export interface StatsDTO {
   topActivities: KnownActivities[];
   totalReferral: number;
   levelReferral: number;
+  friendsReferred: number;
 }
