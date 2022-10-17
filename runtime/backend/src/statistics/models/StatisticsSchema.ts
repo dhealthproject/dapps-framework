@@ -35,9 +35,25 @@ import { StatisticsDTO } from "./StatisticsDTO";
 })
 export class Statistics extends Transferable<StatisticsDTO> {
   /**
+   * This field contains the *mongo collection name* for entries
+   * that are stored using {@link AccountIntegrationDocument} or the model
+   * {@link AccountIntegrationModel}.
+   * <br /><br />
+   * Note that this field **is not** part of document properties
+   * and used only internally to perform queries that refer to
+   * an individual collection name, e.g. `$unionWith`.
+   *
+   * @access public
+   * @var {string}
+   */
+  public collectionName = "statistics";
+
+  /**
    * The type of this statistics schema. Depends on the
    * data type it would take a different
    * specific value.
+   * <br /><br />
+   * This field is **required** and *not indexed*.
    *
    * @example `"leaderboard"`
    * @access public
@@ -56,6 +72,8 @@ export class Statistics extends Transferable<StatisticsDTO> {
    * | "D"     | occurs daily   |
    * | "W"     | occurs weekly  |
    * | "M"     | occurs monthly |
+   * <br /><br />
+   * This field is **required** and *not indexed*.
    *
    * @example `"M"`
    * @access public
@@ -72,6 +90,8 @@ export class Statistics extends Transferable<StatisticsDTO> {
    * | daily   | occurs daily   | "20220130"  | period occuring between 0:00 AM 30/01/2022 and 0:00 AM Jan 30 2022
    * | weekly  | occurs weekly  | "202201-02" | period occuring between monday and sunday the second week of Jan 2022
    * | monthly | occurs monthly | "202201"    | period occuring between the 1st and 31st of Jan 2022
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @example `"20220130"`
    * @access public
@@ -98,6 +118,8 @@ export class Statistics extends Transferable<StatisticsDTO> {
    * The position of the user of this schema. This reflects
    * the position in terms of total rewards (token) amount
    * this user's address has received.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @example `123456`
    * @access public
@@ -109,6 +131,8 @@ export class Statistics extends Transferable<StatisticsDTO> {
   /**
    * The total amount of tokens that the address of this schema
    * has received. Amount is in absolute format.
+   * <br /><br />
+   * This field is **required** and *not indexed*.
    *
    * @example `123456`
    * @access public
@@ -121,6 +145,8 @@ export class Statistics extends Transferable<StatisticsDTO> {
    * The document's creation timestamp. This field **does not** reflect the
    * date of creation of an integration but rather the date of creation of the
    * cached database entry.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -133,6 +159,8 @@ export class Statistics extends Transferable<StatisticsDTO> {
    * The document's update timestamp. This field **does not** reflect the
    * date of update of an integration but rather the date of update of the
    * cached database entry.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
    *
    * @access public
    * @readonly

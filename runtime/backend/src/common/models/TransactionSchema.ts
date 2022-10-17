@@ -58,6 +58,8 @@ export class Transaction extends Transferable<TransactionDTO> {
    * with the signer address. A discovery source is an address
    * owned by the dApp itself and *from/to which* transactions
    * are issued.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -70,6 +72,8 @@ export class Transaction extends Transferable<TransactionDTO> {
    * This is the signer's address. The signer corresponds to the
    * issuer of said transaction ("owner"). It is not to be confused
    * with the discovery source address.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -81,6 +85,8 @@ export class Transaction extends Transferable<TransactionDTO> {
   /**
    * This is the signer's public key. The signer corresponds to
    * the issuer of said transaction ("owner").
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -92,6 +98,8 @@ export class Transaction extends Transferable<TransactionDTO> {
   /**
    * This is the recipient address. The recipient corresponds to the
    * destination of said transaction.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -109,18 +117,22 @@ export class Transaction extends Transferable<TransactionDTO> {
    * - `"outgoing"`: This transaction is an *outgoing* transaction
    *   of the {@link sourceAddress} discovery source account. i.e.
    *   this transaction was *sent from* the discovery source account.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
    * @var {string}
    */
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   public readonly transactionMode: string;
 
   /**
    * This is the transaction type as defined in dApps. Typically,
    * this field will contain `"transfer"`, as for now dApps always
    * use transfer transactions to perform operations.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -136,6 +148,9 @@ export class Transaction extends Transferable<TransactionDTO> {
    * <br /><br />
    * Due to the usage of sha3-256, this hash is **always** a **32 bytes**
    * transaction hash (64 characters in hexadecimal notation).
+   * <br /><br />
+   * This field is **required**, *indexed* and values are expected
+   * to be *unique*.
    *
    * @access public
    * @readonly
@@ -153,14 +168,13 @@ export class Transaction extends Transferable<TransactionDTO> {
    * the content of this field may be highly variable, reaching from
    * plain text content over to hexadecimal payloads of encrypted text.
    * <br /><br />
-   * CAUTION: This indexed field *must* be analyzed as it *could* grow
-   * heavily due to the potential of 1024 bytes in transfer messages.
+   * This field is **optional** and *not indexed*.
    *
    * @access public
    * @readonly
    * @var {string}
    */
-  @Prop({ index: true, nullable: true })
+  @Prop({ nullable: true })
   public readonly transactionMessage?: string;
 
   /**
@@ -168,10 +182,9 @@ export class Transaction extends Transferable<TransactionDTO> {
    * contains an array of `ObjectLiteral` objects that consist of both
    * a *mosaicId* and *amount* field.
    * <br /><br />
-   * CAUTION: This indexed field *must* be analyzed as it *could* grow
-   * heavily due to the potential of 1024 bytes in transfer messages.
+   * This field is **optional** and *not indexed*.
    *
-   * @example `{ contract: "elevate:auth", version: 1, challenge: "abcdef12" }`
+   * @example `[{ "mosaicId": "39E0C49FA322A459", amount: 1 }]`
    * @access public
    * @readonly
    * @var {string}
@@ -186,13 +199,15 @@ export class Transaction extends Transferable<TransactionDTO> {
    * <br /><br />
    * Due to the usage of sha3-512, this hash is **always** a **64 bytes**
    * transaction hash (128 characters in hexadecimal notation).
+   * <br /><br />
+   * This field is **required** and *not indexed*.
    *
    * @access public
    * @readonly
    * @var {string}
    */
   @Prop({ required: true })
-  public readonly signature?: string;
+  public readonly signature: string;
 
   /**
    * This is the transaction body as defined by the dApps Framework. This
@@ -209,38 +224,44 @@ export class Transaction extends Transferable<TransactionDTO> {
    * always the same network-wide, depending on the transaction type. It
    * permits to save `112 bytes` of data, that is easily reproduced using
    * the other fields of this document.
+   * <br /><br />
+   * This field is **required** and *not indexed*.
    *
    * @access public
    * @readonly
    * @var {string}
    */
-  @Prop()
-  public readonly encodedBody?: string;
+  @Prop({ required: true })
+  public readonly encodedBody: string;
 
   /**
    * The document's creation block number. This field **does** reflect the
    * time of creation of a transaction. You can use the dHealth Network API
    * to find out exact timestamp by block height.
+   * <br /><br />
+   * This field is **required** and *not indexed*.
    *
    * @todo Note this is not protected for number overflows (but there is a long way until block numbers do overflow..)
    * @access public
    * @readonly
    * @var {number}
    */
-  @Prop()
-  public readonly creationBlock?: number;
+  @Prop({ required: true })
+  public readonly creationBlock: number;
 
   /**
    * The document's discovery timestamp. This field **does not** reflect the
    * date of creation of a transaction but rather the date of creation of the
    * cached database entry.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
    * @var {number}
    */
-  @Prop()
-  public readonly discoveredAt?: number;
+  @Prop({ required: true, index: true })
+  public readonly discoveredAt: number;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -248,18 +269,22 @@ export class Transaction extends Transferable<TransactionDTO> {
    * cached database entry.
    * <br /><br />
    * This field is added for consistency with the other database schema.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
    * @var {Date}
    */
   @Prop({ index: true })
-  public readonly createdAt: Date;
+  public readonly createdAt?: Date;
 
   /**
    * The document's update timestamp. This field **does not** reflect the
    * date of update of a transaction but rather the date of update of the
    * cached database entry.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
    *
    * @access public
    * @readonly

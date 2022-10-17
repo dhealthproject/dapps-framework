@@ -48,7 +48,10 @@ export class AuthChallenge extends Transferable<AuthChallengeDTO> {
   /**
    * The authentication code that is randomly generated for users
    * to use during authentication. This challenge must be attached
-   * to a transfer transaction sent to the dApp's auth autority.
+   * to a transfer transaction sent to the dApp's auth authority.
+   * <br /><br />
+   * This field is **required**, *indexed* and values are expected
+   * to be *unique*.
    *
    * @access public
    * @readonly
@@ -59,6 +62,8 @@ export class AuthChallenge extends Transferable<AuthChallengeDTO> {
 
   /**
    * The *address* of the user that used this authentication token.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -70,6 +75,8 @@ export class AuthChallenge extends Transferable<AuthChallengeDTO> {
   /**
    * The timestamp at which this authentication token was used, this
    * may be referred to as the *time of consumption* of a token.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -82,6 +89,8 @@ export class AuthChallenge extends Transferable<AuthChallengeDTO> {
    * The document's creation timestamp. This field **does not** reflect the
    * date of creation of an account but rather the date of creation of the
    * cached database entry.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -94,6 +103,8 @@ export class AuthChallenge extends Transferable<AuthChallengeDTO> {
    * The document's update timestamp. This field **does not** reflect the
    * date of update of an account but rather the date of update of the
    * cached database entry.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
    *
    * @access public
    * @readonly

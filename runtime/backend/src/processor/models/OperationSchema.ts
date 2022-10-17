@@ -57,6 +57,8 @@ export class Operation extends Transferable<OperationDTO> {
    * on the operation type, i.e. for the `auth` contract, this field
    * shall contain the *signer address*; whereas for the `earn`
    * contract, this field shall contain the *recipient address*.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -72,6 +74,9 @@ export class Operation extends Transferable<OperationDTO> {
    * <br /><br />
    * Due to the usage of sha3-256, this hash is **always** a **32 bytes**
    * transaction hash (64 characters in hexadecimal notation).
+   * <br /><br />
+   * This field is **required**, *indexed* and values are expected
+   * to be *unique*.
    *
    * @access public
    * @readonly
@@ -83,6 +88,8 @@ export class Operation extends Transferable<OperationDTO> {
   /**
    * This is the contract signature as presented inside a dHealth
    * Transfer Transaction.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @example `"elevate:auth"`
    * @access public
@@ -98,6 +105,8 @@ export class Operation extends Transferable<OperationDTO> {
    * of the `contract` and `version` fields, adding to it the body
    * of the contract instance, i.e. the `Auth` contract would here
    * also include a `challenge` field.
+   * <br /><br />
+   * This field is **required** and *not indexed*.
    *
    * @example `{ contract: "elevate:auth", version: 1, challenge: "abcdef12" }`
    * @access public
@@ -111,26 +120,30 @@ export class Operation extends Transferable<OperationDTO> {
    * The document's creation block number. This field **does** reflect the
    * time of creation of an operation. You can use the dHealth Network API
    * to find out exact timestamp by block height.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @todo Note this is not protected for number overflows (but there is a long way until block numbers do overflow..)
    * @access public
    * @readonly
    * @var {number}
    */
-  @Prop()
-  public readonly creationBlock?: number;
+  @Prop({ required: true, index: true })
+  public readonly creationBlock: number;
 
   /**
    * The document's processing timestamp. This field **does not** reflect the
    * date of creation of an operation but rather the date of creation of the
    * cached database entry.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
    * @var {number}
    */
-  @Prop({ index: true })
-  public readonly processedAt?: number;
+  @Prop({ required: true, index: true })
+  public readonly processedAt: number;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -138,6 +151,8 @@ export class Operation extends Transferable<OperationDTO> {
    * cached database entry.
    * <br /><br />
    * This field is added for consistency with the other database schema.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -150,6 +165,8 @@ export class Operation extends Transferable<OperationDTO> {
    * The document's update timestamp. This field **does not** reflect the
    * date of update of a transaction but rather the date of update of the
    * cached database entry.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
    *
    * @access public
    * @readonly

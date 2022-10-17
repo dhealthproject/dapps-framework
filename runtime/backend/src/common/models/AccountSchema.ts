@@ -158,6 +158,8 @@ export class Account extends Transferable<AccountDTO> {
    * The document's creation timestamp. This field **does not** reflect the
    * date of creation of an account but rather the date of creation of the
    * cached database entry.
+   * <br /><br />
+   * This field is **optional** and *indexed*.
    *
    * @access public
    * @readonly
@@ -170,6 +172,8 @@ export class Account extends Transferable<AccountDTO> {
    * The document's update timestamp. This field **does not** reflect the
    * date of update of an account but rather the date of update of the
    * cached database entry.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
    *
    * @access public
    * @readonly

@@ -54,6 +54,9 @@ export class State extends Transferable<StateDTO> {
    * contain dynamic module names, e.g. `"discovery"` or `"payout",
    * such that state cache for each individual module can be tracked
    * accordingly.
+   * <br /><br />
+   * This field is **required**, *indexed* and values are expected
+   * to be *unique*.
    *
    * @access public
    * @readonly
@@ -68,6 +71,8 @@ export class State extends Transferable<StateDTO> {
    * this is to be flexible about state caches for the beginning, in a
    * later iteration of the framework it is possible that this field
    * would be updated to a strictly typed alternative.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -80,6 +85,8 @@ export class State extends Transferable<StateDTO> {
    * The document's creation timestamp. This field **does not** reflect the
    * date of creation of an account but rather the date of creation of the
    * cached database entry.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -92,6 +99,8 @@ export class State extends Transferable<StateDTO> {
    * The document's update timestamp. This field **does not** reflect the
    * date of update of an account but rather the date of update of the
    * cached database entry.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
    *
    * @access public
    * @readonly

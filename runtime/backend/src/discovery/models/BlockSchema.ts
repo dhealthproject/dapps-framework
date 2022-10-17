@@ -38,6 +38,8 @@ export class Block extends Transferable<BlockDTO> {
   /**
    * This is the block height that refers to the order in which
    * blocks were added to the network.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -49,6 +51,8 @@ export class Block extends Transferable<BlockDTO> {
   /**
    * This is the block's harvester address, corresponds to the
    * account that has *harvested* this block.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -60,6 +64,8 @@ export class Block extends Transferable<BlockDTO> {
   /**
    * This block's creation timestamp. This field reflects the
    * time of the creation of the block.
+   * <br /><br />
+   * This field is **required** and *not indexed*.
    *
    * @access public
    * @readonly
@@ -70,6 +76,8 @@ export class Block extends Transferable<BlockDTO> {
 
   /**
    * The total number of transactions included in this block.
+   * <br /><br />
+   * This field is **required** and *not indexed*.
    *
    * @access public
    * @readonly
@@ -84,6 +92,8 @@ export class Block extends Transferable<BlockDTO> {
    * cached database entry.
    * <br /><br />
    * This field is added for consistency with the other database schema.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -96,6 +106,8 @@ export class Block extends Transferable<BlockDTO> {
    * The document's update timestamp. This field **does not** reflect the
    * date of update of a transaction but rather the date of update of the
    * cached database entry.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
    *
    * @access public
    * @readonly

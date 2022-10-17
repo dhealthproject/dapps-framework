@@ -55,6 +55,8 @@ export class Asset extends Transferable<AssetDTO> {
    * (destination) account.
    * <br /><br />
    * The destination address can be found in {@link userAddress}.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -66,6 +68,8 @@ export class Asset extends Transferable<AssetDTO> {
   /**
    * This is the user's address. The user corresponds to the
    * owner of said **assets**.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -79,6 +83,8 @@ export class Asset extends Transferable<AssetDTO> {
    * on the network and acts as an *identifier* for the asset. An asset
    * can always and *only* be obtained using a *transfer transaction* on
    * dHealth Network.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
@@ -100,6 +106,8 @@ export class Asset extends Transferable<AssetDTO> {
    * Note that `Number.MAX_SAFE_INTEGER` takes a maximum value of:
    * `9007199254740991` and is thereby compatible with the maximum amount
    * that can be present in dHealth Network transfers: `8999999999999999`.
+   * <br /><br />
+   * This field is **required** and *not indexed*.
    *
    * @access public
    * @readonly
@@ -112,6 +120,8 @@ export class Asset extends Transferable<AssetDTO> {
    * The document's creation block number. This field **does** reflect the
    * time of creation of the assets in the end-user balance. You can use the
    * dHealth Network API to find out exact timestamp by block height.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @todo Note this is not protected for number overflows (but there is a long way until block numbers do overflow..)
    * @access public
@@ -127,18 +137,22 @@ export class Asset extends Transferable<AssetDTO> {
    * cached database entry.
    * <br /><br />
    * This field is added for consistency with the other database schema.
+   * <br /><br />
+   * This field is **required** and *indexed*.
    *
    * @access public
    * @readonly
    * @var {Date}
    */
   @Prop({ index: true })
-  public readonly createdAt: Date;
+  public readonly createdAt?: Date;
 
   /**
    * The document's update timestamp. This field **does not** reflect the
    * date of update of a transaction but rather the date of update of the
    * cached database entry.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
    *
    * @access public
    * @readonly
