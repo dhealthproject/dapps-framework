@@ -42,7 +42,7 @@
     text-align: left;
     color: $button-text-dark;
 
-    @media screen and (max-width: 768px) {
+    @include devices(tablet) {
       font-size: 12px;
       line-height: 130%;
       padding: 0 25px;
@@ -93,12 +93,12 @@
   }
 
   &__consent {
-    @media screen and (max-width: 1024px) {
+    @include devices(laptop) {
       margin-bottom: auto;
     }
 
     .dapp-nav-panel {
-      @media screen and (max-width: 1024px) {
+      @include devices(laptop) {
         display: none;
       }
     }

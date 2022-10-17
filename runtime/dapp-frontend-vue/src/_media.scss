@@ -5,18 +5,22 @@
  
  // $breakpoint is the variable that can have several values
  @mixin devices ($breakpoint) { //the name of the mixin is devices
-  
+
     @if $breakpoint == mobile {    
+        @media only screen and (max-width: 580px) {
+            @content;
+        }
+    }
+  
+    @if $breakpoint == tablet {    
         @media only screen and (max-width: 768px) {
             @content;
         }
     }
  
-    @if $breakpoint == tablet {
+    @if $breakpoint == laptop {
         @media only screen and (max-width: 1024px) {
             @content;
         }
     }
 }
-
-$test: yellow;

@@ -41,7 +41,7 @@
     border-radius: 8px;
     z-index: 1;
 
-    @media screen and (max-width: 1024px) {
+    @include devices(laptop) {
       right: -100%;
     }
 

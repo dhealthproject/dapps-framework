@@ -33,14 +33,14 @@
   }
 
   .logo {
-    @media screen and (max-width: 1024px) {
+    @include devices(laptop) {
       padding: 14px 0;
       svg {
         width: 122px;
       }
     }
 
-    @media screen and (max-width: 580px) {
+    @include devices(laptop) {
       padding: 14px 0 0 0;
       svg {
         width: 92px;
@@ -51,7 +51,7 @@
   &__hamburger {
     display: none;
 
-    @media screen and (max-width: 1024px) {
+    @include devices(laptop) {
       display: inline-block;
     }
   }

@@ -12,7 +12,7 @@
 
 .dapp-screen-onboarding {
   &__inner {
-    @media screen and (max-width: 580px) {
+    @include devices(mobile) {
       display: none;
     }
   }
@@ -138,7 +138,7 @@
           letter-spacing: -1%;
           margin-bottom: 16px;
 
-          @media screen and (max-width: 768px) {
+          @include devices(tablet) {
             font-size: 20px;
             margin-bottom: 8px;
           }
@@ -151,7 +151,8 @@
           color: $base-grey;
           line-height: 150%;
           margin-bottom: 24px;
-          @media screen and (max-width: 768px) {
+          
+          @include devices(tablet){
             font-size: 16px;
           }
         }

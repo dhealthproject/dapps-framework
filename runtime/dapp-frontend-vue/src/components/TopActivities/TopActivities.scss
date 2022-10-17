@@ -16,14 +16,14 @@
       display: inline-block;
       margin-inline-end: 12px;
 
-      @media screen and (max-width: 768px) {
+      @include devices(tablet) {
         margin-inline-end: 4px;
       }
 
       img {
         width: 32px;
 
-        @media screen and (max-width: 768px) {
+        @include devices(tablet) {
           width: 24px;
         }
       }

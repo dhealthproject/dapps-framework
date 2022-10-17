@@ -15,7 +15,7 @@
   text-align: left;
 
   .dapp-divided-screen__columns {
-    @media screen and (max-width: 768px) {
+    @include devices(tablet) {
       flex-direction: column;
 
       .dapp-divided-screen__columns__column {
@@ -38,7 +38,7 @@
     border: 1px solid $black;
     box-shadow: 5px 5px 0px $black;
 
-    @media screen and (max-width: 1024px) {
+    @include devices(laptop) {
       padding: 40px 24px;
     }
 
@@ -136,7 +136,7 @@
     margin-bottom: 30px;
     word-break: break-word;
 
-    @media screen and (max-width: 768px) {
+    @include devices(tablet) {
       font-size: 24px;
       margin-bottom: 27px;
     }
@@ -210,7 +210,7 @@
     }
   }
 
-  @media screen and (max-width: 768px) {
+  @include devices(tablet) {
     .dapp-list__custom {
       flex-direction: column;
     }
@@ -227,7 +227,7 @@
     img {
       margin-right: 7px;
 
-      @media screen and (max-width: 580px) {
+      @include devices(mobile) {
         max-width: 50px;
       }
     }
@@ -288,11 +288,11 @@
       justify-content: center;
       flex-direction: column;
 
-      @media screen and (max-width: 768px) {
+      @include devices(tablet) {
         padding: 16px 74px;
       }
 
-      @media screen and (max-width: 580px) {
+      @include devices(mobile) {
         padding: 16px 24px;
       }
 
