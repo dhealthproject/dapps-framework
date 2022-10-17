@@ -9,6 +9,29 @@
  */
 /**
  * @label COMMON
+ * @type DefaultNodePayload
+ * @description This type consists of an URL anda publicKey that are used
+ * to establish the connection and query info of the default node.
+ * <br /><br />
+ * @example Using the `DefaultNodePayload` type to configure nodes
+ * ```ts
+ *  // by default the URL can contain the schema and port
+ *  const defaultNode = {
+ *    url: "http://dual-02.dhealth.cloud:3000",
+ *    publicKey: "613010BCE1FBF3CE1503DEF3003C76E451EA4DD9205FAD3530BFF7B1D78BC989"
+ *  } as DefaultNodePayload;
+ * ```
+ *
+ * @link NetworkConfig:COMMON
+ * @since v0.3.0
+ */
+export type DefaultNodePayload = {
+  url: string;
+  publicKey: string;
+};
+
+/**
+ * @label COMMON
  * @type NodeConnectionPayload
  * @description This type consists of an URL and an optional port
  * that are used to establish the connection with an operating
@@ -82,18 +105,19 @@ export type NetworkParameters = {
  */
 export interface NetworkConfig {
   /**
-   * A default operation network node to connect to. This must be
-   * a URL that contains a schema and a port, which identifies the
-   * node and where it is operating.
+   * A default operation network node to connect to.
+   * This configuration option uses the {@link DefaultNodePayload:COMMON}
+   * type and consists of an URL and a publicKey that are used
+   * to establish the connection and query info of the default node.
    * <br /><br />
    * Note that it is OK to use IP addresses rather than a domain
    * name in this configuration option.
    *
    * @example `"http://dual-02.dhealth.cloud:3000"`
    * @access public
-   * @var {string}
+   * @var {DefaultNodePayload}
    */
-  defaultNode: string;
+  defaultNode: DefaultNodePayload;
 
   /**
    * A list of operating network nodes that can be connected to.

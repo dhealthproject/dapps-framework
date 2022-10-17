@@ -14,3 +14,4 @@ export * from "./Pageable";
 export * from "./Queryable";
 export * from "./Sortable";
 export * from "./Transferable";
+export * from "./DappHelper";

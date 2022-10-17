@@ -19,13 +19,13 @@ import {
   RepositoryFactoryHttp,
   RepositoryFactoryConfig,
   TransactionRepository,
-  UInt64,
 } from "@dhealth/sdk";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 // internal dependencies
 import {
+  DefaultNodePayload,
   NetworkParameters,
   NodeConnectionPayload,
 } from "../models/NetworkConfig";
@@ -88,11 +88,6 @@ export type NetworkConnectionPayload = {
  * adapter is not *always* considered "connected", as is currently the
  * case.
  *
- * @todo Potentially add `nodePublicKey` to network configuration (for default node).
- * @todo Move method {@link getBlockTimestamp} to helpers/formatters concern.
- * @todo Move method {@link getNetworkTimestampFromUInt64} to helpers/formatters concern.
- * @todo Deprecate method {@link getBlockRepository} in favor of {@link delegatePromises}.
- * @todo Deprecate method {@link getTransactionRepository} in favor of {@link delegatePromises}.
  * @since v0.1.0
  */
 @Injectable()
@@ -181,16 +176,22 @@ export class NetworkService {
    */
   public constructor(private readonly configService: ConfigService) {
     // prepares the connection parameters
-    const defaultNode = this.configService.get<string>("defaultNode");
+    const defaultNodePayload = this.configService.get<DefaultNodePayload>(
+      "defaultNode",
+    ) as DefaultNodePayload;
 
     // store a copy of network parameters in memory
     this.currentNetwork = this.getNetworkConfiguration();
 
     // connects to a node only if there is a default
-    if (!!defaultNode && defaultNode.length > 0) {
+    if (!!defaultNodePayload?.url && defaultNodePayload.url.length > 0) {
       // initializes a repository factory and passes connection
       // information to avoid extra node requests.
-      this.connectToNode(defaultNode, this.currentNetwork);
+      this.connectToNode(
+        defaultNodePayload.url,
+        defaultNodePayload.publicKey,
+        this.currentNetwork,
+      );
     }
 
     // initializes this class' http service
@@ -275,46 +276,6 @@ export class NetworkService {
   }
 
   /**
-   * Method to get timestamp from a dHealth block-height number.
-   * <br /><br />
-   * @deprecated This method will be deprecated in upcoming releases
-   * of the software. It is yet to be defined which helper classes
-   * are necessary to favor instead.
-   *
-   * @async
-   * @access public
-   * @param {number} height
-   * @returns {Promise<number>}
-   */
-  public async getBlockTimestamp(height: number): Promise<number> {
-    const block = await this.blockRepository
-      .getBlockByHeight(UInt64.fromUint(height))
-      .toPromise();
-    if (!block) throw new Error("Cannot query block from height");
-    const timestamp = this.getNetworkTimestampFromUInt64(block.timestamp);
-    return timestamp * 1e3;
-  }
-
-  /**
-   * Method to get (network adjusted) timestamp from an UInt64 timestamp.
-   * <br /><br />
-   * @deprecated This method will be deprecated in upcoming releases
-   * of the software. It is yet to be defined which helper classes
-   * are necessary to favor instead.
-   *
-   * @access public
-   * @param {UInt64} timestamp
-   * @returns {number}
-   */
-  public getNetworkTimestampFromUInt64(timestamp: UInt64): number {
-    const timestampNumber = timestamp.compact();
-    const epochAdjustment = this.configService.get<number>(
-      "network.epochAdjustment",
-    );
-    return Math.round(timestampNumber / 1000) + epochAdjustment;
-  }
-
-  /**
    * This method forwards the execution of promises using
    * `Promise.all()` and given request failure, connects to
    * a different node that is currently in a healthy state.
@@ -369,7 +330,7 @@ export class NetworkService {
 
       try {
         // instanciate new repository factory
-        this.connectToNode(nodeUrl, this.currentNetwork);
+        this.connectToNode(nodeUrl, null, this.currentNetwork);
 
         // query for node health before we continue
         const result: NodeHealth = await this.nodeRepository
@@ -448,11 +409,13 @@ export class NetworkService {
    *
    * @access protected
    * @param {string} nodeUrl
+   * @param {string} nodePublicKey
    * @param {NetworkConnectionPayload} connectionPayload
    * @returns {NetworkService}
    */
   protected connectToNode(
     nodeUrl: string,
+    nodePublicKey: string,
     connectionPayload: NetworkConnectionPayload,
   ): NetworkService {
     // configures the repository factory
@@ -461,7 +424,7 @@ export class NetworkService {
       epochAdjustment: connectionPayload.epochAdjustment,
       networkType: connectionPayload.networkIdentifier,
       networkCurrencies: connectionPayload.networkCurrencies,
-      nodePublicKey: "FakeUnauthorizedPublicKey",
+      nodePublicKey,
     } as RepositoryFactoryConfig);
 
     // store copy of connected node

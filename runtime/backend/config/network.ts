@@ -40,10 +40,16 @@ export default () => ({
    * Note that it is OK to use IP addresses rather than a domain
    * name in this configuration option.
    *
-   * @example `"http://dual-02.dhealth.cloud:3000"`
+   * @example `{
+   *    url: "http://dual-02.dhealth.cloud:3000",
+   *    publicKey: "613010BCE1FBF3CE1503DEF3003C76E451EA4DD9205FAD3530BFF7B1D78BC989"
+   * }`
    * @var {string}
    */
-  defaultNode: "http://dual-02.dhealth.cloud:3000",
+  defaultNode: {
+    url: "http://dual-02.dhealth.cloud:3000",
+    publicKey: "613010BCE1FBF3CE1503DEF3003C76E451EA4DD9205FAD3530BFF7B1D78BC989"
+  },
 
   /**
    * A list of operating network nodes that can be connected to.

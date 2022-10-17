@@ -43,6 +43,7 @@ const RepositoryFactoryHttpMock: any = jest.fn((url) => ({
 class MockNetworkService extends NetworkService {
   protected connectToNode(
     nodeUrl: string,
+    publicKey: string,
     connectionPayload: NetworkConnectionPayload,
   ): MockNetworkService {
     this.repositoryFactoryHttp = RepositoryFactoryHttpMock("fake-node");
@@ -66,6 +67,10 @@ describe("common/NetworkService", () => {
     configService = module.get<ConfigService>(ConfigService);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should be defined", () => {
     expect(service).toBeDefined();
   });
@@ -75,7 +80,10 @@ describe("common/NetworkService", () => {
       // prepare
       const configServiceGetCall = jest
         .spyOn(configService, "get")
-        .mockReturnValue("test-url");
+        .mockReturnValue({
+          url: "test-url",
+          publicKey: "test-publicKey",
+        });
       const getNetworkConfigurationCall = jest
         .spyOn(MockNetworkService.prototype, "getNetworkConfiguration")
         .mockReturnValue({} as any);
@@ -92,51 +100,27 @@ describe("common/NetworkService", () => {
       expect(getNetworkConfigurationCall).toHaveBeenCalledTimes(1);
       expect(connectToNodeCall).toHaveBeenCalledTimes(1);
     });
-  });
 
-  describe("getBlockTimestamp() -->", () => {
-    it("should have correct flow and result when response is not empty", async () => {
-      const getBlockByHeightCall = jest.fn(() => ({
-        toPromise: () => Promise.resolve({}),
-      }));
-      (service as any).blockRepository = {
-        getBlockByHeight: getBlockByHeightCall,
-      };
-      const getNetworkTimestampFromUInt64Call = jest
-        .spyOn(service, "getNetworkTimestampFromUInt64")
-        .mockReturnValue(1);
-      const result = await service.getBlockTimestamp(1);
-      expect(getBlockByHeightCall).toBeCalled();
-      expect(getNetworkTimestampFromUInt64Call).toBeCalled();
-      expect(result).toEqual(1000);
-    });
+    it("should not connect to a node if there isn't a default one", () => {
+      // prepare
+      const configServiceGetCall = jest
+        .spyOn(configService, "get")
+        .mockReturnValue(undefined);
+      const getNetworkConfigurationCall = jest
+        .spyOn(MockNetworkService.prototype, "getNetworkConfiguration")
+        .mockReturnValue({} as any);
+      const connectToNodeCall = jest
+        .fn()
+        .mockReturnValue(undefined);
+      (MockNetworkService.prototype as any).connectToNode = connectToNodeCall;
 
-    it("should throw correct error when response is empty", async () => {
-      const getBlockByHeightCall = jest.fn(() => ({
-        toPromise: () => Promise.resolve(),
-      }));
-      (service as any).blockRepository = {
-        getBlockByHeight: getBlockByHeightCall,
-      };
-      const getNetworkTimestampFromUInt64Call = jest
-        .spyOn(service, "getNetworkTimestampFromUInt64")
-        .mockReturnValue(1);
-      await service.getBlockTimestamp(1).catch((err: Error) => {
-        expect(getBlockByHeightCall).toBeCalled();
-        expect(getNetworkTimestampFromUInt64Call).toBeCalledTimes(0);
-        expect(err.message).toEqual("Cannot query block from height");
-      });
-    });
-  });
+      // act
+      new MockNetworkService(configService);
 
-  describe("getNetworkTimestampFromUInt64() -->", () => {
-    it("should have correct flow and result", () => {
-      const timestamp = { compact: () => 1000 };
-      const configGetCall = jest.spyOn(configService, "get").mockReturnValue(1);
-      const expectedResult = timestamp.compact() / 1000 + 1;
-      const result = service.getNetworkTimestampFromUInt64(timestamp as any);
-      expect(configGetCall).toBeCalled();
-      expect(result).toEqual(expectedResult);
+      // assert
+      expect(configServiceGetCall).toHaveBeenCalledTimes(1);
+      expect(getNetworkConfigurationCall).toHaveBeenCalledTimes(1);
+      expect(connectToNodeCall).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -405,6 +389,7 @@ describe("common/NetworkService", () => {
       // act
       const result = (service as any).connectToNode(
         "test-url",
+        "test-publicKey",
         {}
       );
 
