@@ -142,7 +142,6 @@ export class WebHooksService {
       // returns the created `ActivityDocument`
       return activity;
     } catch (err: any) {
-      console.log(err.stack);
       throw new Error(
         `An error occurred while handling event ${object_id}: ${err}`,
       );

@@ -12,6 +12,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { getModelToken } from "@nestjs/mongoose";
 import { ConfigService } from "@nestjs/config";
 import { HttpException } from "@nestjs/common";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
@@ -35,10 +36,11 @@ describe("processor/WebHooksController", () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [WebHooksController],
       providers: [
-        OAuthService,
-        WebHooksService,
+        OAuthService, // requirement from WebHooksController
+        WebHooksService, // requirement from WebHooksController
         ConfigService,
         QueryService,
+        EventEmitter2, // requirement from WebHooksService
         {
           provide: getModelToken("AccountIntegration"),
           useValue: MockModel,
@@ -53,6 +55,9 @@ describe("processor/WebHooksController", () => {
     controller = module.get<WebHooksController>(WebHooksController);
     oauthService = module.get<OAuthService>(OAuthService);
     webhooksService = module.get<WebHooksService>(WebHooksService);
+    (webhooksService as any).eventEmitter = {
+      emit: jest.fn()
+    };
 
     mockReponseCall = jest.fn((args) => args);
     mockResponse = {
