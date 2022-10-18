@@ -14,10 +14,13 @@ import { Component, Prop } from "vue-property-decorator";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import InlineSvg from "vue-inline-svg";
+import { mapGetters } from "vuex";
 
 // child components
 import TopActivities from "../TopActivities/TopActivities.vue";
 import ProgressBar from "../ProgressBar/ProgressBar.vue";
+import InfoTip from "../InfoTip/InfoTip.vue";
+import { Translations } from "../../kernel";
 
 // style resource
 import "./Stats.scss";
@@ -41,6 +44,12 @@ export interface StatsConfig {
     InlineSvg,
     TopActivities,
     ProgressBar,
+    InfoTip,
+  },
+  computed: {
+    ...mapGetters({
+      i18n: "app/i18n",
+    }),
   },
 })
 export default class Stats extends MetaView {
@@ -51,6 +60,20 @@ export default class Stats extends MetaView {
    * @var {data}
    */
   @Prop({ default: () => ({}) }) readonly data?: StatsConfig;
+
+  /**
+   * This property contains the translator `Translations` instance.
+   * This field is populated using the Vuex Store after a successful
+   * setup of the internationalization features.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {Translations}
+   */
+  public i18n!: Translations;
 
   get fourDigitsAmount() {
     const stringedAmount = `${(

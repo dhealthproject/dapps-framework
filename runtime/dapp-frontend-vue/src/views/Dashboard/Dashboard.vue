@@ -20,24 +20,30 @@
       />
       <DividedScreen v-if="getIntegrations && getIntegrations.length" :gap="81">
         <template v-slot:left>
-          <Card :title="'Key stats'" :showBorders="false">
+          <Card
+            :title="i18n.$t('dashboard_key_stats_title')"
+            :showBorders="false"
+          >
             <template v-slot:content><Stats :data="stats" /></template
           ></Card>
-          <Card :title="'Invite friends'" :showBorders="false">
+          <Card
+            :title="i18n.$t('dashboard_referral_title')"
+            :showBorders="false"
+          >
             <template v-slot:content>
               <div class="referral-box">
                 <img :src="getImageUrl('coins.png')" alt="Invite friends" />
-                <p class="text-center">
-                  Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et.
-                </p>
+                <p
+                  class="text-center"
+                  v-html="i18n.$t('dashboard_referral_text')"
+                />
                 <div class="referral-box__input">
                   <input type="text" readonly value="JOINFIT22" />
-                  <div class="copy">
-                    <span class="text">Copy referral code</span>
+                  <div class="copy" @click="copyToClipBoard($event, ref)">
+                    <span class="text" v-html="referralLabel" />
                     <img
                       :src="getImageUrl('copy-icon.svg')"
                       alt="Copy referral code"
-                      @click="copyToClipBoard($event, ref)"
                     />
                   </div>
                 </div>

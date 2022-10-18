@@ -28,7 +28,7 @@
     background-position: center center;
 
     &.completed {
-      background-image: url("../../assets/progressbar-bg.png");
+      background: $progress-aqua;
     }
   }
 

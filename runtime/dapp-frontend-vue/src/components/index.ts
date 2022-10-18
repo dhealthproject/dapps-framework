@@ -29,6 +29,7 @@ import UserBalance from "./UserBalance/UserBalance.vue";
 import ProgressBar from "./ProgressBar/ProgressBar.vue";
 import Stats from "./Stats/Stats.vue";
 import TopActivities from "./TopActivities/TopActivities.vue";
+import InfoTip from "./InfoTip/InfoTip.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
@@ -50,6 +51,7 @@ export const AppComponents = {
   ProgressBar,
   Stats,
   TopActivities,
+  InfoTip,
 };
 
 // scoped export of library-level components

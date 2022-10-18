@@ -17,10 +17,6 @@
     box-shadow: 4px 5px 0px $black;
     border: 1px solid $login-dark;
 
-    @include devices(mobile) {
-        background-color: red;
-    }
-
     &__total-earned {
         background-color: $stats-teal-light;
         padding: 16px 16px 12px;
@@ -48,15 +44,6 @@
             width: 100%;
             max-width: 263px;
             margin: 8px auto 0 auto;
-
-            svg {
-                display: inline-block;
-                cursor: pointer;
-
-                path {
-                    fill: $button-text-dark;
-                }
-            }
 
             span {
                 font-weight: 500;
@@ -118,12 +105,10 @@
                 margin-top: 4px;
 
                 svg {
-                    display: inline-block;
                     margin-left: 8px;
-                    cursor: pointer;
 
                     path {
-                        fill: $black;
+                        fill: $grey-system-dark;
                     }
                 }
             }

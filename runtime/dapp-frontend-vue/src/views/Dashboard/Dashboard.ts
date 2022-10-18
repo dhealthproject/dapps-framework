@@ -157,6 +157,8 @@ export default class Dashboard extends MetaView {
     };
   }
 
+  public referralLabel = "";
+
   /**
    * This computed property defines *custom media queries* to further
    * configure the `vueper` Carousel. It defines breakpoints to know
@@ -311,52 +313,6 @@ export default class Dashboard extends MetaView {
   }
 
   /**
-   * This hook is called upon mounting the component on the App. It
-   * should handle the *initialization* of the screen and interpret
-   * the request query if necessary.
-   *
-   * @access protected
-   * @async
-   * @returns {Promise<void>}
-   */
-  protected async mounted(): Promise<void> {
-    // in case we came here from log-in screen, we may
-    // not have a profile in the Vuex Store yet, fill now.
-    if (!this.currentUserAddress) {
-      await this.$store.dispatch("auth/fetchProfile");
-    }
-
-    // handles "denial" of user authorization on the third-party platform
-    if (this.$route.query && "error" in this.$route.query) {
-      this.displayErrorMessage(
-        `Please click "authorize" on the Strava authorization`
-      );
-    }
-
-    // extracts "callback" parameters for when the user comes back
-    // from the authorization process on the third-party platform
-    const { state, code, scope } = this.$route.query;
-
-    // if we come back to dashboard FROM the OAuth Authorization,
-    // then we can now *query an access token* from the data provider
-    // a redirection will happen after retrieval of the access token.
-    if (state && code && scope) {
-      this.$root.$emit("toast", {
-        title: "Great job!",
-        description: "We’ve integrated your account",
-        state: "success",
-        icon: "icons/like-icon.svg",
-        dismissTimeout: 7000,
-      });
-      this.$store.commit("oauth/setParameters", { code, state, scope });
-      await this.oauthCallbackRedirect();
-      await this.$router.replace({ name: "app.dashboard" });
-    }
-
-    this.ref = "JOINFIT22";
-  }
-
-  /**
    * This component method is used internally to display a *pre-configured*
    * snack-bar that contains an *error message*.
    *
@@ -414,8 +370,61 @@ export default class Dashboard extends MetaView {
    * @returns {void}
    */
   copyToClipBoard(evt: any, val: string) {
-    navigator.clipboard
-      .writeText(val)
-      .then(() => console.log("copied", this.ref));
+    navigator.clipboard.writeText(val).then(() => {
+      console.log("copied", this.ref);
+      this.referralLabel = this.i18n.$t("dashboard_referral_copied");
+
+      setTimeout(() => {
+        this.referralLabel = this.i18n.$t("dashboard_copy_referral_code");
+      }, 2000);
+    });
+  }
+
+  /**
+   * This hook is called upon mounting the component on the App. It
+   * should handle the *initialization* of the screen and interpret
+   * the request query if necessary.
+   *
+   * @access protected
+   * @async
+   * @returns {Promise<void>}
+   */
+  protected async mounted(): Promise<void> {
+    // in case we came here from log-in screen, we may
+    // not have a profile in the Vuex Store yet, fill now.
+    if (!this.currentUserAddress) {
+      await this.$store.dispatch("auth/fetchProfile");
+    }
+
+    // handles "denial" of user authorization on the third-party platform
+    if (this.$route.query && "error" in this.$route.query) {
+      this.displayErrorMessage(
+        `Please click "authorize" on the Strava authorization`
+      );
+    }
+
+    // extracts "callback" parameters for when the user comes back
+    // from the authorization process on the third-party platform
+    const { state, code, scope } = this.$route.query;
+
+    // if we come back to dashboard FROM the OAuth Authorization,
+    // then we can now *query an access token* from the data provider
+    // a redirection will happen after retrieval of the access token.
+    if (state && code && scope) {
+      this.$root.$emit("toast", {
+        title: "Great job!",
+        description: "We’ve integrated your account",
+        state: "success",
+        icon: "icons/like-icon.svg",
+        dismissTimeout: 7000,
+      });
+      this.$store.commit("oauth/setParameters", { code, state, scope });
+      await this.oauthCallbackRedirect();
+      await this.$router.replace({ name: "app.dashboard" });
+    }
+
+    this.ref = "JOINFIT22";
+
+    this.referralLabel = this.i18n.$t("dashboard_copy_referral_code");
   }
 }
