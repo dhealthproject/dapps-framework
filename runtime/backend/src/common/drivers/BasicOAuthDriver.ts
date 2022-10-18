@@ -9,9 +9,11 @@
  */
 // internal dependencies
 import { OAuthDriver } from "./OAuthDriver";
-import { OAuthProviderParameters } from "../models/OAuthConfig";
 import { AccessTokenDTO } from "../models/AccessTokenDTO";
-import { HttpRequestHandler } from "./HttpRequestHandler";
+import { OAuthProviderParameters } from "../models/OAuthConfig";
+import { ResponseStatusDTO } from "../models/ResponseStatusDTO";
+import { StatusDTO } from "../models/StatusDTO";
+import { HttpMethod, HttpRequestHandler } from "./HttpRequestHandler";
 
 /**
  * @class BasicOAuthDriver
@@ -163,6 +165,109 @@ export class BasicOAuthDriver implements OAuthDriver {
       params[this.dataField] = data;
     }
 
+    // executes the remote access token request
+    return this.requestAccessToken(params);
+  }
+
+  /**
+   * Method to return an updated access token from the driver's provider
+   * using a refresh token. The result is an access/refresh token pair.
+   * <br /><br />
+   * These access tokens are always signed with the dApp's auth secret and expire
+   * after 1 hour (one hour).
+   *
+   * @access public
+   * @async
+   * @param   {string}      refreshToken        The user's refresh token.
+   * @returns {Promise<AccessTokenDTO>} A promise containing the result {@link AccessTokenDTO}.
+   */
+  public async updateAccessToken(
+    refreshToken?: string,
+  ): Promise<AccessTokenDTO> {
+    // prepare the remote access token request
+    const params = {
+      client_id: this.provider.client_id,
+      client_secret: this.provider.client_secret,
+      grant_type: "refresh_token",
+      refresh_token: refreshToken,
+    };
+
+    // executes the remote access token request
+    return this.requestAccessToken(params);
+  }
+
+  /**
+   * Method to execute a request calling the driver's provider API.
+   *
+   * @access public
+   * @async
+   * @param   {string}      accessToken    The *access token* attached as a Bearer token to the request.
+   * @param   {string}      endpointUri    The *endpoint URI* of the driver's provider API.
+   * @param   {HttpMethod}  method         (Optional) The HTTP method used for the request, e.g. "GET". Defaults to "GET".
+   * @param   {any}         body           (Optional) The *body* of the request, as used with "POST" or "PUT" requests. Defaults to an empty object.
+   * @param   {any}         options        (Optional) An options object that is directly passed to axios before request execution. Defaults to an empty object.
+   * @param   {any}         hedaers        (Optional) Any additional header that is necessary to execute the request. Note that the access token is automatically added. Defaults to an empty object.
+   * @returns {Promise<ResponseStatusDTO>} A promise containing the response and status in {@link ResponseStatusDTO}.
+   */
+  public async executeRequest(
+    accessToken: string,
+    endpointUri: string,
+    method: HttpMethod = "GET",
+    body: any = {},
+    options: any = {},
+    headers: any = {},
+  ): Promise<ResponseStatusDTO> {
+    // remove starting and trailing slashes
+    const requestUrl = endpointUri.replace(/^\//, "");
+    const backendUrl = this.provider.api_url.replace(/\/$/, "");
+
+    // build complete fully qualified URL
+    const fullRequestURL = `${backendUrl}/${requestUrl}`;
+
+    // request directly from the API
+    try {
+      const response = await this.httpService.call(
+        fullRequestURL,
+        method,
+        body,
+        options,
+        {
+          ...headers,
+          "Authorization": `Bearer: ${accessToken}`
+        },
+      );
+
+      return ResponseStatusDTO.create(200, response);
+    }
+    catch (e: any) {
+      return ResponseStatusDTO.create(401, {
+        message: e.toString(),
+        stack: e.stack,
+      });
+    }
+  }
+
+  /**
+   * Helper method that executes the actual access token request using a set
+   * of `params` parameters. The parameters set *must* contain the following
+   * fields:
+   * - `client_id`: Your Strava App's client identifier.
+   * - `client_secret`: Your Strava App's client secret.
+   * - `grant_type`: One of `authorization_code` or `refresh_token`.
+   * <br /><br />
+   * When executing a *authorization* request for the access token, the field
+   * `authorization_code` and `code` are obligatory as well.
+   * When executing a *refresh* request for the access token, it is the field
+   * `refresh_token` that is obligatory (no code).
+   *
+   * @access protected
+   * @async
+   * @param   {Record<string, string>}      params        The parameters for the access token request.
+   * @returns {Promise<AccessTokenDTO>} A promise containing the result {@link AccessTokenDTO}.
+   */
+  protected async requestAccessToken(
+    params: Record<string, string>,
+  ): Promise<AccessTokenDTO> {
     // request an access token from provider
     const response = await this.httpService.call(
       this.provider.token_url,

@@ -13,10 +13,10 @@ import { InjectModel } from "@nestjs/mongoose";
 import { ConfigService } from "@nestjs/config";
 import { sha3_256 } from "js-sha3";
 import { Crypto } from "@dhealth/sdk";
+import dayjs from "dayjs";
 
 // internal dependencies
 import { QueryService } from "./QueryService";
-import { PaginatedResultDTO } from "../models/PaginatedResultDTO";
 import { OAuthProviderParameters } from "../models/OAuthConfig";
 import { AccountDocument } from "../models/AccountSchema";
 import {
@@ -25,7 +25,10 @@ import {
   AccountIntegrationModel,
   AccountIntegrationQuery,
 } from "../models/AccountIntegrationSchema";
+import { PaginatedResultDTO } from "../models/PaginatedResultDTO";
+import { ResponseStatusDTO } from "../models/ResponseStatusDTO";
 import { OAuthCallbackRequest } from "../requests/OAuthCallbackRequest";
+import { HttpMethod } from "../drivers/HttpRequestHandler";
 
 // OAuth Drivers Implementation
 import { OAuthDriver } from "../drivers/OAuthDriver";
@@ -82,30 +85,6 @@ export class OAuthService {
   }
 
   /**
-   * This method reads an OAuth provider configuration
-   * from the runtime configuration file `config/oauth.ts`
-   * and returns a {@link OAuthProviderParameters} object.
-   *
-   * @access public
-   * @param   {string}    providerName   Contains the identifier of the OAuth Provider, e.g. "strava".
-   * @returns {OAuthProviderParameters}  The OAuth provider parameters, i.e. URLs and configuration.
-   */
-  public getProvider(providerName: string): OAuthProviderParameters {
-    // reads OAuth provider from configuration
-    const provider = this.configService.get<OAuthProviderParameters>(
-      `providers.${providerName}`,
-    );
-
-    // throw an error if the provider is unknown
-    if (undefined === provider) {
-      throw new Error(`Invalid oauth provider "${providerName}".`);
-    }
-
-    // :OAuthProviderParameters
-    return provider;
-  }
-
-  /**
    * Generate an encryption password (seed) to protect the access
    * token using a combination of the authentication secret, the
    * user address and Strava-owned authentication details.
@@ -129,6 +108,30 @@ export class OAuthService {
       );
 
     return encPassword;
+  }
+
+  /**
+   * This method reads an OAuth provider configuration
+   * from the runtime configuration file `config/oauth.ts`
+   * and returns a {@link OAuthProviderParameters} object.
+   *
+   * @access public
+   * @param   {string}    providerName   Contains the identifier of the OAuth Provider, e.g. "strava".
+   * @returns {OAuthProviderParameters}  The OAuth provider parameters, i.e. URLs and configuration.
+   */
+  public getProvider(providerName: string): OAuthProviderParameters {
+    // reads OAuth provider from configuration
+    const provider = this.configService.get<OAuthProviderParameters>(
+      `providers.${providerName}`,
+    );
+
+    // throw an error if the provider is unknown
+    if (undefined === provider) {
+      throw new Error(`Invalid oauth provider "${providerName}".`);
+    }
+
+    // :OAuthProviderParameters
+    return provider;
   }
 
   /**
@@ -178,6 +181,7 @@ export class OAuthService {
    * @param   {AccountDocument}  account  The account document to be integrated with access/refresh tokens.
    * @param   {OAuthCallbackRequest}  request The OAuth callback request.
    * @returns {Promise<AccountIntegrationDocument>} The result account integration document that has been saved.
+   * @throws  {HttpException}   HTTP 403 - Forbidden: Given missing oauth authorization from {@link getIntegration}.
    */
   public async oauthCallback(
     providerName: string,
@@ -210,15 +214,147 @@ export class OAuthService {
     const encPassword: string = this.getEncryptionSeed(integration);
 
     // encrypt the access/refresh tokens pair
-    const { accessToken, refreshToken } = tokenDTO;
+    const { accessToken, refreshToken, expiresAt } = tokenDTO;
     const encAccessToken: string = Crypto.encrypt(accessToken, encPassword);
     const encRefreshToken: string = Crypto.encrypt(refreshToken, encPassword);
 
     // store tokens *encrypted* in `account_integrations` document
-    return await this.updateIntegration(providerName, account, {
+    return await this.updateIntegration(providerName, account.address, {
       encAccessToken,
       encRefreshToken,
+      expiresAt,
     });
+  }
+
+  /**
+   * This method sends an OAuth access token *refresh* request to the provider
+   * and stores the integration result's details in database.
+   * <br /><br />
+   * Note that this process includes requesting an access/refresh token
+   * from the provider and creating an *encryption password* that will be
+   * used to sign the access/refresh tokens pair.
+   *
+   * @access public
+   * @async
+   * @param   {string}  providerName  Contains the identifier of the OAuth Provider, e.g. "strava".
+   * @param   {AccountIntegrationDocument}  integration  The `accountintegrations` entity that will be updated.
+   * @returns {Promise<AccountIntegrationDocument>} The resulting account integration document that has been saved.
+   * @throws  {HttpException}   HTTP 403 - Forbidden: Given missing oauth authorization from `integration` parameter.
+   */
+  public async refreshAccessToken(
+    providerName: string,
+    integration: AccountIntegrationDocument,
+  ): Promise<AccountIntegrationDocument> {
+    if (!integration || !("address" in integration)) {
+      throw new HttpException(`Forbidden`, 403);
+    }
+
+    // decrypts the refresh token
+    const encPassword: string = this.getEncryptionSeed(integration);
+    const decRefreshToken: string = Crypto.decrypt(
+      integration.encRefreshToken,
+      encPassword,
+    );
+
+    // reads OAuth provider from configuration
+    const provider = this.getProvider(providerName);
+
+    // creates the OAuth implementation driver
+    const driver = this.driverFactory(providerName, provider);
+
+    // requests an access token using the provider's
+    // token URL in a `POST` request, then returns a
+    // wrapped `AccessTokenDTO`
+    const tokenDTO = await driver.updateAccessToken(decRefreshToken);
+
+    // encrypt the newly received access/refresh tokens pair
+    const { accessToken, refreshToken, expiresAt } = tokenDTO;
+    const encAccessToken: string = Crypto.encrypt(accessToken, encPassword);
+    const encRefreshToken: string = Crypto.encrypt(refreshToken, encPassword);
+
+    // store tokens *encrypted* in `account_integrations` document
+    return await this.updateIntegration(providerName, integration.address, {
+      encAccessToken,
+      encRefreshToken,
+      expiresAt,
+    });
+  }
+
+  /**
+   * This method executes a basic HTTP handler that uses `axios` under the
+   * hood, to execute a HTTP request to a remote data provider API. This
+   * method can be used to request *specific* endpoints from the providers
+   * API, e.g. `/activities/:id` from Strava.
+   * <br /><br />
+   * Note that the *access token* attached to the request as an `Authorization`
+   * header (Bearer), is the one from the `integration` parameter. This permits
+   * to execute requests using the account's valid OAuth authorization.
+   * <br /><br />
+   * Note that you *do not* need to add an access token header in the options
+   * parameters, it will be added automatically whenever you use this method.
+   *
+   * @access public
+   * @async
+   * @param   {AccountIntegrationDocument}  integration  The `accountintegrations` entity that will be updated.
+   * @param   {string}  endpointUri  The endpoint URI that must be requested from the remote data provider API.
+   * @returns {Promise<ResponseStatusDTO>} A response object that contains a `status`, `code` and `response` as defined in {@link ResponseStatusDTO}.
+   * @throws  {HttpException}   HTTP 403 - Forbidden: Given missing oauth authorization from {@link getIntegration}.
+   */
+  public async callProviderAPI(
+    endpointUri: string,
+    integration: AccountIntegrationDocument,
+    httpOptions: {
+      method: HttpMethod,
+      body?: any,
+      options?: any,
+      headers?: any
+    } = {
+      method: "GET",
+      body: undefined,
+      options: undefined,
+      headers: undefined,
+    },
+  ): Promise<ResponseStatusDTO> {
+    if (!integration || !("address" in integration)) {
+      throw new HttpException(`Forbidden`, 403);
+    }
+
+    // if the access token is expired, or will expire
+    // now, then we first have to *refresh* from provider
+    const serverTime = dayjs(new Date().valueOf());
+    const expireTime = dayjs(integration.expiresAt);
+    if (expireTime.isBefore(serverTime) || expireTime.isSame(serverTime)) {
+      // fetches a new access token using refresh token
+      integration = await this.refreshAccessToken(
+        integration.name,
+        integration,
+      );
+    }
+
+    // reads OAuth configuration for provider and creates
+    // an instance of the OAuth driver implementation
+    // - reads OAuth provider from configuration
+    // - creates the OAuth driver implementation
+    const provider = this.getProvider(integration.name);
+    const driver = this.driverFactory(integration.name, provider);
+
+    // the forwarded request requires the accessToken field
+    // to be in *plaintext* format, we decrypt it here for use
+    const encPassword: string = this.getEncryptionSeed(integration);
+    const decAccessToken: string = Crypto.decrypt(
+      integration.encAccessToken,
+      encPassword,
+    );
+
+    // executes the data provider API request
+    return await driver.executeRequest(
+      decAccessToken,
+      endpointUri,
+      httpOptions.method,
+      httpOptions.body ?? undefined,
+      httpOptions.options ?? undefined,
+      httpOptions.headers ?? undefined,
+    );
   }
 
   /**

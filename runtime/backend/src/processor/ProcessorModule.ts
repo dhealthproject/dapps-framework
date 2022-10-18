@@ -22,13 +22,31 @@ import { WebHooksModule } from "./modules/WebHooksModule";
  * is loaded by the software when `"processor"` is present in
  * the enabled scopes through configuration (config/dapp.json).
  * <br /><br />
- * This scoped module currently features the following submodules:
+ * #### Modules
+ *
+ * This scoped module currently features the following submodules: *
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
  * | {@link OperationsModule:PROCESSOR} | `operations` | `/operations` | Module with schedulers, collections and routes around **dApp operations**. |
  * | {@link ActivitiesModule:PROCESSOR} | `activities` | `/activities` | Module with schedulers, collections and routes around **activities**. |
  * | {@link WebHooksModule:PROCESSOR} | N/A | `/webhook/:provider` | Module with schedulers, collections and routes around **Web Hooks**. |
  * <br /><br />
+ * #### Events
+ *
+ * This scoped module currently features the following events: *
+ * | Class | Name | Link | Description |
+ * | --- | --- | --- | --- |
+ * | `OnActivityCreated` | `processor.activity.created` | {@link OnActivityCreated:EVENTS} | Event that is *emitted* in {@link WebHooksService.eventHandler} when an activity is created in database. |
+ *
+ * #### Listeners
+ *
+ * This scoped module currently features the following events:
+ * | Class | Event | Link | Description |
+ * | --- | --- | --- | --- |
+ * | `OnActivityCreatedListener` | `processor.activity.created` | {@link OnActivityCreatedListener:LISTENERS} | Event listener that *instructs* the runtime backend to run an *activity processor* command. |
+ * <br /><br />
+ * #### Notes
+ *
  * Note also that in {@link Schedulers:COMMON}, we map the following **schedulers**
  * to this module:
  * - A {@link ProcessOperations:PROCESSOR} *scheduler* that processes operations using transactions, in the background.

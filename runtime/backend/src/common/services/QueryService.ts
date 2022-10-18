@@ -23,10 +23,6 @@ import { MongoQueryCursor } from "../types/MongoQueryCursor";
 import { MongoQueryPipeline } from "../types/MongoQueryPipeline";
 import { MongoRoutineCount, MongoRoutineIn } from "../types/MongoQueryRoutines";
 import { MongoPipelineFacet } from "../types/MongoPipelineStages";
-import {
-  MongoQueryOperation,
-  MongoQueryOperationSpec,
-} from "../types/MongoQueryOperation";
 import { MongoQueryOperations } from "../types/MongoQueryOperations";
 
 /**

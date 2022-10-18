@@ -40,7 +40,8 @@ export class ActivityDTO extends BaseDTO {
 
   /**
    * The activity slug is composed of the date of the activity,
-   * the index of it on a daily basis, and the athlete identifier.
+   * the index of it on a daily basis, the activity identifier
+   * and the athlete identifier.
    *
    * @example `"20220910-1-123456"`
    * @access public
@@ -48,9 +49,9 @@ export class ActivityDTO extends BaseDTO {
    */
   @ApiProperty({
     type: "string",
-    example: "20220910-1-123456",
+    example: "20220910-1-65432-123456",
     description:
-      "The activity slug is composed of the date of the activity, the index of it on a daily basis, and the athlete identifier.",
+      "The activity slug is composed of the date of the activity, the index of it on a daily basis, the activity identifier and the athlete identifier.",
   })
   public slug: string;
 

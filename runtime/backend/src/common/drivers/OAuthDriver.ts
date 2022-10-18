@@ -8,7 +8,9 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
+import { HttpMethod } from "./HttpRequestHandler";
 import { AccessTokenDTO } from "../models/AccessTokenDTO";
+import { ResponseStatusDTO } from "../models/ResponseStatusDTO";
 
 /**
  * @interface OAuthDriver
@@ -47,7 +49,43 @@ export interface OAuthDriver {
    * Method to return the access token from the driver's provider.
    *
    * @access public
-   * @var {string}
+   * @async
+   * @param   {string}      code        The required `code` field value.
+   * @param   {string}      data        The required `data` field value.
+   * @returns {Promise<AccessTokenDTO>} A promise containing the result {@link AccessTokenDTO}.
    */
   getAccessToken(code: string, data?: string): Promise<AccessTokenDTO>;
+
+  /**
+   * Method to return an updated access token from the driver's provider
+   * using a refresh token.
+   *
+   * @access public
+   * @async
+   * @param   {string}      refreshToken        The user's refresh token.
+   * @returns {Promise<AccessTokenDTO>} A promise containing the result {@link AccessTokenDTO}.
+   */
+  updateAccessToken(refreshToken?: string): Promise<AccessTokenDTO>;
+
+  /**
+   * Method to execute a request calling the driver's provider API.
+   *
+   * @access public
+   * @async
+   * @param   {string}      accessToken    The *access token* attached as a Bearer token to the request.
+   * @param   {string}      endpointUri    The *endpoint URI* of the driver's provider API.
+   * @param   {HttpMethod}  method         (Optional) The HTTP method used for the request, e.g. "GET". Defaults to "GET".
+   * @param   {any}         body           (Optional) The *body* of the request, as used with "POST" or "PUT" requests. Defaults to an empty object.
+   * @param   {any}         options        (Optional) An options object that is directly passed to axios before request execution. Defaults to an empty object.
+   * @param   {any}         hedaers        (Optional) Any additional header that is necessary to execute the request. Note that the access token is automatically added. Defaults to an empty object.
+   * @returns {Promise<ResponseStatusDTO>} A promise containing the response and status in {@link ResponseStatusDTO}.
+   */
+  executeRequest(
+    accessToken: string,
+    endpointUri: string,
+    method?: HttpMethod,
+    body?: any,
+    options?: any,
+    headers?: any,
+  ): Promise<ResponseStatusDTO>;
 }

@@ -11,6 +11,7 @@
 // external dependencies
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { QueryModule } from "../../common/modules/QueryModule";
@@ -44,6 +45,13 @@ import { Activity, ActivitySchema } from "../models/ActivitySchema";
         schema: ActivitySchema,
       }, // requirement from WebHooksService
     ]),
+    EventEmitterModule.forRoot({
+      wildcard: false,
+      delimiter: ".",
+      maxListeners: 5,
+      verboseMemoryLeak: true,
+      ignoreErrors: false,
+    }),
     QueryModule,
   ],
 })

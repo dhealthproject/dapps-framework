@@ -18,6 +18,7 @@ export { ScopeFactory } from "./common/ScopeFactory";
 export { Schedulers } from "./common/Schedulers";
 export * from "./common/concerns";
 export * from "./common/drivers";
+export * from "./common/events";
 export * from "./common/models";
 export * from "./common/requests";
 export * from "./common/routes";
@@ -38,6 +39,8 @@ export * from "./payout/PayoutModule";
 
 // processor scope
 export * from "./processor/ProcessorModule";
+export * from "./processor/events";
+export * from "./processor/listeners";
 export * from "./processor/models";
 export * from "./processor/modules";
 export * from "./processor/routes";

@@ -247,14 +247,14 @@ describe("common/OAuthService", () => {
       // act
       oauthService.getIntegration(
         "strava",
-        "fake-remote-identifier",
+        "fake-address",
       );
 
       // assert
       expect(findOneMock).toHaveBeenCalledTimes(1);
       expect(findOneMock).toHaveBeenCalledWith(new AccountIntegrationQuery({
         name: "strava",
-        remoteIdentifier: "fake-remote-identifier",
+        address: "fake-address",
       } as AccountIntegrationDocument), (oauthService as any).model);
     });
 
@@ -262,14 +262,14 @@ describe("common/OAuthService", () => {
       // act
       oauthService.getIntegration(
         "other",
-        "fake-remote-identifier",
+        "fake-address",
       );
 
       // assert
       expect(findOneMock).toHaveBeenCalledTimes(1);
       expect(findOneMock).toHaveBeenCalledWith(new AccountIntegrationQuery({
         name: "other",
-        remoteIdentifier: "fake-remote-identifier",
+        address: "fake-address",
       } as AccountIntegrationDocument), (oauthService as any).model);
     });
 
@@ -277,14 +277,14 @@ describe("common/OAuthService", () => {
       // act
       oauthService.getIntegration(
         "other",
-        "another-remote-identifier",
+        "fake-address",
       );
 
       // assert
       expect(findOneMock).toHaveBeenCalledTimes(1);
       expect(findOneMock).toHaveBeenCalledWith(new AccountIntegrationQuery({
         name: "other",
-        remoteIdentifier: "another-remote-identifier",
+        address: "fake-address",
       } as AccountIntegrationDocument), (oauthService as any).model);
     });
 
@@ -302,7 +302,7 @@ describe("common/OAuthService", () => {
       // act
       const result = await oauthService.getIntegration(
         "strava",
-        "fake-remote-identifier",
+        "fake-address",
       );
 
       // assert
@@ -315,9 +315,8 @@ describe("common/OAuthService", () => {
     it("should result in correct integration", async () => {
       // prepare
       const providerName: string = "test-provider-name";
-      const account: AccountDocument = {} as AccountDocument;
       const data: Record<string, any> = { authorizeUrl: "test-url" };
-      const expectedResult = {} as AccountIntegrationDocument;
+      const expectedResult = { address: "fake-address" } as AccountIntegrationDocument;
       const queryServiceCreateOrUpdateCall = jest
         .fn().mockResolvedValue(expectedResult);
       (oauthService as any).queryService = {
@@ -326,7 +325,7 @@ describe("common/OAuthService", () => {
 
       // act
       const result = await (oauthService as any).updateIntegration(
-        providerName, account, data
+        providerName, "fake-address", data
       );
 
       // assert
@@ -334,7 +333,7 @@ describe("common/OAuthService", () => {
         1,
         {
           document: {
-            address: undefined,
+            address: "fake-address",
             name: providerName,
           },
           filterQuery: undefined,
@@ -427,7 +426,7 @@ describe("common/OAuthService", () => {
       // act
       await oauthService.updateIntegration(
         "strava",
-        { address: "fake-address" } as AccountDocument,
+        "fake-address",
         { testing: "fields" }
       );
 
@@ -448,7 +447,7 @@ describe("common/OAuthService", () => {
       // act
       await oauthService.updateIntegration(
         "other",
-        { address: "fake-address" } as AccountDocument,
+        "fake-address",
         { testing: "fields" }
       );
 
@@ -469,7 +468,7 @@ describe("common/OAuthService", () => {
       // act
       await oauthService.updateIntegration(
         "other",
-        { address: "another-fake-address" } as AccountDocument,
+        "another-fake-address",
         { testing: "fields" }
       );
 
@@ -590,7 +589,7 @@ describe("common/OAuthService", () => {
       expect(updateIntegrationMock).toHaveBeenCalledTimes(1);
       expect(updateIntegrationMock).toHaveBeenCalledWith(
         "fake-provider",
-        { address: "fake-address" } as AccountDocument,
+        "fake-address",
         {
           encAccessToken: undefined, // mocked Crypto.encrypt
           encRefreshToken: undefined, // mocked Crypto.encrypt

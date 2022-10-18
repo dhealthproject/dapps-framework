@@ -23,8 +23,8 @@
  *   oauth_url: "https://example.com.com/api/v3/oauth/authorize",
  *   token_url: "https://example.com.com/api/v3/oauth/token"
  *   callback_url: "http://localhost:8080/oauth/callback",
- *   subscribe_url: `http://localhost:7903/webhook/strava`,
- *   webhook_url: `http://localhost:7903/webhook/strava`,
+ *   subscribe_url: "http://localhost:7903/webhook/strava",
+ *   webhook_url: "http://localhost:7903/webhook/strava",
  *   scope: "example:scope"
  * }
  * ```

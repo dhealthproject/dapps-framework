@@ -10,6 +10,7 @@
 // external dependencies
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 import dayjs from "dayjs";
 
 // internal dependencies
@@ -21,6 +22,9 @@ import {
   ActivityModel,
   ActivityQuery,
 } from "../models/ActivitySchema";
+
+// emitted events
+import { OnActivityCreated } from "../events/OnActivityCreated";
 
 /**
  * @class WebHooksService
@@ -44,6 +48,7 @@ export class WebHooksService {
    * @constructor
    * @param {ActivityModel} model
    * @param {QueryService<ActivityDocument, ActivityModel>} queryService
+   * @param {EventEmitter2} eventEmitter
    */
   public constructor(
     @InjectModel(Activity.name)
@@ -52,6 +57,7 @@ export class WebHooksService {
       ActivityDocument,
       ActivityModel
     >,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   /**
@@ -65,6 +71,7 @@ export class WebHooksService {
    * @param     {StravaWebHookEventRequest}   data          The activity's **headers**. Importantly, Strava does not share full details here.
    * @returns   {Promise<ActivityDocument>}   The created document that was added to `activities`.
    * @throws    {Error}                       Given invalid event payload, incompatible event payload or given any other error occurs while processing.
+   * @emits     {@link OnActivityCreated}     Given a successful activity creation.
    */
   public async eventHandler(
     providerName: string,
@@ -101,9 +108,12 @@ export class WebHooksService {
         this.model,
       );
 
-      // index uses date-only, index and athlete id (x per day).
-      // e.g. "20220910-1-94380856"
-      const activitySlug = `${eventDate}-${countToday + 1}-${owner_id}`;
+      // index uses date-only, index, object id and athlete id (x per day).
+      // e.g. "20220910-1-123456-94380856"
+      const activityIdx = countToday + 1;
+      const activitySlug = [eventDate, activityIdx, object_id, owner_id].join(
+        "-",
+      );
 
       // creates a new document in `activities` that contains
       // only the *activity headers*. Activity details will be
@@ -115,6 +125,7 @@ export class WebHooksService {
         } as ActivityDocument),
         this.model,
         {
+          remoteIdentifier: object_id,
           dateSlug: eventDate,
           createdAt: eventTime,
           provider: providerName.toLowerCase(),
@@ -122,9 +133,16 @@ export class WebHooksService {
         {},
       );
 
+      // internal event emission 
+      this.eventEmitter.emit(
+        'processor.activity.created',
+        OnActivityCreated.create(activity.slug),
+      );
+
       // returns the created `ActivityDocument`
       return activity;
-    } catch (err) {
+    } catch (err: any) {
+      console.log(err.stack);
       throw new Error(
         `An error occurred while handling event ${object_id}: ${err}`,
       );

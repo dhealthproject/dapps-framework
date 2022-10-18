@@ -10,16 +10,19 @@
 // external dependencies
 import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { WebHooksService } from "../../../../src/processor/services/WebHooksService";
 import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/processor/models/ActivitySchema";
 import { StravaWebHookEventRequest } from "../../../../src/common/drivers/strava/StravaWebHookEventRequest";
+import { OnActivityCreated } from "../../../../src/processor/events/OnActivityCreated";
 
 describe("common/WebHooksService", () => {
   let service: WebHooksService;
   let queryService: QueryService<ActivityDocument, ActivityModel>;
+  let eventEmitter: EventEmitter2;
   let mockDate: Date;
 
   const findOneCall = jest.fn(() => ({ exec: () => ({}) }));
@@ -37,6 +40,7 @@ describe("common/WebHooksService", () => {
       providers: [
         QueryService,
         WebHooksService,
+        EventEmitter2,
         {
           provide: getModelToken("Activity"),
           useValue: MockModel,
@@ -46,6 +50,7 @@ describe("common/WebHooksService", () => {
 
     service = module.get<WebHooksService>(WebHooksService);
     queryService = module.get<QueryService<ActivityDocument, ActivityModel>>(QueryService);
+    eventEmitter = module.get<EventEmitter2>(EventEmitter2);
   });
 
   it("should be defined", () => {
@@ -130,10 +135,13 @@ describe("common/WebHooksService", () => {
     it ("should count previous daily activities for user", async () => {
       // prepare
       const countMock = jest.fn();
-      const createOrUpdateMock = jest.fn();
+      const createOrUpdateMock = jest.fn().mockReturnValue({ slug: "fake-slug" });
       (service as any).queryService = {
         count: countMock,
         createOrUpdate: createOrUpdateMock,
+      };
+      (service as any).eventEmitter = {
+        emit: jest.fn()
       };
 
       // act
@@ -161,10 +169,13 @@ describe("common/WebHooksService", () => {
       // prepare
       mockDate = new Date(2021, 7, 29); // <-- 7 for august
       const countMock = jest.fn();
-      const createOrUpdateMock = jest.fn();
+      const createOrUpdateMock = jest.fn().mockReturnValue({ slug: "fake-slug" });
       (service as any).queryService = {
         count: countMock,
         createOrUpdate: createOrUpdateMock,
+      };
+      (service as any).eventEmitter = {
+        emit: jest.fn()
       };
 
       // act
@@ -188,14 +199,17 @@ describe("common/WebHooksService", () => {
       );
     });
 
-    it ("should include date, count of activities and owner in activity slug", async () => {
+    it ("should include: date, count, activity id, owner in activity slug", async () => {
       // prepare
       mockDate = new Date(2022, 0, 22); // <-- 0 is january
       const countMock = jest.fn().mockReturnValue(9); // <-- 9 previous activities today
-      const createOrUpdateMock = jest.fn();
+      const createOrUpdateMock = jest.fn().mockReturnValue({ slug: "fake-slug" });
       (service as any).queryService = {
         count: countMock,
         createOrUpdate: createOrUpdateMock,
+      };
+      (service as any).eventEmitter = {
+        emit: jest.fn()
       };
       // Strava sends **seconds** not *milliseconds*
       const eventDate = mockDate;
@@ -216,10 +230,11 @@ describe("common/WebHooksService", () => {
       expect(createOrUpdateMock).toHaveBeenCalledWith(
         new ActivityQuery({
           address: "fake-address",
-          slug: `20220122-10-67890`, // 9+1 ("10th" activity) from L194
+          slug: `20220122-10-12345-67890`, // 9+1 ("10th" activity) from L194
         } as ActivityDocument),
         (service as any).model,
         {
+          remoteIdentifier: "12345",
           dateSlug: "20220122",
           createdAt: eventDate,
           provider: "strava",
@@ -232,10 +247,13 @@ describe("common/WebHooksService", () => {
       // prepare
       mockDate = new Date(2022, 0, 22); // <-- 0 is january
       const countMock = jest.fn().mockReturnValue(9); // <-- 9 previous activities today
-      const createOrUpdateMock = jest.fn();
+      const createOrUpdateMock = jest.fn().mockReturnValue({ slug: "fake-slug" });
       (service as any).queryService = {
         count: countMock,
         createOrUpdate: createOrUpdateMock,
+      };
+      (service as any).eventEmitter = {
+        emit: jest.fn()
       };
       // Strava sends **seconds** not *milliseconds*
       const eventDate = mockDate;
@@ -266,10 +284,11 @@ describe("common/WebHooksService", () => {
       expect(createOrUpdateMock).toHaveBeenNthCalledWith(1, 
         new ActivityQuery({
           address: "fake-player1",
-          slug: `20220122-10-11111`,
+          slug: `20220122-10-12345-11111`,
         } as ActivityDocument),
         (service as any).model,
         {
+          remoteIdentifier: "12345",
           dateSlug: "20220122",
           createdAt: eventDate,
           provider: "strava",
@@ -279,15 +298,47 @@ describe("common/WebHooksService", () => {
       expect(createOrUpdateMock).toHaveBeenNthCalledWith(2, 
         new ActivityQuery({
           address: "fake-player2",
-          slug: `20220122-10-99999`,
+          slug: `20220122-10-12346-99999`,
         } as ActivityDocument),
         (service as any).model,
         {
+          remoteIdentifier: "12346",
           dateSlug: "20220122",
           createdAt: eventDate,
           provider: "strava",
         },
         {},
+      );
+    });
+
+    it ("should emit correct event 'processor.activity.created'", async () => {
+      // prepare
+      const countMock = jest.fn();
+      const createOrUpdateMock = jest.fn().mockReturnValue({ slug: "fake-slug" });
+      const emitMock = jest.fn();
+      (service as any).queryService = {
+        count: countMock,
+        createOrUpdate: createOrUpdateMock,
+      };
+      (service as any).eventEmitter = {
+        emit: emitMock
+      };
+
+      // act
+      await service.eventHandler("strava", "fake-address", {
+        object_type: "activity",
+        aspect_type: "create",
+        object_id: "12345",
+        owner_id: "67890",
+        subscription_id: 1,
+        event_time: mockDate.valueOf() / 1000, // <-- Strava sends **seconds** not *milliseconds*
+      });
+
+      // assert
+      expect(emitMock).toHaveBeenCalledTimes(1);
+      expect(emitMock).toHaveBeenCalledWith(
+        "processor.activity.created",
+        OnActivityCreated.create("fake-slug"),
       );
     });
   });
