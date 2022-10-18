@@ -394,6 +394,9 @@ export class DiscoverTransactions extends DiscoveryCommand {
       );
     }
 
+    // setup timing
+    const discoveredAt = new Date().valueOf();
+
     // note that these may be undefined
     const { includeUnconfirmed, includePartial } = options;
 
@@ -502,6 +505,7 @@ export class DiscoverTransactions extends DiscoveryCommand {
         signature: this.extractTransactionSignature(transaction),
         encodedBody: this.extractTransactionBody(transaction),
         creationBlock: this.extractTransactionBlock(transaction),
+        discoveredAt: discoveredAt,
       });
 
       nCreated++;
