@@ -25,26 +25,11 @@ import "./Settings.scss";
   },
   computed: {
     ...mapGetters({
-      i18n: "app/i18n",
       getIntegrations: "oauth/getIntegrations",
     }),
   },
 })
 export default class Settings extends MetaView {
-  /**
-   * This property contains the translator `Translations` instance.
-   * This field is populated using the Vuex Store after a successful
-   * setup of the internationalization features.
-   * <br /><br />
-   * The `!`-operator tells TypeScript that this value is required
-   * and the *public* access permits the Vuex Store to mutate this
-   * value when it is necessary.
-   *
-   * @access public
-   * @var {Translations}
-   */
-  public i18n!: Translations;
-
   /**
    * This property contains the list of integrations for current user.
    * This field is populated using the Vuex Store after a successful
@@ -60,6 +45,21 @@ export default class Settings extends MetaView {
   public getIntegrations!: string[];
 
   /**
+   * This property contains the translator `Translations` instance.
+   * This field is populated using the Vuex Store after a successful
+   * setup of the internationalization features.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {any}
+   * @todo Replace any with correct type of $t() function call
+   */
+  public $t!: any;
+
+  /**
    * This computed property defines a list of *integrated* OAuth providers.
    *
    * @deprecated This method must be deprecated in favor of an actual OAuth
@@ -70,7 +70,7 @@ export default class Settings extends MetaView {
    */
   protected get integrationsList() {
     // translate the description
-    const description: string = this.i18n.$t(
+    const description: string = this.$t(
       "settings_integrations_description_strava"
     );
 

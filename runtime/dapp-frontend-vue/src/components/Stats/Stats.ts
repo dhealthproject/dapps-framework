@@ -46,11 +46,6 @@ export interface StatsConfig {
     ProgressBar,
     InfoTip,
   },
-  computed: {
-    ...mapGetters({
-      i18n: "app/i18n",
-    }),
-  },
 })
 export default class Stats extends MetaView {
   /**
@@ -71,9 +66,10 @@ export default class Stats extends MetaView {
    * value when it is necessary.
    *
    * @access public
-   * @var {Translations}
+   * @var {any}
+   * @todo Replace any with correct type of $t() function call
    */
-  public i18n!: Translations;
+  public $t!: any;
 
   get fourDigitsAmount() {
     const stringedAmount = `${(

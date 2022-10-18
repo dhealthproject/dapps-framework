@@ -16,7 +16,7 @@
       <div class="description">
         <div class="container text-left">
           <p>
-            {{ i18n.$t("settings_integrations_description_text") }}
+            {{ $t("settings_integrations_description_text") }}
           </p>
         </div>
       </div>

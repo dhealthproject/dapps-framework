@@ -20,23 +20,14 @@
       />
       <DividedScreen v-if="getIntegrations && getIntegrations.length" :gap="81">
         <template v-slot:left>
-          <Card
-            :title="i18n.$t('dashboard_key_stats_title')"
-            :showBorders="false"
-          >
+          <Card :title="$t('dashboard_key_stats_title')" :showBorders="false">
             <template v-slot:content><Stats :data="stats" /></template
           ></Card>
-          <Card
-            :title="i18n.$t('dashboard_referral_title')"
-            :showBorders="false"
-          >
+          <Card :title="$t('dashboard_referral_title')" :showBorders="false">
             <template v-slot:content>
               <div class="referral-box">
                 <img :src="getImageUrl('coins.png')" alt="Invite friends" />
-                <p
-                  class="text-center"
-                  v-html="i18n.$t('dashboard_referral_text')"
-                />
+                <p class="text-center" v-html="$t('dashboard_referral_text')" />
                 <div class="referral-box__input">
                   <input type="text" readonly value="JOINFIT22" />
                   <div class="copy" @click="copyToClipBoard($event, ref)">
@@ -68,24 +59,24 @@
         <div class="dapp-activate-screen text-center">
           <img
             :src="getImageUrl('workout.svg')"
-            :alt="i18n.$t('dashboard_cta_strava_welcome_text')"
+            :alt="$t('dashboard_cta_strava_welcome_text')"
           />
           <h2 class="dapp-activate-screen__title">
-            {{ i18n.$t("dashboard_cta_strava_welcome_text") }}
+            {{ $t("dashboard_cta_strava_welcome_text") }}
           </h2>
           <p class="dapp-activate-screen__description">
-            {{ i18n.$t("dashboard_cta_strava_start_earning") }}
+            {{ $t("dashboard_cta_strava_start_earning") }}
           </p>
           <UiButton
             :accent="true"
             class="dapp-activate-screen__integrate"
             @click="oauthAuthorizeRedirect"
           >
-            {{ i18n.$t("dashboard_cta_strava_integrate_strava") }}
+            {{ $t("dashboard_cta_strava_integrate_strava") }}
           </UiButton>
           <p class="add-strava">
-            {{ i18n.$t("dashboard_cta_strava_download_strava") }}
-            &nbsp;<a href="#" target="_blank">{{ i18n.$t("word_here") }}</a>
+            {{ $t("dashboard_cta_strava_download_strava") }}
+            &nbsp;<a href="#" target="_blank">{{ $t("word_here") }}</a>
           </p>
         </div>
       </div>

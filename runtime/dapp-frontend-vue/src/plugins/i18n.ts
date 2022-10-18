@@ -7,6 +7,16 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-export * from "./imageUrl";
-export * from "./formatAddress";
-export * from "./i18n";
+
+/**
+ * This method provides an access to all available i18n translations
+ *
+ * @access public
+ */
+export default {
+  install(Vue: any) {
+    Vue.prototype.$t = function (jsonPath: string) {
+      return this.$store.getters["app/i18n"].$t(jsonPath);
+    };
+  },
+};

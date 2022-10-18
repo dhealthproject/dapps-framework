@@ -70,7 +70,6 @@ export interface StatisticsTabItem {
   },
   computed: {
     ...mapGetters({
-      i18n: "app/i18n",
       hasSnackBar: "app/hasSnackBar",
       currentUserAddress: "auth/getCurrentUserAddress",
       getIntegrations: "oauth/getIntegrations",
@@ -103,9 +102,10 @@ export default class Dashboard extends MetaView {
    * value when it is necessary.
    *
    * @access public
-   * @var {Translations}
+   * @var {any}
+   * @todo Replace any with correct type of $t() function call
    */
-  public i18n!: Translations;
+  public $t!: any;
 
   /**
    * This property contains the list of integrations for current user.
@@ -234,25 +234,25 @@ export default class Dashboard extends MetaView {
   protected get statisticsTabs(): StatisticsTabItem[] {
     return [
       {
-        title: this.i18n.$t("dashboard_statistics_tabs_alltime"),
+        title: this.$t("dashboard_statistics_tabs_alltime"),
         quickStats: [
           {
-            title: this.i18n.$t("dashboard_statistics_label_minutes_practiced"),
+            title: this.$t("dashboard_statistics_label_minutes_practiced"),
             amount: 0,
             direction: "up",
           },
           {
-            title: this.i18n.$t("dashboard_statistics_label_fit_earned"),
+            title: this.$t("dashboard_statistics_label_fit_earned"),
             amount: 0,
             direction: "down",
           },
           {
-            title: this.i18n.$t("dashboard_statistics_label_calories_burnt"),
+            title: this.$t("dashboard_statistics_label_calories_burnt"),
             amount: 0,
             direction: "down",
           },
           {
-            title: this.i18n.$t("dashboard_statistics_label_friends_referred"),
+            title: this.$t("dashboard_statistics_label_friends_referred"),
             amount: 0,
             direction: "down",
           },
@@ -262,35 +262,35 @@ export default class Dashboard extends MetaView {
           {
             avatar: "friend1.png",
             name: "Yoga Maestro",
-            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
+            action: this.$t("dashboard_statistics_label_go1on1"),
           },
           {
             avatar: "friend2.png",
             name: "Terminator",
-            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
+            action: this.$t("dashboard_statistics_label_go1on1"),
           },
         ],
       },
       {
-        title: this.i18n.$t("dashboard_statistics_tabs_today"),
+        title: this.$t("dashboard_statistics_tabs_today"),
         quickStats: [
           {
-            title: this.i18n.$t("dashboard_statistics_label_minutes_practiced"),
+            title: this.$t("dashboard_statistics_label_minutes_practiced"),
             amount: 0,
             direction: "down",
           },
           {
-            title: this.i18n.$t("dashboard_statistics_label_fit_earned"),
+            title: this.$t("dashboard_statistics_label_fit_earned"),
             amount: 0,
             direction: "down",
           },
           {
-            title: this.i18n.$t("dashboard_statistics_label_calories_burnt"),
+            title: this.$t("dashboard_statistics_label_calories_burnt"),
             amount: 0,
             direction: "up",
           },
           {
-            title: this.i18n.$t("dashboard_statistics_label_friends_referred"),
+            title: this.$t("dashboard_statistics_label_friends_referred"),
             amount: 0,
             direction: "down",
           },
@@ -300,12 +300,12 @@ export default class Dashboard extends MetaView {
           {
             avatar: "friend1.png",
             name: "Yoga Maestro",
-            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
+            action: this.$t("dashboard_statistics_label_go1on1"),
           },
           {
             avatar: "friend2.png",
             name: "Terminator",
-            action: this.i18n.$t("dashboard_statistics_label_go1on1"),
+            action: this.$t("dashboard_statistics_label_go1on1"),
           },
         ],
       },
@@ -372,10 +372,10 @@ export default class Dashboard extends MetaView {
   copyToClipBoard(evt: any, val: string) {
     navigator.clipboard.writeText(val).then(() => {
       console.log("copied", this.ref);
-      this.referralLabel = this.i18n.$t("dashboard_referral_copied");
+      this.referralLabel = this.$t("dashboard_referral_copied");
 
       setTimeout(() => {
-        this.referralLabel = this.i18n.$t("dashboard_copy_referral_code");
+        this.referralLabel = this.$t("dashboard_copy_referral_code");
       }, 2000);
     });
   }
@@ -425,6 +425,6 @@ export default class Dashboard extends MetaView {
 
     this.ref = "JOINFIT22";
 
-    this.referralLabel = this.i18n.$t("dashboard_copy_referral_code");
+    this.referralLabel = this.$t("dashboard_copy_referral_code");
   }
 }
