@@ -133,9 +133,9 @@ export class WebHooksService {
         {},
       );
 
-      // internal event emission 
+      // internal event emission
       this.eventEmitter.emit(
-        'processor.activity.created',
+        "processor.activity.created",
         OnActivityCreated.create(activity.slug),
       );
 

@@ -25,7 +25,7 @@ export enum ProcessingState {
   Not_Processed = 0,
   Processed = 1,
   Failed = -1,
-};
+}
 
 /**
  * @class ProcessingStatusDTO

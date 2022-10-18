@@ -42,7 +42,7 @@ import { QueryService } from "../../../common/services/QueryService";
 /**
  * @interface ProcessOperationsCommandOptions
  * @description This interface defines **arguments** that can be
- * passed to this **discovery** command that is implemented in the
+ * passed to this **processor** command that is implemented in the
  * backend runtime.
  * <br /><br />
  * Note that it is important that child classes extend this interface
@@ -447,6 +447,7 @@ export class ProcessOperations extends ProcessorCommand {
         contractSignature: contract.signature,
         contractPayload: contract.payload,
         creationBlock: this.extractTransactionBlock(transaction),
+        processedAt: new Date().valueOf(),
       });
       nCreated++;
     }

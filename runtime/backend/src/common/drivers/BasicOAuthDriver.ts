@@ -233,13 +233,12 @@ export class BasicOAuthDriver implements OAuthDriver {
         options,
         {
           ...headers,
-          "Authorization": `Bearer: ${accessToken}`
+          Authorization: `Bearer: ${accessToken}`,
         },
       );
 
       return ResponseStatusDTO.create(200, response);
-    }
-    catch (e: any) {
+    } catch (e: any) {
       return ResponseStatusDTO.create(401, {
         message: e.toString(),
         stack: e.stack,

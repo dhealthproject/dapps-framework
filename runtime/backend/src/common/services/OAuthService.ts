@@ -304,10 +304,10 @@ export class OAuthService {
     endpointUri: string,
     integration: AccountIntegrationDocument,
     httpOptions: {
-      method: HttpMethod,
-      body?: any,
-      options?: any,
-      headers?: any
+      method: HttpMethod;
+      body?: any;
+      options?: any;
+      headers?: any;
     } = {
       method: "GET",
       body: undefined,

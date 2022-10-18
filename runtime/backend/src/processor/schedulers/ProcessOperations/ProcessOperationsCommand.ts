@@ -29,7 +29,7 @@ import { ProcessOperations } from "./ProcessOperations";
 
 /**
  * @class ProcessOperationsCommand
- * @description The main definition for the Transactions Discovery module.
+ * @description The main definition for the Operations processor module.
  *
  * @since v0.2.0
  */
