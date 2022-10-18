@@ -168,7 +168,7 @@ export class NetworkService {
    * @access protected
    * @var {HttpRequestHandler}
    */
-   protected httpService: HttpRequestHandler;
+  protected httpService: HttpRequestHandler;
 
   /**
    * Constructs an instance of the network service and connects
@@ -392,22 +392,25 @@ export class NetworkService {
     // none of the configured nodes is currently in a healthy
     // state, we will now use the network-api to query for a
     // healthy and available node instead
-    const healthyNodesResponse = await this.httpService
-    .call(
+    const healthyNodesResponse = await this.httpService.call(
       `${networkApiUrl}/network/nodes?health.apiNode=up&health.db=up`,
-      "GET"
+      "GET",
     );
 
     // get data from query response
-    const healthyNodesResponseData =
-      healthyNodesResponse.data.data as Record<string, string>[];
+    const healthyNodesResponseData = healthyNodesResponse.data.data as Record<
+      string,
+      string
+    >[];
 
     // convert data to a list of NodeConnectionPayload
-    const healthyNodes: NodeConnectionPayload[] = healthyNodesResponseData
-      .map((response: Record<string, string>) => ({
-        url: response.host,
-        port: response.port,
-      } as NodeConnectionPayload));
+    const healthyNodes: NodeConnectionPayload[] = healthyNodesResponseData.map(
+      (response: Record<string, string>) =>
+        ({
+          url: response.host,
+          port: response.port,
+        } as NodeConnectionPayload),
+    );
 
     // if there exists a node, return it
     if (healthyNodes.length > 0) {
