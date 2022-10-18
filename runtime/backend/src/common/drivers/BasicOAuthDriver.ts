@@ -133,8 +133,9 @@ export class BasicOAuthDriver implements OAuthDriver {
   }
 
   /**
-   * Method to return the remote access token.
-   * The result is an access/refresh token pair or an access token.
+   * Method to return the remote access token. The result is an access/refresh
+   * token pair. This method requires the use of an *authorization code* that
+   * is provided by the provider.
    * <br /><br />
    * These access tokens are always signed with the dApp's auth secret and expire
    * after 1 hour (one hour).
@@ -181,10 +182,11 @@ export class BasicOAuthDriver implements OAuthDriver {
 
     // extract tokens from response
     // @todo forward `expires_in` and/or `expires_at`
-    const { access_token, refresh_token } = response.data;
+    const { access_token, refresh_token, expires_at } = response.data;
     return {
       accessToken: access_token,
       refreshToken: refresh_token,
+      expiresAt: expires_at,
     } as AccessTokenDTO;
   }
 }

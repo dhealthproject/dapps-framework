@@ -18,10 +18,14 @@
  * {
  *   client_id: "123456",
  *   client_secret: "YourSecretFromProvider",
- *   oauth_url: "http://example.com/oauth/authorize",
- *   token_url: "http://example.com/oauth/token",
+ *   verify_token: "YourVerifyTokenFromProvider",
+ *   api_url: "https://example.com.com/api/v3",
+ *   oauth_url: "https://example.com.com/api/v3/oauth/authorize",
+ *   token_url: "https://example.com.com/api/v3/oauth/token"
  *   callback_url: "http://localhost:8080/oauth/callback",
- *   scope: "activity:read_all"
+ *   subscribe_url: `http://localhost:7903/webhook/strava`,
+ *   webhook_url: `http://localhost:7903/webhook/strava`,
+ *   scope: "example:scope"
  * }
  * ```
  *
@@ -32,6 +36,7 @@ export interface OAuthProviderParameters {
   client_id: string;
   client_secret: string;
   verify_token?: string;
+  api_url: string;
   oauth_url: string;
   token_url: string;
   callback_url: string;

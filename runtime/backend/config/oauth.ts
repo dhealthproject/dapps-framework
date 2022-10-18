@@ -44,9 +44,13 @@ export default () => ({
      * {
      *   client_id: "123456",
      *   client_secret: "YourSecretFromProvider",
-     *   oauth_url: "http://example.com/oauth/authorize",
-     *   token_url: "http://example.com/oauth/token",
+     *   verify_token: "YourVerifyTokenFromProvider",
+     *   api_url: "https://www.strava.com/api/v3",
+     *   oauth_url: "https://www.strava.com/api/v3/oauth/authorize",
+     *   token_url: "https://www.strava.com/api/v3/oauth/token"
      *   callback_url: "http://localhost:8080/oauth/callback",
+     *   subscribe_url: `http://localhost:7903/webhook/strava`,
+     *   webhook_url: `http://localhost:7903/webhook/strava`,
      *   scope: "activity:read_all"
      * }
      * ```
@@ -57,8 +61,9 @@ export default () => ({
       client_secret: process.env.STRAVA_CLIENT_SECRET,
       verify_token: process.env.STRAVA_VERIFY_TOKEN,
       scope: "activity:read_all",
-      oauth_url: "https://www.strava.com/oauth/authorize",
-      token_url: "https://www.strava.com/oauth/token",
+      api_url: "https://www.strava.com/api/v3",
+      oauth_url: "https://www.strava.com/api/v3/oauth/authorize",
+      token_url: "https://www.strava.com/api/v3/oauth/token",
       callback_url: `${process.env.FRONTEND_URL}/dashboard`,
       subscribe_url: `${process.env.BACKEND_URL}/webhook/strava`,
       webhook_url: `${process.env.BACKEND_URL}/webhook/strava`,

@@ -29,6 +29,7 @@ describe("common/BasicOAuthDriver", () => {
   let fakeProvider = {
     client_id: "123456",
     client_secret: "ThisIsNotASecret;)",
+    api_url: "http://example.com",
     oauth_url: "http://example.com/oauth/authorize",
     token_url: "http://example.com/oauth/token",
     callback_url: "http://localhost:8080/oauth/example/callback",

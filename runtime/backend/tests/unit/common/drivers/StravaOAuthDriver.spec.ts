@@ -31,9 +31,13 @@ describe("common/StravaOAuthDriver", () => {
   let stravaProvider = {
     client_id: "123456",
     client_secret: "ThisIsNotASecret;)",
-    oauth_url: "https://www.strava.com/oauth/authorize",
-    token_url: "https://www.strava.com/oauth/token",
+    verify_token: "ThisIsAlsoNotASecret;)",
+    api_url: "https://www.strava.com/api/v3",
+    oauth_url: "https://www.strava.com/api/v3/oauth/authorize",
+    token_url: "https://www.strava.com/api/v3/oauth/token",
     callback_url: "http://localhost:8080/oauth/example/callback",
+    subscribe_url: "http://localhost:7903/webhook/strava",
+    webhook_url: "http://localhost:7903/webhook/strava",
     scope: "activity:read",
   } as OAuthProviderParameters;
 

@@ -138,7 +138,7 @@ export class OAuthController {
     // stores a copy of the created OAuth authorization
     await this.oauthService.updateIntegration(
       provider,
-      account,
+      account.address,
       // the following will be hashed
       { authorizeUrl: authorize_url },
     );

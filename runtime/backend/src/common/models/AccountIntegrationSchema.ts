@@ -135,6 +135,17 @@ export class AccountIntegration extends Transferable<AccountIntegrationDTO> {
   public readonly encRefreshToken?: string;
 
   /**
+   * The short-lived access token's expiration time. This is the number of
+   * *seconds* since the UTC epoch, at which the access token will expire.
+   *
+   * @access public
+   * @readonly
+   * @var {number}
+   */
+  @Prop({ index: true })
+  public readonly expiresAt?: number;
+
+  /**
    * The document's creation timestamp. This field **does not** reflect the
    * date of creation of an integration but rather the date of creation of the
    * cached database entry.

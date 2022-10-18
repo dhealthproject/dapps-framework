@@ -187,7 +187,7 @@ export class OAuthService {
     // first make sure we actually have an authorization
     const integration = await this.getIntegration(
       providerName,
-      request.identifier,
+      account.address,
     );
     if (!integration || !("address" in integration)) {
       throw new HttpException(`Forbidden`, 403);
@@ -233,7 +233,7 @@ export class OAuthService {
    */
   public async updateIntegration(
     providerName: string,
-    account: AccountDocument,
+    address: string,
     data: Record<string, any>,
   ): Promise<AccountIntegrationDocument> {
     // this block hashes a possible "authorizeUrl"
@@ -248,7 +248,7 @@ export class OAuthService {
     // create an `account_integrations` document for this user
     const integration = await this.queryService.createOrUpdate(
       new AccountIntegrationQuery({
-        address: account.address,
+        address: address,
         name: providerName,
       } as AccountIntegrationDocument),
       this.model,
@@ -286,17 +286,17 @@ export class OAuthService {
    * @access public
    * @async
    * @param   {string}  provider  Contains the identifier of the OAuth Provider, e.g. "strava".
-   * @param   {string}  remoteIdentifier  The remote identifier to query account integration document from.
+   * @param   {string}  address   The address to query account integration document from.
    * @returns {Promise<AccountIntegrationDocument>} The result account integration document.
    */
   public async getIntegration(
     provider: string,
-    remoteIdentifier: string,
+    address: string,
   ): Promise<AccountIntegrationDocument> {
     return await this.queryService.findOne(
       new AccountIntegrationQuery({
         name: provider,
-        remoteIdentifier: remoteIdentifier,
+        address: address,
       } as AccountIntegrationDocument),
       this.model,
     );
