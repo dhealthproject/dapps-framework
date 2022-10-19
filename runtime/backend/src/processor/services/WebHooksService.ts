@@ -135,10 +135,12 @@ export class WebHooksService {
         {},
       );
 
+      console.log("[DEBUG][WebHooksService] Created activities entry: ", activitySlug);
+
       // internal event emission
       this.eventEmitter.emit(
         "processor.activity.created",
-        OnActivityCreated.create(activity),
+        OnActivityCreated.create(activitySlug),
       );
 
       // returns the created `ActivityDocument`

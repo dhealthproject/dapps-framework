@@ -175,7 +175,7 @@ export class WebHooksController {
     const IGNORE_MESSAGE = "EVENT_IGNORED";
     const SUCCESS_MESSAGE = "EVENT_RECEIVED";
 
-    console.log("[DEBUG][WebHooksController] Receive webhook event with data: ", data);
+    console.log("[DEBUG][WebHooksController] Received webhook event with data: ", data);
 
     try {
       // first make sure we have a compatible provider
