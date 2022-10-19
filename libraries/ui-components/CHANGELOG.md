@@ -3,6 +3,28 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.4.0][0.4.0] - 19-Oct-2022
+
+#### Added
+
+- [@dhealth/components] feat(elements): add new sizes to DappIcon component
+- [@dhealth/components] feat(elements): add DappDirectionTriangle and DappAccountDetails components
+- [@dhealth/components] style(elements): update DappAccountDetails to use full width
+- [@dhealth/components] feat(elements): create DappTitleBar as a header component
+- [@dhealth/components] feat(elements): create DappNavigation as a header component
+- [@dhealth/components] feat(elements): create DappNavigationItem as a graphic component
+- [@dhealth/components] feat(elements): add drawer for DappNavigation, update responsive view
+- [@dhealth/components] test(elements): add unit tests for DappNavigation
+- [@dhealth/components] feat(elements): add information section and additional information slot to drawer
+
+#### Changed
+
+- [@dhealth/components] refactor: move DappTitleBar to header elements
+
+#### Fixed
+
+- [@dhealth/components] fix(review): update components and tests after rebase
+
 ## [0.3.1][0.3.1] - 12-Sep-2022
 
 #### Added
@@ -94,6 +116,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealth/components] feat(widgets): add implementation for DappQR base component
 
 
+[0.4.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.4.0
 [0.3.1]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0
 [0.2.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.1.0..v0.2.0

@@ -3,6 +3,57 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.4.0][0.4.0] - 19-Oct-2022
+
+#### Added
+
+- [@dhealthdapps/frontend] feat(screens): add strava integration CTA
+- [@dhealthdapps/frontend] feat(screens): add integration screen, settings page, remove local integration logic
+- [@dhealthdapps/frontend] feat(widgets): update dashboard widget's endpoint
+- [@dhealthdapps/frontend] fix(widgets): fix import for Snackbar, apply lint fixes
+- [@dhealthdapps/frontend] feat(screens): add onboarding page, restyle login, add components
+- [@dhealthdapps/frontend] feat(screens): add popup component, add popups for login, refCode
+- [@dhealthdapps/frontend] feat(widgets): add lint, popup fixes, small improvements
+- [@dhealthdapps/frontend] feat(widgets): remove extra field from referral popup
+- [@dhealthdapps/frontend] test(screens): fix LoginScreen unit tests and imports
+- [@dhealthdapps/frontend] feat(screens): add onboarding page, restyle login, add components
+- [@dhealthdapps/frontend] feat(screens): add popup component, add popups for login, refCode
+- [@dhealthdapps/frontend] feat(screens): add settings screen with remove integration logic
+- [@dhealthdapps/frontend] feat(widgets): header styles adjustments
+- [@dhealthdapps/frontend] feat(screens): add restyled dashboard
+- [@dhealthdapps/frontend] feat(api): add toast event
+- [@dhealthdapps/frontend] feat(screens):  add dashboard mobile styling
+- [@dhealthdapps/frontend] feat(widgets): settings page styling, old unit tests fix
+- [@dhealthdapps/frontend] feat(screens): add doccomments
+- [@dhealthdapps/frontend] test: add unit tests for components, rename hamburgerbutton component
+- [@dhealthdapps/frontend] feat(widgets): add console error fix for translations, uibutton event rename
+- [@dhealthdapps/frontend] feat(widgets): add mobile menu approved styling
+- [@dhealthdapps/frontend] feat(state): add leaderboard module to store
+- [@dhealthdapps/frontend] feat(widgets): add leaderboarditem component, get /leaderboard api call, leaderboard confirmed styling
+- [@dhealthdapps/frontend] style: add border to user avatar if exists
+- [@dhealthdapps/frontend] style: add correct header config, fix of mobile styling
+
+#### Changed
+
+- [@dhealthdapps/frontend] refactor: move snackbar config to store, uses i18n
+
+#### Fixed
+
+- [@dhealthdapps/frontend] fix(tests): fix unit test failing
+- [@dhealthdapps/frontend] fix: linter issues
+- [@dhealthdapps/frontend] fix: merge issues and tests fix
+- [@dhealthdapps/frontend] fix(i18n): add change of translations key in data, fix of integrations displaying
+- [@dhealthdapps/frontend] fix(style): add fix for button displaying, lint fixes
+- [@dhealthdapps/frontend] fix(screens): redirect after provider authorization
+- [@dhealthdapps/frontend] fix(widgets): displaying logo on desktop, add disconnect wallet button
+- [@dhealthdapps/frontend] fix(widgets): title display on mobile, close menu on route change
+- [@dhealthdapps/frontend] fix(widgets): add proper format for an address, remove tabs from quick stats
+- [@dhealthdapps/frontend] fix(widgets): set quick stats values to 0
+- [@dhealthdapps/frontend] fix(widgets): add error handling for get leaderboard, no-items fallback, create current-user mock
+- [@dhealthdapps/frontend] fix(widgets): fix leaderboard item vertical padding
+- [@dhealthdapps/frontend] fix: source code file case and missing documentation
+- [@dhealthdapps/frontend] fix(widgets): add fixes for typos, comments, remove imports
+
 ## [0.3.1][0.3.1] - 12-Sep-2022
 
 #### Added
@@ -94,6 +145,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] feat(theme): adds tailwindcss@3.0.x and moves assets to resources/
 
 
+[0.4.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.4.0
 [0.3.1]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0
 [0.2.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.1.0..v0.2.0
