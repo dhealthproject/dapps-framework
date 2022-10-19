@@ -121,11 +121,9 @@ export class WebHooksController {
   protected async subscribe(
     @NestResponse() response: Response,
     @Param("provider") providerName: string,
-    @Query() query: StravaWebHookSubscriptionRequest,
+    @Query("hub.challenge") challenge: string,
+    @Query("hub.verify_token") verify_token: string,
   ): Promise<Response> {
-    // extract verification fields from query's "hub" or "data"
-    const { verify_token, challenge } = query.hub;
-
     // uses verify token to protect this endpoint
     if (undefined === verify_token || !verify_token.length) {
       throw new HttpException(`Bad Request`, 400);
