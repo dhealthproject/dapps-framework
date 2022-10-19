@@ -10,6 +10,7 @@
 // external dependencies
 import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
+import dayjs from "dayjs";
 
 // internal dependencies
 import { BaseEventListener } from "../../common/events/BaseEventListener";
@@ -57,6 +58,8 @@ export class OnActivityCreatedListener extends BaseEventListener {
    */
   @OnEvent("processor.activity.created", { async: true })
   public async handleEvent(event: OnActivityCreated): Promise<void> {
+    console.log("[DEBUG][OnActivityCreatedListener] event 'processor.activity.created' caught: ", event);
+
     // (1) reads an activity by slug from database, the
     // slug field requires its' values to be unique.
     const activity = await this.activitiesService.findOne(
@@ -89,6 +92,8 @@ export class OnActivityCreatedListener extends BaseEventListener {
       return;
     }
 
+    console.log("[DEBUG][OnActivityCreatedListener] Now requesting activity data from Strava API.");
+
     // (3) the following block will execute an API request to fetch
     // the activity data from a data provider as configured in `api_url`.
 
@@ -102,8 +107,32 @@ export class OnActivityCreatedListener extends BaseEventListener {
         integration,
       );
 
+      console.log("[DEBUG][OnActivityCreatedListener] Activity data from Strava: ", response.data);
+
+      // extracts the fields we want
+      // @todo this is highly Strava-specific and should be abstracted out
+      // @todo note that this data must not be accessible publicly
+      const apiResponse = response.data;
+      const activityData = {
+        slug: activity.slug,
+        address: activity.address,
+        name: apiResponse.name ?? undefined,
+        sport: apiResponse.sport_type,
+        startedAt: dayjs(apiResponse.start_date).toDate().valueOf(),
+        timezone: apiResponse.timezone,
+        startLocation: apiResponse.start_latlng,
+        endLocation: apiResponse.end_latlng,
+        hasTrainerDevice: apiResponse.trainer,
+        elapsedTime: apiResponse.elapsed_time,
+        movingTime: apiResponse.moving_time,
+        distance: apiResponse.distance,
+        elevation: apiResponse.total_elevation_gain,
+        kilojoules: apiResponse.kilojoules,
+        calories: apiResponse.calories,
+      } as ActivityDataDocument;
+
       // populates this activity's *data* in `activityData`
-      await this.onSuccessActivityUpdate(activity, response.data);
+      await this.onSuccessActivityUpdate(activity, activityData);
       return;
     } catch (e: any) {
       // @todo print error message in persistent log such that it can be investigated

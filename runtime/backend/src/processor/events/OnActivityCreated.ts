@@ -31,10 +31,10 @@ export class OnActivityCreated {
   /**
    *
    */
-  public static create(data: any): OnActivityCreated {
+  public static create(activity: any): OnActivityCreated {
     // creates instance and fill
     const event = new OnActivityCreated();
-    event.slug = data["slug"] ?? undefined;
+    event.slug = activity["slug"] ?? undefined;
 
     // returns prepared
     return event;

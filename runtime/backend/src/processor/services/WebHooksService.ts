@@ -138,7 +138,7 @@ export class WebHooksService {
       // internal event emission
       this.eventEmitter.emit(
         "processor.activity.created",
-        OnActivityCreated.create(activity.slug),
+        OnActivityCreated.create(activity),
       );
 
       // returns the created `ActivityDocument`
