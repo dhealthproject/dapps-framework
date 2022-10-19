@@ -157,23 +157,13 @@ export default class LoginScreen extends MetaView {
   protected globalIntervalTimer?: ReturnType<typeof setTimeout>;
 
   /**
-   * This *computed* property is used internally to configure
-   * the *carousel* component that is displayed on the left
-   * of the screen.
+   * This property is used to store a pointer to the timeout
+   * that calls hint popup after 8 seconds.
    *
-   * @access protected
-   * @returns {CarouselItem[]}
+   * @access public
+   * @var {modalTimer}
    */
-  protected get carouselItems(): CarouselItem[] {
-    return [
-      {
-        id: "screen_1",
-        text: "Keep a digital wardrobe of your gear as an NFT",
-      },
-      { id: "screen_2", text: "Open dHealth Signer app on your phone" },
-      { id: "screen_3", text: "Tap on scan from the bottom navigation bar" },
-    ];
-  }
+  protected modalTimer?: ReturnType<typeof setTimeout>;
 
   /**
    * This *computed* property is used internally to configure
@@ -306,7 +296,7 @@ export default class LoginScreen extends MetaView {
       this.hasLoaded = true;
     }
 
-    setTimeout(() => {
+    this.modalTimer = setTimeout(() => {
       this.$root.$emit("modal", {
         overlayColor: "rgba(19, 30, 25, 0.7)",
         type: "notification",
@@ -328,7 +318,13 @@ export default class LoginScreen extends MetaView {
    * @async
    * @returns {void}
    */
-  public beforeDestroyed() {
+  public beforeDestroy() {
+    this.$root.$emit("modal-close");
+
+    if (this.modalTimer) {
+      clearTimeout(this.modalTimer);
+    }
+
     if (this.interval) {
       clearInterval(this.interval);
     }
