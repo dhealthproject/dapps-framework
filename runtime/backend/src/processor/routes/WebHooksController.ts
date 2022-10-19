@@ -175,6 +175,8 @@ export class WebHooksController {
     const IGNORE_MESSAGE = "EVENT_IGNORED";
     const SUCCESS_MESSAGE = "EVENT_RECEIVED";
 
+    console.log("[DEBUG][WebHooksController] Receive webhook event with data: ", data);
+
     try {
       // first make sure we have a compatible provider
       const provider = this.oauthService.getProvider(providerName);
@@ -185,6 +187,8 @@ export class WebHooksController {
         providerName,
         data.owner_id,
       );
+
+      console.log("[DEBUG][WebHooksController] Found accountintegrations entry.");
 
       // ignore this event given no integration or client_id
       if (null === integration || !provider.client_id) {
@@ -200,9 +204,12 @@ export class WebHooksController {
         data,
       );
 
+      console.log("[DEBUG][WebHooksController] Event handler executed successfully.");
+
       // responds with status 200 and success message
       return response.status(200).send(SUCCESS_MESSAGE);
     } catch (e) {
+      console.log("[DEBUG][WebHooksController][ERROR] An error happened with the webhook event: ", e);
       // CAUTION: do not respond with status code different
       // from 200, otherwise data providers will re-send req
       return response.status(200).send(IGNORE_MESSAGE);

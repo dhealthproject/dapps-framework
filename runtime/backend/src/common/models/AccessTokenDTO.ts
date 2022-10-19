@@ -25,6 +25,23 @@ import { BaseDTO } from "./BaseDTO";
  * @since v0.3.0
  */
 export class AccessTokenDTO extends BaseDTO {
+
+  /**
+   * The identifier of the account at the data provider API.
+   * This is a unique identifier for the account on said platform.
+   * <br /><br />
+   *
+   * @access public
+   * @var {string}
+   */
+   @ApiProperty({
+    type: "string",
+    example: "123456",
+    description:
+      "The identifier of the account at the data provider API, this is a unique identifier for the account on said platform.",
+  })
+  public remoteIdentifier?: string;
+
   /**
    * The JWT access token that can be attached in the **bearer
    * authorization header** of HTTP requests to indicate users

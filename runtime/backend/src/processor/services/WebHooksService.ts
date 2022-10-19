@@ -91,6 +91,8 @@ export class WebHooksService {
       throw new Error(`Incompatible webhook event payload.`);
     }
 
+    console.log("[DEBUG][WebHooksService] Now handling event with payload: ", data);
+
     // ------
     // Step 0: The webhook handler is **tried**
     try {

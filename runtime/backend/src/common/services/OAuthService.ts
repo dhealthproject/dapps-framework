@@ -214,12 +214,13 @@ export class OAuthService {
     const encPassword: string = this.getEncryptionSeed(integration);
 
     // encrypt the access/refresh tokens pair
-    const { accessToken, refreshToken, expiresAt } = tokenDTO;
+    const { remoteIdentifier, accessToken, refreshToken, expiresAt } = tokenDTO;
     const encAccessToken: string = Crypto.encrypt(accessToken, encPassword);
     const encRefreshToken: string = Crypto.encrypt(refreshToken, encPassword);
 
     // store tokens *encrypted* in `account_integrations` document
     return await this.updateIntegration(providerName, account.address, {
+      remoteIdentifier,
       encAccessToken,
       encRefreshToken,
       expiresAt,

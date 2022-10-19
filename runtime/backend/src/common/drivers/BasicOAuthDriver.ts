@@ -285,9 +285,10 @@ export class BasicOAuthDriver implements OAuthDriver {
     }
 
     // extract tokens from response
-    // @todo forward `expires_in` and/or `expires_at`
-    const { access_token, refresh_token, expires_at } = response.data;
+    //@todo "athlete" comes only with Strava, extract to Strava driver
+    const { access_token, refresh_token, expires_at, athlete } = response.data;
     return {
+      remoteIdentifier: athlete.id,
       accessToken: access_token,
       refreshToken: refresh_token,
       expiresAt: expires_at,
