@@ -438,4 +438,27 @@ export class OAuthService {
       this.model,
     );
   }
+
+  /**
+   * Method to find one {@link AccountIntegrationDocument} from the
+   * database by querying with *provider name* and *remote identifier*.
+   *
+   * @access public
+   * @async
+   * @param   {string}  provider  Contains the identifier of the OAuth Provider, e.g. "strava".
+   * @param   {string}  remoteIdentifier   The remoteIdentifier to query account integration document from.
+   * @returns {Promise<AccountIntegrationDocument>} The result account integration document.
+   */
+  public async getIntegrationByRemoteIdentifier(
+    provider: string,
+    remoteIdentifier: string,
+  ): Promise<AccountIntegrationDocument> {
+    return await this.queryService.findOne(
+      new AccountIntegrationQuery({
+        name: provider,
+        remoteIdentifier: remoteIdentifier,
+      } as AccountIntegrationDocument),
+      this.model,
+    );
+  }
 }

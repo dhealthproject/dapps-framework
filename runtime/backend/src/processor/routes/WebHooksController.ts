@@ -183,12 +183,10 @@ export class WebHooksController {
 
       // also make sure the forwarded activity is that
       // of a *known* end-user (athlete) in our database
-      const integration = await this.oauthService.getIntegration(
+      const integration = await this.oauthService.getIntegrationByRemoteIdentifier(
         providerName,
         data.owner_id,
       );
-
-      console.log("[DEBUG][WebHooksController] Found accountintegrations entry.");
 
       // ignore this event given no integration or client_id
       if (null === integration || !provider.client_id) {
@@ -196,6 +194,8 @@ export class WebHooksController {
         // from 200, otherwise data providers will re-send req
         return response.status(200).send(IGNORE_MESSAGE);
       }
+
+      console.log("[DEBUG][WebHooksController] Found accountintegrations entry.");
 
       // creates the activity using the webhook *event handler*
       await this.webhooksService.eventHandler(
