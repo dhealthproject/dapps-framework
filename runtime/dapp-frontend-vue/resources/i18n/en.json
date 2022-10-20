@@ -22,6 +22,7 @@
   "leaderboard_title": "Leaderboard",
   "leaderboard_tab_all": "All Time",
   "leaderboard_tab_week": "This Week",
+  "leaderboard_no_items": "No items are loaded",
   "stats_friends_referred": "Friends Referred",
   "stats_tooltip_earned_title": "Total $FIT earned",
   "stats_tooltip_earned_text": "The total number of $FIT token earned from your  fitness activities imported from Strava",
