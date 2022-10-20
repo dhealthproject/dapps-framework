@@ -64,6 +64,21 @@ export class Account extends Transferable<AccountDTO> {
   public readonly address: string;
 
   /**
+   * The account's **referrer address**. An address typically refers to a
+   * human-readable series of 39 characters, starting either with
+   * a `T`, for TESTNET addresses, or with a `N`, for MAINNET addresses.
+   * <br /><br />
+   * This field is **required**, *indexed* and values are expected
+   * to be *unique*.
+   *
+   * @access public
+   * @readonly
+   * @var {string}
+   */
+  @Prop({ index: true })
+  public readonly referredBy?: string;
+
+  /**
    * The account's total **transactions count**. Typically, this field
    * will contain the number of transactions an account has done with
    * a particular dApp.

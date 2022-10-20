@@ -16,19 +16,22 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
-import { WebHooksController } from "../../../../src/processor/routes/WebHooksController";
 import { OAuthService } from "../../../../src/common/services/OAuthService";
-import { WebHooksService } from "../../../../src/processor/services/WebHooksService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { OAuthProviderParameters } from "../../../../src/common/models/OAuthConfig";
 import { AccountIntegrationDocument } from "../../../../src/common/models/AccountIntegrationSchema";
+import { WebHooksService } from "../../../../src/processor/services/WebHooksService";
+import { ActivitiesService } from "../../../../src/processor/services/ActivitiesService";
 import { ActivityDocument } from "../../../../src/processor/models/ActivitySchema";
 
+// tested module
+import { WebHooksController } from "../../../../src/processor/routes/WebHooksController";
 
 describe("processor/WebHooksController", () => {
   let controller: WebHooksController;
   let oauthService: OAuthService;
   let webhooksService: WebHooksService;
+  let activitiesService: ActivitiesService;
 
   let mockReponseCall: any;
   let mockResponse: any;
@@ -38,6 +41,7 @@ describe("processor/WebHooksController", () => {
       providers: [
         OAuthService, // requirement from WebHooksController
         WebHooksService, // requirement from WebHooksController
+        ActivitiesService, // requirement from WebHooksService
         ConfigService,
         QueryService,
         EventEmitter2, // requirement from WebHooksService
@@ -55,6 +59,7 @@ describe("processor/WebHooksController", () => {
     controller = module.get<WebHooksController>(WebHooksController);
     oauthService = module.get<OAuthService>(OAuthService);
     webhooksService = module.get<WebHooksService>(WebHooksService);
+    activitiesService = module.get<ActivitiesService>(ActivitiesService);
     (webhooksService as any).eventEmitter = {
       emit: jest.fn()
     };
@@ -83,7 +88,8 @@ describe("processor/WebHooksController", () => {
       const result = await (controller as any).subscribe(
         mockResponse,
         "test-providerName",
-        { hub: { verify_token: "test-verify_token", challenge: "test-challenge" } },
+        "test-challenge",
+        "test-verify_token",
       );
 
       // assert
@@ -104,7 +110,8 @@ describe("processor/WebHooksController", () => {
       const result = (controller as any).subscribe(
         mockResponse,
         "test-providerName",
-        { hub: { verify_token: undefined, challenge: "test-challenge" } },
+        "test-challenge",
+        undefined, // <-- should not be undefined
       );
 
       // assert
@@ -123,7 +130,8 @@ describe("processor/WebHooksController", () => {
       const result = (controller as any).subscribe(
         mockResponse,
         "test-providerName",
-        { hub: { verify_token: "test-verify_token", challenge: "test-challenge" } },
+        "test-challenge",
+        "test-verify_token", // <-- should not be this value (L122)
       );
 
       // assert
@@ -143,7 +151,7 @@ describe("processor/WebHooksController", () => {
           verify_token: "test-verify_token"
         } as OAuthProviderParameters);
       const oauthServiceGetIntegrationCall = jest
-        .spyOn(oauthService, "getIntegration")
+        .spyOn(oauthService, "getIntegrationByRemoteIdentifier")
         .mockResolvedValue({} as AccountIntegrationDocument);
       const webhooksServiceEventHandler = jest
         .spyOn(webhooksService, "eventHandler")
@@ -173,7 +181,7 @@ describe("processor/WebHooksController", () => {
           verify_token: "test-verify_token"
         } as OAuthProviderParameters);
       const oauthServiceGetIntegrationCall = jest
-        .spyOn(oauthService, "getIntegration")
+        .spyOn(oauthService, "getIntegrationByRemoteIdentifier")
         .mockResolvedValue(null);
       const webhooksServiceEventHandler = jest
         .spyOn(webhooksService, "eventHandler")
@@ -202,7 +210,7 @@ describe("processor/WebHooksController", () => {
           verify_token: "test-verify_token"
         } as OAuthProviderParameters);
       const oauthServiceGetIntegrationCall = jest
-        .spyOn(oauthService, "getIntegration")
+        .spyOn(oauthService, "getIntegrationByRemoteIdentifier")
         .mockResolvedValue({} as AccountIntegrationDocument);
       const webhooksServiceEventHandler = jest
         .spyOn(webhooksService, "eventHandler")
@@ -231,7 +239,7 @@ describe("processor/WebHooksController", () => {
           verify_token: "test-verify_token"
         } as OAuthProviderParameters);
       const oauthServiceGetIntegrationCall = jest
-        .spyOn(oauthService, "getIntegration")
+        .spyOn(oauthService, "getIntegrationByRemoteIdentifier")
         .mockRejectedValue(new Error("test-error"));
       const webhooksServiceEventHandler = jest
         .spyOn(webhooksService, "eventHandler")

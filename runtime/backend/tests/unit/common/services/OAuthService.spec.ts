@@ -490,11 +490,14 @@ describe("common/OAuthService", () => {
   describe("oauthCallback()", () => {
     const theAuthorization = {
             address: "fake-address",
-            name: "fake-provider"
+            name: "fake-provider",
+            remoteIdentifier: "fake-identifier",
+            authorizationHash: "fake-authhash",
           } as AccountIntegrationDocument,
           getIntegrationMock = jest.fn().mockReturnValue(theAuthorization),
           getProviderMock = jest.fn(),
           getAccessTokenMock = jest.fn().mockReturnValue({
+            remoteIdentifier: "fake-identifier",
             accessToken: "fake-access-token",
             refreshToken: "fake-refresh-token"
           }),
@@ -575,12 +578,13 @@ describe("common/OAuthService", () => {
 
       // assert
       expect(getEncryptionSeedMock).toHaveBeenCalledTimes(1);
-      expect(getEncryptionSeedMock).toHaveBeenCalledWith(theAuthorization);
+      expect(getEncryptionSeedMock).toHaveBeenCalledWith(theAuthorization, "fake-identifier");
     });
 
     it("should update integration entry with encrypted tokens", async () => {
       // prepare
       const expectedAccessTokenDTO = new AccessTokenDTO();
+      expectedAccessTokenDTO.remoteIdentifier = "fake-identifier";
       expectedAccessTokenDTO.accessToken = undefined;  // mocked Crypto.encrypt
       expectedAccessTokenDTO.refreshToken = undefined; // mocked Crypto.encrypt
 

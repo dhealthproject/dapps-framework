@@ -91,9 +91,13 @@ export class OAuthService {
    *
    * @access private
    * @param   {AccountIntegrationDocument}  integration   The *document* of OAuth *integration*.
+   * @param   {string}  remoteIdentifier   The *remote identifier* of the end-user (remote as in "from Strava").
    * @returns {string}  The generated encryption seed.
    */
-  private getEncryptionSeed(integration: AccountIntegrationDocument): string {
+  private getEncryptionSeed(
+    integration: AccountIntegrationDocument,
+    remoteIdentifier: string,
+  ): string {
     // protect the access token using a combination of
     // the authentication secret, the user address and
     // Strava-owned authentication details.
@@ -103,7 +107,7 @@ export class OAuthService {
       sha3_256(
         `${authSecret}` +
           `${integration.address}` +
-          `${integration.remoteIdentifier}` +
+          `${remoteIdentifier}` +
           `${integration.authorizationHash}`,
       );
 
@@ -207,14 +211,17 @@ export class OAuthService {
     // token URL in a `POST` request, then returns a
     // wrapped `AccessTokenDTO`
     const tokenDTO = await driver.getAccessToken(request.code, request.state);
+    const { remoteIdentifier, accessToken, refreshToken, expiresAt } = tokenDTO;
 
     // protect the access token using a combination of
     // the authentication secret, the user address and
     // Strava-owned authentication details.
-    const encPassword: string = this.getEncryptionSeed(integration);
+    const encPassword: string = this.getEncryptionSeed(
+      integration,
+      remoteIdentifier,
+    );
 
     // encrypt the access/refresh tokens pair
-    const { remoteIdentifier, accessToken, refreshToken, expiresAt } = tokenDTO;
     const encAccessToken: string = Crypto.encrypt(accessToken, encPassword);
     const encRefreshToken: string = Crypto.encrypt(refreshToken, encPassword);
 
@@ -251,7 +258,10 @@ export class OAuthService {
     }
 
     // decrypts the refresh token
-    const encPassword: string = this.getEncryptionSeed(integration);
+    const encPassword: string = this.getEncryptionSeed(
+      integration,
+      integration.remoteIdentifier,
+    );
     const decRefreshToken: string = Crypto.decrypt(
       integration.encRefreshToken,
       encPassword,
@@ -323,7 +333,7 @@ export class OAuthService {
     // if the access token is expired, or will expire
     // now, then we first have to *refresh* from provider
     const serverTime = dayjs(new Date().valueOf());
-    const expireTime = dayjs(integration.expiresAt);
+    const expireTime = dayjs(integration.expiresAt * 1000);
     if (expireTime.isBefore(serverTime) || expireTime.isSame(serverTime)) {
       // fetches a new access token using refresh token
       integration = await this.refreshAccessToken(
@@ -341,7 +351,10 @@ export class OAuthService {
 
     // the forwarded request requires the accessToken field
     // to be in *plaintext* format, we decrypt it here for use
-    const encPassword: string = this.getEncryptionSeed(integration);
+    const encPassword: string = this.getEncryptionSeed(
+      integration,
+      integration.remoteIdentifier,
+    );
     const decAccessToken: string = Crypto.decrypt(
       integration.encAccessToken,
       encPassword,

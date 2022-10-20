@@ -65,7 +65,7 @@ export class ActivityData extends Transferable<ActivityDataDTO> {
    * @readonly
    * @var {string}
    */
-  @Prop({ required: true, index: true, unique: true, type: String })
+  @Prop({ required: true, index: true })
   public readonly slug: string;
 
   /**

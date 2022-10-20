@@ -12,7 +12,6 @@ import { OAuthDriver } from "./OAuthDriver";
 import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import { OAuthProviderParameters } from "../models/OAuthConfig";
 import { ResponseStatusDTO } from "../models/ResponseStatusDTO";
-import { StatusDTO } from "../models/StatusDTO";
 import { HttpMethod, HttpRequestHandler } from "./HttpRequestHandler";
 
 /**
@@ -233,7 +232,7 @@ export class BasicOAuthDriver implements OAuthDriver {
         options,
         {
           ...headers,
-          Authorization: `Bearer: ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       );
 

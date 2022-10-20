@@ -11,10 +11,13 @@
 import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
 import { EventEmitter2 } from "@nestjs/event-emitter";
+import { ConfigService } from "@nestjs/config";
 
 // internal dependencies
 import { QueryService } from "../../../../src/common/services/QueryService";
+import { OAuthService } from "../../../../src/common/services/OAuthService";
 import { WebHooksService } from "../../../../src/processor/services/WebHooksService";
+import { ActivitiesService } from "../../../../src/processor/services/ActivitiesService";
 import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/processor/models/ActivitySchema";
 import { StravaWebHookEventRequest } from "../../../../src/common/drivers/strava/StravaWebHookEventRequest";
 import { OnActivityCreated } from "../../../../src/processor/events/OnActivityCreated";
@@ -22,6 +25,8 @@ import { OnActivityCreated } from "../../../../src/processor/events/OnActivityCr
 describe("common/WebHooksService", () => {
   let service: WebHooksService;
   let queryService: QueryService<ActivityDocument, ActivityModel>;
+  let oauthService: OAuthService;
+  let activitiesService: ActivitiesService;
   let eventEmitter: EventEmitter2;
   let mockDate: Date;
 
@@ -39,10 +44,17 @@ describe("common/WebHooksService", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         QueryService,
+        OAuthService,
+        ActivitiesService,
         WebHooksService,
+        ConfigService,
         EventEmitter2,
         {
           provide: getModelToken("Activity"),
+          useValue: MockModel,
+        },
+        {
+          provide: getModelToken("AccountIntegration"),
           useValue: MockModel,
         },
       ],
@@ -51,6 +63,8 @@ describe("common/WebHooksService", () => {
     service = module.get<WebHooksService>(WebHooksService);
     queryService = module.get<QueryService<ActivityDocument, ActivityModel>>(QueryService);
     eventEmitter = module.get<EventEmitter2>(EventEmitter2);
+    oauthService = module.get<OAuthService>(OAuthService);
+    activitiesService = module.get<ActivitiesService>(ActivitiesService);
   });
 
   it("should be defined", () => {
@@ -58,6 +72,11 @@ describe("common/WebHooksService", () => {
   });
 
   describe("eventHandler()", () => {
+    beforeEach(() => {
+      (service as any).activitiesService = {
+        exists: jest.fn().mockReturnValue(false) // <-- activity does not exist
+      }
+    });
     it("should throw an error given missing obligatory fields", async () => {
       // prepare
       const expectedMsg: string = `Invalid webhook event payload.`;
@@ -132,30 +151,33 @@ describe("common/WebHooksService", () => {
       }
     });
 
-    it("should throw an error if any error was caught", async () => {
+    it("should throw an error given already existing object_id", async () => {
       // prepare
-      const eventDate = mockDate;
-      const eventTime = eventDate.valueOf() / 1000
-      const expectedErrorMsg = "test-error";
-      const queryServiceCountCall = jest
-        .spyOn(queryService, "count")
-        .mockRejectedValue(new Error(expectedErrorMsg));
-
-      // act
-      const resut = service.eventHandler("strava", "fake-address", {
-        object_type: "activity",
-        aspect_type: "create",
+      const expectedMsg: string = `This activity has been discovered before.`;
+      const baseData: StravaWebHookEventRequest = {
+        object_type: undefined,
+        aspect_type: undefined,
         object_id: "12345",
         owner_id: "67890",
         subscription_id: 1,
-        event_time: eventTime,
-      });
+        event_time: 1,
+      };
+      (service as any).activitiesService = {
+        exists: jest.fn().mockReturnValue(true) // <-- activity exists
+      }
 
-      // prepare
-      expect(queryServiceCountCall).toHaveBeenCalledTimes(1);
-      expect(resut).rejects.toThrowError(
-        new Error(`An error occurred while handling event 12345: Error: ${expectedErrorMsg}`)
-      );
+      try {
+        // act
+        await service.eventHandler("strava", "test", {
+          ...baseData,
+          object_type: "activity",
+          aspect_type: "create",
+        });
+      }
+      catch(e) {
+        // assert
+        expect((e as any).message).toMatch(expectedMsg);
+      }
     });
 
     it ("should count previous daily activities for user", async () => {
@@ -339,7 +361,8 @@ describe("common/WebHooksService", () => {
 
     it ("should emit correct event 'processor.activity.created'", async () => {
       // prepare
-      const countMock = jest.fn();
+      mockDate = new Date(2022, 0, 22); // <-- 0 is january
+      const countMock = jest.fn().mockReturnValue(0);
       const createOrUpdateMock = jest.fn().mockReturnValue({ slug: "fake-slug" });
       const emitMock = jest.fn();
       (service as any).queryService = {
@@ -349,6 +372,7 @@ describe("common/WebHooksService", () => {
       (service as any).eventEmitter = {
         emit: emitMock
       };
+      const activitySlug = "20220122-1-12345-67890";
 
       // act
       await service.eventHandler("strava", "fake-address", {
@@ -364,7 +388,7 @@ describe("common/WebHooksService", () => {
       expect(emitMock).toHaveBeenCalledTimes(1);
       expect(emitMock).toHaveBeenCalledWith(
         "processor.activity.created",
-        OnActivityCreated.create("fake-slug"),
+        OnActivityCreated.create(activitySlug),
       );
     });
   });

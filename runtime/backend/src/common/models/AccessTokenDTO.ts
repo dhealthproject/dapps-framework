@@ -25,7 +25,6 @@ import { BaseDTO } from "./BaseDTO";
  * @since v0.3.0
  */
 export class AccessTokenDTO extends BaseDTO {
-
   /**
    * The identifier of the account at the data provider API.
    * This is a unique identifier for the account on said platform.
@@ -34,7 +33,7 @@ export class AccessTokenDTO extends BaseDTO {
    * @access public
    * @var {string}
    */
-   @ApiProperty({
+  @ApiProperty({
     type: "string",
     example: "123456",
     description:

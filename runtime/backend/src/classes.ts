@@ -40,7 +40,6 @@ export * from "./payout/PayoutModule";
 // processor scope
 export * from "./processor/ProcessorModule";
 export * from "./processor/events";
-export * from "./processor/listeners";
 export * from "./processor/models";
 export * from "./processor/modules";
 export * from "./processor/routes";

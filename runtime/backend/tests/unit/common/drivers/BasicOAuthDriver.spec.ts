@@ -136,6 +136,7 @@ describe("common/BasicOAuthDriver", () => {
     const httpServiceCallMock = jest.fn().mockReturnValue({
       status: 200,
       data: {
+        athlete: { id: "fake-id" },
         access_token: "fake-access-token",
         refresh_token: "fake-refresh-token",
       }

@@ -178,8 +178,8 @@ export class AuthService {
       fromSignedCookies ?? fromRequestCookies ?? fromRequestHeaders ?? null;
 
     // remove Bearer prefix if extracting from (unsecure) header
-    if (token && token.length && null !== token.match(/^Bearer: /)) {
-      token = token.replace(/^Bearer: /, "");
+    if (token && token.length && null !== token.match(/^Bearer /)) {
+      token = token.replace(/^Bearer /, "");
     }
 
     return token;

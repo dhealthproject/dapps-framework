@@ -157,7 +157,7 @@ export class Activity extends Transferable<ActivityDTO> {
    * @readonly
    * @var {string}
    */
-  @Prop({ nullable: true, type: ActivityDataSchema })
+  @Prop({ nullable: true, type: ActivityDataSchema, default: null })
   public readonly activityData?: ActivityData;
 
   /**
@@ -221,6 +221,8 @@ export class Activity extends Transferable<ActivityDTO> {
     if (undefined !== this.address) query["address"] = this.address;
     if (undefined !== this.slug) query["slug"] = this.slug;
     if (undefined !== this.dateSlug) query["dateSlug"] = this.dateSlug;
+    if (undefined !== this.remoteIdentifier)
+      query["remoteIdentifier"] = this.remoteIdentifier;
     if (undefined !== this.processingState)
       query["processingState"] = this.processingState;
 

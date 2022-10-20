@@ -115,13 +115,13 @@ describe("common/AuthService", () => {
       ];
       [
         {
-          signedCookies: { cookieName: "Bearer: test-fromSignedCookies" }
+          signedCookies: { cookieName: "test-fromSignedCookies" }
         },
         {
-          cookies: { cookieName: "Bearer: test-fromRequestCookies" }
+          cookies: { cookieName: "test-fromRequestCookies" }
         },
         {
-          headers: { Authorization: "Bearer: test-fromRequestHeaders" }
+          headers: { Authorization: "Bearer test-fromRequestHeaders" }
         }
       ].forEach((request, index) => {
         // act
@@ -263,7 +263,7 @@ describe("common/AuthService", () => {
         cookies: undefined,
         // then load from headers
         headers: {
-          "Authorization": "Bearer: ThisIsAFakeAccessTokenWithWrongFormat"
+          "Authorization": "Bearer ThisIsAFakeAccessTokenWithWrongFormat"
         }
       };
 

@@ -15,12 +15,13 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { QueryModule } from "../../common/modules/QueryModule";
-import { OAuthService } from "../../common/services/OAuthService";
+import { AuthModule } from "../../common/modules/AuthModule";
 import {
   AccountIntegration,
   AccountIntegrationSchema,
 } from "../../common/models/AccountIntegrationSchema";
 import { WebHooksController } from "../routes/WebHooksController";
+import { ActivitiesModule } from "./ActivitiesModule";
 import { WebHooksService } from "../services/WebHooksService";
 import { Activity, ActivitySchema } from "../models/ActivitySchema";
 
@@ -32,18 +33,16 @@ import { Activity, ActivitySchema } from "../models/ActivitySchema";
  * @since v0.3.2
  */
 @Module({
-  controllers: [WebHooksController],
-  providers: [WebHooksService, OAuthService],
   imports: [
     MongooseModule.forFeature([
       {
         name: AccountIntegration.name,
         schema: AccountIntegrationSchema,
-      }, // requirement from OAuthService
+      }, // requirement from OAuthModule
       {
         name: Activity.name,
         schema: ActivitySchema,
-      }, // requirement from WebHooksService
+      }, // requirement from ActivitiesModule
     ]),
     EventEmitterModule.forRoot({
       wildcard: false,
@@ -51,8 +50,12 @@ import { Activity, ActivitySchema } from "../models/ActivitySchema";
       maxListeners: 5,
       verboseMemoryLeak: true,
       ignoreErrors: false,
-    }),
-    QueryModule,
+    }), // requirement from WebHooksService
+    AuthModule, // requirement from WebHooksService
+    ActivitiesModule, // requirement from WebHooksService
+    QueryModule, // requirement from WebHooksService
   ],
+  controllers: [WebHooksController],
+  providers: [WebHooksService],
 })
 export class WebHooksModule {}
