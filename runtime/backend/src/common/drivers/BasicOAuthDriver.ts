@@ -286,11 +286,20 @@ export class BasicOAuthDriver implements OAuthDriver {
     // extract tokens from response
     //@todo "athlete" comes only with Strava, extract to Strava driver
     const { access_token, refresh_token, expires_at, athlete } = response.data;
-    return {
-      remoteIdentifier: athlete.id,
+
+    // prepare base DTO properties (access token / refresh token)
+    const tokenDTO: AccessTokenDTO = {
       accessToken: access_token,
       refreshToken: refresh_token,
       expiresAt: expires_at,
-    } as AccessTokenDTO;
+    };
+
+    // add athlete information if available (STRAVA)
+    //@todo "athlete" comes only with Strava, extract to Strava driver
+    if ("athlete" in response.data && undefined !== response.data.athlete) {
+      tokenDTO["remoteIdentifier"] = response.data.athlete.id;
+    }
+
+    return tokenDTO as AccessTokenDTO;
   }
 }

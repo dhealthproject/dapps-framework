@@ -14,12 +14,24 @@ jest.mock("js-sha3", () => ({
   sha3_256: sha3_256_call
 }));
 
+// import overwrites for @dhealth/sdk
+// These following mocks are used in this unit test series.
+// Mocks a subset of "@dhealth/sdk" including classes:
+// - Crypto to always return encrypted/decrypted payloads
+jest.mock("@dhealth/sdk", () => ({
+  Crypto: {
+    encrypt: jest.fn().mockReturnValue("fake-encrypted-payload"),
+    decrypt: jest.fn().mockReturnValue("fake-plaintext-payload"),
+  }
+}));
+
 // external dependencies
 import { getModelToken } from "@nestjs/mongoose";
 import { HttpException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
+import { Crypto } from "@dhealth/sdk"; // mocked above ^^^^
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
@@ -585,8 +597,8 @@ describe("common/OAuthService", () => {
       // prepare
       const expectedAccessTokenDTO = new AccessTokenDTO();
       expectedAccessTokenDTO.remoteIdentifier = "fake-identifier";
-      expectedAccessTokenDTO.accessToken = undefined;  // mocked Crypto.encrypt
-      expectedAccessTokenDTO.refreshToken = undefined; // mocked Crypto.encrypt
+      expectedAccessTokenDTO.accessToken = Crypto.encrypt("", "");
+      expectedAccessTokenDTO.refreshToken = Crypto.encrypt("", "");
 
       // act
       await oauthService.oauthCallback(
@@ -604,4 +616,8 @@ describe("common/OAuthService", () => {
       );
     });
   });
+
+  // describe("refreshAccessToken()", () => {
+
+  // });
 });
