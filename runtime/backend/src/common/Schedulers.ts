@@ -33,6 +33,7 @@ import { LeaderboardsAggregationCommand } from "../statistics/schedulers/Leaderb
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
+import { UserAggregationCommand } from "@/statistics/schedulers/UserAggregation/UserAggregationCommand";
 const db = dappConfigLoader().database;
 
 /**
@@ -56,6 +57,7 @@ const db = dappConfigLoader().database;
  * | `discovery` | {@link DiscoverAssets:DISCOVERY} | A discovery command that retrieves assets information from the database using discovered transactions. |
  * | `processor` | {@link ProcessOperations:PROCESSOR} | A processor command that interprets discovered transactions and maps them to dApp operations. |
  * | `statistics`| {@link LeaderboardAggregation:STATISTICS} | A statistics command that aggregates and sorts user rewards for activities and creates leaderboards. |
+ * | `statistics`| {@link UserAggregation:STATISTICS} | A statistics command that aggregates and sorts user rewards for activities and creates user statistics. |
  * <br /><br />
  *
  * @var {[key: string]: any[]}
@@ -79,5 +81,5 @@ export const Schedulers: { [key: string]: any[] } = {
   ],
   payout: [],
   processor: [OperationsModule, ProcessOperationsCommand],
-  statistics: [BlocksModule, LeaderboardsAggregationCommand],
+  statistics: [BlocksModule, LeaderboardsAggregationCommand, UserAggregationCommand],
 };

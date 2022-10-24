@@ -10,19 +10,18 @@
 
 // external dependencies
 import { Injectable, Logger } from "@nestjs/common";
-import { SchedulerRegistry } from "@nestjs/schedule";
-import { CronJob } from "cron";
+import { Cron, SchedulerRegistry } from "@nestjs/schedule";
 
 // internal dependencies
-import { ActivityDataDocument } from "../../../processor/models/ActivityDataSchema";
 import {
   StatisticsCommand,
   StatisticsCommandOptions,
 } from "../StatisticsCommand";
 import { StateService } from "../../../common/services/StateService";
+import { UserAggregationStateData } from "../../models/UserAggregationStateData";
 
 @Injectable()
-export abstract class UserAggregation extends StatisticsCommand {
+export class UserAggregation extends StatisticsCommand {
   /**
    * Constructs and prepares an instance of this scheduler.
    *
@@ -53,15 +52,6 @@ export abstract class UserAggregation extends StatisticsCommand {
   private readonly TYPE: string = "user";
 
   /**
-   * The period format i.e. `"D"`, `"W"` or `"M"`.
-   * This field will be overriden by sub-classes during initialization.
-   *
-   * @access protected
-   * @var {string}
-   */
-  protected periodFormat: string;
-
-  /**
    * Memory store for the last time of execution. This is used
    * in {@link getStateData} to update the latest execution state.
    *
@@ -70,37 +60,59 @@ export abstract class UserAggregation extends StatisticsCommand {
    */
   private lastExecutedAt: number;
 
-  public async aggregate(options?: StatisticsCommandOptions): Promise<void> {}
-
   /**
-   * Method to create and run a cronjob automatically. Subclasses will
-   * be **required** to call this method in their constructor with the
-   * desired cron expression.
+   * This helper method should return the latest execution state
+   * such that it can be saved.
+   * <br /><br />
+   * Execution states refer to one module's required state data,
+   * potentially necessary during execution, and which is fetched
+   * in {@link run} before execution and updated in {@link run}
+   * after execution.
    *
    * @access protected
-   * @param   {string} cronExpression
-   * @returns {void}
+   * @returns {StateData}
    */
-  protected addCronJob(cronExpression: string): void {
-    // initialize a dynamic cronjob
-    const job = new CronJob(
-      cronExpression, // cronTime
-      this.runAsScheduler.bind(this), // onTick
-      undefined, // empty onComplete
-      false, // "startNow" (done with L183)
-      undefined, // timeZone
-      undefined, // empty resolves to default context
-      true, // "runOnInit"
-    );
+  protected getStateData(): UserAggregationStateData {
+    return {
+      lastExecutedAt: this.lastExecutedAt,
+    } as UserAggregationStateData;
+  }
 
-    // also register in nestjs schedulers
-    this.schedulerRegistry.addCronJob(
-      `statistics:cronjobs:users:${this.periodFormat}`,
-      job,
-    );
+  /**
+   * This method must return a *command name*. Note that
+   * it should use only characters of: A-Za-z0-9:-_.
+   * <br /><br />
+   * e.g. "scope:name"
+   * <br /><br />
+   * This property is required through the extension of
+   * {@link StatisticsCommand}.
+   *
+   * @see StatisticsCommand
+   * @see BaseCommand
+   * @access protected
+   * @returns {string}
+   */
+  protected get command(): string {
+    return `UserAggregation`;
+  }
 
-    // also, always *schedule* when initialized
-    job.start();
+  /**
+   * This method must return a *command signature* that
+   * contains hints on the command name and its required
+   * and optional arguments.
+   * <br /><br />
+   * e.g. "command <argument> [--option value]"
+   * <br /><br />
+   * This property is required through the extension of
+   * {@link StatisticsCommand}.
+   *
+   * @see StatisticsCommand
+   * @see BaseCommand
+   * @access protected
+   * @returns {string}
+   */
+  protected get signature(): string {
+    return `UserAggregation`;
   }
 
   /**
@@ -119,6 +131,7 @@ export abstract class UserAggregation extends StatisticsCommand {
    * @param   {BaseCommandOptions}  options
    * @returns {Promise<void>}
    */
+  @Cron("*/30 * * * * *", { name: "statistics:cronjobs:user-aggregation" })
   public async runAsScheduler(): Promise<void> {
     // setup debug logger
     this.logger = new Logger(
@@ -126,12 +139,25 @@ export abstract class UserAggregation extends StatisticsCommand {
     );
 
     // display starting moment information in debug mode
-    this.debugLog(`Starting user aggregation type: ${this.periodFormat}`);
+    this.debugLog(`Starting user aggregation type: ${this.TYPE}`);
 
     // executes the actual command logic (this will call aggregate())
-    await this.run([this.periodFormat], {
+    await this.run([this.TYPE], {
       debug: true,
       quiet: false,
     });
+  }
+
+  /**
+   * This method implements the statistics logic for this command
+   * that will aggregate relevant users.
+   *
+   * @access public
+   * @async
+   * @param   {ProcessOperationsCommandOptions}   options
+   * @returns {Promise<void>}
+   */
+  public async aggregate(options?: StatisticsCommandOptions): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 }
