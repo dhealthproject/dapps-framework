@@ -269,9 +269,9 @@ export default class LoginScreen extends MetaView {
    */
   public async mounted() {
     // do we already have an access token? then redirect
-    if (this.isAuthenticated) {
-      return this.$router.push({ name: "app.dashboard" });
-    }
+    // if (this.isAuthenticated) {
+    //   return this.$router.push({ name: "app.dashboard" });
+    // }
 
     try {
       // @todo make sure referral code is saved

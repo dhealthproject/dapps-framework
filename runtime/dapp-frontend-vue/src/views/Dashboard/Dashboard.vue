@@ -16,7 +16,7 @@
       <h1
         v-if="getIntegrations && getIntegrations.length"
         class="dapp-screen-dashboard__title"
-        v-html="`${formatAddress(currentUserAddress, 'dashes')} dashboard`"
+        v-html="`${formatAddress(storedUserAddress, 'dashes')} dashboard`"
       />
       <DividedScreen v-if="getIntegrations && getIntegrations.length" :gap="81">
         <template v-slot:left>

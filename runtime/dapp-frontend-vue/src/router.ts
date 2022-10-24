@@ -98,13 +98,13 @@ export const createRouter = ($store: any): VueRouter => {
       {
         path: "/login",
         name: "app.login",
-        meta: { layout: "guest/split-horizontal" },
+        meta: { layout: "guest/split-horizontal", middleware: [guest] },
         component: () => import("./views/LoginScreen/LoginScreen.vue"),
         children: [
           {
             path: ":refCode",
             name: "app.login.withRefCode",
-            meta: { layout: "guest/split-horizontal" },
+            meta: { layout: "guest/split-horizontal", middleware: [guest] },
             component: () => import("./views/LoginScreen/LoginScreen.vue"),
           },
         ],

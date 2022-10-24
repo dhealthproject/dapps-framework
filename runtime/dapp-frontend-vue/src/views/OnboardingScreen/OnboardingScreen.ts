@@ -193,7 +193,7 @@ export default class OnboardingScreen extends MetaView {
    * @returns void
    * @access public
    */
-  beforeDestroyed() {
+  beforeDestroy() {
     this.currentScreen = 0;
   }
 }

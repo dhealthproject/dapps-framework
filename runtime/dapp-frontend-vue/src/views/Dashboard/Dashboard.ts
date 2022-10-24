@@ -93,6 +93,16 @@ export default class Dashboard extends MetaView {
   public currentUserAddress!: string;
 
   /**
+   * This property contains the authenticated user's dHealth Account
+   * Address. This field is getting populated on mounted hook. Used in title,
+   * to prevent displaying undefined instead of user address
+   *
+   * @access public
+   * @var {string}
+   */
+  public storedUserAddress = "";
+
+  /**
    * This property contains the translator `Translations` instance.
    * This field is populated using the Vuex Store after a successful
    * setup of the internationalization features.
