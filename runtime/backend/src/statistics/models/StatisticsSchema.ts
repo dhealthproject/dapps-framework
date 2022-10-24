@@ -17,6 +17,15 @@ import { Transferable } from "../../common/concerns/Transferable";
 import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
 import { StatisticsDTO } from "./StatisticsDTO";
 
+export type KnownActivities = "running" | "walking" | "swimming";
+export interface UserData {
+  practicedMinutes: number;
+  totalEarned: number;
+  topActivities: KnownActivities[];
+  referredLevel: number;
+  totalReferred: number;
+}
+
 /**
  * @class Activity
  * @description This class defines the **exact** fields that are
@@ -125,8 +134,11 @@ export class Statistics extends Transferable<StatisticsDTO> {
    * @access public
    * @var {number}
    */
-  @Prop({ required: true, index: true })
-  public readonly position: number;
+  @Prop({ required: true, index: true, nullable: true })
+  public readonly position?: number;
+
+  @Prop({ required: false, nullable: true, type: Object })
+  public data: UserData;
 
   /**
    * The total amount of tokens that the address of this schema
@@ -138,8 +150,8 @@ export class Statistics extends Transferable<StatisticsDTO> {
    * @access public
    * @var{number}
    */
-  @Prop({ required: true })
-  public readonly amount: number;
+  @Prop({ required: true, nullable: true })
+  public readonly amount?: number;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
