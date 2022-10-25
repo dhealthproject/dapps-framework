@@ -27,28 +27,18 @@ describe("worker/WorkerModule", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkerModule,
-        // AppService,
-        // AppController,
-        // ConfigService,
-        // AuthService,
-        // OAuthService,
-        // NetworkService,
-        // AccountsService,
-        // ChallengesService,
-        // JwtService,
-        // QueryService,
         {
           provide: getModelToken("AccountIntegration"),
           useValue: MockModel,
-        },
+        }, // requirement from StatisticsService
         {
           provide: getModelToken("Account"),
           useValue: MockModel,
-        },
+        }, // requirement from StatisticsService
         {
           provide: getModelToken("AuthChallenge"),
           useValue: MockModel,
-        },
+        }, // requirement from StatisticsService
       ],
     }).compile();
 

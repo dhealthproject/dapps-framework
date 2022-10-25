@@ -18,6 +18,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { MockModel } from "../../../mocks/global";
 import { OAuthService } from "../../../../src/common/services/OAuthService";
 import { QueryService } from "../../../../src/common/services/QueryService";
+import { CipherService } from "../../../../src/common/services/CipherService";
 import { OAuthProviderParameters } from "../../../../src/common/models/OAuthConfig";
 import { AccountIntegrationDocument } from "../../../../src/common/models/AccountIntegrationSchema";
 import { WebHooksService } from "../../../../src/processor/services/WebHooksService";
@@ -42,17 +43,18 @@ describe("processor/WebHooksController", () => {
         OAuthService, // requirement from WebHooksController
         WebHooksService, // requirement from WebHooksController
         ActivitiesService, // requirement from WebHooksService
-        ConfigService,
-        QueryService,
+        ConfigService, // requirement from OAuthService
+        QueryService, // requirement from OAuthService
         EventEmitter2, // requirement from WebHooksService
+        CipherService, // requirement from OAuthService
         {
           provide: getModelToken("AccountIntegration"),
           useValue: MockModel,
-        },
+        }, // requirement from OAuthService
         {
           provide: getModelToken("Activity"),
           useValue: MockModel,
-        },
+        }, // requirement from ActivitiesService
       ]
     }).compile();
 

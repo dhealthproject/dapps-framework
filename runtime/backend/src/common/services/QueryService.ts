@@ -105,7 +105,9 @@ export class QueryService<
     query: Queryable<TDocument>,
     model: TModel,
   ): Promise<number> {
-    return await model.count(query);
+    // wrap query to be mongo-compatible
+    const { searchQuery } = this.getQueryConfig(query);
+    return await model.count(searchQuery as FilterQuery<TDocument>);
   }
 
   /**

@@ -14,29 +14,18 @@ jest.mock("js-sha3", () => ({
   sha3_256: sha3_256_call
 }));
 
-// import overwrites for @dhealth/sdk
-// These following mocks are used in this unit test series.
-// Mocks a subset of "@dhealth/sdk" including classes:
-// - Crypto to always return encrypted/decrypted payloads
-jest.mock("@dhealth/sdk", () => ({
-  Crypto: {
-    encrypt: jest.fn().mockReturnValue("fake-encrypted-payload"),
-    decrypt: jest.fn().mockReturnValue("fake-plaintext-payload"),
-  }
-}));
-
 // external dependencies
 import { getModelToken } from "@nestjs/mongoose";
 import { HttpException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-import { Crypto } from "@dhealth/sdk"; // mocked above ^^^^
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
+import { CipherService } from "../../../../src/common/services/CipherService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { AuthService } from "../../../../src/common/services/AuthService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
@@ -63,6 +52,7 @@ describe("common/OAuthService", () => {
         JwtService, // requirement from AuthService
         AuthService, // requirement from OAuthService
         QueryService, // requirement from OAuthService
+        CipherService, // requirement from OAuthService
         ConfigService, // requirement from OAuthService
         {
           provide: getModelToken("AccountIntegration"),
@@ -116,6 +106,8 @@ describe("common/OAuthService", () => {
       expect(sha3_256_call).toHaveBeenCalledTimes(1);
       expect(result).toBe("test-secret-fakeHash");
     });
+
+    //XXX add tests for parameters used: authSecret, remoteIdentifier, etc.
   });
 
   describe("getAuthorizeURL()", () => {
@@ -595,10 +587,14 @@ describe("common/OAuthService", () => {
 
     it("should update integration entry with encrypted tokens", async () => {
       // prepare
-      const expectedAccessTokenDTO = new AccessTokenDTO();
+      const expectedAccessTokenDTO: any = {};
       expectedAccessTokenDTO.remoteIdentifier = "fake-identifier";
-      expectedAccessTokenDTO.accessToken = Crypto.encrypt("", "");
-      expectedAccessTokenDTO.refreshToken = Crypto.encrypt("", "");
+      expectedAccessTokenDTO.encAccessToken = "fake-encrypted-payload";
+      expectedAccessTokenDTO.encRefreshToken = "fake-encrypted-payload";
+      const encryptMock = jest.fn().mockReturnValue("fake-encrypted-payload");
+      (oauthService as any).cipher = {
+        encrypt: encryptMock,
+      }
 
       // act
       await oauthService.oauthCallback(
@@ -608,6 +604,7 @@ describe("common/OAuthService", () => {
       );
 
       // assert
+      expect(encryptMock).toHaveBeenCalledTimes(2); // access + refresh tokens
       expect(updateIntegrationMock).toHaveBeenCalledTimes(1);
       expect(updateIntegrationMock).toHaveBeenCalledWith(
         "fake-provider",
@@ -617,7 +614,166 @@ describe("common/OAuthService", () => {
     });
   });
 
-  // describe("refreshAccessToken()", () => {
+  describe("refreshAccessToken()", () => {
+    const theAuthorization = {
+        address: "fake-address",
+        name: "fake-provider",
+        remoteIdentifier: "fake-identifier",
+        authorizationHash: "fake-authhash",
+        encAccessToken: "fake-encrypted-access-token",
+        encRefreshToken: "fake-encrypted-refresh-token",
+      } as AccountIntegrationDocument,
+      getProviderMock = jest.fn(),
+      updateAccessTokenMock = jest.fn().mockReturnValue({
+        accessToken: "fake-updated-access-token",
+        refreshToken: "fake-updated-refresh-token"
+      }),
+      driverFactoryMock = jest.fn().mockReturnValue({
+        updateAccessToken: updateAccessTokenMock
+      }),
+      getEncryptionSeedMock = jest.fn().mockReturnValue(
+        "fake-insecure-encryption-seed"
+      ),
+      cipherDecryptMock = jest.fn().mockReturnValue(
+        "fake-decrypted-refresh-token",
+      ),
+      cipherEncryptMock = jest.fn().mockReturnValue(
+        "fake-encrypted-token",
+      ),
+      updateIntegrationMock = jest.fn();
+    beforeEach(() => {
+      // following methods are necessary for the `refreshAccessToken()`
+      // method and are therefor *mocked* here. These must be tested
+      // separately as to permit more granular unit tests here.
+      (oauthService as any).getProvider = getProviderMock;
+      (oauthService as any).driverFactory = driverFactoryMock;
+      (oauthService as any).getEncryptionSeed = getEncryptionSeedMock;
+      (oauthService as any).updateIntegration = updateIntegrationMock;
+      (oauthService as any).cipher = {
+        decrypt: cipherDecryptMock,
+        encrypt: cipherEncryptMock,
+      };
 
-  // });
+      getProviderMock.mockClear();
+      driverFactoryMock.mockClear();
+      getEncryptionSeedMock.mockClear();
+      updateIntegrationMock.mockClear();
+      updateAccessTokenMock.mockClear();
+      cipherDecryptMock.mockClear();
+      cipherEncryptMock.mockClear();
+    });
+
+    it("should throw an error given no authorization", async () => {
+      // prepare
+      let nullAuthorizationMock = {
+        // - missing address field
+        name: "fake-provider",
+        remoteIdentifier: "fake-identifier",
+        authorizationHash: "fake-authhash",
+      } as AccountIntegrationDocument;
+
+      // act
+      try {
+        await oauthService.refreshAccessToken(
+          "strava",
+          nullAuthorizationMock,
+        );
+      } catch(e: any) {
+        // assert
+        expect(e instanceof HttpException).toBe(true);
+        expect("status" in e).toBe(true);
+        expect("response" in e).toBe(true);
+        expect(e.status).toBe(403);
+        expect(e.response).toBe("Forbidden");
+      }
+    });
+
+    it("should create encryption seed from integration", async () => {
+      // act
+      await oauthService.refreshAccessToken(
+        "fake-provider",
+        theAuthorization,
+      );
+
+      // assert
+      expect(getEncryptionSeedMock).toHaveBeenCalledTimes(1);
+      expect(getEncryptionSeedMock).toHaveBeenCalledWith(theAuthorization, "fake-identifier");
+    });
+
+    it("should decrypt refresh token from integration document", async () => {
+      // act
+      await oauthService.refreshAccessToken(
+        "fake-provider",
+        theAuthorization,
+      );
+
+      // assert
+      expect(cipherDecryptMock).toHaveBeenCalledTimes(1);
+      expect(cipherDecryptMock).toHaveBeenCalledWith(
+        "fake-encrypted-refresh-token",
+        "fake-insecure-encryption-seed",
+      );
+    });
+
+    it("should use correct provider to load OAuth driver", async () => {
+      // act
+      await oauthService.refreshAccessToken(
+        "fake-provider",
+        theAuthorization,
+      );
+
+      // assert
+      expect(getProviderMock).toHaveBeenCalledTimes(1);
+      expect(driverFactoryMock).toHaveBeenCalledTimes(1);
+      expect(getProviderMock).toHaveBeenCalledWith("fake-provider");
+      expect(driverFactoryMock).toHaveBeenCalledWith("fake-provider", undefined);
+    });
+
+    it("should use correct refresh token for updateAccessToken call", async () => {
+      // act
+      await oauthService.refreshAccessToken(
+        "fake-provider",
+        theAuthorization,
+      );
+
+      // assert
+      expect(getEncryptionSeedMock).toHaveBeenCalledTimes(1);
+      expect(cipherDecryptMock).toHaveBeenCalledTimes(1);
+      expect(updateAccessTokenMock).toHaveBeenCalledTimes(1);
+      expect(updateAccessTokenMock).toHaveBeenCalledWith(
+        "fake-decrypted-refresh-token"
+      );
+    });
+
+    it("should use encryption for newly received token pair", async () => {
+      // prepare
+      let fakeResultUpdateAccessTokenMock = jest.fn().mockReturnValue({
+          accessToken: "new-access-token",
+          refreshToken: "new-refresh-token",
+        }),
+        fakeDriverFactoryMock = jest.fn().mockReturnValue({
+          updateAccessToken: fakeResultUpdateAccessTokenMock
+        });
+      (oauthService as any).driverFactory = fakeDriverFactoryMock;
+
+      // act
+      await oauthService.refreshAccessToken(
+        "fake-provider",
+        theAuthorization,
+      );
+
+      // assert
+      expect(cipherEncryptMock).toHaveBeenCalledTimes(2);
+      expect(cipherEncryptMock).toHaveBeenNthCalledWith(
+        1,
+        "new-access-token",
+        "fake-insecure-encryption-seed",
+      );
+      expect(cipherEncryptMock).toHaveBeenNthCalledWith(
+        2,
+        "new-refresh-token",
+        "fake-insecure-encryption-seed",
+      );
+    });
+  });
 });

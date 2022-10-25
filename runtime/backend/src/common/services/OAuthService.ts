@@ -12,11 +12,11 @@ import { HttpException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { ConfigService } from "@nestjs/config";
 import { sha3_256 } from "js-sha3";
-import { Crypto } from "@dhealth/sdk";
 import dayjs from "dayjs";
 
 // internal dependencies
 import { QueryService } from "./QueryService";
+import { CipherService } from "./CipherService";
 import { OAuthProviderParameters } from "../models/OAuthConfig";
 import { AccountDocument } from "../models/AccountSchema";
 import {
@@ -59,6 +59,7 @@ export class OAuthService {
       AccountIntegrationDocument,
       AccountIntegrationModel
     >,
+    private readonly cipher: CipherService,
   ) {}
 
   /**
@@ -222,8 +223,14 @@ export class OAuthService {
     );
 
     // encrypt the access/refresh tokens pair
-    const encAccessToken: string = Crypto.encrypt(accessToken, encPassword);
-    const encRefreshToken: string = Crypto.encrypt(refreshToken, encPassword);
+    const encAccessToken: string = this.cipher.encrypt(
+      accessToken,
+      encPassword,
+    );
+    const encRefreshToken: string = this.cipher.encrypt(
+      refreshToken,
+      encPassword,
+    );
 
     // store tokens *encrypted* in `account_integrations` document
     return await this.updateIntegration(providerName, account.address, {
@@ -262,7 +269,7 @@ export class OAuthService {
       integration,
       integration.remoteIdentifier,
     );
-    const decRefreshToken: string = Crypto.decrypt(
+    const decRefreshToken: string = this.cipher.decrypt(
       integration.encRefreshToken,
       encPassword,
     );
@@ -280,8 +287,14 @@ export class OAuthService {
 
     // encrypt the newly received access/refresh tokens pair
     const { accessToken, refreshToken, expiresAt } = tokenDTO;
-    const encAccessToken: string = Crypto.encrypt(accessToken, encPassword);
-    const encRefreshToken: string = Crypto.encrypt(refreshToken, encPassword);
+    const encAccessToken: string = this.cipher.encrypt(
+      accessToken,
+      encPassword,
+    );
+    const encRefreshToken: string = this.cipher.encrypt(
+      refreshToken,
+      encPassword,
+    );
 
     // store tokens *encrypted* in `account_integrations` document
     return await this.updateIntegration(providerName, integration.address, {
@@ -355,7 +368,7 @@ export class OAuthService {
       integration,
       integration.remoteIdentifier,
     );
-    const decAccessToken: string = Crypto.decrypt(
+    const decAccessToken: string = this.cipher.decrypt(
       integration.encAccessToken,
       encPassword,
     );

@@ -89,6 +89,58 @@ export type MongoOperationDec = {
 };
 
 /**
+ * @type MongoOperationGreaterThan
+ * @description A type that represents a *mongo query operations* using
+ * the `$gt`-operator that matches documents based of a field value.This
+ * type is used whenever a `$gt` operation shall be executed for filters
+ * additionally to query conditions.
+ *
+ * @since v0.4.0
+ */
+export type MongoOperationGreaterThan = {
+  $gt: MongoQueryOperationValue;
+};
+
+/**
+ * @type MongoOperationGreaterThanEqual
+ * @description A type that represents a *mongo query operations* using
+ * the `$gte`-operator that matches documents based of a field value.This
+ * type is used whenever a `$gte` operation shall be executed for filters
+ * additionally to query conditions.
+ *
+ * @since v0.4.0
+ */
+export type MongoOperationGreaterThanEqual = {
+  $gte: MongoQueryOperationValue;
+};
+
+/**
+ * @type MongoOperationLessThan
+ * @description A type that represents a *mongo query operations* using
+ * the `$lt`-operator that matches documents based of a field value.This
+ * type is used whenever a `$lt` operation shall be executed for filters
+ * additionally to query conditions.
+ *
+ * @since v0.4.0
+ */
+export type MongoOperationLessThan = {
+  $lt: MongoQueryOperationValue;
+};
+
+/**
+ * @type MongoOperationLessThanEqual
+ * @description A type that represents a *mongo query operations* using
+ * the `$lte`-operator that matches documents based of a field value.This
+ * type is used whenever a `$lte` operation shall be executed for filters
+ * additionally to query conditions.
+ *
+ * @since v0.4.0
+ */
+export type MongoOperationLessThanEqual = {
+  $lte: MongoQueryOperationValue;
+};
+
+/**
  * @type MongoQueryOperation
  * @description A type that represents *mongo query operations* individually
  * and is used to perform **safe** database queries with typed operations.
@@ -96,7 +148,14 @@ export type MongoOperationDec = {
  * Mongo operations that are currently supported include:
  * - `$eq`: This operation consists of matching documents by `equality` of a field value.
  * - `$ne`: This operation consists of matching documents for which *a field is not null*.
- * - `$exists`: This operation consists for matching documents for which *a field exists and is not null*.
+ * - `$exists`: This operation consists of matching documents for which *a field exists and is not null*.
+ * - `$set`: This operation consists of *setting field values* on matching documents.
+ * - `$inc`: This operation consists of *incrementing a field value* on matching documents.
+ * - `$dec`: This operation consists of *decrementing a field value* on matching documents.
+ * - `$gt`: This operation consists of matching documents for which a field value is *greater than* the provided filter.
+ * - `$gte`: This operation consists of matching documents for which a field value is *greater than or equal* the provided filter.
+ * - `$lt`: This operation consists of matching documents for which a field value is *less than* the provided filter.
+ * - `$lte`: This operation consists of matching documents for which a field value is *less than or equal* the provided filter.
  * <br /><br />
  * @example Using the `MongoOperationEqual` operator
  * ```json
@@ -112,7 +171,11 @@ export type MongoQueryOperation =
   | MongoOperationExists
   | MongoOperationSet
   | MongoOperationInc
-  | MongoOperationDec;
+  | MongoOperationDec
+  | MongoOperationGreaterThan
+  | MongoOperationGreaterThanEqual
+  | MongoOperationLessThan
+  | MongoOperationLessThanEqual;
 
 /**
  * @type MongoQueryOperationSpec
@@ -127,4 +190,8 @@ export type MongoQueryOperationSpec =
   | keyof MongoOperationExists
   | keyof MongoOperationSet
   | keyof MongoOperationInc
-  | keyof MongoOperationDec;
+  | keyof MongoOperationDec
+  | keyof MongoOperationGreaterThan
+  | keyof MongoOperationGreaterThanEqual
+  | keyof MongoOperationLessThan
+  | keyof MongoOperationLessThanEqual;

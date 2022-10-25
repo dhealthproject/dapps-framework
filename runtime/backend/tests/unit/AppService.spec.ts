@@ -22,7 +22,7 @@ describe("AppService", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AppService,
-        ConfigService,
+        ConfigService, // requirement from AppService
       ],
     }).compile();
 

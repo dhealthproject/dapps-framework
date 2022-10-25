@@ -22,6 +22,7 @@ import { JwtService } from "@nestjs/jwt";
 import { AuthService } from "../../../../src/common/services/AuthService";
 import { AuthController } from "../../../../src/common/routes/AuthController";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
+import { CipherService } from "../../../../src/common/services/CipherService";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { QueryService } from "../../../../src/common/services/QueryService";
@@ -37,21 +38,22 @@ describe("routes/AuthController", () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
-        AuthService,
-        AccountsService,
-        ConfigService,
-        NetworkService,
-        ChallengesService,
-        JwtService,
-        QueryService,
+        AuthService, // requirement from AuthService
+        AccountsService, // requirement from AuthController
+        ConfigService, // requirement from AuthService
+        NetworkService, // requirement from AuthService
+        ChallengesService, // requirement from AuthService
+        JwtService, // requirement from AuthService
+        CipherService, // requirement from OAuthService
+        QueryService, // requirement from AccountsService
         {
           provide: getModelToken("Account"),
           useValue: MockModel,
-        },
+        }, // requirement from AccountsService
         {
           provide: getModelToken("AuthChallenge"),
           useValue: MockModel,
-        },
+        }, // requirement from ChallengesService
       ],
     }).compile();
 

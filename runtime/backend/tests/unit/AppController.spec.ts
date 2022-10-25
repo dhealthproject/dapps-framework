@@ -22,6 +22,7 @@ import { NetworkService } from "../../src/common/services/NetworkService";
 import { AuthService } from "../../src/common/services/AuthService";
 import { QueryService } from "../../src/common/services/QueryService";
 import { OAuthService } from "../../src/common/services/OAuthService";
+import { CipherService } from "../../src/common/services/CipherService";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -46,14 +47,15 @@ describe("AppController", () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [MockAppController],
       providers: [
+        OAuthService,
+        AuthService, // requirement from OAuthService
+        CipherService, // requirement from OAuthService
         ConfigService, // requirement from AuthService
         NetworkService, // requirement from AuthService
-        QueryService, // requirement from AccountsService
         AccountsService, // requirement from AuthService
-        ChallengesService, // requirement from AccountsService
         JwtService, // requirement from AuthService
-        OAuthService,
-        AuthService,
+        QueryService, // requirement from AccountsService
+        ChallengesService, // requirement from AccountsService
         {
           provide: getModelToken("Account"),
           useValue: MockModel, // test/mocks/global.ts
@@ -61,11 +63,11 @@ describe("AppController", () => {
         {
           provide: getModelToken("AccountIntegration"),
           useValue: MockModel, // test/mocks/global.ts
-        },
+        }, // requirement from OAuthService
         {
           provide: getModelToken("AuthChallenge"),
           useValue: MockModel,
-        }, // requirement from AuthService
+        }, // requirement from ChallengesService
       ],
     }).compile();
 

@@ -25,6 +25,7 @@ class AnotherDriver extends BasicOAuthDriver {
 }
 
 describe("common/BasicOAuthDriver", () => {
+  let mockDate: Date;
   let basicDriver: BasicOAuthDriver;
   let fakeProvider = {
     client_id: "123456",
@@ -38,6 +39,10 @@ describe("common/BasicOAuthDriver", () => {
 
   beforeEach(() => {
     basicDriver = new BasicOAuthDriver("fake-provider", fakeProvider);
+
+    mockDate = new Date(Date.UTC(2022, 1, 1)); // UTC 1643673600000
+    jest.useFakeTimers("modern");
+    jest.setSystemTime(mockDate);
   });
 
   describe("constructor()", () => {
@@ -129,6 +134,214 @@ describe("common/BasicOAuthDriver", () => {
           fakeQuery +
           "&scope=" + fakeProvider.scope
       );
+    });
+  });
+
+  describe("requestAccessToken()", () => {
+    const httpServiceCallMock = jest.fn().mockReturnValue({
+      status: 200,
+      data: {}
+    });
+    beforeEach(() => {
+      (basicDriver as any).httpService = {
+        call: httpServiceCallMock
+      };
+
+      httpServiceCallMock.mockClear();
+    });
+
+    it ("should fetch token pair using correct provider url and HTTP method", async () => {
+      // prepare
+      const expectedParams = {
+        client_id: fakeProvider.client_id,
+        client_secret: fakeProvider.client_secret,
+        grant_type: "authorization_code",
+        code: "fake-code",
+        state: "this-is-an-extra",
+      };
+
+      // act
+      await (basicDriver as any).requestAccessToken(expectedParams);
+
+      // assert
+      expect(httpServiceCallMock).toHaveBeenCalledTimes(1);
+      expect(httpServiceCallMock).toHaveBeenCalledWith(
+        fakeProvider.token_url,
+        "POST",
+        expectedParams
+      );
+    });
+
+    it ("should throw an error given a non-200 HTTP status code response", async () => {
+      // prepare
+      const fake403HttpServiceCallMock = jest.fn().mockReturnValue({
+        status: 403, // <-- non-200 HTTP status code
+        data: {}
+      });
+      (basicDriver as any).httpService = fake403HttpServiceCallMock;
+
+      // act
+      try {
+        await (basicDriver as any).requestAccessToken({
+          client_id: fakeProvider.client_id,
+          client_secret: fakeProvider.client_secret,
+          grant_type: "authorization_code",
+          code: "fake-code",
+          state: "this-is-an-extra",
+        });
+      } catch(e: any) {
+        // assert
+        expect(e instanceof Error).toBe(true);
+        expect(e.toString()).toBe(
+          `Error: An error occurred requesting an access token ` +
+          `from "fake-provider". Please, try again later.`);
+      }
+    });
+
+    it ("should extract token pair and expiration from response", async () => {
+      // prepare
+      const fakeResultHttpServiceCallMock = jest.fn().mockReturnValue({
+        status: 200,
+        data: {
+          access_token: "fake-access-token",
+          refresh_token: "fake-refresh-token",
+          expires_at: new Date().valueOf(),
+        }
+      });
+      (basicDriver as any).httpService = fakeResultHttpServiceCallMock;
+
+      // act
+      const result = await (basicDriver as any).requestAccessToken({
+        client_id: fakeProvider.client_id,
+        client_secret: fakeProvider.client_secret,
+        grant_type: "authorization_code",
+        code: "fake-code",
+        state: "this-is-an-extra",
+      });
+
+      // assert
+      expect(result).toBeDefined();
+      expect("accessToken" in result).toBe(true);
+      expect("refreshToken" in result).toBe(true);
+      expect("expiresAt" in result).toBe(true);
+      expect("remoteIdentifier" in result).toBe(false);
+      expect(result.accessToken).toBe("fake-access-token");
+      expect(result.refreshToken).toBe("fake-refresh-token");
+      expect(result.expiresAt).toBe(mockDate.valueOf());
+    });
+
+    it ("should extract remote identifier from response given athlete", async () => {
+      // prepare
+      const fakeResultHttpServiceCallMock = jest.fn().mockReturnValue({
+        status: 200,
+        data: {
+          access_token: "fake-access-token",
+          refresh_token: "fake-refresh-token",
+          expires_at: new Date().valueOf(),
+          athlete: { id: "fake-remote-identifier" },
+        }
+      });
+      (basicDriver as any).httpService = fakeResultHttpServiceCallMock;
+
+      // act
+      const result = await (basicDriver as any).requestAccessToken({
+        client_id: fakeProvider.client_id,
+        client_secret: fakeProvider.client_secret,
+        grant_type: "authorization_code",
+        code: "fake-code",
+        state: "this-is-an-extra",
+      });
+
+      // assert
+      expect(result).toBeDefined();
+      expect("accessToken" in result).toBe(true);
+      expect("refreshToken" in result).toBe(true);
+      expect("expiresAt" in result).toBe(true);
+      expect("remoteIdentifier" in result).toBe(true);
+      expect(result.accessToken).toBe("fake-access-token");
+      expect(result.refreshToken).toBe("fake-refresh-token");
+      expect(result.expiresAt).toBe(mockDate.valueOf());
+      expect(result.remoteIdentifier).toBe("fake-remote-identifier");
+    });
+  });
+
+  describe("executeRequest()", () => {
+    const httpServiceCallMock = jest.fn().mockReturnValue({
+      status: 200,
+      data: {}
+    });
+    beforeEach(() => {
+      (basicDriver as any).httpService = {
+        call: httpServiceCallMock
+      };
+
+      httpServiceCallMock.mockClear();
+    });
+
+    it ("should use correct provider API URL and attach access token", async () => {
+      // act
+      await basicDriver.executeRequest(
+        "fake-access-token",
+        "/my-precious/api/endpoint",
+        "GET",
+      );
+
+      // assert
+      expect(httpServiceCallMock).toHaveBeenCalledTimes(1);
+      expect(httpServiceCallMock).toHaveBeenCalledWith(
+        fakeProvider.api_url + "/my-precious/api/endpoint",
+        "GET",
+        {}, // no-body
+        {}, // no-options
+        {
+          Authorization: "Bearer fake-access-token",
+        },
+      );
+    });
+
+    it ("should wrap response alongside status code in ResponseStatusDTO", async () => {
+      // act
+      const response = await basicDriver.executeRequest(
+        "fake-access-token",
+        "/my-precious/api/endpoint",
+        "GET",
+      );
+
+      // assert
+      expect(response).toBeDefined();
+      expect("code" in response).toBe(true);
+      expect("status" in response).toBe(true);
+      expect("response" in response).toBe(true);
+      expect(response.response).toBeDefined();
+      expect("data" in response.response).toBe(true);
+      expect(response.code).toBe(200);
+      expect(response.status).toBe(true);
+    });
+
+    it ("should wrap caught error cases using failure ResponseStatusDTO", async () => {
+      // prepare
+      const fakeErrorHttpServiceCallMock = jest.fn().mockRejectedValue("deny");
+      (basicDriver as any).httpService = {
+        call: fakeErrorHttpServiceCallMock
+      };
+
+      // act
+      const response = await basicDriver.executeRequest(
+        "fake-access-token",
+        "/my-precious/api/endpoint",
+        "GET",
+      );
+
+      // assert
+      expect(response).toBeDefined();
+      expect("code" in response).toBe(true);
+      expect("status" in response).toBe(true);
+      expect("response" in response).toBe(true);
+      expect(response.response).toBeDefined();
+      expect("message" in response.response).toBe(true);
+      expect("stack" in response.response).toBe(true);
+      expect(response.code).toBe(401);
+      expect(response.status).toBe(false);
     });
   });
 
@@ -275,6 +488,64 @@ describe("common/BasicOAuthDriver", () => {
 
       // assert
       expect(methodPromise).rejects.toEqual(expectedError);
+    });
+  });
+
+  describe("updateAccessToken()", () => {
+    const httpServiceCallMock = jest.fn().mockReturnValue({
+        status: 200,
+        data: {
+          athlete: { id: "fake-id" },
+          access_token: "fake-access-token",
+          refresh_token: "fake-refresh-token",
+        }
+      });
+    beforeEach(() => {
+      (basicDriver as any).httpService = {
+        call: httpServiceCallMock
+      };
+
+      httpServiceCallMock.mockClear();
+    });
+
+    it ("should request a new access- and refresh token pair", async () => {
+      // prepare,
+      let requestAccessTokenMock = jest.fn().mockReturnValue({
+        accessToken: "fake-access-token",
+        refreshToken: "fake-refresh-token",
+      });
+      (basicDriver as any).requestAccessToken = requestAccessTokenMock;
+
+      // act
+      await basicDriver.updateAccessToken(
+        "fake-refresh-token",
+      );
+
+      // assert
+      expect(requestAccessTokenMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("should use correct provider token_url and parameters", async () => {
+      // prepare
+      const expectedParams = {
+        client_id: fakeProvider.client_id,
+        client_secret: fakeProvider.client_secret,
+        grant_type: "refresh_token", // <-- REFRESH
+        refresh_token: "fake-refresh-token",
+      };
+
+      // act
+      await basicDriver.updateAccessToken(
+        "fake-refresh-token",
+      );
+
+      // assert
+      expect(httpServiceCallMock).toHaveBeenCalledTimes(1);
+      expect(httpServiceCallMock).toHaveBeenCalledWith(
+        fakeProvider.token_url,
+        "POST",
+        expectedParams
+      );
     });
   });
 });

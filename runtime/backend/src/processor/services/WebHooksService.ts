@@ -249,6 +249,8 @@ export class WebHooksService {
         elevation: apiResponse.total_elevation_gain,
         kilojoules: apiResponse.kilojoules,
         calories: apiResponse.calories,
+        //XXX sufferScore
+        //XXX additionalData
       } as ActivityDataDocument;
 
       // populates this activity's *data* in `activityData`
@@ -311,7 +313,7 @@ export class WebHooksService {
       new ActivityQuery({
         slug: activity.slug,
       } as ActivityDocument),
-      { activityData },
+      { activityData, processingState: ProcessingState.Processed },
     );
   }
 

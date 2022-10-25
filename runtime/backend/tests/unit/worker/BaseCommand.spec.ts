@@ -72,13 +72,13 @@ describe("worker/BaseCommand -->", () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        QueryService,
-        StateService,
+        MockBaseCommand,
+        StateService, // requirement from BaseCommand
+        QueryService, // requirement from StateService
         {
           provide: getModelToken("State"),
           useValue: MockModel,
-        },
-        MockBaseCommand,
+        }, // requirement from StateService
     ]})
     .compile();
 

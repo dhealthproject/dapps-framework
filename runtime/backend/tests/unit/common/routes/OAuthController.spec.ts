@@ -27,11 +27,12 @@ import { AccountsService } from "../../../../src/common/services/AccountsService
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { QueryService } from "../../../../src/common/services/QueryService";
+import { CipherService } from "../../../../src/common/services/CipherService";
 import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 import { AccountIntegrationDocument } from "../../../../src/common/models/AccountIntegrationSchema";
 import { MockModel } from "../../../mocks/global";
 
-describe("routes/AuthController", () => {
+describe("routes/OAuthController", () => {
   let controller: OAuthController;
   let oauthService: OAuthService;
   let authService: AuthService;
@@ -41,25 +42,26 @@ describe("routes/AuthController", () => {
       controllers: [OAuthController],
       providers: [
         OAuthService,
-        AuthService,
-        AccountsService,
-        ConfigService,
-        NetworkService,
-        ChallengesService,
-        JwtService,
-        QueryService,
+        AuthService, // requirement from OAuthService
+        QueryService, // requirement from OAuthService
+        CipherService, // requirement from OAuthService
+        AccountsService, // requirement from AuthService
+        ConfigService, // requirement from AuthService
+        NetworkService, // requirement from AuthService
+        ChallengesService, // requirement from AuthService
+        JwtService, // requirement from AuthService
         {
           provide: getModelToken("Account"),
           useValue: MockModel,
-        },
+        }, // requirement from AccountsService
         {
           provide: getModelToken("AuthChallenge"),
           useValue: MockModel,
-        },
+        }, // requirement from ChallengesService
         {
           provide: getModelToken("AccountIntegration"),
           useValue: MockModel,
-        },
+        }, // requirement from OAuthService
       ],
     }).compile();
 

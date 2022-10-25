@@ -15,6 +15,7 @@ import { ConfigService } from "@nestjs/config";
 
 // internal dependencies
 import { QueryService } from "../../../../src/common/services/QueryService";
+import { CipherService } from "../../../../src/common/services/CipherService";
 import { OAuthService } from "../../../../src/common/services/OAuthService";
 import { WebHooksService } from "../../../../src/processor/services/WebHooksService";
 import { ActivitiesService } from "../../../../src/processor/services/ActivitiesService";
@@ -43,20 +44,21 @@ describe("common/WebHooksService", () => {
     jest.setSystemTime(mockDate);
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        QueryService,
-        OAuthService,
-        ActivitiesService,
         WebHooksService,
-        ConfigService,
-        EventEmitter2,
+        QueryService, // requirement from WebHooksService
+        OAuthService, // requirement from WebHooksService
+        ActivitiesService, // requirement from WebHooksService
+        EventEmitter2, // requirement from WebHooksService
+        ConfigService, // requirement from OAuthService
+        CipherService, // requirement from OAuthService
         {
           provide: getModelToken("Activity"),
           useValue: MockModel,
-        },
+        }, // requirement from ActivitiesService
         {
           provide: getModelToken("AccountIntegration"),
           useValue: MockModel,
-        },
+        }, // requirement from OAuthService
       ],
     }).compile();
 

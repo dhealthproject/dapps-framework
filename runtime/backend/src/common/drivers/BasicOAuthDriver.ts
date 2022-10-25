@@ -181,7 +181,7 @@ export class BasicOAuthDriver implements OAuthDriver {
    * @returns {Promise<AccessTokenDTO>} A promise containing the result {@link AccessTokenDTO}.
    */
   public async updateAccessToken(
-    refreshToken?: string,
+    refreshToken: string,
   ): Promise<AccessTokenDTO> {
     // prepare the remote access token request
     const params = {
@@ -296,8 +296,8 @@ export class BasicOAuthDriver implements OAuthDriver {
 
     // add athlete information if available (STRAVA)
     //@todo "athlete" comes only with Strava, extract to Strava driver
-    if ("athlete" in response.data && undefined !== response.data.athlete) {
-      tokenDTO["remoteIdentifier"] = response.data.athlete.id;
+    if ("athlete" in response.data && undefined !== athlete) {
+      tokenDTO["remoteIdentifier"] = athlete.id;
     }
 
     return tokenDTO as AccessTokenDTO;

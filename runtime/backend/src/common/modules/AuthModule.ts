@@ -32,6 +32,7 @@ import {
 import { Account, AccountSchema } from "../models/AccountSchema";
 import { OAuthController } from "../routes/OAuthController";
 import { OAuthService } from "../services/OAuthService";
+import { CipherService } from "../services/CipherService";
 
 // configuration resources
 import securityConfigLoader from "../../../config/security";
@@ -64,7 +65,7 @@ const auth = securityConfigLoader().auth;
     ]),
   ],
   controllers: [AuthController, OAuthController],
-  providers: [AuthService, AuthStrategy, OAuthService],
-  exports: [AuthService, OAuthService],
+  providers: [AuthService, AuthStrategy, CipherService, OAuthService],
+  exports: [AuthService, OAuthService, CipherService],
 })
 export class AuthModule {}

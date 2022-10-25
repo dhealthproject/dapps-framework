@@ -26,6 +26,7 @@ import { NetworkService } from "../../src/common/services/NetworkService";
 import { AccountsService } from "../../src/common/services/AccountsService";
 import { ChallengesService } from "../../src/common/services/ChallengesService";
 import { QueryService } from "../../src/common/services/QueryService";
+import { CipherService } from "../../src/common/services/CipherService";
 
 describe("AppModule", () => {
   let appModule: AppModule;
@@ -34,28 +35,29 @@ describe("AppModule", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AppModule,
-        AppService,
-        AppController,
-        ConfigService,
-        AuthService,
-        OAuthService,
-        NetworkService,
-        AccountsService,
-        ChallengesService,
-        JwtService,
-        QueryService,
+        AppService, // requirement from AppModule
+        AppController, // requirement from AppModule
+        AuthService, // requirement from AppModule 
+        ConfigService, // requirement from AppService
+        OAuthService, // requirement from AppModule
+        CipherService, // requirement from OAuthService
+        NetworkService, // requirement from AuthService
+        AccountsService, // requirement from AuthService
+        ChallengesService, // requirement from AuthService
+        JwtService, // requirement from AuthService
+        QueryService, // requirement from AccountsService
         {
           provide: getModelToken("AccountIntegration"),
           useValue: MockModel,
-        },
+        }, // requirement from OAuthService
         {
           provide: getModelToken("Account"),
           useValue: MockModel,
-        },
+        }, // requirement from AccountsService
         {
           provide: getModelToken("AuthChallenge"),
           useValue: MockModel,
-        },
+        }, // requirement from ChallengesService
       ],
     }).compile();
 
