@@ -33,6 +33,7 @@ import { BroadcastActivityPayouts } from "../payout/schedulers/ActivityPayouts/B
 
 // statistics scope
 import { LeaderboardsAggregationCommand } from "../statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand";
+import { UserAggregationCommand } from "@/statistics/schedulers/UserAggregation/UserAggregationCommand";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -61,6 +62,7 @@ const db = dappConfigLoader().database;
  * | `payout`| {@link PrepareActivityPayouts:PAYOUT} | A payout command that prepares activity reward transactions and signs them such that they can be broadcast to dHealth Network. |
  * | `payout`| {@link BroadcastActivityPayouts:PAYOUT} | A payout command that broadcasts activity reward transactions to dHealth Network. |
  * | `statistics` | {@link LeaderboardAggregation:STATISTICS} | A statistics command that aggregates and sorts user rewards for activities and creates leaderboards. |
+ * | `statistics`| {@link UserAggregation:STATISTICS} | A statistics command that aggregates and sorts user rewards for activities and creates user statistics. |
  * <br /><br />
  *
  * @var {[key: string]: any[]}
@@ -80,5 +82,9 @@ export const Schedulers: { [key: string]: any[] } = {
   ],
   payout: [PayoutsModule, ActivityPayoutsCommand],
   processor: [OperationsModule, ProcessOperationsCommand],
-  statistics: [BlocksModule, LeaderboardsAggregationCommand],
+  statistics: [
+    BlocksModule,
+    LeaderboardsAggregationCommand,
+    UserAggregationCommand,
+  ],
 };

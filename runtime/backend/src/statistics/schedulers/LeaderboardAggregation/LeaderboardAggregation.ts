@@ -392,6 +392,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
     endDate: Date,
   ): PipelineStage[] {
     const scoreFields = this.config.fields;
+
     const group: Record<string, any> = {
       _id: "$userAddress",
     };
