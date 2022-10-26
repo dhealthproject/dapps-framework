@@ -68,16 +68,6 @@ export const createRouter = ($store: any): VueRouter => {
     routes: [
       ...dynamicRoutes,
       {
-        path: "/",
-        name: "app.home",
-        meta: {
-          layout: "guest/split-horizontal",
-          middleware: [guest],
-        },
-        component: () =>
-          import("./views/OnboardingScreen/OnboardingScreen.vue"),
-      },
-      {
         path: "/terms-of-service",
         name: "legal.terms-of-service",
         meta: { layout: "guest/default" },
@@ -126,6 +116,25 @@ export const createRouter = ($store: any): VueRouter => {
           middleware: [auth],
         },
         component: () => import("./views/Settings/Settings.vue"),
+      },
+      {
+        path: "/",
+        name: "app.home",
+        meta: {
+          layout: "guest/split-horizontal",
+          middleware: [guest],
+        },
+        component: () =>
+          import("./views/OnboardingScreen/OnboardingScreen.vue"),
+        children: [
+          {
+            path: ":refCode",
+            name: "app.home.withRefCode",
+            meta: { layout: "guest/split-horizontal" },
+            component: () =>
+              import("./views/OnboardingScreen/OnboardingScreen.vue"),
+          },
+        ],
       },
     ],
   });

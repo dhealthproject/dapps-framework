@@ -93,14 +93,17 @@ export class AuthService extends BackendService {
    * @param   {string}    challenge     The authentication challenge that was used to perform sign-in (on-chain).
    * @returns {Promise<AccessTokenDTO>}
    */
-  public async login(challenge: string): Promise<AccessTokenDTO> {
+  public async login(
+    challenge: string,
+    refCode: string | undefined | null = undefined
+  ): Promise<AccessTokenDTO> {
     // request an access token for authenticated users
     // a token will only be returned given the challenge
     // was successfully found in a dHealth Network transfer
     const response = await this.handler.call(
       this.getUrl("auth/token"),
       "POST",
-      { challenge },
+      { challenge, refCode },
       { withCredentials: true, credentials: "include" }
       // no-headers
     );

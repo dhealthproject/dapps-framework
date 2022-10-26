@@ -270,6 +270,20 @@ export default class LoginScreen extends MetaView {
   }
 
   /**
+   * Sets refCode to the localStrorage, closes popup
+   *
+   * @returns void
+   * @access public
+   */
+  setRefcode(values: any) {
+    const { refCode } = values;
+
+    if (refCode) {
+      localStorage.setItem("refCode", refCode);
+    }
+  }
+
+  /**
    * This method is called upon *mounting* the component onto a Vue
    * app. For this component, it will populate the {@link authChallenge}
    * property with a valid authentication challenge as requested from
@@ -282,6 +296,11 @@ export default class LoginScreen extends MetaView {
   public async mounted() {
     this.qrConfig = this.createLoginQRCode();
     try {
+      // make sure referral code is saved
+      if (this.$route.params.refCode) {
+        this.setRefcode(this.$route.params);
+      }
+
       // now start requesting for an access token and refresh token
       // this backend API call will only succeed after the end-user
       // successfully attached the challenge inside a transaction.

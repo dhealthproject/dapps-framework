@@ -181,8 +181,8 @@ export default class OnboardingScreen extends MetaView {
     const code = localStorage.getItem("refCode");
     this.refCode = code;
 
-    if (this.$route.query.refCode && !this.refCode) {
-      this.setRefcode(this.$route.query);
+    if (this.$route.params.refCode && !this.refCode) {
+      this.setRefcode(this.$route.params);
     }
   }
 
