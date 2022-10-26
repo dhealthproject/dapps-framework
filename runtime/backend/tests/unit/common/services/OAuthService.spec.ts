@@ -37,12 +37,16 @@ import {
   AccountIntegrationDocument,
   AccountIntegrationQuery,
 } from "../../../../src/common/models/AccountIntegrationSchema";
-import { AccessTokenDTO } from "../../../../src/common/models/AccessTokenDTO";
 
 describe("common/OAuthService", () => {
+  let mockDate: Date;
   let oauthService: OAuthService;
 
   beforeEach(async () => {
+    mockDate = new Date(Date.UTC(2022, 1, 1)); // UTC 1643673600000
+    jest.useFakeTimers("modern");
+    jest.setSystemTime(mockDate);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OAuthService,
@@ -70,6 +74,8 @@ describe("common/OAuthService", () => {
     }).compile();
 
     oauthService = module.get<OAuthService>(OAuthService);
+
+    sha3_256_call.mockClear();
   });
 
   it("should be defined", () => {
@@ -100,14 +106,39 @@ describe("common/OAuthService", () => {
       };
 
       // act
-      const result = (oauthService as any).getEncryptionSeed({} as AccountIntegrationDocument);
+      const result = (oauthService as any).getEncryptionSeed(
+        {} as AccountIntegrationDocument,
+        "no-identifier",
+      );
 
       // assert
       expect(sha3_256_call).toHaveBeenCalledTimes(1);
       expect(result).toBe("test-secret-fakeHash");
     });
 
-    //XXX add tests for parameters used: authSecret, remoteIdentifier, etc.
+    it("should use integration and custom identifier parameter", () => {
+      // prepare
+      (oauthService as any).configService = {
+        get: jest.fn().mockReturnValue("test-secret-"),
+      };
+
+      // act
+      (oauthService as any).getEncryptionSeed(
+        {
+          address: "fake-address",
+          authorizationHash: "fake-authorization"
+        } as AccountIntegrationDocument,
+        "other-identifier",
+      );
+
+      expect(sha3_256_call).toHaveBeenCalledTimes(1);
+      expect(sha3_256_call).toHaveBeenCalledWith(
+        "test-secret-" + 
+        "fake-address" +
+        "other-identifier" +
+        "fake-authorization"
+      );
+    });
   });
 
   describe("getAuthorizeURL()", () => {
@@ -316,45 +347,6 @@ describe("common/OAuthService", () => {
     });
   });
 
-  describe("updateIntegrations()", () => {
-    it("should result in correct integration", async () => {
-      // prepare
-      const providerName: string = "test-provider-name";
-      const data: Record<string, any> = { authorizeUrl: "test-url" };
-      const expectedResult = { address: "fake-address" } as AccountIntegrationDocument;
-      const queryServiceCreateOrUpdateCall = jest
-        .fn().mockResolvedValue(expectedResult);
-      (oauthService as any).queryService = {
-        createOrUpdate: queryServiceCreateOrUpdateCall,
-      };
-
-      // act
-      const result = await (oauthService as any).updateIntegration(
-        providerName, "fake-address", data
-      );
-
-      // assert
-      expect(queryServiceCreateOrUpdateCall).toHaveBeenNthCalledWith(
-        1,
-        {
-          document: {
-            address: "fake-address",
-            name: providerName,
-          },
-          filterQuery: undefined,
-          order: "asc",
-          pageNumber: 1,
-          pageSize: 20,
-          sort: "_id",
-        },
-        MockModel,
-        { authorizationHash: "fakeHash" },
-        {},
-      );
-      expect(result).toBe(expectedResult);
-    });
-  });
-
   describe("getIntegrations()", () => {
     const findMock = jest.fn();
     beforeEach(() => {
@@ -488,6 +480,43 @@ describe("common/OAuthService", () => {
         { testing: "fields"}, // correct data
         {} // empty operations
       );
+    });
+
+    it("should result in correct integration", async () => {
+      // prepare
+      const providerName: string = "test-provider-name";
+      const data: Record<string, any> = { authorizeUrl: "test-url" };
+      const expectedResult = { address: "fake-address" } as AccountIntegrationDocument;
+      const queryServiceCreateOrUpdateCall = jest
+        .fn().mockResolvedValue(expectedResult);
+      (oauthService as any).queryService = {
+        createOrUpdate: queryServiceCreateOrUpdateCall,
+      };
+
+      // act
+      const result = await (oauthService as any).updateIntegration(
+        providerName, "fake-address", data
+      );
+
+      // assert
+      expect(queryServiceCreateOrUpdateCall).toHaveBeenNthCalledWith(
+        1,
+        {
+          document: {
+            address: "fake-address",
+            name: providerName,
+          },
+          filterQuery: undefined,
+          order: "asc",
+          pageNumber: 1,
+          pageSize: 20,
+          sort: "_id",
+        },
+        MockModel,
+        { authorizationHash: "fakeHash" },
+        {},
+      );
+      expect(result).toBe(expectedResult);
     });
   });
 
@@ -773,6 +802,141 @@ describe("common/OAuthService", () => {
         2,
         "new-refresh-token",
         "fake-insecure-encryption-seed",
+      );
+    });
+  });
+
+  describe("callProviderAPI()", () => {
+    const theAuthorization = {
+        address: "fake-address",
+        name: "fake-provider",
+        remoteIdentifier: "fake-identifier",
+        authorizationHash: "fake-authhash",
+        encAccessToken: "fake-encrypted-access-token",
+        encRefreshToken: "fake-encrypted-refresh-token",
+        expiresAt: new Date().valueOf(),
+      } as AccountIntegrationDocument,
+      getProviderMock = jest.fn(),
+      executeRequestMock = jest.fn(),
+      refreshAccessTokenMock = jest.fn().mockReturnValue({
+        access_token: "new-access-token",
+        refresh_token: "new-refresh-token",
+        expires_at: new Date().valueOf(),
+      }),
+      driverFactoryMock = jest.fn().mockReturnValue({
+        executeRequest: executeRequestMock,
+      }),
+      getEncryptionSeedMock = jest.fn().mockReturnValue(
+        "fake-insecure-encryption-seed"
+      ),
+      cipherDecryptMock = jest.fn().mockReturnValue(
+        "fake-decrypted-access-token",
+      );
+    beforeEach(() => {
+      // following methods are necessary for the `refreshAccessToken()`
+      // method and are therefor *mocked* here. These must be tested
+      // separately as to permit more granular unit tests here.
+      (oauthService as any).getProvider = getProviderMock;
+      (oauthService as any).driverFactory = driverFactoryMock;
+      (oauthService as any).getEncryptionSeed = getEncryptionSeedMock;
+      (oauthService as any).refreshAccessToken = refreshAccessTokenMock;
+      (oauthService as any).cipher = {
+        decrypt: cipherDecryptMock,
+      };
+
+      getProviderMock.mockClear();
+      driverFactoryMock.mockClear();
+      getEncryptionSeedMock.mockClear();
+      cipherDecryptMock.mockClear();
+      executeRequestMock.mockClear();
+      refreshAccessTokenMock.mockClear();
+    });
+
+    it("should throw an error given no authorization", async () => {
+      // prepare
+      let nullAuthorizationMock = {
+        // - missing address field
+        name: "fake-provider",
+        remoteIdentifier: "fake-identifier",
+        authorizationHash: "fake-authhash",
+      } as AccountIntegrationDocument;
+
+      // act
+      try {
+        await oauthService.callProviderAPI(
+          "/custom/api/endpoint",
+          nullAuthorizationMock,
+        );
+      } catch(e: any) {
+        // assert
+        expect(e instanceof HttpException).toBe(true);
+        expect("status" in e).toBe(true);
+        expect("response" in e).toBe(true);
+        expect(e.status).toBe(403);
+        expect(e.response).toBe("Forbidden");
+      }
+    });
+
+    it("should refresh access token given expired token", async () => {
+      // act
+      await oauthService.callProviderAPI(
+        "/custom/api/endpoint",
+        {
+          ...theAuthorization,
+          expiresAt: Date.UTC(2021, 1, 1).valueOf(),
+        } as AccountIntegrationDocument,
+      );
+
+      // assert
+      expect(refreshAccessTokenMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("should decrypt access token from integration document", async () => {
+      // act
+      await oauthService.callProviderAPI(
+        "/custom/api/endpoint",
+        theAuthorization,
+      );
+
+      // assert
+      expect(cipherDecryptMock).toHaveBeenCalledTimes(1);
+      expect(cipherDecryptMock).toHaveBeenCalledWith(
+        "fake-encrypted-access-token",
+        "fake-insecure-encryption-seed",
+      );
+    });
+
+    it("should use correct provider to load OAuth driver", async () => {
+      // act
+      await oauthService.callProviderAPI(
+        "/custom/api/endpoint",
+        theAuthorization,
+      );
+
+      // assert
+      expect(getProviderMock).toHaveBeenCalledTimes(1);
+      expect(driverFactoryMock).toHaveBeenCalledTimes(1);
+      expect(getProviderMock).toHaveBeenCalledWith("fake-provider");
+      expect(driverFactoryMock).toHaveBeenCalledWith("fake-provider", undefined);
+    });
+
+    it("should use correct access token for executeRequest call", async () => {
+      // act
+      await oauthService.callProviderAPI(
+        "/custom/api/endpoint",
+        theAuthorization,
+      );
+
+      // assert
+      expect(getEncryptionSeedMock).toHaveBeenCalledTimes(1);
+      expect(cipherDecryptMock).toHaveBeenCalledTimes(1);
+      expect(executeRequestMock).toHaveBeenCalledTimes(1);
+      expect(executeRequestMock).toHaveBeenCalledWith(
+        "fake-decrypted-access-token",
+        "/custom/api/endpoint",
+        "GET",
+        // no-body, no-options, no-headers
+        undefined, undefined, undefined,
       );
     });
   });
