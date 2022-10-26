@@ -151,10 +151,15 @@ export const AuthModule = {
         const handler = new AuthService();
         const authChallenge: string = context.getters["getChallenge"];
 
+        const refCode = localStorage.getItem("refCode");
+
         // try authenticating the user and requesting an access token
         // this will only succeed provided that the end-user attached
         // the authentication challenge in a transfer transaction
-        const response: AccessTokenDTO = await handler.login(authChallenge);
+        const response: AccessTokenDTO = await handler.login(
+          authChallenge,
+          refCode
+        );
 
         context.commit("setAuthenticated", true);
         context.commit("setAccessToken", response.accessToken);
