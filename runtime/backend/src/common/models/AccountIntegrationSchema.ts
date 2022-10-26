@@ -136,7 +136,11 @@ export class AccountIntegration extends Transferable<AccountIntegrationDTO> {
 
   /**
    * The short-lived access token's expiration time. This is the number of
-   * *seconds* since the UTC epoch, at which the access token will expire.
+   * **milliseconds** since the UTC epoch, representing the time at which
+   * the access token will expire.
+   * <br /><br />
+   * Note that this field is explicitly converted to contain *milliseconds*
+   * rather than seconds, such that resulting timestamps can be used in TS.
    *
    * @access public
    * @readonly

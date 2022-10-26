@@ -8,6 +8,7 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
+import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import { BasicOAuthDriver } from "./BasicOAuthDriver";
 import { OAuthProviderParameters } from "../models/OAuthConfig";
 
@@ -39,6 +40,21 @@ export class StravaOAuthDriver extends BasicOAuthDriver {
   protected codeFieldName = "code";
 
   /**
+   * The driver's value to determine whether seconds are used to express
+   * UTC timestamps (if set to false, milliseconds are used). This field
+   * indicates the type of timestamp returned with this driver.
+   * <br /><br />
+   * This Strava OAuth implementation uses *seconds since epoch* when it
+   * expresses/returns UTC timestamps that represent an access token's
+   * expiration time.
+   *
+   * @see https://developers.strava.com/docs/authentication/#response-parameters
+   * @access protected
+   * @var {boolean}
+   */
+  protected usesSecondsUTC = true;
+
+  /**
    * Constructs an instance of this driver.
    *
    * @access public
@@ -68,5 +84,31 @@ export class StravaOAuthDriver extends BasicOAuthDriver {
       `&response_type=code` +
       `&approval_prompt=auto`
     );
+  }
+
+  /**
+   * Helper method that extracts access- and refresh tokens, and
+   * expiration time of the access token from a HTTP response.
+   * <br /><br />
+   * This method overload permits to extract *additional* data
+   * from the response object as it *may* be included by Strava.
+   * <br /><br />
+   * Note that this overload *calls* the {@link BasicOAuthDriver.extractFromResponse} method
+   * to extract mandatory token information from the response.
+   *
+   * @access protected
+   * @param   {any}     data    The HTTP response data (parsed JSON object).
+   * @returns {AccessTokenDTO}  A resulting {@link AccessTokenDTO} object.
+   */
+  protected extractFromResponse(data: any): AccessTokenDTO {
+    // extract mandatory OAuth access token request fields
+    const tokenDTO = super.extractFromResponse(data);
+
+    // add athlete information if available (STRAVA-only)
+    if ("athlete" in data && undefined !== data["athlete"]) {
+      tokenDTO["remoteIdentifier"] = data["athlete"].id;
+    }
+
+    return tokenDTO;
   }
 }

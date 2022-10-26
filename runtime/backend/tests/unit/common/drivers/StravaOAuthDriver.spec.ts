@@ -27,7 +27,8 @@ class AnotherDriver extends BasicOAuthDriver {
 
 describe("common/StravaOAuthDriver", () => {
   let stravaDriver: StravaOAuthDriver,
-      anotherDriver: AnotherDriver;
+      anotherDriver: AnotherDriver,
+      mockDate: Date;
   let stravaProvider = {
     client_id: "123456",
     client_secret: "ThisIsNotASecret;)",
@@ -44,6 +45,10 @@ describe("common/StravaOAuthDriver", () => {
   beforeEach(() => {
     stravaDriver = new StravaOAuthDriver(stravaProvider);
     anotherDriver = new AnotherDriver("other", stravaProvider);
+
+    mockDate = new Date(Date.UTC(2022, 1, 1)); // UTC 1643673600000
+    jest.useFakeTimers("modern");
+    jest.setSystemTime(mockDate);
   });
 
   describe("constructor()", () => {
@@ -237,6 +242,33 @@ describe("common/StravaOAuthDriver", () => {
         "POST",
         expectedParamsOther
       );
+    });
+  });
+
+  describe("extractFromResponse()", () => {
+    it ("should extract remote identifier from response given athlete", () => {
+      // prepare
+      const response = { data: {
+        athlete: { id: "fake-id" },
+        access_token: "fake-access-token",
+        refresh_token: "fake-refresh-token",
+        expires_at: mockDate.valueOf() / 1000, // <-- Strava works with SECONDS
+      } };
+
+      // act
+      const result = (stravaDriver as any).extractFromResponse(
+        response.data,
+      );
+
+      // assert
+      expect(result).toBeDefined();
+      expect("accessToken" in result).toBe(true);
+      expect("refreshToken" in result).toBe(true);
+      expect("expiresAt" in result).toBe(true);
+      expect("remoteIdentifier" in result).toBe(true); // <-- is present
+      expect(result.accessToken).toBe("fake-access-token");
+      expect(result.refreshToken).toBe("fake-refresh-token");
+      expect(result.expiresAt).toBe(mockDate.valueOf());
     });
   });
 });

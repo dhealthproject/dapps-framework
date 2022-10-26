@@ -42,6 +42,20 @@ export class BasicOAuthDriver implements OAuthDriver {
   protected codeFieldName = "code";
 
   /**
+   * The driver's value to determine whether seconds are used to express
+   * UTC timestamps (if set to false, milliseconds are used). This field
+   * indicates the type of timestamp returned with this driver.
+   * <br /><br />
+   * By default, as defined below, we expect OAuth drivers to *not* use
+   * seconds and instead **use milliseconds**. Extending driver classes
+   * can override this field value to specify the use of seconds instead.
+   *
+   * @access protected
+   * @var {boolean}
+   */
+  protected usesSecondsUTC = false;
+
+  /**
    * The driver's HTTP service. It's a handler for HTTP requests and contains
    * methods for executing *remote* API calls, e.g. calling a `GET` HTTP API
    * endpoint.
@@ -93,6 +107,18 @@ export class BasicOAuthDriver implements OAuthDriver {
    */
   public get codeField(): string {
     return this.codeFieldName;
+  }
+
+  /**
+   * Getter that determines whether this driver
+   * uses *seconds* (rather than milliseconds) to
+   * express a timestamp in UTC format.
+   *
+   * @access public
+   * @returns {boolean}   Whether this driver uses seconds to express UTC timestamps.
+   */
+  public get usesUTCSecondsToEpoch(): boolean {
+    return this.usesSecondsUTC;
   }
 
   /**
@@ -261,7 +287,7 @@ export class BasicOAuthDriver implements OAuthDriver {
    * @access protected
    * @async
    * @param   {Record<string, string>}      params        The parameters for the access token request.
-   * @returns {Promise<AccessTokenDTO>} A promise containing the result {@link AccessTokenDTO}.
+   * @returns {Promise<AccessTokenDTO>} A promise containing the resulting {@link AccessTokenDTO} object.
    */
   protected async requestAccessToken(
     params: Record<string, string>,
@@ -283,23 +309,46 @@ export class BasicOAuthDriver implements OAuthDriver {
       );
     }
 
-    // extract tokens from response
-    //@todo "athlete" comes only with Strava, extract to Strava driver
-    const { access_token, refresh_token, expires_at, athlete } = response.data;
+    // extract tokens (and potentially platform-specific data)
+    // from the response object (axios wraps in `data`).
+    return this.extractFromResponse(response.data);
+  }
+
+  /**
+   * Helper method that extracts access- and refresh tokens, and
+   * expiration time of the access token from a HTTP response.
+   * <br /><br />
+   * A method overload can be implemented in extending OAuth driver
+   * classes to permit extracting *additional fields*, e.g. Strava
+   * shares an `athlete` object with initial access token requests.
+   * <br /><br />
+   * Note that this method automatically transforms UTC timestamps
+   * that use *seconds since epoch* into UTC timestamps that use
+   * *milliseconds since epoch* as defined in driver implementations.
+   *
+   * @access protected
+   * @param   {any}     data    The HTTP response data (parsed JSON object).
+   * @returns {AccessTokenDTO}  A resulting {@link AccessTokenDTO} object.
+   */
+  protected extractFromResponse(data: any): AccessTokenDTO {
+    // extract mandatory OAuth access token request fields
+    const { access_token, refresh_token, expires_at } = data;
+
+    // always format database timestamps in *milliseconds* since epoch
+    // this depends on the driver implementation, e.g. Strava returns
+    // *seconds since epoch* for the access token expiration timestamp
+    let msExpiresAt = expires_at;
+    if (true === this.usesUTCSecondsToEpoch) {
+      msExpiresAt = expires_at * 1000;
+    }
 
     // prepare base DTO properties (access token / refresh token)
     const tokenDTO: AccessTokenDTO = {
       accessToken: access_token,
       refreshToken: refresh_token,
-      expiresAt: expires_at,
+      expiresAt: msExpiresAt,
     };
 
-    // add athlete information if available (STRAVA)
-    //@todo "athlete" comes only with Strava, extract to Strava driver
-    if ("athlete" in response.data && undefined !== athlete) {
-      tokenDTO["remoteIdentifier"] = athlete.id;
-    }
-
-    return tokenDTO as AccessTokenDTO;
+    return tokenDTO;
   }
 }

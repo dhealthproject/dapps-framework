@@ -38,6 +38,16 @@ export interface OAuthDriver {
   get codeField(): string;
 
   /**
+   * Getter that determines whether this driver
+   * uses *seconds* (rather than milliseconds) to
+   * express a timestamp in UTC format.
+   *
+   * @access public
+   * @var {boolean}
+   */
+  get usesUTCSecondsToEpoch(): boolean;
+
+  /**
    * Method to return the authorize url of this driver's provider.
    *
    * @access public

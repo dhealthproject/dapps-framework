@@ -229,40 +229,6 @@ describe("common/BasicOAuthDriver", () => {
       expect(result.refreshToken).toBe("fake-refresh-token");
       expect(result.expiresAt).toBe(mockDate.valueOf());
     });
-
-    it ("should extract remote identifier from response given athlete", async () => {
-      // prepare
-      const fakeResultHttpServiceCallMock = jest.fn().mockReturnValue({
-        status: 200,
-        data: {
-          access_token: "fake-access-token",
-          refresh_token: "fake-refresh-token",
-          expires_at: new Date().valueOf(),
-          athlete: { id: "fake-remote-identifier" },
-        }
-      });
-      (basicDriver as any).httpService = fakeResultHttpServiceCallMock;
-
-      // act
-      const result = await (basicDriver as any).requestAccessToken({
-        client_id: fakeProvider.client_id,
-        client_secret: fakeProvider.client_secret,
-        grant_type: "authorization_code",
-        code: "fake-code",
-        state: "this-is-an-extra",
-      });
-
-      // assert
-      expect(result).toBeDefined();
-      expect("accessToken" in result).toBe(true);
-      expect("refreshToken" in result).toBe(true);
-      expect("expiresAt" in result).toBe(true);
-      expect("remoteIdentifier" in result).toBe(true);
-      expect(result.accessToken).toBe("fake-access-token");
-      expect(result.refreshToken).toBe("fake-refresh-token");
-      expect(result.expiresAt).toBe(mockDate.valueOf());
-      expect(result.remoteIdentifier).toBe("fake-remote-identifier");
-    });
   });
 
   describe("executeRequest()", () => {
@@ -546,6 +512,54 @@ describe("common/BasicOAuthDriver", () => {
         "POST",
         expectedParams
       );
+    });
+  });
+
+  describe("extractFromResponse()", () => {
+    it ("should extract token pair and expiration from response", () => {
+      // prepare
+      const response = { data: {
+        athlete: { id: "fake-id" },
+        access_token: "fake-access-token",
+        refresh_token: "fake-refresh-token",
+        expires_at: mockDate.valueOf(), // <-- Basic OAuth works with MILLISECONDS
+      } };
+
+      // act
+      const result = (basicDriver as any).extractFromResponse(
+        response.data,
+      );
+
+      // assert
+      expect(result).toBeDefined();
+      expect("accessToken" in result).toBe(true);
+      expect("refreshToken" in result).toBe(true);
+      expect("expiresAt" in result).toBe(true);
+      expect("remoteIdentifier" in result).toBe(false); // <-- not present
+      expect(result.accessToken).toBe("fake-access-token");
+      expect(result.refreshToken).toBe("fake-refresh-token");
+      expect(result.expiresAt).toBe(mockDate.valueOf());
+    });
+
+    it ("should transform expiration to ms given seconds", () => {
+      // prepare
+      (basicDriver as any).usesSecondsUTC = true;
+      const response = { data: {
+        athlete: { id: "fake-id" },
+        access_token: "fake-access-token",
+        refresh_token: "fake-refresh-token",
+        expires_at: mockDate.valueOf() / 1000, // <-- faking "seconds"
+      } };
+
+      // act
+      const result = (basicDriver as any).extractFromResponse(
+        response.data,
+      );
+
+      // assert
+      expect(result).toBeDefined();
+      expect("expiresAt" in result).toBe(true);
+      expect(result.expiresAt).toBe(mockDate.valueOf()); // <-- x1000
     });
   });
 });

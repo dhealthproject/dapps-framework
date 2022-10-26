@@ -346,7 +346,7 @@ export class OAuthService {
     // if the access token is expired, or will expire
     // now, then we first have to *refresh* from provider
     const serverTime = dayjs(new Date().valueOf());
-    const expireTime = dayjs(integration.expiresAt * 1000);
+    const expireTime = dayjs(integration.expiresAt);
     if (expireTime.isBefore(serverTime) || expireTime.isSame(serverTime)) {
       // fetches a new access token using refresh token
       integration = await this.refreshAccessToken(

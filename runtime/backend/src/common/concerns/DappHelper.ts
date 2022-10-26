@@ -11,7 +11,7 @@
 import { BlockHttp, UInt64 } from "@dhealth/sdk";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { NetworkService } from "../services";
+import { NetworkService } from "../services/NetworkService";
 
 @Injectable()
 export class DappHelper {
