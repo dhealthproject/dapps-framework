@@ -33,4 +33,5 @@ export interface User {
   firstTransactionAt?: Date;
   firstTransactionAtBlock?: number;
   integrations?: string[];
+  refCode?: string;
 }

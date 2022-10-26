@@ -27,6 +27,7 @@ export interface AuthState {
   refreshToken?: string;
   currentUserAddress?: string;
   isProviderIntegrated?: boolean;
+  userRefCode?: string;
 }
 
 /**
@@ -53,6 +54,7 @@ export const AuthModule = {
     accessToken: undefined,
     refreshToken: undefined,
     currentUserAddress: undefined,
+    userRefCode: undefined,
   }),
 
   getters: {
@@ -64,6 +66,7 @@ export const AuthModule = {
       state.refreshToken,
     getCurrentUserAddress: (state: AuthState): string | undefined =>
       state.currentUserAddress,
+    getRefCode: (state: AuthState): string | undefined => state.userRefCode,
   },
 
   mutations: {
@@ -105,6 +108,9 @@ export const AuthModule = {
 
     setIsProviderIntegrated: (state: AuthState, providerState: boolean) =>
       (state.isProviderIntegrated = providerState),
+
+    setRefCode: (state: AuthState, refCode: string) =>
+      (state.userRefCode = refCode),
   },
 
   actions: {
@@ -161,6 +167,9 @@ export const AuthModule = {
           refCode ? refCode : undefined
         );
 
+        // remove refCode after it's got used
+        localStorage.removeItem("refCode");
+
         context.commit("setAuthenticated", true);
         context.commit("setAccessToken", response.accessToken);
         context.commit("setRefreshToken", response.refreshToken);
@@ -183,6 +192,7 @@ export const AuthModule = {
         const profile: User = await handler.getProfile();
 
         context.commit("setAuthenticated", true);
+        context.commit("setRefCode", profile.refCode);
         context.commit("setCurrentUserAddress", profile.address);
         context.commit("oauth/setIntegrations", profile.integrations, {
           root: true,
@@ -208,6 +218,7 @@ export const AuthModule = {
       context.commit("setAuthenticated", false);
       context.commit("setAccessToken", undefined);
       context.commit("setRefreshToken", undefined);
+      context.commit("setRefCode", undefined);
       context.commit("setCurrentUserAddress", undefined);
       return true;
     },
