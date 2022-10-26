@@ -29,9 +29,9 @@
                 <img :src="getImageUrl('coins.png')" alt="Invite friends" />
                 <p class="text-center" v-html="$t('dashboard_referral_text')" />
                 <div class="referral-box__input">
-                  <input type="text" readonly value="JOINFIT22" />
-                  <div class="copy" @click="copyToClipBoard($event, ref)">
-                    <span class="text" v-html="referralLabel" />
+                  <input type="text" readonly :value="ref" />
+                  <div class="copy">
+                    <span class="text">Copy referral code</span>
                     <img
                       :src="getImageUrl('copy-icon.svg')"
                       alt="Copy referral code"
