@@ -95,7 +95,7 @@ export class AuthService extends BackendService {
    */
   public async login(
     challenge: string,
-    refCode: string | undefined | null = undefined
+    refCode: string | undefined = undefined
   ): Promise<AccessTokenDTO> {
     // request an access token for authenticated users
     // a token will only be returned given the challenge

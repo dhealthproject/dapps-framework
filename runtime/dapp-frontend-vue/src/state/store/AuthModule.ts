@@ -158,7 +158,7 @@ export const AuthModule = {
         // the authentication challenge in a transfer transaction
         const response: AccessTokenDTO = await handler.login(
           authChallenge,
-          refCode
+          refCode ? refCode : undefined
         );
 
         context.commit("setAuthenticated", true);

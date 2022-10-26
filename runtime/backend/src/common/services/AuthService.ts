@@ -96,6 +96,7 @@ export interface CookiePayload {
 export interface AuthenticationPayload {
   sub: string;
   address: string;
+  refCode?: string;
 }
 
 /**
@@ -417,6 +418,24 @@ export class AuthService {
       const randomNumber = Math.floor(Math.random() * (10000 - 0) + 0);
       const todayTimestamp = Date.now();
       userData.refCode = `JOINFIT${todayTimestamp}${randomNumber}`;
+    }
+
+    // if payload has refCode - query account in DB with proper code
+    if (payload.refCode) {
+      const referrer = await this.accountsService.findOne(
+        new AccountQuery({
+          refCode: payload.refCode,
+        } as AccountDocument),
+      );
+
+      // if user that refers exist & currently authenticating user address != referer address
+      if (
+        referrer &&
+        referrer.address &&
+        payload.address !== referrer.address
+      ) {
+        userData.referredBy = referrer.address;
+      }
     }
 
     // prepare a result object (DTO) that holds only an

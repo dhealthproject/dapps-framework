@@ -40,4 +40,20 @@ export class AccessTokenRequest {
       "The authentication challenge that can be used to authenticate a user to the dApp.",
   })
   public challenge: string;
+
+  /**
+   * Referral code that must be used for identification
+   * that user was referred by other user
+   * <br /><br />
+   * Can be optional
+   *
+   * @access public
+   * @var {string}
+   */
+  @ApiProperty({
+    example: "JOINFIT16667868627809199",
+    description:
+      "Referral code which is used for detecting if user was invited.",
+  })
+  public refCode?: string;
 }
