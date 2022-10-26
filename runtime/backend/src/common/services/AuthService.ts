@@ -411,6 +411,14 @@ export class AuthService {
       lastSessionHash: payload.sub, // contains a transaction hash
     };
 
+    // if user new or he don't own refCode - generate and assign new code
+    // Ref code format JOINFIT + day timestamp + random number from 0 to 100000
+    if (!account || !account.refCode) {
+      const randomNumber = Math.floor(Math.random() * (10000 - 0) + 0);
+      const todayTimestamp = Date.now();
+      userData.refCode = `JOINFIT${todayTimestamp}${randomNumber}`;
+    }
+
     // prepare a result object (DTO) that holds only an
     // access token OR a pair of access- and refresh- tokens
     const accessTokenDTO: AccessTokenDTO = { accessToken };

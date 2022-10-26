@@ -110,6 +110,19 @@ export class Account extends Transferable<AccountDTO> {
   public readonly firstTransactionAt?: number;
 
   /**
+   * The account's identified referral code.
+   * This field should contain randomly generated unique referral code.
+   * <br /><br />
+   * This field is required.
+   *
+   * @access public
+   * @readonly
+   * @var {string}
+   */
+  @Prop({ index: true, unique: true })
+  public readonly refCode: string;
+
+  /**
    * The account's first identified **transaction block**. Typically, this
    * field will contain the block height of the first transaction *to the dApp*
    * that was issued with this account.
@@ -225,6 +238,7 @@ export class Account extends Transferable<AccountDTO> {
     dto.transactionsCount = doc.transactionsCount;
     dto.firstTransactionAt = doc.firstTransactionAt;
     dto.firstTransactionAtBlock = doc.firstTransactionAtBlock;
+    dto.refCode = doc.refCode;
     return dto;
   }
 }

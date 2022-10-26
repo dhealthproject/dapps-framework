@@ -59,6 +59,21 @@ export class AccountDTO extends BaseDTO {
   public transactionsCount?: number;
 
   /**
+   * Referral code of the user,
+   * that allows to track who invited user in the app
+   *
+   * @access public
+   * @var {number}
+   */
+  @ApiProperty({
+    type: "string",
+    example: "JOINFIT22-4234432424",
+    description:
+      "Referral code of the user, that allows to track who invited user in the app",
+  })
+  public refCode: string;
+
+  /**
    * The time at which this account first interacted
    * with this dApp on dHealth Network.
    *
