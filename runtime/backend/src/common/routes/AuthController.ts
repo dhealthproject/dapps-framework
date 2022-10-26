@@ -236,9 +236,10 @@ export class AuthController {
       if (null !== payload) {
         // fetches or generates currently active accessToken, note that a
         // `refreshToken` will only be attached when it is initially created
-        const tokens: AccessTokenDTO = await this.authService.getAccessToken(
-          payload,
-        );
+        const tokens: AccessTokenDTO = await this.authService.getAccessToken({
+          ...payload,
+          refCode: body.refCode,
+        });
 
         // set access token as the value of the cookie,
         // as an end-user is now successfully logged-in.
