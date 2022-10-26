@@ -23,7 +23,7 @@ import { UserAggregationStateData } from "../../models/UserAggregationStateData"
 import { QueryService } from "@/classes";
 import { ActivityModel } from "@/classes";
 import { ActivityDocument } from "../../../processor/models/ActivitySchema";
-import { AccountDocument, AccountModel } from "@/classes";
+import { StatisticsModel } from "../../models/StatisticsSchema";
 
 @Injectable()
 export class UserAggregation extends StatisticsCommand {
@@ -41,7 +41,7 @@ export class UserAggregation extends StatisticsCommand {
     // protected readonly assetModel: AssetDocument,
     protected readonly activityModel: ActivityDocument,
     protected readonly schedulerRegistry: SchedulerRegistry,
-    protected readonly queryService: QueryService<AccountModel>,
+    protected readonly model: StatisticsModel,
     protected readonly stateService: StateService,
     protected readonly queriesService: QueryService<
       ActivityDocument,
@@ -219,7 +219,7 @@ export class UserAggregation extends StatisticsCommand {
       };
       position++;
       // find one and create new (if not exists) or update (if exists)
-      await this.queryService.createOrUpdate(
+      await this.model.createOrUpdate(
         {
           type: this.TYPE,
           period: period,
