@@ -8,33 +8,45 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { DataSource } from "typeorm";
+import { mongoMigrateCli } from 'mongo-migrate-ts';
 import dotenv from "dotenv";
+import fs from "fs";
 
 // internal dependencies
 import { DatabaseConfig } from "src/common/models/DatabaseConfig";
 
-// environment setup necessary due to typeorm
+// runtime path configuration
+// @todo permit to overwrite the default deployment
+// @todo strategy that uses a root folder with all projects
+// @todo and a `runtime/backend/` subfolder for the backend
+let rootFolderPath = undefined !== process.env && "PWD" in process.env
+  ? `${process.env["PWD"]}/../..` // runtime/backend
+  : `${__dirname}/../../..`; // runtime/backend/config
+
+// environment configuration
+const envFilePath = `${rootFolderPath}/.env`;
+if (!fs.existsSync(envFilePath)) {
+  throw new Error(
+    `An error occurred configuring the database migrations. ` +
+    `A ".env" file was not found in ${envFilePath}`);
+}
+
+// environment setup necessary due to mongo-migrate
 // binary execution in the migration npm script
 // this will load the `.env` in `process.env`.
-dotenv.config();
+const { parsed: env, error } = dotenv.config({ path: envFilePath });
+if (undefined === env || error !== undefined) {
+  throw new Error(`Could not load configuration from ${envFilePath}: ${error}.`);
+}
 
 // configuration resources
 import dappConfigLoader from "./dapp";
-const currentDbConfig: DatabaseConfig = dappConfigLoader().database;
+const db: DatabaseConfig = dappConfigLoader().database;
 
-export default new DataSource({
-  migrationsTableName: "migrations",
-  type: "mongodb",
-  host: "localhost",
-  port: +currentDbConfig.port,
-  username: currentDbConfig.user,
-  password: process.env.DB_PASS,
-  database: currentDbConfig.name,
-  authSource: "admin",
-  logging: true,
-  synchronize: false,
-  name: 'default',
-  entities: ['src/**/*Schema.ts'],
-  migrations: ['migrations/*.ts'],
+// Note that the database *password* is intentionally read *only* from environment
+// variables and is **not added to the configuration** to reduce potential leaks.
+mongoMigrateCli({
+  uri: `mongodb://${db.user}:${env.DB_PASS}@localhost:${db.port}/${db.name}?authSource=admin`,
+  migrationsDir: "migrations",
+  migrationsCollection: "migrations",
 });
