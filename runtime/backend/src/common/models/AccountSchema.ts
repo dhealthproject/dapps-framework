@@ -220,6 +220,8 @@ export class Account extends Transferable<AccountDTO> {
   public get toQuery(): Record<string, unknown> {
     return {
       address: this.address,
+      refCode: this.refCode,
+      referredBy: this.referredBy,
     };
   }
 
