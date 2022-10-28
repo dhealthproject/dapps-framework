@@ -238,7 +238,7 @@ export class AuthController {
         // `refreshToken` will only be attached when it is initially created
         const tokens: AccessTokenDTO = await this.authService.getAccessToken({
           ...payload,
-          refCode: body.refCode,
+          referralCode: body.referralCode,
         });
 
         // set access token as the value of the cookie,

@@ -103,7 +103,7 @@ export class AuthService extends BackendService {
     const response = await this.handler.call(
       this.getUrl("auth/token"),
       "POST",
-      { challenge, refCode },
+      { challenge, referralCode: refCode },
       { withCredentials: true, credentials: "include" }
       // no-headers
     );

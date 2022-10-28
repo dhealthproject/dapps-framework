@@ -120,7 +120,7 @@ export class Account extends Transferable<AccountDTO> {
    * @var {string}
    */
   @Prop({ index: true, unique: true })
-  public readonly refCode: string;
+  public readonly referralCode: string;
 
   /**
    * The account's first identified **transaction block**. Typically, this
@@ -220,7 +220,7 @@ export class Account extends Transferable<AccountDTO> {
   public get toQuery(): Record<string, unknown> {
     return {
       address: this.address,
-      refCode: this.refCode,
+      referralCode: this.referralCode,
       referredBy: this.referredBy,
     };
   }
@@ -240,7 +240,7 @@ export class Account extends Transferable<AccountDTO> {
     dto.transactionsCount = doc.transactionsCount;
     dto.firstTransactionAt = doc.firstTransactionAt;
     dto.firstTransactionAtBlock = doc.firstTransactionAtBlock;
-    dto.refCode = doc.refCode;
+    dto.referralCode = doc.referralCode;
     return dto;
   }
 }
