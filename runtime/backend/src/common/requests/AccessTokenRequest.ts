@@ -55,5 +55,5 @@ export class AccessTokenRequest {
     description:
       "Referral code which is used for detecting if user was invited.",
   })
-  public refCode?: string;
+  public referralCode?: string;
 }

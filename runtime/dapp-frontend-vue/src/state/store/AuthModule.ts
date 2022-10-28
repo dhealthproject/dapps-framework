@@ -192,7 +192,7 @@ export const AuthModule = {
         const profile: User = await handler.getProfile();
 
         context.commit("setAuthenticated", true);
-        context.commit("setRefCode", profile.refCode);
+        context.commit("setRefCode", profile.referralCode);
         context.commit("setCurrentUserAddress", profile.address);
         context.commit("oauth/setIntegrations", profile.integrations, {
           root: true,

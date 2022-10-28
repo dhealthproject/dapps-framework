@@ -96,7 +96,7 @@ export interface CookiePayload {
 export interface AuthenticationPayload {
   sub: string;
   address: string;
-  refCode?: string;
+  referralCode?: string;
 }
 
 /**
@@ -414,17 +414,17 @@ export class AuthService {
 
     // if user new or he don't own refCode - generate and assign new code
     // Ref code format JOINFIT + day timestamp + random number from 0 to 100000
-    if (!account || !account.refCode) {
+    if (!account || !account.referralCode) {
       const randomNumber = Math.floor(Math.random() * (10000 - 0) + 0);
       const todayTimestamp = Date.now();
-      userData.refCode = `JOINFIT${todayTimestamp}${randomNumber}`;
+      userData.referralCode = Math.random().toString(8).slice(-8);
     }
 
     // if payload has refCode - query account in DB with proper code
-    if (payload.refCode) {
+    if (payload.referralCode) {
       const referrer = await this.accountsService.findOne(
         new AccountQuery({
-          refCode: payload.refCode,
+          referralCode: payload.referralCode,
         } as AccountDocument),
       );
 
