@@ -68,13 +68,17 @@
     "mongoose": "^6.3.4",
     "mongodb": "^4.11.0",
     "mongo-migrate-ts": "^1.1.1",
+    "nest-winston": "^1.8.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.4.0",
-    "utf8": "^3.0.0"
+    "utf8": "^3.0.0",
+    "winston": "^3.8.2",
+    "winston-daily-rotate-file": "^4.7.1",
+    "winston-mongodb": "^5.1.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",

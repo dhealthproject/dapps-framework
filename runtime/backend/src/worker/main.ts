@@ -13,6 +13,7 @@ import { NestFactory } from "@nestjs/core";
 // internal dependencies
 import { WorkerModule } from "./WorkerModule";
 import { DappConfig } from "../common/models/DappConfig";
+import { LogService } from "../common/services/LogService";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -29,6 +30,7 @@ async function bootstrap(): Promise<void> {
     WorkerModule.register({
       ...dappConfigLoader(),
     } as DappConfig),
+    { logger: new LogService("SCHEDULERS") },
   );
 }
 

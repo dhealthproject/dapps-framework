@@ -23,16 +23,24 @@ import { AppModule } from "./AppModule";
 import * as packageJson from "../package.json";
 import { DappConfig } from "./common/models/DappConfig";
 import { SecurityConfig } from "./common/models/SecurityConfig";
+import { LogService } from "./common/services/LogService";
 
 // configuration resources
 import dappConfigLoader from "../config/dapp";
 import securityConfigLoader from "../config/security";
 
 /**
- * Main function to bootstrap the app.
+ * This method implements the *entry-point* of a dApp backend runtime and
+ * initializes the configuration for worker processes (schedulers) as well
+ * as for dynamic scopes that export routes, services and other application
+ * modules that are registered dynamically.
+ * <br /><br />
+ * This method also configures a *Swagger* instance such that this backend
+ * runtime includes documentation about routes and DTOs automatically.
  *
  * @async
  * @returns {Promise<void>}
+ * @throws {ConfigurationError}   Given errors in/invalid configuration files, will throw {@link ConfigurationError}.
  */
 async function bootstrap(): Promise<void> {
   // read configuration
@@ -43,15 +51,18 @@ async function bootstrap(): Promise<void> {
   // CAUTION: this will fail with a `ConfigurationError`
   AppModule.checkConfiguration();
 
+  // create a logger instance
+  const logger = new LogService(dappConfig.dappName);
+
   // create app instance
   const app = await NestFactory.create(
     AppModule.register({
       ...dappConfig,
     } as DappConfig),
+    { logger },
   );
 
-  // create a logger instance
-  const logger = new Logger(dappConfig.dappName);
+  // log about the app starting *also* in debug mode
   logger.debug(`Starting ${packageJson.name} at v${packageJson.version}`);
 
   // configures the request listener (HTTP server)
@@ -61,7 +72,7 @@ async function bootstrap(): Promise<void> {
 
   // init OpenAPI documentation with information from package.json
   const docConfig = new DocumentBuilder()
-    .setTitle(dappConfig.dappName)
+    .setTitle(appName)
     .setDescription(packageJson.description)
     .setVersion(packageJson.version)
     .addTag(`${packageJson.name} v${packageJson.version}`)

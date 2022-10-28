@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Logger } from "@nestjs/common";
+import { LoggerService } from "@nestjs/common";
 
 // internal dependencies
 import { StateService } from "../services/StateService";
@@ -41,9 +41,9 @@ export abstract class StatefulModule {
    * by extending modules to use a common log process.
    *
    * @access protected
-   * @var {Logger}
+   * @var {LoggerService}
    */
-  protected logger: Logger;
+  protected logger: LoggerService;
 
   /**
    * Constructs a stateful module. This naming refers to a *nest* injectable

@@ -7,15 +7,13 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// external dependencies
-import { Logger } from "@nestjs/common";
-
 // internal dependencies
 import { StateService } from "../common/services/StateService";
 import { StatefulModule } from "../common/traits/StatefulModule";
 import { Scope } from "../common/models/Scope";
 import { DappConfig } from "../common/models/DappConfig";
 import { NetworkConfig } from "../common/models/NetworkConfig";
+import { LogService } from "../common/services/LogService";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -182,7 +180,7 @@ export abstract class BaseCommand extends StatefulModule {
     options?: BaseCommandOptions,
   ): Promise<void> {
     // prepares execution logger and arguments
-    this.logger = new Logger(`${this.scope}/${this.command}`);
+    this.logger = new LogService(`${this.scope}/${this.command}`);
     this.argv = passedParams;
 
     // if not quiet, display info about start of execution

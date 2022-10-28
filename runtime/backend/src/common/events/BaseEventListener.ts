@@ -8,10 +8,11 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Logger } from "@nestjs/common";
+import { LoggerService } from "@nestjs/common";
 
 // internal dependencies
 import { BaseEvent } from "./BaseEvent";
+import { LogService } from "../services/LogService";
 
 /**
  *
@@ -23,9 +24,9 @@ export abstract class BaseEventListener {
    * by extending listeners to use a common log process.
    *
    * @access protected
-   * @var {Logger}
+   * @var {LoggerService}
    */
-  protected logger: Logger;
+  protected logger: LoggerService;
 
   /**
    * The application scope that includes this *listener* implementation,
@@ -57,7 +58,7 @@ export abstract class BaseEventListener {
     this.eventName = eventName;
 
     // initializes a logger with correct name
-    this.logger = new Logger(`${this.scope}/${this.eventName}`);
+    this.logger = new LogService(`${this.scope}/${this.eventName}`);
   }
 
   /**
