@@ -17,6 +17,7 @@ import { ScheduleModule } from "@nestjs/schedule";
 import { StateModule } from "../../../common/modules/StateModule";
 import { QueryModule } from "../../../common/modules/QueryModule";
 import { NetworkModule } from "../../../common/modules/NetworkModule";
+import { ActivityModel } from "../../../processor/models/ActivitySchema";
 
 // statistics scope
 import { Statistics, StatisticsSchema } from "../../models/StatisticsSchema";
@@ -48,6 +49,7 @@ import {
     ]),
     QueryModule,
     NetworkModule,
+    ActivityModel,
   ],
   providers: [UserAggregation],
 })
