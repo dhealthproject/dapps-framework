@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
@@ -38,6 +38,7 @@ import {
   TransactionQuery,
 } from "../../../common/models/TransactionSchema";
 import { QueryService } from "../../../common/services/QueryService";
+import { LogService } from "../../../common/services/LogService";
 
 /**
  * @interface ProcessOperationsCommandOptions
@@ -244,7 +245,7 @@ export class ProcessOperations extends ProcessorCommand {
     }
 
     // prepares execution logger
-    this.logger = new Logger(`${this.scope}/${this.command}`);
+    this.logger = new LogService(`${this.scope}/${this.command}`);
 
     // display starting moment information in debug mode
     this.debugLog(

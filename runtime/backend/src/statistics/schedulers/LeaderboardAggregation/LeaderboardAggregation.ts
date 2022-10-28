@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { PipelineStage } from "mongoose";
 import { CronJob } from "cron";
@@ -33,6 +33,7 @@ import {
 } from "../../../common/models/StatisticsConfig";
 import { ActivityDocument } from "../../../processor/models/ActivitySchema";
 import { LeaderboardAggregationStateData } from "../../models/LeaderboardAggregationStateData";
+import { LogService } from "../../../common/services/LogService";
 
 /**
  * @class LeaderboardAggregation
@@ -199,7 +200,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    */
   public async runAsScheduler(): Promise<void> {
     // setup debug logger
-    this.logger = new Logger(
+    this.logger = new LogService(
       `${this.scope}/${this.command}`, // includes /(D|M|W)
     );
 

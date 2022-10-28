@@ -14,6 +14,7 @@ import { DynamicModule, Logger, Module } from "@nestjs/common";
 import { DappConfig } from "../common/models/DappConfig";
 import { ScopeFactory } from "../common/ScopeFactory";
 import { Schedulers } from "../common/Schedulers";
+import { LogService } from "../common/services/LogService";
 
 /**
  * @class WorkerModule
@@ -31,7 +32,7 @@ export class WorkerModule {
    * @static
    * @readonly
    */
-  private static readonly logger = new Logger(WorkerModule.name);
+  private static readonly logger = new LogService(WorkerModule.name);
 
   /**
    * The main method to take config input, initialize and return an instance of the module.

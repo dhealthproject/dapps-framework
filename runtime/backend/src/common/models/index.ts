@@ -16,6 +16,7 @@ export * from "./NetworkConfig";
 export * from "./OAuthConfig";
 export * from "./SecurityConfig";
 export * from "./StatisticsConfig";
+export * from "./MonitoringConfig";
 
 // database models
 export * from "./AccountIntegrationSchema";
@@ -29,6 +30,7 @@ export * from "./BaseDTO";
 export * from "./PaginatedResultDTO";
 export * from "./Scope";
 export * from "./StateData";
+export * from "./StorageOptions";
 
 // specialized data transfer objects
 export * from "./AccessTokenDTO";
