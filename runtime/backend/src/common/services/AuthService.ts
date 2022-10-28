@@ -417,7 +417,7 @@ export class AuthService {
     if (!account || !account.referralCode) {
       const randomNumber = Math.floor(Math.random() * (10000 - 0) + 0);
       const todayTimestamp = Date.now();
-      userData.referralCode = Math.random().toString(8).slice(-8);
+      userData.referralCode = Math.random().toString(36).slice(-8);
     }
 
     // if payload has refCode - query account in DB with proper code
