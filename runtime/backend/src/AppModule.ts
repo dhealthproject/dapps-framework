@@ -18,6 +18,7 @@ import { AppController } from "./AppController";
 import { AppService } from "./AppService";
 import { ScopeFactory } from "./common/ScopeFactory";
 import { DappConfig } from "./common/models/DappConfig";
+import { LogService } from "./common/services/LogService";
 
 // configuration resources
 import dappConfigLoader from "../config/dapp";
@@ -48,7 +49,7 @@ export class AppModule {
    * @static
    * @readonly
    */
-  private static readonly logger = new Logger(dappConfigLoader().dappName);
+  private static readonly logger = new LogService(dappConfigLoader().dappName);
 
   /**
    * The main method to take config input, initialize and return an instance of the module.

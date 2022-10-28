@@ -9,7 +9,6 @@
  */
 // external dependencies
 import { NestFactory } from "@nestjs/core";
-import { Logger } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import helmet from "helmet";
 import childProcess from "child_process";
@@ -20,6 +19,7 @@ import { AppModule } from "./AppModule";
 import * as packageJson from "../package.json";
 import { DappConfig } from "./common/models/DappConfig";
 import { SecurityConfig } from "./common/models/SecurityConfig";
+import { LogService } from "./common/services/LogService";
 
 // configuration resources
 import dappConfigLoader from "../config/dapp";
@@ -36,15 +36,18 @@ async function bootstrap(): Promise<void> {
   const dappConfig: DappConfig = dappConfigLoader();
   const securityConfig: SecurityConfig = securityConfigLoader();
 
+  // create a logger instance
+  const logger = new LogService("API");
+
   // create app instance
   const app = await NestFactory.create(
     AppModule.register({
       ...dappConfig,
     } as DappConfig),
+    { logger },
   );
 
-  // create a logger instance
-  const logger = new Logger(dappConfig.dappName);
+  // starting app log
   logger.debug(`Starting ${packageJson.name} at v${packageJson.version}`);
 
   // configures the request listener (HTTP server)

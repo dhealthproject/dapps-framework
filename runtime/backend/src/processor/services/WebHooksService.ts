@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, LoggerService } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import dayjs from "dayjs";
@@ -26,6 +26,7 @@ import {
 import { ActivityDataDocument } from "../models/ActivityDataSchema";
 import { ProcessingState } from "../models/ProcessingStatusDTO";
 import { ActivitiesService } from "./ActivitiesService";
+import { LogService } from "../../common/services/LogService";
 
 // emitted events
 import { OnActivityCreated } from "../events/OnActivityCreated";
@@ -51,9 +52,9 @@ export class WebHooksService {
    * by extending listeners to use a common log process.
    *
    * @access protected
-   * @var {Logger}
+   * @var {LoggerService}
    */
-  protected logger: Logger;
+  protected logger: LoggerService;
 
   /**
    * Constructs an instance of this service.
@@ -181,7 +182,7 @@ export class WebHooksService {
   @OnEvent("processor.activity.created", { async: true })
   public async onActivityCreated(event: OnActivityCreated): Promise<void> {
     // initializes a logger with correct name
-    this.logger = new Logger(`processor/onActivityCreated`);
+    this.logger = new LogService(`processor/onActivityCreated`);
 
     // (1) reads an activity by slug from database, the
     // slug field requires its' values to be unique.
