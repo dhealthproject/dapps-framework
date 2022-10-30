@@ -35,6 +35,14 @@ jest.mock("@dhealth/sdk", () => ({
   }
 }));
 
+jest.mock("../../../../src/common/services/LogService", () => ({
+  LogService: jest.fn(() => ({
+    log: jest.fn(),
+    debug: jest.fn(),
+    error: jest.fn(),
+  }))
+}));
+
 // external dependencies
 import { Address, NetworkType, PublicAccount } from "@dhealth/sdk"; // mocked!
 import { Logger } from "@nestjs/common";

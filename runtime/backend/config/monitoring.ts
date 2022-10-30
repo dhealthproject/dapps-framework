@@ -118,5 +118,5 @@ export default () => ({
    * @example `256000`
    * @var {number}
    */
-  logMaxFileSize: 1000,
+  logMaxFileSize: 256000,
 });
