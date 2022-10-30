@@ -32,6 +32,26 @@ jest.mock("js-sha3", () => ({
   },
 }));
 
+jest.mock("../../config/monitoring", () => {
+  return () => ({
+    storage: [
+      "console",
+    ],
+    logLevels: {
+      none: 0,
+      error: 1,
+      warn: 2,
+      debug: 4,
+      info: 8,
+    },
+    logPrintLevel: "info",
+    logPersistLevel: "error",
+    logPersistCollection: "system-logs",
+    logDirectoryPath: "./logs/",
+    logMaxFileSize: 1000,
+  });
+});
+
 // Mocks an unsigned transfer transaction with message
 const mockUnsignedTransferTransaction = 
     "C400000000000000000000000000000000000000000000000000000000000000"

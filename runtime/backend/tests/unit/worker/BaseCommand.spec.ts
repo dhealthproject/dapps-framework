@@ -7,6 +7,13 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+jest.mock("../../../src/common/services/LogService", () => ({
+  LogService: jest.fn(() => ({
+    log: jest.fn(),
+    debug: jest.fn(),
+    error: jest.fn(),
+  }))
+}));
 // external dependencies
 import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";

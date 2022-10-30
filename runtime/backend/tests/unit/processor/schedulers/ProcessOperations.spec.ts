@@ -15,6 +15,13 @@ jest.mock("../../../../src/processor/models/OperationTypes", () => ({
   getOperation: getOperationCall,
 }));
 
+jest.mock("../../../../src/common/services/LogService", () => ({
+  LogService: jest.fn(() => ({
+    log: jest.fn(),
+    debug: jest.fn(),
+    error: jest.fn(),
+  }))
+}));
 
 // external dependencies
 import { Test, TestingModule } from "@nestjs/testing";
