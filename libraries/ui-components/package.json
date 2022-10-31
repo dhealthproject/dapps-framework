@@ -1,6 +1,6 @@
 {
   "name": "@dhealth/components",
-  "version": "0.4.0",
+  "version": "0.4.1-alpha.365+84a6c0b",
   "homepage": "https://github.com/dhealthproject/dapps-framework/tree/main/libraries/ui-components#readme",
   "description": "Components Library for dApps Development with dHealth Network",
   "author": "dHealth Network <devs@dhealth.foundation>",
@@ -140,5 +140,6 @@
       "name": "Vitaliy Kravchenko",
       "email": "vitaliy@dhealth.foundation"
     }
-  ]
+  ],
+  "gitHead": "84a6c0bdf1e6690154d346f9d745fb8a14a4dcc5"
 }
