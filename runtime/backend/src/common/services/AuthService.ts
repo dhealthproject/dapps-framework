@@ -415,8 +415,6 @@ export class AuthService {
     // if user new or he don't own refCode - generate and assign new code
     // Ref code format JOINFIT + day timestamp + random number from 0 to 100000
     if (!account || !account.referralCode) {
-      const randomNumber = Math.floor(Math.random() * (10000 - 0) + 0);
-      const todayTimestamp = Date.now();
       userData.referralCode = Math.random().toString(36).slice(-8);
     }
 
