@@ -10,6 +10,7 @@
 // internal dependencies
 import { httpQueryStringParser } from "../../../mocks/global";
 import { BasicOAuthDriver } from "../../../../src/common/drivers/BasicOAuthDriver";
+import { OAuthEntityType } from "../../../../src/common/drivers/OAuthEntity";
 import { OAuthProviderParameters } from "../../../../src/common/models/OAuthConfig";
 
 // fakes an extension to test the getter-only
@@ -562,4 +563,33 @@ describe("common/BasicOAuthDriver", () => {
       expect(result.expiresAt).toBe(mockDate.valueOf()); // <-- x1000
     });
   });
+
+  describe("getEntityDefinition()", () => {
+    it("should accept data and optional type", () => {
+      // prepare
+      const expectedData = { simple: "data" };
+
+      // act
+      const actual = basicDriver.getEntityDefinition(
+        expectedData,
+      );
+
+      // assert
+      expect(actual).toBe(expectedData);
+    });
+
+    it("should return data untouched (basic driver)", () => {
+      // prepare
+      const expectedData = { simple: "data" };
+
+      // act
+      const actual = basicDriver.getEntityDefinition(
+        expectedData,
+        OAuthEntityType.Custom,
+      );
+
+      // assert
+      expect(actual).toBe(expectedData);
+    });
+  })
 });

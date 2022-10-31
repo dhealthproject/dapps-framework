@@ -8,9 +8,13 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
+import { OAuthEntity, OAuthEntityType } from "./OAuthEntity";
 import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import { BasicOAuthDriver } from "./BasicOAuthDriver";
 import { OAuthProviderParameters } from "../models/OAuthConfig";
+
+// driver-owned entities and classes
+import { ActivityDataDTO } from "./strava/ActivityDataDTO";
 
 /**
  * @class StravaOAuthDriver
@@ -63,6 +67,43 @@ export class StravaOAuthDriver extends BasicOAuthDriver {
    */
   public constructor(protected readonly provider: OAuthProviderParameters) {
     super("strava", provider);
+  }
+
+  /**
+   * Method to transform an *entity* as described by the data provider
+   * API. Typically, this method is used to handle the transformation
+   * of remote objects (from data provider API) to internal objects in
+   * the backend runtime's database.
+   * <br /><br />
+   * e.g. This method is used to transform *activity data* as defined
+   * by the Strava API, into {@link ActivityData} as defined internally.
+   * <br /><br />
+   * This implementation is currently compatible with remote *activity*
+   * data as defined in the Strava API. It uses the {@link Activity}
+   * class to transform the activity data.
+   *
+   * @access public
+   * @param   {any}               data      The API Response object that will be transformed.
+   * @param   {OAuthEntityType}   type      The type of entity as described in {@link OAuthEntityType}.
+   * @returns {OAuthEntity}       A parsed entity object.
+   */
+  public getEntityDefinition(data: any, type?: OAuthEntityType): OAuthEntity {
+    // set custom type if necessary
+    if (undefined === type || !type) {
+      type = OAuthEntityType.Custom;
+    }
+
+    // use correct factory depending on type
+    switch (type) {
+      case OAuthEntityType.Activity:
+        // map Strava-activity to database columns
+        return ActivityDataDTO.createFromDTO(data).toDocument();
+
+      default:
+      case OAuthEntityType.Custom:
+        // nothing to do
+        return data as OAuthEntity;
+    }
   }
 
   /**

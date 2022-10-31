@@ -14,6 +14,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { StravaWebHookSubscriptionFields } from "./StravaWebHookSubscriptionFields";
 
 /**
+ * @label STRAVA
  * @class StravaWebHookSubscriptionRequest
  * @description This class defines the requirements for HTTP
  * requests that must include a complex `hub` in the HTTP query.

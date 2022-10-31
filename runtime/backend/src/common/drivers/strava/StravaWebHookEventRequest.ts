@@ -11,6 +11,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
+ * @label STRAVA
  * @class StravaWebHookEventRequest
  * @description This class defines the requirements for HTTP
  * requests that is issued by third-party data providers to

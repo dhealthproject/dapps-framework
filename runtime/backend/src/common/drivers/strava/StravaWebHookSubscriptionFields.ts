@@ -11,6 +11,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
+ * @label STRAVA
  * @class StravaWebHookSubscriptionFields
  * @description This class consists of the required fields in order to
  * establish a connection and *webhook subscription process* with

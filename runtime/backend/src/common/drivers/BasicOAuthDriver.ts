@@ -9,6 +9,7 @@
  */
 // internal dependencies
 import { OAuthDriver } from "./OAuthDriver";
+import { OAuthEntity, OAuthEntityType } from "./OAuthEntity";
 import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import { OAuthProviderParameters } from "../models/OAuthConfig";
 import { ResponseStatusDTO } from "../models/ResponseStatusDTO";
@@ -125,7 +126,7 @@ export class BasicOAuthDriver implements OAuthDriver {
    * Method to return the authorize url of this driver's provider.
    *
    * @access public
-   * @param   {string}  extra   The `data` value to include in this query.
+   * @param   {string}  extra   The `data` field value to include in this query.
    * @returns {string}          The full authorize url to send request to.
    */
   public getAuthorizeURL(extra: string): string {
@@ -312,6 +313,37 @@ export class BasicOAuthDriver implements OAuthDriver {
     // extract tokens (and potentially platform-specific data)
     // from the response object (axios wraps in `data`).
     return this.extractFromResponse(response.data);
+  }
+
+  /**
+   * Method to transform an *entity* as described by the data provider
+   * API. Typically, this method is used to handle the transformation
+   * of remote objects (from data provider API) to internal objects in
+   * the backend runtime's database.
+   * <br /><br />
+   * e.g. This method is used to transform *activity data* as defined
+   * by the Strava API, into {@link ActivityData} as defined internally.
+   * <br /><br />
+   * Note that this implementation *does not transform* the remote data
+   * because this class corresponds to a *generic* OAuth implementation
+   * and as such must be compatible with *any entity*. For more details
+   * on specializations of this method, you may have a look at the code
+   * in {@link StravaOAuthDriver.getEntityDefinition}.
+   *
+   * @access public
+   * @param   {any}               data      The API Response object that will be transformed.
+   * @param   {OAuthEntityType}   type      The type of entity as described in {@link OAuthEntityType}.
+   * @returns {OAuthEntity}       A parsed entity object.
+   */
+  public getEntityDefinition(data: any, type?: OAuthEntityType): OAuthEntity {
+    // set custom type if necessary
+    if (undefined === type || !type) {
+      type = OAuthEntityType.Custom;
+    }
+
+    // nothing to do, child classes must implement this
+    // capacity and should transform the input to an entity
+    return data as OAuthEntity;
   }
 
   /**

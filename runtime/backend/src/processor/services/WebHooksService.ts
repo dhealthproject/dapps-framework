@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 
 // internal dependencies
 import { OAuthService } from "../../common/services/OAuthService";
+import { OAuthEntityType } from "../../common/drivers/OAuthEntity";
 import { StravaWebHookEventRequest } from "../../common/drivers/strava/StravaWebHookEventRequest";
 import { QueryService } from "../../common/services/QueryService";
 import {
@@ -79,15 +80,20 @@ export class WebHooksService {
   /**
    * This method handles incoming **events** from third-party
    * data providers such as Strava or Apple Health.
+   * <br /><br />
+   * After a successful execution of processing an incoming event,
+   * this method will *fire an internal event* with the identifier:
+   * `processor.activity.created`. This event can be caught to use
+   * the fulfilled (completed) activity details in other places.
    *
    * @access public
    * @async
    * @param     {string}                      providerName  The OAuth provider name. This is the name of the third-party data provider, e.g. "strava".
    * @param     {string}                      userAddress   The dHealth Address of the account that belongs to the activity owner.
-   * @param     {StravaWebHookEventRequest}   data          The activity's **headers**. Importantly, Strava does not share full details here.
+   * @param     {StravaWebHookEventRequest}   data          The activity's **headers**. Importantly, Strava does not share full activity details here.
    * @returns   {Promise<ActivityDocument>}   The created document that was added to `activities`.
    * @throws    {Error}                       Given invalid event payload, incompatible event payload or given any other error occurs while processing.
-   * @emits     {@link OnActivityCreated}     Given a successful activity creation.
+   * @emits     {@link OnActivityCreated}     Given a successful activity creation (processing success).
    */
   public async eventHandler(
     providerName: string,
@@ -176,7 +182,26 @@ export class WebHooksService {
   }
 
   /**
+   * This method serves as an **event listener** for the internal
+   * event with identifier `processor.activity.created`. The main
+   * purpose of this listener is to *request activity details* from
+   * a data provider.
+   * <br /><br />
+   * An example *activity detail DTO* can be found on the Strava
+   * documentation: https://developers.strava.com/docs/reference/#api-Activities-getActivityById
+   * <br /><br />
+   * Note that we do not store *all fields* that are returned by
+   * the `/activities/:id` endpoint. More fields may be interpreted
+   * in the future.
+   * <br /><br />
+   * Note that *event listeners* do not specify a *return type*. This
+   * is because their execution is asynchronous.
    *
+   * @access public
+   * @async
+   * @param     {OnActivityCreated}   event   The internal app event as triggered by {@link eventHandler}.
+   * @returns   {Promise<void>}       No return is specified for an event listener to permit asynchronous behaviour.
+   * @throws    {Error}               Given missing OAuth authorization, unreachable/invalid Strava request or any other error occurs while requesting activity details.
    */
   @OnEvent("processor.activity.created", { async: true })
   public async onActivityCreated(event: OnActivityCreated): Promise<void> {
@@ -228,33 +253,24 @@ export class WebHooksService {
         integration,
       );
 
-      // extracts the fields we want
-      // @todo this is highly Strava-specific and should be abstracted out
+      // extracts the fields we want (as an "activity")
       // @todo note that this data must not be accessible publicly
       // @todo CAUTION: make sure manual activities do not count!!
-      const apiResponse = response.data;
-      const activityData = {
-        slug: activity.slug,
-        address: activity.address,
-        name: apiResponse.name ?? undefined,
-        sport: apiResponse.sport_type,
-        startedAt: dayjs(apiResponse.start_date).toDate().valueOf(),
-        timezone: apiResponse.timezone,
-        startLocation: apiResponse.start_latlng,
-        endLocation: apiResponse.end_latlng,
-        hasTrainerDevice: apiResponse.trainer,
-        elapsedTime: apiResponse.elapsed_time,
-        movingTime: apiResponse.moving_time,
-        distance: apiResponse.distance,
-        elevation: apiResponse.total_elevation_gain,
-        kilojoules: apiResponse.kilojoules,
-        calories: apiResponse.calories,
-        //XXX sufferScore
-        //XXX additionalData
-      } as ActivityDataDocument;
+      const activityData: any = this.oauthService.extractProviderEntity(
+        integration.name,
+        response.data,
+        OAuthEntityType.Activity,
+      );
+
+      // fills mandatory activity-level fields
+      activityData.slug = activity.slug;
+      activityData.address = activity.address;
 
       // populates this activity's *data* in `activityData`
-      await this.onSuccessActivityUpdate(activity, activityData);
+      await this.onSuccessActivityUpdate(
+        activity,
+        activityData as ActivityDataDocument,
+      );
       return;
     } catch (e: any) {
       // @todo print error message in persistent log such that it can be investigated

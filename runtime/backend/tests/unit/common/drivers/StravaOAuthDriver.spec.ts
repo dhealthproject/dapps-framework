@@ -11,6 +11,7 @@
 import { httpQueryStringParser } from "../../../mocks/global";
 import { BasicOAuthDriver } from "../../../../src/common/drivers/BasicOAuthDriver";
 import { StravaOAuthDriver } from "../../../../src/common/drivers/StravaOAuthDriver";
+import { OAuthEntityType } from "../../../../src/common/drivers/OAuthEntity";
 import { OAuthProviderParameters } from "../../../../src/common/models/OAuthConfig";
 
 // fakes an extension to test the getter-only
@@ -271,4 +272,59 @@ describe("common/StravaOAuthDriver", () => {
       expect(result.expiresAt).toBe(mockDate.valueOf());
     });
   });
+
+  describe("getEntityDefinition()", () => {
+    it("should accept data and optional type", () => {
+      // prepare
+      const expectedData = { simple: "data" };
+
+      // act
+      const actual = stravaDriver.getEntityDefinition(
+        expectedData,
+      );
+
+      // assert
+      expect(actual).toBe(expectedData);
+    });
+
+    it("should return data untouched given custom type", () => {
+      // prepare
+      const expectedData = { simple: "data" };
+
+      // act
+      const actual = stravaDriver.getEntityDefinition(
+        expectedData,
+        OAuthEntityType.Custom,
+      );
+
+      // assert
+      expect(actual).toBe(expectedData);
+    });
+
+    it("should return correct activity data given activity type", () => {
+      // prepare
+      const expectedData = { empty: "activity" };
+
+      // act
+      const actual = stravaDriver.getEntityDefinition(
+        expectedData,
+        OAuthEntityType.Activity,
+      );
+
+      // assert
+      expect("name" in actual).toBe(true);
+      expect("sport" in actual).toBe(true);
+      expect("startedAt" in actual).toBe(true);
+      expect("timezone" in actual).toBe(true);
+      expect("startLocation" in actual).toBe(true);
+      expect("endLocation" in actual).toBe(true);
+      expect("hasTrainerDevice" in actual).toBe(true);
+      expect("elapsedTime" in actual).toBe(true);
+      expect("movingTime" in actual).toBe(true);
+      expect("distance" in actual).toBe(true);
+      expect("elevation" in actual).toBe(true);
+      expect("kilojoules" in actual).toBe(true);
+      expect("calories" in actual).toBe(true);
+    });
+  })
 });

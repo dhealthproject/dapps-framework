@@ -32,6 +32,7 @@ import { HttpMethod } from "../drivers/HttpRequestHandler";
 
 // OAuth Drivers Implementation
 import { OAuthDriver } from "../drivers/OAuthDriver";
+import { OAuthEntity, OAuthEntityType } from "../drivers/OAuthEntity";
 import { BasicOAuthDriver } from "../drivers/BasicOAuthDriver";
 import { StravaOAuthDriver } from "../drivers/StravaOAuthDriver";
 
@@ -382,6 +383,36 @@ export class OAuthService {
       httpOptions.options ?? undefined,
       httpOptions.headers ?? undefined,
     );
+  }
+
+  /**
+   * Method to extract and transform an *entity* as described by the data
+   * provider API. Typically, this method is used to handle transformations
+   * of remote objects (from data provider API) to internal objects in
+   * the backend runtime's database.
+   * <br /><br />
+   * e.g. This method is used to transform *activity data* as defined
+   * by the Strava API, into {@link ActivityData} as defined internally.
+   *
+   * @access public
+   * @param   {string}            providerName  Contains the identifier of the OAuth Provider, e.g. "strava".
+   * @param   {any}               data          The API Response object that will be transformed.
+   * @param   {OAuthEntityType}   type          (Optional) The type of entity as described in {@link OAuthEntityType}.
+   * @returns {OAuthEntity}       A parsed entity object.
+   */
+  public extractProviderEntity(
+    providerName: string,
+    data: any,
+    type?: OAuthEntityType,
+  ): OAuthEntity {
+    // reads OAuth provider from configuration
+    const provider = this.getProvider(providerName);
+
+    // creates the OAuth implementation driver
+    const driver = this.driverFactory(providerName, provider);
+
+    // uses the driver to wrap the entity
+    return driver.getEntityDefinition(data, type);
   }
 
   /**

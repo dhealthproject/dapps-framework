@@ -9,6 +9,7 @@
  */
 // internal dependencies
 import { HttpMethod } from "./HttpRequestHandler";
+import { OAuthEntity, OAuthEntityType } from "./OAuthEntity";
 import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import { ResponseStatusDTO } from "../models/ResponseStatusDTO";
 
@@ -51,7 +52,8 @@ export interface OAuthDriver {
    * Method to return the authorize url of this driver's provider.
    *
    * @access public
-   * @var {string}
+   * @param   {string}  extra   The `data` field value to include in this query.
+   * @returns {string}          The full authorize url to send request to.
    */
   getAuthorizeURL(extra: string): string;
 
@@ -98,4 +100,20 @@ export interface OAuthDriver {
     options?: any,
     headers?: any,
   ): Promise<ResponseStatusDTO>;
+
+  /**
+   * Method to transform an *entity* as described by the data provider
+   * API. Typically, this method is used to handle the transformation
+   * of remote objects (from data provider API) to internal objects in
+   * the backend runtime's database.
+   * <br /><br />
+   * e.g. This method is used to transform *activity data* as defined
+   * by the Strava API, into {@link ActivityData} as defined internally.
+   *
+   * @access public
+   * @param   {any}               data      The API Response object that will be transformed.
+   * @param   {OAuthEntityType}   type      The type of entity as described in {@link OAuthEntityType}.
+   * @returns {OAuthEntity}       A parsed entity object.
+   */
+  getEntityDefinition(data: any, type?: OAuthEntityType): OAuthEntity;
 }

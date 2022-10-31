@@ -14,6 +14,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { StravaWebHookSubscriptionFields } from "./StravaWebHookSubscriptionFields";
 
 /**
+ * @label STRAVA
  * @class StravaWebHookSubscriptionResponse
  * @description A response class that consists of fields that are
  * included in the response of a *successful* callback request for

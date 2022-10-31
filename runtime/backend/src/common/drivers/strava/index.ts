@@ -16,3 +16,6 @@ export * from "./StravaWebHookEventRequest";
 
 // responses
 export * from "./StravaWebHookSubscriptionResponse";
+
+// entities
+export * from "./ActivityDataDTO";

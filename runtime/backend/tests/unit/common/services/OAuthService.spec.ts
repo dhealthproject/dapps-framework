@@ -37,6 +37,7 @@ import {
   AccountIntegrationDocument,
   AccountIntegrationQuery,
 } from "../../../../src/common/models/AccountIntegrationSchema";
+import { OAuthEntityType } from "../../../../src/common/drivers/OAuthEntity";
 
 describe("common/OAuthService", () => {
   let mockDate: Date;
@@ -937,6 +938,67 @@ describe("common/OAuthService", () => {
         "GET",
         // no-body, no-options, no-headers
         undefined, undefined, undefined,
+      );
+    });
+  });
+
+  describe("extractProviderEntity()", () => {
+    let getProviderMock = jest.fn(),
+        getEntityDefinitionMock = jest.fn().mockReturnValue({
+          fake: "entity",
+        }),
+        driverFactoryMock = jest.fn().mockReturnValue({
+          getEntityDefinition: getEntityDefinitionMock
+        });
+    beforeEach(() => {
+      // following methods are necessary for the `extractProviderEntity()`
+      // method and are therefor *mocked* here. These must be tested
+      // separately as to permit more granular unit tests here.
+      (oauthService as any).getProvider = getProviderMock;
+      (oauthService as any).driverFactory = driverFactoryMock;
+
+      getProviderMock.mockClear();
+      driverFactoryMock.mockClear();
+      getEntityDefinitionMock.mockClear();
+    });
+
+    it("should accept optional entity type", () => {
+      // prepare
+      const expectedData = { simple: "data" };
+      const expectedType = OAuthEntityType.Custom;
+
+      // act
+      oauthService.extractProviderEntity(
+        "basic",
+        expectedData,
+        expectedType,
+      );
+
+      // assert
+      expect(getProviderMock).toHaveBeenCalledTimes(1);
+      expect(getEntityDefinitionMock).toHaveBeenCalledTimes(1);
+      expect(getEntityDefinitionMock).toHaveBeenCalledWith(
+        expectedData,
+        expectedType,
+      );
+    });
+
+    it("should use Basic OAuth Driver implementation", () => {
+      // prepare
+      const expectedData = { simple: "data" };
+
+      // act
+      oauthService.extractProviderEntity(
+        "basic",
+        expectedData,
+      );
+
+      // assert
+      expect(getProviderMock).toHaveBeenCalledTimes(1);
+      expect(getEntityDefinitionMock).toHaveBeenCalledTimes(1);
+      expect(getEntityDefinitionMock).toHaveBeenCalledWith(
+        expectedData,
+        undefined, // optional entity type
       );
     });
   });
