@@ -151,8 +151,8 @@
           color: $base-grey;
           line-height: 150%;
           margin-bottom: 24px;
-          
-          @include devices(tablet){
+
+          @include devices(tablet) {
             font-size: 16px;
           }
         }

@@ -9,23 +9,23 @@
  */
 
 .dapp-activities {
-    margin-top: 4px;
-    display: block;
+  margin-top: 4px;
+  display: block;
 
-    li {
-      display: inline-block;
-      margin-inline-end: 12px;
+  li {
+    display: inline-block;
+    margin-inline-end: 12px;
+
+    @include devices(tablet) {
+      margin-inline-end: 4px;
+    }
+
+    img {
+      width: 32px;
 
       @include devices(tablet) {
-        margin-inline-end: 4px;
-      }
-
-      img {
-        width: 32px;
-
-        @include devices(tablet) {
-          width: 24px;
-        }
+        width: 24px;
       }
     }
   }
+}

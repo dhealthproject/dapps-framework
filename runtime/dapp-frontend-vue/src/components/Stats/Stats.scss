@@ -8,115 +8,115 @@
  * @license     LGPL-3.0
  */
 
- @import "@/vars.scss";
+@import "@/vars.scss";
 
- .dapp-stats {
-    padding: 16px 32px;
-    background-color: $white;
-    border-radius: 16px;
-    box-shadow: 4px 5px 0px $black;
-    border: 1px solid $login-dark;
+.dapp-stats {
+  padding: 16px 32px;
+  background-color: $white;
+  border-radius: 16px;
+  box-shadow: 4px 5px 0px $black;
+  border: 1px solid $login-dark;
 
-    &__total-earned {
-        background-color: $stats-teal-light;
-        padding: 16px 16px 12px;
-        border-radius: 12px;
-        text-align: center;
+  &__total-earned {
+    background-color: $stats-teal-light;
+    padding: 16px 16px 12px;
+    border-radius: 12px;
+    text-align: center;
 
-        .amount-big {
-            font-family: "Dotrice";
-            font-size: 72px;
-            line-height: 100%;
+    .amount-big {
+      font-family: "Dotrice";
+      font-size: 72px;
+      line-height: 100%;
 
-            .dark {
-                color: $button-text-dark;
-            }
+      .dark {
+        color: $button-text-dark;
+      }
 
-            .light {
-                color: $stats-teal-main;
-            }
-        }
-
-        .amount-small {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 263px;
-            margin: 8px auto 0 auto;
-
-            span {
-                font-weight: 500;
-                font-size: 12px;
-                line-height: 150%;
-                color: $button-text-dark;
-            }
-        }
+      .light {
+        color: $stats-teal-main;
+      }
     }
 
-    &__other {
-        margin: 20px 0;
+    .amount-small {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 263px;
+      margin: 8px auto 0 auto;
+
+      span {
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 150%;
+        color: $button-text-dark;
+      }
+    }
+  }
+
+  &__other {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .minutes {
+      &__amount {
+        font-family: "Dotrice";
+        color: $black;
+        font-size: 32px;
+        line-height: 140%;
+        display: block;
+        color: $black;
+      }
+    }
+
+    .dapp-activities {
+      margin-top: 5px;
+    }
+
+    &__label {
+      color: $stats-teal-dark;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 150%;
+    }
+
+    .referred {
+      .amount {
+        color: $black;
+        font-weight: 400;
+        font-family: "Dotrice";
+        font-size: 24px;
+        line-height: 150%;
+      }
+
+      .get-more {
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 150%;
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        align-items: center;
+        justify-content: center;
+        margin-top: 4px;
 
-        &:last-child {
-            margin-bottom: 0;
+        svg {
+          margin-left: 8px;
+
+          path {
+            fill: $grey-system-dark;
+          }
         }
-
-        .minutes {
-            &__amount {
-                font-family: "Dotrice";
-                color: $black;
-                font-size: 32px;
-                line-height: 140%;
-                display: block;
-                color: $black;
-            }
-        }
-
-        .dapp-activities {
-            margin-top: 5px;
-        }
-
-        &__label {
-            color: $stats-teal-dark;
-            font-weight: 500;
-            font-size: 14px;
-            line-height: 150%;
-        }
-
-        .referred {
-            .amount {
-                color: $black;
-                font-weight: 400;
-                font-family: "Dotrice";
-                font-size: 24px;
-                line-height: 150%;
-            }
-
-            .get-more {
-                font-weight: 500;
-                font-size: 12px;
-                line-height: 150%;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-                margin-top: 4px;
-
-                svg {
-                    margin-left: 8px;
-
-                    path {
-                        fill: $grey-system-dark;
-                    }
-                }
-            }
-        }
+      }
     }
+  }
 
-    &__referred {
-        margin-bottom: 20px;
-    }
+  &__referred {
+    margin-bottom: 20px;
+  }
 }

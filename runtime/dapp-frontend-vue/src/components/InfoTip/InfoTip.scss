@@ -8,72 +8,72 @@
  * @license     LGPL-3.0
  */
 
- @import "../../vars.scss";
+@import "../../vars.scss";
 
- .dapp-info-tip {
-    display: inline-block;
-    position: relative;
-    text-align: left;
+.dapp-info-tip {
+  display: inline-block;
+  position: relative;
+  text-align: left;
 
-    &:hover {
-        .dapp-info-tip__box {
-            display: block;
-        }
+  &:hover {
+    .dapp-info-tip__box {
+      display: block;
+    }
+  }
+
+  &__box {
+    position: absolute;
+    width: 274px;
+    padding: 16px;
+    background-color: $tooltip-dark;
+    border-radius: 8px;
+    top: 35px;
+    display: none;
+
+    &.left {
+      left: -19px;
     }
 
-    &__box {
-        position: absolute;
-        width: 274px;
-        padding: 16px;
-        background-color: $tooltip-dark;
-        border-radius: 8px;
-        top: 35px;
-        display: none;
-
-        &.left {
-            left: -19px;
-        }
-
-        &.right {
-            right: -19px;
-        }
-
-        &__triangle{
-            position: absolute;
-            top: -15px;
-            width: 20px;
-
-            &.right {
-                right: 17px;
-            }
-
-            &.left {
-                left: 17px;
-            }
-        }
-
-        .title {
-            font-weight: 600;
-            font-size: 14px;
-            line-height: 17px;
-            color: $tooltip-grey-light;
-            margin-bottom: 8px;
-        }
-
-        .text {
-            font-weight: 400;
-            font-size: 12px;
-            line-height: 130%;
-            color: $white;
-        }
+    &.right {
+      right: -19px;
     }
 
-    svg {
-        cursor: pointer;
-        margin-left: 0 !important;
+    &__triangle {
+      position: absolute;
+      top: -15px;
+      width: 20px;
 
-        path {
-            fill: $button-text-dark;
-        }
+      &.right {
+        right: 17px;
+      }
+
+      &.left {
+        left: 17px;
+      }
     }
- }
+
+    .title {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 17px;
+      color: $tooltip-grey-light;
+      margin-bottom: 8px;
+    }
+
+    .text {
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 130%;
+      color: $white;
+    }
+  }
+
+  svg {
+    cursor: pointer;
+    margin-left: 0 !important;
+
+    path {
+      fill: $button-text-dark;
+    }
+  }
+}
