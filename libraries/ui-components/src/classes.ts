@@ -17,6 +17,9 @@
 // to the TypeScript class for `typedoc` to succeed.
 
 // library types
+import type { Asset, AssetPriceInformation } from "./types/Asset";
+import type { DirectionTriangle } from "./types/DirectionTriangle";
+import type { Size } from "./types/Size";
 import type { Variant } from "./types/Variant";
 
 // components
@@ -55,7 +58,7 @@ import DappNavigation from "./headers/DappNavigation/DappNavigation";
 import DappNavigationItem from "./graphics/DappNavigationItem/DappNavigationItem";
 
 // exports
-export type { Variant };
+export type { Asset, AssetPriceInformation, DirectionTriangle, Size, Variant };
 export {
   DappButton,
   DappContractOperation,
