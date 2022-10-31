@@ -15,3 +15,4 @@ export * from "./HelpersModule";
 export * from "./NetworkModule";
 export * from "./QueryModule";
 export * from "./StateModule";
+export * from "./LogModule";
