@@ -119,8 +119,8 @@ export class Account extends Transferable<AccountDTO> {
    * @readonly
    * @var {string}
    */
-  @Prop({ index: true, unique: true })
-  public readonly referralCode: string;
+  @Prop({ index: true, nullable: true })
+  public readonly referralCode?: string;
 
   /**
    * The account's first identified **transaction block**. Typically, this

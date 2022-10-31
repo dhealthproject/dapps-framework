@@ -71,7 +71,7 @@ export class AccountDTO extends BaseDTO {
     description:
       "Referral code of the user, that allows to track who invited user in the app",
   })
-  public referralCode: string;
+  public referralCode?: string;
 
   /**
    * The time at which this account first interacted
