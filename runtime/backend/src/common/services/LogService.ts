@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { LoggerService, LogLevel } from "@nestjs/common";
+import { Injectable, LoggerService, LogLevel, Optional } from "@nestjs/common";
 import path from "path";
 import {
   utilities as nestWinstonModuleUtilities,
@@ -54,17 +54,33 @@ import monitoringConfigLoader from "../../../config/monitoring";
  *
  * @since v0.3.2
  */
+@Injectable()
 export class LogService implements LoggerService {
   private logger: LoggerService;
   private dappConfig: DappConfig;
   private monitoringConfig: MonitoringConfig;
 
   /**
-   * The constructor of this class.
-   *
-   * @param {string} name The identified name of this instance.
+   * The default constructor of this class.
    */
-  constructor(private readonly name?: string) {
+  constructor();
+
+  /**
+   * The constructor of this class with context.
+   *
+   * @param {string} context The identified context of this instance.
+   */
+  constructor(context: string);
+
+  /**
+   * The constructor implementation of this class.
+   *
+   * @param {string} context The optional identified context of this instance.
+   */
+  constructor(
+    @Optional()
+    protected context?: string,
+  ) {
     this.dappConfig = dappConfigLoader();
     this.monitoringConfig = monitoringConfigLoader();
     this.logger = WinstonModule.createLogger({
@@ -72,13 +88,23 @@ export class LogService implements LoggerService {
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.ms(),
-        nestWinstonModuleUtilities.format.nestLike(this.name, {
+        nestWinstonModuleUtilities.format.nestLike(this.context, {
           colors: true,
         }),
         winston.format.metadata(),
       ),
       transports: this.createTransports(),
     });
+  }
+
+  /**
+   * The setter of this instance's context.
+   *
+   * @param {string} context The identified name of this instance.
+   * @returns {void}
+   */
+  public setContext(context: string): void {
+    this.context = context;
   }
 
   /**
@@ -101,7 +127,7 @@ export class LogService implements LoggerService {
         },
         // A collection to save json formatted logs
         collection: this.monitoringConfig.logPersistCollection,
-        label: this.name,
+        label: this.context,
       }),
     );
     // get storage options from config

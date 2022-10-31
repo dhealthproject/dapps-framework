@@ -81,6 +81,19 @@ describe("common/StateService", () => {
     expect(service).toBeDefined();
   });
 
+  describe("setContext", () => {
+    it("should set context of instance", () => {
+      // prepare
+      const expectedContext = "new-test-context";
+
+      // act
+      service.setContext(expectedContext);
+
+      // assert
+      expect((service as any).context).toBe(expectedContext);
+    });
+  });
+
   describe("createTransports()", () => {
     it("should include correct transport methods", () => {
       // act
