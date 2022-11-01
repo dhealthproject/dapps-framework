@@ -46,6 +46,9 @@
         />
       </div>
     </div>
+    <footer v-else-if="layout === 'version-only'">
+      <div class="text-xs text-right px-[15px]">v{{ version }}</div>
+    </footer>
   </div>
 </template>
 

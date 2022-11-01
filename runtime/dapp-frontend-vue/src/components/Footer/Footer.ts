@@ -35,5 +35,10 @@ export default class Footer extends MetaView {
   /**
    *
    */
+  @Prop({ default: "" }) protected version?: string;
+
+  /**
+   *
+   */
   @Prop({ default: "default" }) protected layout?: string;
 }

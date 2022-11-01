@@ -405,6 +405,8 @@ export default class Dashboard extends MetaView {
       await this.$store.dispatch("auth/fetchProfile");
     }
 
+    this.storedUserAddress = this.currentUserAddress;
+
     // handles "denial" of user authorization on the third-party platform
     if (this.$route.query && "error" in this.$route.query) {
       this.displayErrorMessage(

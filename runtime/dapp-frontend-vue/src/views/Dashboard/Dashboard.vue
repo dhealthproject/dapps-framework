@@ -13,11 +13,11 @@
 <template>
   <div class="dapp-screen-dashboard">
     <div class="container">
-      <h1
+      <!-- <h1
         v-if="getIntegrations && getIntegrations.length"
         class="dapp-screen-dashboard__title"
         v-html="`${formatAddress(storedUserAddress, 'dashes')} dashboard`"
-      />
+      /> -->
       <DividedScreen v-if="getIntegrations && getIntegrations.length" :gap="81">
         <template v-slot:left>
           <Card :title="$t('dashboard_key_stats_title')" :showBorders="false">

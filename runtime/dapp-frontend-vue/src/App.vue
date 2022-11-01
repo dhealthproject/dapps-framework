@@ -28,6 +28,7 @@
     <div v-else-if="$route.meta.layout === 'app/default'" class="layout-user">
       <Header :links="headerLinks" />
       <router-view :key="$route.fullPath"></router-view>
+      <Footer layout="version-only" :version="version" />
     </div>
     <!-- Dynamic layout (assembled) -->
     <div
