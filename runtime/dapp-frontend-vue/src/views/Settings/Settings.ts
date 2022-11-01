@@ -13,7 +13,6 @@ import { Component } from "vue-property-decorator";
 import { mapGetters } from "vuex";
 
 // internal dependencies
-import { Translations } from "@/kernel/i18n/Translations";
 import { MetaView } from "@/views/MetaView";
 import UiButton from "@/components/UiButton/UiButton.vue";
 

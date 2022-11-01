@@ -81,6 +81,7 @@ export const LeaderboardModule = {
 
       try {
         items = await handler.getLeaderboard(payload.which, payload.period);
+        context.commit("setLeaderboardItems", items);
       } catch (err) {
         console.log("fetchLeaderboard", err);
         payload.vm.$root.$emit("toast", {

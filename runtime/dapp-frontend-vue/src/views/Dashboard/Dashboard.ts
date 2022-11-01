@@ -19,7 +19,6 @@ import {
   CarouselItem,
   CarouselConfig,
 } from "@/views/Dashboard/components/EventsCarousel";
-import { Translations } from "@/kernel/i18n/Translations";
 import { StatsConfig } from "@/components/Stats/Stats";
 
 // child components

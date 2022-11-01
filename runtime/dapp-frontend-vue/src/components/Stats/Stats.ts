@@ -14,13 +14,11 @@ import { Component, Prop } from "vue-property-decorator";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import InlineSvg from "vue-inline-svg";
-import { mapGetters } from "vuex";
 
 // child components
 import TopActivities from "../TopActivities/TopActivities.vue";
 import ProgressBar from "../ProgressBar/ProgressBar.vue";
 import InfoTip from "../InfoTip/InfoTip.vue";
-import { Translations } from "../../kernel";
 
 // style resource
 import "./Stats.scss";

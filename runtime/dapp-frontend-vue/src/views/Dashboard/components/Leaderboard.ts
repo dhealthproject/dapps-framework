@@ -16,7 +16,6 @@ import { mapGetters } from "vuex";
 import { MetaView } from "@/views/MetaView";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
 import { LeaderboardItem } from "@/services/LeaderboardService";
-import { Translations } from "@/kernel/i18n/Translations";
 
 // child components
 import Tabs from "@/components/Tabs/Tabs.vue";

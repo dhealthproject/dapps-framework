@@ -63,8 +63,6 @@ export default class InfoTip extends MetaView {
       const rect = el.getBoundingClientRect();
 
       const left = rect.left + window.scrollX;
-      const right = rect.right + window.scrollX;
-      console.log({ l: rect.left });
 
       if (left > el.offsetWidth) {
         this.tipPosition = "right";
