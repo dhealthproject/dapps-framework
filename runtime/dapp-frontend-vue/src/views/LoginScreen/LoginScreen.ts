@@ -315,7 +315,7 @@ export default class LoginScreen extends MetaView {
    * @async
    * @returns {void}
    */
-  public beforeRouteLeave(to: any, from: any, next: any) {
+  public beforeDestroy() {
     this.$root.$emit("modal-close");
 
     if (this.modalTimer) {
@@ -329,7 +329,6 @@ export default class LoginScreen extends MetaView {
     if (this.globalIntervalTimer) {
       clearTimeout(this.globalIntervalTimer);
     }
-    next();
   }
 
   /**
