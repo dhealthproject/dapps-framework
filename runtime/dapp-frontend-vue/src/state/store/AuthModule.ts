@@ -196,6 +196,10 @@ export const AuthModule = {
       const handler = new AuthService();
       await handler.logout();
 
+      // fetch new challenge value
+      // so user don't have to reload the page to login again
+      await context.dispatch("fetchChallenge");
+
       context.commit("setAuthenticated", false);
       context.commit("setAccessToken", undefined);
       context.commit("setRefreshToken", undefined);

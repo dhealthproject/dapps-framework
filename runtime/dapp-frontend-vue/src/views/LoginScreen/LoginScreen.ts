@@ -33,6 +33,7 @@ import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
 import { AccessTokenDTO, AuthService } from "@/services/AuthService";
 import NavPanel from "@/components/NavPanel/NavPanel.vue";
 import UiButton from "@/components/UiButton/UiButton.vue";
+import Loader from "@/components/Loader/Loader.vue";
 
 // style resource
 import "./LoginScreen.scss";
@@ -80,6 +81,7 @@ export interface TutorialStepItem {
     DividedScreen,
     NavPanel,
     InlineSvg,
+    Loader,
   },
   computed: {
     ...mapGetters({
@@ -98,6 +100,16 @@ export default class LoginScreen extends MetaView {
    * @var {number}
    */
   protected selectedIndex: number = 0;
+
+  /**
+   * This property contains generated
+   * QR Code configuration generated in `createLoginQRCode()`
+   * Gets populated with value on mounted hook
+   *
+   * @access protected
+   * @var {QRCode}
+   */
+  protected qrConfig: QRCode | null = null;
 
   /**
    * This property contains the *authentication challenge* as it
@@ -268,6 +280,7 @@ export default class LoginScreen extends MetaView {
    * @returns {void}
    */
   public async mounted() {
+    this.qrConfig = this.createLoginQRCode();
     try {
       // now start requesting for an access token and refresh token
       // this backend API call will only succeed after the end-user
@@ -302,7 +315,7 @@ export default class LoginScreen extends MetaView {
    * @async
    * @returns {void}
    */
-  public beforeDestroy() {
+  public beforeRouteLeave(to: any, from: any, next: any) {
     this.$root.$emit("modal-close");
 
     if (this.modalTimer) {
@@ -316,6 +329,7 @@ export default class LoginScreen extends MetaView {
     if (this.globalIntervalTimer) {
       clearTimeout(this.globalIntervalTimer);
     }
+    next();
   }
 
   /**

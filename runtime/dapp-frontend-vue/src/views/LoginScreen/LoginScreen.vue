@@ -40,7 +40,8 @@
       <div class="qr-wrapper">
         <DividedScreen :gap="32">
           <template v-slot:left>
-            <DappQR :qrCode="createLoginQRCode()" class="qr-code" />
+            <DappQR v-if="qrConfig" :qrCode="qrConfig" class="qr-code" />
+            <Loader v-else />
           </template>
           <template v-slot:right>
             <span class="qr-wrapper__title">In 4 easy steps...</span>
