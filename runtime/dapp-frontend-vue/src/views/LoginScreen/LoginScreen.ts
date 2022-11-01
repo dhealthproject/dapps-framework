@@ -268,23 +268,7 @@ export default class LoginScreen extends MetaView {
    * @returns {void}
    */
   public async mounted() {
-    // do we already have an access token? then redirect
-    // if (this.isAuthenticated) {
-    //   return this.$router.push({ name: "app.dashboard" });
-    // }
-
     try {
-      // @todo make sure referral code is saved
-      if (this.$route.params.refCode) {
-        // const refCode: string = this.$route.params.refCode;
-        // Cookies.set("ELEVATE:referralCode", refCode, {
-        //   secure: false,
-        //   sameSite: "strict",
-        //   domain: process.env.VUE_APP_FRONTEND_DOMAIN,
-        // });
-        // @todo the frontend must not set cookies, should be in backend
-      }
-
       // now start requesting for an access token and refresh token
       // this backend API call will only succeed after the end-user
       // successfully attached the challenge inside a transaction.
