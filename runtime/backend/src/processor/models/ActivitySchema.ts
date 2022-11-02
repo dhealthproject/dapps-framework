@@ -39,8 +39,8 @@ import { ProcessingState } from "./ProcessingStatusDTO";
 export class Activity extends Transferable<ActivityDTO> {
   /**
    * This field contains the *mongo collection name* for entries
-   * that are stored using {@link AccountIntegrationDocument} or the model
-   * {@link AccountIntegrationModel}.
+   * that are stored using {@link ActivityDocument} or the model
+   * {@link ActivityModel}.
    * <br /><br />
    * Note that this field **is not** part of document properties
    * and used only internally to perform queries that refer to
@@ -249,8 +249,8 @@ export class Activity extends Transferable<ActivityDTO> {
 /**
  * @type ActivityDocument
  * @description This type is used to interface entities of the
- * `account_integrations` collection with *mongoose* and permits to
- * instanciate objects representing these entities.
+ * `activities` collection with *mongoose* and permits to
+ * an instance and objects representing these entities.
  * <br /><br />
  * e.g. alongside {@link ActivitySchema}, we also define
  * `ActivityDocument` which is a mixin that comprises of
@@ -274,11 +274,11 @@ export type ActivityDocument = Activity & Documentable;
  * @example Injecting and using the `ActivityModel`
  * ```typescript
  *   import { InjectModel } from "@nestjs/mongoose";
- *   import { Account, ActivityModel } from "./AccountSchema";
+ *   import { Activity, ActivityModel } from "./ActivitySchema";
  *
- *   class MyAccountService {
+ *   class MyActivityService {
  *     public constructor(
- *       @InjectModel(Account.name) private readonly model: ActivityModel
+ *       @InjectModel(Activity.name) private readonly model: ActivityModel
  *     )
  *
  *     public addEntry(data: Record<string, any>) {
@@ -294,16 +294,16 @@ export class ActivityModel extends Model<ActivityDocument> {}
 /**
  * @class ActivityQuery
  * @description This class augments {@link Queryable} objects enabling
- * *accounts* to be queried **by `address`** and **by `transactionsCount`.**
+ * *activities* to be queried **by `address`** and **by `transactionsCount`.**
  * <br /><br />
  * The main purpose of this class shall be to perform queries against
- * the `account_integrations` collection.
+ * the `activities` collection.
  *
  * @since v0.3.0
  */
 export class ActivityQuery extends Queryable<ActivityDocument> {
   /**
-   * Copy constructor for pageable queries in `account_integrations` collection.
+   * Copy constructor for pageable queries in `activities` collection.
    *
    * @see Queryable
    * @param   {ActivityDocument|undefined}     document          The *document* instance (defaults to `undefined`) (optional).

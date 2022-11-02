@@ -30,6 +30,7 @@ import { ActivitiesService } from "./ActivitiesService";
 
 // emitted events
 import { OnActivityCreated } from "../events/OnActivityCreated";
+import { OnActivityDownloaded } from "../events/OnActivityDownloaded";
 
 /**
  * @class WebHooksService
@@ -201,6 +202,7 @@ export class WebHooksService {
    * @async
    * @param     {OnActivityCreated}   event   The internal app event as triggered by {@link eventHandler}.
    * @returns   {Promise<void>}       No return is specified for an event listener to permit asynchronous behaviour.
+   * @emits     {@link OnActivityDownloaded}     Given a successful activity details download from data provider (downloading success).
    * @throws    {Error}               Given missing OAuth authorization, unreachable/invalid Strava request or any other error occurs while requesting activity details.
    */
   @OnEvent("processor.activity.created", { async: true })
@@ -266,6 +268,12 @@ export class WebHooksService {
       activityData.slug = activity.slug;
       activityData.address = activity.address;
 
+      // internal event emission
+      this.eventEmitter.emit(
+        "processor.activity.downloaded",
+        OnActivityDownloaded.create(activity.slug),
+      );
+
       // populates this activity's *data* in `activityData`
       await this.onSuccessActivityUpdate(
         activity,
@@ -287,7 +295,16 @@ export class WebHooksService {
   }
 
   /**
+   * Helper method that executes error handling. It prints the error
+   * message in the logs and updates the `activities` document's
+   * `processingState` field to {@link ProcessingState.Failed}.
    *
+   * @access private
+   * @async
+   * @param   {ActivityDocument}  activity    The activity that produced an error.
+   * @param   {string}            message     The error message.
+   * @param   {string}            stack       (Optional) An optional error stack trace.
+   * @returns {Promise<void>}
    */
   private async onError(
     activity: ActivityDocument,
@@ -304,7 +321,16 @@ export class WebHooksService {
   }
 
   /**
+   * Helper method that executes a database update of the `activities`
+   * document's `processingState` field to {@link ProcessingState.Failed}.
+   * <br /><br />
+   * This method is called internally *on failure* of the activity
+   * details download process.
    *
+   * @access private
+   * @async
+   * @param   {ActivityDocument}  activity    The activity that produced an error.
+   * @returns {Promise<ActivityDocument>}   The updated `activities` document.
    */
   private async onFailureActivityUpdate(
     activity: ActivityDocument,
@@ -319,7 +345,17 @@ export class WebHooksService {
   }
 
   /**
+   * Helper method that executes a database update of the `activities`
+   * document's `processingState` field to {@link ProcessingState.Processed}.
+   * <br /><br />
+   * This method is called internally *on success* of the activity
+   * details download process.
    *
+   * @access private
+   * @async
+   * @param   {ActivityDocument}      activity        The activity document that is being updated.
+   * @param   {ActivityDataDocument}  activityData    The activity *data* document that will be attached to the activity.
+   * @returns {Promise<ActivityDocument>}   The updated `activities` document.
    */
   private async onSuccessActivityUpdate(
     activity: ActivityDocument,

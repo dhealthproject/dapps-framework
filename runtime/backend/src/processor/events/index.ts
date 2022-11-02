@@ -9,3 +9,4 @@
  */
 // exported events
 export * from "./OnActivityCreated";
+export * from "./OnActivityDownloaded";

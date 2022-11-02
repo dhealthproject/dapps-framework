@@ -9,9 +9,9 @@
  */
 /**
  * @label EVENTS
- * @class OnActivityCreated
+ * @class OnActivityDownloaded
  * @description An event class that is attached to *emitted events* as a payload
- * for events with the name `processor.activities.created`.
+ * for events with the name `processor.activities.downloaded`.
  * <br /><br />
  * This class can also be used to implement the event emitter.
  * <br /><br />
@@ -20,9 +20,9 @@
  * | --- | --- | --- |
  * | `slug` | `string` | The activity's slug as described in {@link Activity}. |
  *
- * @since v0.3.2
+ * @since v0.4.0
  */
-export class OnActivityCreated {
+export class OnActivityDownloaded {
   /**
    * Contains the **activity slug** which consists of a *unique* field
    * in the `activities` collection. This field can be used to retrieve
@@ -42,11 +42,11 @@ export class OnActivityCreated {
    * @access public
    * @static
    * @param   {string}    slug    The unique activity slug.
-   * @returns {OnActivityCreated}   The prepared event (which can be emitted).
+   * @returns {OnActivityDownloaded}   The prepared event (which can be emitted).
    */
-  public static create(slug: string): OnActivityCreated {
+  public static create(slug: string): OnActivityDownloaded {
     // creates instance and fill
-    const event = new OnActivityCreated();
+    const event = new OnActivityDownloaded();
     event.slug = slug;
 
     // returns prepared

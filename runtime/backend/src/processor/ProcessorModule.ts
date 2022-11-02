@@ -24,7 +24,7 @@ import { WebHooksModule } from "./modules/WebHooksModule";
  * <br /><br />
  * #### Modules
  *
- * This scoped module currently features the following submodules: *
+ * This scoped module currently features the following submodules:
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
  * | {@link OperationsModule:PROCESSOR} | `operations` | `/operations` | Module with schedulers, collections and routes around **dApp operations**. |
@@ -33,17 +33,18 @@ import { WebHooksModule } from "./modules/WebHooksModule";
  * <br /><br />
  * #### Events
  *
- * This scoped module currently features the following events: *
+ * This scoped module currently features the following events:
  * | Class | Name | Link | Description |
  * | --- | --- | --- | --- |
  * | `OnActivityCreated` | `processor.activity.created` | {@link OnActivityCreated:EVENTS} | Event that is *emitted* in {@link WebHooksService.eventHandler} when an activity is created in database. |
- *
+ * | `OnActivityDownloaded` | `processor.activity.downloaded` | {@link OnActivityDownloaded:EVENTS} | Event that is *emitted* in {@link WebHooksService.onActivityCreated} when an activity is successfully downloaded from the data provider. |
+ * <br /><br />
  * #### Listeners
  *
- * This scoped module currently features the following events:
+ * This scoped module currently features the following listeners:
  * | Class | Event | Link | Description |
  * | --- | --- | --- | --- |
- * | `OnActivityCreatedListener` | `processor.activity.created` | {@link OnActivityCreatedListener:LISTENERS} | Event listener that *instructs* the runtime backend to run an *activity processor* command. |
+ * | `WebHooksService.onActivityCreated` | `processor.activity.created` | {@link WebHooksService.onActivityCreated} | Event listener that *instructs* the runtime backend to run an *activity download* command. |
  * <br /><br />
  * #### Notes
  *
