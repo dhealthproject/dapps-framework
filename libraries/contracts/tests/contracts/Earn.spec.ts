@@ -59,6 +59,25 @@ describe("contracts/Earn", () => {
       }
     });
 
+    it("should accept optional 'asset' and 'amount' input fields", () => {
+      // prepare
+      instance = new Earn({
+        dappIdentifier: "fake-dapp",
+        date: "2022-08-29",
+        asset: "4ADBC6CEF9393B90",
+        amount: 1,
+      } as EarnParameters);
+
+      // act
+      const inputs: EarnParameters = (instance as any).inputs;
+
+      // assert
+      expect("date" in inputs).to.be.equal(true);
+      expect(inputs.date).to.be.equal("2022-08-29");
+      expect(inputs.asset).to.be.equal("4ADBC6CEF9393B90");
+      expect(inputs.amount).to.be.equal(1);
+    });
+
     it("should accept change of 'version' field", () => {
       // act
       instance = new Earn(
@@ -151,6 +170,30 @@ describe("contracts/Earn", () => {
       expect(transaction.message).to.not.be.undefined;
       expect(transaction.message.payload).to.not.be.undefined;
       expect(transaction.message.payload).to.be.equal(expectedJSON);
+    });
+
+    it("should include asset and amount in JSON payload", () => {
+      // prepare
+      instance = new Earn({
+        dappIdentifier: "fake-dapp",
+        date: "2022-08-29",
+        asset: "4ADBC6CEF9393B90",
+        amount: 123,
+      } as EarnParameters);
+
+      // act
+      const expectedJSON: string = instance.toJSON();
+      const transaction: TransferTransaction = instance.toTransaction({
+        recipientPublicKey: mockAccountPublicKey,
+      } as TransactionParameters);
+
+      // assert
+      expect(transaction.message).to.not.be.undefined;
+      expect(transaction.message.payload).to.not.be.undefined;
+      expect(transaction.message.payload).to.be.equal(expectedJSON);
+      expect(transaction.mosaics).to.not.be.undefined;
+      expect(transaction.mosaics.length).to.be.equal(1);
+      expect(transaction.mosaics[0].id.toHex()).to.be.equal("4ADBC6CEF9393B90");
     });
   });
 });

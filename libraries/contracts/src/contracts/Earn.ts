@@ -8,7 +8,13 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { PlainMessage, TransferTransaction } from "@dhealth/sdk";
+import {
+  Mosaic,
+  MosaicId,
+  PlainMessage,
+  TransferTransaction,
+  UInt64,
+} from "@dhealth/sdk";
 
 // internal dependencies
 import type { ContractParameters } from "../types/ContractParameters";
@@ -31,14 +37,24 @@ import { dHealthNetwork } from "../types/dHealthNetwork";
  * | --- | --- | --- | --- |
  * | `dappIdentifier` | `string` | **Required** | The dApp identifier, e.g. "elevate". |
  * | `date` | `string` | **Required** | The date of the operation being rewarded, e.g. "20220829". |
+ * | `asset` | `string` | **Optional** | The identifier of the asset attached to this operation, e.g. "4ADBC6CEF9393B90". |
+ * | `amount` | `number` | **Optional** | The amount of asset(s) attached to this operation, e.g. `1`. |
  *
  * <br /><br />
  * @example Using the `EarnParameters` class
  * ```ts
- * // creating authentication contract inputs
+ * // creating earn contract inputs
  * const inputs = {
  *   dappIdentifier: "my-cool-dapp",
  *   date: "20220829",
+ * } as EarnParameters;
+ *
+ * // creating earn contract inputs with optionals
+ * const inputs = {
+ *   dappIdentifier: "my-cool-dapp",
+ *   date: "20220829",
+ *   asset: "4ADBC6CEF9393B90", ("FIT")
+ *   amount: 1234,
  * } as EarnParameters;
  * ```
  * <br /><br />
@@ -68,6 +84,36 @@ export interface EarnParameters extends ContractParameters {
    * @var {string}
    */
   date: string;
+
+  /**
+   * Contains the identifier of the asset attached to this operations,
+   * i.e. this corresponds to the *mosaic identifier* as presented in
+   * the resulting *transfer transaction*'s *mosaics* field.
+   * <br /><br />
+   * For the purpose of backwards compatibility, the `asset` input *may*
+   * be *empty* because previous versions of this contract (v0) did not
+   * include an amount of rewarded assets.
+   *
+   * @access public
+   * @example `"4ADBC6CEF9393B90"`
+   * @var {string}
+   */
+  asset?: string;
+
+  /**
+   * Contains the amount of asset(s) attached to this operations,
+   * i.e. this corresponds to the *mosaic amount* as presented in
+   * the resulting *transfer transaction*'s *mosaics* field.
+   * <br /><br />
+   * For the purpose of backwards compatibility, the `amount` input *may*
+   * be *empty* because previous versions of this contract (v0) did not
+   * include an amount of rewarded assets.
+   *
+   * @access public
+   * @example `1`
+   * @var {number}
+   */
+  amount?: number;
 }
 
 /**
@@ -87,7 +133,8 @@ export interface EarnParameters extends ContractParameters {
  * | --- | --- | --- | --- |
  * | `dappIdentifier` | `string` | **Required** | The dApp identifier, e.g. "elevate". |
  * | `date` | `string` | **Required** | The date of the operation being rewarded, e.g. "20220829". |
- *
+ * | `asset` | `string` | **Optional** | The identifier of the asset attached to this operation, e.g. "4ADBC6CEF9393B90". |
+ * | `amount` | `number` | **Optional** | The amount of asset(s) attached to this operation, e.g. `1`. |
  * <br /><br />
  * @example Using the `Earn` contract class
  * ```ts
@@ -95,6 +142,14 @@ export interface EarnParameters extends ContractParameters {
  * const contract: Earn = new Earn({
  *   dappIdentifier: "elevate",
  *   date: "20220829",
+ * });
+ *
+ * // creating a reward contract with optionals
+ * const contract: Earn = new Earn({
+ *   dappIdentifier: "elevate",
+ *   date: "20220829",
+ *   asset: "4ADBC6CEF9393B90",
+ *   amount: 123,
  * });
  * ```
  * <br /><br />
@@ -247,10 +302,38 @@ export class Earn extends Contract {
         parameters.recipientPublicKey,
         this.parameters.getNetworkType()
       ).address,
-      this.parameters.getMosaic(0),
+      this.getMosaics(),
       PlainMessage.create(this.toJSON()),
       this.parameters.getNetworkType(),
       this.parameters.getMaxFee(0)
     );
+  }
+
+  /**
+   * This method should return an array of `Mosaic` instances as
+   * defined in `@dhealth/sdk`. The transaction assets consists
+   * of a set of **assets** that are attached to a transaction
+   * on dHealth Network.
+   *
+   * @access protected
+   * @returns {Mosaic[]}   An array of *assets* and *amounts thereof* that are attached to a transfer transaction.
+   */
+  protected getMosaics(): Mosaic[] {
+    // by default, this uses `DHP`
+    let assetId: string = this.parameters.currencyMosaicId;
+    let amount: number = 0;
+
+    // if the operation has a custom `asset`, use it
+    if ("asset" in this.inputs && undefined !== this.inputs.asset) {
+      assetId = this.inputs.asset;
+    }
+
+    // by default, the amount is 0, if custom provided, use it
+    if ("amount" in this.inputs && undefined !== this.inputs.amount) {
+      amount = this.inputs.amount;
+    }
+
+    // returns a dHealth Network transfer transaction attachment
+    return [new Mosaic(new MosaicId(assetId), UInt64.fromUint(amount))];
   }
 }
