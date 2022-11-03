@@ -9,6 +9,7 @@
  */
 // external dependencies
 import { MongooseModule } from "@nestjs/mongoose";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 import { Account, Address, PublicAccount } from "@dhealth/sdk";
 
 // internal dependencies
@@ -24,12 +25,16 @@ import { OAuthConfig } from "./common/models/OAuthConfig";
 import { SecurityConfig } from "./common/models/SecurityConfig";
 import { StatisticsConfig } from "./common/models/StatisticsConfig";
 import { SocialConfig } from "./common/models/SocialConfig";
+import { MonitoringConfig } from "./common/models/MonitoringConfig";
 
 // payout scope
 import { PayoutConfig } from "./payout/models/PayoutConfig";
 
 // processor scope
 import { ProcessorConfig } from "./processor/models/ProcessorConfig";
+
+// notifier scope
+import { TransportConfig } from "./notifier/models/TransportConfig";
 
 // import configuration resources
 import assetsConfigLoader from "../config/assets";
@@ -41,6 +46,8 @@ import processorConfigLoader from "../config/processor";
 import securityConfigLoader from "../config/security";
 import statisticsConfigLoader from "../config/statistics";
 import socialConfigLoader from "../config/social";
+import monitoringConfigLoader from "../config/monitoring";
+import transportConfigLoader from "../config/transport";
 
 /**
  * @class AppConfiguration
@@ -70,6 +77,21 @@ export class AppConfiguration {
    * @var {MongooseModule}
    */
   private static DATABASE: MongooseModule;
+
+  /**
+   * The dApp event emitter module using {@link EventEmitterModule} from nestjs.
+   * This object is *not* available outside of this class and is defined
+   * to limit the number of instances created which serves as the application's
+   * internal event emitter/handler.
+   * <br /><br />
+   * Storage of a *singular* event emitter adapter is how we make
+   * sure that the application is using only one.
+   *
+   * @access private
+   * @static
+   * @var {EventEmitterModule}
+   */
+    private static EVENT_EMITTER: EventEmitterModule;
 
   /**
    * The dApp assets configuration. This configuration object is used to
@@ -189,6 +211,30 @@ export class AppConfiguration {
   protected social: SocialConfig;
 
   /**
+   * The dApp monitoring configuration. This configuration
+   * object is used to determine dApp monitoring information.
+   * <br /><br />
+   * #### Reference
+   * {@link MonitoringConfig:CONFIG}
+   *
+   * @access protected
+   * @var {MonitoringConfig}
+   */
+  protected monitoring: MonitoringConfig;
+
+  /**
+   * The dApp transport configuration. This configuration
+   * is used to determine dApp monitoring transport information.
+   * <br /><br />
+   * #### Reference
+   * {@link TransportConfig:CONFIG}
+   *
+   * @access protected
+   * @var {TransportConfig}
+   */
+  protected transport: TransportConfig;
+
+  /**
    * Construct an instance of this application configuration.
    * <br /><br />
    * CAUTION: Creating an instance of this class automatically interprets
@@ -210,6 +256,8 @@ export class AppConfiguration {
     this.security = securityConfigLoader();
     this.statistics = statisticsConfigLoader();
     this.social = socialConfigLoader();
+    this.monitoring = monitoringConfigLoader();
+    this.transport = transportConfigLoader();
   }
 
   /**
@@ -247,6 +295,8 @@ export class AppConfiguration {
       statisticsConfigLoader,
       payoutConfigLoader,
       socialConfigLoader,
+      monitoringConfigLoader,
+      transportConfigLoader,
     ];
   }
 
@@ -281,6 +331,31 @@ export class AppConfiguration {
 
     // return singleton instance
     return AppConfiguration.DATABASE;
+  }
+
+  /**
+   * This method initializes the internal *event emitter adapter*.
+   * <br /><br />
+   * You should not have to call this method manually, it is used inside
+   * {@link Schedulers:COMMON} and {@link Scopes:COMMON} to perform the
+   * configuration of event emitter adapters.
+   *
+   * @access public
+   * @static
+   * @returns   {MongooseModule}    A `@nestjs/mongoose` MongooseModule object.
+   */
+  public static getEventEmitterModule(): EventEmitterModule {
+    // singleton instance for database
+    AppConfiguration.EVENT_EMITTER = EventEmitterModule.forRoot({
+      wildcard: false,
+      delimiter: ".",
+      maxListeners: 5,
+      verboseMemoryLeak: true,
+      ignoreErrors: false,
+    });
+
+    // return singleton instance
+    return AppConfiguration.EVENT_EMITTER;
   }
 
   /**

@@ -28,7 +28,7 @@ import { DappConfig } from "../models/DappConfig";
 import dappConfigLoader from "../../../config/dapp";
 import { MonitoringConfig } from "../models/MonitoringConfig";
 import monitoringConfigLoader from "../../../config/monitoring";
-import { AlertEvent } from "../models/AlertEvent";
+import { AlertEvent } from "../events/AlertEvent";
 
 /**
  * @class LogService

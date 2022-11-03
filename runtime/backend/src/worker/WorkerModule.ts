@@ -9,6 +9,7 @@
  */
 // external dependencies
 import { DynamicModule, Module } from "@nestjs/common";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { DappConfig } from "../common/models/DappConfig";
@@ -63,6 +64,7 @@ export class WorkerModule {
     return {
       module: WorkerModule,
       imports: modules,
+      providers: [EventEmitter2],
     } as DynamicModule;
   }
 }
