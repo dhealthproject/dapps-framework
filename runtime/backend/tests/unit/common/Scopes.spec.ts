@@ -136,6 +136,12 @@ jest.mock("../../../src/statistics/modules/StatisticsModule", () => {
   return { StatisticsModule: StatisticsModuleImplMock };
 });
 
+// notifier scope
+const NotifierModuleMock: any = jest.fn();
+jest.mock("../../../src/notifier/NotifierModule", () => {
+  return { NotifierModule: NotifierModuleMock };
+});
+
 // schedulers
 const DiscoverAccountsCommandMock: any = jest.fn();
 jest.mock(
@@ -198,6 +204,14 @@ jest.mock(
   "../../../src/payout/schedulers/ActivityPayouts/ActivityPayoutsCommand",
   () => {
     return { ActivityPayoutsCommand: ActivityPayoutsCommandMock };
+  }
+);
+
+const ReportNotifierCommandMock: any = jest.fn();
+jest.mock(
+  "../../../src/notifier/schedulers/ReportNotifier/ReportNotifierCommand",
+  () => {
+    return { ReportNotifierCommand: ReportNotifierCommandMock };
   },
 );
 

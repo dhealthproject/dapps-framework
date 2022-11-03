@@ -31,7 +31,7 @@ import { getModelToken } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule/dist/scheduler.registry";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
-import { Logger } from "@nestjs/common";
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 // mock cron dependency
 const jobStartCall = jest.fn();
@@ -54,13 +54,14 @@ import { StatisticsDocument, StatisticsModel } from "../../../../src/statistics/
 import { WeeklyScoreAggregation } from "../../../../src/statistics/schedulers/LeaderboardAggregation/WeeklyScoreAggegation";
 import { MonthlyScoreAggregation } from "../../../../src/statistics/schedulers/LeaderboardAggregation/MonthlyScoreAggregation";
 import { LeaderboardAggregationStateData } from "../../../../src/statistics/models/LeaderboardAggregationStateData";
+import { LogService } from "../../../../src/common/services/LogService";
 
 describe("statistics/LeaderboardAggregation", () => {
   let service: LeaderboardAggregation;
   let queriesService: QueryService<StatisticsDocument, StatisticsModel>;
   let statesService: StateService;
   let configService: ConfigService;
-  let logger: Logger;
+  let logger: LogService;
 
   let mockDate: Date;
   let module: TestingModule;
@@ -79,6 +80,7 @@ describe("statistics/LeaderboardAggregation", () => {
         QueryService,
         NetworkService,
         ConfigService,
+        EventEmitter2,
         {
           provide: getModelToken("Statistics"),
           useValue: MockModel,
@@ -96,8 +98,9 @@ describe("statistics/LeaderboardAggregation", () => {
           useValue: MockModel,
         },
         {
-          provide: Logger,
+          provide: LogService,
           useValue: {
+            setContext: jest.fn(),
             log: jest.fn(),
             debug: jest.fn(),
             error: jest.fn(),
@@ -110,7 +113,7 @@ describe("statistics/LeaderboardAggregation", () => {
     queriesService = module.get<QueryService<StatisticsDocument, StatisticsModel>>(QueryService);
     statesService = module.get<StateService>(StateService);
     configService = module.get<ConfigService>(ConfigService);
-    logger = module.get<Logger>(Logger);
+    logger = module.get<LogService>(LogService);
 
     (service as any).configService = {
       get: configGetCallMock,

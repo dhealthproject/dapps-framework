@@ -24,6 +24,7 @@ import { AccountIntegrationDocument } from "../../../../src/common/models/Accoun
 import { WebHooksService } from "../../../../src/processor/services/WebHooksService";
 import { ActivitiesService } from "../../../../src/processor/services/ActivitiesService";
 import { ActivityDocument } from "../../../../src/processor/models/ActivitySchema";
+import { LogService } from "../../../../src/common/services/LogService";
 
 // tested module
 import { WebHooksController } from "../../../../src/processor/routes/WebHooksController";
@@ -55,6 +56,15 @@ describe("processor/WebHooksController", () => {
           provide: getModelToken("Activity"),
           useValue: MockModel,
         }, // requirement from ActivitiesService
+        {
+          provide: LogService,
+          useValue: {
+            setContext: jest.fn(),
+            log: jest.fn(),
+            debug: jest.fn(),
+            error: jest.fn(),
+          },
+        }, // requirement from WebHooksController
       ]
     }).compile();
 

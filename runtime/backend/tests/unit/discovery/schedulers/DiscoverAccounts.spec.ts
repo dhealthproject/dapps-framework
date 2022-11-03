@@ -35,20 +35,12 @@ jest.mock("@dhealth/sdk", () => ({
   }
 }));
 
-jest.mock("../../../../src/common/services/LogService", () => ({
-  LogService: jest.fn(() => ({
-    log: jest.fn(),
-    debug: jest.fn(),
-    error: jest.fn(),
-  }))
-}));
-
 // external dependencies
 import { Address, NetworkType, PublicAccount } from "@dhealth/sdk"; // mocked!
-import { Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 // internal dependencies
 import { createTransactionDocument, MockModel } from "../../../mocks/global";
@@ -63,6 +55,7 @@ import { TransactionsService } from "../../../../src/discovery/services/Transact
 import { DiscoverAccounts } from "../../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccounts";
 import { AccountDiscoveryStateData } from "../../../../src/discovery/models/AccountDiscoveryStateData";
 import { BaseCommand } from "../../../../src/worker/BaseCommand";
+import { LogService } from "../../../../src/common/services/LogService";
 
 // Mocks the actual discovery:DiscoverAccounts command to
 // allow testing of the `runWithOptions` method.
@@ -109,7 +102,7 @@ const fakeCreateTransactionDocuments = (
  */
 describe("discovery/DiscoverAccounts", () => {
   let service: MockDiscoverAccounts;
-  let logger: Logger;
+  let logger: LogService;
 
   let mockDate: Date;
   beforeEach(async () => {
@@ -125,6 +118,7 @@ describe("discovery/DiscoverAccounts", () => {
         QueryService,
         StateService,
         NetworkService,
+        EventEmitter2,
         {
           provide: getModelToken("Account"),
           useValue: MockModel, // test/mocks/global.ts
@@ -138,7 +132,7 @@ describe("discovery/DiscoverAccounts", () => {
           useValue: MockModel, // test/mocks/global.ts
         },
         {
-          provide: Logger,
+          provide: LogService,
           useValue: {
             log: jest.fn(),
             debug: jest.fn(),
@@ -150,7 +144,7 @@ describe("discovery/DiscoverAccounts", () => {
     }).compile();
 
     service = module.get<MockDiscoverAccounts>(MockDiscoverAccounts);
-    logger = module.get<Logger>(Logger);
+    logger = module.get<LogService>(LogService);
 
     // overwrites the internal model (injected)
     (service as any).model = new MockModel();
@@ -207,7 +201,8 @@ describe("discovery/DiscoverAccounts", () => {
         .spyOn((service as any).configService, "get")
         .mockReturnValueOnce("test-pubkey")
         .mockReturnValueOnce(NetworkType.MAIN_NET);
-      const superRun = jest.spyOn(BaseCommand.prototype, "run");
+      const superRun = jest.spyOn(BaseCommand.prototype, "run")
+        .mockResolvedValue();
       jest
         .spyOn(PublicAccount, "createFromPublicKey")
         .mockReturnValue({

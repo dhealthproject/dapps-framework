@@ -12,6 +12,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { getModelToken } from "@nestjs/mongoose";
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 // internal dependencies
 import { MockModel } from "../mocks/global";
@@ -46,6 +47,7 @@ describe("AppModule", () => {
         ChallengesService, // requirement from AuthService
         JwtService, // requirement from AuthService
         QueryService, // requirement from AccountsService
+        EventEmitter2,
         {
           provide: getModelToken("AccountIntegration"),
           useValue: MockModel,
@@ -91,7 +93,7 @@ describe("AppModule", () => {
         module: AppModule,
         imports: modules,
         controllers: [AppController],
-        providers: [AppService],
+        providers: [AppService, EventEmitter2],
       }
 
       // act

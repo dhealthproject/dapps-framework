@@ -37,10 +37,10 @@ jest.mock("@dhealth/sdk", () => ({
 
 // external dependencies
 import { Address, PublicAccount } from "@dhealth/sdk"; // mocked!
-import { Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 // internal dependencies
 import { createTransactionDocument, MockModel } from "../../../mocks/global";
@@ -57,6 +57,7 @@ import { TransactionsService } from "../../../../src/discovery/services/Transact
 import { DiscoverAssets } from "../../../../src/discovery/schedulers/DiscoverAssets/DiscoverAssets";
 import { AssetDiscoveryStateData } from "../../../../src/discovery/models/AssetDiscoveryStateData";
 import { DiscoveryCommand } from "../../../../src/discovery/schedulers/DiscoveryCommand";
+import { LogService } from "../../../../src/common/services/LogService";
 
 // configuration resources
 import dappConfigLoader from "../../../../config/dapp";
@@ -111,7 +112,7 @@ describe("discovery/DiscoverAssets", () => {
   let transactionsService: TransactionsService;
   let statesService: StateService;
   let networkService: NetworkService;
-  let logger: Logger;
+  let logger: LogService;
   let expectedDappConfig: DappConfig = dappConfigLoader();
 
   let mockDate: Date;
@@ -128,6 +129,7 @@ describe("discovery/DiscoverAssets", () => {
         QueryService,
         StateService,
         NetworkService,
+        EventEmitter2,
         {
           provide: getModelToken("Asset"),
           useValue: MockModel, // test/mocks/global.ts
@@ -141,7 +143,7 @@ describe("discovery/DiscoverAssets", () => {
           useValue: MockModel, // test/mocks/global.ts
         },
         {
-          provide: Logger,
+          provide: LogService,
           useValue: {
             log: jest.fn(),
             debug: jest.fn(),
@@ -158,7 +160,7 @@ describe("discovery/DiscoverAssets", () => {
     transactionsService = module.get<TransactionsService>(TransactionsService);
     statesService = module.get<StateService>(StateService);
     networkService = module.get<NetworkService>(NetworkService);
-    logger = module.get<Logger>(Logger);
+    logger = module.get<LogService>(LogService);
 
     // overwrites the internal model (injected)
     (service as any).model = new MockModel();
