@@ -16,3 +16,4 @@ export * from "./NetworkModule";
 export * from "./QueryModule";
 export * from "./StateModule";
 export * from "./LogModule";
+export * from "./HelpersModule";
