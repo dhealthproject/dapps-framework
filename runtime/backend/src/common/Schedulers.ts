@@ -35,6 +35,9 @@ import { BroadcastActivityPayouts } from "../payout/schedulers/ActivityPayouts/B
 import { LeaderboardsAggregationCommand } from "../statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand";
 import { UserAggregationCommand } from "../statistics/schedulers/UserAggregation/UserAggregationCommand";
 
+// notifier scope
+import { ReportNotifierCommand } from "../notifier/schedulers/ReportNotifier/ReportNotifierCommand";
+
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
 const db = dappConfigLoader().database;
@@ -63,6 +66,7 @@ const db = dappConfigLoader().database;
  * | `payout`| {@link BroadcastActivityPayouts:PAYOUT} | A payout command that broadcasts activity reward transactions to dHealth Network. |
  * | `statistics` | {@link LeaderboardAggregation:STATISTICS} | A statistics command that aggregates and sorts user rewards for activities and creates leaderboards. |
  * | `statistics`| {@link UserAggregation:STATISTICS} | A statistics command that aggregates and sorts user rewards for activities and creates user statistics. |
+ * | `notifier`  | {@link ReportNotifierCommand:NOTIFIER} | A notifier command that aggregates and sorts persisted warn/error logs and periodically creates and send reports. |
  * <br /><br />
  *
  * @var {[key: string]: any[]}
@@ -70,6 +74,7 @@ const db = dappConfigLoader().database;
  */
 export const Schedulers: { [key: string]: any[] } = {
   database: [AppConfiguration.getDatabaseModule(db)],
+  eventEmitter: [ AppConfiguration.getEventEmitterModule() ],
   discovery: [
     AccountsModule,
     AssetsModule,
@@ -87,4 +92,5 @@ export const Schedulers: { [key: string]: any[] } = {
     LeaderboardsAggregationCommand,
     UserAggregationCommand,
   ],
+  notifier: [ReportNotifierCommand],
 };

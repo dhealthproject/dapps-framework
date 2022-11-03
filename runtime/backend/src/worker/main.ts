@@ -9,6 +9,7 @@
  */
 // external dependencies
 import { NestFactory } from "@nestjs/core";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { WorkerModule } from "./WorkerModule";
@@ -32,12 +33,16 @@ async function bootstrap(): Promise<void> {
   const logger = new LogService(dappConfig.dappName + "/worker");
 
   // create an instance of the scheduler with imported configs
-  NestFactory.createApplicationContext(
+  const app = await NestFactory.createApplicationContext(
     WorkerModule.register({
       ...dappConfig,
     } as DappConfig),
     { logger },
   );
+
+  // create a logger instance
+  const logger = new LogService("SCHEDULERS", app.get(EventEmitter2));
+  app.useLogger(logger);
 }
 
 // bootstrap the scheduler
