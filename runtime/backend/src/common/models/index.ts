@@ -24,6 +24,7 @@ export * from "./AccountSchema";
 export * from "./AuthChallengeSchema";
 export * from "./StateSchema";
 export * from "./TransactionSchema";
+export * from "./LogSchema";
 
 // generic types / utilities
 export * from "./BaseDTO";
@@ -31,6 +32,7 @@ export * from "./PaginatedResultDTO";
 export * from "./Scope";
 export * from "./StateData";
 export * from "./StorageOptions";
+export * from "./AlertEvent";
 
 // specialized data transfer objects
 export * from "./AccessTokenDTO";
@@ -40,3 +42,4 @@ export * from "./AuthChallengeDTO";
 export * from "./ProfileDTO";
 export * from "./StateDTO";
 export * from "./StatusDTO";
+export * from "./LogDTO";

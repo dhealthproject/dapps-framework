@@ -9,10 +9,12 @@
  */
 // external dependencies
 import { MongooseModule } from "@nestjs/mongoose";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 // internal dependencies
 // common scope
 import { AccountsModule as CommonAccountsModule } from "../common/modules/AccountsModule";
+import { LogModule } from "./modules/LogModule";
 
 // discovery scope
 import { AccountsModule } from "../discovery/modules/AccountsModule";
@@ -30,6 +32,9 @@ import { ProcessOperationsCommand } from "../processor/schedulers/ProcessOperati
 
 // statistics scope
 import { LeaderboardsAggregationCommand } from "../statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand";
+
+// notifier scope
+import { ReportNotifierCommand } from "../notifier/schedulers/ReportNotifier/ReportNotifierCommand";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -56,6 +61,7 @@ const db = dappConfigLoader().database;
  * | `discovery` | {@link DiscoverAssets:DISCOVERY} | A discovery command that retrieves assets information from the database using discovered transactions. |
  * | `processor` | {@link ProcessOperations:PROCESSOR} | A processor command that interprets discovered transactions and maps them to dApp operations. |
  * | `statistics`| {@link LeaderboardAggregation:STATISTICS} | A statistics command that aggregates and sorts user rewards for activities and creates leaderboards. |
+ * | `notifier`  | {@link ReportNotifierCommand:NOTIFIER} | A notifier command that aggregates and sorts persisted warn/error logs and periodically creates and send reports. |
  * <br /><br />
  *
  * @var {[key: string]: any[]}
@@ -66,6 +72,15 @@ export const Schedulers: { [key: string]: any[] } = {
     MongooseModule.forRoot(
       `mongodb://${db.user}:${process.env.DB_PASS}@${db.host}:${db.port}/${db.name}?authSource=admin`,
     ),
+  ],
+  eventEmitter: [
+    EventEmitterModule.forRoot({
+      wildcard: false,
+      delimiter: ".",
+      maxListeners: 5,
+      verboseMemoryLeak: true,
+      ignoreErrors: false,
+    }),
   ],
   discovery: [
     AccountsModule,
@@ -80,4 +95,5 @@ export const Schedulers: { [key: string]: any[] } = {
   payout: [],
   processor: [OperationsModule, ProcessOperationsCommand],
   statistics: [BlocksModule, LeaderboardsAggregationCommand],
+  notifier: [ReportNotifierCommand],
 };

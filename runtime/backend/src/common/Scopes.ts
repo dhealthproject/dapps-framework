@@ -9,12 +9,14 @@
  */
 // external dependencies
 import { MongooseModule } from "@nestjs/mongoose";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { DiscoveryModule } from "../discovery/DiscoveryModule";
 import { PayoutModule } from "../payout/PayoutModule";
 import { ProcessorModule } from "../processor/ProcessorModule";
 import { StatisticsModule } from "../statistics/StatisticsModule";
+import { NotifierModule } from "../notifier/NotifierModule";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -39,6 +41,7 @@ const db = dappConfigLoader().database;
  * | `payout`| {@link PayoutModule} | A payout scope that encapsulates payout mechanisms that are executed in background processes. |
  * | `processor` | {@link ProcessorModule} | A processing scope that consists in detecting invoice updates and processing payments. |
  * | `statistics` | {@link StatisticsModule} | A statistics scope that consists in aggregate data into meaningful statistics and measurements. |
+ * | `notifier` | {@link NotifierModule} | A notifier scope that consists in aggregate monitoring logs into meaningful alerts and reports. |
  * <br /><br />
  * A `scheduler` scope is also included with {@link SchedulerModule} but
  * this one executes in a *parallel* process and thereby should not be
@@ -54,8 +57,16 @@ export const Scopes: { [key: string]: any } = {
   database: MongooseModule.forRoot(
     `mongodb://${db.user}:${process.env.DB_PASS}@${db.host}:${db.port}/${db.name}?authSource=admin`,
   ),
+  eventEmitter: EventEmitterModule.forRoot({
+    wildcard: false,
+    delimiter: ".",
+    maxListeners: 5,
+    verboseMemoryLeak: true,
+    ignoreErrors: false,
+  }),
   discovery: DiscoveryModule,
   payout: PayoutModule,
   processor: ProcessorModule,
   statistics: StatisticsModule,
+  notifier: NotifierModule,
 };

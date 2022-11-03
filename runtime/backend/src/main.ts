@@ -13,6 +13,7 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import helmet from "helmet";
 import childProcess from "child_process";
 import cookieParser from "cookie-parser";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { AppModule } from "./AppModule";
@@ -36,16 +37,17 @@ async function bootstrap(): Promise<void> {
   const dappConfig: DappConfig = dappConfigLoader();
   const securityConfig: SecurityConfig = securityConfigLoader();
 
-  // create a logger instance
-  const logger = new LogService("API");
-
   // create app instance
   const app = await NestFactory.create(
     AppModule.register({
       ...dappConfig,
     } as DappConfig),
-    { logger },
+    { logger: new LogService("API") },
   );
+
+  // create a logger instance
+  const logger = new LogService("API", app.get(EventEmitter2));
+  app.useLogger(logger);
 
   // starting app log
   logger.debug(`Starting ${packageJson.name} at v${packageJson.version}`);

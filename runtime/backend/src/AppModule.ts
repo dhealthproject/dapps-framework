@@ -9,6 +9,7 @@
  */
 // external dependencies
 import { DynamicModule, Logger, Module } from "@nestjs/common";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { AuthModule } from "./common/modules/AuthModule";
@@ -71,7 +72,7 @@ export class AppModule {
       module: AppModule,
       imports: modules,
       controllers: [AppController],
-      providers: [AppService],
+      providers: [AppService, EventEmitter2],
     } as DynamicModule;
   }
 }
