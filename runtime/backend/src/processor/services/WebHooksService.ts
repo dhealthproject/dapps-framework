@@ -47,27 +47,19 @@ import { OnActivityCreated } from "../events/OnActivityCreated";
 @Injectable()
 export class WebHooksService {
   /**
-   * This property permits to log information to the console or in files
-   * depending on the configuration. This logger instance can be accessed
-   * by extending listeners to use a common log process.
-   *
-   * @access protected
-   * @var {LoggerService}
-   */
-  protected logger: LoggerService;
-
-  /**
    * Constructs an instance of this service.
    *
    * @access public
    * @constructor
    * @param {ActivityModel} model
+   * @param {LogService} logger
    * @param {QueryService<ActivityDocument, ActivityModel>} queryService
    * @param {EventEmitter2} eventEmitter
    */
   public constructor(
     @InjectModel(Activity.name)
     private readonly model: ActivityModel,
+    protected readonly logger: LogService,
     private readonly queryService: QueryService<
       ActivityDocument,
       ActivityModel
@@ -75,7 +67,10 @@ export class WebHooksService {
     protected readonly oauthService: OAuthService,
     protected readonly activitiesService: ActivitiesService,
     private readonly eventEmitter: EventEmitter2,
-  ) {}
+  ) {
+    // initializes a logger with correct name
+    this.logger.setContext(`processor/onActivityCreated`);
+  }
 
   /**
    * This method handles incoming **events** from third-party
@@ -181,9 +176,6 @@ export class WebHooksService {
    */
   @OnEvent("processor.activity.created", { async: true })
   public async onActivityCreated(event: OnActivityCreated): Promise<void> {
-    // initializes a logger with correct name
-    this.logger = new LogService(`processor/onActivityCreated`);
-
     // (1) reads an activity by slug from database, the
     // slug field requires its' values to be unique.
     const activity = await this.activitiesService.findOne(

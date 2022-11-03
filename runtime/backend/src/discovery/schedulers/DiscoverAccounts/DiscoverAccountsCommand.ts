@@ -22,6 +22,7 @@ import {
   Transaction,
   TransactionSchema,
 } from "../../../common/models/TransactionSchema";
+import { LogModule } from "../../../common/modules";
 
 // private implementation
 import { DiscoverAccounts } from "./DiscoverAccounts";
@@ -39,6 +40,7 @@ import { DiscoverAccounts } from "./DiscoverAccounts";
     NetworkModule,
     AccountsModule,
     TransactionsModule,
+    LogModule,
     MongooseModule.forFeature([
       { name: Account.name, schema: AccountSchema },
       { name: Transaction.name, schema: TransactionSchema },

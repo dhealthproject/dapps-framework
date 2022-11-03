@@ -24,6 +24,7 @@ import { WebHooksController } from "../routes/WebHooksController";
 import { ActivitiesModule } from "./ActivitiesModule";
 import { WebHooksService } from "../services/WebHooksService";
 import { Activity, ActivitySchema } from "../models/ActivitySchema";
+import { LogModule } from "../../common/modules";
 
 /**
  * @label PROCESSOR
@@ -54,6 +55,7 @@ import { Activity, ActivitySchema } from "../models/ActivitySchema";
     AuthModule, // requirement from WebHooksService
     ActivitiesModule, // requirement from WebHooksService
     QueryModule, // requirement from WebHooksService
+    LogModule, // requirement from WebHooksService
   ],
   controllers: [WebHooksController],
   providers: [WebHooksService],

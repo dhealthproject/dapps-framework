@@ -7,6 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
+import { EventEmitter2 } from "@nestjs/event-emitter";
+
 // internal dependencies
 import { StateService } from "../common/services/StateService";
 import { StatefulModule } from "../common/traits/StatefulModule";
@@ -113,6 +116,16 @@ export abstract class BaseCommand extends StatefulModule {
   protected networkConfig: NetworkConfig;
 
   /**
+   * The event emitter object. This object is used to configure the
+   * {@link LogService} instance of this class to emit an event
+   * when a warning or an error message is logged.
+   *
+   * @access protected
+   * @var {EventEmitter2}
+   */
+  protected eventEmitter: EventEmitter2;
+
+  /**
    * Constructs an instance of this command. This constructor
    * initializes a logger instance with the {@link scope} and
    * {@link name} of the command.
@@ -180,7 +193,10 @@ export abstract class BaseCommand extends StatefulModule {
     options?: BaseCommandOptions,
   ): Promise<void> {
     // prepares execution logger and arguments
-    this.logger = new LogService(`${this.scope}/${this.command}`);
+    this.logger = new LogService(
+      `${this.scope}/${this.command}`,
+      this.eventEmitter,
+    );
     this.argv = passedParams;
 
     // if not quiet, display info about start of execution

@@ -12,6 +12,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { ConfigService } from "@nestjs/config";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { StateService } from "../../../common/services/StateService";
@@ -31,6 +32,7 @@ import {
   Activity,
   ActivityDocument,
 } from "../../../processor/models/ActivitySchema";
+import { LogService } from "../../../common/services/LogService";
 
 /**
  * @class DailyScoreAggregation
@@ -45,6 +47,8 @@ export class DailyScoreAggregation extends LeaderboardAggregation {
   /**
    * Constructs and prepares an instance of this scheduler.
    *
+   * @param {LogService}          logger
+   * @param {EventEmitter2}       eventEmitter
    * @param {SchedulerRegistry}   schedulerRegistry
    * @param {StateService}        stateService
    * @param {queriesService}      queriesService
@@ -55,6 +59,8 @@ export class DailyScoreAggregation extends LeaderboardAggregation {
     @InjectModel(Statistics.name) protected readonly model: StatisticsModel,
     @InjectModel(Asset.name) protected assetModel: AssetDocument,
     @InjectModel(Activity.name) protected activityModel: ActivityDocument,
+    protected readonly logger: LogService,
+    protected readonly eventEmitter: EventEmitter2,
     protected readonly schedulerRegistry: SchedulerRegistry,
     protected readonly stateService: StateService,
     protected readonly queriesService: QueryService<AssetDocument, AssetModel>,
@@ -65,6 +71,8 @@ export class DailyScoreAggregation extends LeaderboardAggregation {
       model,
       assetModel,
       activityModel,
+      logger,
+      eventEmitter,
       schedulerRegistry,
       stateService,
       queriesService,
@@ -72,6 +80,7 @@ export class DailyScoreAggregation extends LeaderboardAggregation {
       configService,
     );
     this.periodFormat = "D";
+    this.setLoggerContext();
     this.addCronJob("0 0 */3 * * *"); // every 3 hours (8 times per day)
   }
 
