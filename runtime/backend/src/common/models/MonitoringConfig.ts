@@ -81,6 +81,11 @@ export interface MonitoringConfig {
   logMaxFileSize: number;
 
   /**
+   *
+   */
+  enableAlerts: boolean;
+
+  /**
    * The alerts configuration options.
    *
    * @example `{type: "warn", transport: "mail", recipient: "dev-alerts@dhealth.foundation"}`
@@ -88,6 +93,11 @@ export interface MonitoringConfig {
    * @var {AlertsConfig}
    */
   alerts: AlertsConfig;
+
+  /**
+   *
+   */
+  enableReports: boolean;
 
   /**
    * The reports configuration options.

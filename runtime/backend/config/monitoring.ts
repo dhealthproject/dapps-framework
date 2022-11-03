@@ -102,6 +102,11 @@ export default () => ({
   logMaxFileSize: 25 * 1024 * 1024, // 25 Mb
 
   /**
+   *
+   */
+  enableAlerts: true,
+
+  /**
    * The alerts configuration options.
    *
    * @example `{type: ["warn"], transport: "mail", recipient: "dev-alerts@dhealth.foundation"}`
@@ -113,6 +118,11 @@ export default () => ({
     transport: "mail", // currently only mail supported
     recipient: "dev-alerts@dhealth.foundation",
   },
+
+  /**
+   *
+   */
+  enableReports: true,
 
   /**
    * The reports configuration options.
