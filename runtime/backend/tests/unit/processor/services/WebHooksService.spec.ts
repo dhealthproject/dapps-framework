@@ -22,6 +22,7 @@ import { ActivitiesService } from "../../../../src/processor/services/Activities
 import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/processor/models/ActivitySchema";
 import { StravaWebHookEventRequest } from "../../../../src/common/drivers/strava/StravaWebHookEventRequest";
 import { OnActivityCreated } from "../../../../src/processor/events/OnActivityCreated";
+import { LogService } from "../../../../src/common/services/LogService";
 
 describe("common/WebHooksService", () => {
   let service: WebHooksService;
@@ -59,6 +60,15 @@ describe("common/WebHooksService", () => {
           provide: getModelToken("AccountIntegration"),
           useValue: MockModel,
         }, // requirement from OAuthService
+        {
+          provide: LogService,
+          useValue: {
+            setContext: jest.fn(),
+            log: jest.fn(),
+            debug: jest.fn(),
+            error: jest.fn(),
+          },
+        }, // requirement from WebHooksService
       ],
     }).compile();
 

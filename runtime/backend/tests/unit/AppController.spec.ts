@@ -12,6 +12,7 @@ import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 import { JwtService } from "@nestjs/jwt";
 import { getModelToken } from "@nestjs/mongoose";
+import { MailerService } from "@nestjs-modules/mailer";
 
 // internal dependencies
 import { MockModel } from "../mocks/global";
@@ -23,6 +24,8 @@ import { AuthService } from "../../src/common/services/AuthService";
 import { QueryService } from "../../src/common/services/QueryService";
 import { OAuthService } from "../../src/common/services/OAuthService";
 import { CipherService } from "../../src/common/services/CipherService";
+import { NotifierFactory } from "../../src/notifier/concerns/NotifierFactory";
+import { EmailNotifier } from "../../src/notifier/services/EmailNotifier";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -56,6 +59,8 @@ describe("AppController", () => {
         JwtService, // requirement from AuthService
         QueryService, // requirement from AccountsService
         ChallengesService, // requirement from AccountsService
+        NotifierFactory,
+        EmailNotifier,
         {
           provide: getModelToken("Account"),
           useValue: MockModel, // test/mocks/global.ts
@@ -67,6 +72,10 @@ describe("AppController", () => {
         {
           provide: getModelToken("AuthChallenge"),
           useValue: MockModel,
+        }, // requirement from ChallengesService
+        {
+          provide: MailerService,
+          useValue: MailerService,
         }, // requirement from ChallengesService
       ],
     }).compile();

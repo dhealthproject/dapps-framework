@@ -11,8 +11,8 @@
 import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
-import { Logger } from "@nestjs/common";
 import { of } from "rxjs";
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 // internal dependencies
 import { DiscoverBlocks } from "../../../../src/discovery/schedulers/DiscoverBlocks/DiscoverBlocks";
@@ -25,13 +25,14 @@ import { BlockDiscoveryStateData } from "../../../../src/discovery/models/BlockD
 import { DiscoveryCommand } from "../../../../src/discovery/schedulers/DiscoveryCommand";
 import { BlockDocument, BlockQuery } from "../../../../src/discovery/models/BlockSchema";
 import { StateDocument } from "../../../../src/common/models/StateSchema";
+import { LogService } from "../../../../src/common/services/LogService";
 
 describe("discovery/DiscoverBlocks", () => {
   let service: DiscoverBlocks;
   let stateService: StateService;
   let networkService: NetworkService;
   let blocksService: BlocksService;
-  let logger: Logger;
+  let logger: LogService;
 
   let mockDate: Date;
   beforeEach(async () => {
@@ -47,6 +48,7 @@ describe("discovery/DiscoverBlocks", () => {
         NetworkService,
         BlocksService,
         QueryService,
+        EventEmitter2,
         {
           provide: getModelToken("Block"),
           useValue: MockModel,
@@ -56,7 +58,7 @@ describe("discovery/DiscoverBlocks", () => {
           useValue: MockModel,
         },
         {
-          provide: Logger,
+          provide: LogService,
           useValue: {
             log: jest.fn(),
             debug: jest.fn(),
@@ -70,7 +72,7 @@ describe("discovery/DiscoverBlocks", () => {
     stateService = module.get<StateService>(StateService);
     networkService = module.get<NetworkService>(NetworkService);
     blocksService = module.get<BlocksService>(BlocksService);
-    logger = module.get<Logger>(Logger);
+    logger = module.get<LogService>(LogService);
   });
 
   it('should be defined', () => {

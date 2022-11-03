@@ -15,20 +15,11 @@ jest.mock("../../../../src/processor/models/OperationTypes", () => ({
   getOperation: getOperationCall,
 }));
 
-jest.mock("../../../../src/common/services/LogService", () => ({
-  LogService: jest.fn(() => ({
-    log: jest.fn(),
-    debug: jest.fn(),
-    error: jest.fn(),
-  }))
-}));
-
 // external dependencies
 import { Test, TestingModule } from "@nestjs/testing";
 import { getModelToken } from "@nestjs/mongoose";
-
 import { ConfigService } from "@nestjs/config";
-import { Logger } from "@nestjs/common";
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
@@ -40,6 +31,7 @@ import { TransactionDocument, TransactionModel } from "../../../../src/common/mo
 import { OperationsService } from "../../../../src/processor/services/OperationsService";
 import { StateDocument } from "../../../../src/common/models/StateSchema";
 import { OperationProcessorStateData } from "../../../../src/processor/models/OperationProcessorStateData";
+import { LogService } from "../../../../src/common/services/LogService";
 
 
 describe("processor/ProcessOperations", () => {
@@ -49,7 +41,7 @@ describe("processor/ProcessOperations", () => {
   let networkService: NetworkService;
   let queriesService: QueryService<TransactionDocument, TransactionModel>;
   let operationsService: OperationsService;
-  let logger: Logger;
+  let logger: LogService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -60,7 +52,7 @@ describe("processor/ProcessOperations", () => {
         NetworkService,
         QueryService,
         OperationsService,
-        Logger,
+        EventEmitter2,
         {
           provide: getModelToken("Operation"),
           useValue: MockModel,
@@ -73,6 +65,15 @@ describe("processor/ProcessOperations", () => {
           provide: getModelToken("State"),
           useValue: MockModel,
         },
+        {
+          provide: LogService,
+          useValue: {
+            setContext: jest.fn(),
+            log: jest.fn(),
+            debug: jest.fn(),
+            error: jest.fn(),
+          },
+        },
       ]
     }).compile();
 
@@ -82,7 +83,7 @@ describe("processor/ProcessOperations", () => {
     networkService = module.get<NetworkService>(NetworkService);
     queriesService = module.get<QueryService<TransactionDocument, TransactionModel>>(QueryService);
     operationsService = module.get<OperationsService>(OperationsService);
-    logger = module.get<Logger>(Logger);
+    logger = module.get<LogService>(LogService);
   });
 
   it("should be defined", () => {

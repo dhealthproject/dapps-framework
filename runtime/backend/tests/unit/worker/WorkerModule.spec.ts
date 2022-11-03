@@ -12,6 +12,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { getModelToken } from "@nestjs/mongoose";
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 // internal dependencies
 import { MockModel } from "../../mocks/global";
@@ -27,6 +28,7 @@ describe("worker/WorkerModule", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkerModule,
+        EventEmitter2,
         {
           provide: getModelToken("AccountIntegration"),
           useValue: MockModel,
@@ -70,6 +72,7 @@ describe("worker/WorkerModule", () => {
       const expectedResult = {
         module: WorkerModule,
         imports: modules,
+        providers: [EventEmitter2],
       };
 
       // act

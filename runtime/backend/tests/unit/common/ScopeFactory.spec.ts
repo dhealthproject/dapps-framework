@@ -91,6 +91,12 @@ jest.mock("../../../src/statistics/modules/LeaderboardsModule", () => {
   return { LeaderboardsModule: LeaderboardsModuleMock };
 });
 
+// notifier scope
+const NotifierModuleMock: any = jest.fn();
+jest.mock("../../../src/notifier/NotifierModule", () => {
+  return { NotifierModule: NotifierModuleMock };
+});
+
 // schedulers
 const DiscoverAccountsCommandMock: any = jest.fn();
 jest.mock(
@@ -137,6 +143,14 @@ jest.mock(
   "../../../src/statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand",
   () => {
     return { LeaderboardsAggregationCommand: LeaderboardsAggregationCommandMock };
+  },
+);
+
+const ReportNotifierCommandMock: any = jest.fn();
+jest.mock(
+  "../../../src/notifier/schedulers/ReportNotifier/ReportNotifierCommand",
+  () => {
+    return { ReportNotifierCommand: ReportNotifierCommandMock };
   },
 );
 
@@ -240,7 +254,7 @@ describe("common/ScopeFactory", () => {
       const configDto: DappConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
-        scopes: ["discovery", "payout", "processor", "statistics"],
+        scopes: ["discovery", "payout", "processor", "statistics", "notifier"],
         database: {
           host: "fake",
           port: "1",
@@ -271,6 +285,7 @@ describe("common/ScopeFactory", () => {
         PayoutModuleMock,
         ProcessorModuleMock,
         StatisticsModuleMock,
+        NotifierModuleMock,
       ]);
     });
 
