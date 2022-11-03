@@ -101,4 +101,56 @@ export interface MonitoringConfig {
    * @var {number}
    */
   logMaxFileSize: number;
+
+  /**
+   * The alerts configuration options.
+   *
+   * @example `{type: "warn", transport: "mail", recipient: "dev-alerts@dhealth.foundation"}`
+   * @access public
+   * @var {AlertsConfig}
+   */
+  alerts: AlertsConfig;
+
+  /**
+   * The reports configuration options.
+   *
+   * @example `{type: "warn", transport: "mail", period: "W", recipient: "dev-reports@dhealth.foundation"}`
+   * @access public
+   * @var {ReportsConfig}
+   */
+  reports: ReportsConfig;
+}
+
+/**
+ * @label COMMON
+ * @interface AlertsConfig
+ * @description The dApp monitoring alerts configuration object. This configuration
+ * object is used to determine dApp alerts monitoring information.
+ * <br /><br />
+ * This interface is mainly used **internally** to restrict the configuration
+ * values provided to some modules or services and methods.
+ *
+ * @link AlertsConfig:COMMON
+ * @since v0.3.2
+ */
+export interface AlertsConfig {
+  type: string[];
+  transport: string;
+  recipient: string | string[];
+}
+
+/**
+ * @label COMMON
+ * @interface ReportsConfig
+ * @description The dApp monitoring reports configuration object. This configuration
+ * object is used to determine dApp reports monitoring information.
+ * <br /><br />
+ * This interface is mainly used **internally** to restrict the configuration
+ * values provided to some modules or services and methods.
+ *
+ * @link ReportsConfig:COMMON
+ * @since v0.3.2
+ */
+export interface ReportsConfig extends AlertsConfig {
+  period: string;
 }

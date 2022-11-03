@@ -31,6 +31,10 @@ import { StorageOptions } from "../src/common/models/StorageOptions";
  * can be rotated if storage options contains `"filesystem"`.
  * - A log directory path. This specifies the path to the directory which
  * logs will be saved to if storage options contains `"filesystem"`.
+ * - An alerts configuration options. This specifies the necessary details
+ * of which the app will use to send alerts to specific recipient(s).
+ * - A reports configuration options. This specifies the necessary details
+ * of which the app will use to send reports to specific recipient(s).
  * <br /><br />
  * CAUTION: By modifying the content of this configuration field,
  * *changes* may occur for the application log service and may
@@ -88,7 +92,7 @@ export default () => ({
    * @example `"warn"`
    * @var {string}
    */
-  logPersistLevel: "error",
+  logPersistLevel: "warn",
 
   /**
    * A log persistence collection specification. This specifies the
@@ -119,4 +123,31 @@ export default () => ({
    * @var {number}
    */
   logMaxFileSize: 256000,
+
+  /**
+   * The alerts configuration options.
+   *
+   * @example `{type: ["warn"], transport: "mail", recipient: "dev-alerts@dhealth.foundation"}`
+   * @see AlertsConfig
+   * @var {AlertsConfig}
+   */
+  alerts: {
+    type: ["warn", "error"], // send mails for ERRORs and WARNs
+    transport: "mail", // currently only mail supported
+    recipient: "dev-alerts@dhealth.foundation",
+  },
+
+  /**
+   * The reports configuration options.
+   *
+   * @example `{type: ["warn"], transport: "mail", period: "W", recipient: "dev-reports@dhealth.foundation"}`
+   * @see ReportsConfig
+   * @var {ReportsConfig}
+   */
+  reports: {
+    type: ["warn", "error"],
+    transport: "mail", // currently only mail supported
+    period: "W", // daily, weekly, monthly, yearly
+    recipient: "dev-reports@dhealth.foundation",
+  },
 });
