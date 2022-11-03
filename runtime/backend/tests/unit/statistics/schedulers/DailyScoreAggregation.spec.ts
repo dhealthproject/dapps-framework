@@ -41,7 +41,7 @@ import { getModelToken } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule/dist/scheduler.registry";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
-import { Logger } from "@nestjs/common";
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
@@ -50,13 +50,14 @@ import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
 import { StatisticsDocument, StatisticsModel } from "../../../../src/statistics/models/StatisticsSchema";
+import { LogService } from "../../../../src/common/services/LogService";
 
 describe("statistics/DailyScoreAggregation", () => {
   let service: DailyScoreAggregation;
   let queriesService: QueryService<StatisticsDocument, StatisticsModel>;
   let statesService: StateService;
   let configService: ConfigService;
-  let logger: Logger;
+  let logger: LogService;
 
   let mockDate: Date;
   let module: TestingModule;
@@ -73,6 +74,7 @@ describe("statistics/DailyScoreAggregation", () => {
         QueryService,
         NetworkService,
         ConfigService,
+        EventEmitter2,
         {
           provide: getModelToken("Statistics"),
           useValue: MockModel,
@@ -90,8 +92,9 @@ describe("statistics/DailyScoreAggregation", () => {
           useValue: MockModel,
         },
         {
-          provide: Logger,
+          provide: LogService,
           useValue: {
+            setContext: jest.fn(),
             log: jest.fn(),
             debug: jest.fn(),
             error: jest.fn(),
@@ -104,7 +107,7 @@ describe("statistics/DailyScoreAggregation", () => {
     queriesService = module.get<QueryService<StatisticsDocument, StatisticsModel>>(QueryService);
     statesService = module.get<StateService>(StateService);
     configService = module.get<ConfigService>(ConfigService);
-    logger = module.get<Logger>(Logger);
+    logger = module.get<LogService>(LogService);
 
     (service as any).configService = {
       get: configGetCallMock,

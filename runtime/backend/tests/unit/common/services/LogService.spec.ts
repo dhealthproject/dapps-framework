@@ -32,6 +32,7 @@ describe("common/LogService", () => {
 
     service = module.get<LogService>(LogService);
     (service as any).context = "test-context";
+    (service as any).logger = TestWinstonLogger;
   });
 
   it("should be defined", () => {

@@ -30,6 +30,12 @@ jest.mock("@nestjs/schedule", () => {
   return { ScheduleModule: ScheduleModuleMock };
 });
 
+const eventEmitter2ForRootCall: any = jest.fn(() => EventEmitterModuleMock);
+const EventEmitterModuleMock: any = { forRoot: eventEmitter2ForRootCall };
+jest.mock("@nestjs/event-emitter", () => {
+  return { EventEmitterModule: EventEmitterModuleMock };
+});
+
 // internal dependency mocks
 // common scope
 const CommonQueryModuleMock: any = jest.fn();
@@ -136,6 +142,12 @@ jest.mock("../../../src/statistics/modules/StatisticsModule", () => {
   return { StatisticsModule: StatisticsModuleImplMock };
 });
 
+// notifier scope
+const NotifierModuleMock: any = jest.fn();
+jest.mock("../../../src/notifier/NotifierModule", () => {
+  return { NotifierModule: NotifierModuleMock };
+});
+
 // schedulers
 const DiscoverAccountsCommandMock: any = jest.fn();
 jest.mock(
@@ -198,6 +210,14 @@ jest.mock(
   "../../../src/payout/schedulers/ActivityPayouts/ActivityPayoutsCommand",
   () => {
     return { ActivityPayoutsCommand: ActivityPayoutsCommandMock };
+  }
+);
+
+const ReportNotifierCommandMock: any = jest.fn();
+jest.mock(
+  "../../../src/notifier/schedulers/ReportNotifier/ReportNotifierCommand",
+  () => {
+    return { ReportNotifierCommand: ReportNotifierCommandMock };
   },
 );
 
@@ -301,7 +321,7 @@ describe("common/ScopeFactory", () => {
       const configDto: DappConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
-        scopes: ["discovery", "payout", "processor", "statistics"],
+        scopes: ["discovery", "payout", "processor", "statistics", "notifier"],
         database: {
           host: "fake",
           port: "1",
@@ -332,6 +352,7 @@ describe("common/ScopeFactory", () => {
         PayoutModuleMock,
         ProcessorModuleMock,
         StatisticsModuleMock,
+        NotifierModuleMock,
       ]);
     });
 
@@ -442,11 +463,12 @@ describe("common/ScopeFactory", () => {
       const result3 = MockFactory.create(configDto3).getSchedulers();
 
       // assert
-      expect(result1).toEqual([ConfigModuleMock, MongooseModuleMock]);
-      expect(result2).toEqual([ConfigModuleMock, MongooseModuleMock]);
+      expect(result1).toEqual([ConfigModuleMock, MongooseModuleMock, EventEmitterModuleMock]);
+      expect(result2).toEqual([ConfigModuleMock, MongooseModuleMock, EventEmitterModuleMock]);
       expect(result3).toEqual([
         ConfigModuleMock,
         MongooseModuleMock,
+        EventEmitterModuleMock,
         AccountsDiscoveryModuleMock,
         AssetsModuleMock,
         TransactionsModuleMock,
@@ -491,6 +513,7 @@ describe("common/ScopeFactory", () => {
       expect(result).toStrictEqual([
         ConfigModuleMock,
         MongooseModuleMock,
+        EventEmitterModuleMock,
         AccountsDiscoveryModuleMock,
         AssetsModuleMock,
         TransactionsModuleMock,
@@ -532,7 +555,7 @@ describe("common/ScopeFactory", () => {
       const result = MockFactory.create(configDto).getSchedulers();
 
       // assert
-      expect(result).toEqual([ConfigModuleMock, MongooseModuleMock]);
+      expect(result).toEqual([ConfigModuleMock, MongooseModuleMock, EventEmitterModuleMock]);
     });
 
     it("should return correct list of enabled schedulers for processor", () => {
@@ -568,6 +591,7 @@ describe("common/ScopeFactory", () => {
       expect(result).toEqual([
         ConfigModuleMock,
         MongooseModuleMock,
+        EventEmitterModuleMock,
         OperationsModuleMock,
         ProcessOperationsCommandMock,
       ]);

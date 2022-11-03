@@ -25,11 +25,13 @@ import { StateService } from "../../../src/common/services/StateService";
 import { StateDocument, StateModel, StateQuery } from "../../../src/common/models/StateSchema";
 import { StateData } from "../../../src/common/models/StateData";
 import { BaseCommand, BaseCommandOptions } from "../../../src/worker/BaseCommand";
+import { LogService } from "../../../src/common/services/LogService";
 
 // Mocks a base command **child** class to implement
 // abstract methods as defined in `BaseCommand`.
 class MockBaseCommand extends BaseCommand {
   protected scope: Scope = "discovery";
+  protected logger: LogService = new LogService();
   protected get command(): string { return "fake-command"; }
   protected get signature(): string { return "fake-command --source TARGET_ACCOUNT"; }
   protected async runWithOptions(
