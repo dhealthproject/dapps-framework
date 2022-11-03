@@ -61,4 +61,105 @@ export class DappHelper {
     );
     return Math.round(timestampNumber / 1000) + epochAdjustment;
   }
+
+  /**
+   * Method to get date range according to the period format string.
+   *
+   * @access public
+   * @param {string} periodFormat The period format string e.g. `"D"`, `"W"`, `"M"`.
+   * @returns { startDate: Date, endDate: Date }
+   */
+  public getTimeRange(periodFormat: string): {
+    startDate: Date;
+    endDate: Date;
+  } {
+    const dateNow = new Date();
+    switch (periodFormat) {
+      case "D": {
+        // today at 00:00:00:000
+        const startDate = new Date(
+          Date.UTC(
+            dateNow.getUTCFullYear(),
+            dateNow.getUTCMonth(),
+            dateNow.getUTCDate(),
+            0,
+            0,
+            0,
+            0,
+          ),
+        );
+        // tomorrow at 00:00:00:000
+        const endDate = new Date(
+          Date.UTC(
+            dateNow.getUTCFullYear(),
+            dateNow.getUTCMonth(),
+            dateNow.getUTCDate() + 1,
+            0,
+            0,
+            0,
+            0,
+          ),
+        );
+        return { startDate, endDate };
+      }
+      case "W": {
+        const dayOfWeek = dateNow.getUTCDay();
+        const startDate = new Date(
+          Date.UTC(
+            dateNow.getUTCFullYear(),
+            dateNow.getUTCMonth(),
+            dateNow.getUTCDate() - dayOfWeek + 1,
+          ),
+        );
+        const endDate = new Date(
+          Date.UTC(
+            dateNow.getUTCFullYear(),
+            dateNow.getUTCMonth(),
+            dateNow.getUTCDate() + (8 - dayOfWeek),
+          ),
+        );
+        return { startDate, endDate };
+      }
+      case "M": {
+        const startDate = new Date(
+          Date.UTC(dateNow.getUTCFullYear(), dateNow.getUTCMonth(), 1),
+        );
+        const endDate = new Date(
+          Date.UTC(dateNow.getUTCFullYear(), dateNow.getUTCMonth() + 1, 1),
+        );
+        return { startDate, endDate };
+      }
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Method to return a html formatted string that represents the input object.
+   * This string will be used mostly by a {@link Notifier} strategy implementation
+   * to present the report content.
+   *
+   * @param {Record<string, string | number | object>[]} details The list of queried result.
+   * @returns {string} The html-formatted string that represents the input queried result.
+   */
+  public createDetailsTableHTML(
+    details: Record<string, string | number | object>[],
+  ): string {
+    const style = 'style="border: 1px solid #dddddd"';
+    const result = [];
+    for (const detail of details) {
+      result.push("<table>");
+      for (const field in detail) {
+        result.push(
+          `<tr ${style}><td ${style}>${field}</td><td ${style}>${JSON.stringify(
+            detail[field],
+            null,
+            1,
+          )}</td></tr>`,
+        );
+      }
+      result.push("</table><br /><br />");
+    }
+    return result.join("");
+  }
 }

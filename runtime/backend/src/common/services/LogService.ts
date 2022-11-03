@@ -18,6 +18,7 @@ import * as winston from "winston";
 import * as WinstonTransport from "winston-transport";
 import "winston-mongodb";
 import "winston-daily-rotate-file";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { StorageOptions } from "../models/StorageOptions";
@@ -27,6 +28,7 @@ import { DappConfig } from "../models/DappConfig";
 import dappConfigLoader from "../../../config/dapp";
 import { MonitoringConfig } from "../models/MonitoringConfig";
 import monitoringConfigLoader from "../../../config/monitoring";
+import { AlertEvent } from "../models/AlertEvent";
 
 /**
  * @class LogService
@@ -56,9 +58,35 @@ import monitoringConfigLoader from "../../../config/monitoring";
  */
 @Injectable()
 export class LogService implements LoggerService {
+  /**
+   * The main logger of this class.
+   * This will utilizes the {@link winston} logger
+   * instance by default.
+   *
+   * @access private
+   * @var {LoggerService}
+   */
   private logger: LoggerService;
-  private dappConfig: DappConfig;
-  private monitoringConfig: MonitoringConfig;
+
+  /**
+   * An instance of {@link DappConfig} that will be used
+   * to get necessary dapp information for this class.
+   *
+   * @access private
+   * @readonly
+   * @var {DappConfig}
+   */
+  private readonly dappConfig: DappConfig;
+
+  /**
+   * An instance of {@link DappConfig} that will be used
+   * to get necessary monitoring information for this class.
+   *
+   * @access private
+   * @readonly
+   * @var {MonitoringConfig}
+   */
+  private readonly monitoringConfig: MonitoringConfig;
 
   /**
    * The default constructor of this class.
@@ -73,16 +101,37 @@ export class LogService implements LoggerService {
   constructor(context: string);
 
   /**
+   * The constructor of this class with context and event emitter.
+   *
+   * @param {string}        context       The identified context of this instance.
+   * @param {EventEmitter2} eventEmitter  The identified eventEmitter of this instance.
+   */
+  constructor(context: string, eventEmitter: EventEmitter2);
+
+  /**
    * The constructor implementation of this class.
    *
-   * @param {string} context The optional identified context of this instance.
+   * @param {string}        context       The optional identified context of this instance.
+   * @param {EventEmitter2} eventEmitter  The optional identified eventEmitter of this instance.
    */
   constructor(
     @Optional()
     protected context?: string,
+    @Optional()
+    protected eventEmitter?: EventEmitter2,
   ) {
     this.dappConfig = dappConfigLoader();
     this.monitoringConfig = monitoringConfigLoader();
+    if (context) this.setLogger();
+  }
+
+  /**
+   * The setter of this instance's logger.
+   *
+   * @access private
+   * @returns {void}
+   */
+  private setLogger(): void {
     this.logger = WinstonModule.createLogger({
       levels: this.monitoringConfig.logLevels,
       format: winston.format.combine(
@@ -100,11 +149,13 @@ export class LogService implements LoggerService {
   /**
    * The setter of this instance's context.
    *
+   * @access public
    * @param {string} context The identified name of this instance.
    * @returns {void}
    */
   public setContext(context: string): void {
     this.context = context;
+    this.setLogger();
   }
 
   /**
@@ -183,6 +234,16 @@ export class LogService implements LoggerService {
    */
   error(message: string, trace?: string, context?: string): void {
     this.logger.error(message, trace, context);
+    if (this.eventEmitter) {
+      this.eventEmitter.emit("event.log.error", {
+        timestamp: new Date(),
+        level: "error",
+        loggerContext: this.context,
+        message,
+        trace,
+        context,
+      } as AlertEvent);
+    }
   }
 
   /**
@@ -195,6 +256,15 @@ export class LogService implements LoggerService {
    */
   warn(message: string, context?: string): void {
     this.logger.warn(message, context);
+    if (this.eventEmitter) {
+      this.eventEmitter.emit("event.log.warn", {
+        timestamp: new Date(),
+        level: "warn",
+        loggerContext: this.context,
+        message,
+        context,
+      } as AlertEvent);
+    }
   }
 
   /**
