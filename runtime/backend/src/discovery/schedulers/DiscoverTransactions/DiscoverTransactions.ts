@@ -25,6 +25,7 @@ import {
   UInt64,
 } from "@dhealth/sdk";
 import { ObjectLiteral } from "@dhealth/contracts";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { StateDocument, StateQuery } from "../../../common/models/StateSchema";
@@ -41,6 +42,7 @@ import {
   TransactionQuery,
 } from "../../../common/models/TransactionSchema";
 import { TransactionDiscoveryStateData } from "../../models/TransactionDiscoveryStateData";
+import { LogService } from "../../../common/services/LogService";
 
 /**
  * @interface DiscoverTransactionsCommandOptions
@@ -167,6 +169,8 @@ export class DiscoverTransactions extends DiscoveryCommand {
    * The constructor of this class.
    * Params will be automatically injected upon called.
    *
+   * @param {LogService}      logger
+   * @param {EventEmitter2}   eventEmitter
    * @param {ConfigService}   configService
    * @param {StateService}   stateService
    * @param {NetworkService}  networkService
@@ -174,6 +178,8 @@ export class DiscoverTransactions extends DiscoveryCommand {
    */
   constructor(
     @InjectModel(Transaction.name) protected readonly model: TransactionModel,
+    protected readonly logger: LogService,
+    protected readonly eventEmitter: EventEmitter2,
     protected readonly configService: ConfigService,
     protected readonly stateService: StateService,
     protected readonly networkService: NetworkService,

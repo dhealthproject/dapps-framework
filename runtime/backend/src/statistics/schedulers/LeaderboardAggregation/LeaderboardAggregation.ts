@@ -13,6 +13,7 @@ import { SchedulerRegistry } from "@nestjs/schedule";
 import { PipelineStage } from "mongoose";
 import { CronJob } from "cron";
 import { ConfigService } from "@nestjs/config";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { StateService } from "../../../common/services/StateService";
@@ -76,6 +77,8 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
   /**
    * Constructs and prepares an instance of this scheduler.
    *
+   * @param { LogService } logger
+   * @param { EventEmitter2 } eventEmitter
    * @param { SchedulerRegistry } schedulerRegistry
    * @param { StateService } stateService
    * @param { QueryService } queriesService
@@ -86,6 +89,8 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
     protected readonly model: StatisticsModel,
     protected readonly assetModel: AssetDocument,
     protected readonly activityModel: ActivityDocument,
+    protected readonly logger: LogService,
+    protected readonly eventEmitter: EventEmitter2,
     protected readonly schedulerRegistry: SchedulerRegistry,
     protected readonly stateService: StateService,
     protected readonly queriesService: QueryService<AssetDocument, AssetModel>,
@@ -152,6 +157,21 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
   }
 
   /**
+   * Setter method to set the context of this instance's logger.
+   * Subclasses will be **required** to call this method in their
+   * constructor after the `periodFormat` value is set.
+   *
+   * @access protected
+   * @return {void}
+   */
+  protected setLoggerContext(): void {
+    // setup debug logger
+    this.logger.setContext(
+      `${this.scope}/${this.command}`, // includes /(D|M|W)
+    );
+  }
+
+  /**
    * Method to create and run a cronjob automatically. Subclasses will
    * be **required** to call this method in their constructor with the
    * desired cron expression.
@@ -199,11 +219,6 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    * @returns {Promise<void>}
    */
   public async runAsScheduler(): Promise<void> {
-    // setup debug logger
-    this.logger = new LogService(
-      `${this.scope}/${this.command}`, // includes /(D|M|W)
-    );
-
     // display starting moment information *also* in debug mode
     this.debugLog(
       `Starting leaderboard aggregation type: ${this.periodFormat}`,

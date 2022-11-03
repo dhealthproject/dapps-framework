@@ -22,6 +22,7 @@ import {
 import { Asset, AssetSchema } from "../../models/AssetSchema";
 import { AssetsModule } from "../../modules/AssetsModule";
 import { TransactionsModule } from "../../modules/TransactionsModule";
+import { LogModule } from "../../../common/modules";
 
 // private implementation
 import { DiscoverAssets } from "./DiscoverAssets";
@@ -39,6 +40,7 @@ import { DiscoverAssets } from "./DiscoverAssets";
     NetworkModule,
     AssetsModule,
     TransactionsModule,
+    LogModule,
     MongooseModule.forFeature([
       { name: Asset.name, schema: AssetSchema },
       { name: Transaction.name, schema: TransactionSchema },
