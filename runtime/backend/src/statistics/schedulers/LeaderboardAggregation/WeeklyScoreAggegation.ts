@@ -12,6 +12,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { ConfigService } from "@nestjs/config";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 import moment from "moment";
 
 // internal dependencies
@@ -32,6 +33,7 @@ import {
   Activity,
   ActivityDocument,
 } from "../../../processor/models/ActivitySchema";
+import { LogService } from "../../../common/services/LogService";
 
 /**
  * @class MonthlyScoreAggregation
@@ -46,6 +48,8 @@ export class WeeklyScoreAggregation extends LeaderboardAggregation {
   /**
    * Constructs and prepares an instance of this scheduler.
    *
+   * @param {LogService}          logger
+   * @param {EventEmitter2}       eventEmitter
    * @param {SchedulerRegistry}   schedulerRegistry
    * @param {StateService}        stateService
    * @param {queriesService}      queriesService
@@ -56,6 +60,8 @@ export class WeeklyScoreAggregation extends LeaderboardAggregation {
     @InjectModel(Statistics.name) protected readonly model: StatisticsModel,
     @InjectModel(Asset.name) protected assetModel: AssetDocument,
     @InjectModel(Activity.name) protected activityModel: ActivityDocument,
+    protected readonly logger: LogService,
+    protected readonly eventEmitter: EventEmitter2,
     protected readonly schedulerRegistry: SchedulerRegistry,
     protected readonly stateService: StateService,
     protected readonly queriesService: QueryService<AssetDocument, AssetModel>,
@@ -66,6 +72,8 @@ export class WeeklyScoreAggregation extends LeaderboardAggregation {
       model,
       assetModel,
       activityModel,
+      logger,
+      eventEmitter,
       schedulerRegistry,
       stateService,
       queriesService,
@@ -73,6 +81,7 @@ export class WeeklyScoreAggregation extends LeaderboardAggregation {
       configService,
     );
     this.periodFormat = "W";
+    this.setLoggerContext();
     this.addCronJob("0 0 0 */1 * *"); // every day (7 times per week)
   }
 

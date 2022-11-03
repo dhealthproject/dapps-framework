@@ -21,6 +21,7 @@ import {
   Transaction,
   TransactionSchema,
 } from "../../../common/models/TransactionSchema";
+import { LogModule } from "../../../common/modules";
 
 // processor scope
 import { OperationsModule } from "../../modules/OperationsModule";
@@ -40,6 +41,7 @@ import { ProcessOperations } from "./ProcessOperations";
     NetworkModule,
     OperationsModule,
     QueryModule,
+    LogModule,
     MongooseModule.forFeature([
       { name: Operation.name, schema: OperationSchema },
       { name: Transaction.name, schema: TransactionSchema },

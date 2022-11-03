@@ -12,6 +12,7 @@ import { BlockInfo, BlockOrderBy, Order, Page } from "@dhealth/sdk";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { StateService } from "../../../common/services/StateService";
@@ -27,6 +28,7 @@ import { ConfigService } from "@nestjs/config";
 import { NetworkService } from "../../../common/services/NetworkService";
 import { StateDocument, StateQuery } from "../../../common/models/StateSchema";
 import { BlocksService } from "../../../discovery/services/BlocksService";
+import { LogService } from "../../../common/services/LogService";
 
 /**
  * @class DiscoverBlocks
@@ -88,6 +90,8 @@ export class DiscoverBlocks extends DiscoveryCommand {
    * The constructor of this class.
    * Params will be automatically injected upon called.
    *
+   * @param {LogService}   logger
+   * @param {EventEmitter2}   eventEmitter
    * @param {ConfigService}   configService
    * @param {StateService}   stateService
    * @param {NetworkService}  networkService
@@ -95,6 +99,8 @@ export class DiscoverBlocks extends DiscoveryCommand {
    */
   constructor(
     @InjectModel(Block.name) protected readonly model: BlockModel,
+    protected readonly logger: LogService,
+    protected readonly eventEmitter: EventEmitter2,
     protected readonly configService: ConfigService,
     protected readonly stateService: StateService,
     protected readonly networkService: NetworkService,

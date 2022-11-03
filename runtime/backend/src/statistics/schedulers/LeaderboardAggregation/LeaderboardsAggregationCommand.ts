@@ -17,6 +17,7 @@ import { ScheduleModule } from "@nestjs/schedule";
 import { StateModule } from "../../../common/modules/StateModule";
 import { QueryModule } from "../../../common/modules/QueryModule";
 import { NetworkModule } from "../../../common/modules/NetworkModule";
+import { LogModule } from "../../../common/modules";
 
 // statistics scope
 import { Statistics, StatisticsSchema } from "../../models/StatisticsSchema";
@@ -50,6 +51,7 @@ import {
     ]),
     QueryModule,
     NetworkModule,
+    LogModule,
   ],
   providers: [
     DailyScoreAggregation,

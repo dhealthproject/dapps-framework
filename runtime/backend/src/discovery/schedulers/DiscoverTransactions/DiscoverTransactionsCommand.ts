@@ -11,6 +11,7 @@
 import { Module } from "@nestjs/common";
 import { ScheduleModule } from "@nestjs/schedule";
 import { MongooseModule } from "@nestjs/mongoose";
+import { LogModule } from "../../../common/modules";
 
 // internal dependencies
 import { NetworkModule } from "../../../common/modules/NetworkModule";
@@ -36,6 +37,7 @@ import { DiscoverTransactions } from "./DiscoverTransactions";
     StateModule,
     NetworkModule,
     TransactionsModule,
+    LogModule,
     MongooseModule.forFeature([
       { name: Transaction.name, schema: TransactionSchema },
     ]),

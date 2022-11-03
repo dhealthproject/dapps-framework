@@ -12,7 +12,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
-import { PublicAccount, NetworkType, Address } from "@dhealth/sdk";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { QueryParameters } from "../../../common/concerns/Queryable";
@@ -34,6 +34,7 @@ import {
 import { AssetDTO } from "../../../discovery/models/AssetDTO";
 import { AssetsService } from "../../../discovery/services/AssetsService";
 import { AssetDiscoveryStateData } from "../../models/AssetDiscoveryStateData";
+import { LogService } from "../../../common/services/LogService";
 
 /**
  * @class DiscoverAssets
@@ -96,6 +97,8 @@ export class DiscoverAssets extends DiscoveryCommand {
    * Params will be automatically injected upon called.
    *
    * @param {AssetModel}   model
+   * @param {LogService}      logger
+   * @param {EventEmitter2}   eventEmitter
    * @param {ConfigService}   configService
    * @param {StateService}   statesService
    * @param {NetworkService}  networkService
@@ -104,6 +107,8 @@ export class DiscoverAssets extends DiscoveryCommand {
    */
   constructor(
     @InjectModel(Asset.name) protected readonly model: AssetModel,
+    protected readonly logger: LogService,
+    protected readonly eventEmitter: EventEmitter2,
     protected readonly configService: ConfigService,
     protected readonly statesService: StateService,
     protected readonly networkService: NetworkService,
