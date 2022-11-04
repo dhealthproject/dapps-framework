@@ -34,10 +34,10 @@ import { BaseEvent } from "./BaseEvent";
  * @since v0.3.2
  */
 export class AlertEvent extends BaseEvent {
-  timestamp: Date;
-  level: LogLevel;
-  loggerContext: string;
-  message: string;
+  timestamp?: Date;
+  level?: LogLevel;
+  loggerContext?: string;
+  message?: string;
   trace?: string;
   context?: string;
 
@@ -65,12 +65,12 @@ export class AlertEvent extends BaseEvent {
     context?: string,
   ): AlertEvent {
     const result = new AlertEvent();
-    result.timestamp = timestamp;
-    result.level = level;
-    result.loggerContext = loggerContext;
-    result.message = message;
-    result.trace = trace;
-    result.context = context;
+    if (timestamp) result.timestamp = timestamp;
+    if (level) result.level = level;
+    if (loggerContext) result.loggerContext = loggerContext;
+    if (message) result.message = message;
+    if (trace) result.trace = trace;
+    if (context) result.context = context;
     return result;
   }
 }
