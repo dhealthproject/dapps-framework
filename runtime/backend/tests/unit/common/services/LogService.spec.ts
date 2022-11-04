@@ -66,15 +66,28 @@ jest.mock("../../../../config/monitoring", () => {
   });
 });
 
+// external dependencies
 import { LogLevel } from "@nestjs/common";
-// internal dependency
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { Test, TestingModule } from "@nestjs/testing";
+
+// internal dependencies
 import { LogService } from "../../../../src/common/services/LogService";
 
-describe("common/StateService", () => {
+describe("common/LogService", () => {
   let service: LogService;
+  let eventEmitter: EventEmitter2;
 
-  beforeEach(() => {
-    service = new LogService("test-context");
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        LogService,
+        EventEmitter2
+      ],
+    }).compile();
+
+    eventEmitter = module.get<EventEmitter2>(EventEmitter2);
+    service = new LogService("test-context", eventEmitter);
   });
 
   it("should be defined", () => {
@@ -123,8 +136,13 @@ describe("common/StateService", () => {
   });
 
   describe("error()", () => {
-    it("should call winston logger's error() method", () => {
-      // act
+    it("should call winston logger's error() method and emit an event", () => {
+      // prepare
+      const eventEmitterEmitCall = jest
+        .spyOn(eventEmitter, "emit")
+        .mockReturnValue(true);
+
+        // act
       service.error(
         "test-error-message",
         "test-error-trace",
@@ -138,11 +156,17 @@ describe("common/StateService", () => {
         "test-error-trace",
         "test-error-context",
       );
+      expect(eventEmitterEmitCall).toHaveBeenCalledTimes(1);
     });
   });
 
   describe("warn()", () => {
-    it("should call winston logger's warn() method", () => {
+    it("should call winston logger's warn() method and emit an event", () => {
+      // prepare
+      const eventEmitterEmitCall = jest
+        .spyOn(eventEmitter, "emit")
+        .mockReturnValue(true);
+
       // act
       service.warn("test-warn-message", "test-warn-context");
 
@@ -152,6 +176,7 @@ describe("common/StateService", () => {
         "test-warn-message",
         "test-warn-context"
       );
+      expect(eventEmitterEmitCall).toHaveBeenCalledTimes(1);
     });
   });
 
