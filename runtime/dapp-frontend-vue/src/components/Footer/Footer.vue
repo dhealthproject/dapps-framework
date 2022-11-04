@@ -41,7 +41,7 @@
           v-for="(link, index) in links"
           :key="link.text + index"
           :to="link.path"
-          class="text-[14px] text-[#8A8A8A] inline-block px-[5px] underline"
+          class="text-[14px] text-[#8A8A8A] inline-block px-[5px] underline link"
           v-html="link.text"
         />
       </div>

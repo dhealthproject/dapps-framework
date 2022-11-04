@@ -11,7 +11,6 @@
 // external dependencies
 import { Component, Prop, Watch } from "vue-property-decorator";
 import InlineSvg from "vue-inline-svg";
-import { DappButton } from "@dhealth/components";
 import { mapGetters } from "vuex";
 
 // internal dependencies
@@ -37,7 +36,6 @@ export interface HeaderLink {
   components: {
     ElevateLogo,
     InlineSvg,
-    DappButton,
     MobileNavigationButton,
     Dropdown,
     UserBalance,

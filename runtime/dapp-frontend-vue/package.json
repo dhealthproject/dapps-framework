@@ -28,6 +28,7 @@
     "build": "vue-cli-service build --target app",
     "build:watch": "vue-cli-service build --target app --watch",
     "test": "jest",
+    "test:watch": "jest --watch",
     "test:unit": "vue-cli-service test:unit",
     "serve": "vue-cli-service serve",
     "serve:prod": "vue-cli-service serve --mode=production"

@@ -13,7 +13,6 @@ import { Component, Prop } from "vue-property-decorator";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
-import { DappButton } from "@dhealth/components";
 
 // styles source
 import "./UiButton.scss";
@@ -26,7 +25,6 @@ import "./UiButton.scss";
  * @since v0.3.0
  */
 @Component({
-  components: { DappButton },
   props: {
     to: {
       type: [String, Object],
