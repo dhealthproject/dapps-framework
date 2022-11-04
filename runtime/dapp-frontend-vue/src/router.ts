@@ -130,7 +130,7 @@ export const createRouter = ($store: any): VueRouter => {
           {
             path: ":refCode",
             name: "app.home.withRefCode",
-            meta: { layout: "guest/split-horizontal" },
+            meta: { layout: "guest/split-horizontal", middleware: [guest] },
             component: () =>
               import("./views/OnboardingScreen/OnboardingScreen.vue"),
           },

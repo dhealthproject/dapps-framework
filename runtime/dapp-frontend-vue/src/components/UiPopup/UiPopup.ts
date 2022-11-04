@@ -12,23 +12,32 @@
 import { Component, Prop } from "vue-property-decorator";
 import InlineSvg from "vue-inline-svg";
 import Vue from "vue";
+import { mapGetters } from "vuex";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import UiButton from "../UiButton/UiButton.vue";
+import ReferralInput from "../ReferralInput/ReferralInput.vue";
 
 // modal config
 export interface ModalConfig {
   keepOnBgClick?: boolean;
   overlayColor?: string;
   modalBg?: string;
-  type: "form" | "notification";
+  type: "form" | "notification" | "share";
   title?: string;
   width: number;
   fields?: any[];
   submitCallback?: any;
   description?: string;
   illustration?: string;
+  shareNetworks?: ShareNetwork[];
+}
+
+export interface ShareNetwork {
+  title: string;
+  url: string;
+  icon: string;
 }
 
 // styles source
@@ -44,17 +53,29 @@ import "./UiPopup.scss";
  * @since v0.3.0
  */
 @Component({
-  components: { InlineSvg, UiButton },
+  components: { InlineSvg, UiButton, ReferralInput },
+  computed: {
+    ...mapGetters({
+      refCode: "auth/getRefCode",
+    }),
+  },
 })
 export default class UiPopup extends MetaView {
   /**
-   * This propery used for configuring of displayed popup
+   * This property used for configuring of displayed popup
    *
    * @var {ModalConfig}
    */
   @Prop({ default: () => ({}) }) config?: ModalConfig;
 
   protected formFields: any = {};
+
+  /**
+   * This property represents full url with referral code
+   *
+   * @var {string}
+   */
+  public refUrl = "";
 
   /**
    * This method is used for hiding pop-up
@@ -119,6 +140,42 @@ export default class UiPopup extends MetaView {
     if (this.config && this.config.submitCallback) {
       this.config.submitCallback(formValues);
     }
+  }
+
+  // will delete after create config on backend
+  get tempItems(): ShareNetwork[] {
+    return [
+      {
+        title: "Whatsapp",
+        icon: "share/whatsapp.svg",
+        url: "https://www.whatsapp.com/",
+      },
+      {
+        title: "Facebook",
+        icon: "share/facebook.svg",
+        url: "https://www.facebook.com/",
+      },
+      {
+        title: "Twitter",
+        icon: "share/twitter.svg",
+        url: "https://www.twitter.com/",
+      },
+      {
+        title: "Linkedin",
+        icon: "share/linkedin.svg",
+        url: "https://www.linkedin.com/",
+      },
+      {
+        title: "Discord",
+        icon: "share/discord.svg",
+        url: "https://www.discord.com/",
+      },
+      {
+        title: "Telegram",
+        icon: "share/telegram.svg",
+        url: "https://www.telegram.org/",
+      },
+    ];
   }
 
   mounted() {

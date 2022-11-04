@@ -123,5 +123,45 @@
         line-height: 150%;
       }
     }
+
+    &__share {
+      padding: 27px 24px;
+      border-radius: 8px;
+      border: 1px solid $black;
+      box-shadow: 5px 5px 0px $black;
+      text-align: left;
+
+      .title {
+        font-weight: 500;
+        font-size: 20px;
+        line-height: 150%;
+        color: $button-text-dark;
+      }
+
+      svg {
+        position: static;
+      }
+
+      .social-item {
+        text-align: center;
+        cursor: pointer;
+        width: 100%;
+
+        img {
+          display: inline-block;
+          width: 60px;
+          height: 60px;
+          margin-bottom: 8px;
+        }
+
+        .title {
+          display: block;
+          font-weight: 400;
+          font-size: 12px;
+          line-height: 130%;
+          color: $black;
+        }
+      }
+    }
   }
 }

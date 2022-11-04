@@ -30,5 +30,6 @@
   "stats_top_activities": "Top Activities",
   "stats_minutes_exercised": "Minutes Exercised",
   "stats_tooltip_referral_title": "Elevate’s referral program",
-  "stats_tooltip_referral_text": "Invite 50 fitness buddies to join Elevate and get 5% boost for your earning, plus a really cool “Super friend” medal, and unblock next reward level"
+  "stats_tooltip_referral_text": "Invite 50 fitness buddies to join Elevate and get 5% boost for your earning, plus a really cool “Super friend” medal, and unblock next reward level",
+  "referral_share": "Share"
 }
