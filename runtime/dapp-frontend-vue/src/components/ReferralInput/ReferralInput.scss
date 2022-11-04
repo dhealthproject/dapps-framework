@@ -1,0 +1,58 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth UI Components
+ * @subpackage  Components
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+@import "../../vars";
+
+.referral-input {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+
+  input {
+    padding: 12px 16px;
+    background-color: $white;
+    border-radius: 8px;
+    border: 1px solid $black;
+    color: $black;
+    outline: none;
+    width: 100%;
+
+    &.link {
+      background-color: $base-grey-lighter;
+    }
+  }
+
+  .copy {
+    position: absolute;
+    top: 0;
+    right: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    img {
+      margin-bottom: 0 !important;
+      margin-left: 8px;
+      cursor: pointer;
+    }
+
+    .text {
+      color: $placeholder-grey;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 130%;
+
+      &.link {
+        color: $system-grey-60;
+      }
+    }
+  }
+}

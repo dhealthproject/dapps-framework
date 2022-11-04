@@ -16,7 +16,7 @@
       <span class="dapp-card__title" v-html="title" />
       <slot name="button" />
     </div>
-    <div :class="{ 'no-borders': !showBorders }" class="dapp-card__inner">
+    <div :class="{ 'no-borders': !showBorders, 'dapp-card__inner': title }">
       <slot name="content" />
     </div>
   </div>

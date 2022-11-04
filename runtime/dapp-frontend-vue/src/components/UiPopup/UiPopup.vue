@@ -75,6 +75,40 @@
         <p v-html="config.description" />
       </div>
     </div>
+
+    <!-- Share of type notification -->
+    <div
+      v-if="config && config.type === 'share'"
+      class="dapp-ui-popup__modal dapp-ui-popup__modal__share"
+      :style="`background: ${
+        config.modalBg ? config.modalBg : '#fff'
+      };max-width: ${config.width}px`"
+    >
+      <div class="flex flex-row justify-between items-center mb-[32px]">
+        <div class="row-item">
+          <h3 class="title" v-html="$t('referral_share')" />
+        </div>
+        <div class="row-item">
+          <inline-svg
+            :src="getImageUrl('icons/close-icon.svg')"
+            :width="32"
+            class="dapp-ui-popup__modal__notification__close"
+            @click="$root.$emit('modal-close')"
+          />
+        </div>
+      </div>
+      <div class="flex flex-row mb-[32px]">
+        <div
+          v-for="(item, index) in tempItems"
+          :key="index + item.title"
+          class="social-item"
+        >
+          <img :src="getImageUrl(item.icon)" :alt="item.title" />
+          <span class="title" v-html="item.title" />
+        </div>
+      </div>
+      <ReferralInput type="link" :val="refCode" />
+    </div>
   </div>
 </template>
 

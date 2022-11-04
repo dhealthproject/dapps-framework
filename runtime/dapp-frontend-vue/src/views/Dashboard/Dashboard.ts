@@ -32,6 +32,7 @@ import GenericList from "@/components/GenericList/GenericList.vue";
 import EventsCarousel from "@/views/Dashboard/components/EventsCarousel.vue";
 import Leaderboard from "@/views/Dashboard/components/Leaderboard.vue";
 import Stats from "@/components/Stats/Stats.vue";
+import ReferralInput from "@/components/ReferralInput/ReferralInput.vue";
 
 export interface OtherPlayer {
   avatar: string;
@@ -66,6 +67,7 @@ export interface StatisticsTabItem {
     UiButton,
     ProgressBar,
     Stats,
+    ReferralInput,
   },
   computed: {
     ...mapGetters({
@@ -176,8 +178,6 @@ export default class Dashboard extends MetaView {
       gap: 4,
     };
   }
-
-  public referralLabel = "";
 
   /**
    * This computed property defines *custom media queries* to further
@@ -427,19 +427,12 @@ export default class Dashboard extends MetaView {
     await this.$store.dispatch("oauth/callback", this.currentUserAddress);
   }
 
-  /**
-   * Method allows to copy refCode to user's clipboard
-   *
-   * @access public
-   * @param evt: any
-   * @param val: string
-   * @returns {void}
-   */
-  copyToClipBoard(evt: any, val: string | undefined) {
-    if (val) {
-      navigator.clipboard
-        .writeText(val)
-        .then(() => console.log("copied", this.ref));
-    }
+  protected shareModal() {
+    this.$root.$emit("modal", {
+      type: "share",
+      overlayColor: "rgba(0, 0, 0, .50)",
+      width: 518,
+      modalBg: "#FFFFFF",
+    });
   }
 }
