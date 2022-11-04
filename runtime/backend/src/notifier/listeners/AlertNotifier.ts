@@ -101,15 +101,15 @@ export class AlertNotifier {
     this.logger.debug("Caught a warning event.");
     if (this.alertsConfig.type.includes("warn")) {
       const dappName = this.configService.get<string>("dappName");
-      const { timestamp, loggerContext, message, context } = event;
+      const { timestamp, level, loggerContext, message, context } = event;
       this.notifier.sendInternal({
         to: this.alertsConfig.recipient,
         subject: `[${dappName}] Warning: Production warning happened at ${new Date()}`,
         text: `Warning: Production warning happened at ${new Date()} ${this.dappHelper.createDetailsTableHTML(
-          [{ timestamp, loggerContext, message, context }],
+          [{ timestamp, level, loggerContext, message, context }],
         )}`,
         html: `Warning: Production warning happened at <b>${new Date()}</b><br /><br /> ${this.dappHelper.createDetailsTableHTML(
-          [{ timestamp, loggerContext, message, context }],
+          [{ timestamp, level, loggerContext, message, context }],
         )}`, // HTML body content
       });
     }
@@ -128,15 +128,16 @@ export class AlertNotifier {
     this.logger.debug("Caught an error event.");
     if (this.alertsConfig.type.includes("error")) {
       const dappName = this.configService.get<string>("dappName");
-      const { timestamp, loggerContext, message, trace, context } = event;
+      const { timestamp, level, loggerContext, message, trace, context } =
+        event;
       this.notifier.sendInternal({
         to: this.alertsConfig.recipient,
         subject: `[${dappName}] Error: Production error happened at ${new Date()}`,
         text: `Error: Production error happened at ${new Date()} ${this.dappHelper.createDetailsTableHTML(
-          [{ timestamp, loggerContext, message, trace, context }],
+          [{ timestamp, level, loggerContext, message, trace, context }],
         )}`,
         html: `Error: Production error happened at <b>${new Date()}</b><br /><br /> ${this.dappHelper.createDetailsTableHTML(
-          [{ timestamp, loggerContext, message, trace, context }],
+          [{ timestamp, level, loggerContext, message, trace, context }],
         )}`, // HTML body content
       });
     }

@@ -193,7 +193,7 @@ export class ReportNotifier extends NotifierCommand {
 
     // also register in nestjs schedulers
     this.schedulerRegistry.addCronJob(
-      `notifier:cronjobs:report-notifier:${this.periodFormat}`,
+      `notifier:cronjobs:reportNotifier:${this.periodFormat}`,
       job,
     );
 
@@ -295,7 +295,11 @@ export class ReportNotifier extends NotifierCommand {
       this.periodFormat,
     );
     const results = await this.queryService.aggregate(
-      this.createLogQuery(this.reportsConfig.type as LogLevel[], startDate, endDate),
+      this.createLogQuery(
+        this.reportsConfig.type as LogLevel[],
+        startDate,
+        endDate,
+      ),
       this.model,
     );
 
@@ -341,7 +345,11 @@ export class ReportNotifier extends NotifierCommand {
    * @param {Date} endDate The timerange's end {@link Date} instance.
    * @returns {PipelineStage[]} All {@link LogModel} inside the timerange.
    */
-  private createLogQuery(levels: LogLevel[], startDate: Date, endDate: Date): PipelineStage[] {
+  private createLogQuery(
+    levels: LogLevel[],
+    startDate: Date,
+    endDate: Date,
+  ): PipelineStage[] {
     return [
       {
         $match: {
@@ -351,7 +359,7 @@ export class ReportNotifier extends NotifierCommand {
           },
           level: {
             $in: levels,
-          }
+          },
         },
       },
     ];

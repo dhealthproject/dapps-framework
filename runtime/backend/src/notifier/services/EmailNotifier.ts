@@ -41,9 +41,7 @@ export class EmailNotifier implements Notifier {
   public async sendInternal(
     emailDetails: ISendMailOptions,
   ): Promise<SentMessageInfo> {
-    return await this.mailerService.sendMail(emailDetails).catch((err) => {
-      throw err;
-    });
+    return await this.mailerService.sendMail(emailDetails);
   }
 
   /**
@@ -56,8 +54,6 @@ export class EmailNotifier implements Notifier {
   public async sendPublic(
     emailDetails: ISendMailOptions,
   ): Promise<SentMessageInfo> {
-    return await this.mailerService.sendMail(emailDetails).catch((err) => {
-      throw err;
-    });
+    return await this.mailerService.sendMail(emailDetails);
   }
 }
