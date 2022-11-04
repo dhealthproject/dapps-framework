@@ -142,7 +142,8 @@
       "index.ts",
       "config",
       "tests/e2e",
-      "classes.ts"
+      "classes.ts",
+      "modules"
     ]
   },
   "contributors": [

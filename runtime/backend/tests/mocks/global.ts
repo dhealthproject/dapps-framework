@@ -47,6 +47,17 @@ jest.mock("../../config/monitoring", () => {
     },
     logDirectoryPath: "./logs/",
     logMaxFileSize: 1000,
+    alerts: {
+      type: ["warn", "error"],
+      transport: "mail",
+      recipient: "recipient@example.com",
+    },
+    reports: {
+      type: ["warn", "error"],
+      transport: "mail",
+      period: "W",
+      recipient: "recipient@example.com",
+    },
   });
 });
 
