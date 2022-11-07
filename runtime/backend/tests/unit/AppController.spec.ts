@@ -75,7 +75,7 @@ describe("AppController", () => {
     authService = app.get<AuthService>(AuthService);
   });
 
-  describe("getHello() -->", () => {
+  describe("getHello()", () => {
     it('should return "Hello, world of dAppName!"', () => {
       expect(appController.fakeGetHello()).toBe(
         `Hello, world of ${dappConfigLoader().dappName}!`,
@@ -83,7 +83,7 @@ describe("AppController", () => {
     });
   });
 
-  describe("getProfile() -->", () => {
+  describe("getProfile()", () => {
     it("should call correct method and respond with DTO", async () => {
       // prepare
       (appController as any).authService = {

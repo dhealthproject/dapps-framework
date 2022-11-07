@@ -18,8 +18,7 @@ import { QueryService } from "../../../../src/common/services/QueryService";
 import { OperationDocument, OperationModel, OperationQuery } from "../../../../src/processor/models/OperationSchema";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 
-
-describe("common/OperationsService", () => {
+describe("processor/OperationsService", () => {
   let service: OperationsService;
   let queriesService: QueryService<OperationDocument, OperationModel>
 

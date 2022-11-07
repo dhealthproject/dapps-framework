@@ -23,7 +23,7 @@ import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/
 import { StravaWebHookEventRequest } from "../../../../src/common/drivers/strava/StravaWebHookEventRequest";
 import { OnActivityCreated } from "../../../../src/processor/events/OnActivityCreated";
 
-describe("common/WebHooksService", () => {
+describe("processor/WebHooksService", () => {
   let service: WebHooksService;
   let queryService: QueryService<ActivityDocument, ActivityModel>;
   let oauthService: OAuthService;

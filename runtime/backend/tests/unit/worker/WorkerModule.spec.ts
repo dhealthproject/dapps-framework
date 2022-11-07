@@ -19,7 +19,6 @@ import { WorkerModule } from "../../../src/worker/WorkerModule";
 import { ScopeFactory } from "../../../src/common/ScopeFactory";
 import { DappConfig } from "../../../src/common/models/DappConfig";
 
-
 describe("worker/WorkerModule", () => {
   let workerModule: WorkerModule;
 

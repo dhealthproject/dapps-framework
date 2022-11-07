@@ -21,12 +21,12 @@ describe("processor/OperationTypes", () => {
       const plainMessage = "20220101";
 
       // act
-      const resullt = getOperation(
+      const result = getOperation(
         plainMessage
       );
 
       // assert
-      expect(resullt).toEqual(Factory.createFromJSON(
+      expect(result).toEqual(Factory.createFromJSON(
         JSON.stringify({
           contract: "elevate:earn",
           version: 0,
@@ -41,12 +41,12 @@ describe("processor/OperationTypes", () => {
       (plainMessage as any).payload = "20220101";
 
       // act
-      const resullt = getOperation(
+      const result = getOperation(
         plainMessage
       );
 
       // assert
-      expect(resullt).toEqual(Factory.createFromJSON(
+      expect(result).toEqual(Factory.createFromJSON(
         JSON.stringify({
           contract: "elevate:earn",
           version: 0,
@@ -64,12 +64,12 @@ describe("processor/OperationTypes", () => {
       };
 
       // act
-      const resullt = getOperation(
+      const result = getOperation(
         JSON.stringify(plainMessage)
       );
 
       // assert
-      expect(resullt).toEqual(Factory.createFromJSON(plainMessage));
+      expect(result).toEqual(Factory.createFromJSON(plainMessage));
     });
   });
 

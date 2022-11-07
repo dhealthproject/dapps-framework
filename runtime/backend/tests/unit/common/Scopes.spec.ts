@@ -233,7 +233,7 @@ describe("common/Scopes", () => {
     actualModules = MockFactory.create(dappConfig).getModules();
 
     // assert
-    expect(mongooseForRootCall).toHaveBeenCalledTimes(2); // imported in Scopes and in Schedulers
+    expect(mongooseForRootCall).toHaveBeenCalledTimes(1); // imported through AppConfiguration.getDatabaseModule(db)
     expect(actualModules).toEqual([ConfigModuleMock, MongooseModuleMock]);
   });
 
@@ -245,7 +245,7 @@ describe("common/Scopes", () => {
     actualModules = MockFactory.create(dappConfig).getModules();
 
     // assert
-    expect(mongooseForRootCall).toHaveBeenCalledTimes(2); // imported in Scopes and in Schedulers
+    expect(mongooseForRootCall).toHaveBeenCalledTimes(1); // imported through AppConfiguration.getDatabaseModule(db)
     expect(mongooseForRootCall).toHaveBeenCalledWith(expectedPayload);
   });
 });

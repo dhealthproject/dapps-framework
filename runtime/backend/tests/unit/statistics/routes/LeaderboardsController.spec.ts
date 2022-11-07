@@ -28,7 +28,7 @@ import { PaginatedResultDTO } from '../../../../src/common/models/PaginatedResul
 import { StatisticsDTO } from '../../../../src/statistics/models/StatisticsDTO';
 import { AccountDocument } from '../../../../src/common/models/AccountSchema';
 
-describe('statistics/LeaderboardController', () => {
+describe('statistics/LeaderboardsController', () => {
   let controller: LeaderboardsController;
   let authService: AuthService;
   let leaderboardsService: LeaderboardsService;

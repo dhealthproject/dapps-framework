@@ -13,29 +13,29 @@ import { getModelToken } from "@nestjs/mongoose";
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
-import { ActivitiesService } from "../../../../src/processor/services/ActivitiesService";
 import { QueryService } from "../../../../src/common/services/QueryService";
-import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/processor/models/ActivitySchema";
+import { PayoutsService } from "../../../../src/payout/services/PayoutsService";
+import { PayoutDocument, PayoutModel, PayoutQuery } from "../../../../src/payout/models/PayoutSchema";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 
-describe("processor/ActivitiesService", () => {
-  let service: ActivitiesService;
-  let queriesService: QueryService<ActivityDocument, ActivityModel>
+describe("payout/PayoutsService", () => {
+  let service: PayoutsService;
+  let queryService: QueryService<PayoutDocument, PayoutModel>
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ActivitiesService,
+        PayoutsService,
         QueryService,
         {
-          provide: getModelToken("Activity"),
+          provide: getModelToken("Payout"),
           useValue: MockModel,
         },
       ],
     }).compile();
 
-    service = module.get<ActivitiesService>(ActivitiesService);
-    queriesService = module.get<QueryService<ActivityDocument, ActivityModel>>(QueryService);
+    service = module.get<PayoutsService>(PayoutsService);
+    queryService = module.get<QueryService<PayoutDocument, PayoutModel>>(QueryService);
   });
 
   it("should be defined", () => {
@@ -46,11 +46,11 @@ describe("processor/ActivitiesService", () => {
     it("should call count() from queryService", async () => {
       // prepare
       const queryServiceCountCall = jest
-        .spyOn(queriesService, "count")
+        .spyOn(queryService, "count")
         .mockResolvedValue(1);
 
       // act
-      await service.count({} as ActivityQuery);
+      await service.count({} as PayoutQuery);
 
       // assert
       expect(queryServiceCountCall).toHaveBeenNthCalledWith(1, {}, MockModel);
@@ -61,11 +61,11 @@ describe("processor/ActivitiesService", () => {
     it("should return correct result", async () => {
       // prepare
       const queryServiceFindOneCall = jest
-        .spyOn(queriesService, "findOne")
-        .mockResolvedValue({} as ActivityDocument);
+        .spyOn(queryService, "findOne")
+        .mockResolvedValue({} as PayoutDocument);
 
       // act
-      const result = await service.exists({} as ActivityQuery);
+      const result = await service.exists({} as PayoutQuery);
 
       // assert
       expect(queryServiceFindOneCall).toHaveBeenNthCalledWith(1, {}, MockModel, true);
@@ -77,11 +77,11 @@ describe("processor/ActivitiesService", () => {
     it("should call find() from queryService", async () => {
       // prepare
       const queryServiceFindCall = jest
-        .spyOn(queriesService, "find")
-        .mockResolvedValue({} as PaginatedResultDTO<ActivityDocument>);
+        .spyOn(queryService, "find")
+        .mockResolvedValue({} as PaginatedResultDTO<PayoutDocument>);
 
       // act
-      await service.find({} as ActivityQuery);
+      await service.find({} as PayoutQuery);
 
       // assert
       expect(queryServiceFindCall).toHaveBeenNthCalledWith(1, {}, MockModel);
@@ -92,11 +92,11 @@ describe("processor/ActivitiesService", () => {
     it("should call findOne() from queryService", async () => {
       // prepare
       const queryServiceFindOneCall = jest
-      .spyOn(queriesService, "findOne")
-      .mockResolvedValue({} as ActivityDocument);
+      .spyOn(queryService, "findOne")
+      .mockResolvedValue({} as PayoutDocument);
 
       // act
-      await service.findOne({} as ActivityQuery);
+      await service.findOne({} as PayoutQuery);
 
       // assert
       expect(queryServiceFindOneCall).toHaveBeenNthCalledWith(1, {}, MockModel);
@@ -107,11 +107,11 @@ describe("processor/ActivitiesService", () => {
     it("should call createOrUpdate() from queryService", async () => {
       // prepare
       const queryServiceCreateOrUpdateCall = jest
-      .spyOn(queriesService, "createOrUpdate")
-      .mockResolvedValue({} as ActivityDocument);
+      .spyOn(queryService, "createOrUpdate")
+      .mockResolvedValue({} as PayoutDocument);
 
       // act
-      await service.createOrUpdate({} as ActivityQuery, {} as ActivityModel);
+      await service.createOrUpdate({} as PayoutQuery, {} as PayoutModel);
 
       // assert
       expect(queryServiceCreateOrUpdateCall).toHaveBeenNthCalledWith(
@@ -128,7 +128,7 @@ describe("processor/ActivitiesService", () => {
     it("should call updateBatch() from queryService", async () => {
       // prepare
       const queryServiceUpdateBatchCall = jest
-      .spyOn(queriesService, "updateBatch")
+      .spyOn(queryService, "updateBatch")
       .mockResolvedValue(1);
 
       // act

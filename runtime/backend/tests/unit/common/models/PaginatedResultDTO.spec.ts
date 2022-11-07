@@ -10,8 +10,8 @@
 // internal dependencies
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 
-describe("common/AccountSchema", () => {
-  describe("constructor() -->", () => {
+describe("common/PaginatedResultDTO", () => {
+  describe("constructor()", () => {
     it("should create instance with correct fields", () => {
       // prepare
       const data = ["data"];
@@ -45,7 +45,7 @@ describe("common/AccountSchema", () => {
     });
   });
 
-  describe("isLastPage() -->", () => {
+  describe("isLastPage()", () => {
     it("should return correct result", () => {
       // prepare
       const data = ["data1", "data2", "data3"];

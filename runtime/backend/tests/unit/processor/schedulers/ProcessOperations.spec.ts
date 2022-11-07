@@ -34,7 +34,6 @@ import { OperationsService } from "../../../../src/processor/services/Operations
 import { StateDocument } from "../../../../src/common/models/StateSchema";
 import { OperationProcessorStateData } from "../../../../src/processor/models/OperationProcessorStateData";
 
-
 describe("processor/ProcessOperations", () => {
   let processOperations: ProcessOperations;
   let configService: ConfigService;

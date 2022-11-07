@@ -75,7 +75,7 @@ describe("common/NetworkService", () => {
     expect(service).toBeDefined();
   });
 
-  describe("constructor() -->", () => {
+  describe("constructor()", () => {
     it("should connect to a node if there is a default one", () => {
       // prepare
       const configServiceGetCall = jest
@@ -124,7 +124,7 @@ describe("common/NetworkService", () => {
     });
   });
 
-  describe("getNetworkConfiguration() -->", () => {
+  describe("getNetworkConfiguration()", () => {
     it("should return empty result if network parameters is undefined", () => {
       // prepare
       const configServiceGetCall = jest
@@ -169,7 +169,7 @@ describe("common/NetworkService", () => {
     });
   });
 
-  describe("getNetworkCurrency() -->", () => {
+  describe("getNetworkCurrency()", () => {
     it("should return correct result", () => {
       // prepare
       const currencyMosaicId = "test-mosaicId";
@@ -184,7 +184,7 @@ describe("common/NetworkService", () => {
     });
   });
 
-  describe("getNextAvailableNode() -->", () => {
+  describe("getNextAvailableNode()", () => {
     it("return node if node is healthy", async () => {
       // prepare
       const configServiceGetCall = jest
@@ -333,7 +333,7 @@ describe("common/NetworkService", () => {
     });
   });
 
-  describe("getNodeUrl() -->", () => {
+  describe("getNodeUrl()", () => {
     it("should return URL when the URL already contains a port", () => {
       // prepare
       const expectedResult = "http://test.url:3000";
@@ -376,7 +376,7 @@ describe("common/NetworkService", () => {
     });
   });
 
-  describe("connectToNode() -->", () => {
+  describe("connectToNode()", () => {
     it("should call correct methods", () => {
       // prepare
       const createBlockRepositoryCall = jest
@@ -401,7 +401,7 @@ describe("common/NetworkService", () => {
     });
   });
 
-  describe("delegatePromises() -->", () => {
+  describe("delegatePromises()", () => {
     it("should request to node failed, try with a different node", async () => {
       // prepare
       const promiseAllCall = jest

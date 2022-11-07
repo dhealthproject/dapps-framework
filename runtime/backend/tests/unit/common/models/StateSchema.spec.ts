@@ -12,7 +12,7 @@ import { StateDTO } from "../../../../src/common/models/StateDTO";
 import { State, StateDocument } from "../../../../src/common/models/StateSchema";
 
 describe("common/StateSchema", () => {
-  describe("toQuery() -->", () => {
+  describe("toQuery()", () => {
     it("should return correct value", () => {
       // prepare
       const name = "test-name";
@@ -27,7 +27,7 @@ describe("common/StateSchema", () => {
     });
   });
 
-  describe("fillDTO() -->", () => {
+  describe("fillDTO()", () => {
     it("should return correct instance", () => {
       // prepare
       const name = "test-name";

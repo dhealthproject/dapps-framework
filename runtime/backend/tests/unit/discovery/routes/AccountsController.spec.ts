@@ -50,7 +50,7 @@ describe("discovery/AccountsController", () => {
     expect(controller).toBeDefined();
   });
 
-  describe("find() -->", () => {
+  describe("find()", () => {
     it("should call correct method and respond with DTO", async () => {
       // prepare
       const accountDoc = new Account();

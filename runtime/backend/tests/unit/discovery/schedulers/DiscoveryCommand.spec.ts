@@ -62,7 +62,7 @@ class MockDiscoveryCommand extends DiscoveryCommand {
 PublicAccount.createFromPublicKey = jest.fn().mockReturnValue({ address: { plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY" } });
 Address.createFromRawAddress = jest.fn().mockReturnValue({ plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY" });
 
-describe("discovery/DiscoveryCommand -->", () => {
+describe("discovery/DiscoveryCommand", () => {
   // global injectable service setup
   let fakeCommand: MockDiscoveryCommand;
   let stateService: StateService;

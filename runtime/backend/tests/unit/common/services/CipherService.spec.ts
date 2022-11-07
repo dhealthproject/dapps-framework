@@ -42,7 +42,7 @@ describe("common/CipherService", () => {
     expect(service).toBeDefined();
   });
 
-  describe("encrypt() -->", () => {
+  describe("encrypt()", () => {
     it ("should accept data and password for PBKDF2 encryption", () => {
       // act
       service.encrypt("test-data", "test-pw");
@@ -65,7 +65,7 @@ describe("common/CipherService", () => {
     });
   });
 
-  describe("decrypt() -->", () => {
+  describe("decrypt()", () => {
     let payload: string;
     beforeEach(() => {
       (service as any).encrypt = jest.fn().mockReturnValue(

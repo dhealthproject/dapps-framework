@@ -21,8 +21,8 @@ class FakeSchema {
 
 type FakeSchemaDocument = FakeSchema & Documentable;
 
-describe("concerns/Queryable", () => {
-  describe("get() -->", () => {
+describe("common/Queryable", () => {
+  describe("get()", () => {
     it("should return undefined", () => {
       // prepare
       const queryable = new Queryable<FakeSchemaDocument>();
@@ -47,7 +47,7 @@ describe("concerns/Queryable", () => {
     });
   });
 
-  describe("set() -->", () => {
+  describe("set()", () => {
     it("should sucessfully set document instance", () => {
       // prepare
       const fakeSchemaDocument = { key: "test-value" } as FakeSchemaDocument;
@@ -61,7 +61,7 @@ describe("concerns/Queryable", () => {
     });
   });
 
-  describe("forDocument() -->", () => {
+  describe("forDocument()", () => {
     it("should return correct result", () => {
       // prepare
       const fakeSchemaDocument = new FakeSchema() as FakeSchemaDocument;

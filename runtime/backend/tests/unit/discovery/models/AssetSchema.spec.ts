@@ -12,7 +12,7 @@ import { AssetDTO } from "../../../../src/discovery/models/AssetDTO";
 import { Asset, AssetDocument } from "../../../../src/discovery/models/AssetSchema";
 
 describe("discovery/AssetSchema", () => {
-  describe("toQuery() -->", () => {
+  describe("toQuery()", () => {
     it("should return correct database query", () => {
       // prepare
       const asset: Asset = new Asset();
@@ -33,7 +33,7 @@ describe("discovery/AssetSchema", () => {
     });
   });
 
-  describe("fillDTO() -->", () => {
+  describe("fillDTO()", () => {
     it("should return correct instance", () => {
       // prepare
       const assetDocument = {

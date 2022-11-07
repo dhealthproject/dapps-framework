@@ -57,7 +57,7 @@ class MockModel {
   static findOneAndUpdate = jest.fn(() => ({ exec: () => ({}) }));
 }
 
-describe("worker/BaseCommand -->", () => {
+describe("worker/BaseCommand", () => {
   // global injectable service setup
   let fakeCommand: MockBaseCommand;
   let stateService: StateService;

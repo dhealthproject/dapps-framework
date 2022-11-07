@@ -32,7 +32,7 @@ import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 import { AccountIntegrationDocument } from "../../../../src/common/models/AccountIntegrationSchema";
 import { MockModel } from "../../../mocks/global";
 
-describe("routes/OAuthController", () => {
+describe("common/OAuthController", () => {
   let controller: OAuthController;
   let oauthService: OAuthService;
   let authService: AuthService;

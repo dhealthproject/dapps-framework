@@ -264,7 +264,7 @@ export abstract class PreparePayouts<
       // creates the *unsigned* transaction
       // @todo contract transaction parameters should define FEES
       const transfer: TransferTransaction = contract.toTransaction({
-        recipientPublicKey: subject.address,
+        recipientAddress: subject.address,
         signerPublicKey: this.signerService.getSignerPublicKey(),
       });
 

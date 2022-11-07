@@ -45,8 +45,7 @@ import { QueryService } from "../../../../src/common/services/QueryService";
 import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 import { MockModel } from "../../../mocks/global";
 
-
-describe("routes/AuthController", () => {
+describe("common/AuthStrategy", () => {
   let service: AuthStrategy;
   let accountsService: AccountsService;
 

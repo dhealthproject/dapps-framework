@@ -48,7 +48,7 @@ describe("discovery/TransactionsService", () => {
     expect(service).toBeDefined();
   });
 
-  describe("count() -->", () => {
+  describe("count()", () => {
     it("should use QueryService.count() method with correct query", async () => {
       // prepare
       const expectedResult = 2;
@@ -65,7 +65,7 @@ describe("discovery/TransactionsService", () => {
     });
   });
 
-  describe("exists() -->", () => {
+  describe("exists()", () => {
     it("should use QueryService.findOne() method with correct query", async () => {
       // prepare
       const expectedResult = true;
@@ -82,7 +82,7 @@ describe("discovery/TransactionsService", () => {
     });
   });
 
-  describe("find() -->", () => {
+  describe("find()", () => {
     it("should use QueryService.find() method with correct query", async () => {
       // prepare
       const expectedResult = new PaginatedResultDTO(
@@ -106,7 +106,7 @@ describe("discovery/TransactionsService", () => {
     });
   });
 
-  describe("findOne() -->", () => {
+  describe("findOne()", () => {
     it("should use QueryService.findOne() method with correct query", async () => {
       // prepare
       const expectedResult = {};
@@ -123,7 +123,7 @@ describe("discovery/TransactionsService", () => {
     });
   });
 
-  describe("createOrUpdate() -->", () => {
+  describe("createOrUpdate()", () => {
     it("should use QueryService.createOrUpdate() method with correct query", async () => {
       // prepare
       const expectedResult = {};
@@ -147,7 +147,7 @@ describe("discovery/TransactionsService", () => {
     });
   });
 
-  describe("updateBatch() -->", () => {
+  describe("updateBatch()", () => {
     // for each updateBatch() test we overwrite the
     // bulk operations functions from mongoose plugin
     let bulkMocks: any,

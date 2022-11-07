@@ -16,7 +16,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { DappHelper } from "../../../../src/common/concerns/DappHelper";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 
-describe("common/QueryService", () => {
+describe("common/DappHelper", () => {
   let service: DappHelper;
   let configService: ConfigService;
 
@@ -38,7 +38,7 @@ describe("common/QueryService", () => {
     expect(service).toBeDefined();
   });
 
-  describe("getBlockTimestamp() -->", () => {
+  describe("getBlockTimestamp()", () => {
     it("should have correct flow and result when response is not empty", async () => {
       const getBlockByHeightCall = jest.fn(() => ({
         toPromise: () => Promise.resolve({}),
@@ -73,7 +73,7 @@ describe("common/QueryService", () => {
     });
   });
 
-  describe("getNetworkTimestampFromUInt64() -->", () => {
+  describe("getNetworkTimestampFromUInt64()", () => {
     it("should have correct flow and result", () => {
       const timestamp = { compact: () => 1000 };
       const configGetCall = jest.spyOn(configService, "get").mockReturnValue(1);

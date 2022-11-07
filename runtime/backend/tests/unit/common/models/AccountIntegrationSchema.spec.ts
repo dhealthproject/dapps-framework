@@ -12,7 +12,7 @@ import { AccountIntegrationDTO } from "../../../../src/common/models/AccountInte
 import { AccountIntegration, AccountIntegrationDocument } from "../../../../src/common/models/AccountIntegrationSchema";
 
 describe("common/AccountIntegrationSchema", () => {
-  describe("toQuery() -->", () => {
+  describe("toQuery()", () => {
     it("should return correct value", () => {
       // prepare
       const address = "test-address";
@@ -42,7 +42,7 @@ describe("common/AccountIntegrationSchema", () => {
     });
   });
 
-  describe("fillDTO() -->", () => {
+  describe("fillDTO()", () => {
     it("should return correct instance", () => {
       // prepare
       const address = "test-address";

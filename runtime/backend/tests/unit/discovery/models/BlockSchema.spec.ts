@@ -12,7 +12,7 @@ import { BlockDTO } from "../../../../src/discovery/models/BlockDTO";
 import { Block, BlockDocument } from "../../../../src/discovery/models/BlockSchema";
 
 describe("discovery/BlockSchema", () => {
-  describe("toQuery() -->", () => {
+  describe("toQuery()", () => {
     it("should return correct database query", () => {
       // prepare
       const block: Block = new Block();
@@ -36,7 +36,7 @@ describe("discovery/BlockSchema", () => {
     });
   });
 
-  describe("fillDTO() -->", () => {
+  describe("fillDTO()", () => {
     it("should return correct instance", () => {
       // prepare
       const assetDocument = {

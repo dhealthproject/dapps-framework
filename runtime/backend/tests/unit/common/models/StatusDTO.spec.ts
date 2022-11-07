@@ -10,7 +10,7 @@
 // internal dependencies
 import { StatusDTO } from "../../../../src/common/models/StatusDTO";
 
-describe("models/StatusDTO", () => {
+describe("common/StatusDTO", () => {
   describe("create()", () => {
     it("should return correct result", () => {
       // prepare

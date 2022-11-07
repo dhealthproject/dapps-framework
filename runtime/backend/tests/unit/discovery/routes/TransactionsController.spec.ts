@@ -18,7 +18,7 @@ import { TransactionsController } from "../../../../src/discovery/routes/Transac
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { TransactionDocument } from "../../../../src/common/models/TransactionSchema";
 
-describe("discovery/AccountsController", () => {
+describe("discovery/TransactionsController", () => {
   let controller: TransactionsController;
   let transactionsService: TransactionsService;
 

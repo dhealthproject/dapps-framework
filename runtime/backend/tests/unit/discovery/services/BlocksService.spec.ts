@@ -17,7 +17,7 @@ import { QueryService } from "../../../../src/common/services/QueryService";
 import { BlocksService } from "../../../../src/discovery/services/BlocksService";
 import { BlockDocument, BlockModel, BlockQuery } from "../../../../src/discovery/models/BlockSchema";
 
-describe("discovery/BlockService", () => {
+describe("discovery/BlocksService", () => {
   let service: BlocksService;
   let queriesService: QueryService<BlockDocument, BlockModel>;
 

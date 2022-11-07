@@ -18,7 +18,7 @@ import { StatisticsDocument, StatisticsModel, StatisticsQuery } from '../../../.
 import { QueryService } from '../../../../src/common/services/QueryService';
 import { PaginatedResultDTO } from '../../../../src/common/models/PaginatedResultDTO';
 
-describe('statistics/LeaderboardService', () => {
+describe('statistics/LeaderboardsService', () => {
   let service: LeaderboardsService;
   let queriesService: QueryService<
     StatisticsDocument,

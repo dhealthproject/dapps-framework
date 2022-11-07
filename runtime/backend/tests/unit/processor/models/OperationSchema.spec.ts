@@ -11,9 +11,8 @@
 import { OperationDTO } from "../../../../src/processor/models/OperationDTO";
 import { Operation, OperationDocument, OperationQuery } from "../../../../src/processor/models/OperationSchema";
 
-
 describe("processor/OperationSchema", () => {
-  describe("toQuery() -->", () => {
+  describe("toQuery()", () => {
     it("should return correct value", () => {
       // prepare
       const userAddress = "test-userAddress";
@@ -32,7 +31,7 @@ describe("processor/OperationSchema", () => {
     });
   });
 
-  describe("fillDTO() -->", () => {
+  describe("fillDTO()", () => {
     it("should return correct instance", () => {
       // prepare
       const userAddress = "test-userAddress";

@@ -12,7 +12,7 @@ import { AuthChallengeDTO } from "../../../../src/common/models/AuthChallengeDTO
 import { AuthChallenge, AuthChallengeDocument, AuthChallengeQuery } from "../../../../src/common/models/AuthChallengeSchema";
 
 describe("common/AuthChallengeSchema", () => {
-  describe("toQuery() -->", () => {
+  describe("toQuery()", () => {
     it("should return correct value", () => {
       // prepare
       const challenge = "test-challenge";
@@ -27,7 +27,7 @@ describe("common/AuthChallengeSchema", () => {
     });
   });
 
-  describe("fillDTO() -->", () => {
+  describe("fillDTO()", () => {
     it("should return correct instance", () => {
       // prepare
       const challenge = "test-challenge";
@@ -48,7 +48,7 @@ describe("common/AuthChallengeSchema", () => {
 });
 
 describe("common/AuthChallengeQuery", () => {
-  describe("constructor() -->", () => {
+  describe("constructor()", () => {
     it("should created correct instance with default queryParameters", () => {
       // prepare
       const authChallengeDocument = {

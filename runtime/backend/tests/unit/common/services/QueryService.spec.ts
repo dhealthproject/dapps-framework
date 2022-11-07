@@ -177,7 +177,7 @@ describe("common/QueryService", () => {
     expect(service).toBeDefined();
   });
 
-  describe("count() -->", () => {
+  describe("count()", () => {
     it("should return correct result", async () => {
       // prepare
       const model = new MockModel();
@@ -194,7 +194,7 @@ describe("common/QueryService", () => {
     });
   });
 
-  describe("exists() -->", () => {
+  describe("exists()", () => {
     it("should return correct result", async () => {
       // prepare
       const findOneCall = jest
@@ -210,7 +210,7 @@ describe("common/QueryService", () => {
     });
   });
 
-  describe("find() -->", () => {
+  describe("find()", () => {
     beforeEach(() => {
       aggregateFn = baseAggregateFn;
       aggregateFn.mockClear();
@@ -375,7 +375,7 @@ describe("common/QueryService", () => {
     });
   });
 
-  describe("findOne() -->", () => {
+  describe("findOne()", () => {
     it("should return correct result when stripDocument is true", async () => {
       // prepare
       const model = new MockModel();
@@ -427,7 +427,7 @@ describe("common/QueryService", () => {
     });
   });
 
-  describe("createOrUpdate() -->", () => {
+  describe("createOrUpdate()", () => {
     it("should return correct result", async () => {
       // prepare
       const model = new MockModel();
@@ -463,7 +463,7 @@ describe("common/QueryService", () => {
     });
   });
 
-  describe("updateBatch() -->", () => {
+  describe("updateBatch()", () => {
     it("should return 0 if update was not successful", async () => {
       // prepare
       const model = new MockModel();
@@ -535,7 +535,7 @@ describe("common/QueryService", () => {
     });
   });
 
-  describe("union() -->", () => {
+  describe("union()", () => {
     let fakeGroup1: [string, Queryable<any>],
         fakeGroup2: [string, Queryable<any>],
         fakeGroup3: [string, Queryable<any>];
@@ -872,14 +872,14 @@ describe("common/QueryService", () => {
     });
   });
 
-  describe("aggregate() -->", () => {
+  describe("aggregate()", () => {
     it("should call aggregate() from model", async () => {
       await service.aggregate([], testModel);
       expect(aggregateFn).toHaveBeenCalled();
     });
   });
 
-  describe("sanitizeSearchQuery() -->", () => {
+  describe("sanitizeSearchQuery()", () => {
     it("should bypass fields that are undefined", () => {
       // prepare
       const typecastFieldCall = jest
@@ -902,7 +902,7 @@ describe("common/QueryService", () => {
     });
   });
 
-  describe("typecastField() -->", () => {
+  describe("typecastField()", () => {
     it("should return correct result", () => {
       const testInput = {
         testString: "abc",
@@ -922,7 +922,7 @@ describe("common/QueryService", () => {
     });
   });
 
-  describe("getAggregateFindQuery() -->", () => {
+  describe("getAggregateFindQuery()", () => {
     let fakeGroup1: [string, Queryable<any>],
         fakeGroup2: [string, Queryable<any>];
     beforeEach(() => {

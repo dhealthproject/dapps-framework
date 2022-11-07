@@ -22,7 +22,7 @@ describe("common/HttpRequestHandler", () => {
     jest.clearAllMocks();
   });
 
-  describe("call() -->", () => {
+  describe("call()", () => {
     it("should throw correct error", async () => {
       // prepare
       const httpRequestHandler = new HttpRequestHandler();

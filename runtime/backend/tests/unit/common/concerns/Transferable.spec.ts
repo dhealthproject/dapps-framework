@@ -27,7 +27,7 @@ class FakeSchema extends Transferable<FakeDTO> {
   }
 }
 
-describe("concerns/Transferable", () => {
+describe("common/Transferable", () => {
   let document: FakeSchema;
 
   beforeEach(() => {

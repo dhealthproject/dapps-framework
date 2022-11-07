@@ -14,7 +14,7 @@ import { TransactionType } from "@dhealth/sdk";
 import { getTransactionType } from "../../../../src/discovery/models/TransactionTypes";
 
 describe("discovery/TransactionType", () => {
-  describe("getTransactionType() -->", () => {
+  describe("getTransactionType()", () => {
     it("should return transaction type: transfer", () => {
       // act
       const result = getTransactionType(TransactionType.TRANSFER);

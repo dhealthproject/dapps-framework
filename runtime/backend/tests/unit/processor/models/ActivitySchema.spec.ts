@@ -11,8 +11,8 @@
 import { ActivityDTO } from "../../../../src/processor/models/ActivityDTO";
 import { Activity, ActivityDocument } from "../../../../src/processor/models/ActivitySchema";
 
-describe("processor/StateSchema", () => {
-  describe("toQuery() -->", () => {
+describe("processor/ActivitySchema", () => {
+  describe("toQuery()", () => {
     it("should return correct value", () => {
       // prepare
       const slug = "test-slug";
@@ -29,7 +29,7 @@ describe("processor/StateSchema", () => {
     });
   });
 
-  describe("fillDTO() -->", () => {
+  describe("fillDTO()", () => {
     it("should return correct instance", () => {
       // prepare
       const address = "test-address";

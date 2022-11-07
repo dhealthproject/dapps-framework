@@ -10,7 +10,7 @@
 // internal dependencies
 import { AccessTokenRequest } from "../../../../src/common/requests/AccessTokenRequest";
 
-describe("common/StravaWebHookEventRequest", () => {
+describe("common/AccessTokenRequest", () => {
   it("should be defined", () => {
     // act
     const instance = new AccessTokenRequest();

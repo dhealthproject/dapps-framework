@@ -10,7 +10,7 @@
 // internal dependencies
 import { OAuthAuthorizeRequest } from "../../../../src/common/requests/OAuthAuthorizeRequest";
 
-describe("common/StravaWebHookEventRequest", () => {
+describe("common/OAuthAuthorizeRequest", () => {
   it("should be defined", () => {
     // act
     const instance = new OAuthAuthorizeRequest();

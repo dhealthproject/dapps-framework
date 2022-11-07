@@ -14,8 +14,8 @@ import { TransactionMapping } from "@dhealth/sdk";
 // internal dependencies
 import { Transaction, TransactionDocument } from "../../../../src/common/models/TransactionSchema";
 
-describe("discovery/AccountIntegrationSchema", () => {
-  describe("get toQuery() -->", () => {
+describe("common/TransactionSchema", () => {
+  describe("get toQuery()", () => {
     it("should add properties from schema to query", () => {
       // prepare
       const transaction = new Transaction();
@@ -46,7 +46,7 @@ describe("discovery/AccountIntegrationSchema", () => {
     });
   });
 
-  describe("toSDK() -->", () => {
+  describe("toSDK()", () => {
     it("should return correct value", () => {
       // prepare
       let createFromPayloadCall = jest
@@ -63,7 +63,7 @@ describe("discovery/AccountIntegrationSchema", () => {
     });
   });
 
-  describe("fillDTO() -->", () => {
+  describe("fillDTO()", () => {
     it("should create correct result", () => {
       // prepare
       const transactionDocument = {

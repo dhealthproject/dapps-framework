@@ -16,7 +16,7 @@ jest.mock("mongoose", () => {
 // internal dependencies
 import { Documentable } from "../../../../src/common/concerns/Documentable";
 
-describe("concerns/Documentable", () => {
+describe("common/Documentable", () => {
   let document: Documentable;
 
   beforeEach(() => {

@@ -228,7 +228,7 @@ class MockFactory extends ScopeFactory {
 }
 
 describe("common/ScopeFactory", () => {
-  describe("create() -->", () => {
+  describe("create()", () => {
     it("should return new instance", () => {
       // act
       const scopeFactory = ScopeFactory.create(mockDappConfig);
@@ -250,7 +250,7 @@ describe("common/ScopeFactory", () => {
     });
   });
 
-  describe("getModules() -->", () => {
+  describe("getModules()", () => {
     it("should always include configuration module", () => {
       // prepare
       const baseConfig = {
@@ -398,7 +398,7 @@ describe("common/ScopeFactory", () => {
     });
   });
 
-  describe("getSchedulers() -->", () => {
+  describe("getSchedulers()", () => {
     it("should always include configuration and database modules", () => {
       // prepare
       const baseConfig = {

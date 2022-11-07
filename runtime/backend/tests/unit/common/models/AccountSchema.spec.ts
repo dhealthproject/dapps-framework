@@ -11,7 +11,7 @@
 import { Account } from "../../../../src/common/models/AccountSchema";
 
 describe("common/AccountSchema", () => {
-  describe("toQuery() -->", () => {
+  describe("toQuery()", () => {
     it("should return correct value", () => {
       // prepare
       const address = "test-address";

@@ -51,7 +51,7 @@ import { StateService } from "../../../../src/common/services/StateService";
 import { MockModel } from "../../../mocks/global";
 import { StatisticsDocument, StatisticsModel } from "../../../../src/statistics/models/StatisticsSchema";
 
-describe("statistics/MonthlyScoreAggregation", () => {
+describe("statistics/WeeklyScoreAggregation", () => {
   let service: WeeklyScoreAggregation;
   let queriesService: QueryService<StatisticsDocument, StatisticsModel>;
   let statesService: StateService;

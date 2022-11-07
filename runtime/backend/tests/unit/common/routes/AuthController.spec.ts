@@ -29,7 +29,7 @@ import { QueryService } from "../../../../src/common/services/QueryService";
 import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 import { MockModel } from "../../../mocks/global";
 
-describe("routes/AuthController", () => {
+describe("common/AuthController", () => {
   let controller: AuthController;
   let authService: AuthService;
   let accountsService: AccountsService;

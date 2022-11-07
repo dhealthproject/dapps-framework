@@ -18,7 +18,7 @@ import { AccountsService } from "../../../../src/common/services/AccountsService
 import { AccountDocument, AccountModel, AccountQuery } from "../../../../src/common/models/AccountSchema";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 
-describe("discovery/AccountsService", () => {
+describe("common/AccountsService", () => {
   let service: AccountsService;
   let queriesService: QueryService<AccountDocument, AccountModel>;
   let mockDate: Date;
@@ -44,11 +44,11 @@ describe("discovery/AccountsService", () => {
     queriesService = module.get<QueryService<AccountDocument, AccountModel>>(QueryService);
   });
 
-  it("should be defined -->", () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  describe("count() -->", () => {
+  describe("count()", () => {
     it("should use QueryService.count() method with correct query", async () => {
       // prepare
       const expectedResult = 2;
@@ -65,7 +65,7 @@ describe("discovery/AccountsService", () => {
     });
   });
 
-  describe("exists() -->", () => {
+  describe("exists()", () => {
     it("should use QueryService.findOne() method with correct query", async () => {
       // prepare
       const expectedResult = true;
@@ -82,7 +82,7 @@ describe("discovery/AccountsService", () => {
     });
   })
 
-  describe("find() -->", () => {
+  describe("find()", () => {
     it("should use QueryService.find() method with correct query", async () => {
       // prepare
       const expectedResult = new PaginatedResultDTO(
@@ -106,7 +106,7 @@ describe("discovery/AccountsService", () => {
     });
   });
 
-  describe("findOne() -->", () => {
+  describe("findOne()", () => {
     it("should use QueryService.findOne() method with correct query", async () => {
       // prepare
       const expectedResult = {};
@@ -123,7 +123,7 @@ describe("discovery/AccountsService", () => {
     });
   });
 
-  describe("createOrUpdate() -->", () => {
+  describe("createOrUpdate()", () => {
     it("should use QueryService.createOrUpdate() method with correct query", async () => {
       // prepare
       const expectedResult = {};
@@ -150,7 +150,7 @@ describe("discovery/AccountsService", () => {
     });
   });
 
-  describe("updateBatch() -->", () => {
+  describe("updateBatch()", () => {
 
     // for each updateBatch() test we overwrite the
     // bulk operations functions from mongoose plugin

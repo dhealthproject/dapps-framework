@@ -10,7 +10,7 @@
 // internal dependencies
 import { Statistics } from "../../../../src/statistics/models/StatisticsSchema";
 
-describe("discovery/AssetSchema", () => {
+describe("statistics/StatisticsSchema", () => {
   describe("get toQuery()", () => {
     it("should return correct database query", () => {
       // prepare

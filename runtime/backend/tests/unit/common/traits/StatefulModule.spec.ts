@@ -30,7 +30,7 @@ describe("common/StatefulModule", () => {
     jest.clearAllMocks();
   });
 
-  describe("debugLog() -->", () => {
+  describe("debugLog()", () => {
     it("should call debug method from logger with context", () => {
       // prepare
       const statefulModule = new StatefulModuleTest((stateService as any));
@@ -56,7 +56,7 @@ describe("common/StatefulModule", () => {
     });
   });
 
-  describe("errorLog() -->", () => {
+  describe("errorLog()", () => {
     it("should call error method from logger with correct params", () => {
       // prepare
       const statefulModule = new StatefulModuleTest((stateService as any));

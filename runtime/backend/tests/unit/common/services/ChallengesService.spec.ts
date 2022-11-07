@@ -18,7 +18,7 @@ import { AuthChallengeDocument, AuthChallengeModel, AuthChallengeQuery } from ".
 import { MockModel } from "../../../mocks/global";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 
-describe("discovery/ChallengesService", () => {
+describe("common/ChallengesService", () => {
   let service: ChallengesService;
   let queriesService: QueryService<AuthChallengeDocument, AuthChallengeModel>;
   let mockDate: Date;
@@ -44,11 +44,11 @@ describe("discovery/ChallengesService", () => {
     queriesService = module.get<QueryService<AuthChallengeDocument, AuthChallengeModel>>(QueryService);
   });
 
-  it("should be defined -->", () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  describe("count() -->", () => {
+  describe("count()", () => {
     it("should use QueryService.count() method with correct query", async () => {
       // prepare
       const expectedResult = 2;
@@ -65,7 +65,7 @@ describe("discovery/ChallengesService", () => {
     });
   });
 
-  describe("exists() -->", () => {
+  describe("exists()", () => {
     it("should use QueryService.findOne() method with correct query", async () => {
       // prepare
       const expectedResult = true;
@@ -82,7 +82,7 @@ describe("discovery/ChallengesService", () => {
     });
   });
 
-  describe("find() -->", () => {
+  describe("find()", () => {
     it("should use QueryService.find() method with correct query", async () => {
       // prepare
       const expectedResult = new PaginatedResultDTO(
@@ -106,7 +106,7 @@ describe("discovery/ChallengesService", () => {
     });
   });
 
-  describe("findOne() -->", () => {
+  describe("findOne()", () => {
     it("should use QueryService.findOne() method with correct query", async () => {
       // prepare
       const expectedResult = {};
@@ -123,7 +123,7 @@ describe("discovery/ChallengesService", () => {
     });
   });
 
-  describe("createOrUpdate() -->", () => {
+  describe("createOrUpdate()", () => {
     it("should use QueryService.createOrUpdate() method with correct query", async () => {
       // prepare
       const expectedResult = {};
@@ -150,7 +150,7 @@ describe("discovery/ChallengesService", () => {
     });
   });
 
-  describe("updateBatch() -->", () => {
+  describe("updateBatch()", () => {
 
     // for each updateBatch() test we overwrite the
     // bulk operations functions from mongoose plugin
@@ -223,7 +223,7 @@ describe("discovery/ChallengesService", () => {
     });
   });
 
-  describe("generateChallenge() -->", () => {
+  describe("generateChallenge()", () => {
     it("should use random function from Math lib in greatest radix (36) and slice result correctly", () => {
       // prepare
       const mathRandomCall = jest

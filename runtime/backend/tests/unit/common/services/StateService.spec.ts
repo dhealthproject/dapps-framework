@@ -47,7 +47,7 @@ describe("common/StateService", () => {
     expect(service).toBeDefined();
   });
 
-  describe("findOne() -->", () => {
+  describe("findOne()", () => {
     it("should call findOne() from queryService with correct param", async () => {
       const expectedResult = {} as StateDocument;
       const findMock = jest
@@ -59,7 +59,7 @@ describe("common/StateService", () => {
     });
   });
 
-  describe("updateOne() -->", () => {
+  describe("updateOne()", () => {
     it("should call updateOne() from queryService with correct param", async () => {
       const expectedResult = { data: {} } as StateDocument;
       const findMock = jest
