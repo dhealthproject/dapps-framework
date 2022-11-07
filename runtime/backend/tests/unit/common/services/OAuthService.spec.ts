@@ -35,12 +35,15 @@ import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResul
 import { OAuthCallbackRequest } from "../../../../src/common/requests/OAuthCallbackRequest";
 import {
   AccountIntegrationDocument,
+  AccountIntegrationModel,
   AccountIntegrationQuery,
 } from "../../../../src/common/models/AccountIntegrationSchema";
+import { HttpMethod } from "../../../../src/common/drivers/HttpRequestHandler";
 
 describe("common/OAuthService", () => {
   let mockDate: Date;
   let oauthService: OAuthService;
+  let queryService: QueryService<AccountIntegrationDocument, AccountIntegrationModel>;
 
   beforeEach(async () => {
     mockDate = new Date(Date.UTC(2022, 1, 1)); // UTC 1643673600000
@@ -74,6 +77,7 @@ describe("common/OAuthService", () => {
     }).compile();
 
     oauthService = module.get<OAuthService>(OAuthService);
+    queryService = module.get<QueryService<AccountIntegrationDocument, AccountIntegrationModel>>(QueryService);
 
     sha3_256_call.mockClear();
   });
@@ -938,6 +942,62 @@ describe("common/OAuthService", () => {
         // no-body, no-options, no-headers
         undefined, undefined, undefined,
       );
+    });
+
+    it("should use correct http options for executeRequest call", async () => {
+      // prepare
+      const httpOptions = {
+        method: "GET" as HttpMethod,
+        body: "test-http-body",
+        options: "test-http-options",
+        headers: "test-http-headers",
+      };
+
+      // act
+      await oauthService.callProviderAPI(
+        "/custom/api/endpoint",
+        theAuthorization,
+        httpOptions
+      );
+
+      // assert
+      expect(getEncryptionSeedMock).toHaveBeenCalledTimes(1);
+      expect(cipherDecryptMock).toHaveBeenCalledTimes(1);
+      expect(executeRequestMock).toHaveBeenCalledTimes(1);
+      expect(executeRequestMock).toHaveBeenCalledWith(
+        "fake-decrypted-access-token",
+        "/custom/api/endpoint",
+        "GET",
+        // no-body, no-options, no-headers
+        httpOptions.body,
+        httpOptions.options,
+        httpOptions.headers,
+      );
+    });
+  });
+
+  describe("getIntegrationByRemoteIdentifier()", () => {
+    it("should run correctly & return correct result", async () => {
+      // prepare
+      const provider = "test-provider";
+      const remoteIdentifier = "test-remote-identifier";
+      const accountIntegrationQuery = new AccountIntegrationQuery({
+        name: provider,
+        remoteIdentifier: remoteIdentifier,
+      } as AccountIntegrationDocument);
+      const queryServiceFindOneCall = jest
+        .spyOn(queryService, "findOne")
+        .mockResolvedValue({} as AccountIntegrationDocument);
+
+      // act
+      const result = await oauthService.getIntegrationByRemoteIdentifier(
+        provider,
+        remoteIdentifier,
+      );
+
+      // assert
+      expect(queryServiceFindOneCall).toHaveBeenNthCalledWith(1, accountIntegrationQuery, MockModel);
+      expect(result).toEqual({});
     });
   });
 });
