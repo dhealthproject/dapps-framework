@@ -296,16 +296,19 @@ export class Earn extends Contract {
    * @returns {Transaction}   A prepared (but unsigned) dHealth Network Transaction.
    */
   public toTransaction(parameters: TransactionParameters): TransferTransaction {
+    // extract for shortcuts
+    const { deadline, maxFee } = parameters;
+
+    // prepare unsigned transaction object
     return TransferTransaction.create(
-      this.parameters.getDeadline(),
-      this.parameters.getPublicAccount(
-        parameters.recipientPublicKey,
-        this.parameters.getNetworkType()
-      ).address,
+      deadline !== undefined ? deadline : this.parameters.getDeadline(),
+      this.getRecipientAddress(parameters),
       this.getMosaics(),
       PlainMessage.create(this.toJSON()),
       this.parameters.getNetworkType(),
-      this.parameters.getMaxFee(0)
+      maxFee !== undefined
+        ? UInt64.fromUint(maxFee)
+        : this.parameters.getMaxFee(0)
     );
   }
 

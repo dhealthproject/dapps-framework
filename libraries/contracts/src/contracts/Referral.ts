@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { PlainMessage, TransferTransaction } from "@dhealth/sdk";
+import { PlainMessage, TransferTransaction, UInt64 } from "@dhealth/sdk";
 
 // internal dependencies
 import type { ContractParameters } from "../types/ContractParameters";
@@ -234,16 +234,19 @@ export class Referral extends Contract {
    * @returns {Transaction}   A prepared (but unsigned) dHealth Network Transaction.
    */
   public toTransaction(parameters: TransactionParameters): TransferTransaction {
+    // extract for shortcuts
+    const { deadline, maxFee } = parameters;
+
+    // prepare unsigned transaction object
     return TransferTransaction.create(
-      this.parameters.getDeadline(),
-      this.parameters.getPublicAccount(
-        parameters.recipientPublicKey,
-        this.parameters.getNetworkType()
-      ).address,
+      deadline !== undefined ? deadline : this.parameters.getDeadline(),
+      this.getRecipientAddress(parameters),
       this.parameters.getMosaic(0),
       PlainMessage.create(this.toJSON()),
       this.parameters.getNetworkType(),
-      this.parameters.getMaxFee(0)
+      maxFee !== undefined
+        ? UInt64.fromUint(maxFee)
+        : this.parameters.getMaxFee(0)
     );
   }
 }

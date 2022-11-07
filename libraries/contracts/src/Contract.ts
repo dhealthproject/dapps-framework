@@ -9,6 +9,7 @@
  */
 // external dependencies
 import {
+  Address,
   AggregateTransaction,
   Transaction,
   TransactionType,
@@ -362,5 +363,37 @@ export abstract class Contract {
     } catch (e) {
       throw new InvalidContractError("A contract could not be parsed.");
     }
+  }
+
+  /**
+   * Helper method that creates an `Address` instance out of transaction
+   * parameters. Parameters may include a `recipientPublicKey` or a
+   * `recipientAddress`. If both are provided, the `recipientAddress`
+   * takes precedence.
+   * <br /><br />
+   * Note that in the case of providing a `recipientPublicKey, this method
+   * uses the internal {@link Contract.parameters} to determine the network
+   * identifier.
+   *
+   * @param   {TransactionParameters}   parameters    A configuration object that is passed to the creation process of the dHealth Network Transaction.
+   * @returns {Address}   A dHealth Network Account Address from `@dhealth/sdk`.
+   */
+  protected getRecipientAddress(parameters: TransactionParameters): Address {
+    // extract for shortcuts
+    const { recipientAddress, recipientPublicKey } = parameters;
+
+    // wrap into local variables
+    const recipientAddr =
+      recipientAddress !== undefined ? recipientAddress : "";
+    const recipientPub =
+      recipientPublicKey !== undefined ? recipientPublicKey : "";
+
+    // returns string-to-address to publicKey-to-address
+    return recipientAddress !== undefined
+      ? Address.createFromRawAddress(recipientAddr)
+      : this.parameters.getPublicAccount(
+          recipientPub,
+          this.parameters.getNetworkType()
+        ).address;
   }
 }
