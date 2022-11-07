@@ -146,8 +146,9 @@ export default () => ({
      * @var {DiscoveryConfig}
      */
     sources: [
-      "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY", // authAutority (login contract)
+      "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY", // authAuthority (login contract)
       "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY", // main interactions account
+      "NCNQMX5JEENRMIGNFJC3UGHDUO3HAYQZK7ZIJUA", // earnAuthority (earn contract)
     ],
   }
 });
