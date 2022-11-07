@@ -7,14 +7,19 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-
+// external dependencies
 import { Injectable } from "@nestjs/common";
-import { StatsDTO } from "../models/StatsDTO";
-import { ActivitiesService } from "@/processor/services/ActivitiesService";
+
+// internal dependencies
+// processor scope
+import { ActivitiesService } from "../../processor/services/ActivitiesService";
 import {
   ActivityQuery,
   ActivityDocument,
-} from "@/processor/models/ActivitySchema";
+} from "../../processor/models/ActivitySchema";
+
+// statistics scope
+import { StatsDTO } from "../models/StatsDTO";
 
 @Injectable()
 export class StatisticsService {

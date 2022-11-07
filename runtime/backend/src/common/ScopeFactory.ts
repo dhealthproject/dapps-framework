@@ -16,15 +16,7 @@ import type { Scope } from "./models/Scope";
 import { DappConfig } from "./models/DappConfig";
 import { Scopes } from "./Scopes";
 import { Schedulers } from "./Schedulers";
-
-// configuration resources
-import dappConfigLoader from "../../config/dapp";
-import networkConfigLoader from "../../config/network";
-import securityConfigLoader from "../../config/security";
-import processorConfigLoader from "../../config/processor";
-import oauthConfigLoader from "../../config/oauth";
-import assetsConfigLoader from "../../config/assets";
-import statisticsConfigLoader from "../../config/statistics";
+import { AppConfiguration } from "../AppConfiguration";
 
 /**
  * @label COMMON
@@ -78,15 +70,7 @@ export class ScopeFactory {
     // configure the base imports with a `DappConfig`
     this.baseImports = [
       ConfigModule.forRoot({
-        load: [
-          dappConfigLoader,
-          networkConfigLoader,
-          securityConfigLoader,
-          processorConfigLoader,
-          oauthConfigLoader,
-          assetsConfigLoader,
-          statisticsConfigLoader,
-        ],
+        load: AppConfiguration.getLoaders(),
         isGlobal: true,
         envFilePath: [".env", ".env-sample"],
       }),

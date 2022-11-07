@@ -53,6 +53,6 @@ export type LeaderboardConfig = {
  */
 export interface StatisticsConfig {
   statistics: {
-    leaderboard: LeaderboardConfig;
+    leaderboards: LeaderboardConfig;
   };
 }

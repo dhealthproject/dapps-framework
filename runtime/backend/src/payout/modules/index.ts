@@ -8,10 +8,4 @@
  * @license     LGPL-3.0
  */
 // modules index
-export * from "./AccountsModule";
-export * from "./AuthModule";
-export * from "./ChallengesModule";
-export * from "./HelpersModule";
-export * from "./NetworkModule";
-export * from "./QueryModule";
-export * from "./StateModule";
+export * from "./PayoutsModule";

@@ -7,7 +7,12 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// This file is used as the entry-point for source code documentation
+// using `typedoc`. All classes of the framework *must* be exported in
+// this file so that documentation can be generated correctly.
+
 // application-layer
+export { AppConfiguration } from "./AppConfiguration";
 export { AppModule } from "./AppModule";
 export { AppService } from "./AppService";
 
@@ -18,6 +23,7 @@ export { ScopeFactory } from "./common/ScopeFactory";
 export { Schedulers } from "./common/Schedulers";
 export * from "./common/concerns";
 export * from "./common/drivers";
+export * from "./common/errors";
 export * from "./common/events";
 export * from "./common/models";
 export * from "./common/requests";
@@ -25,6 +31,15 @@ export * from "./common/routes";
 export * from "./common/services";
 export * from "./common/traits";
 export * from "./common/types";
+// explicitely not exporting AccountsModule:COMMON
+export {
+  AuthModule,
+  ChallengesModule,
+  HelpersModule,
+  NetworkModule,
+  QueryModule,
+  StateModule,
+} from "./common/modules";
 
 // discovery scope
 export * from "./discovery/DiscoveryModule";
@@ -36,6 +51,13 @@ export * from "./discovery/services";
 
 // payout scope
 export * from "./payout/PayoutModule";
+export * from "./payout/concerns";
+export * from "./payout/errors";
+export * from "./payout/models";
+export * from "./payout/modules";
+export * from "./payout/routes";
+export * from "./payout/schedulers";
+export * from "./payout/services";
 
 // processor scope
 export * from "./processor/ProcessorModule";

@@ -7,6 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// This file is used as the entry-point for the `nestjs` backend runtime
+// and *does not* export any classes or interfaces and types.
+
 // external dependencies
 import { NestFactory } from "@nestjs/core";
 import { Logger } from "@nestjs/common";
@@ -35,6 +38,10 @@ async function bootstrap(): Promise<void> {
   // read configuration
   const dappConfig: DappConfig = dappConfigLoader();
   const securityConfig: SecurityConfig = securityConfigLoader();
+
+  // verify configuration integrity
+  // CAUTION: this will fail with a `ConfigurationError`
+  AppModule.checkConfiguration();
 
   // create app instance
   const app = await NestFactory.create(

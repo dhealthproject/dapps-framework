@@ -13,12 +13,18 @@ import { Model, FilterQuery } from "mongoose";
 import { ObjectLiteral } from "@dhealth/contracts";
 
 // internal dependencies
+// common scope
 import { Documentable } from "../../common/concerns/Documentable";
 import { Transferable } from "../../common/concerns/Transferable";
 import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
+
+// processor scope
 import { ActivityDTO } from "./ActivityDTO";
 import { ActivityData, ActivityDataSchema } from "./ActivityDataSchema";
 import { ProcessingState } from "./ProcessingStatusDTO";
+
+// payout scope
+import { PayoutState } from "../../payout/models/PayoutStatusDTO";
 
 /**
  * @class Activity
@@ -161,25 +167,43 @@ export class Activity extends Transferable<ActivityDTO> {
   public readonly activityData?: ActivityData;
 
   /**
-   * This property is a flag that determines whether the activity is missing
-   * OAuth authorizations. This field should *usually* hold `false` but may
+   * This property is a flag that determines whether the activity has been
+   * *processed* by the processor before. An activity is considered to be
+   * *fully processed* only *after* the full details (activity data) has
+   * been downloaded from the data provider.
    * <br /><br />
    * Possible values for this field in the database are of type `number` and
    * listed in {@link ProcessingState}. Initially, the value will always be
    * `0` as this corresponds to "not-processed".
    * <br /><br />
-   * This field is **optional**, *not indexed* and defaults to `0`.
+   * This field is **optional**, *indexed* and defaults to `0`.
    *
    * @example `0`
    * @access public
    * @readonly
-   * @var {string}
+   * @var {ProcessingState}
    */
-  @Prop({ required: true, default: 0 })
+  @Prop({ required: true, index: true, default: 0 })
   public readonly processingState?: ProcessingState;
 
-  //XXX readingState?
-  //XXX payoutState?
+  /**
+   * This property is a flag that determines whether the activity payout
+   * has been executed. An activity is considered to be *completed* only
+   * *after* the payout has been *confirmed* on dHealth Network.
+   * <br /><br />
+   * Possible values for this field in the database are of type `number` and
+   * listed in {@link PayoutState}. Initially, the value will always be
+   * `0` as this corresponds to "not-started".
+   * <br /><br />
+   * This field is **optional**, *indexed* and defaults to `0`.
+   *
+   * @example `0`
+   * @access public
+   * @readonly
+   * @var {PayoutState}
+   */
+  @Prop({ required: true, index: true, default: 0 })
+  public readonly payoutState?: PayoutState;
 
   /**
    * The document's creation timestamp. This field **does not** represent an
@@ -225,6 +249,7 @@ export class Activity extends Transferable<ActivityDTO> {
       query["remoteIdentifier"] = this.remoteIdentifier;
     if (undefined !== this.processingState)
       query["processingState"] = this.processingState;
+    if (undefined !== this.payoutState) query["payoutState"] = this.payoutState;
 
     return query;
   }

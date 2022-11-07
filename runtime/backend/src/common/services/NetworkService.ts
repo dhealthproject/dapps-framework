@@ -279,6 +279,10 @@ export class NetworkService {
    * This method forwards the execution of promises using
    * `Promise.all()` and given request failure, connects to
    * a different node that is currently in a healthy state.
+   * <br /><br />
+   * Note that this method *debounces* the API calls such that
+   * requests to a node are done at a maximum pace of *3 requests*
+   * in a second.
    *
    * @async
    * @access public
@@ -287,13 +291,25 @@ export class NetworkService {
    */
   public async delegatePromises<ResponseType>(
     promises: Promise<ResponseType>[],
+    countTrials = 0,
   ): Promise<ResponseType[]> {
     try {
-      return await Promise.all(promises);
+      // debounces the promise executions by 300ms
+      return await Promise.all([
+        promises.reduce(async (prev, next) => {
+          setTimeout(async () => await prev, 300);
+          return await next;
+        }),
+      ]);
     } catch (e) {
+      // we do not want this to end in infinite loop
+      if (countTrials >= 3) {
+        throw new Error(`Aborting node requests due to too many trials.`);
+      }
+
       // request to node **failed**, try with a different node
       this.currentNode = await this.getNextAvailableNode();
-      return this.delegatePromises(promises);
+      return this.delegatePromises(promises, ++countTrials);
     }
   }
 

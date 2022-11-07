@@ -37,6 +37,36 @@ jest.mock("../../../src/common/modules/AccountsModule", () => {
   return { AccountsModule: CommonAccountsModuleMock };
 });
 
+const CommonAuthModuleMock: any = jest.fn();
+jest.mock("../../../src/common/modules/AuthModule", () => {
+  return { AuthModule: CommonAuthModuleMock };
+});
+
+const CommonChallengesModuleMock: any = jest.fn();
+jest.mock("../../../src/common/modules/ChallengesModule", () => {
+  return { ChallengesModule: CommonChallengesModuleMock };
+});
+
+const CommonHelpersModuleMock: any = jest.fn();
+jest.mock("../../../src/common/modules/HelpersModule", () => {
+  return { HelpersModule: CommonHelpersModuleMock };
+});
+
+const CommonNetworkModuleMock: any = jest.fn();
+jest.mock("../../../src/common/modules/NetworkModule", () => {
+  return { NetworkModule: CommonNetworkModuleMock };
+});
+
+const CommonQueryModuleMock: any = jest.fn();
+jest.mock("../../../src/common/modules/QueryModule", () => {
+  return { QueryModule: CommonQueryModuleMock };
+});
+
+const CommonStateModuleMock: any = jest.fn();
+jest.mock("../../../src/common/modules/StateModule", () => {
+  return { StateModule: CommonStateModuleMock };
+});
+
 // discovery scope
 const DiscoveryModuleMock: any = jest.fn();
 jest.mock("../../../src/discovery/DiscoveryModule", () => {
@@ -74,10 +104,25 @@ jest.mock("../../../src/processor/modules/OperationsModule", () => {
   return { OperationsModule: OperationsModuleMock };
 });
 
+const ActivitiesModuleMock: any = jest.fn();
+jest.mock("../../../src/processor/modules/ActivitiesModule", () => {
+  return { ActivitiesModule: ActivitiesModuleMock };
+});
+
+const WebHooksModuleMock: any = jest.fn();
+jest.mock("../../../src/processor/modules/WebHooksModule", () => {
+  return { WebHooksModule: WebHooksModuleMock };
+});
+
 // payout scope
 const PayoutModuleMock: any = jest.fn();
 jest.mock("../../../src/payout/PayoutModule", () => {
   return { PayoutModule: PayoutModuleMock };
+});
+
+const PayoutsModuleMock: any = jest.fn();
+jest.mock("../../../src/payout/modules/PayoutsModule", () => {
+  return { PayoutsModule: PayoutsModuleMock };
 });
 
 // statistics scope
@@ -137,6 +182,14 @@ jest.mock(
   "../../../src/statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand",
   () => {
     return { LeaderboardsAggregationCommand: LeaderboardsAggregationCommandMock };
+  },
+);
+
+const ActivityPayoutsCommandMock: any = jest.fn();
+jest.mock(
+  "../../../src/payout/schedulers/ActivityPayouts/ActivityPayoutsCommand",
+  () => {
+    return { ActivityPayoutsCommand: ActivityPayoutsCommandMock };
   },
 );
 

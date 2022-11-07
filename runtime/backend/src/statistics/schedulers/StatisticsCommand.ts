@@ -41,7 +41,7 @@ export interface StatisticsCommandOptions extends BaseCommandOptions {
  * stateful modules due to the extension of {@link StatefulModule}
  * in the parent class {@link BaseCommand}.
  * <br /><br />
- * Additionally, discovery command also *implement* the `CommandRunner`
+ * Additionally, statistics commands also *implement* the `CommandRunner`
  * interface from `nest-commander`. The `run()` method call is defined
  * in {@link BaseCommand} and *delegates* the runtime to the method
  * implemented in this class as {@link runWithOptions}.

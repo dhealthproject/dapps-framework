@@ -8,11 +8,16 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { ActivitiesModule } from "@/processor/modules/ActivitiesModule";
 import { Module } from "@nestjs/common";
 
 // internal dependencies
+// common scope
 import { AccountsModule } from "../common/modules/AccountsModule";
+
+// processor scope
+import { ActivitiesModule } from "../processor/modules/ActivitiesModule";
+
+// statistics scope
 import { LeaderboardsModule } from "./modules/LeaderboardsModule";
 import { StatisticsController } from "./routes/StatisticsController";
 import { StatisticsService } from "./services/StatisticsService";

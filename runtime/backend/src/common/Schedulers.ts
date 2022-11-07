@@ -7,12 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// external dependencies
-import { MongooseModule } from "@nestjs/mongoose";
-
 // internal dependencies
 // common scope
-import { AccountsModule as CommonAccountsModule } from "../common/modules/AccountsModule";
+import { AppConfiguration } from "../AppConfiguration";
 
 // discovery scope
 import { AccountsModule } from "../discovery/modules/AccountsModule";
@@ -27,6 +24,12 @@ import { DiscoverBlocksCommand } from "../discovery/schedulers/DiscoverBlocks/Di
 // processor scope
 import { OperationsModule } from "../processor/modules/OperationsModule";
 import { ProcessOperationsCommand } from "../processor/schedulers/ProcessOperations/ProcessOperationsCommand";
+
+// payout scope
+import { PayoutsModule } from "../payout/modules/PayoutsModule";
+import { ActivityPayoutsCommand } from "../payout/schedulers/ActivityPayouts/ActivityPayoutsCommand";
+import { PrepareActivityPayouts } from "../payout/schedulers/ActivityPayouts/PrepareActivityPayouts";
+import { BroadcastActivityPayouts } from "../payout/schedulers/ActivityPayouts/BroadcastActivityPayouts";
 
 // statistics scope
 import { LeaderboardsAggregationCommand } from "../statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand";
@@ -55,18 +58,16 @@ const db = dappConfigLoader().database;
  * | `discovery` | {@link DiscoverAccounts:DISCOVERY} | A discovery command that retrieves accounts information from the database using discovered transactions. |
  * | `discovery` | {@link DiscoverAssets:DISCOVERY} | A discovery command that retrieves assets information from the database using discovered transactions. |
  * | `processor` | {@link ProcessOperations:PROCESSOR} | A processor command that interprets discovered transactions and maps them to dApp operations. |
- * | `statistics`| {@link LeaderboardAggregation:STATISTICS} | A statistics command that aggregates and sorts user rewards for activities and creates leaderboards. |
+ * | `payout`| {@link PrepareActivityPayouts:PAYOUT} | A payout command that prepares activity reward transactions and signs them such that they can be broadcast to dHealth Network. |
+ * | `payout`| {@link BroadcastActivityPayouts:PAYOUT} | A payout command that broadcasts activity reward transactions to dHealth Network. |
+ * | `statistics` | {@link LeaderboardAggregation:STATISTICS} | A statistics command that aggregates and sorts user rewards for activities and creates leaderboards. |
  * <br /><br />
  *
  * @var {[key: string]: any[]}
  * @since v0.1.0
  */
 export const Schedulers: { [key: string]: any[] } = {
-  database: [
-    MongooseModule.forRoot(
-      `mongodb://${db.user}:${process.env.DB_PASS}@${db.host}:${db.port}/${db.name}?authSource=admin`,
-    ),
-  ],
+  database: [AppConfiguration.getDatabaseModule(db)],
   discovery: [
     AccountsModule,
     AssetsModule,
@@ -77,7 +78,7 @@ export const Schedulers: { [key: string]: any[] } = {
     DiscoverTransactionsCommand,
     DiscoverBlocksCommand,
   ],
-  payout: [],
+  payout: [PayoutsModule, ActivityPayoutsCommand],
   processor: [OperationsModule, ProcessOperationsCommand],
   statistics: [BlocksModule, LeaderboardsAggregationCommand],
 };

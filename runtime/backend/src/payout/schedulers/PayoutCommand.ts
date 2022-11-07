@@ -12,46 +12,45 @@ import { Scope } from "../../common/models/Scope";
 import { BaseCommand, BaseCommandOptions } from "../../worker/BaseCommand";
 
 /**
- * @interface ProcessorCommandOptions
+ * @interface PayoutCommandOptions
  * @description This interface defines **arguments** that can be
- * passed to any **processor** command that is implemented in the
+ * passed to any **payout** command that is implemented in the
  * backend runtime.
  * <br /><br />
  * Note that it is important that child classes extend this interface
  * with their own specification of arguments.
  *
  * @see BaseCommandOptions
- * @since v0.3.0
+ * @since v0.4.0
  */
-export interface ProcessorCommandOptions extends BaseCommandOptions {
+export interface PayoutCommandOptions extends BaseCommandOptions {
   /**
-   * Defines the contract that is being processed with this command.
-   * <br /><br />
-   * We require the input of a contract here such that processing is
-   * always scoped around singular contract functionalities.
+   * Defines whether the command is executed in "dry-mode" or not. In
+   * dry-mode, commands *will not broadcast transactions*. Transactions
+   * may still be *prepared*.
    *
    * @access public
-   * @var {string}
+   * @var {boolean}
    */
-  contract: string;
+  dryRun: boolean;
 }
 
 /**
- * @class ProcessorCommand
+ * @class PayoutCommand
  * @description This class defines the abstraction layer used in
- * *any* processor commands. Note that processor commands are always
+ * *any* payout commands. Note that payout commands are always
  * stateful modules due to the extension of {@link StatefulModule}
  * in the parent class {@link BaseCommand}.
  * <br /><br />
- * Additionally, processor commands also *implement* the `CommandRunner`
+ * Additionally, payout commands also *implement* the `CommandRunner`
  * interface from `nest-commander`. The `run()` method call is defined
  * in {@link BaseCommand} and *delegates* the runtime to the method
  * implemented in this class as {@link runWithOptions}.
  *
  * @abstract
- * @since v0.3.0
+ * @since v0.4.0
  */
-export abstract class ProcessorCommand extends BaseCommand {
+export abstract class PayoutCommand extends BaseCommand {
   /**
    * The command scope. This is the scope that must be enabled
    * through the configuration files for this command to be
@@ -63,7 +62,7 @@ export abstract class ProcessorCommand extends BaseCommand {
    * @access protected
    * @var {Scope}
    */
-  protected scope: Scope = "processor";
+  protected scope: Scope = "payout";
 
   /**
    * This method must be implemented by extending classes and
@@ -72,10 +71,10 @@ export abstract class ProcessorCommand extends BaseCommand {
    * @abstract
    * @access public
    * @async
-   * @param   {ProcessorCommandOptions}   options
+   * @param   {PayoutCommandOptions}   options
    * @returns {Promise<void>}
    */
-  public abstract process(options?: ProcessorCommandOptions): Promise<void>;
+  public abstract execute(options?: PayoutCommandOptions): Promise<void>;
 
   /**
    * This method must return a *command name*. Note that
@@ -113,20 +112,6 @@ export abstract class ProcessorCommand extends BaseCommand {
   protected abstract get signature(): string;
 
   /**
-   * This helper method serves as a *parser* for the `-c`
-   * or `--collection` option of this command.
-   * <br /><br />
-   * The processor collection can contain a mongo *collection*
-   * name that must exist in the database.
-   *
-   * @param     {string}  collectionOption     The `--collection` argument as passed in the terminal.
-   * @returns   {string}   A validated mongo database collection name.
-   */
-  protected parseCollection(collectionOption: string): string {
-    return collectionOption;
-  }
-
-  /**
    * This method implements the *execution* logic for
    * processor commands that extend this class. Child
    * classes must implement a {@link process} method
@@ -137,16 +122,14 @@ export abstract class ProcessorCommand extends BaseCommand {
    * failures more consistently at a higher level.
    *
    * @see BaseCommand
-   * @param {ProcessorCommandOptions}  options   The *parsed* runtime arguments passed to the command.
+   * @param {PayoutCommandOptions}  options   The *parsed* runtime arguments passed to the command.
    * @returns {Promise<void>}
    */
-  protected async runWithOptions(
-    options: ProcessorCommandOptions,
-  ): Promise<void> {
+  protected async runWithOptions(options: PayoutCommandOptions): Promise<void> {
     // try-catch block around runWithOptions call make it
     // unnecessary here. Possibly this will change with some
     // commands that require more detailed error handling
-    await this.process(options);
+    await this.execute(options);
 
     // no-return (void)
   }

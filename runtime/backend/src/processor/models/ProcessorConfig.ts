@@ -35,7 +35,7 @@ import { TransactionDocument } from "../../common/models/TransactionSchema";
 export type OperationParameters = {
   contract: string;
   label: string;
-  query: TransactionDocument;
+  query: TransactionDocument | any;
 };
 
 /**

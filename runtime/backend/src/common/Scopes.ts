@@ -7,14 +7,12 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// external dependencies
-import { MongooseModule } from "@nestjs/mongoose";
-
 // internal dependencies
 import { DiscoveryModule } from "../discovery/DiscoveryModule";
 import { PayoutModule } from "../payout/PayoutModule";
 import { ProcessorModule } from "../processor/ProcessorModule";
 import { StatisticsModule } from "../statistics/StatisticsModule";
+import { AppConfiguration } from "../AppConfiguration";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";
@@ -51,9 +49,7 @@ const db = dappConfigLoader().database;
  * @since v0.1.0
  */
 export const Scopes: { [key: string]: any } = {
-  database: MongooseModule.forRoot(
-    `mongodb://${db.user}:${process.env.DB_PASS}@${db.host}:${db.port}/${db.name}?authSource=admin`,
-  ),
+  database: AppConfiguration.getDatabaseModule(db),
   discovery: DiscoveryModule,
   payout: PayoutModule,
   processor: ProcessorModule,
