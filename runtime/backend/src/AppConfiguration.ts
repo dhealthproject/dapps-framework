@@ -23,6 +23,7 @@ import { NetworkConfig } from "./common/models/NetworkConfig";
 import { OAuthConfig } from "./common/models/OAuthConfig";
 import { SecurityConfig } from "./common/models/SecurityConfig";
 import { StatisticsConfig } from "./common/models/StatisticsConfig";
+import { SocialConfig } from "./common/models/SocialConfig";
 
 // payout scope
 import { PayoutConfig } from "./payout/models/PayoutConfig";
@@ -39,6 +40,7 @@ import payoutConfigLoader from "../config/payout";
 import processorConfigLoader from "../config/processor";
 import securityConfigLoader from "../config/security";
 import statisticsConfigLoader from "../config/statistics";
+import socialConfigLoader from "../config/social";
 
 /**
  * @class AppConfiguration
@@ -175,6 +177,18 @@ export class AppConfiguration {
   protected statistics: StatisticsConfig;
 
   /**
+   * The dApp social platforms configuration. This configuration object is
+   * used to determine social platforms are integrated to *share content*.
+   * <br /><br />
+   * #### Reference
+   * {@link SocialConfig:CONFIG}
+   *
+   * @access protected
+   * @var {SocialConfig}
+   */
+  protected social: SocialConfig;
+
+  /**
    * Construct an instance of this application configuration.
    * <br /><br />
    * CAUTION: Creating an instance of this class automatically interprets
@@ -195,6 +209,7 @@ export class AppConfiguration {
     this.processor = processorConfigLoader();
     this.security = securityConfigLoader();
     this.statistics = statisticsConfigLoader();
+    this.social = socialConfigLoader();
   }
 
   /**
@@ -218,6 +233,7 @@ export class AppConfiguration {
       assetsConfigLoader,
       statisticsConfigLoader,
       payoutConfigLoader,
+      socialConfigLoader,
     ];
   }
 

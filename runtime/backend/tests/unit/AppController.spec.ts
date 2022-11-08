@@ -92,6 +92,7 @@ describe("AppController", () => {
           firstTransactionAt: 0,
           firstTransactionAtBlock: 0,
           transactionsCount: 0,
+          referralCode: "otherUser",
         }),
       };
       (appController as any).oauthService = {
@@ -112,6 +113,7 @@ describe("AppController", () => {
         firstTransactionAtBlock: 0,
         integrations: ["strava"],
         transactionsCount: 0,
+        referralCode: "otherUser",
       });
     });
 

@@ -71,6 +71,15 @@ export default class UiPopup extends MetaView {
   protected formFields: any = {};
 
   /**
+   * This property represents
+   * getRefCode store getter, value of refCode is getting set on mounted() hook into ref property
+   *
+   * @access public
+   * @var {string}
+   */
+  public refCode?: string;
+
+  /**
    * This property represents full url with referral code
    *
    * @var {string}
@@ -148,22 +157,22 @@ export default class UiPopup extends MetaView {
       {
         title: "Whatsapp",
         icon: "share/whatsapp.svg",
-        url: "https://www.whatsapp.com/",
+        url: `whatsapp://send?text=${process.env.VUE_APP_FRONTEND_URL}/${this.refCode}`,
       },
       {
         title: "Facebook",
         icon: "share/facebook.svg",
-        url: "https://www.facebook.com/",
+        url: `https://www.facebook.com/sharer/sharer.php?u=#${process.env.VUE_APP_FRONTEND_URL}/${this.refCode}`,
       },
       {
         title: "Twitter",
         icon: "share/twitter.svg",
-        url: "https://www.twitter.com/",
+        url: `http://twitter.com/share?text=Join me on Elevate&url=${process.env.VUE_APP_FRONTEND_URL}/${this.refCode}&hashtags=fitness,sports`,
       },
       {
         title: "Linkedin",
         icon: "share/linkedin.svg",
-        url: "https://www.linkedin.com/",
+        url: `https://www.linkedin.com/sharing/share-offsite/?url=${process.env.VUE_APP_FRONTEND_URL}/${this.refCode}`,
       },
       {
         title: "Discord",
@@ -173,7 +182,7 @@ export default class UiPopup extends MetaView {
       {
         title: "Telegram",
         icon: "share/telegram.svg",
-        url: "https://www.telegram.org/",
+        url: `https://telegram.me/share/url?url=${process.env.VUE_APP_FRONTEND_URL}/${this.refCode}&text=Join me on Elevate`,
       },
     ];
   }
