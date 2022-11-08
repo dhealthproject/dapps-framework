@@ -103,8 +103,10 @@
           :key="index + item.title"
           class="social-item"
         >
-          <img :src="getImageUrl(item.icon)" :alt="item.title" />
-          <span class="title" v-html="item.title" />
+          <a :href="item.url" target="_blank" rel="noopener">
+            <img :src="getImageUrl(item.icon)" :alt="item.title" />
+            <span class="title" v-html="item.title" />
+          </a>
         </div>
       </div>
       <ReferralInput type="link" :val="refCode" />

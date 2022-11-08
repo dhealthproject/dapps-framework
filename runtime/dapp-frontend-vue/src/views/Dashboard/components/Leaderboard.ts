@@ -163,7 +163,7 @@ export default class Leaderboard extends MetaView {
    */
   async onTabChange(data: LeaderboardTab) {
     await this.$store.dispatch("leaderboard/fetchLeaderboard", {
-      which: "running",
+      which: this.currentUserAddress,
       period: data.value,
       vm: this,
     });
@@ -175,7 +175,7 @@ export default class Leaderboard extends MetaView {
   async mounted() {
     if (!this.getLeaderboardItems?.length) {
       await this.$store.dispatch("leaderboard/fetchLeaderboard", {
-        which: "running",
+        which: this.currentUserAddress,
         period: "weekly",
         vm: this,
       });

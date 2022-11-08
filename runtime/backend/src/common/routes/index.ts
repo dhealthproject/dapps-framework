@@ -10,3 +10,4 @@
 // routes index
 export * from "./AuthController";
 export * from "./OAuthController";
+export * from "./SocialController";
