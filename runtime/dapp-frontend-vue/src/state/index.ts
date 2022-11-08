@@ -12,3 +12,5 @@ export * from "./store/Store";
 export * from "./store/AppModule";
 export * from "./store/AuthModule";
 export * from "./store/LeaderboardModule";
+export * from "./store/OAuthModule";
+export * from "./store/StatsModule";
