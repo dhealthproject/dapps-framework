@@ -34,29 +34,35 @@ export default () => ({
    */
   socialApps: {
     "whatsapp": {
+      icon: "share/whatsapp.svg",
       title: "WhatsApp",
-      shareUrl: `whatsapp://send?text=${process.env.FRONTEND_URL}`,
+      shareUrl: `whatsapp://send?text=${process.env.FRONTEND_URL}/%REFERRAL_CODE%`,
     },
     "facebook": {
+      icon: "share/facebook.svg",
       title: "Facebook",
       appUrl: "https://www.facebook.com/ELEVATE",
-      shareUrl: `https://www.facebook.com/sharer/sharer.php?u=#${process.env.FRONTEND_URL}`,
+      shareUrl: `https://www.facebook.com/sharer/sharer.php?u=#${process.env.FRONTEND_URL}/%REFERRAL_CODE%`,
     },
     "twitter": {
+      icon: "share/twitter.svg",
       title: "Twitter",
-      shareUrl: `http://twitter.com/share?text=Join me on Elevate&url=${process.env.FRONTEND_URL}&hashtags=fitness,sports`,
+      shareUrl: `http://twitter.com/share?text=Join me on Elevate&url=${process.env.FRONTEND_URL}/%REFERRAL_CODE%&hashtags=fitness,sports`,
     },
     "linkedin": {
+      icon: "share/linkedin.svg",
       title: "LinkedIn",
-      shareUrl: `https://www.linkedin.com/sharing/share-offsite/?url=${process.env.FRONTEND_URL}`,
+      shareUrl: `https://www.linkedin.com/sharing/share-offsite/?url=${process.env.FRONTEND_URL}/%REFERRAL_CODE%`,
     },
     "discord": {
+      icon: "share/discord.svg",
       title: "Discord",
       shareUrl: "",
     },
     "telegram": {
+      icon: "share/telegram.svg",
       title: "Telegram",
-      shareUrl: `https://telegram.me/share/url?url=${process.env.FRONTEND_URL}&text=Join me on Elevate`,
+      shareUrl: `https://telegram.me/share/url?url=${process.env.FRONTEND_URL}/%REFERRAL_CODE%&text=Join me on Elevate`,
     }
   },
 });

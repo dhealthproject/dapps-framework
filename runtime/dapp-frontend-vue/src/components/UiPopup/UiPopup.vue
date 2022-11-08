@@ -99,12 +99,15 @@
       </div>
       <div class="flex flex-row mb-[32px]">
         <div
-          v-for="(item, index) in tempItems"
+          v-for="(item, index) in socialPlatforms"
           :key="index + item.title"
           class="social-item"
         >
-          <a :href="item.url" target="_blank" rel="noopener">
-            <img :src="getImageUrl(item.icon)" :alt="item.title" />
+          <a :href="item.shareUrl" target="_blank" rel="noopener">
+            <img
+              :src="getImageUrl(`${item.icon}`)"
+              :alt="item.title"
+            />
             <span class="title" v-html="item.title" />
           </a>
         </div>

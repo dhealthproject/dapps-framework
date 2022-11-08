@@ -14,6 +14,8 @@ import { ActionContext } from "vuex";
 import { RootState } from "./Store";
 import { AwaitLock } from "../AwaitLock";
 import { Translations } from "../../kernel/i18n/Translations";
+import { SocialService } from "../../services/SocialService";
+import { SocialPlatformDTO } from "../../models/SocialPlatformDTO";
 
 // configuration
 import packageConfig from "../../../package.json";
@@ -30,6 +32,7 @@ export interface AppState {
   backendUrl: string;
   displaySnackBar: boolean;
   i18n: Translations;
+  socialApps: SocialPlatformDTO[];
 }
 
 /**
@@ -57,6 +60,7 @@ export const AppModule = {
     backendUrl: process.env.VUE_APP_BACKEND_URL ?? "http://localhost:7903",
     displaySnackBar: false,
     i18n: new Translations(Translations.defaultLanguage),
+    socialApps: [],
   }),
 
   getters: {
@@ -67,6 +71,7 @@ export const AppModule = {
     getLanguage: (state: AppState): string => state.language,
     getBackendURL: (state: AppState): string => state.backendUrl,
     i18n: (state: AppState): Translations => state.i18n,
+    socialApps: (state: AppState): SocialPlatformDTO[] => state.socialApps,
   },
 
   mutations: {
@@ -99,6 +104,12 @@ export const AppModule = {
      */
     disableSnackBar: (state: AppState): boolean =>
       (state.displaySnackBar = false),
+
+    /**
+     *
+     */
+    setSocialPlatforms: (state: AppState, payload: SocialPlatformDTO[]) =>
+      (state.socialApps = payload),
   },
 
   actions: {
@@ -109,6 +120,9 @@ export const AppModule = {
       const callback = async () => {
         // loads custom language settings
         await context.dispatch("fetchLanguage");
+
+        // loads available social networks for share
+        await context.dispatch("fetchSocialItems");
 
         // initialization is done after setup
         context.commit("setInitialized", true);
@@ -136,6 +150,20 @@ export const AppModule = {
     translate(context: AppContext, key: string): string {
       const i18n = context.getters["i18n"];
       return i18n.$t(key);
+    },
+
+    /**
+     *
+     */
+    async fetchSocialPlatforms(context: AppContext) {
+      const handler = new SocialService();
+      try {
+        const items = await handler.getSocialPlatforms();
+        context.commit("setSocialPlatforms", items);
+        return items;
+      } catch (err) {
+        console.log("ERROR fetchSocialPlatforms", err);
+      }
     },
   },
 };

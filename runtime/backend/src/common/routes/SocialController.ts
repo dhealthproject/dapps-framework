@@ -25,16 +25,35 @@ import {
 import { ConfigService } from "@nestjs/config";
 
 // internal dependencies
-import { SocialConfig } from "../models/SocialConfig";
+import { SocialConfig, SocialPlatformsMap } from "../models/SocialConfig";
 import { SocialPlatformDTO } from "../models/SocialPlatformDTO";
 
 // config resources
 import socialConfigLoader from "../../../config/social";
 
 namespace HTTPResponses {
+
   // creates a variable that we include in a namespace
   // and configure the OpenAPI schema for the response
-  // maps to the HTTP response of `/auth/challenge`
+  // maps to the HTTP response of `/social/platforms`
+  export const SocialPlatformsResponseSchema = {
+    schema: {
+      allOf: [
+        {
+          properties: {
+            data: {
+              type: "array",
+              items: { type: "string" },
+            },
+          },
+        },
+      ],
+    },
+  };
+
+  // creates a variable that we include in a namespace
+  // and configure the OpenAPI schema for the response
+  // maps to the HTTP response of `/social/share/:provider`
   export const SocialShareResponseSchema = {
     schema: {
       allOf: [
@@ -61,7 +80,8 @@ namespace HTTPResponses {
  * This controller defines the following routes:
  * | URI | HTTP method | Class method | Description |
  * | --- | --- | --- | --- |
- * | `/social/share` | **`GET`** | {@link SocialController.share} | Responds with a {@link SocialPlatformDTO} object that contains a social platforms link details. |
+ * | `/social/platforms` | **`GET`** | {@link SocialController.find} | Responds with a {@link SocialPlatformDTO} object that contains a social platforms link details. |
+ * | `/social/share/:provider` | **`GET`** | {@link SocialController.share} | Responds with a {@link SocialPlatformDTO} object that contains a social platforms link details. |
  * <br /><br />
  *
  * @since v0.5.0
@@ -78,6 +98,32 @@ export class SocialController {
   public constructor(private readonly configService: ConfigService) {}
 
   /**
+   * This method returns an array of {@link SocialPlatformDTO} objects that
+   * contain information about *available* social platform configurations.
+   *
+   * @method GET
+   * @access protected
+   * @async
+   * @returns {Promise<SocialPlatformDTO[]>}   An array of social platform configuration objects.
+   */
+  @Get("platforms")
+  @ApiOperation({
+    summary: "Request available social platforms",
+    description:
+      "Request a list of social platforms that are enabled through the configuration",
+  })
+  @ApiOkResponse(HTTPResponses.SocialPlatformsResponseSchema)
+  protected find(): SocialPlatformDTO[] {
+    // read all platform configurations
+    const apps = this.configService.get<SocialPlatformsMap>(`socialApps`);
+
+    // returns only the platform configurations
+    return Object.keys(apps).map(
+      a => apps[a],
+    );
+  }
+
+  /**
    * This method returns a {@link SocialPlatformDTO} object that contains
    * information about a social platform's links to *share content*.
    * <br /><br />
@@ -92,7 +138,7 @@ export class SocialController {
    */
   @Get("share/:platform")
   @ApiOperation({
-    summary: "Social Platform Share",
+    summary: "Request a social platform Share URL",
     description:
       "Request a social platform share URL as used to *share content* on a social platform.",
   })

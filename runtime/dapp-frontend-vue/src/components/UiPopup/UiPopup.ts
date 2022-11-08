@@ -18,6 +18,7 @@ import { mapGetters } from "vuex";
 import { MetaView } from "@/views/MetaView";
 import UiButton from "../UiButton/UiButton.vue";
 import ReferralInput from "../ReferralInput/ReferralInput.vue";
+import { SocialPlatformDTO } from "../../models/SocialPlatformDTO";
 
 // modal config
 export interface ModalConfig {
@@ -31,13 +32,7 @@ export interface ModalConfig {
   submitCallback?: any;
   description?: string;
   illustration?: string;
-  shareNetworks?: ShareNetwork[];
-}
-
-export interface ShareNetwork {
-  title: string;
-  url: string;
-  icon: string;
+  shareNetworks?: SocialPlatformDTO[];
 }
 
 // styles source
@@ -57,6 +52,7 @@ import "./UiPopup.scss";
   computed: {
     ...mapGetters({
       refCode: "auth/getRefCode",
+      fetchedSocialPlatforms: "app/socialApps",
     }),
   },
 })
@@ -67,8 +63,14 @@ export default class UiPopup extends MetaView {
    * @var {ModalConfig}
    */
   @Prop({ default: () => ({}) }) config?: ModalConfig;
-
   protected formFields: any = {};
+
+  /**
+   * This property represents state getter for social items received from the backend
+   *
+   * @var {SocialPlatformDTO}
+   */
+  protected fetchedSocialPlatforms?: SocialPlatformDTO[];
 
   /**
    * This property represents
@@ -85,6 +87,13 @@ export default class UiPopup extends MetaView {
    * @var {string}
    */
   public refUrl = "";
+
+  /**
+   * This property represents social items received from the backend where user can share referral code
+   *
+   * @var {SocialPlatformDTO}
+   */
+  public socialPlatforms: SocialPlatformDTO[] = [];
 
   /**
    * This method is used for hiding pop-up
@@ -151,48 +160,23 @@ export default class UiPopup extends MetaView {
     }
   }
 
-  // will delete after create config on backend
-  get tempItems(): ShareNetwork[] {
-    return [
-      {
-        title: "Whatsapp",
-        icon: "share/whatsapp.svg",
-        url: `whatsapp://send?text=${process.env.VUE_APP_FRONTEND_URL}/${this.refCode}`,
-      },
-      {
-        title: "Facebook",
-        icon: "share/facebook.svg",
-        url: `https://www.facebook.com/sharer/sharer.php?u=#${process.env.VUE_APP_FRONTEND_URL}/${this.refCode}`,
-      },
-      {
-        title: "Twitter",
-        icon: "share/twitter.svg",
-        url: `http://twitter.com/share?text=Join me on Elevate&url=${process.env.VUE_APP_FRONTEND_URL}/${this.refCode}&hashtags=fitness,sports`,
-      },
-      {
-        title: "Linkedin",
-        icon: "share/linkedin.svg",
-        url: `https://www.linkedin.com/sharing/share-offsite/?url=${process.env.VUE_APP_FRONTEND_URL}/${this.refCode}`,
-      },
-      {
-        title: "Discord",
-        icon: "share/discord.svg",
-        url: "https://www.discord.com/",
-      },
-      {
-        title: "Telegram",
-        icon: "share/telegram.svg",
-        url: `https://telegram.me/share/url?url=${process.env.VUE_APP_FRONTEND_URL}/${this.refCode}&text=Join me on Elevate`,
-      },
-    ];
-  }
-
   mounted() {
     // if fields property exists - set all input values to ""
     if (this.config?.fields) {
       this.config.fields.forEach((field) => {
         Vue.set(this.formFields, field.name, "");
       });
+    }
+
+    if (this.config?.type === "share" && this.fetchedSocialPlatforms) {
+      this.socialPlatforms = this.fetchedSocialPlatforms.map(
+        (item: SocialPlatformDTO) => ({
+          ...item,
+          shareUrl: this.refCode
+            ? item.shareUrl.replace("%REFERRAL_CODE%", this.refCode)
+            : item.shareUrl.replace("/%REFERRAL_CODE%", ""),
+        }),
+      );
     }
   }
 }

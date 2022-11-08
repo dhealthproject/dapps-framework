@@ -24,6 +24,25 @@ import { BaseDTO } from "./BaseDTO";
  */
 export class SocialPlatformDTO extends BaseDTO {
   /**
+   * The icon of the social platform, e.g. \"facebook\" or \"twitter\".
+   * This field is used to *load icons* in {@link UiPopup}.
+   * <br /><br />
+   * This field can be left empty and is populated automatically in search
+   * requests as implemented in {@link SocialController.find}.
+   *
+   * @access public
+   * @var {string}
+   */
+  @ApiProperty({
+    type: "string",
+    example: "facebook",
+    description:
+      'The identifier of the social platform, e.g. "facebook" or "twitter". ' +
+      'This field is used to *load icons* and must refer to an existing file.',
+  })
+  public icon: string;
+
+  /**
    * The name of the social platform, e.g. \"facebook\" or \"twitter\".
    *
    * @access public
