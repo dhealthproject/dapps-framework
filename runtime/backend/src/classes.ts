@@ -76,6 +76,14 @@ export * from "./statistics/routes";
 export * from "./statistics/schedulers";
 export * from "./statistics/services";
 
+// notifier scope
+export * from "./notifier/concerns";
+export * from "./notifier/listeners";
+export * from "./notifier/models";
+export * from "./notifier/modules";
+export * from "./notifier/schedulers";
+export * from "./notifier/services";
+
 // worker scope
 export * from "./worker/WorkerModule";
 export * from "./worker/BaseCommand";
