@@ -11,7 +11,7 @@
 import { DappButton } from "@dhealth/components";
 
 // internal dependencies
-import Header from "./Header/Header.vue";
+import AppHeader from "./AppHeader/AppHeader.vue";
 import Footer from "./Footer/Footer.vue";
 import Loader from "./Loader/Loader.vue";
 import ElevateLogo from "./ElevateLogo/ElevateLogo.vue";
@@ -34,7 +34,7 @@ import ReferralInput from "./ReferralInput/ReferralInput.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
-  Header,
+  AppHeader,
   Footer,
   Loader,
   ElevateLogo,
