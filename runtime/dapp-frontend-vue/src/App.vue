@@ -20,13 +20,13 @@
     </div>
     <!-- Guest default layout (non-authenticated) -->
     <div v-else-if="$route.meta.layout === 'guest/default'">
-      <!-- <Header /> -->
+      <!-- <AppHeader /> -->
       <router-view :key="$route.fullPath"></router-view>
       <!-- <Footer layout="empty" :links="emptyFooterLinks" /> -->
     </div>
     <!-- In-App layout (authenticated) -->
     <div v-else-if="$route.meta.layout === 'app/default'" class="layout-user">
-      <Header :links="headerLinks" />
+      <AppHeader :links="headerLinks" />
       <router-view :key="$route.fullPath"></router-view>
       <Footer layout="version-only" :version="version" />
     </div>

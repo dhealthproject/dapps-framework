@@ -14,7 +14,7 @@ import { MetaView } from "@/views/MetaView";
 
 // child components
 import Assembler from "@/views/Assembler/Assembler.vue";
-import Header from "@/components/Header/Header.vue";
+import AppHeader from "@/components/AppHeader/AppHeader.vue";
 import Footer from "@/components/Footer/Footer.vue";
 import Loader from "@/components/Loader/Loader.vue";
 import UiPopup from "./components/UiPopup/UiPopup.vue";
@@ -28,7 +28,7 @@ import packageConfig from "../package.json";
 @Component({
   components: {
     Assembler,
-    Header,
+    AppHeader,
     Footer,
     Loader,
     UiPopup,

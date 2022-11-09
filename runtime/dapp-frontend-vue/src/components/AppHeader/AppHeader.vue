@@ -124,4 +124,4 @@
   </div>
 </template>
 
-<script lang="ts" src="./Header.ts"></script>
+<script lang="ts" src="./AppHeader.ts"></script>

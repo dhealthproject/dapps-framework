@@ -24,7 +24,7 @@ import UserBalance from "../UserBalance/UserBalance.vue";
 import UiButton from "../UiButton/UiButton.vue";
 
 // style resource
-import "./Header.scss";
+import "./AppHeader.scss";
 
 export interface HeaderLink {
   path: string;
@@ -47,7 +47,7 @@ export interface HeaderLink {
     }),
   },
 })
-export default class Header extends MetaView {
+export default class AppHeader extends MetaView {
   /**
    * Prop which defines list of links available in header. If the list
    * is empty, the header will be displayed without menu links.

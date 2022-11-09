@@ -12,8 +12,10 @@
 import { expect } from "chai";
 import { mount, createLocalVue } from "@vue/test-utils";
 
+// internal dependencies
+
 // components page being tested
-import Header from "@/components/Header/Header.vue";
+import Loader from "@/components/Loader/Loader.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
@@ -28,16 +30,21 @@ const componentOptions = {
     getImageUrl,
     $route: { params: {} },
   },
+  propsData: {},
 };
 
-describe("Header -->", () => {
+describe("Loader -->", () => {
   let widget: any;
 
   beforeEach(() => {
-    widget = mount(Header as any, componentOptions);
+    widget = mount(Loader as any, componentOptions);
   });
 
   it("should exist", () => {
-    expect(widget.find(".dapp-screen-footer").exists()).to.be.true;
+    expect(widget.find(".dapp-loader").exists()).to.be.true;
+  });
+
+  it("should display svg", () => {
+    expect(widget.find(".dapp-loader svg").exists()).to.be.true;
   });
 });
