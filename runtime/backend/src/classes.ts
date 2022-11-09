@@ -77,6 +77,7 @@ export * from "./statistics/schedulers";
 export * from "./statistics/services";
 
 // notifier scope
+export * from "./notifier/NotifierModule";
 export * from "./notifier/concerns";
 export * from "./notifier/listeners";
 export * from "./notifier/models";
