@@ -85,6 +85,19 @@ export abstract class StatefulModule {
   }
 
   /**
+   * This method uses the {@link logger} to print info messages.
+   *
+   * @param   {string}              message
+   * @param   {string|undefined}    context
+   * @returns {void}
+   */
+   protected infoLog(message: string, context?: string): void {
+    if (!!context) {
+      this.logger.log(message, context);
+    } else this.logger.log(message);
+  }
+
+  /**
    * This method uses the {@link logger} to print debug messages.
    *
    * @param   {string}              message

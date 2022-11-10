@@ -300,6 +300,7 @@ export abstract class BroadcastPayouts extends PayoutCommand {
       for (let u = 0, max_s = payouts.length; u < max_s; u++) {
         // retrieve full subject details
         const payout: PayoutDocument = payouts[u];
+
         // updates the `payouts` entry
         payout.updateOne({
           payoutState: PayoutState.Broadcast,

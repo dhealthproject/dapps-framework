@@ -141,9 +141,8 @@ export abstract class PreparePayouts<
 
     // setup contracts payload
     // @todo this should use `DappHelper.slugify()`
-    this.dappIdentifier = this.configService
-      .get<string>("dappName")
-      .toLowerCase();
+    const dappName = this.configService.get<string>("dappName");
+    this.dappIdentifier = (dappName ?? "dapp").toLowerCase();
   }
 
   /**

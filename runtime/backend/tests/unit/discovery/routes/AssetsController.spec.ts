@@ -25,7 +25,7 @@ import { ChallengesService } from "../../../../src/common/services/ChallengesSer
 import { AssetDocument } from "../../../../src/discovery/models/AssetSchema";
 import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 
-describe("discovery/AccountsController", () => {
+describe("discovery/AssetsController", () => {
   let controller: AssetsController;
   let assetsService: AssetsService;
   let authService: AuthService;

@@ -207,6 +207,10 @@ export class PrepareActivityPayouts extends PreparePayouts<
    * This method must return an asset amount which will be
    * attached to a transfer transaction.
    * <br /><br />
+   * Note that an *empty total time elapsed* will always
+   * return a `0`-amount. The total time elapsed in used
+   * in the formula in a division operation.
+   * <br /><br />
    * This implementation defines the *payout formula* used to
    * compute *asset amounts* depending on the *intensity* of an
    * activity. Note that the `activityData` field *must* contain
@@ -231,6 +235,10 @@ export class PrepareActivityPayouts extends PreparePayouts<
       elapsedTime: T, // in-formula, elapsedTime is `T`
       kilojoules: J, // in-formula, kilojoules is `J`
     } = subject.activityData;
+
+    // note that the *time elapsed* is used in division
+    // this removes the potential for division-by-zero
+    if (T <= 0) return 0;
 
     // @see https://developers.strava.com/docs/reference/#api-models-SportType
     // This method uses abbreviated variable names in order to keep
@@ -260,7 +268,7 @@ export class PrepareActivityPayouts extends PreparePayouts<
     }
 
     // make sure to work only with *integers* (always absolute amounts)
-    return Math.floor(amount * Math.pow(10, this.earnAsset.divisibility));
+    return Math.round(Math.floor(amount * Math.pow(10, this.earnAsset.divisibility)));
   }
 
   /**
