@@ -20,6 +20,7 @@ import {
   CarouselConfig,
 } from "@/views/Dashboard/components/EventsCarousel";
 import { StatsConfig } from "@/components/Stats/Stats";
+import { SocialItem } from "@/state";
 
 // child components
 import Card from "@/components/Card/Card.vue";
@@ -76,6 +77,7 @@ export interface StatisticsTabItem {
       getIntegrations: "oauth/getIntegrations",
       stats: "stats/getConfiguration",
       refCode: "auth/getRefCode",
+      fetchedSocialItems: "app/socialItems",
     }),
   },
 })
@@ -93,6 +95,13 @@ export default class Dashboard extends MetaView {
    * @var {string}
    */
   public currentUserAddress!: string;
+
+  /**
+   * This property represents state getter for social items received from the backend
+   *
+   * @var {ModalConfig}
+   */
+  protected fetchedSocialItems?: SocialItem[];
 
   /**
    * This property contains the authenticated user's dHealth Account
@@ -428,11 +437,21 @@ export default class Dashboard extends MetaView {
   }
 
   protected shareModal() {
-    this.$root.$emit("modal", {
-      type: "share",
-      overlayColor: "rgba(0, 0, 0, .50)",
-      width: 518,
-      modalBg: "#FFFFFF",
-    });
+    const data = {
+      title: this.fetchedSocialItems ? this.fetchedSocialItems[0].title : "",
+      text: "join me on Elevate",
+      url: this.fetchedSocialItems ? this.fetchedSocialItems[0].url : "",
+    };
+    try {
+      navigator.share(data);
+    } catch (err) {
+      console.log(err);
+      this.$root.$emit("modal", {
+        type: "share",
+        overlayColor: "rgba(0, 0, 0, .50)",
+        width: 518,
+        modalBg: "#FFFFFF",
+      });
+    }
   }
 }
