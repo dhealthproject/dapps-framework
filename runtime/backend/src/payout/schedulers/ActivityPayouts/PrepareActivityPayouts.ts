@@ -76,7 +76,7 @@ export class PrepareActivityPayouts extends PreparePayouts<
    *
    * @param {ConfigService}   configService
    * @param {StateService}    stateService
-   * @param {QueryService}    queryService
+   * @param {QueryService<ActivityDocument, ActivityModel>}    queryService
    * @param {PayoutsService}  payoutsService
    * @param {SignerService}   signerService
    * @param {ActivityModel}   model
@@ -191,6 +191,27 @@ export class PrepareActivityPayouts extends PreparePayouts<
   }
 
   /**
+   * This method must *update* a payout subject document. Note
+   * that subjects *are the subject of a payout execution*.
+   *
+   * @param   {ActivityDocument}      subject     The document being updated.
+   * @param   {Record<string, any>}   updateData  The columns and their respective value.
+   * @returns {Promise<ActivityDocument>}    The updated document.
+   */
+  protected async updatePayoutSubject(
+    subject: ActivityDocument,
+    updateData: Record<string, any>,
+  ): Promise<ActivityDocument> {
+    return await this.queryService.createOrUpdate(
+      new ActivityQuery({
+        slug: subject.slug,
+      } as ActivityDocument),
+      this.model,
+      updateData,
+    );
+  }
+
+  /**
    * This method must return an asset identifier which will
    * be used in a transfer transaction.
    *
@@ -268,7 +289,9 @@ export class PrepareActivityPayouts extends PreparePayouts<
     }
 
     // make sure to work only with *integers* (always absolute amounts)
-    return Math.round(Math.floor(amount * Math.pow(10, this.earnAsset.divisibility)));
+    return Math.round(
+      Math.floor(amount * Math.pow(10, this.earnAsset.divisibility)),
+    );
   }
 
   /**

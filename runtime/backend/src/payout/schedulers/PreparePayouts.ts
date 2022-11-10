@@ -186,6 +186,19 @@ export abstract class PreparePayouts<
   protected abstract fetchSubjects(): Promise<TDocument[]>;
 
   /**
+   * This method must *update* a payout subject document. Note
+   * that subjects *are the subject of a payout execution*.
+   *
+   * @param   {TDocument}             subject     The document being updated.
+   * @param   {Record<string, any>}   updateData  The columns and their respective value.
+   * @returns {Promise<TDocument>}    The updated document.
+   */
+  protected abstract updatePayoutSubject(
+    subject: TDocument,
+    updateData: Record<string, any>,
+  ): Promise<TDocument>;
+
+  /**
    * This method must return an asset identifier which will
    * be used in a transfer transaction.
    *
@@ -288,7 +301,10 @@ export abstract class PreparePayouts<
 
       // (4) updates the *subject* so that it won't be considered
       // a subject for following executions of this command
-      subject.updateOne({
+      // Note that the implementation of `updatePayoutSubject()` is delegated
+      // to child classes such that we can implement different payout
+      // strategies more easily, e.g. using profiles, etc.
+      await this.updatePayoutSubject(subject, {
         payoutState: PayoutState.Prepared,
       });
 

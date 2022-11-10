@@ -9,6 +9,7 @@
  */
 // external dependencies
 import { Injectable, Logger } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
 import { ConfigService } from "@nestjs/config";
 import { Cron } from "@nestjs/schedule";
 
@@ -16,6 +17,15 @@ import { Cron } from "@nestjs/schedule";
 // common scope
 import { NetworkService } from "../../../common/services/NetworkService";
 import { StateService } from "../../../common/services/StateService";
+import { QueryService } from "../../../common/services/QueryService";
+
+// processor scope
+import {
+  Activity,
+  ActivityDocument,
+  ActivityModel,
+  ActivityQuery,
+} from "../../../processor/models/ActivitySchema";
 
 // payout scope
 import {
@@ -59,27 +69,39 @@ export type BroadcastActivityPayoutsCommandOptions =
  * @since v0.4.0
  */
 @Injectable()
-export class BroadcastActivityPayouts extends BroadcastPayouts {
+export class BroadcastActivityPayouts extends BroadcastPayouts<
+  ActivityDocument,
+  ActivityModel
+> {
   /**
    * Constructs and prepares an instance of this scheduler.
    *
    * @param {ConfigService}   configService
    * @param {StateService}    stateService
+   * @param {QueryService<ActivityDocument, ActivityModel>}    queryService
    * @param {PayoutsService}  payoutsService
    * @param {SignerService}   signerService
    * @param {NetworkService}  networkService
+   * @param {ActivityModel}   model
    */
   constructor(
     protected readonly configService: ConfigService,
     protected readonly stateService: StateService,
+    protected readonly queryService: QueryService<
+      ActivityDocument,
+      ActivityModel
+    >,
     protected readonly payoutsService: PayoutsService,
     protected readonly signerService: SignerService,
     protected readonly networkService: NetworkService,
+    @InjectModel(Activity.name)
+    protected readonly model: ActivityModel,
   ) {
     // required super call
     super(
       configService,
       stateService,
+      queryService,
       payoutsService,
       signerService,
       networkService,
@@ -166,6 +188,27 @@ export class BroadcastActivityPayouts extends BroadcastPayouts {
 
     // return 1 page's documents
     return page.data;
+  }
+
+  /**
+   * This method must *update* a payout subject document. Note
+   * that subjects *are the subject of a payout execution*.
+   *
+   * @param   {ActivityDocument}      subject     The document being updated.
+   * @param   {Record<string, any>}   updateData  The columns and their respective value.
+   * @returns {Promise<ActivityDocument>}    The updated document.
+   */
+  protected async updatePayoutSubject(
+    subject: ActivityDocument,
+    updateData: Record<string, any>,
+  ): Promise<ActivityDocument> {
+    return await this.queryService.createOrUpdate(
+      new ActivityQuery({
+        slug: subject.slug,
+      } as ActivityDocument),
+      this.model,
+      updateData,
+    );
   }
 
   /**

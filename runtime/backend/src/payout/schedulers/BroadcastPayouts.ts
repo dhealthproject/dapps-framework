@@ -15,19 +15,19 @@ import {
 } from "@dhealth/sdk";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { Model } from "mongoose";
 
 // internal dependencies
 // common scope
 import { NetworkService } from "../../common/services/NetworkService";
 import { StateService } from "../../common/services/StateService";
-
-// processor scope
-import { ActivityDocument } from "../../processor/models/ActivitySchema";
+import { QueryService } from "../../common/services/QueryService";
 
 // payout scope
+import { Subjectable } from "../concerns/Subjectable";
 import { PayoutCommand, PayoutCommandOptions } from "./PayoutCommand";
 import { PayoutBroadcastStateData } from "../models/PayoutBroadcastStateData";
-import { Payout, PayoutDocument } from "../models/PayoutSchema";
+import { Payout, PayoutDocument, PayoutQuery } from "../models/PayoutSchema";
 import { PayoutState } from "../models/PayoutStatusDTO";
 import { PayoutsService } from "../services/PayoutsService";
 import { SignerService } from "../services/SignerService";
@@ -71,15 +71,18 @@ export interface BroadcastPayoutsCommandOptions extends PayoutCommandOptions {
  * @since v0.4.0
  */
 @Injectable()
-export abstract class BroadcastPayouts extends PayoutCommand {
+export abstract class BroadcastPayouts<
+  TDocument extends Subjectable /* extends Documentable */,
+  TModel extends Model<TDocument, {}, {}, {}> = Model<TDocument>,
+> extends PayoutCommand {
   /**
    * Memory store for *all* transactions that must be broadcast during
    * this execution of the command.
    *
    * @access protected
-   * @var {TransferTransaction[]}
+   * @var {Record<string, TransferTransaction>}
    */
-  protected transactions: TransferTransaction[] = [];
+  protected transactions: Record<string, TransferTransaction>;
 
   /**
    * Memory store for the last time of execution. This is used
@@ -111,6 +114,7 @@ export abstract class BroadcastPayouts extends PayoutCommand {
    *
    * @param {ConfigService}   configService
    * @param {StateService}    stateService
+   * @param {QueryService<TDocument, TModel>}   queryService
    * @param {PayoutsService}  payoutsService
    * @param {SignerService}   signerService
    * @param {NetworkService}  networkService
@@ -118,6 +122,7 @@ export abstract class BroadcastPayouts extends PayoutCommand {
   constructor(
     protected readonly configService: ConfigService,
     protected readonly stateService: StateService,
+    protected readonly queryService: QueryService<TDocument, TModel>,
     protected readonly payoutsService: PayoutsService,
     protected readonly signerService: SignerService,
     protected readonly networkService: NetworkService,
@@ -136,6 +141,7 @@ export abstract class BroadcastPayouts extends PayoutCommand {
 
     // configures dry-run mode
     this.globalDryRun = this.configService.get<boolean>("globalDryRun");
+    this.transactions = {};
   }
 
   /**
@@ -178,6 +184,19 @@ export abstract class BroadcastPayouts extends PayoutCommand {
    * @returns {Promise<PayoutDocument[]>}
    */
   protected abstract fetchSubjects(count: number): Promise<PayoutDocument[]>;
+
+  /**
+   * This method must *update* a payout subject document. Note
+   * that subjects *are the subject of a payout execution*.
+   *
+   * @param   {TDocument}             subject     The document being updated.
+   * @param   {Record<string, any>}   updateData  The columns and their respective value.
+   * @returns {Promise<TDocument>}    The updated document.
+   */
+  protected abstract updatePayoutSubject(
+    subject: TDocument,
+    updateData: Record<string, any>,
+  ): Promise<TDocument>;
 
   /**
    * This method implements the processor logic for this command
@@ -243,7 +262,7 @@ export abstract class BroadcastPayouts extends PayoutCommand {
         ) as TransferTransaction;
 
       // store a copy of the re-built transfer instance
-      this.transactions.push(transfer);
+      this.transactions[payout.transactionHash] = transfer;
     }
 
     // (3) determines whether the broadcast transactions must
@@ -266,16 +285,18 @@ export abstract class BroadcastPayouts extends PayoutCommand {
     // stand-alone (multi-broadcast)
     // else {
     // each transaction is broadcast on its own
-    const broadcastTransactions: SignedTransaction[] = this.transactions.map(
-      (t) =>
-        new SignedTransaction(
-          t.serialize(),
-          t.transactionInfo.hash,
-          t.signer.publicKey,
-          t.type,
-          t.networkType,
-        ),
-    );
+    const broadcastTransactions: SignedTransaction[] = Object.keys(
+      this.transactions,
+    ).map((transactionHash) => {
+      const t = this.transactions[transactionHash];
+      return new SignedTransaction(
+        t.serialize(),
+        transactionHash,
+        t.signer.publicKey,
+        t.type,
+        t.networkType,
+      );
+    });
     // }
 
     // debug information about broadcast operations
@@ -302,13 +323,22 @@ export abstract class BroadcastPayouts extends PayoutCommand {
         const payout: PayoutDocument = payouts[u];
 
         // updates the `payouts` entry
-        payout.updateOne({
-          payoutState: PayoutState.Broadcast,
-        });
+        await this.payoutsService.createOrUpdate(
+          new PayoutQuery({
+            userAddress: payout.userAddress,
+            subjectSlug: payout.subjectSlug,
+            subjectCollection: this.collection,
+          } as PayoutDocument),
+          {
+            payoutState: PayoutState.Broadcast,
+          },
+        );
 
-        // updates the `activities` entry ("payout subject")
-        const subject = await Payout.fetchSubject<ActivityDocument>(payout);
-        subject.updateOne({
+        // fetches the *payout subject* (e.g. "activity")
+        const subject = await Payout.fetchSubject<TDocument>(payout);
+
+        // updates the payout subject document (e.g. "activities" document)
+        await this.updatePayoutSubject(subject, {
           payoutState: PayoutState.Broadcast,
         });
       }

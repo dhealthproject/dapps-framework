@@ -290,21 +290,51 @@ describe("payout/PrepareActivityPayouts", () => {
     });
   });
 
+  describe("updatePayoutSubject()", () => {
+    const queryCreateOrUpdateMock = jest.fn();
+    beforeEach(() => {
+      (command as any).queryService = {
+        createOrUpdate: queryCreateOrUpdateMock,
+      };
+
+      queryCreateOrUpdateMock.mockClear();
+    });
+
+    it("should filter subjects by slug and set payout state", async () => {
+      // prepare
+      const expectedSlug = "fake-payout-subject-slug";
+      const expectedData = { payoutState: PayoutState.Prepared };
+
+      // act
+      (command as any).updatePayoutSubject(
+        { slug: expectedSlug } as ActivityDocument,
+        expectedData,
+      );
+
+      // assert
+      expect(queryCreateOrUpdateMock).toHaveBeenCalledTimes(1);
+      expect(queryCreateOrUpdateMock).toHaveBeenCalledWith(
+        new ActivityQuery(
+          { slug: expectedSlug } as ActivityDocument,
+        ),
+        (command as any).model,
+        expectedData
+      );
+    });
+  });
+
   describe("execute()", () => {
     const mockTotalNumberPrepared = 100;
     const mockPublicKey = "fake-signer-public-key";
     const mockSignedPayload = "fake-serialized-signed-transaction";
     const mockTransactionHash = "fake-transaction-hash";
-    const subjectUpdateMock = jest.fn();
+    const updatePayoutSubjectMock = jest.fn();
     const fetchSubjectsEmptyMock = jest.fn().mockReturnValue(Promise.resolve([]));
     const fetchSubjectsNonEmptyMock = jest.fn().mockReturnValue(Promise.resolve([
       {} as ActivityDocument,
     ]));
     const fetchSubjectsActualMock = jest.fn().mockReturnValue(
-      Promise.resolve(activityMocks.map(a => ({
-        ...a,
-        updateOne: subjectUpdateMock,
-      }))),
+      Promise.resolve(activityMocks),
     );
     const payoutsCreateOrUpdateMock = jest.fn();
     const signerGetSignerPublicKeyMock = jest.fn().mockReturnValue(
@@ -324,6 +354,7 @@ describe("payout/PrepareActivityPayouts", () => {
         data: { totalNumberPrepared: mockTotalNumberPrepared },
       };
       (command as any).fetchSubjects = fetchSubjectsEmptyMock; // <-- empty
+      (command as any).updatePayoutSubject = updatePayoutSubjectMock;
       (command as any).payoutsService = {
         createOrUpdate: payoutsCreateOrUpdateMock
       };
@@ -335,7 +366,7 @@ describe("payout/PrepareActivityPayouts", () => {
       fetchSubjectsEmptyMock.mockClear();
       fetchSubjectsNonEmptyMock.mockClear();
       fetchSubjectsActualMock.mockClear();
-      subjectUpdateMock.mockClear();
+      updatePayoutSubjectMock.mockClear();
       payoutsCreateOrUpdateMock.mockClear();
       signerGetSignerPublicKeyMock.mockClear();
       signerSignTransactionMock.mockClear();
@@ -393,7 +424,7 @@ describe("payout/PrepareActivityPayouts", () => {
       expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(2); // 2 subjects
       expect(signerGetSignerPublicKeyMock).toHaveBeenCalledTimes(2); // 2 payouts
       expect(signerSignTransactionMock).toHaveBeenCalledTimes(2); // 2 payouts
-      expect(subjectUpdateMock).toHaveBeenCalledTimes(2); // 2 subjects
+      expect(updatePayoutSubjectMock).toHaveBeenCalledTimes(2); // 2 subjects
       expect((command as any).totalNumberPrepared).toBe(
         mockTotalNumberPrepared + 2, // 2 payouts
       );

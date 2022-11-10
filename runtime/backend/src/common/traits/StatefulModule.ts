@@ -91,7 +91,7 @@ export abstract class StatefulModule {
    * @param   {string|undefined}    context
    * @returns {void}
    */
-   protected infoLog(message: string, context?: string): void {
+  protected infoLog(message: string, context?: string): void {
     if (!!context) {
       this.logger.log(message, context);
     } else this.logger.log(message);
