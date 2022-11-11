@@ -32,6 +32,7 @@ import { PayoutsService } from "../../../../src/payout/services/PayoutsService";
 import { SignerService } from "../../../../src/payout/services/SignerService";
 import { MathService } from "../../../../src/payout/services/MathService";
 import { PrepareActivityPayouts } from "../../../../src/payout/schedulers/ActivityPayouts/PrepareActivityPayouts";
+import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 
 const dE_2 = 100; // elevate factor with div=2
 const dE_3 = 1000; // elevate factor with div=3
@@ -160,6 +161,7 @@ describe("payout/PrepareActivityPayouts", () => {
         SignerService,
         MathService,
         EventEmitter2,
+        AccountSessionsService,
         {
           provide: getModelToken("Payout"),
           useValue: MockModel,
@@ -181,6 +183,10 @@ describe("payout/PrepareActivityPayouts", () => {
             debug: jest.fn(),
             error: jest.fn(),
           },
+        },
+        {
+          provide: getModelToken("AccountSession"),
+          useValue: MockModel,
         },
       ]
     }).compile();

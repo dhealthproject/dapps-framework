@@ -22,17 +22,18 @@ import { JwtService } from "@nestjs/jwt";
 import { AuthService } from "../../../../src/common/services/AuthService";
 import { AuthController } from "../../../../src/common/routes/AuthController";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
+import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 import { CipherService } from "../../../../src/common/services/CipherService";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { QueryService } from "../../../../src/common/services/QueryService";
-import { AccountDocument } from "../../../../src/common/models/AccountSchema";
+import { AccountSessionDocument } from "../../../../src/common/models/AccountSessionSchema";
 import { MockModel } from "../../../mocks/global";
 
 describe("common/AuthController", () => {
   let controller: AuthController;
   let authService: AuthService;
-  let accountsService: AccountsService;
+  let accountSessionsService: AccountSessionsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,16 +41,21 @@ describe("common/AuthController", () => {
       providers: [
         AuthService, // requirement from AuthService
         AccountsService, // requirement from AuthController
+        AccountSessionsService, // requirement from AuthController
         ConfigService, // requirement from AuthService
         NetworkService, // requirement from AuthService
         ChallengesService, // requirement from AuthService
         JwtService, // requirement from AuthService
         CipherService, // requirement from OAuthService
-        QueryService, // requirement from AccountsService
+        QueryService, // requirement from AccountSessionsService
         {
           provide: getModelToken("Account"),
           useValue: MockModel,
-        }, // requirement from AccountsService
+        }, // requirement from AccountSessionsService
+        {
+          provide: getModelToken("AccountSession"),
+          useValue: MockModel,
+        }, // requirement from AccountSessionsService
         {
           provide: getModelToken("AuthChallenge"),
           useValue: MockModel,
@@ -59,7 +65,7 @@ describe("common/AuthController", () => {
 
     controller = module.get<AuthController>(AuthController);
     authService = module.get<AuthService>(AuthService);
-    accountsService = module.get<AccountsService>(AccountsService);
+    accountSessionsService = module.get<AccountSessionsService>(AccountSessionsService);
   });
 
   it("should be defined", () => {
@@ -179,8 +185,8 @@ describe("common/AuthController", () => {
         .spyOn(AuthService, "extractToken")
         .mockReturnValue("testToken");
       const accountsServiceFindOneCall = jest
-        .spyOn(accountsService, "findOne")
-        .mockResolvedValue({} as AccountDocument);
+        .spyOn(accountSessionsService, "findOne")
+        .mockResolvedValue({} as AccountSessionDocument);
       const tokens = {
         accessToken: "testAccessToken",
         refreshToken: "testRefreshToken",

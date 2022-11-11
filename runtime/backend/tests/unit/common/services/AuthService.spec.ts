@@ -49,11 +49,12 @@ import { Address, Order, TransactionType } from "@dhealth/sdk";
 import { MockModel } from "../../../mocks/global";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
+import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { AuthenticationPayload, AuthService, CookiePayload } from "../../../../src/common/services/AuthService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
-import { AccountDocument, AccountQuery } from "../../../../src/common/models/AccountSchema";
 import { Factory } from "@dhealth/contracts";
+import { AccountSessionDocument, AccountSessionQuery } from "../../../../src/common/models/AccountSessionSchema";
 
 describe("common/AuthService", () => {
   let authService: AuthService;
@@ -65,12 +66,17 @@ describe("common/AuthService", () => {
         AuthService,
         NetworkService, // requirement from AuthService
         AccountsService, // requirement from AuthService
+        AccountSessionsService, // requirement from AuthService
         ChallengesService, // requirement from AuthService
         JwtService, // requirement from AuthService
         QueryService, // requirement from AuthService
         ConfigService, // requirement from AuthService
         {
           provide: getModelToken("Account"),
+          useValue: MockModel,
+        }, // requirement from AuthService
+        {
+          provide: getModelToken("AccountSession"),
           useValue: MockModel,
         }, // requirement from AuthService
         {
@@ -294,8 +300,8 @@ describe("common/AuthService", () => {
 
     it("should use indexed access token in account query", async () => {
       // prepare
-      const findOneMock = jest.fn();
-      (authService as any).accountsService = {
+      const findOneMock = jest.fn().mockResolvedValue({address: "test-address"});
+      (authService as any).accountSessionsService = {
         findOne: findOneMock,
       };
 
@@ -304,15 +310,15 @@ describe("common/AuthService", () => {
 
       // assert
       expect(findOneMock).toHaveBeenCalledTimes(1);
-      expect(findOneMock).toHaveBeenCalledWith(new AccountQuery({
+      expect(findOneMock).toHaveBeenCalledWith(new AccountSessionQuery({
         accessToken: expectedToken,
-      } as AccountDocument));
+      } as AccountSessionDocument));
     });
 
     it("should return correct account with no cookie name", async () => {
       // prepare
-      const findOneMock = jest.fn();
-      (authService as any).accountsService = {
+      const findOneMock = jest.fn().mockResolvedValue({address: "test-address"});
+      (authService as any).accountSessionsService = {
         findOne: findOneMock,
       };
 
@@ -321,13 +327,13 @@ describe("common/AuthService", () => {
 
       // assert
       expect(findOneMock).toHaveBeenCalledTimes(1);
-      expect(findOneMock).toHaveBeenCalledWith(new AccountQuery({
+      expect(findOneMock).toHaveBeenCalledWith(new AccountSessionQuery({
         accessToken: expectedToken,
-      } as AccountDocument));
+      } as AccountSessionDocument));
     });
   });
 
-  describe("getAccountQuery()", () => {
+  describe("getAccountSessionQuery()", () => {
     let payload: AuthenticationPayload = {
       sub: "fake-user",
       address: "fake-address"
@@ -335,7 +341,7 @@ describe("common/AuthService", () => {
 
     it("should use authentication payload in account query", () => {
       // act
-      const query = (authService as any).getAccountQuery(payload);
+      const query = (authService as any).getAccountSessionQuery(payload);
 
       // assert
       expect(query).toBeDefined();
@@ -353,7 +359,7 @@ describe("common/AuthService", () => {
         get: configServiceGetCall,
       }
       const address = Address.createFromRawAddress("test-address");
-      const accountsServiceCreateAddressCall = jest
+      const accountSessionsServiceCreateAddressCall = jest
         .spyOn(AccountsService, "createAddress")
         .mockReturnValue(address);
       const expectedResult = {
@@ -370,7 +376,7 @@ describe("common/AuthService", () => {
 
       // assert
       expect(configServiceGetCall).toHaveBeenCalledTimes(1);
-      expect(accountsServiceCreateAddressCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceCreateAddressCall).toHaveBeenCalledTimes(1);
       expect(result).toStrictEqual(expectedResult);
     });
   });
@@ -481,9 +487,10 @@ describe("common/AuthService", () => {
       };
 
       // act
-      const validateChallenge = () => (authService as any).validateChallenge(
-        "test-challenge"
-      );
+      const validateChallenge = () => (authService as any).validateChallenge({
+        challlenge: "test-challenge",
+        sub: "test-sub",
+      });
 
       // assert
       expect(validateChallenge).rejects.toEqual(httpUnauthorizedError);
@@ -498,9 +505,10 @@ describe("common/AuthService", () => {
         jest.fn().mockResolvedValue(undefined);
 
       // act
-      const validateChallenge = () => (authService as any).validateChallenge(
-        "test-challenge"
-      );
+      const validateChallenge = () => (authService as any).validateChallenge({
+        challlenge: "test-challenge",
+        sub: "test-sub",
+      });
 
       // assert
       expect(validateChallenge).rejects.toEqual(httpUnauthorizedError);
@@ -524,14 +532,15 @@ describe("common/AuthService", () => {
           },
         });
       const expectedResult = {
-        sub: "fakeHash1",
+        sub: "test-sub",
         address: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
       };
 
       // act
-      const result = await (authService as any).validateChallenge(
-        "test-challenge"
-      );
+      const result = await (authService as any).validateChallenge({
+        challlenge: "test-challenge",
+        sub: "test-sub",
+      });
 
       // assert
       expect(result).toStrictEqual(expectedResult);
@@ -541,11 +550,11 @@ describe("common/AuthService", () => {
   describe("getAccessToken()", () => {
     it("should return correct result with no account existing", async () => {
       // prepare
-      const accountsServiceFindOneCall = jest.fn().mockResolvedValue(null);
-      const accountsServiceCreateOrUpdateCall = jest.fn().mockResolvedValue({});
-      (authService as any).accountsService = {
-        findOne: accountsServiceFindOneCall,
-        createOrUpdate: accountsServiceCreateOrUpdateCall,
+      const accountSessionsServiceFindOneCall = jest.fn().mockResolvedValue(null);
+      const accountSessionsServiceCreateOrUpdateCall = jest.fn().mockResolvedValue({});
+      (authService as any).accountSessionsService = {
+        findOne: accountSessionsServiceFindOneCall,
+        createOrUpdate: accountSessionsServiceCreateOrUpdateCall,
       };
       const jwtServicesSignCall = jest.fn()
         .mockReturnValueOnce("test-accessToken")
@@ -558,9 +567,9 @@ describe("common/AuthService", () => {
       const result = await authService.getAccessToken({} as AuthenticationPayload);
 
       // assert
-      expect(accountsServiceFindOneCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceFindOneCall).toHaveBeenCalledTimes(1);
       expect(jwtServicesSignCall).toHaveBeenCalledTimes(2);
-      expect(accountsServiceCreateOrUpdateCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceCreateOrUpdateCall).toHaveBeenCalledTimes(1);
       expect(result).toStrictEqual({
         accessToken: "test-accessToken",
         refreshToken: "test-refreshToken",
@@ -569,11 +578,11 @@ describe("common/AuthService", () => {
 
     it("should return correct result with account existing but no token information", async () => {
       // prepare
-      const accountsServiceFindOneCall = jest.fn().mockResolvedValue({});
-      const accountsServiceCreateOrUpdateCall = jest.fn().mockResolvedValue({});
-      (authService as any).accountsService = {
-        findOne: accountsServiceFindOneCall,
-        createOrUpdate: accountsServiceCreateOrUpdateCall,
+      const accountSessionsServiceFindOneCall = jest.fn().mockResolvedValue({});
+      const accountSessionsServiceCreateOrUpdateCall = jest.fn().mockResolvedValue({});
+      (authService as any).accountSessionsService = {
+        findOne: accountSessionsServiceFindOneCall,
+        createOrUpdate: accountSessionsServiceCreateOrUpdateCall,
       };
       const jwtServicesSignCall = jest.fn()
         .mockReturnValueOnce("test-accessToken")
@@ -586,9 +595,9 @@ describe("common/AuthService", () => {
       const result = await authService.getAccessToken({} as AuthenticationPayload);
 
       // assert
-      expect(accountsServiceFindOneCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceFindOneCall).toHaveBeenCalledTimes(1);
       expect(jwtServicesSignCall).toHaveBeenCalledTimes(2);
-      expect(accountsServiceCreateOrUpdateCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceCreateOrUpdateCall).toHaveBeenCalledTimes(1);
       expect(result).toStrictEqual({
         accessToken: "test-accessToken",
         refreshToken: "test-refreshToken",
@@ -597,14 +606,14 @@ describe("common/AuthService", () => {
 
     it("should return correct result with account and token information", async () => {
       // prepare
-      const accountsServiceFindOneCall = jest.fn().mockResolvedValue({
+      const accountSessionsServiceFindOneCall = jest.fn().mockResolvedValue({
         accessToken: "test-accessToken",
         refreshTokenHash: "test-refreshToken",
       });
-      const accountsServiceCreateOrUpdateCall = jest.fn().mockResolvedValue({});
-      (authService as any).accountsService = {
-        findOne: accountsServiceFindOneCall,
-        createOrUpdate: accountsServiceCreateOrUpdateCall,
+      const accountSessionsServiceCreateOrUpdateCall = jest.fn().mockResolvedValue({});
+      (authService as any).accountSessionsService = {
+        findOne: accountSessionsServiceFindOneCall,
+        createOrUpdate: accountSessionsServiceCreateOrUpdateCall,
       };
      const jwtServicesVerifyCall = jest.fn().mockReturnValue(true);
       (authService as any).jwtService = {
@@ -615,9 +624,9 @@ describe("common/AuthService", () => {
       const result = await authService.getAccessToken({} as AuthenticationPayload);
 
       // assert
-      expect(accountsServiceFindOneCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceFindOneCall).toHaveBeenCalledTimes(1);
       expect(jwtServicesVerifyCall).toHaveBeenCalledTimes(1);
-      expect(accountsServiceCreateOrUpdateCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceCreateOrUpdateCall).toHaveBeenCalledTimes(1);
       expect(result).toStrictEqual({
         accessToken: "test-accessToken",
       });
@@ -625,14 +634,14 @@ describe("common/AuthService", () => {
 
     it("should create a new token when current token is expired", async () => {
       // prepare
-      const accountsServiceFindOneCall = jest.fn().mockResolvedValue({
+      const accountSessionsServiceFindOneCall = jest.fn().mockResolvedValue({
         accessToken: "test-accessToken",
         refreshTokenHash: "test-refreshToken",
       });
-      const accountsServiceCreateOrUpdateCall = jest.fn().mockResolvedValue({});
-      (authService as any).accountsService = {
-        findOne: accountsServiceFindOneCall,
-        createOrUpdate: accountsServiceCreateOrUpdateCall,
+      const accountSessionsServiceCreateOrUpdateCall = jest.fn().mockResolvedValue({});
+      (authService as any).accountSessionsService = {
+        findOne: accountSessionsServiceFindOneCall,
+        createOrUpdate: accountSessionsServiceCreateOrUpdateCall,
       };
       const jwtServicesSignCall = jest.fn()
         .mockReturnValueOnce("new-test-accessToken");
@@ -650,10 +659,10 @@ describe("common/AuthService", () => {
       const result = await authService.getAccessToken({} as AuthenticationPayload);
 
       // assert
-      expect(accountsServiceFindOneCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceFindOneCall).toHaveBeenCalledTimes(1);
       expect(jwtServicesSignCall).toHaveBeenCalledTimes(1);
       expect(jwtServicesVerifyCall).toHaveBeenCalledTimes(1);
-      expect(accountsServiceCreateOrUpdateCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceCreateOrUpdateCall).toHaveBeenCalledTimes(1);
       expect(result).toStrictEqual({
         accessToken: "new-test-accessToken",
       });
@@ -661,11 +670,11 @@ describe("common/AuthService", () => {
 
     it("should throw correct error if error was caught during process", () => {
       // prepare
-      const accountsServiceFindOneCall = jest.fn().mockResolvedValue({});
-      const accountsServiceCreateOrUpdateCall = jest.fn().mockResolvedValue({});
-      (authService as any).accountsService = {
-        findOne: accountsServiceFindOneCall,
-        createOrUpdate: accountsServiceCreateOrUpdateCall,
+      const accountSessionsServiceFindOneCall = jest.fn().mockResolvedValue({});
+      const accountSessionsServiceCreateOrUpdateCall = jest.fn().mockResolvedValue({});
+      (authService as any).accountSessionsService = {
+        findOne: accountSessionsServiceFindOneCall,
+        createOrUpdate: accountSessionsServiceCreateOrUpdateCall,
       };
       const jwtServicesVerifyCall = jest.fn(() => {
         throw new Error();
@@ -685,10 +694,10 @@ describe("common/AuthService", () => {
   describe("refreshAccessToken()", () => {
     it("should responds with error if the account was not previously logged-in", () => {
       // prepare
-      [undefined, {}].forEach((account, index) => {
-        const accountsServiceFindOneCall = jest.fn().mockResolvedValue(account);
-        (authService as any).accountsService = {
-          findOne: accountsServiceFindOneCall,
+      [undefined, {}].forEach(async (account, index) => {
+        const accountSessionsServiceFindOneCall = jest.fn().mockResolvedValue(account);
+        (authService as any).accountSessionsService = {
+          findOne: accountSessionsServiceFindOneCall,
         };
 
         // act
@@ -701,14 +710,14 @@ describe("common/AuthService", () => {
 
     it("should return correct result", async () => {
       // prepare
-      const accountsServiceFindOneCall = jest.fn().mockResolvedValue({
+      const accountSessionsServiceFindOneCall = jest.fn().mockResolvedValue({
         lastSessionHash: "fakeHash1",
         address: "test-address"
       });
-      const accountsServiceCreateOrUpdateCall = jest.fn().mockResolvedValue({});
-      (authService as any).accountsService = {
-        findOne: accountsServiceFindOneCall,
-        createOrUpdate: accountsServiceCreateOrUpdateCall,
+      const accountSessionsServiceCreateOrUpdateCall = jest.fn().mockResolvedValue({});
+      (authService as any).accountSessionsService = {
+        findOne: accountSessionsServiceFindOneCall,
+        createOrUpdate: accountSessionsServiceCreateOrUpdateCall,
       };
       const jwtServicesSignCall = jest.fn()
         .mockReturnValueOnce("test-accessToken");
@@ -721,8 +730,8 @@ describe("common/AuthService", () => {
       const result = await authService.refreshAccessToken("test-userAddress", "test-refreshToken");
 
       // assert
-      expect(accountsServiceFindOneCall).toHaveBeenCalledTimes(1);
-      expect(accountsServiceCreateOrUpdateCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceFindOneCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceCreateOrUpdateCall).toHaveBeenCalledTimes(1);
       expect(jwtServicesSignCall).toHaveBeenCalledTimes(1);
       expect(result).toStrictEqual(expectedResult);
     });
