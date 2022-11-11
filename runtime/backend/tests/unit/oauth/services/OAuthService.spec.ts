@@ -25,12 +25,13 @@ import { JwtService } from "@nestjs/jwt";
 import { MockModel } from "../../../mocks/global";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
+import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 import { CipherService } from "../../../../src/common/services/CipherService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { AuthService } from "../../../../src/common/services/AuthService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { OAuthService } from "../../../../src/oauth/services/OAuthService";
-import { AccountDocument } from "../../../../src/common/models/AccountSchema";
+import { AccountSessionDocument } from "../../../../src/common/models/AccountSessionSchema";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 import { OAuthCallbackRequest } from "../../../../src/oauth/requests/OAuthCallbackRequest";
 import {
@@ -53,6 +54,7 @@ describe("common/OAuthService", () => {
         OAuthService,
         NetworkService, // requirement from AuthService
         AccountsService, // requirement from AuthService
+        AccountSessionsService, // requirement from AuthService
         ChallengesService, // requirement from AuthService
         JwtService, // requirement from AuthService
         AuthService, // requirement from OAuthService
@@ -65,6 +67,10 @@ describe("common/OAuthService", () => {
         }, // requirement from OAuthService
         {
           provide: getModelToken("Account"),
+          useValue: MockModel,
+        }, // requirement from AuthService
+        {
+          provide: getModelToken("AccountSession"),
           useValue: MockModel,
         }, // requirement from AuthService
         {
@@ -363,7 +369,7 @@ describe("common/OAuthService", () => {
     it("should use correct database query parameters", async () => {
       // act
       await oauthService.getIntegrations(
-        { address: "fake-address" } as AccountDocument,
+        { address: "fake-address" } as AccountSessionDocument,
       );
 
       // assert
@@ -376,7 +382,7 @@ describe("common/OAuthService", () => {
     it("should accept any address in string format", async () => {
       // act
       await oauthService.getIntegrations(
-        { address: "another-fake-address" } as AccountDocument,
+        { address: "another-fake-address" } as AccountSessionDocument,
       );
 
       // assert
@@ -399,7 +405,7 @@ describe("common/OAuthService", () => {
 
       // act
       const result = await oauthService.getIntegrations(
-        { address: "fake-address" } as AccountDocument,
+        { address: "fake-address" } as AccountSessionDocument,
       );
 
       // assert
@@ -574,7 +580,7 @@ describe("common/OAuthService", () => {
       try {
         await oauthService.oauthCallback(
           "strava",
-          { address: "fake-address" } as AccountDocument,
+          { address: "fake-address" } as AccountSessionDocument,
           validCallbackRequest,
         );
       } catch(e: any) {
@@ -591,7 +597,7 @@ describe("common/OAuthService", () => {
       // act
       await oauthService.oauthCallback(
         "fake-provider",
-        { address: "fake-address" } as AccountDocument,
+        { address: "fake-address" } as AccountSessionDocument,
         validCallbackRequest,
       );
 
@@ -606,7 +612,7 @@ describe("common/OAuthService", () => {
       // act
       await oauthService.oauthCallback(
         "fake-provider",
-        { address: "fake-address" } as AccountDocument,
+        { address: "fake-address" } as AccountSessionDocument,
         validCallbackRequest,
       );
 
@@ -629,7 +635,7 @@ describe("common/OAuthService", () => {
       // act
       await oauthService.oauthCallback(
         "fake-provider",
-        { address: "fake-address" } as AccountDocument,
+        { address: "fake-address" } as AccountSessionDocument,
         validCallbackRequest,
       );
 

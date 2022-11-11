@@ -25,6 +25,7 @@ import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 import { StatisticsService } from "../../../../src/statistics/services/StatisticsService";
 import { UsersController } from "../../../../src/statistics/routes/UsersController";
 import { StatisticsDocument } from "../../../../src/statistics/models/StatisticsSchema";
+import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 
 describe("statistics/UsersController", () => {
   let controller: UsersController;
@@ -43,6 +44,7 @@ describe("statistics/UsersController", () => {
         QueryService, // requirement from AuthService
         ConfigService, // requirement from AuthService
         StatisticsService, // requirement from UsersController
+        AccountSessionsService, // requirement rom AuthService
         {
           provide: getModelToken("Account"),
           useValue: MockModel,
@@ -55,6 +57,10 @@ describe("statistics/UsersController", () => {
           provide: getModelToken("Statistics"),
           useValue: MockModel,
         }, // requirement from StatisticsService
+        {
+          provide: getModelToken("AccountSession"),
+          useValue: MockModel,
+        }, // requirement from AuthService
       ]
     }).compile();
 

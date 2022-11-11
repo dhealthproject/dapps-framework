@@ -40,31 +40,31 @@ import { getModelToken } from "@nestjs/mongoose";
 
 // internal dependencies
 import { AuthStrategy } from "../../../../src/common/traits/AuthStrategy";
-import { AccountsService } from "../../../../src/common/services/AccountsService";
+import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 import { QueryService } from "../../../../src/common/services/QueryService";
-import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 import { MockModel } from "../../../mocks/global";
+import { AccountSessionDocument } from "../../../../src/common/models/AccountSessionSchema";
 
 describe("common/AuthStrategy", () => {
   let service: AuthStrategy;
-  let accountsService: AccountsService;
+  let accountSessionsService: AccountSessionsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MockPassportStrategy,
         AuthStrategy,
-        AccountsService,
+        AccountSessionsService,
         QueryService,
         {
-          provide: getModelToken("Account"),
+          provide: getModelToken("AccountSession"),
           useValue: MockModel,
         },
       ],
     }).compile();
 
     service = module.get<AuthStrategy>(AuthStrategy);
-    accountsService = module.get<AccountsService>(AccountsService);
+    accountSessionsService = module.get<AccountSessionsService>(AccountSessionsService);
   });
 
   it("should be defined", () => {
@@ -121,16 +121,16 @@ describe("common/AuthStrategy", () => {
   describe("validate()", () => {
     it("should return correct result", async () => {
       // prepare
-      const accountDoc = {
+      const accountSessionDoc = {
         address: "testAddress",
         lastSessionHash: "testLastSessionHash",
       }
       const accountsServiceFindOneCall = jest
-        .spyOn(accountsService, "findOne")
-        .mockResolvedValue(accountDoc as AccountDocument);
+        .spyOn(accountSessionsService, "findOne")
+        .mockResolvedValue(accountSessionDoc as AccountSessionDocument);
       const expectedResult = {
-        sub: accountDoc.lastSessionHash,
-        address: accountDoc.address,
+        sub: accountSessionDoc.lastSessionHash,
+        address: accountSessionDoc.address,
       }
       
       // act

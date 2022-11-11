@@ -25,6 +25,7 @@ import { AuthService } from "../../src/common/services/AuthService";
 import { OAuthService } from "../../src/oauth/services/OAuthService";
 import { NetworkService } from "../../src/common/services/NetworkService";
 import { AccountsService } from "../../src/common/services/AccountsService";
+import { AccountSessionsService } from "../../src/common/services/AccountSessionsService";
 import { ChallengesService } from "../../src/common/services/ChallengesService";
 import { QueryService } from "../../src/common/services/QueryService";
 import { CipherService } from "../../src/common/services/CipherService";
@@ -44,6 +45,7 @@ describe("AppModule", () => {
         CipherService, // requirement from OAuthService
         NetworkService, // requirement from AuthService
         AccountsService, // requirement from AuthService
+        AccountSessionsService, // requirement from AuthService
         ChallengesService, // requirement from AuthService
         JwtService, // requirement from AuthService
         QueryService, // requirement from AccountsService
@@ -56,6 +58,10 @@ describe("AppModule", () => {
           provide: getModelToken("Account"),
           useValue: MockModel,
         }, // requirement from AccountsService
+        {
+          provide: getModelToken("AccountSession"),
+          useValue: MockModel,
+        }, // requirement from AccountSessionsService
         {
           provide: getModelToken("AuthChallenge"),
           useValue: MockModel,

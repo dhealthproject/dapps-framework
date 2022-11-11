@@ -25,6 +25,7 @@ import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 import { PayoutDocument } from "../../../../src/payout/models/PayoutSchema";
 import { PayoutsService } from "../../../../src/payout/services/PayoutsService";
 import { PayoutsController } from "../../../../src/payout/routes/PayoutsController";
+import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 
 describe("payout/PayoutsController", () => {
   let controller: PayoutsController;
@@ -43,6 +44,7 @@ describe("payout/PayoutsController", () => {
         AccountsService,
         ChallengesService,
         JwtService,
+        AccountSessionsService,
         {
           provide: getModelToken("Payout"),
           useValue: MockModel,
@@ -53,6 +55,10 @@ describe("payout/PayoutsController", () => {
         },
         {
           provide: getModelToken("AuthChallenge"),
+          useValue: MockModel,
+        },
+        {
+          provide: getModelToken("AccountSession"),
           useValue: MockModel,
         },
       ],

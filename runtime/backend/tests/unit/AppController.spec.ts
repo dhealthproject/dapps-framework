@@ -18,6 +18,7 @@ import { MailerService } from "@nestjs-modules/mailer";
 import { MockModel } from "../mocks/global";
 import { AppController } from "../../src/AppController";
 import { AccountsService } from "../../src/common/services/AccountsService";
+import { AccountSessionsService } from "../../src/common/services/AccountSessionsService";
 import { ChallengesService } from "../../src/common/services/ChallengesService";
 import { NetworkService } from "../../src/common/services/NetworkService";
 import { AuthService } from "../../src/common/services/AuthService";
@@ -56,6 +57,7 @@ describe("AppController", () => {
         ConfigService, // requirement from AuthService
         NetworkService, // requirement from AuthService
         AccountsService, // requirement from AuthService
+        AccountSessionsService, // requirement from AuthService
         JwtService, // requirement from AuthService
         QueryService, // requirement from AccountsService
         ChallengesService, // requirement from AccountsService
@@ -65,6 +67,10 @@ describe("AppController", () => {
           provide: getModelToken("Account"),
           useValue: MockModel, // test/mocks/global.ts
         }, // requirement from AccountsService
+        {
+          provide: getModelToken("AccountSession"),
+          useValue: MockModel, // test/mocks/global.ts
+        }, // requirement from AccountsSessionService
         {
           provide: getModelToken("AccountIntegration"),
           useValue: MockModel, // test/mocks/global.ts

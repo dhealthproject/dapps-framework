@@ -24,6 +24,7 @@ import { OAuthController } from "../../../../src/oauth/routes/OAuthController";
 import { OAuthService } from "../../../../src/oauth/services/OAuthService";
 import { AuthService } from "../../../../src/common/services/AuthService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
+import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { QueryService } from "../../../../src/common/services/QueryService";
@@ -46,6 +47,7 @@ describe("common/OAuthController", () => {
         QueryService, // requirement from OAuthService
         CipherService, // requirement from OAuthService
         AccountsService, // requirement from AuthService
+        AccountSessionsService, // requirement from AuthService
         ConfigService, // requirement from AuthService
         NetworkService, // requirement from AuthService
         ChallengesService, // requirement from AuthService
@@ -53,7 +55,11 @@ describe("common/OAuthController", () => {
         {
           provide: getModelToken("Account"),
           useValue: MockModel,
-        }, // requirement from AccountsService
+        }, // requirement from AccountSessionsService
+        {
+          provide: getModelToken("AccountSession"),
+          useValue: MockModel,
+        }, // requirement from AccountSessionsService
         {
           provide: getModelToken("AuthChallenge"),
           useValue: MockModel,

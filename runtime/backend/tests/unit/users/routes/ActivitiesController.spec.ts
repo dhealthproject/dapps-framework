@@ -18,6 +18,7 @@ import { JwtService } from "@nestjs/jwt";
 import { MockModel } from "../../../mocks/global";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
+import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 import { AuthService } from "../../../../src/common/services/AuthService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { QueryService } from "../../../../src/common/services/QueryService";
@@ -38,6 +39,7 @@ describe("users/ActivitiesController", () => {
         AuthService, // requirement from ActivitiesService
         NetworkService, // requirement from AuthService
         AccountsService, // requirement from AuthService
+        AccountSessionsService, // requirement from AuthService
         ChallengesService, // requirement from AuthService
         JwtService, // requirement from AuthService
         QueryService, // requirement from AuthService
@@ -45,6 +47,10 @@ describe("users/ActivitiesController", () => {
         ActivitiesService, // requirement from ActivitiesController
         {
           provide: getModelToken("Account"),
+          useValue: MockModel,
+        }, // requirement from AuthService
+        {
+          provide: getModelToken("AccountSession"),
           useValue: MockModel,
         }, // requirement from AuthService
         {

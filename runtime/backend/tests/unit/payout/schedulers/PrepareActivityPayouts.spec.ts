@@ -32,6 +32,7 @@ import { PayoutsService } from "../../../../src/payout/services/PayoutsService";
 import { SignerService } from "../../../../src/payout/services/SignerService";
 import { MathService } from "../../../../src/payout/services/MathService";
 import { PrepareActivityPayouts } from "../../../../src/payout/schedulers/ActivityPayouts/PrepareActivityPayouts";
+import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 
 const mockActivityRewardWalkFormulaFirst = Math.round(Math.floor(
   ((2/4)*1.2) * 100 // <-- 2 zeros (L172)
@@ -149,6 +150,7 @@ describe("payout/PrepareActivityPayouts", () => {
         SignerService,
         MathService,
         EventEmitter2,
+        AccountSessionsService,
         {
           provide: getModelToken("Payout"),
           useValue: MockModel,
@@ -170,6 +172,10 @@ describe("payout/PrepareActivityPayouts", () => {
             debug: jest.fn(),
             error: jest.fn(),
           },
+        },
+        {
+          provide: getModelToken("AccountSession"),
+          useValue: MockModel,
         },
       ]
     }).compile();

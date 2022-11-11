@@ -31,6 +31,7 @@ import {
 } from '../../../../src/statistics/models/StatisticsSchema';
 import { LeaderboardsController } from '../../../../src/statistics/routes/LeaderboardsController';
 import { StatisticsService } from '../../../../src/statistics/services/StatisticsService';
+import { AccountSessionsService } from '../../../../src/common/services/AccountSessionsService';
 
 describe('statistics/LeaderboardsController', () => {
   let controller: LeaderboardsController;
@@ -41,18 +42,23 @@ describe('statistics/LeaderboardsController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [LeaderboardsController],
       providers: [
-        AuthService, // requirement from StatisticsService
-        NetworkService, // requirement from AuthService
-        AccountsService, // requirement from AuthService
-        ChallengesService, // requirement from AuthService
-        JwtService, // requirement from AuthService
-        QueryService, // requirement from AuthService
-        ConfigService, // requirement from AuthService
-        StatisticsService, // requirement from UsersController
+        AuthService,
+        QueryService,
+        AccountsService,
+        AccountSessionsService,
+        ConfigService,
+        NetworkService,
+        ChallengesService,
+        StatisticsService,
+        JwtService,
         {
           provide: getModelToken("Account"),
           useValue: MockModel,
         }, // requirement from AuthService
+        {
+          provide: getModelToken("AccountSession"),
+          useValue: MockModel,
+        },
         {
           provide: getModelToken("AuthChallenge"),
           useValue: MockModel,

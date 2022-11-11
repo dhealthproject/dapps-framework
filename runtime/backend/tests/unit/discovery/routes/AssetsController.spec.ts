@@ -21,6 +21,7 @@ import { AuthService } from "../../../../src/common/services/AuthService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
+import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { AssetDocument } from "../../../../src/discovery/models/AssetSchema";
 import { AccountDocument } from "../../../../src/common/models/AccountSchema";
@@ -40,6 +41,7 @@ describe("discovery/AssetsController", () => {
         QueryService,
         NetworkService,
         AccountsService,
+        AccountSessionsService,
         ChallengesService,
         JwtService,
         {
@@ -48,6 +50,10 @@ describe("discovery/AssetsController", () => {
         },
         {
           provide: getModelToken("Account"),
+          useValue: MockModel,
+        },
+        {
+          provide: getModelToken("AccountSession"),
           useValue: MockModel,
         },
         {
