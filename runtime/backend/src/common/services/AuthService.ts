@@ -36,9 +36,12 @@ import {
   AuthChallengeDocument,
   AuthChallengeQuery,
 } from "../models/AuthChallengeSchema";
+import { AccountSessionDocument, AccountSessionQuery } from "../models/AccountSessionSchema";
+import { AccountSessionsService } from "./AccountSessionsService";
 
 // configuration resources
 import dappConfigLoader from "../../../config/dapp";
+import { AccessTokenRequest } from "../requests/AccessTokenRequest";
 const conf = dappConfigLoader();
 
 /**
@@ -82,7 +85,7 @@ export interface CookiePayload {
  * - A `sub` field that contains a log-in operation's completion
  *   transaction hash. This permits to *scope* authenticated sessions
  *   and is typically used to describe "one subscription".
- * - A `address` field that contains the authenticated account's
+ * - A `address` field that contains the authenticated account session's
  *   dHealth Network Address. This is typically used as the "username".
  * - An optional `referralCode` field that contains a referral code
  *   previously attached to the account that invited the authenticating
@@ -196,17 +199,19 @@ export class AuthService {
    * up the *cookie generation* and *challenge generation* routines.
    *
    * @access public
-   * @param   {AuthChallengeModel}  model
-   * @param   {ConfigService}       configService
-   * @param   {NetworkService}      networkService
-   * @param   {AccountsService}     accountsService
-   * @param   {ChallengesService}   challengesService
-   * @param   {JwtService}          jwtService
+   * @param   {AuthChallengeModel}         model
+   * @param   {ConfigService}              configService
+   * @param   {NetworkService}             networkService
+   * @param   {AccountsService}            accountsService
+   * @param   {AccountSessionsService}     accountSessionsService
+   * @param   {ChallengesService}          challengesService
+   * @param   {JwtService}                 jwtService
    */
   public constructor(
     private readonly configService: ConfigService,
     private readonly networkService: NetworkService,
     private readonly accountsService: AccountsService,
+    private readonly accountSessionsService: AccountSessionsService,
     private readonly challengesService: ChallengesService,
     private jwtService: JwtService,
   ) {
@@ -267,10 +272,18 @@ export class AuthService {
     // read and decode access token
     const token: string = AuthService.extractToken(request, cookieName);
 
+
+    // find account session in database
+    const accountSession = await this.accountSessionsService.findOne(
+      new AccountSessionQuery({
+        accessToken: token,
+      } as AccountSessionDocument),
+    );
+
     // find profile information in database
     return await this.accountsService.findOne(
       new AccountQuery({
-        accessToken: token,
+        address: accountSession.address,
       } as AccountDocument),
     );
   }
@@ -286,12 +299,15 @@ export class AuthService {
    * a document will be *insert* in the collection `authChallenges`.
    *
    * @param   {string}  challenge       An authentication challenge, as created with {@link getChallenge}.
-   * @returns {Promise<AuthenticationPayload>}  An authenticated account described with {@link AuthenticationPayload}.
+   * @returns {Promise<AuthenticationPayload>}  An authenticated account session described with {@link AuthenticationPayload}.
    * @throws  {HttpException}           Given challenge could not be found in recent transactions.
    */
   public async validateChallenge(
-    challenge: string,
+    body: AccessTokenRequest,
   ): Promise<AuthenticationPayload> {
+    // get challenge and sub from request body
+    const { challenge, sub } = body;
+
     // does not permit multiple usage of challenges
     const challengeUsed: boolean = await this.challengesService.exists(
       new AuthChallengeQuery({
@@ -318,10 +334,10 @@ export class AuthService {
     }
 
     // for authentication operations, the transaction **signer**
-    // is the account that is trying to authenticate
+    // is the account session that is trying to authenticate
     const authorizedAddr: Address = transaction.signer.address;
     const authorizedUser: AuthenticationPayload = {
-      sub: transaction.transactionInfo.hash,
+      sub,
       address: authorizedAddr.plain(),
     };
 
@@ -333,7 +349,7 @@ export class AuthService {
     // in the database collection `authChallenges`
     await this.challengesService.createOrUpdate(
       new AuthChallengeQuery({
-        challenge: challenge,
+        challenge,
       } as AuthChallengeDocument),
       {
         usedBy: authorizedAddr.plain(),
@@ -348,9 +364,9 @@ export class AuthService {
   /**
    * This method accepts a {@link AuthenticationPayload} object
    * of which the `address` field is used to find the related
-   * `accounts` document *by address*.
+   * `account-sessions` document *by address*.
    * <br /><br />
-   * We read the access/refresh token(s) from the `accounts`
+   * We read the access/refresh token(s) from the `account-sessions`
    * document *if possible*, otherwise we *generate them* and
    * *sign them using the authentication secret* as provided
    * in the configuration file `config/security.ts`.
@@ -366,15 +382,15 @@ export class AuthService {
   ): Promise<AccessTokenDTO> {
     let accessToken: string, refreshToken: string;
 
-    // finds the related `accounts` document (if any)
-    const account: AccountDocument = await this.accountsService.findOne(
-      this.getAccountQuery(payload),
+    // finds the related `account-sessions` document (if any)
+    const accountSession: AccountSessionDocument = await this.accountSessionsService.findOne(
+      this.getAccountSessionQuery(payload),
     );
 
-    // tries to read tokens from `accounts` document
-    if (null !== account) {
-      accessToken = account.accessToken ?? null;
-      refreshToken = account.refreshTokenHash ?? null;
+    // tries to read tokens from `account-sessions` document
+    if (null !== accountSession) {
+      accessToken = accountSession.accessToken ?? null;
+      refreshToken = accountSession.refreshTokenHash ?? null;
     }
 
     // block: creating access token
@@ -389,7 +405,7 @@ export class AuthService {
         });
       }
       // if on the other hand, we already have an active access
-      // token for the account, we verify that it hasn't expired
+      // token for the account session, we verify that it hasn't expired
       else {
         this.jwtService.verify(accessToken, {
           secret: this.authSecret,
@@ -428,7 +444,7 @@ export class AuthService {
     // block: creating refresh token
     // if we don't have an active refresh token for this user
     // constructs a long-lived refreshToken for the next year
-    // and store a copy of the created tokens in `accounts`
+    // and store a copy of the created tokens in `account-sessions`
     if (undefined === refreshToken || null === refreshToken) {
       refreshToken = this.jwtService.sign(payload, {
         // defines a symmetric secret key for signing tokens
@@ -445,7 +461,7 @@ export class AuthService {
     // block: updating referral data
     // automatically generate a new referral code given
     // unknown `accounts` (by address).
-    if (!account || !account.referralCode) {
+    if (!accountSession || !accountSession.referralCode) {
       userData.referralCode = `JOINFIT-${Math.random().toString(36).slice(-8)}`;
     }
 
@@ -464,18 +480,18 @@ export class AuthService {
         undefined !== referrer &&
         undefined !== referrer.address &&
         payload.address !== referrer.address &&
-        (account === undefined || account.referredBy === undefined)
+        (accountSession === undefined || accountSession.referredBy === undefined)
       ) {
         userData.referredBy = referrer.address;
       }
     }
     // /block: updating referral data
 
-    // store tokens in `accounts` document
+    // store tokens in `account-sessions` document
     // note that we store a *hash* of the refresh token
     // otherwise there would be too much risk in leaking
-    await this.accountsService.createOrUpdate(
-      this.getAccountQuery(payload),
+    await this.accountSessionsService.createOrUpdate(
+      this.getAccountSessionQuery(payload),
       userData,
     );
 
@@ -501,7 +517,7 @@ export class AuthService {
    * @async
    * @param   {string}  userAddress       The address of the end-user for which a new access token must be generated ("Refresh").
    * @returns {Promise<AccessTokenDTO>}   An access token for the authenticated user.
-   * @throws  {HttpException}             Given invalid log-in state for the requested account.
+   * @throws  {HttpException}             Given invalid log-in state for the requested account session.
    */
   public async refreshAccessToken(
     userAddress: string,
@@ -509,25 +525,25 @@ export class AuthService {
   ): Promise<AccessTokenDTO> {
     // find existing refresh token to user and refresh
     // the attached *access token* if necessary
-    const account: AccountDocument = await this.accountsService.findOne(
-      new AccountQuery({
+    const accountSession: AccountSessionDocument = await this.accountSessionsService.findOne(
+      new AccountSessionQuery({
         address: userAddress,
         refreshTokenHash: sha3_256(refreshToken),
-      } as AccountDocument),
+      } as AccountSessionDocument),
     );
 
-    // responds with error if the account was not
+    // responds with error if the account session was not
     // previously logged-in, the refresh call is invalid
     // 401: Unauthorized
-    if (undefined === account || undefined === account.lastSessionHash) {
+    if (undefined === accountSession || undefined === accountSession.lastSessionHash) {
       throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
     }
 
     // creates an authentication payload and
     // extends its lifetime for one more hour
     const payload: AuthenticationPayload = {
-      sub: account.lastSessionHash,
-      address: account.address,
+      sub: accountSession.lastSessionHash,
+      address: accountSession.address,
     };
 
     // always re-generates a new access token provided
@@ -538,8 +554,8 @@ export class AuthService {
       expiresIn: "1h", // 1 hour expiry for access tokens
     });
 
-    // store new accessToken in `accounts` document
-    await this.accountsService.createOrUpdate(this.getAccountQuery(payload), {
+    // store new accessToken in `account-sessions` document
+    await this.accountSessionsService.createOrUpdate(this.getAccountSessionQuery(payload), {
       accessToken,
     });
 
@@ -549,18 +565,19 @@ export class AuthService {
   }
 
   /**
-   * This method returns an *accounts query* for the mongo collection
-   * named `accounts`, and is used to query an account by the address
+   * This method returns an *account sessions query* for the mongo collection
+   * named `account-sessions`, and is used to query an account by the address
    * attached inside the {@link AuthenticationPayload} payload.
    *
    * @access protected
    * @param   {AuthenticationPayload}   payload
-   * @returns {AccountQuery}
+   * @returns {AccountSessionQuery}
    */
-  protected getAccountQuery(payload: AuthenticationPayload): AccountQuery {
-    return new AccountQuery({
+  protected getAccountSessionQuery(payload: AuthenticationPayload): AccountSessionQuery {
+    return new AccountSessionQuery({
       address: payload.address,
-    } as AccountDocument);
+      sub: payload.sub,
+    } as AccountSessionDocument);
   }
 
   /**

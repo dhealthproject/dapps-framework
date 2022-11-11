@@ -14,7 +14,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
-import { AccountsModule } from "../modules/AccountsModule";
+import { AccountSessionsModule } from "./AccountSessionsModule";
 import { ChallengesModule } from "../modules/ChallengesModule";
 import { NetworkModule } from "../modules/NetworkModule";
 import { QueryModule } from "../modules/QueryModule";
@@ -33,9 +33,11 @@ import {
 import { Account, AccountSchema } from "../models/AccountSchema";
 import { CipherService } from "../services/CipherService";
 import { SocialController } from "../routes/SocialController";
+import { AccountsModule } from "./AccountsModule";
 
 // configuration resources
 import securityConfigLoader from "../../../config/security";
+import { RefreshStrategy } from "../traits";
 const auth = securityConfigLoader().auth;
 
 /**
@@ -50,6 +52,7 @@ const auth = securityConfigLoader().auth;
     NetworkModule,
     QueryModule,
     AccountsModule,
+    AccountSessionsModule,
     ChallengesModule,
     PassportModule,
     LogModule,
@@ -66,7 +69,7 @@ const auth = securityConfigLoader().auth;
     ]),
   ],
   controllers: [AuthController, SocialController],
-  providers: [AuthService, AuthStrategy, CipherService],
+  providers: [AuthService, AuthStrategy, RefreshStrategy, CipherService],
   exports: [AuthService, CipherService],
 })
 export class AuthModule {}

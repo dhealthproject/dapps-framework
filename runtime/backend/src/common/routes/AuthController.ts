@@ -35,8 +35,8 @@ import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import { AccessTokenRequest } from "../requests/AccessTokenRequest";
 import { AuthChallengeDTO } from "../models/AuthChallengeDTO";
 import { StatusDTO } from "../models/StatusDTO";
-import { AccountsService } from "../services/AccountsService";
-import { AccountDocument, AccountQuery } from "../models/AccountSchema";
+import { AccountSessionDocument, AccountSessionQuery } from "../models/AccountSessionSchema";
+import { AccountSessionsService } from "../services/AccountSessionsService";
 
 namespace HTTPResponses {
   // creates a variable that we include in a namespace
@@ -137,12 +137,12 @@ export class AuthController {
    * Constructs an instance of this controller.
    *
    * @constructor
-   * @param {ConfigService} configService
-   * @param {AppService} appService
+   * @param {AuthService} authService
+   * @param {AccountSessionsService} accountSessionsService
    */
   public constructor(
     private readonly authService: AuthService,
-    private readonly accountsService: AccountsService,
+    private readonly accountSessionsService: AccountSessionsService,
   ) {}
 
   /**
@@ -231,7 +231,7 @@ export class AuthController {
       // - make sure it wasn't used before (no multiple usage)
       // - make sure it is present in a recent transaction on-chain
       const payload: AuthenticationPayload =
-        await this.authService.validateChallenge(body.challenge);
+        await this.authService.validateChallenge(body);
 
       if (null !== payload) {
         // fetches or generates currently active accessToken, note that a
@@ -254,8 +254,6 @@ export class AuthController {
         // cookie in the response to permit refreshing
         // `refreshToken` will only be attached the first time
         if (undefined !== tokens.refreshToken) {
-          // @todo This should permit multi-devices at some point
-          // @todo It is currently not possible to *refresh* on multi devices
           response.cookie(`${authCookie.name}:Refresh`, tokens.refreshToken, {
             httpOnly: true,
             domain: authCookie.domain,
@@ -317,16 +315,16 @@ export class AuthController {
       );
 
       // find profile information in database
-      const account = await this.accountsService.findOne(
-        new AccountQuery({
+      const accountSession = await this.accountSessionsService.findOne(
+        new AccountSessionQuery({
           refreshTokenHash: sha3_256(token),
-        } as AccountDocument),
+        } as AccountSessionDocument),
       );
 
       // validate the refresh token and get authentication payload
       // - make sure it is a valid `refreshToken` in `accounts`
       const tokens: AccessTokenDTO = await this.authService.refreshAccessToken(
-        account.address,
+        accountSession.address,
         token,
       );
 

@@ -57,4 +57,19 @@ export class AccessTokenRequest {
       "A referral code *may* be attached to this request to mark that the authenticating account was *invited* to the dApp by another account.",
   })
   public referralCode?: string;
+
+  /**
+   * The JWT sub value that can be attached in the **bearer
+   * authorization header** of HTTP requests to serve as a
+   * unique identity of each device.
+   *
+   * @access public
+   * @var {string}
+   */
+  @ApiProperty({
+    example: "5d60ad3bcd08fa119b77a7e5ef72dae509d291e33ccf75d93b4c155e61db55d7",
+    description:
+      "The JWT sub value that can be attached in the **bearer authorization header** of HTTP requests to serve as a unique identity of each device.",
+  })
+  public sub: string;
 }
