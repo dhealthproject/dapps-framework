@@ -14,6 +14,7 @@ import { Address } from "@dhealth/sdk";
 import { Scope } from "../../common/models/Scope";
 import { BaseCommand, BaseCommandOptions } from "../../worker/BaseCommand";
 import { AccountsService } from "../../common/services/AccountsService";
+import { StateDocument, StateQuery } from "../../common/models/StateSchema";
 
 /**
  * @interface DiscoveryCommandOptions
@@ -166,5 +167,64 @@ export abstract class DiscoveryCommand extends BaseCommand {
     await this.discover(options);
 
     // no-return (void)
+  }
+
+  /**
+   * This method will find the *next relevant discovery source*
+   * by iterating through the passed {@link sources} and checking
+   * individual synchronization state.
+   * <br /><br />
+   * Accounts that are fully synchronized require *less* requests
+   * for recent transactions. Note that a *per-source* state is
+   * persisted as well, to keep track of the last page number as
+   * well as to keep track of when the runtime reads the latest
+   * available page of transactions for said discovery source.
+   *
+   * @param   {string[]}    sources   The discovery sources public keys and/or addresses.
+   * @returns {Promise<string>}       The discovery source *address*.
+   */
+  protected async getNextSource(sources: string[]): Promise<string> {
+    // iterate through all configured discovery sources and
+    // fetch transactions. Transactions will first be read
+    // for accounts that are *not yet synchronized*.
+    let address: Address,
+      cursor = 0;
+    do {
+      address = this.parseSource(sources[cursor++]);
+
+      // fetch **per-source** synchronization state once
+      // Caution: do not confuse with `this.state`, this one
+      // is internal and synchronizes **per each source**.
+      const state = await this.stateService.findOne(
+        new StateQuery({
+          name: `${this.stateIdentifier}:${address.plain()}`, // "discovery:DiscoverTransactions:%SOURCE%"
+        } as StateDocument),
+      );
+
+      // if current source is synchronized, move to next
+      if (!!state && "sync" in state.data && true === state.data.sync) {
+        continue;
+      }
+
+      // if no sync state is available, use **current source**
+      return address.plain();
+    } while (cursor < sources.length);
+
+    // use first with no sync configuration
+    if (!this.state || !("lastUsedAccount" in this.state.data)) {
+      return sources[0];
+    }
+
+    // fully synchronized: switch source every minute
+    const lastIndex = sources.findIndex(
+      (s) => s === this.state.data.lastUsedAccount,
+    );
+
+    // if necessary, loop through back to first source
+    if (lastIndex === -1 || lastIndex === sources.length - 1) {
+      return sources[0];
+    }
+
+    return sources[lastIndex + 1];
   }
 }

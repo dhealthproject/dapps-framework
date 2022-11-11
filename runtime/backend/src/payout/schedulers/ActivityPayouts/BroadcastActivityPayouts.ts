@@ -253,7 +253,7 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
     // prepares execution logger
     this.logger = new LogService(`${this.scope}/${this.command}`);
 
-    // display starting moment information *also* in debug mode
+    // display starting moment information also in non-debug mode
     this.debugLog(
       `Starting payout broadcast for subjects type: ${this.collection}`,
     );

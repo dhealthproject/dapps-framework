@@ -247,7 +247,7 @@ export class ProcessOperations extends ProcessorCommand {
     // prepares execution logger
     this.logger = new LogService(`${this.scope}/${this.command}`);
 
-    // display starting moment information in debug mode
+    // display starting moment information also in non-debug mode
     this.debugLog(
       `Starting operations processor for contracts: ${contracts.join(", ")}`,
     );
