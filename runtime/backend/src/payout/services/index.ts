@@ -10,3 +10,4 @@
 // services index
 export * from "./PayoutsService";
 export * from "./SignerService";
+export * from "./MathService";

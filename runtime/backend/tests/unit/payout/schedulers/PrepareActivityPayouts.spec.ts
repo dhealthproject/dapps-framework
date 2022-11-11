@@ -29,7 +29,29 @@ import { PayoutState } from "../../../../src/payout/models/PayoutStatusDTO";
 import { PayoutDocument, PayoutQuery } from "../../../../src/payout/models/PayoutSchema";
 import { PayoutsService } from "../../../../src/payout/services/PayoutsService";
 import { SignerService } from "../../../../src/payout/services/SignerService";
+import { MathService } from "../../../../src/payout/services/MathService";
 import { PrepareActivityPayouts } from "../../../../src/payout/schedulers/ActivityPayouts/PrepareActivityPayouts";
+
+const dE = 1000000; // elevate factor
+const mockActivityRewardFormulaNormal = Math.round(Math.floor(
+  ((((2+5)/(4/60))*(3+5+(1/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
+));
+
+const mockActivityRewardFormulaNormalDiv3 = Math.round(Math.floor(
+  ((((2+5)/(4/60))*(3+5+(1/1000))/dE)*1.2*100) * 1000 // <-- 3 zeros
+));
+
+const mockActivityRewardFormulaNormalDiv6 = Math.round(Math.floor(
+  ((((2+5)/(4/60))*(3+5+(1/1000))/dE)*1.2*100) * 1000000 // <-- 6 zeros
+));
+
+const mockActivityRewardFormulaReversed = Math.round(Math.floor(
+  ((((4+1)/(2/60))*(3+1+(5/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
+));
+
+const mockActivityRewardFormulaAdjusted = Math.round(Math.floor(
+  ((((7+0)/(8/60))*(0.8+0+(0/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
+));
 
 const activityMocks = [
   {
@@ -58,6 +80,19 @@ const activityMocks = [
       kilojoules: 1,
     }
   } as ActivityDocument,
+  {
+    slug: "fake-slug3",
+    address: "fake-owner3",
+    createdAt: new Date(),
+    activityData: {
+      sport: "Walk",
+      calories: 0, // <-- C:0
+      distance: 7,
+      elevation: 0, // <-- E:0
+      elapsedTime: 8,
+      kilojoules: 0, // <-- J:0
+    }
+  } as ActivityDocument,
 ];
 
 describe("payout/PrepareActivityPayouts", () => {
@@ -67,6 +102,7 @@ describe("payout/PrepareActivityPayouts", () => {
   let queryService: QueryService<ActivityDocument, ActivityModel>;
   let payoutsService: PayoutsService;
   let signerService: SignerService;
+  let mathService: MathService;
   let logger: Logger;
 
   beforeEach(async () => {
@@ -78,6 +114,7 @@ describe("payout/PrepareActivityPayouts", () => {
         QueryService,
         PayoutsService,
         SignerService,
+        MathService,
         Logger,
         {
           provide: getModelToken("Payout"),
@@ -100,6 +137,7 @@ describe("payout/PrepareActivityPayouts", () => {
     queryService = module.get<QueryService<ActivityDocument, ActivityModel>>(QueryService);
     payoutsService = module.get<PayoutsService>(PayoutsService);
     signerService = module.get<SignerService>(SignerService);
+    mathService = module.get<MathService>(MathService);
     logger = module.get<Logger>(Logger);
   });
 
@@ -241,9 +279,7 @@ describe("payout/PrepareActivityPayouts", () => {
         divisibility: 3, // <-- forcing divisibility 3
       };
       // note that this uses the Walk formula
-      const expectedValue = Math.round(Math.floor(
-        (((2+5)/4)*(3+5+1)*1.2*100) * 1000 // <-- 3 zeros
-      ));
+      const expectedValue = mockActivityRewardFormulaNormalDiv3; // <-- 3 zeros
 
       // act
       const result = (command as any).getAssetAmount(activityMock);
@@ -259,9 +295,7 @@ describe("payout/PrepareActivityPayouts", () => {
         divisibility: 6, // <-- forcing divisibility 6
       };
       // note that this uses the Walk formula
-      const expectedValue = Math.round(Math.floor(
-        (((2+5)/4)*(3+5+1)*1.2*100) * 1000000 // <-- 6 zeros
-      ));
+      const expectedValue = mockActivityRewardFormulaNormalDiv6;
 
       // act
       const result = (command as any).getAssetAmount(activityMock);
@@ -272,13 +306,8 @@ describe("payout/PrepareActivityPayouts", () => {
 
     it("should always round to correct integer value for amount", () => {
       // prepare
-      
-      const walkFormula = Math.round(Math.floor(
-        (((2+5)/4)*(3+5+1)*1.2*100) * 100 // <-- 2 zeros (L172)
-      ));
-      const otherFormula = Math.round(Math.floor(
-        (((4+1)/2)*(3+1+5)*1.2*100) * 100 // <-- 2 zeros (L172)
-      ));
+      const walkFormula = mockActivityRewardFormulaNormal;
+      const otherFormula = mockActivityRewardFormulaReversed;
 
       // act
       const result1 = (command as any).getAssetAmount(activityMocks[0]);
@@ -328,6 +357,8 @@ describe("payout/PrepareActivityPayouts", () => {
     const mockPublicKey = "fake-signer-public-key";
     const mockSignedPayload = "fake-serialized-signed-transaction";
     const mockTransactionHash = "fake-transaction-hash";
+    const mockActivityReward = mockActivityRewardFormulaNormal;
+    const mockActivityRewardReverse = mockActivityRewardFormulaReversed;
     const updatePayoutSubjectMock = jest.fn();
     const fetchSubjectsEmptyMock = jest.fn().mockReturnValue(Promise.resolve([]));
     const fetchSubjectsNonEmptyMock = jest.fn().mockReturnValue(Promise.resolve([
@@ -421,18 +452,24 @@ describe("payout/PrepareActivityPayouts", () => {
 
       // assert
       expect(fetchSubjectsActualMock).toHaveBeenCalledTimes(1);
-      expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(2); // 2 subjects
-      expect(signerGetSignerPublicKeyMock).toHaveBeenCalledTimes(2); // 2 payouts
-      expect(signerSignTransactionMock).toHaveBeenCalledTimes(2); // 2 payouts
-      expect(updatePayoutSubjectMock).toHaveBeenCalledTimes(2); // 2 subjects
+      expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(3); // 3 subjects
+      expect(signerGetSignerPublicKeyMock).toHaveBeenCalledTimes(3); // 3 payouts
+      expect(signerSignTransactionMock).toHaveBeenCalledTimes(3); // 3 payouts
+      expect(updatePayoutSubjectMock).toHaveBeenCalledTimes(3); // 3 subjects
       expect((command as any).totalNumberPrepared).toBe(
-        mockTotalNumberPrepared + 2, // 2 payouts
+        mockTotalNumberPrepared + 3, // 3 payouts
       );
     });
 
-    it("should update payout document state after signature", async() => {
+    it("should update payout document state after signature", async () => {
       // prepare
       (command as any).fetchSubjects = fetchSubjectsActualMock; // <-- non-empty
+      const expectedAssets1 = [
+        { amount: mockActivityReward, mosaicId: "fake-identifier" },
+      ];
+      const expectedAssets2 = [
+        { amount: mockActivityRewardReverse, mosaicId: "fake-identifier" },
+      ];
 
       // act
       await command.execute({
@@ -441,7 +478,7 @@ describe("payout/PrepareActivityPayouts", () => {
       });
 
       // assert
-      expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(2); // 2 payouts
+      expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(3); // 3 payouts
       expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(1,
         new PayoutQuery({
           subjectSlug: activityMocks[0].slug,
@@ -450,6 +487,7 @@ describe("payout/PrepareActivityPayouts", () => {
         } as PayoutDocument),
         {
           payoutState: PayoutState.Prepared,
+          payoutAssets: expectedAssets1,
           signedBytes: mockSignedPayload,
           transactionHash: mockTransactionHash,
         },
@@ -462,6 +500,41 @@ describe("payout/PrepareActivityPayouts", () => {
         } as PayoutDocument),
         {
           payoutState: PayoutState.Prepared,
+          payoutAssets: expectedAssets2,
+          signedBytes: mockSignedPayload,
+          transactionHash: mockTransactionHash,
+        },
+      );
+    });
+
+    it("should use skew-normal adjustment given 0-elevation", async () => {
+      // prepare
+      (command as any).fetchSubjects = fetchSubjectsActualMock; // <-- non-empty
+      (command as any).mathService = {
+        skewNormal: jest.fn().mockReturnValue(0.8), // <-- force fake
+      };
+      const mockActivityRewardAdjusted = mockActivityRewardFormulaAdjusted;
+      const expectedAdjustedAssets = [
+        { amount: mockActivityRewardAdjusted, mosaicId: "fake-identifier" },
+      ];
+
+      // act
+      await command.execute({
+        dryRun: true,
+        debug: true,
+      });
+
+      // assert
+      expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(3); // 3 payouts
+      expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(3,
+        new PayoutQuery({
+          subjectSlug: activityMocks[2].slug,
+          subjectCollection: "activities",
+          userAddress: activityMocks[2].address,
+        } as PayoutDocument),
+        {
+          payoutState: PayoutState.Prepared,
+          payoutAssets: expectedAdjustedAssets,
           signedBytes: mockSignedPayload,
           transactionHash: mockTransactionHash,
         },

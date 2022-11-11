@@ -30,6 +30,7 @@ import { ProcessingState } from "../../../processor/models/ProcessingStatusDTO";
 // payout scope
 import { PayoutsService } from "../../services/PayoutsService";
 import { SignerService } from "../../services/SignerService";
+import { MathService } from "../../services/MathService";
 import { PayoutState } from "../../models/PayoutStatusDTO";
 import { PayoutCommand, PayoutCommandOptions } from "../PayoutCommand";
 import {
@@ -79,6 +80,7 @@ export class PrepareActivityPayouts extends PreparePayouts<
    * @param {QueryService<ActivityDocument, ActivityModel>}    queryService
    * @param {PayoutsService}  payoutsService
    * @param {SignerService}   signerService
+   * @param {MathService}     mathService
    * @param {ActivityModel}   model
    */
   constructor(
@@ -90,6 +92,7 @@ export class PrepareActivityPayouts extends PreparePayouts<
     >,
     protected readonly payoutsService: PayoutsService,
     protected readonly signerService: SignerService,
+    protected readonly mathService: MathService,
     @InjectModel(Activity.name)
     protected readonly model: ActivityModel,
   ) {
@@ -239,8 +242,26 @@ export class PrepareActivityPayouts extends PreparePayouts<
    * - `calories`: Number of `kilocalories` burned.
    * - `distance`: Number of `meters` distance.
    * - `elevation`: Number of `meters` elevation gain.
-   * - `elapsedTime`: Number of `minutes` spent during activity.
+   * - `elapsedTime`: Number of `seconds` spent during activity.
    * - `kilojoules`: Number of `kilojoules` produced during activity (Rides only).
+   * <br /><br />
+   * Note that the below listed formula *may use* a different unit of measure
+   * than the one listed in the database, e.g. in-formula the distance may be
+   * used and expressed in *centimeters* or *dekameters* depending of sports.
+   * <br /><br />
+   * Following formulas are currently applied to compute amounts:
+   * - *Walk*:    `(((D + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.2 x 100`
+   * - *Run*:     `(((D + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.5 x 100`
+   * - *Ride*:    `(((D * 10 + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.3 x 100`
+   * - *Swim*:    `(((D * 100 + J) / (T/60)) x ((D/25) + J + kC) / dE) x 1.7 x 100`
+   * - *Others*:  `((T/60) x (A + J + kC) / dE) x 1.6 x 100`
+   * with `dE` which contains the *ELEVATE factor* of `1'000'000`.
+   * <br /><br />
+   * Note that in the case of an *elevation* gain that is `0`,
+   * we use the Health2Earn v0 *skew-normal* distribution to
+   * generate a random number that will deviate between `0.5`
+   * and `1.5`. This is necessary to avoid zeroing out factor
+   * two of the formula.
    *
    * @todo document formula in developer documentations
    * @access protected
@@ -248,6 +269,9 @@ export class PrepareActivityPayouts extends PreparePayouts<
    * @returns {number}    An amount that is computed and depends on the *intensity* of an activity.
    */
   protected getAssetAmount(subject: ActivityDocument): number {
+    // in-formula "adjustment"
+    let A = 0;
+
     // extracts fields used for computing the reward amount
     const {
       calories: C, // in-formula, calories is `C`
@@ -261,31 +285,45 @@ export class PrepareActivityPayouts extends PreparePayouts<
     // this removes the potential for division-by-zero
     if (T <= 0) return 0;
 
+    // the elevation must be greater than 0, if not
+    // available we use an adjustment value such that
+    // multiplication will not result in a `0` amount.
+    if (E <= 0) A = this.mathService.skewNormal(0.8, 0.3, 0.5);
+
+    // common transformations and factor
+    // Strava expresses in calories not `kcal`
+    const kC = C / 1000;
+    const dE = 1000000; // ELEVATE factor
+
     // @see https://developers.strava.com/docs/reference/#api-models-SportType
     // This method uses abbreviated variable names in order to keep
     // readability high-enough for arithmetical operations.
     let amount: number;
     if ("Walk" === subject.activityData.sport) {
       // WALKING
-      // ((D + J) / T) x (E + J + C) x 1.2 x 100
-      amount = ((D + J) / T) * (E + J + C) * 1.2 * 100;
-    } else if ("Ride" === subject.activityData.sport) {
-      // RIDING
-      // ((D + J) / T) x (E + J + C) x 1.3 x 100
-      amount = ((D + J) / T) * (E + J + C) * 1.3 * 100;
+      // (((D + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.2 x 100
+      amount = ((((D + J) / (T / 60)) * ((E || A) + J + kC)) / dE) * 1.2 * 100;
     } else if ("Run" === subject.activityData.sport) {
       // RUNNING
-      // ((D + J) / T) x (E + J + C) x 1.5 x 100
-      amount = ((D + J) / T) * (E + J + C) * 1.5 * 100;
+      // (((D + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.5 x 100
+      amount = ((((D + J) / (T / 60)) * ((E || A) + J + kC)) / dE) * 1.5 * 100;
+    } else if ("Ride" === subject.activityData.sport) {
+      // RIDING
+      // (((D * 10 + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.3 x 100
+      // uses *dekameters* in distance
+      const dM = D * 10;
+      amount = ((((dM + J) / (T / 60)) * ((E || A) + J + kC)) / dE) * 1.3 * 100;
     } else if ("Swim" === subject.activityData.sport) {
       // SWIMMING
-      // ((D + J) / T) x (E + J + C) x 1.7 x 100
+      // (((D * 100 + J) / (T/60)) x ((D/25) + J + kC) / dE) x 1.7 x 100
       // uses *centimeters* in distance and "lanes" in elevation
-      amount = ((D * 100 + J) / T) * (D / 25 + J + C) * 1.7 * 100;
+      const cM = D * 100;
+      amount =
+        ((((cM + J) / (T / 60)) * (D / 25 + A + J + kC)) / dE) * 1.7 * 100;
     } else {
       // OTHERS
-      // T x (J + C) x 1.6 x 100
-      amount = T * (J + C) * 1.6 * 100;
+      // ((T/60) x (A + J + kC) / dE) x 1.6 x 100
+      amount = (((T / 60) * (A + J + kC)) / dE) * 1.6 * 100;
     }
 
     // make sure to work only with *integers* (always absolute amounts)

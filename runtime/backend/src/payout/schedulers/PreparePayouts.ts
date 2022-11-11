@@ -262,13 +262,17 @@ export abstract class PreparePayouts<
       const subjectSlug = subject.slug; // @see Subjectable
       const subjectAddr = subject.address; // @see Subjectable
 
+      // read subject related fields
+      const mosaicId: string = this.getAssetIdentifier();
+      const theAmount: number = this.getAssetAmount(subject);
+
       // creates an EARN contract operation
       const contract: EarnContract = new EarnContract(
         {
           dappIdentifier: this.dappIdentifier,
           date: dayjs(subjectDate).format("YYYY-MM-DD"), //XXX exact date?
-          asset: this.getAssetIdentifier(),
-          amount: this.getAssetAmount(subject),
+          asset: mosaicId,
+          amount: theAmount,
         },
         1,
       );
@@ -294,6 +298,7 @@ export abstract class PreparePayouts<
         } as PayoutDocument),
         {
           payoutState: PayoutState.Prepared,
+          payoutAssets: [{ mosaicId, amount: theAmount }],
           signedBytes: signedTransfer.payload,
           transactionHash: signedTransfer.hash,
         },
@@ -306,6 +311,7 @@ export abstract class PreparePayouts<
       // strategies more easily, e.g. using profiles, etc.
       await this.updatePayoutSubject(subject, {
         payoutState: PayoutState.Prepared,
+        activityAssets: [{ mosaicId, amount: theAmount }],
       });
 
       nCreated++;

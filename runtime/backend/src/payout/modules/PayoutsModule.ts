@@ -19,6 +19,7 @@ import { Payout, PayoutSchema } from "../models/PayoutSchema";
 import { PayoutsController } from "../routes/PayoutsController";
 import { SignerService } from "../services/SignerService";
 import { PayoutsService } from "../services/PayoutsService";
+import { MathService } from "../services/MathService";
 
 /**
  * @label PAYOUT
@@ -29,7 +30,7 @@ import { PayoutsService } from "../services/PayoutsService";
  */
 @Module({
   controllers: [PayoutsController],
-  providers: [SignerService, PayoutsService],
+  providers: [SignerService, PayoutsService, MathService],
   imports: [
     MongooseModule.forFeature([
       {
@@ -41,6 +42,6 @@ import { PayoutsService } from "../services/PayoutsService";
     QueryModule, // requirement from PayoutsService
     StateModule, // requirement from PreparePayouts
   ],
-  exports: [SignerService, PayoutsService],
+  exports: [SignerService, PayoutsService, MathService],
 })
 export class PayoutsModule {}
