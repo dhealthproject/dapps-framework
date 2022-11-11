@@ -15,9 +15,9 @@ import { Request } from "express";
 import { sha3_256 } from "js-sha3";
 
 // internal dependencies
-import { AccountDocument, AccountQuery } from "../models/AccountSchema";
-import { AccountsService } from "../services/AccountsService";
 import { AuthenticationPayload, AuthService } from "../services/AuthService";
+import { AccountSessionsService } from "../services/AccountSessionsService";
+import { AccountSessionDocument, AccountSessionQuery } from "../models/AccountSessionSchema";
 
 // configuration resources
 import dappConfigLoader from "../../../config/dapp";
@@ -39,7 +39,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
   /**
    *
    */
-  public constructor(private readonly accountsService: AccountsService) {
+  public constructor(private readonly accountSessionsService: AccountSessionsService) {
     super({
       // determines the *token* extraction method
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -86,11 +86,11 @@ export class RefreshStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
 
     // finds an `accounts` document using a SHA3-256
     // hash of the refresh token (never plain text).
-    const account: AccountDocument = await this.accountsService.findOne(
-      new AccountQuery({
+    const account: AccountSessionDocument = await this.accountSessionsService.findOne(
+      new AccountSessionQuery({
         address: payload.address,
         refreshTokenHash: sha3_256(refreshToken),
-      } as AccountDocument),
+      } as AccountSessionDocument),
     );
 
     // re-build the authentication payload

@@ -138,51 +138,6 @@ export class Account extends Transferable<AccountDTO> {
   public readonly firstTransactionAtBlock?: number;
 
   /**
-   * The JWT access token that can be attached in the **bearer
-   * authorization header** of HTTP requests to indicate that
-   * a user is authenticated.
-   * <br /><br />
-   * This field is **optional** and *not indexed*.
-   * <br /><br />
-   * See more details in {@link AccessTokenDTO}.
-   *
-   * @access public
-   * @readonly
-   * @var {string}
-   */
-  @Prop({ required: false, nullable: true })
-  public readonly accessToken?: string;
-
-  /**
-   * The JWT refresh token that can be attached in the **bearer
-   * authorization header** of HTTP requests to `/auth/token` to
-   * indicate that a user's access token must be refreshed.
-   * <br /><br />
-   * This field is **optional** and *not indexed*.
-   * <br /><br />
-   * See more details in {@link AccessTokenDTO}.
-   *
-   * @access public
-   * @readonly
-   * @var {string}
-   */
-  @Prop({ index: true, nullable: true })
-  public readonly refreshTokenHash?: string;
-
-  /**
-   * The transaction hash that is/was attached to the **last**
-   * authenticated *session* of this account.
-   * <br /><br />
-   * This field is **optional** and *not indexed*.
-   *
-   * @access public
-   * @readonly
-   * @var {string}
-   */
-  @Prop({ nullable: true })
-  public readonly lastSessionHash?: string;
-
-  /**
    * The document's creation timestamp. This field **does not** reflect the
    * date of creation of an account but rather the date of creation of the
    * cached database entry.

@@ -25,6 +25,7 @@ export * from "./AuthChallengeSchema";
 export * from "./LogSchema";
 export * from "./StateSchema";
 export * from "./TransactionSchema";
+export * from "./AccountSessionSchema";
 
 // generic types / utilities
 export * from "./BaseDTO";
@@ -47,3 +48,4 @@ export * from "./SocialPlatformDTO";
 export * from "./StateDTO";
 export * from "./StatusDTO";
 export * from "./LogDTO";
+export * from "./AccountSessionDTO";
