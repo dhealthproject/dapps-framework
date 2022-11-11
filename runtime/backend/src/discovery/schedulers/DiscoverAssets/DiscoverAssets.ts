@@ -41,9 +41,6 @@ import { AssetDiscoveryStateData } from "../../models/AssetDiscoveryStateData";
  * scheduler. Contains source code for the execution logic of a
  * command with name: `discovery:DiscoverAssets`.
  *
- * @todo This discovery should use a specific **discovery**
- * @todo config field instead of dappPublicKey
- * @todo (similar to getNextSource in DiscoverTransactions)
  * @since v0.3.2
  */
 @Injectable()
@@ -119,6 +116,7 @@ export class DiscoverAssets extends DiscoveryCommand {
     // sets default state data
     this.lastPageNumber = 1;
     this.lastExecutedAt = new Date().valueOf();
+    this.lastUsedAccount = "";
   }
 
   /**
@@ -172,7 +170,7 @@ export class DiscoverAssets extends DiscoveryCommand {
    */
   protected getStateData(): AssetDiscoveryStateData {
     return {
-      lastPageNumber: this.lastPageNumber,
+      lastUsedAccount: this.lastUsedAccount,
       lastExecutedAt: this.lastExecutedAt,
     } as AssetDiscoveryStateData;
   }
@@ -200,21 +198,14 @@ export class DiscoverAssets extends DiscoveryCommand {
   @Cron("0 */2 * * * *", { name: "discovery:cronjobs:assets" })
   public async runAsScheduler(): Promise<void> {
     // CAUTION:
-    // assets discovery cronjob always read the dApp's main account
+    // assets discovery cronjob uses discovery sources
     const sources = this.configService.get<string[]>("discovery.sources");
-    const dappPubKey = this.configService.get<string>("dappPublicKey");
-    const networkType = this.configService.get<NetworkType>(
-      "network.networkIdentifier",
-    );
 
-    const source = await this.getNextSource(sources);
+    // iterate through all configured discovery sources and
+    // fetch assets from db. Assets will first be read for
+    // accounts that are *not yet synchronized*.
+    const source: string = await this.getNextSource(sources);
     this.lastUsedAccount = source;
-
-    // creates the discovery source public account
-    const publicAcct = PublicAccount.createFromPublicKey(
-      dappPubKey,
-      networkType,
-    );
 
     // keep track of last execution
     this.lastExecutedAt = new Date().valueOf();
@@ -242,42 +233,23 @@ export class DiscoverAssets extends DiscoveryCommand {
    * @returns {Promise<void>}
    */
   public async discover(options?: DiscoveryCommandOptions): Promise<void> {
-    // display starting moment information in debug mode
-    if (options.debug && !options.quiet) {
-      this.debugLog(`Starting assets discovery for source "${options.source}"`);
-    }
+    // display starting moment information *also* in non-debug mode
+    this.debugLog(`Starting assets discovery for source "${options.source}"`);
 
-    // get the latest transactions page number
-    if (
-      !!this.state &&
-      !!this.state.data &&
-      "lastPageNumber" in this.state.data
-    ) {
-      this.lastPageNumber = this.state.data.lastPageNumber ?? 1;
-    }
+    // per-source synchronization: "discovery:DiscoverAssets:%SOURCE%"
+    const stateIdentifier = `${this.stateIdentifier}:${options.source}`;
+    const stateQuerySrc = new StateQuery({
+      name: stateIdentifier,
+    } as StateDocument);
 
-    // check for the total number of transactions
-    const transactionsState = await this.stateService.findOne(
-      new StateQuery({
-        name: "discovery:DiscoverTransactions",
-      } as StateDocument),
-    );
+    // fetch **per-source** synchronization state once
+    // Caution: do not confuse with `this.state`, this one
+    // is internal and synchronizes **per each source**.
+    const state = await this.stateService.findOne(stateQuerySrc);
 
-    const countTransactions =
-      !!transactionsState &&
-      "totalNumberOfTransactions" in transactionsState.data
-        ? transactionsState.data.totalNumberOfTransactions
-        : 0;
-
-    // if we reached the end of transactions, we want
-    // to continue *only* with recent transactions in
-    // the next runs of assets discovery
-    if (
-      countTransactions > 0 &&
-      this.lastPageNumber * this.usePageSize > countTransactions
-    ) {
-      this.lastPageNumber =
-        Math.floor(countTransactions / this.usePageSize) ?? 1;
+    // reads the latest per-source execution state
+    if (!!state && "lastPageNumber" in state.data) {
+      this.lastPageNumber = state.data.lastPageNumber ?? 1;
     }
 
     // display debug information about configuration
@@ -289,6 +261,7 @@ export class DiscoverAssets extends DiscoveryCommand {
 
     // (1) each round queries a page of 100 transactions *from the database*
     // and discovers assets that are attached in said transactions
+    let isSynchronized: boolean;
     for (
       let i = this.lastPageNumber, max = this.lastPageNumber + 20;
       i < max;
@@ -306,6 +279,9 @@ export class DiscoverAssets extends DiscoveryCommand {
           } as QueryParameters,
         ),
       );
+
+      // determines the current source's synchronization state
+      isSynchronized = transactions.isLastPage();
 
       // if we don't get anything, stop querying transactions for now
       if (!transactions.data.length) {
@@ -350,6 +326,15 @@ export class DiscoverAssets extends DiscoveryCommand {
         `Found ${this.discoveredAssets.length} new asset entries from transactions`,
       );
     }
+
+    // (4) update per-source state `lastPageNumber`
+    await this.stateService.updateOne(
+      stateQuerySrc, // /!\ per-source
+      {
+        lastPageNumber: this.lastPageNumber,
+        sync: isSynchronized,
+      },
+    );
 
     // bail out if no assets could be discovered
     if (!this.discoveredAssets.length) {
@@ -401,64 +386,5 @@ export class DiscoverAssets extends DiscoveryCommand {
     // this discovery method.
 
     // no-return (void)
-  }
-
-  /**
-   * This method will find the *next relevant discovery source*
-   * by iterating through the passed {@link sources} and checking
-   * individual synchronization state.
-   * <br /><br />
-   * Accounts that are fully synchronized require *less* requests
-   * for recent transactions. Note that a *per-source* state is
-   * persisted as well, to keep track of the last page number as
-   * well as to keep track of when the runtime reads the latest
-   * available page of transactions for said discovery source.
-   *
-   * @param   {string[]}    sources   The discovery sources public keys and/or addresses.
-   * @returns {Promise<string>}       The discovery source *address*.
-   */
-  protected async getNextSource(sources: string[]): Promise<string> {
-    // iterate through all configured discovery sources and
-    // fetch transactions. Transactions will first be read
-    // for accounts that are *not yet synchronized*.
-    let address: Address,
-      cursor = 0;
-    do {
-      address = this.parseSource(sources[cursor++]);
-
-      // fetch **per-source** synchronization state once
-      // Caution: do not confuse with `this.state`, this one
-      // is internal and synchronizes **per each source**.
-      const state = await this.stateService.findOne(
-        new StateQuery({
-          name: `${this.stateIdentifier}:${address.plain()}`, // "discovery:DiscoverTransactions:%SOURCE%"
-        } as StateDocument),
-      );
-
-      // if current source is synchronized, move to next
-      if (!!state && "sync" in state.data && true === state.data.sync) {
-        continue;
-      }
-
-      // if no sync state is available, use **current source**
-      return address.plain();
-    } while (cursor < sources.length);
-
-    // use first with no sync configuration
-    if (!this.state || !("lastUsedAccount" in this.state.data)) {
-      return sources[0];
-    }
-
-    // fully synchronized: switch source every minute
-    const lastIndex = sources.findIndex(
-      (s) => s === this.state.data.lastUsedAccount,
-    );
-
-    // if necessary, loop through back to first source
-    if (lastIndex === -1 || lastIndex === sources.length - 1) {
-      return sources[0];
-    }
-
-    return sources[lastIndex + 1];
   }
 }

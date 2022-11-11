@@ -169,6 +169,7 @@ export class AssetsService {
     // read assets configuration
     const baseAsset = AssetsService.getAssetParameters("base");
 
+    // required mosaics configuration
     // the following if-else conditions block permits to
     // always work with *mosaic id* instead of *namespace id*
     // BASE asset
@@ -179,6 +180,7 @@ export class AssetsService {
       return baseAsset.mosaicId;
     }
 
+    // optional EARN mosaic configuration
     try {
       // EARN asset
       const earnAsset = AssetsService.getAssetParameters("earn");
@@ -187,6 +189,18 @@ export class AssetsService {
         mosaicOrNamespaceId === earnAsset.namespaceId
       ) {
         return earnAsset.mosaicId;
+      }
+    } catch (error) {}
+
+    // optional BOOSTERS mosaic configuration
+    try {
+      // BOOSTERS asset
+      const boostersAsset = AssetsService.getAssetParameters("boosters");
+      if (
+        "namespaceId" in boostersAsset &&
+        mosaicOrNamespaceId === boostersAsset.namespaceId
+      ) {
+        return boostersAsset.mosaicId;
       }
     } catch (error) {}
 
