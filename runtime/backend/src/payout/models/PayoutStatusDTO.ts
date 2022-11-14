@@ -27,6 +27,7 @@ export enum PayoutState {
   Broadcast = 2,
   Confirmed = 3,
   Failed = -1,
+  Not_Eligible = -2,
 }
 
 /**

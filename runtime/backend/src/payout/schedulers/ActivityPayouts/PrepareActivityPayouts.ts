@@ -239,20 +239,20 @@ export class PrepareActivityPayouts extends PreparePayouts<
    * compute *asset amounts* depending on the *intensity* of an
    * activity. Note that the `activityData` field *must* contain
    * fields including:
-   * - `calories`: Number of `kilocalories` burned.
-   * - `distance`: Number of `meters` distance.
-   * - `elevation`: Number of `meters` elevation gain.
-   * - `elapsedTime`: Number of `seconds` spent during activity.
-   * - `kilojoules`: Number of `kilojoules` produced during activity (Rides only).
+   * - `calories`: Number of `kilocalories` burned (`C || kC`).
+   * - `distance`: Number of `meters` distance (`D`). (* some formula express this in different unit of measure)
+   * - `elevation`: Number of `meters` elevation gain (`E || A`). This field uses an adjusted value in case it is empty.
+   * - `elapsedTime`: Number of `seconds` spent during activity (`T`).
+   * - `kilojoules`: Number of `kilojoules` produced during activity (Rides only) (`J`).
    * <br /><br />
    * Note that the below listed formula *may use* a different unit of measure
    * than the one listed in the database, e.g. in-formula the distance may be
    * used and expressed in *centimeters* or *dekameters* depending of sports.
    * <br /><br />
    * Following formulas are currently applied to compute amounts:
-   * - *Walk*:    `(((D + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.2 x 100`
-   * - *Run*:     `(((D + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.5 x 100`
-   * - *Ride*:    `(((D * 10 + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.3 x 100`
+   * - *Walk*:    `(((D + J) / (T/60)) x (A + J + kC) / dE) x 1.2 x 100`
+   * - *Run*:     `(((D + J) / (T/60)) x (A + J + kC) / dE) x 1.5 x 100`
+   * - *Ride*:    `(((D * 10 + J) / (T/60)) x (A + J + kC) / dE) x 1.3 x 100`
    * - *Swim*:    `(((D * 100 + J) / (T/60)) x ((D/25) + J + kC) / dE) x 1.7 x 100`
    * - *Others*:  `((T/60) x (A + J + kC) / dE) x 1.6 x 100`
    * with `dE` which contains the *ELEVATE factor* of `1'000'000`.
@@ -304,18 +304,18 @@ export class PrepareActivityPayouts extends PreparePayouts<
     let amount: number;
     if ("Walk" === subject.activityData.sport) {
       // WALKING
-      // (((D + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.2 x 100
-      amount = ((((D + J) / (T / 60)) * ((E || A) + J + kC)) / dE) * 1.2 * 100;
+      // (((D + J) / (T/60)) x (A + J + kC) / dE) x 1.2 x 100
+      amount = ((((D + J) / (T / 60)) * (A + J + kC)) / dE) * 1.2 * 100;
     } else if ("Run" === subject.activityData.sport) {
       // RUNNING
-      // (((D + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.5 x 100
-      amount = ((((D + J) / (T / 60)) * ((E || A) + J + kC)) / dE) * 1.5 * 100;
+      // (((D + J) / (T/60)) x (A + J + kC) / dE) x 1.5 x 100
+      amount = ((((D + J) / (T / 60)) * (A + J + kC)) / dE) * 1.5 * 100;
     } else if ("Ride" === subject.activityData.sport) {
       // RIDING
-      // (((D * 10 + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.3 x 100
+      // (((D * 10 + J) / (T/60)) x (A + J + kC) / dE) x 1.3 x 100
       // uses *dekameters* in distance
       const dM = D * 10;
-      amount = ((((dM + J) / (T / 60)) * ((E || A) + J + kC)) / dE) * 1.3 * 100;
+      amount = ((((dM + J) / (T / 60)) * (A + J + kC)) / dE) * 1.3 * 100;
     } else if ("Swim" === subject.activityData.sport) {
       // SWIMMING
       // (((D * 100 + J) / (T/60)) x ((D/25) + J + kC) / dE) x 1.7 x 100

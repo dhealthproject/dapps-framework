@@ -47,6 +47,20 @@ const payoutMocks = [
     signedBytes: "fake-signed-bytes2",
     transactionHash: "fake-hash2",
   } as PayoutDocument,
+  {
+    subjectSlug: "fake-subject3",
+    subjectCollection: "activities",
+    userAddress: "fake-owner3",
+    signedBytes: "fake-signed-bytes3",
+    transactionHash: "fake-hash3",
+  } as PayoutDocument,
+  {
+    subjectSlug: "fake-subject4",
+    subjectCollection: "activities",
+    userAddress: "fake-owner4",
+    signedBytes: "fake-signed-bytes4",
+    transactionHash: "fake-hash4",
+  } as PayoutDocument,
 ];
 
 describe("payout/BroadcastActivityPayouts", () => {
@@ -218,6 +232,7 @@ describe("payout/BroadcastActivityPayouts", () => {
       toPromise: transactionAnnounceToPromiseMock,
     });
     const serializeMock = jest.fn();
+    const countMock = jest.fn().mockReturnValue(4); // <-- 4 payouts in payoutMocks
     const transactionMock = {
       serialize: serializeMock,
       transactionInfo: {
@@ -242,6 +257,7 @@ describe("payout/BroadcastActivityPayouts", () => {
       (command as any).updatePayoutSubject = updatePayoutSubjectMock;
       (command as any).payoutsService = {
         createOrUpdate: payoutsCreateOrUpdateMock,
+        count: countMock,
       };
       (command as any).networkService = {
         delegatePromises: networkDelegatePromisesMock,
@@ -257,6 +273,7 @@ describe("payout/BroadcastActivityPayouts", () => {
       updatePayoutSubjectMock.mockClear();
       networkDelegatePromisesMock.mockClear();
       serializeMock.mockClear();
+      countMock.mockClear();
 
       debugLogMock = jest.spyOn((command as any), "debugLog");
     });
@@ -366,28 +383,31 @@ describe("payout/BroadcastActivityPayouts", () => {
       (command as any).fetchSubjects = fetchSubjectsActualMock; // <-- non-empty
       const createFromPayloadMock = jest.spyOn(TransactionMapping, "createFromPayload")
         .mockReturnValue(transactionMock as any);
+      const expectedCount = 1;
 
       // act
       await command.execute({
-        maxCount: 1,
+        maxCount: expectedCount,
         dryRun: true, // <-- dry-run
         debug: true,
       });
 
       // assert
+      expect(countMock).toHaveBeenCalledTimes(1);
       expect(debugLogMock).toHaveBeenCalledTimes(3);
       expect((command as any).transactions).toBeDefined();
-      expect(Object.keys((command as any).transactions).length).toBe(2); // 2 payouts
+      expect(Object.keys((command as any).transactions).length).toBe(1); // <-- maxCount: 1
       expect(debugLogMock).toHaveBeenNthCalledWith(1,
         `[DRY-RUN] The dry-run mode is enabled for this command`
       );
       expect(debugLogMock).toHaveBeenNthCalledWith(2,
-        `[DRY-RUN] Found ${payoutMocks.length} broadcast-able transaction(s)`
+        `[DRY-RUN] Found ${expectedCount} broadcast-able transaction(s) ` +
+        `in queue of ${payoutMocks.length} eligible payouts.`
       );
       expect(debugLogMock).toHaveBeenNthCalledWith(3,
-        `[DRY-RUN] Now broadcasting ${payoutMocks.length} transaction(s)`
+        `[DRY-RUN] Now broadcasting ${expectedCount} transaction(s)`
       );
-      expect(createFromPayloadMock).toHaveBeenCalledTimes(2);
+      expect(createFromPayloadMock).toHaveBeenCalledTimes(expectedCount);
     });
 
     it("should not broadcast transaction given dry-run mode", async () => {
@@ -421,10 +441,11 @@ describe("payout/BroadcastActivityPayouts", () => {
         slug: "fake-payout-subject-slug",
       } as any);
       (command as any).fetchSubjects = fetchSubjectsActualMock; // <-- non-empty
+      const expectedCount = 2;
 
       // act
       await command.execute({
-        maxCount: 1,
+        maxCount: expectedCount,
         dryRun: false, // <-- production
         debug: true,
       });

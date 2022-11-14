@@ -261,10 +261,28 @@ export abstract class PreparePayouts<
       const subjectDate = subject.createdAt; // @see Subjectable
       const subjectSlug = subject.slug; // @see Subjectable
       const subjectAddr = subject.address; // @see Subjectable
+      const payoutQuery = {
+        subjectSlug,
+        subjectCollection: this.collection,
+        userAddress: subjectAddr,
+      };
 
       // read subject related fields
       const mosaicId: string = this.getAssetIdentifier();
       const theAmount: number = this.getAssetAmount(subject);
+
+      // empty reward amounts are *not* rewarded
+      // CAUTION: this disables manual activity rewards
+      if (theAmount <= 0) {
+        // update `payouts` state to `Not_Eligible`
+        await this.payoutsService.createOrUpdate(
+          new PayoutQuery(payoutQuery as PayoutDocument),
+          { payoutState: PayoutState.Not_Eligible },
+        );
+
+        // continue to next payout
+        continue;
+      }
 
       // creates an EARN contract operation
       const contract: EarnContract = new EarnContract(
@@ -291,11 +309,7 @@ export abstract class PreparePayouts<
       // creates a `payouts` document that will be used
       // in follow-up steps (broadcast + verify)
       await this.payoutsService.createOrUpdate(
-        new PayoutQuery({
-          subjectSlug,
-          subjectCollection: this.collection,
-          userAddress: subjectAddr,
-        } as PayoutDocument),
+        new PayoutQuery(payoutQuery as PayoutDocument),
         {
           payoutState: PayoutState.Prepared,
           payoutAssets: [{ mosaicId, amount: theAmount }],

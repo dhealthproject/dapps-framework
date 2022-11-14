@@ -159,6 +159,23 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
   }
 
   /**
+   * This method must return a total count of subjects.
+   *
+   * @abstract
+   * @access protected
+   * @returns {Promise<number>}
+   */
+  protected async countSubjects(): Promise<number> {
+    // executes a `count()` query on the `payouts` collection
+    return await this.payoutsService.count(
+      new PayoutQuery({
+        payoutState: PayoutState.Prepared,
+        subjectCollection: this.collection,
+      } as PayoutDocument),
+    );
+  }
+
+  /**
    * This method must return an *array of subjects*. Note that
    * subjects *will be the subject of a payout execution*.
    *
@@ -168,9 +185,8 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
    * @returns {Promise<PayoutDocument[]>}
    */
   protected async fetchSubjects(count: number): Promise<PayoutDocument[]> {
-    // queries *one page* of 10 `activities` documents for which
-    // the *processing state* is currently `Not_Processed` and
-    // the *payout state* is currently `Not_Started`.
+    // queries *one page* of 10 `payouts` documents for which
+    // the *processing state* is currently `Prepared`.
     const page = await this.payoutsService.find(
       new PayoutQuery(
         {
