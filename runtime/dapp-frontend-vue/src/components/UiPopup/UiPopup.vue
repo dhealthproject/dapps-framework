@@ -28,12 +28,13 @@
       };max-width: ${config.width}px`"
       class="dapp-ui-popup__modal dapp-ui-popup__modal__form"
     >
-      <inline-svg
-        :src="getImageUrl('icons/close-icon.svg')"
-        :width="24"
+      <div
         class="dapp-ui-popup__modal__form__close"
         @click="$root.$emit('modal-close')"
-      />
+      >
+        <inline-svg :src="getImageUrl('icons/close-icon.svg')" :width="24" />
+      </div>
+
       <h2 class="dapp-ui-popup__modal__form__title">{{ config.title }}</h2>
       <div
         v-for="(field, index) in config.fields"
@@ -61,12 +62,13 @@
       };max-width: ${config.width}px`"
       class="dapp-ui-popup__modal dapp-ui-popup__modal__notification"
     >
-      <inline-svg
-        :src="getImageUrl('icons/close-icon.svg')"
-        :width="32"
+      <div
         class="dapp-ui-popup__modal__notification__close"
         @click="$root.$emit('modal-close')"
-      />
+      >
+        <inline-svg :src="getImageUrl('icons/close-icon.svg')" :width="32" />
+      </div>
+
       <div v-if="config.illustration" class="img-wrapper">
         <img
           :src="getImageUrl(config.illustration)"
