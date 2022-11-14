@@ -42,8 +42,8 @@
     "db:migration:create": "./node_modules/.bin/ts-node config/migrations.ts new",
     "db:migration:show": "./node_modules/.bin/ts-node config/migrations.ts status",
     "db:migration:up": "./node_modules/.bin/ts-node config/migrations.ts up",
-    "db:migration:undo": "./node_modules/.bin/ts-node config/migrations.ts down -l",
-    "db:migration:down": "./node_modules/.bin/ts-node config/migrations.ts down -a",
+    "db:migration:down": "./node_modules/.bin/ts-node config/migrations.ts down -l",
+    "db:migration:reset": "./node_modules/.bin/ts-node config/migrations.ts down -a",
     "docs": "npx typedoc --out \"docs/`npm run version --silent`\" src/classes.ts"
   },
   "dependencies": {
