@@ -168,7 +168,6 @@ export class AssetsService {
   public static formatMosaicId(mosaicOrNamespaceId: string): string {
     // read assets configuration
     const baseAsset = AssetsService.getAssetParameters("base");
-    const earnAsset = AssetsService.getAssetParameters("earn");
 
     // the following if-else conditions block permits to
     // always work with *mosaic id* instead of *namespace id*
@@ -179,13 +178,17 @@ export class AssetsService {
     ) {
       return baseAsset.mosaicId;
     }
-    // EARN asset
-    else if (
-      "namespaceId" in earnAsset &&
-      mosaicOrNamespaceId === earnAsset.namespaceId
-    ) {
-      return earnAsset.mosaicId;
-    }
+
+    try {
+      // EARN asset
+      const earnAsset = AssetsService.getAssetParameters("earn");
+      if (
+        "namespaceId" in earnAsset &&
+        mosaicOrNamespaceId === earnAsset.namespaceId
+      ) {
+        return earnAsset.mosaicId;
+      }
+    } catch (error) {}
 
     // by default, keeps the input value
     return mosaicOrNamespaceId;
