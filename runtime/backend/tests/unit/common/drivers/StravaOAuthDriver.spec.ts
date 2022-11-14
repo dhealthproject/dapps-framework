@@ -325,6 +325,8 @@ describe("common/StravaOAuthDriver", () => {
       expect("elevation" in actual).toBe(true);
       expect("kilojoules" in actual).toBe(true);
       expect("calories" in actual).toBe(true);
+      expect("isManual" in actual).toBe(true);
+      expect("sufferScore" in actual).toBe(true);
     });
   })
 });

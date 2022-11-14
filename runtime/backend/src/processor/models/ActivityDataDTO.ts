@@ -138,4 +138,21 @@ export class ActivityDataDTO extends BaseDTO {
       "The activity's *calories burned* defined by the data provider and transformed to calories (cal) rather than kCal. The calories burned are always expressed in **calories** (not kCal).'",
   })
   public calories: number;
+
+  /**
+   * Determines whether the activity was *crafted by hand* or if
+   * it is the result of an actual activity.
+   * <br /><br />
+   * Note that manual activities are not considered for payouts.
+   *
+   * @access public
+   * @var {boolean}
+   */
+  @ApiProperty({
+    type: Boolean,
+    example: true,
+    description:
+      "Determines whether the activity was *crafted by hand* or if it is the result of an actual activity. Note that manual activities are not considered for payouts.",
+  })
+  public isManual: boolean;
 }
