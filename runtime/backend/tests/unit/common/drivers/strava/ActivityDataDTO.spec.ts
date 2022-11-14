@@ -113,6 +113,8 @@ describe("common/ActivityDataDTO", () => {
         elevation: 8,
         kilojoules: 9,
         calories: 10,
+        isManual: false,
+        sufferScore: 11,
       };
 
       activityDataDTO = ActivityDataDTO.createFromDTO({
@@ -130,6 +132,8 @@ describe("common/ActivityDataDTO", () => {
         total_elevation_gain: 8,
         kilojoules: 9,
         calories: 10,
+        manual: false,
+        suffer_score: 11,
       });
     });
 

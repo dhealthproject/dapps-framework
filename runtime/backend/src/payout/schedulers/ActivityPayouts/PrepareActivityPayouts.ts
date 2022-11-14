@@ -279,15 +279,18 @@ export class PrepareActivityPayouts extends PreparePayouts<
       elevation: E, // in-formula, elevation is `E`
       elapsedTime: T, // in-formula, elapsedTime is `T`
       kilojoules: J, // in-formula, kilojoules is `J`
+      isManual: isCraftedByHand,
+      // sufferScore: S, // in-formula, sufferScore is `S`
     } = subject.activityData;
 
     // note that the *time elapsed* is used in division
     // this removes the potential for division-by-zero
-    if (T <= 0) return 0;
+    if (T <= 0 || isCraftedByHand === true) return 0;
 
     // the elevation must be greater than 0, if not
     // available we use an adjustment value such that
     // multiplication will not result in a `0` amount.
+    A = E;
     if (E <= 0) A = this.mathService.skewNormal(0.8, 0.3, 0.5);
 
     // common transformations and factor

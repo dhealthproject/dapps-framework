@@ -310,6 +310,32 @@ export class ActivityData extends Transferable<ActivityDataDTO> {
   public readonly calories: number;
 
   /**
+   * Determines whether the activity was *crafted by hand* or if
+   * it is the result of an actual activity.
+   * <br /><br />
+   * Note that manual activities are not considered for payouts.
+   *
+   * @access public
+   * @var {boolean}
+   */
+  @Prop({ required: true, index: true, default: true })
+  public readonly isManual: boolean;
+
+  /**
+   * The suffer score attributed to this activity *by Strava*.
+   * We store a copy of this value so that we can evaluate its
+   * usage in our formulas.
+   * <br /><br />
+   * Note that this field is sometimes `null` when received from
+   * Strava, in those cases this field is set to `-1`.
+   *
+   * @access public
+   * @var {sufferScore}
+   */
+  @Prop({ required: true, index: true, default: -1 })
+  public readonly sufferScore: number;
+
+  /**
    * The document's creation timestamp. This field **does not** reflect the
    * date of creation of an integration but rather the date of creation of the
    * cached database entry.
@@ -381,6 +407,7 @@ export class ActivityData extends Transferable<ActivityDataDTO> {
     dto.distance = doc.distance;
     dto.elevation = doc.elevation;
     dto.calories = doc.calories;
+    dto.isManual = doc.isManual;
     return dto;
   }
 }

@@ -64,6 +64,8 @@ export class ActivityDataDTO extends BasicRemoteDTO {
     "elevation",
     "kilojoules",
     "calories",
+    "isManual",
+    "sufferScore",
   ];
 
   /**
@@ -206,6 +208,30 @@ export class ActivityDataDTO extends BasicRemoteDTO {
   public calories: number;
 
   /**
+   * Determines whether the activity was *crafted by hand* or if
+   * it is the result of an actual activity.
+   * <br /><br />
+   * Note that manual activities are not considered for payouts.
+   *
+   * @access public
+   * @var {boolean}
+   */
+  public isManual: boolean;
+
+  /**
+   * The suffer score attributed to this activity *by Strava*.
+   * We store a copy of this value so that we can evaluate its
+   * usage in our formulas.
+   * <br /><br />
+   * Note that this field is sometimes `null` when received from
+   * Strava, in those cases this field is set to `-1`.
+   *
+   * @access public
+   * @var {sufferScore}
+   */
+  public sufferScore: number;
+
+  /**
    * This method shall *extract* an entity's definition (field values)
    * from an API response object.
    * <br /><br />
@@ -235,6 +261,8 @@ export class ActivityDataDTO extends BasicRemoteDTO {
     activity.elevation = data.total_elevation_gain;
     activity.kilojoules = data.kilojoules;
     activity.calories = data.calories;
+    activity.isManual = data.manual;
+    activity.sufferScore = null === data.suffer_score ? -1 : data.suffer_score;
     return activity;
   }
 
@@ -245,7 +273,7 @@ export class ActivityDataDTO extends BasicRemoteDTO {
    * the correct format and are always transformed correctly.
    * <br /><br />
    * To create an instance of this class, you must use the static method
-   * {@link ActivityDataDTO.createFromObject}.
+   * {@link ActivityDataDTO.createFromDTO}.
    *
    * @access protected
    */
