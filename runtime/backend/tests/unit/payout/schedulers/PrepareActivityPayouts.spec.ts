@@ -33,24 +33,32 @@ import { MathService } from "../../../../src/payout/services/MathService";
 import { PrepareActivityPayouts } from "../../../../src/payout/schedulers/ActivityPayouts/PrepareActivityPayouts";
 
 const dE = 1000000; // elevate factor
-const mockActivityRewardFormulaNormal = Math.round(Math.floor(
+const mockActivityRewardWalkFormulaFirst = Math.round(Math.floor(
   ((((2+5)/(4/60))*(3+5+(1/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
 ));
 
-const mockActivityRewardFormulaNormalDiv3 = Math.round(Math.floor(
-  ((((2+5)/(4/60))*(3+5+(1/1000))/dE)*1.2*100) * 1000 // <-- 3 zeros
-));
-
-const mockActivityRewardFormulaNormalDiv6 = Math.round(Math.floor(
-  ((((2+5)/(4/60))*(3+5+(1/1000))/dE)*1.2*100) * 1000000 // <-- 6 zeros
-));
-
-const mockActivityRewardFormulaReversed = Math.round(Math.floor(
+const mockActivityRewardWalkFormulaSecond = Math.round(Math.floor(
   ((((4+1)/(2/60))*(3+1+(5/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
 ));
 
-const mockActivityRewardFormulaAdjusted = Math.round(Math.floor(
-  ((((7+0)/(8/60))*(0.8+0+(0/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
+const mockActivityRewardWalkFormulaThird = Math.round(Math.floor(
+  ((((8+5)/(6/60))*(0.8+5+(9/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
+));
+
+const mockActivityRewardWalkFormulaFirstAdjusted = Math.round(Math.floor(
+  ((((2+5)/(4/60))*(0.8+5+(1/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
+));
+
+const mockActivityRewardWalkFormulaFirstDiv3 = Math.round(Math.floor(
+  ((((2+5)/(4/60))*(3+5+(1/1000))/dE)*1.2*100) * 1000 // <-- 3 zeros
+));
+
+const mockActivityRewardWalkFormulaFirstDiv6 = Math.round(Math.floor(
+  ((((2+5)/(4/60))*(3+5+(1/1000))/dE)*1.2*100) * 1000000 // <-- 6 zeros
+));
+
+const mockActivityRewardWalkFormulaSecondAdjusted = Math.round(Math.floor(
+  ((((4+1)/(2/60))*(0.8+1+(5/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
 ));
 
 const activityMocks = [
@@ -65,6 +73,7 @@ const activityMocks = [
       elevation: 3,
       elapsedTime: 4,
       kilojoules: 5,
+      isManual: false,
     }
   } as ActivityDocument,
   {
@@ -78,6 +87,7 @@ const activityMocks = [
       elevation: 3,
       elapsedTime: 2,
       kilojoules: 1,
+      isManual: false,
     }
   } as ActivityDocument,
   {
@@ -86,11 +96,12 @@ const activityMocks = [
     createdAt: new Date(),
     activityData: {
       sport: "Walk",
-      calories: 0, // <-- C:0
-      distance: 7,
+      calories: 9,
+      distance: 8,
       elevation: 0, // <-- E:0
-      elapsedTime: 8,
-      kilojoules: 0, // <-- J:0
+      elapsedTime: 6,
+      kilojoules: 5,
+      isManual: false,
     }
   } as ActivityDocument,
 ];
@@ -233,12 +244,19 @@ describe("payout/PrepareActivityPayouts", () => {
         kilojoules: 5,
       }
     } as ActivityDocument;
+    const mathSkewNormalMock = jest.fn().mockReturnValue(0.8);
 
     beforeEach(() => {
       (command as any).earnAsset = {
         mosaicId: "fake-identifier",
         divisibility: 2,
       };
+
+      (command as any).mathService = {
+        skewNormal: mathSkewNormalMock,
+      };
+
+      mathSkewNormalMock.mockClear();
     });
 
     it("should return empty given no time elapsed", () => {
@@ -279,7 +297,7 @@ describe("payout/PrepareActivityPayouts", () => {
         divisibility: 3, // <-- forcing divisibility 3
       };
       // note that this uses the Walk formula
-      const expectedValue = mockActivityRewardFormulaNormalDiv3; // <-- 3 zeros
+      const expectedValue = mockActivityRewardWalkFormulaFirstDiv3; // <-- 3 zeros
 
       // act
       const result = (command as any).getAssetAmount(activityMock);
@@ -295,7 +313,7 @@ describe("payout/PrepareActivityPayouts", () => {
         divisibility: 6, // <-- forcing divisibility 6
       };
       // note that this uses the Walk formula
-      const expectedValue = mockActivityRewardFormulaNormalDiv6;
+      const expectedValue = mockActivityRewardWalkFormulaFirstDiv6;
 
       // act
       const result = (command as any).getAssetAmount(activityMock);
@@ -306,8 +324,8 @@ describe("payout/PrepareActivityPayouts", () => {
 
     it("should always round to correct integer value for amount", () => {
       // prepare
-      const walkFormula = mockActivityRewardFormulaNormal;
-      const otherFormula = mockActivityRewardFormulaReversed;
+      const walkFormula = mockActivityRewardWalkFormulaFirst;
+      const otherFormula = mockActivityRewardWalkFormulaSecond;
 
       // act
       const result1 = (command as any).getAssetAmount(activityMocks[0]);
@@ -316,6 +334,73 @@ describe("payout/PrepareActivityPayouts", () => {
       // assert
       expect(result1).toBe(walkFormula);
       expect(result2).toBe(otherFormula);
+    });
+
+    it("should return zero given empty elapsed time", () => {
+      // act
+      const result1 = (command as any).getAssetAmount({
+        ...activityMocks[0],
+        activityData: {
+          ...activityMocks[0].activityData,
+          elapsedTime: 0,
+        }
+      });
+      const result2 = (command as any).getAssetAmount({
+        ...activityMocks[1],
+        activityData: {
+          ...activityMocks[1].activityData,
+          elapsedTime: 0,
+        }
+      });
+
+      // assert
+      expect(result1).toBe(0);
+      expect(result2).toBe(0);
+    });
+
+    it("should return zero given manual activity", () => {
+      // act
+      const result1 = (command as any).getAssetAmount({
+        ...activityMocks[0],
+        activityData: {
+          ...activityMocks[0].activityData,
+          isManual: true,
+        }
+      });
+      const result2 = (command as any).getAssetAmount({
+        ...activityMocks[1],
+        activityData: {
+          ...activityMocks[1].activityData,
+          isManual: true,
+        }
+      });
+
+      // assert
+      expect(result1).toBe(0);
+      expect(result2).toBe(0);
+    });
+
+    it("should use adjustment given zero elevation", () => {
+      // act
+      const result1 = (command as any).getAssetAmount({
+        ...activityMocks[0],
+        activityData: {
+          ...activityMocks[0].activityData,
+          elevation: 0, // <-- forces call of MathService.skewNormal
+        }
+      });
+      const result2 = (command as any).getAssetAmount({
+        ...activityMocks[1],
+        activityData: {
+          ...activityMocks[1].activityData,
+          elevation: 0, // <-- forces call of MathService.skewNormal
+        }
+      });
+
+      // assert
+      expect(mathSkewNormalMock).toHaveBeenCalledTimes(2);
+      expect(result1).toBe(mockActivityRewardWalkFormulaFirstAdjusted);
+      expect(result2).toBe(mockActivityRewardWalkFormulaSecondAdjusted);
     });
   });
 
@@ -357,8 +442,8 @@ describe("payout/PrepareActivityPayouts", () => {
     const mockPublicKey = "fake-signer-public-key";
     const mockSignedPayload = "fake-serialized-signed-transaction";
     const mockTransactionHash = "fake-transaction-hash";
-    const mockActivityReward = mockActivityRewardFormulaNormal;
-    const mockActivityRewardReverse = mockActivityRewardFormulaReversed;
+    const mockActivityReward = mockActivityRewardWalkFormulaFirst;
+    const mockActivityRewardReverse = mockActivityRewardWalkFormulaSecond;
     const updatePayoutSubjectMock = jest.fn();
     const fetchSubjectsEmptyMock = jest.fn().mockReturnValue(Promise.resolve([]));
     const fetchSubjectsNonEmptyMock = jest.fn().mockReturnValue(Promise.resolve([
@@ -513,7 +598,7 @@ describe("payout/PrepareActivityPayouts", () => {
       (command as any).mathService = {
         skewNormal: jest.fn().mockReturnValue(0.8), // <-- force fake
       };
-      const mockActivityRewardAdjusted = mockActivityRewardFormulaAdjusted;
+      const mockActivityRewardAdjusted = mockActivityRewardWalkFormulaThird;
       const expectedAdjustedAssets = [
         { amount: mockActivityRewardAdjusted, mosaicId: "fake-identifier" },
       ];

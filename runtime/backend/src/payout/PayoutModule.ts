@@ -22,16 +22,16 @@ import { PayoutsModule } from "./modules/PayoutsModule";
  * This module is also responsible for computing *payout amounts*.
  * <br /><br />
  * The inputs to compute payout amounts are defined as follows:
- * - `calories`: Number of `kilocalories` burned.
- * - `distance`: Number of `meters`* distance. (* some formula express this in different unit of measure)
- * - `elevation`: Number of `meters` elevation gain.
- * - `elapsedTime`: Number of `minutes` spent.
- * - `kilojoules`: Number of `kilojoules` produced (Rides only).
+ * - `calories`: Number of `kilocalories` burned (`C || kC`).
+ * - `distance`: Number of `meters` distance (`D`). (* some formula express this in different unit of measure)
+ * - `elevation`: Number of `meters` elevation gain (`E || A`). This field uses an adjusted value in case it is empty.
+ * - `elapsedTime`: Number of `seconds` spent during activity (`T`).
+ * - `kilojoules`: Number of `kilojoules` produced during activity (Rides only) (`J`).
  * <br /><br />
  * The following formulas are currently applied to compute amounts:
- * - *Walk*:    `(((D + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.2 x 100`
- * - *Run*:     `(((D + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.5 x 100`
- * - *Ride*:    `(((D * 10 + J) / (T/60)) x ((E||A) + J + kC) / dE) x 1.3 x 100`
+ * - *Walk*:    `(((D + J) / (T/60)) x (A + J + kC) / dE) x 1.2 x 100`
+ * - *Run*:     `(((D + J) / (T/60)) x (A + J + kC) / dE) x 1.5 x 100`
+ * - *Ride*:    `(((D * 10 + J) / (T/60)) x (A + J + kC) / dE) x 1.3 x 100`
  * - *Swim*:    `(((D * 100 + J) / (T/60)) x ((D/25) + J + kC) / dE) x 1.7 x 100`
  * - *Others*:  `((T/60) x (A + J + kC) / dE) x 1.6 x 100`
  * with `dE` which contains the *ELEVATE factor* of `1'000'000`.

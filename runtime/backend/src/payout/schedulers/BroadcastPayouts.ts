@@ -175,6 +175,15 @@ export abstract class BroadcastPayouts<
   protected abstract get collection(): string;
 
   /**
+   * This method must return a total count of subjects.
+   *
+   * @abstract
+   * @access protected
+   * @returns {Promise<number>}
+   */
+  protected abstract countSubjects(): Promise<number>;
+
+  /**
    * This method must return an *array of subjects*. Note that
    * subjects *will be the subject of a payout broadcast*.
    *
@@ -229,10 +238,14 @@ export abstract class BroadcastPayouts<
       options.maxCount,
     );
 
+    // counts the number of eligible payouts in queue
+    const countInQueue: number = await this.countSubjects();
+
     // debug information about discovered payouts
     if (options.debug && !options.quiet && payouts.length > 0) {
       this.debugLog(
-        `[${broadcastMode}] Found ${payouts.length} broadcast-able transaction(s)`,
+        `[${broadcastMode}] Found ${options.maxCount} broadcast-able ` +
+          `transaction(s) in queue of ${countInQueue} eligible payouts.`,
       );
     }
     // also display debug message when no payouts are discovered
@@ -250,7 +263,7 @@ export abstract class BroadcastPayouts<
 
     // (2) for each discovered subject, we can now broadcast the payout
     // so we update the database document so that it reflects that
-    for (let j = 0, max_s = payouts.length; j < max_s; j++) {
+    for (let j = 0, max_s = options.maxCount; j < max_s; j++) {
       // retrieve full subject details
       const payout: PayoutDocument = payouts[j];
 
@@ -318,7 +331,7 @@ export abstract class BroadcastPayouts<
       // updates the *payouts* so that they won't be considered
       // a payout for future/parallel executions of this command
       // CAUTION: dry-run mode disables this block
-      for (let u = 0, max_s = payouts.length; u < max_s; u++) {
+      for (let u = 0, max_s = options.maxCount; u < max_s; u++) {
         // retrieve full subject details
         const payout: PayoutDocument = payouts[u];
 

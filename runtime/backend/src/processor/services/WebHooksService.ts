@@ -257,7 +257,6 @@ export class WebHooksService {
 
       // extracts the fields we want (as an "activity")
       // @todo note that this data must not be accessible publicly
-      // @todo CAUTION: make sure manual activities do not count!!
       const activityData: any = this.oauthService.extractProviderEntity(
         integration.name,
         response.data,
