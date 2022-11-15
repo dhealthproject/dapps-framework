@@ -244,7 +244,7 @@ export abstract class BroadcastPayouts<
     // debug information about discovered payouts
     if (options.debug && !options.quiet && payouts.length > 0) {
       this.debugLog(
-        `[${broadcastMode}] Found ${options.maxCount} broadcast-able ` +
+        `[${broadcastMode}] Found ${payouts.length} broadcast-able ` +
           `transaction(s) in queue of ${countInQueue} eligible payouts.`,
       );
     }
