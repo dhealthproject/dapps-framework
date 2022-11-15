@@ -178,6 +178,56 @@ describe("payout/BroadcastActivityPayouts", () => {
         },
       ));
     });
+
+    it("should forward to query service with correct query", async () => {
+      // prepare
+      (command as any).payoutsService = payoutsService; // L113
+      const modelAggregateMock = jest.fn().mockReturnValue({
+        exec: jest.fn().mockReturnValue([{
+          data: [],
+          metadata: []
+        }]),
+      });
+      (payoutsService as any).model = {
+        aggregate: modelAggregateMock,
+      };
+      const queryFindMock = jest.spyOn(queryService, "find");
+
+      // act
+      await (command as any).fetchSubjects(2);
+
+      // assert
+      expect(queryFindMock).toHaveBeenCalledTimes(1);
+      expect(queryFindMock).toHaveBeenCalledWith(new PayoutQuery(
+        {
+          payoutState: PayoutState.Prepared,
+          subjectCollection: (command as any).collection
+        } as PayoutDocument,
+        {
+          pageNumber: 1,
+          pageSize: 2,
+          sort: "createdAt",
+          order: "asc",
+        },
+      ), (payoutsService as any).model);
+      expect(modelAggregateMock).toHaveBeenCalledTimes(1);
+      expect(modelAggregateMock).toHaveBeenCalledWith([
+        {
+          $match: {
+            payoutState: {
+              $in: [PayoutState.Prepared, PayoutState.Prepared]
+            },
+            subjectCollection: "activities",
+          },
+        },
+        {
+          $facet: {
+            data: [{ $skip: 0 }, { $limit: 2 }, { $sort: { createdAt: 1 } }],
+            metadata: [{ $count: "total" }],
+          },
+        },
+      ]);
+    });
   });
 
   describe("updatePayoutSubject()", () => {
@@ -380,7 +430,9 @@ describe("payout/BroadcastActivityPayouts", () => {
 
     it("should re-build specialized transaction given signed payload", async () => {
       // prepare
-      (command as any).fetchSubjects = fetchSubjectsActualMock; // <-- non-empty
+      (command as any).fetchSubjects = jest.fn().mockReturnValue(
+        Promise.resolve([payoutMocks[0]]),
+      ); // <-- only one
       const createFromPayloadMock = jest.spyOn(TransactionMapping, "createFromPayload")
         .mockReturnValue(transactionMock as any);
       const expectedCount = 1;
