@@ -56,5 +56,10 @@ import {
     WeeklyScoreAggregation,
     MonthlyScoreAggregation,
   ],
+  exports: [
+    DailyScoreAggregation,
+    WeeklyScoreAggregation,
+    MonthlyScoreAggregation,
+  ],
 })
 export class LeaderboardsAggregationCommand {}

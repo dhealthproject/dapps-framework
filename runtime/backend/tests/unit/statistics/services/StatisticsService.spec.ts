@@ -12,14 +12,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 
 // internal dependencies
-import { LeaderboardsService } from '../../../../src/statistics/services/LeaderboardsService';
+import { StatisticsService } from '../../../../src/statistics/services/StatisticsService';
 import { MockModel } from '../../../mocks/global';
 import { StatisticsDocument, StatisticsModel, StatisticsQuery } from '../../../../src/statistics/models/StatisticsSchema';
 import { QueryService } from '../../../../src/common/services/QueryService';
 import { PaginatedResultDTO } from '../../../../src/common/models/PaginatedResultDTO';
 
-describe('statistics/LeaderboardsService', () => {
-  let service: LeaderboardsService;
+describe('statistics/StatisticsService', () => {
+  let service: StatisticsService;
   let queriesService: QueryService<
     StatisticsDocument,
     StatisticsModel
@@ -28,7 +28,7 @@ describe('statistics/LeaderboardsService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        LeaderboardsService,
+        StatisticsService,
         QueryService,
         {
           provide: getModelToken("Statistics"),
@@ -37,7 +37,7 @@ describe('statistics/LeaderboardsService', () => {
       ],
     }).compile();
 
-    service = module.get<LeaderboardsService>(LeaderboardsService);
+    service = module.get<StatisticsService>(StatisticsService);
     queriesService = module.get<QueryService<StatisticsDocument, StatisticsModel>>(QueryService);
   });
 

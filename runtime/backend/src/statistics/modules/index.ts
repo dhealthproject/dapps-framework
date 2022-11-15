@@ -8,4 +8,4 @@
  * @license     LGPL-3.0
  */
 // modules index
-export * from "./LeaderboardsModule";
+export * from "./StatisticsModule";

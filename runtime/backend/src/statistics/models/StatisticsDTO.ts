@@ -12,6 +12,7 @@ import { ApiProperty } from "@nestjs/swagger";
 
 // internal dependencies
 import { BaseDTO } from "../../common/models/BaseDTO";
+import { StatisticsDataType } from "./StatisticsDataType";
 
 /**
  * @class StatisticsDTO
@@ -119,7 +120,7 @@ export class StatisticsDTO extends BaseDTO {
    *
    * @example `123456`
    * @access public
-   * @var{number}
+   * @var {number}
    */
   @ApiProperty({
     type: "number",
@@ -127,4 +128,23 @@ export class StatisticsDTO extends BaseDTO {
     description: "The total tokens acummulated from activities",
   })
   public amount?: number;
+
+  /**
+   * The data attached to this statistics document. This can contain
+   * any object literal that is defined using one of:
+   * - {@link UserStatisticsFields}: Consists of a user statistic fields definition.
+   * - `ObjectLiteral`: e.g. `{ just: "a value" }`.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
+   *
+   * @example `123456`
+   * @access public
+   * @var {number}
+   */
+  @ApiProperty({
+    type: "object",
+    example: { just: "a value" },
+    description: "The data attached to this statistics entry",
+  })
+  public data?: StatisticsDataType;
 }

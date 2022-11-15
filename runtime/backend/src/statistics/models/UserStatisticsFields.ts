@@ -7,17 +7,17 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-
-export type KnownActivities = "running" | "swimming" | "cycling";
-
-export interface StatsDTO {
-  address: string;
-  period: string;
-  periodFormat: string;
+/**
+ * @class UserStatisticsFields
+ * @description A interface that consists of the specialized properties
+ * of an account's statistics.
+ *
+ * @since v0.5.0
+ */
+export interface UserStatisticsFields {
   totalPracticedMinutes: number;
   totalEarned: number;
-  topActivities: KnownActivities[];
+  topActivities: string[];
   totalReferral: number;
   levelReferral: number;
-  friendsReferred: number;
 }

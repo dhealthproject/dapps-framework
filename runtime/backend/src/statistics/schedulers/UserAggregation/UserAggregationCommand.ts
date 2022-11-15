@@ -16,15 +16,10 @@ import { ScheduleModule } from "@nestjs/schedule";
 // common scope
 import { StateModule } from "../../../common/modules/StateModule";
 import { QueryModule } from "../../../common/modules/QueryModule";
-import { NetworkModule } from "../../../common/modules/NetworkModule";
-import { ActivityModel } from "../../../processor/models/ActivitySchema";
 
 // statistics scope
 import { Statistics, StatisticsSchema } from "../../models/StatisticsSchema";
 import { UserAggregation } from "./UserAggregation";
-
-// discovery scope
-import { Asset, AssetSchema } from "../../../discovery/models/AssetSchema";
 
 // processor scope
 import {
@@ -33,24 +28,22 @@ import {
 } from "../../../processor/models/ActivitySchema";
 
 /**
- * @class LeaderboardAggregationCommand
- * @description The main definition for the Leaderboard Aggregation module.
+ * @class UserAggregationCommand
+ * @description The main definition for the User Aggregation module.
  *
- * @since v0.3.2
+ * @since v0.5.0
  */
 @Module({
   imports: [
-    StateModule,
     ScheduleModule.forRoot(),
+    StateModule,
+    QueryModule,
     MongooseModule.forFeature([
       { name: Statistics.name, schema: StatisticsSchema },
-      { name: Asset.name, schema: AssetSchema },
       { name: Activity.name, schema: ActivitySchema },
     ]),
-    QueryModule,
-    NetworkModule,
-    ActivityModel,
   ],
   providers: [UserAggregation],
+  exports: [UserAggregation],
 })
 export class UserAggregationCommand {}

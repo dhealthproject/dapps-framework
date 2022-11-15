@@ -33,7 +33,7 @@ import { BroadcastActivityPayouts } from "../payout/schedulers/ActivityPayouts/B
 
 // statistics scope
 import { LeaderboardsAggregationCommand } from "../statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand";
-import { UserAggregationCommand } from "@/statistics/schedulers/UserAggregation/UserAggregationCommand";
+import { UserAggregationCommand } from "../statistics/schedulers/UserAggregation/UserAggregationCommand";
 
 // configuration resources
 import dappConfigLoader from "../../config/dapp";

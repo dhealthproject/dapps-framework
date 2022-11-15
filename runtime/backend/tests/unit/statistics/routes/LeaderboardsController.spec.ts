@@ -16,7 +16,7 @@ import { Account } from '@dhealth/sdk';
 
 // internal dependencies
 import { AuthService } from '../../../../src/common/services/AuthService';
-import { LeaderboardsService } from '../../../../src/statistics/services/LeaderboardsService';
+import { StatisticsService } from '../../../../src/statistics/services/StatisticsService';
 import { LeaderboardsController } from '../../../../src/statistics/routes/LeaderboardsController';
 import { MockModel } from '../../../mocks/global';
 import { QueryService } from '../../../../src/common/services/QueryService';
@@ -31,7 +31,7 @@ import { AccountDocument } from '../../../../src/common/models/AccountSchema';
 describe('statistics/LeaderboardsController', () => {
   let controller: LeaderboardsController;
   let authService: AuthService;
-  let leaderboardsService: LeaderboardsService;
+  let leaderboardsService: StatisticsService;
   let queriesService: QueryService<
     StatisticsDocument,
     StatisticsModel
@@ -50,7 +50,7 @@ describe('statistics/LeaderboardsController', () => {
         ConfigService,
         NetworkService,
         ChallengesService,
-        LeaderboardsService,
+        StatisticsService,
         {
           provide: getModelToken("Statistics"),
           useValue: MockModel,
@@ -71,7 +71,7 @@ describe('statistics/LeaderboardsController', () => {
 
     controller = module.get<LeaderboardsController>(LeaderboardsController);
     authService = module.get<AuthService>(AuthService);
-    leaderboardsService = module.get<LeaderboardsService>(LeaderboardsService);
+    leaderboardsService = module.get<StatisticsService>(StatisticsService);
     queriesService = module.get<QueryService<StatisticsDocument, StatisticsModel>>(QueryService);
     configService = module.get<ConfigService>(ConfigService);
     networkService = module.get<NetworkService>(NetworkService);
@@ -107,7 +107,7 @@ describe('statistics/LeaderboardsController', () => {
       // assert
       expect(serviceFindMock).toBeCalledTimes(1);
       expect(serviceFindMock).toBeCalledWith(
-        new StatisticsQuery({ address: "fakeAddress" } as StatisticsDocument),
+        new StatisticsQuery({ address: "fakeAddress", type: "leaderboard" } as StatisticsDocument),
       );
       expect(result).toEqual(expectToMapToDTOs);
     });

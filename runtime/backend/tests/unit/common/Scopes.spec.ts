@@ -131,9 +131,9 @@ jest.mock("../../../src/statistics/StatisticsModule", () => {
   return { StatisticsModule: StatisticsModuleMock };
 });
 
-const LeaderboardsModuleMock: any = jest.fn();
-jest.mock("../../../src/statistics/modules/LeaderboardsModule", () => {
-  return { LeaderboardsModule: LeaderboardsModuleMock };
+const StatisticsModuleImplMock: any = jest.fn();
+jest.mock("../../../src/statistics/modules/StatisticsModule", () => {
+  return { StatisticsModule: StatisticsModuleImplMock };
 });
 
 // schedulers
@@ -182,6 +182,14 @@ jest.mock(
   "../../../src/statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand",
   () => {
     return { LeaderboardsAggregationCommand: LeaderboardsAggregationCommandMock };
+  },
+);
+
+const UserAggregationCommandMock: any = jest.fn();
+jest.mock(
+  "../../../src/statistics/schedulers/UserAggregation/UserAggregationCommand",
+  () => {
+    return { UserAggregationCommand: UserAggregationCommandMock };
   },
 );
 

@@ -10,13 +10,15 @@
 // abstract command module
 export * from "./StatisticsCommand";
 
-// leaderboard command module
+// command modules
 export * from "./LeaderboardAggregation/LeaderboardsAggregationCommand";
-
-// leaderboard abstract command module
-export * from "./LeaderboardAggregation/LeaderboardAggregation";
+export * from "./UserAggregation/UserAggregationCommand";
 
 // leaderboard score aggregation commands
+export * from "./LeaderboardAggregation/LeaderboardAggregation";
 export * from "./LeaderboardAggregation/DailyScoreAggregation";
 export * from "./LeaderboardAggregation/WeeklyScoreAggegation";
 export * from "./LeaderboardAggregation/MonthlyScoreAggregation";
+
+// user aggregation commands
+export * from "./UserAggregation/UserAggregation";

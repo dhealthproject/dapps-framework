@@ -8,4 +8,4 @@
  * @license     LGPL-3.0
  */
 // services index
-export * from "./LeaderboardsService";
+export * from "./StatisticsService";
