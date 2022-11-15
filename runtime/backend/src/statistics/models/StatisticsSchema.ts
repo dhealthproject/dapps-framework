@@ -16,15 +16,7 @@ import { Documentable } from "../../common/concerns/Documentable";
 import { Transferable } from "../../common/concerns/Transferable";
 import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
 import { StatisticsDTO } from "./StatisticsDTO";
-
-export type KnownActivities = "running" | "walking" | "swimming";
-export interface UserData {
-  practicedMinutes: number;
-  totalEarned: number;
-  topActivities: KnownActivities[];
-  referredLevel: number;
-  totalReferred: number;
-}
+import { StatisticsDataType } from "./StatisticsDataType";
 
 /**
  * @class Activity
@@ -68,7 +60,7 @@ export class Statistics extends Transferable<StatisticsDTO> {
    * @access public
    * @var {string}
    */
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   public readonly type: string;
 
   /**
@@ -137,9 +129,6 @@ export class Statistics extends Transferable<StatisticsDTO> {
   @Prop({ required: true, index: true, nullable: true })
   public readonly position?: number;
 
-  @Prop({ required: false, nullable: true, type: Object })
-  public data: UserData;
-
   /**
    * The total amount of tokens that the address of this schema
    * has received. Amount is in absolute format.
@@ -152,6 +141,21 @@ export class Statistics extends Transferable<StatisticsDTO> {
    */
   @Prop({ required: true, nullable: true })
   public readonly amount?: number;
+
+  /**
+   * The data attached to this statistics document. This can contain
+   * any object literal that is defined using one of:
+   * - {@link UserStatisticsFields}: Consists of a user statistic fields definition.
+   * - `ObjectLiteral`: e.g. `{ just: "a value" }`.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
+   *
+   * @example `123456`
+   * @access public
+   * @var {number}
+   */
+  @Prop({ required: false, nullable: true, type: Object })
+  public data?: StatisticsDataType;
 
   /**
    * The document's creation timestamp. This field **does not** reflect the
@@ -190,6 +194,7 @@ export class Statistics extends Transferable<StatisticsDTO> {
    */
   public get toQuery(): Record<string, unknown> {
     const query: Record<string, any> = {};
+    if (undefined !== this.type) query["type"] = this.type;
     if (undefined !== this.period) query["period"] = this.period;
     if (undefined !== this.address) query["address"] = this.address;
     if (undefined !== this.position) query["position"] = this.position;
@@ -216,6 +221,7 @@ export class Statistics extends Transferable<StatisticsDTO> {
     dto.address = doc.address;
     dto.position = doc.position;
     dto.amount = doc.amount;
+    dto.data = doc.data;
     return dto;
   }
 }

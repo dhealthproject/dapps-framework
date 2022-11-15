@@ -56,6 +56,7 @@ import {
 export type PrepareActivityPayoutsCommandOptions = PreparePayoutsCommandOptions;
 
 /**
+ * @label PAYOUT
  * @class PrepareActivityPayouts
  * @description The implementation for the payout *preparation*
  * scheduler. Contains source code for the execution logic of a

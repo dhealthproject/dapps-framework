@@ -15,20 +15,22 @@ import { MongooseModule } from "@nestjs/mongoose";
 // internal dependencies
 import { AuthModule } from "../../common/modules/AuthModule";
 import { QueryModule } from "../../common/modules/QueryModule";
+import { StateModule } from "../../common/modules/StateModule";
 import { Statistics, StatisticsSchema } from "../models/StatisticsSchema";
 import { LeaderboardsController } from "../routes/LeaderboardsController";
-import { LeaderboardsService } from "../services/LeaderboardsService";
+import { UsersController } from "../routes/UsersController";
+import { StatisticsService } from "../services/StatisticsService";
 
 /**
  * @label STATISTICS
  * @class LeaderboardsModule
  * @description The main definition for the Leaderboards module.
  *
- * @since v0.3.2
+ * @since v0.5.0
  */
 @Module({
-  controllers: [LeaderboardsController],
-  providers: [LeaderboardsService],
+  controllers: [UsersController, LeaderboardsController],
+  providers: [StatisticsService],
   imports: [
     MongooseModule.forFeature([
       {
@@ -36,10 +38,11 @@ import { LeaderboardsService } from "../services/LeaderboardsService";
         schema: StatisticsSchema,
       },
     ]),
-    QueryModule,
-    AuthModule,
-    AccountsModule,
+    QueryModule, // requirement from StatisticsService
+    AuthModule, // requirement from UsersController
+    AccountsModule, // requirement from AuthModule
+    StateModule, // requirement from schedulers
   ],
-  exports: [LeaderboardsService],
+  exports: [StatisticsService],
 })
-export class LeaderboardsModule {}
+export class StatisticsModule {}

@@ -35,12 +35,12 @@ import {
   StatisticsDocument,
   StatisticsQuery,
 } from "../models/StatisticsSchema";
-import { LeaderboardsService } from "../services/LeaderboardsService";
+import { StatisticsService } from "../services/StatisticsService";
 
 namespace HTTPResponses {
   // creates a variable that we include in a namespace
   // and configure the OpenAPI schema for the response
-  // maps to the HTTP response of `/leaderboard`
+  // maps to the HTTP response of `/statistics/leaderboard`
   export const StatisticsSearchResponseSchema = {
     schema: {
       allOf: [
@@ -59,7 +59,7 @@ namespace HTTPResponses {
 
   // creates a variable that we include in a namespace
   // and configure the OpenAPI schema for the response
-  // maps to the HTTP response of `/leaderboard/:address`
+  // maps to the HTTP response of `/statistics/leaderboard/:address`
   export const UserStatisticsSearchResponseSchema = {
     schema: {
       allOf: [
@@ -91,7 +91,7 @@ namespace HTTPResponses {
  *
  * @since v0.3.2
  */
-@ApiTags("Statistics")
+@ApiTags("Leaderboards Statistics")
 @Controller("statistics/leaderboards")
 export class LeaderboardsController {
   /**
@@ -99,11 +99,11 @@ export class LeaderboardsController {
    *
    * @constructor
    * @param {AuthService} authService
-   * @param {LeaderboardsService} leaderboardsService
+   * @param {StatisticsService} statisticsService
    */
   constructor(
     private readonly authService: AuthService,
-    private readonly leaderboardsService: LeaderboardsService,
+    private readonly statisticsService: StatisticsService,
   ) {}
 
   /**
@@ -137,10 +137,11 @@ export class LeaderboardsController {
     const { pageNumber, pageSize, sort, order, ...rest } = query;
 
     // reads from database
-    const data = await this.leaderboardsService.find(
+    const data = await this.statisticsService.find(
       new StatisticsQuery(
         {
           ...rest,
+          type: "leaderboard",
         } as StatisticsDocument,
         { pageNumber, pageSize, sort, order },
       ),
@@ -201,7 +202,7 @@ export class LeaderboardsController {
     );
 
     // reads leaderboard statistics from database
-    const data = await this.leaderboardsService.find(safeQuery);
+    const data = await this.statisticsService.find(safeQuery);
 
     // wraps for transport using StatisticsDTO
     return new PaginatedResultDTO<StatisticsDTO>(

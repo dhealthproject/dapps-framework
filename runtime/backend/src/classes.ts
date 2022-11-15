@@ -69,7 +69,7 @@ export * from "./processor/schedulers";
 export * from "./processor/services";
 
 // statistics scope
-export * from "./statistics/modules/LeaderboardsModule";
+export * from "./statistics/modules";
 export * from "./statistics/models";
 export * from "./statistics/modules";
 export * from "./statistics/routes";

@@ -11,16 +11,8 @@
 import { Module } from "@nestjs/common";
 
 // internal dependencies
-// common scope
-import { AccountsModule } from "../common/modules/AccountsModule";
-
-// processor scope
-import { ActivitiesModule } from "../processor/modules/ActivitiesModule";
-
 // statistics scope
-import { LeaderboardsModule } from "./modules/LeaderboardsModule";
-import { StatisticsController } from "./routes/StatisticsController";
-import { StatisticsService } from "./services/StatisticsService";
+import { StatisticsModule as ModuleImpl } from "./modules/StatisticsModule";
 
 /**
  * @label STATISTICS
@@ -29,22 +21,33 @@ import { StatisticsService } from "./services/StatisticsService";
  * is loaded by the software when `"statistics"` is present in
  * the enabled scopes through configuration (config/dapp.json).
  * <br /><br />
+ * #### Modules
+ *
  * This scoped module currently features the following submodules:
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
- * | {@link LeaderboardsModule:STATISTICS} | `statistics` | `/statistics/leaderboards` | Module with schedulers, collections and routes around **leaderboards**. |
+ * | {@link StatisticsModule:STATISTICS} | `statistics` | `/statistics/leaderboards` | Module with schedulers, collections and routes around **leaderboards**. |
  * <br /><br />
+ * #### Events
+ *
+ * This scoped module does not currently fire/trigger any events.
+ *
+ * <br /><br />
+ * #### Notes
+ *
  * Note also that in {@link Schedulers:COMMON}, we map the following **schedulers**
  * to this module:
  * - A {@link DailyScoreAggregation:STATISTICS} *scheduler* that produces *daily* leaderboards in the background every 3 hours.
  * - A {@link WeeklyScoreAggregation:STATISTICS} *scheduler* that produces *daily* leaderboards in the background every 3 days.
  * - A {@link MonthlyScoreAggregation:STATISTICS} *scheduler* that produces *daily* leaderboards in the background every 3 days.
+ * - A {@link UserAggregation:STATISTICS} *scheduler* that produces *daily* user aggregation in the background every minute.
  *
  * @since v0.3.2
  */
 @Module({
-  imports: [AccountsModule, LeaderboardsModule, ActivitiesModule],
-  controllers: [StatisticsController],
-  providers: [StatisticsService],
+  imports: [
+    // imports routes and DTOs
+    ModuleImpl,
+  ],
 })
 export class StatisticsModule {}

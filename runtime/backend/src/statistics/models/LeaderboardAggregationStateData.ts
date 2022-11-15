@@ -20,7 +20,7 @@ import type { StateData } from "../../common/models/StateData";
  * This class shall be used mainly to refer and handle
  * data in relation with the **discovery** module.
  *
- * @see DiscoverBlocks
+ * @see LeaderboardsAggregation
  * @since v0.3.2
  */
 export class LeaderboardAggregationStateData implements StateData {

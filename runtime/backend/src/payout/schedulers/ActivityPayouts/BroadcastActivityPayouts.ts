@@ -57,6 +57,7 @@ export type BroadcastActivityPayoutsCommandOptions =
   BroadcastPayoutsCommandOptions;
 
 /**
+ * @label PAYOUT
  * @class BroadcastActivityPayouts
  * @description The implementation for the payout *preparation*
  * scheduler. Contains source code for the execution logic of a
