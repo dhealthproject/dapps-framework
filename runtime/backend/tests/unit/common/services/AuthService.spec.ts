@@ -672,7 +672,7 @@ describe("common/AuthService", () => {
   describe("refreshAccessToken()", () => {
     it("should responds with error if the account was not previously logged-in", () => {
       // prepare
-      [undefined, {}].forEach(async (account, index) => {
+      [undefined, {}].forEach((account, index) => {
         const accountsServiceFindOneCall = jest.fn().mockResolvedValue(account);
         (authService as any).accountsService = {
           findOne: accountsServiceFindOneCall,

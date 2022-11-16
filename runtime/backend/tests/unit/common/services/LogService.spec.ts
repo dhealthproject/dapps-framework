@@ -7,74 +7,31 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-jest.mock("winston-mongodb");
-jest.mock("winston-daily-rotate-file", () => {
-  return jest.fn();
-});
-const testWinstonLogger = {
-  log: jest.fn(),
-  debug: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
-  verbose: jest.fn(),
-  setLogLevels: jest.fn(),
-}
-jest.mock("nest-winston", () => ({
-  utilities: {
-    format: {
-      nestLike: jest.fn(),
-    },
-  },
-  WinstonModule: { createLogger: jest.fn().mockReturnValue(testWinstonLogger) },
-}));
-
-class TestMongoDBTransport {};
-class TestConsoleTransport {};
-class TestDailyRotateFileTransport {};
-jest.mock("winston", () => ({
-  format: {
-    timestamp: jest.fn(),
-    ms: jest.fn(),
-    combine: jest.fn(),
-    metadata: jest.fn(),
-  },
-  transports: {
-    MongoDB: TestMongoDBTransport,
-    Console: TestConsoleTransport,
-    DailyRotateFile: TestDailyRotateFileTransport,
-  }
-}));
-
-jest.mock("../../../../config/monitoring", () => {
-  return () => ({
-    storage: [
-      "console",
-      "filesystem",
-    ],
-    logLevels: {
-      none: 0,
-      error: 1,
-      warn: 2,
-      debug: 4,
-      info: 8,
-    },
-    logPrintLevel: "info",
-    logPersistLevel: "error",
-    logPersistCollection: "system-logs",
-    logDirectoryPath: "./logs/",
-    logMaxFileSize: 1000,
-  });
-});
-
+// external dependencies
+import { Test, TestingModule } from "@nestjs/testing";
 import { LogLevel } from "@nestjs/common";
-// internal dependency
+
+// internal dependencies
+import {
+  TestMongoDBTransport,
+  TestConsoleTransport,
+  TestDailyRotateFileTransport,
+  TestWinstonLogger,
+} from "../../../mocks/global";
 import { LogService } from "../../../../src/common/services/LogService";
 
 describe("common/StateService", () => {
   let service: LogService;
 
-  beforeEach(() => {
-    service = new LogService("test-context");
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        LogService,
+      ],
+    }).compile();
+
+    service = module.get<LogService>(LogService);
+    (service as any).context = "test-context";
   });
 
   it("should be defined", () => {
@@ -114,7 +71,7 @@ describe("common/StateService", () => {
       service.log("test-log-message", "test-log-context");
 
       // assert
-      expect(testWinstonLogger.log).toHaveBeenNthCalledWith(
+      expect(TestWinstonLogger.log).toHaveBeenNthCalledWith(
         1,
         "test-log-message",
         "test-log-context"
@@ -132,7 +89,7 @@ describe("common/StateService", () => {
       );
 
       // assert
-      expect(testWinstonLogger.error).toHaveBeenNthCalledWith(
+      expect(TestWinstonLogger.error).toHaveBeenNthCalledWith(
         1,
         "test-error-message",
         "test-error-trace",
@@ -147,7 +104,7 @@ describe("common/StateService", () => {
       service.warn("test-warn-message", "test-warn-context");
 
       // assert
-      expect(testWinstonLogger.warn).toHaveBeenNthCalledWith(
+      expect(TestWinstonLogger.warn).toHaveBeenNthCalledWith(
         1,
         "test-warn-message",
         "test-warn-context"
@@ -161,7 +118,7 @@ describe("common/StateService", () => {
       service.debug("test-debug-message", "test-debug-context");
 
       // assert
-      expect(testWinstonLogger.debug).toHaveBeenNthCalledWith(
+      expect(TestWinstonLogger.debug).toHaveBeenNthCalledWith(
         1,
         "test-debug-message",
         "test-debug-context"
@@ -175,7 +132,7 @@ describe("common/StateService", () => {
       service.verbose("test-verbose-message", "test-verbose-context");
 
       // assert
-      expect(testWinstonLogger.verbose).toHaveBeenNthCalledWith(
+      expect(TestWinstonLogger.verbose).toHaveBeenNthCalledWith(
         1,
         "test-verbose-message",
         "test-verbose-context"
@@ -198,7 +155,7 @@ describe("common/StateService", () => {
       service.setLogLevels(expectedLevels);
 
       // assert
-      expect(testWinstonLogger.setLogLevels).toHaveBeenNthCalledWith(1, expectedLevels);
+      expect(TestWinstonLogger.setLogLevels).toHaveBeenNthCalledWith(1, expectedLevels);
     });
   });
 });

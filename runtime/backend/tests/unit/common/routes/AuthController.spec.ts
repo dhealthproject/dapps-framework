@@ -146,7 +146,7 @@ describe("common/AuthController", () => {
       expect(result).toBeUndefined();
     });
 
-    it("should throw same error if any error was caught", async () => {
+    it("should throw same error if any error was caught", () => {
       // prepare
       const expectedError = new Error("testError");
       const authServiceGetCookieCall = jest
@@ -206,7 +206,7 @@ describe("common/AuthController", () => {
       expect(result).toEqual(tokens);
     });
 
-    it("should throw same error if any error was caught", async () => {
+    it("should throw same error if any error was caught", () => {
       // prepare
       const expectedError = new Error("testError");
       const authServiceGetCookieCall = jest

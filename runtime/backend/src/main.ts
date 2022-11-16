@@ -12,7 +12,6 @@
 
 // external dependencies
 import { NestFactory } from "@nestjs/core";
-import { Logger } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import helmet from "helmet";
 import childProcess from "child_process";

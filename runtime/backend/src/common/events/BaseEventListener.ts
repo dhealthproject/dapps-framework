@@ -7,9 +7,6 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// external dependencies
-import { LoggerService } from "@nestjs/common";
-
 // internal dependencies
 import { BaseEvent } from "./BaseEvent";
 import { LogService } from "../services/LogService";
@@ -24,9 +21,9 @@ export abstract class BaseEventListener {
    * by extending listeners to use a common log process.
    *
    * @access protected
-   * @var {LoggerService}
+   * @var {LogService}
    */
-  protected logger: LoggerService;
+  protected logger: LogService;
 
   /**
    * The application scope that includes this *listener* implementation,

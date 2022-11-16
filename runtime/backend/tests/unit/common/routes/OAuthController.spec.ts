@@ -107,7 +107,7 @@ describe("common/OAuthController", () => {
       expect(responseRedirectCall).toBeCalledTimes(1);
     });
 
-    it("should throw correct error if account address is not the same with account integration address", async () => {
+    it("should throw correct error if account address is not the same with account integration address", () => {
       // prepare
       const authServiceGetAccountCall = jest
         .spyOn(authService, "getAccount")
@@ -169,7 +169,7 @@ describe("common/OAuthController", () => {
       expect(result).toEqual(expectedResult);
     });
 
-    it("should throw same error if any error was caught", async () => {
+    it("should throw same error if any error was caught", () => {
       // prepare
       const authServiceGetAccountCall = jest
         .spyOn(authService, "getAccount")

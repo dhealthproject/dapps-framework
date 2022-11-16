@@ -9,30 +9,36 @@
  */
 
 // external dependencies
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron, SchedulerRegistry } from "@nestjs/schedule";
 import { PipelineStage } from "mongoose";
 
 // internal dependencies
-import {
-  StatisticsCommand,
-  StatisticsCommandOptions,
-} from "../StatisticsCommand";
-import { StateService } from "../../../common/services/StateService";
+// common scope
+import { LogService } from "../../../common/services/LogService";
 import { QueryService } from "../../../common/services/QueryService";
-import { UserAggregationStateData } from "../../models/UserAggregationStateData";
+import { StateService } from "../../../common/services/StateService";
+
+// processor scope
 import {
   Activity,
   ActivityDocument,
   ActivityModel,
 } from "../../../processor/models/ActivitySchema";
+
+// statistics scope
+import {
+  StatisticsCommand,
+  StatisticsCommandOptions,
+} from "../StatisticsCommand";
 import {
   Statistics,
   StatisticsDocument,
   StatisticsModel,
   StatisticsQuery,
 } from "../../models/StatisticsSchema";
+import { UserAggregationStateData } from "../../models/UserAggregationStateData";
 import { StatisticsService } from "../../services/StatisticsService";
 
 /**
@@ -180,9 +186,7 @@ export class UserAggregation extends StatisticsCommand {
   @Cron("0 */10 * * * *", { name: "statistics:cronjobs:user-aggregation" })
   public async runAsScheduler(): Promise<void> {
     // setup debug logger
-    this.logger = new Logger(
-      `${this.scope}/${this.command}`, // includes /(D|M|W)
-    );
+    this.logger = new LogService(`${this.scope}/${this.command}`);
 
     // display starting moment information *also* in debug mode
     this.debugLog(`Starting user aggregation type: ${this.periodFormat}`);

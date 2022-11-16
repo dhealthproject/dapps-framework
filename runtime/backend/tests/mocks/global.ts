@@ -32,10 +32,12 @@ jest.mock("js-sha3", () => ({
   },
 }));
 
+// Mocks the monitoring configuration
 jest.mock("../../config/monitoring", () => {
   return () => ({
     storage: [
       "console",
+      "filesystem"
     ],
     logLevels: {
       none: 0,
@@ -51,6 +53,46 @@ jest.mock("../../config/monitoring", () => {
     logMaxFileSize: 1000,
   });
 });
+
+// Mocks the winston module as logs are core
+// to the runtime execution and log from anywhere
+jest.mock("winston-mongodb");
+jest.mock("winston-daily-rotate-file", () => {
+  return jest.fn();
+});
+export const TestWinstonLogger = {
+  log: jest.fn(),
+  debug: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+  verbose: jest.fn(),
+  setLogLevels: jest.fn(),
+}
+jest.mock("nest-winston", () => ({
+  utilities: {
+    format: {
+      nestLike: jest.fn(),
+    },
+  },
+  WinstonModule: { createLogger: jest.fn().mockReturnValue(TestWinstonLogger) },
+}));
+
+export class TestMongoDBTransport {};
+export class TestConsoleTransport {};
+export class TestDailyRotateFileTransport {};
+jest.mock("winston", () => ({
+  format: {
+    timestamp: jest.fn(),
+    ms: jest.fn(),
+    combine: jest.fn(),
+    metadata: jest.fn(),
+  },
+  transports: {
+    MongoDB: TestMongoDBTransport,
+    Console: TestConsoleTransport,
+    DailyRotateFile: TestDailyRotateFileTransport,
+  }
+}));
 
 // Mocks an unsigned transfer transaction with message
 export const mockUnsignedTransferTransaction = 

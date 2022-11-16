@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { DynamicModule, Logger, Module } from "@nestjs/common";
+import { DynamicModule, Module } from "@nestjs/common";
 
 // internal dependencies
 import { DappConfig } from "../common/models/DappConfig";
@@ -26,7 +26,7 @@ import { LogService } from "../common/services/LogService";
 @Module({})
 export class WorkerModule {
   /**
-   * {@link Logger} instance of this class.
+   * {@link LogService} instance of this class.
    *
    * @access private
    * @static

@@ -433,7 +433,7 @@ describe("common/BasicOAuthDriver", () => {
       );
     });
 
-    it("should throw correct error when response code is not 200", async () => {
+    it("should throw correct error when response code is not 200", () => {
       // prepare
       const httpServiceCallMock = jest.fn().mockReturnValue({
         status: 400,

@@ -205,7 +205,7 @@ export class LogService implements LoggerService {
    * @param {string} context The debug context.
    * @return {void}
    */
-  debug?(message: string, context?: string): void {
+  debug(message: string, context?: string): void {
     this.logger.debug(message, context);
   }
 
@@ -217,7 +217,7 @@ export class LogService implements LoggerService {
    * @param {string} context The verbose context.
    * @return {void}
    */
-  verbose?(message: string, context?: string): void {
+  verbose(message: string, context?: string): void {
     this.logger.verbose(message, context);
   }
 
@@ -228,7 +228,7 @@ export class LogService implements LoggerService {
    * @param {LogLevel[]} levels The log level values.
    * @return {void}
    */
-  setLogLevels?(levels: LogLevel[]): void {
+  setLogLevels(levels: LogLevel[]): void {
     this.logger.setLogLevels(levels);
   }
 }

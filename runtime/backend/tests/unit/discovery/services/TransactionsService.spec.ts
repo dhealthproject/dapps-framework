@@ -153,7 +153,7 @@ describe("discovery/TransactionsService", () => {
     let bulkMocks: any,
         finderMock: any,
         upsertMock: any;
-    beforeEach(async () => {
+    beforeEach(() => {
       upsertMock = { update: jest.fn() };
       finderMock = { upsert: jest.fn().mockReturnValue(upsertMock) };
       bulkMocks = {
