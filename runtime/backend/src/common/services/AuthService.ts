@@ -18,6 +18,7 @@ import {
   Page,
   Transaction,
   TransactionGroup,
+  TransactionSearchCriteria,
   TransactionType,
   TransferTransaction,
 } from "@dhealth/sdk";
@@ -303,11 +304,8 @@ export class AuthService {
    * @throws  {HttpException}           Given challenge could not be found in recent transactions.
    */
   public async validateChallenge(
-    body: AccessTokenRequest,
+    { challenge, sub, registry }: AccessTokenRequest,
   ): Promise<AuthenticationPayload> {
-    // get challenge and sub from request body
-    const { challenge, sub } = body;
-
     // does not permit multiple usage of challenges
     const challengeUsed: boolean = await this.challengesService.exists(
       new AuthChallengeQuery({
@@ -324,7 +322,7 @@ export class AuthService {
     // query latest 100 transactions + unconfirmed transactions
     // to find the challenge, possibly, in the "recent" storage
     const transaction: TransferTransaction = await this.findRecentChallenge(
-      challenge,
+      registry, challenge
     );
 
     // responds with error if the `challenge` could **not** be found
@@ -591,16 +589,20 @@ export class AuthService {
    *
    * @link https://docs.dhealth.com/reference/searchconfirmedtransactions
    * @access protected
-   * @returns   {any}   A REST-gateway compatible transaction *search* query.
+   * @returns   {TransactionSearchCriteria}   A list of REST-gateway compatible transaction *search* queries.
    */
-  protected getTransactionQuery(): any {
+  protected getTransactionQuery(registry: string): TransactionSearchCriteria {
     // get the account address from config
     const registries = this.configService.get<string[]>("auth.registries");
 
-    // @todo this limits the authentication registries to 1 accounts,
-    // @todo instead, should allow using all listed registries.
+    // returns null if the provided registry is not found in the configured list
+    if (!registries.includes(registry)) {
+      return null;
+    }
+
+    // get the parsed dHealth account address from the registry
     const authRegistryAddress: Address = AccountsService.createAddress(
-      registries[0],
+      registry,
     );
 
     // returns a REST-compatible query
@@ -611,7 +613,7 @@ export class AuthService {
       order: Order.Desc,
       pageNumber: 1,
       pageSize: 100,
-    };
+    } as TransactionSearchCriteria;
   }
 
   /**
@@ -625,16 +627,26 @@ export class AuthService {
    *
    * @async
    * @access protected
+   * @param   {string}    registry      The authentication registry address to search for in recent transactions.
    * @param   {string}    challenge     The authentication challenge to search for in recent transactions.
    * @returns {Promise<TransferTransaction | undefined>}  A transfer transaction instance given a validated authentication challenge, or undefined.
    */
   protected async findRecentChallenge(
+    registry: string,
     challenge: string,
   ): Promise<TransferTransaction | undefined> {
-    // prepares the transaction queries and promises to run a
-    // *transactions search* for groups Confirmed and Unconfirmed
+    // if registry is null/undefined, return
+    if (!registry) return;
+
+    // prepares the transaction query
+    const recentQuery = this.getTransactionQuery(registry);
+
+    // if transaction query is null/undefined
+    if (!recentQuery) return;
+
+    // prepares the promises to run a *transactions search*
+    // for groups Confirmed and Unconfirmed
     const repository = this.networkService.transactionRepository;
-    const recentQuery = this.getTransactionQuery();
     const promises: Promise<Page<Transaction>>[] = [
       repository
         .search({ ...recentQuery, group: TransactionGroup.Unconfirmed })

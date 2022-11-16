@@ -354,7 +354,7 @@ describe("common/AuthService", () => {
   describe("getTransactionQuery()", () => {
     it("should return correct result", () => {
       // prepare
-      const configServiceGetCall = jest.fn().mockReturnValue({});
+      const configServiceGetCall = jest.fn().mockReturnValue(["test-registry"]);
       (authService as any).configService = {
         get: configServiceGetCall,
       }
@@ -372,7 +372,7 @@ describe("common/AuthService", () => {
       };
 
       // act
-      const result = (authService as any).getTransactionQuery();
+      const result = (authService as any).getTransactionQuery("test-registry");
 
       // assert
       expect(configServiceGetCall).toHaveBeenCalledTimes(1);
@@ -410,7 +410,10 @@ describe("common/AuthService", () => {
       (authService as any).cookie = { name: "ELEVATE" };
 
       // act
-      const result = await (authService as any).findRecentChallenge("test-challenge");
+      const result = await (authService as any).findRecentChallenge(
+        "test-registry",
+        "test-challenge",
+      );
 
       // assert
       expect(getTransactionQueryCall).toHaveBeenCalledTimes(1);
@@ -427,7 +430,7 @@ describe("common/AuthService", () => {
       };
       const getTransactionQueryCall = jest
         .spyOn((authService as any), "getTransactionQuery")
-        .mockReturnValue({});
+        .mockReturnValue([]);
       const networkServiceDelegatePromisesCall = jest.fn().mockResolvedValue([
         { data: [{}] },
       ]);
@@ -438,7 +441,10 @@ describe("common/AuthService", () => {
       factoryCreatedContract.signature = "elevate:referral";
 
       // act
-      const result = await (authService as any).findRecentChallenge("test-challenge");
+      const result = await (authService as any).findRecentChallenge(
+        "test-registry",
+        "test-challenge",
+      );
 
       // assert
       expect(getTransactionQueryCall).toHaveBeenCalledTimes(1);
@@ -455,7 +461,7 @@ describe("common/AuthService", () => {
       };
       const getTransactionQueryCall = jest
         .spyOn((authService as any), "getTransactionQuery")
-        .mockReturnValue({});
+        .mockReturnValue([]);
       const networkServiceDelegatePromisesCall = jest.fn().mockResolvedValue([
         { data: [{}] },
       ]);
@@ -469,7 +475,10 @@ describe("common/AuthService", () => {
       Factory.createFromTransaction = factoryCreateFromTransactionCall;
 
       // act
-      const result = await (authService as any).findRecentChallenge("test-challenge");
+      const result = await (authService as any).findRecentChallenge(
+        "test-registry",
+        "test-challenge",
+      );
 
       // assert
       expect(getTransactionQueryCall).toHaveBeenCalledTimes(1);
