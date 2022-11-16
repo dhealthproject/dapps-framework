@@ -31,7 +31,7 @@ import { MockModel } from "../../../mocks/global";
 import type { Scope } from "../../../../src/common/models/Scope";
 import { DappConfig } from "../../../../src/common/models/DappConfig";
 import { NetworkConfig } from "../../../../src/common/models/NetworkConfig";
-import { StateDocument, StateModel } from "../../../../src/common/models/StateSchema";
+import { StateDocument, StateModel, StateQuery } from "../../../../src/common/models/StateSchema";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../../../../src/discovery/schedulers/DiscoveryCommand";
@@ -46,6 +46,9 @@ class MockDiscoveryCommand extends DiscoveryCommand {
   protected scope: Scope = "discovery";
   protected get command(): string { return "fake-command"; }
   protected get signature(): string { return "fake-command --source TARGET_ACCOUNT"; }
+
+  // mocks the internal StateService
+  protected stateService: any = { findOne: jest.fn(), updateOne: jest.fn() };
 
   // mocks a fake discovery method to test processes
   public async discover(options?: DiscoveryCommandOptions): Promise<void> {}
@@ -134,6 +137,140 @@ describe("discovery/DiscoveryCommand", () => {
 
       // assert
       expect(actual.plain()).toBe("NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY");
+    });
+  });
+
+  describe("getNextSource()", () => {
+    // prepare internal method mocks
+    let parseSourceMock: any = jest.fn().mockReturnValue({ plain: () => "abc" });
+
+    // we overwrite the `parseSource()` method as this one is
+    // tested separately in `DiscoveryCommand`.
+    beforeEach(() => {
+      // mocks the configService to fake configuration
+      (fakeCommand as any).parseSource = parseSourceMock;
+
+      // clear mocks
+      parseSourceMock.mockClear();
+    });
+
+    it("should correctly parse source input", async () => {
+      // act
+      const source: string = await (fakeCommand as any).getNextSource(["a", "b"]);
+
+      // assert
+      expect(source).toBeDefined();
+      expect(source).toBe("abc"); // as mocked
+      expect(parseSourceMock).toHaveBeenCalled();
+      expect(parseSourceMock).toHaveBeenCalledWith("a");
+    });
+
+    it("should read synchronization state with per-source identifier", async () => {
+      // act
+      const source: string = await (fakeCommand as any).getNextSource(["a", "b"]);
+
+      // assert
+      expect((fakeCommand as any).stateService.findOne).toHaveBeenCalled();
+      expect((fakeCommand as any).stateService.findOne).toHaveBeenCalledWith(new StateQuery({
+        name: `discovery:fake-command:${source}`, // "discovery:DiscoverTransactions:%SOURCE%"
+      } as StateDocument));
+    });
+
+    it("should loop through available sources", async () => {
+      // overwrites parseSource mock as used inside loop
+      parseSourceMock = jest.fn()
+        .mockReturnValueOnce({ plain: () => "a" })
+        .mockReturnValueOnce({ plain: () => "b" });
+
+      // prepare
+      (fakeCommand as any).parseSource = parseSourceMock;
+      (fakeCommand as any).stateService.findOne = jest.fn().mockReturnValue({
+        data: { sync: true },
+      });
+
+      // act
+      await (fakeCommand as any).getNextSource(["a", "b"]);
+
+      // assert
+      expect(parseSourceMock).toHaveBeenCalledTimes(2);
+      expect((fakeCommand as any).stateService.findOne).toHaveBeenCalledTimes(2);
+      expect((fakeCommand as any).stateService.findOne).toHaveBeenNthCalledWith(1, new StateQuery({
+        name: `discovery:fake-command:a`, // "discovery:DiscoverTransactions:%SOURCE%"
+      } as StateDocument));
+      expect((fakeCommand as any).stateService.findOne).toHaveBeenNthCalledWith(2, new StateQuery({
+        name: `discovery:fake-command:b`, // "discovery:DiscoverTransactions:%SOURCE%"
+      } as StateDocument));
+    });
+
+    describe("given fully synchronized state", () => {
+      // overwrites the `parseSource()` mock to return
+      // *more than one* discovery source such that
+      // the synchronization state can be tested.
+      beforeEach(() => {
+        parseSourceMock = jest.fn()
+          .mockReturnValueOnce({ plain: () => "a" })
+          .mockReturnValueOnce({ plain: () => "b" });
+
+        (fakeCommand as any).parseSource = parseSourceMock;
+
+        // also overwrites per-source synchronization state
+        // as we want to test fully synchronized discovery
+        (fakeCommand as any).stateService.findOne = jest.fn().mockReturnValue({
+          data: { sync: true },
+        });
+      });
+
+      it("should detect fully synchronized state", async () => {
+        // prepare
+        (fakeCommand as any).state = { data: {} }; // <-- missing "lastUsedAccount"
+
+        // act
+        await (fakeCommand as any).getNextSource(["a", "b"]);
+
+        // assert
+        expect(parseSourceMock).toHaveBeenCalledTimes(2);
+        expect((fakeCommand as any).stateService.findOne).toHaveBeenCalledTimes(2);
+      });
+
+      it("should use first source given no general synchronization state", async () => {
+        // prepare
+        (fakeCommand as any).state = { data: {} }; // <-- missing "lastUsedAccount"
+
+        // act
+        const actual: string = await (fakeCommand as any).getNextSource(["a", "b"]);
+
+        // assert
+        expect(actual).toBeDefined();
+        expect(actual).toBe("a"); // <-- first source
+      });
+
+      it("should find last used source and continue with next", async () => {
+        // prepare
+        (fakeCommand as any).state = {
+          data: { lastUsedAccount: "a" }, // <-- forcing state here
+        };
+
+        // act
+        const actual: string = await (fakeCommand as any).getNextSource(["a", "b"]);
+
+        // assert
+        expect(actual).toBeDefined();
+        expect(actual).toBe("b"); // <-- next source
+      });
+
+      it("should use first source given invalid last used source", async () => {
+        // prepare
+        (fakeCommand as any).state = {
+          data: { lastUsedAccount: "c" }, // <-- forcing state here
+        };
+
+        // act
+        const actual: string = await (fakeCommand as any).getNextSource(["a", "b"]);
+
+        // assert
+        expect(actual).toBeDefined();
+        expect(actual).toBe("a"); // <-- first source
+      });
     });
   });
 
