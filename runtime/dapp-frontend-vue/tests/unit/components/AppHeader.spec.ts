@@ -38,6 +38,6 @@ describe("AppHeader -->", () => {
   });
 
   it("should exist", () => {
-    expect(widget.find(".dapp-screen-footer").exists()).to.be.true;
+    expect(widget.find(".dapp-screen-header").exists()).to.be.true;
   });
 });
