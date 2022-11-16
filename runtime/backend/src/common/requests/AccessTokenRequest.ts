@@ -72,4 +72,18 @@ export class AccessTokenRequest {
       "The JWT sub value that can be attached in the **bearer authorization header** of HTTP requests to serve as a unique identity of each device.",
   })
   public sub: string;
+
+  /**
+   * The registry address that has the incoming authentication
+   * transaction which included the challenge.
+   *
+   * @access public
+   * @var {string}
+   */
+  @ApiProperty({
+    example: "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY",
+    description:
+      "The registry address that has the incoming authentication transaction which included the challenge.",
+  })
+  public registry: string;
 }
