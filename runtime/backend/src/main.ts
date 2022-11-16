@@ -60,7 +60,7 @@ async function bootstrap(): Promise<void> {
   );
 
   // create a logger instance
-  const logger = new LogService("API", app.get(EventEmitter2));
+  const logger = new LogService(dappConfig.dappName, app.get(EventEmitter2));
   app.useLogger(logger);
 
   // log about the app starting *also* in debug mode
