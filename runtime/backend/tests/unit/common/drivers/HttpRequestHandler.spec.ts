@@ -23,7 +23,7 @@ describe("common/HttpRequestHandler", () => {
   });
 
   describe("call()", () => {
-    it("should throw correct error", async () => {
+    it("should throw correct error", () => {
       // prepare
       const httpRequestHandler = new HttpRequestHandler();
       const expectedError = new Error("test error");

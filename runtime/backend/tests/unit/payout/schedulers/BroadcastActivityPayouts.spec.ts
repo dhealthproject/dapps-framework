@@ -246,7 +246,7 @@ describe("payout/BroadcastActivityPayouts", () => {
       const expectedData = { payoutState: PayoutState.Broadcast };
 
       // act
-      (command as any).updatePayoutSubject(
+      await (command as any).updatePayoutSubject(
         { slug: expectedSlug } as ActivityDocument,
         expectedData,
       );

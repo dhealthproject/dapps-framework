@@ -8,13 +8,14 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
 
 // internal dependencies
 // common scope
+import { LogService } from "../../../common/services/LogService";
 import { QueryService } from "../../../common/services/QueryService";
 import { StateService } from "../../../common/services/StateService";
 
@@ -357,7 +358,7 @@ export class PrepareActivityPayouts extends PreparePayouts<
   @Cron("*/30 * * * * *", { name: "payout:cronjobs:prepare" })
   public async runAsScheduler(): Promise<void> {
     // prepares execution logger
-    this.logger = new Logger(`${this.scope}/${this.command}`);
+    this.logger = new LogService(`${this.scope}/${this.command}`);
 
     // display starting moment information in debug mode
     this.debugLog(

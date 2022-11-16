@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { DynamicModule, Logger, Module } from "@nestjs/common";
+import { DynamicModule, Module } from "@nestjs/common";
 
 // internal dependencies
 import { AuthModule } from "./common/modules/AuthModule";
@@ -44,7 +44,7 @@ import dappConfigLoader from "../config/dapp";
 })
 export class AppModule {
   /**
-   * {@link Logger} instance for this class.
+   * {@link LogService} instance for this class.
    *
    * @access private
    * @static

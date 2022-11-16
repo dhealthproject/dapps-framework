@@ -26,7 +26,7 @@ describe("common/StatefulModule", () => {
     }
   }
 
-  afterEach(async () => {
+  afterEach(() => {
     jest.clearAllMocks();
   });
 
