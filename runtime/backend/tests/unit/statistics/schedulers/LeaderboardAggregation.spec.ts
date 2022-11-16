@@ -244,9 +244,8 @@ describe("statistics/LeaderboardAggregation", () => {
       );
 
       // assert
-      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(1, "Starting leaderboard aggregation type: D");
-      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(2, `Last leaderboard aggregation executed at: "1643673600000"`);
-      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(3, "Found 1 leaderboard subjects");
+      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(1, `Last leaderboard aggregation executed at: "1643673600000"`);
+      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(2, "Found 1 leaderboard subjects");
     });
 
     it("should use correct configuration and logging when if no leaderboard found", async () => {
@@ -283,9 +282,8 @@ describe("statistics/LeaderboardAggregation", () => {
       );
 
       // assert
-      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(1, "Starting leaderboard aggregation type: D");
-      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(2, `Last leaderboard aggregation executed at: "1643673600000"`);
-      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(3, "No leaderboard subjects found");
+      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(1, `Last leaderboard aggregation executed at: "1643673600000"`);
+      expect(serviceDebugLogCall).toHaveBeenNthCalledWith(2, "No leaderboard subjects found");
     });
 
     it("should run correctly", async () => {
