@@ -203,7 +203,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
       `${this.scope}/${this.command}`, // includes /(D|M|W)
     );
 
-    // display starting moment information in debug mode
+    // display starting moment information *also* in debug mode
     this.debugLog(
       `Starting leaderboard aggregation type: ${this.periodFormat}`,
     );
@@ -238,13 +238,6 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
   public async aggregate(options?: StatisticsCommandOptions): Promise<void> {
     // keep track of last execution
     this.lastExecutedAt = new Date().valueOf();
-
-    // display starting moment information in debug mode
-    if (options.debug && !options.quiet) {
-      this.debugLog(
-        `Starting leaderboard aggregation type: ${this.periodFormat}`,
-      );
-    }
 
     // get the latest blocks page number
     let lastTimeExecutedAt;

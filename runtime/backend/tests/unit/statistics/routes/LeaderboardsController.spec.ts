@@ -11,71 +11,62 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { Account } from '@dhealth/sdk';
 
 // internal dependencies
-import { AuthService } from '../../../../src/common/services/AuthService';
-import { StatisticsService } from '../../../../src/statistics/services/StatisticsService';
-import { LeaderboardsController } from '../../../../src/statistics/routes/LeaderboardsController';
 import { MockModel } from '../../../mocks/global';
-import { QueryService } from '../../../../src/common/services/QueryService';
-import { Statistics, StatisticsDocument, StatisticsModel, StatisticsQuery } from '../../../../src/statistics/models/StatisticsSchema';
-import { AccountsService } from '../../../../src/common/services/AccountsService';
-import { NetworkService } from '../../../../src/common/services/NetworkService';
-import { ChallengesService } from '../../../../src/common/services/ChallengesService';
-import { PaginatedResultDTO } from '../../../../src/common/models/PaginatedResultDTO';
-import { StatisticsDTO } from '../../../../src/statistics/models/StatisticsDTO';
 import { AccountDocument } from '../../../../src/common/models/AccountSchema';
+import { PaginatedResultDTO } from '../../../../src/common/models/PaginatedResultDTO';
+import { AccountsService } from '../../../../src/common/services/AccountsService';
+import { AuthService } from '../../../../src/common/services/AuthService';
+import { ChallengesService } from '../../../../src/common/services/ChallengesService';
+import { NetworkService } from '../../../../src/common/services/NetworkService';
+import { QueryService } from '../../../../src/common/services/QueryService';
+import { StatisticsDTO } from '../../../../src/statistics/models/StatisticsDTO';
+import {
+  Statistics,
+  StatisticsDocument,
+  StatisticsQuery,
+} from '../../../../src/statistics/models/StatisticsSchema';
+import { LeaderboardsController } from '../../../../src/statistics/routes/LeaderboardsController';
+import { StatisticsService } from '../../../../src/statistics/services/StatisticsService';
 
 describe('statistics/LeaderboardsController', () => {
   let controller: LeaderboardsController;
+  let statisticsService: StatisticsService;
   let authService: AuthService;
-  let leaderboardsService: StatisticsService;
-  let queriesService: QueryService<
-    StatisticsDocument,
-    StatisticsModel
-  >;
-  let configService: ConfigService;
-  let networkService: NetworkService;
-  let challengesService: ChallengesService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [LeaderboardsController],
       providers: [
-        AuthService,
-        QueryService,
-        AccountsService,
-        ConfigService,
-        NetworkService,
-        ChallengesService,
-        StatisticsService,
-        {
-          provide: getModelToken("Statistics"),
-          useValue: MockModel,
-        },
+        AuthService, // requirement from StatisticsService
+        NetworkService, // requirement from AuthService
+        AccountsService, // requirement from AuthService
+        ChallengesService, // requirement from AuthService
+        JwtService, // requirement from AuthService
+        QueryService, // requirement from AuthService
+        ConfigService, // requirement from AuthService
+        StatisticsService, // requirement from UsersController
         {
           provide: getModelToken("Account"),
           useValue: MockModel,
-        },
+        }, // requirement from AuthService
         {
           provide: getModelToken("AuthChallenge"),
           useValue: MockModel,
-        },
-      ],
-      imports: [
-        JwtModule,
+        }, // requirement from AuthService
+        {
+          provide: getModelToken("Statistics"),
+          useValue: MockModel,
+        }, // requirement from StatisticsService
       ],
     }).compile();
 
     controller = module.get<LeaderboardsController>(LeaderboardsController);
     authService = module.get<AuthService>(AuthService);
-    leaderboardsService = module.get<StatisticsService>(StatisticsService);
-    queriesService = module.get<QueryService<StatisticsDocument, StatisticsModel>>(QueryService);
-    configService = module.get<ConfigService>(ConfigService);
-    networkService = module.get<NetworkService>(NetworkService);
-    challengesService = module.get<ChallengesService>(ChallengesService);
+    statisticsService = module.get<StatisticsService>(StatisticsService);
   });
 
   it('should be defined', () => {
@@ -96,7 +87,7 @@ describe('statistics/LeaderboardsController', () => {
         { pageNumber: 1, pageSize: 20, total: 1 },
       );
       const serviceFindMock = jest
-        .spyOn(leaderboardsService, "find")
+        .spyOn(statisticsService, "find")
         .mockResolvedValue(expectToFetchDocuments);
 
       // act
@@ -134,7 +125,7 @@ describe('statistics/LeaderboardsController', () => {
         { pageNumber: 1, pageSize: 20, total: 1 },
       );
       const serviceFindMock = jest
-        .spyOn(leaderboardsService, "find")
+        .spyOn(statisticsService, "find")
         .mockResolvedValue(expectToFetchDocuments);
 
         // act

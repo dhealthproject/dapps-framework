@@ -19,6 +19,7 @@ import { QueryModule } from "../../../common/modules/QueryModule";
 
 // statistics scope
 import { Statistics, StatisticsSchema } from "../../models/StatisticsSchema";
+import { StatisticsModule } from "../../modules/StatisticsModule";
 import { UserAggregation } from "./UserAggregation";
 
 // processor scope
@@ -38,6 +39,7 @@ import {
     ScheduleModule.forRoot(),
     StateModule,
     QueryModule,
+    StatisticsModule,
     MongooseModule.forFeature([
       { name: Statistics.name, schema: StatisticsSchema },
       { name: Activity.name, schema: ActivitySchema },

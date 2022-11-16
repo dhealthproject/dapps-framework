@@ -27,8 +27,24 @@ import {
   ActivityDocument,
   ActivityModel,
 } from "../../../processor/models/ActivitySchema";
-import { Statistics, StatisticsModel } from "../../models/StatisticsSchema";
+import {
+  Statistics,
+  StatisticsDocument,
+  StatisticsModel,
+  StatisticsQuery,
+} from "../../models/StatisticsSchema";
+import { StatisticsService } from "../../services/StatisticsService";
 
+/**
+ * @class UserAggregation
+ * @description The implementation for user statistics aggregation
+ * scheduler. Contains source code for the execution logic of a
+ * command with name: `Statistics:UserAggregation`.
+ *
+ * @todo current aggregation does not use dates to filter *relevant* data
+ * @todo the implementation should make use of *previous* aggregation too
+ * @since v0.5.0
+ */
 @Injectable()
 export class UserAggregation extends StatisticsCommand {
   /**
@@ -51,6 +67,7 @@ export class UserAggregation extends StatisticsCommand {
       ActivityDocument,
       ActivityModel
     >,
+    protected readonly statisticsService: StatisticsService,
   ) {
     super(stateService);
     this.lastExecutedAt = new Date().valueOf();
@@ -147,8 +164,7 @@ export class UserAggregation extends StatisticsCommand {
    * This method is necessary to make sure this command is run
    * with the correct `--collection` option.
    * <br /><br />
-   * This scheduler is registered to run **every hour** at the
-   * **fifth minute**.
+   * This scheduler is registered to run **every ten minutes**.
    * <br /><br />
    * Note that a *manual* execution is also triggered such that
    * this aggregation runs directly upon nestjs registration of
@@ -161,15 +177,14 @@ export class UserAggregation extends StatisticsCommand {
    * @param   {BaseCommandOptions}  options
    * @returns {Promise<void>}
    */
-  //XXX update to every 15 minutes
-  @Cron("0 */2 * * * *", { name: "statistics:cronjobs:user-aggregation" })
+  @Cron("0 */10 * * * *", { name: "statistics:cronjobs:user-aggregation" })
   public async runAsScheduler(): Promise<void> {
     // setup debug logger
     this.logger = new Logger(
       `${this.scope}/${this.command}`, // includes /(D|M|W)
     );
 
-    // display starting moment information in debug mode
+    // display starting moment information *also* in debug mode
     this.debugLog(`Starting user aggregation type: ${this.periodFormat}`);
 
     // executes the actual command logic (this will call aggregate())
@@ -191,6 +206,23 @@ export class UserAggregation extends StatisticsCommand {
   public async aggregate(options?: StatisticsCommandOptions): Promise<void> {
     // keep track of last execution
     this.lastExecutedAt = new Date().valueOf();
+
+    // get the latest execution details
+    let lastTimeExecutedAt;
+    if (
+      !!this.state &&
+      !!this.state.data &&
+      "lastExecutedAt" in this.state.data
+    ) {
+      lastTimeExecutedAt = this.state.data.lastExecutedAt;
+    }
+
+    // display debug information about configuration
+    if (options.debug && !options.quiet) {
+      this.debugLog(
+        `Last user aggregation executed at: "${lastTimeExecutedAt}"`,
+      );
+    }
 
     // prepare aggregation operations
     const aggregateQuery = this.createAggregationQuery();
@@ -221,21 +253,20 @@ export class UserAggregation extends StatisticsCommand {
       const address = result._id; // L278 set userAddress as _id
 
       // find one and create new (if not exists) or update (if exists)
-      await this.model.createOrUpdate(
-        {
+      await this.statisticsService.createOrUpdate(
+        new StatisticsQuery({
           address,
           period,
           type: this.TYPE,
-        },
+        } as StatisticsDocument),
         {
           periodFormat,
-          amount: result.activityAssets.amount,
+          amount: result.totalAssetsAmount,
           data: {
-            totalEarned: result.activityAssets.amount,
-            totalPracticedMinutes: result.activityData.elapsedTime,
+            totalEarned: result.totalAssetsAmount,
+            totalPracticedMinutes: Math.ceil(result.totalSecondsPracticed / 60),
           },
         },
-        { upsert: true },
       );
     }
   }
@@ -267,7 +298,10 @@ export class UserAggregation extends StatisticsCommand {
    * @returns {PipelineStage[]}
    */
   private createAggregationQuery(): PipelineStage[] {
-    const scoreFields = ["activityAssets.amount", "activityData.elapsedTime"];
+    const scoreFields: any = {
+      totalAssetsAmount: "activityAssets.amount",
+      totalSecondsPracticed: "activityData.elapsedTime",
+    };
     const group: Record<string, any> = {
       _id: "$address",
     };
@@ -275,8 +309,9 @@ export class UserAggregation extends StatisticsCommand {
     // sums up values of fields as defined:
     // "activityAssets.amount": total amount of $FIT earned
     // "activityData.elapsedTime": total amount of seconds practiced
-    scoreFields.forEach((field) => {
-      group[field] = { $sum: `$${field}` };
+    // the result set is sorted in *descending* order using `amount`
+    Object.keys(scoreFields).forEach((field) => {
+      group[field] = { $sum: `$${scoreFields[field]}` };
     });
     return [
       {
@@ -284,6 +319,12 @@ export class UserAggregation extends StatisticsCommand {
       },
       {
         $group: group,
+      },
+      {
+        // sort by amount DESC
+        $sort: {
+          amount: -1,
+        },
       },
     ];
   }
