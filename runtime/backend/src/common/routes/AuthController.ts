@@ -164,7 +164,6 @@ export class AuthController {
    * to instruct *nest* to pass on the response cookie onto the
    * express `Response` object.
    *
-   * @todo Should accept an authorized registry in the /auth/challenge request
    * @method GET
    * @access protected
    * @async
