@@ -16,10 +16,8 @@ import { Db } from "mongodb";
  * @class AddAccountReferralCode
  * @description This migration consists in one or more database
  * schema and/or data updates. The following tasks are run:
- * - Update values for the field `expiresAt` in the collection
- *   named `accountintegrations`. This update is necessary
- *   because these values contain (incorrect) *seconds to epoch*
- *   instead of *milliseconds to epoch*.
+ * - Update values for the field `referralCode` and `referredBy`
+ *   in the collection named `accounts`.
  *
  * @since v0.4.1
  */
@@ -34,12 +32,23 @@ export class AddAccountReferralCode implements MigrationInterface {
    * @returns {Promise<void>}
    */
   public async up(db: Db): Promise<void> {
-    // update many `accountintegrations` documents such that
-    // - the `expiresAt` field contains *milliseconds since epoch*
+    // update many `accounts` documents such that
+    // - the `referralCode` field contains *a valid referral code*.
+    // - the `referredBy` field contains `null`.
     const collection = db.collection("accounts");
-    await collection.updateMany({ referralCode: { $ne: null } }, [
-      { $set: { referralCode: Math.random().toString(36).slice(-8) } },
-    ]);
+    await collection.updateMany(
+      {},
+      [
+        {
+          $set: {
+            referralCode: {
+              $substr: [{ $toString: "$_id" }, 16, 8],
+            },
+            referredBy: null,
+          }
+        },
+      ],
+    );
   }
 
   /**
@@ -53,11 +62,15 @@ export class AddAccountReferralCode implements MigrationInterface {
    * @returns {Promise<void>}
    */
   public async down(db: Db): Promise<void> {
-    // update many `accountintegrations` documents such that
-    // - the `expiresAt` field contains *seconds since epoch*
+    // update many `accounts` documents such that
+    // - the `referralCode` field is removed (unset)
+    // - the `referredBy` field is removed (unset)
     const collection = db.collection("accounts");
-    await collection.updateMany({ referralCode: { $ne: null } }, [
-      { $set: { referralCode: Math.random().toString(36).slice(-8) } },
-    ]);
+    await collection.updateMany(
+      {},
+      [
+        { $unset: ["referralCode", "referredBy"] },
+      ]
+    );
   }
 }
