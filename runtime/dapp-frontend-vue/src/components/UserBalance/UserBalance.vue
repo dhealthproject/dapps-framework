@@ -18,7 +18,7 @@
       :width="16"
       class="dapp-logo__image"
     />
-    {{ userBalance?.toFixed(2) }} $FIT
+    {{ userBalance ? userBalance.toFixed(2) : 0 }} $FIT
   </div>
 </template>
 
