@@ -91,7 +91,7 @@ export class AppConfiguration {
    * @static
    * @var {EventEmitterModule}
    */
-    private static EVENT_EMITTER: EventEmitterModule;
+  private static EVENT_EMITTER: EventEmitterModule;
 
   /**
    * The dApp assets configuration. This configuration object is used to
