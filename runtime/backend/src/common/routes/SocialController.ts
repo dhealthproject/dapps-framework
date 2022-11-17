@@ -32,7 +32,6 @@ import { SocialPlatformDTO } from "../models/SocialPlatformDTO";
 import socialConfigLoader from "../../../config/social";
 
 namespace HTTPResponses {
-
   // creates a variable that we include in a namespace
   // and configure the OpenAPI schema for the response
   // maps to the HTTP response of `/social/platforms`
@@ -118,9 +117,7 @@ export class SocialController {
     const apps = this.configService.get<SocialPlatformsMap>(`socialApps`);
 
     // returns only the platform configurations
-    return Object.keys(apps).map(
-      a => apps[a],
-    );
+    return Object.keys(apps).map((a) => apps[a]);
   }
 
   /**

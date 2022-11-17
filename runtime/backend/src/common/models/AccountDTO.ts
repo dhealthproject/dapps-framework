@@ -44,6 +44,40 @@ export class AccountDTO extends BaseDTO {
   public address: string;
 
   /**
+   * The account's referral code. This code should be used when inviting
+   * new users to the dApp. This field contains a unique random string of
+   * 8 characters.
+   *
+   * @access public
+   * @var {number}
+   */
+  @ApiProperty({
+    type: "string",
+    example: "JOINFIT22-4234432424",
+    description:
+      "The account's referral code. This code should be used when inviting new users to the dApp.",
+  })
+  public referralCode: string;
+
+  /**
+   * The account's **referrer address**. This address refers to the
+   * account that *invited* the current account to the dApp.
+   * <br /><br />
+   * This field is **optional** and *indexed*.
+   *
+   * @access public
+   * @readonly
+   * @var {string}
+   */
+  @ApiProperty({
+    type: "string",
+    example: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+    description:
+      "The account's referrer address. This address refers to the account whom *invited* the current account to the dApp.",
+  })
+  public referredBy?: string;
+
+  /**
    * The total number of transactions discovered for
    * this account on dHealth Network.
    *
@@ -57,21 +91,6 @@ export class AccountDTO extends BaseDTO {
       "The total number of transactions discovered for this account on dHealth Network",
   })
   public transactionsCount?: number;
-
-  /**
-   * Referral code of the user,
-   * that allows to track who invited user in the app
-   *
-   * @access public
-   * @var {number}
-   */
-  @ApiProperty({
-    type: "string",
-    example: "JOINFIT22-4234432424",
-    description:
-      "Referral code of the user, that allows to track who invited user in the app",
-  })
-  public referralCode?: string;
 
   /**
    * The time at which this account first interacted

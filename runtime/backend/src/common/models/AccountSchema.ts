@@ -64,9 +64,22 @@ export class Account extends Transferable<AccountDTO> {
   public readonly address: string;
 
   /**
-   * The account's **referrer address**. An address typically refers to a
-   * human-readable series of 39 characters, starting either with
-   * a `T`, for TESTNET addresses, or with a `N`, for MAINNET addresses.
+   * The account's **referrer address**. This address refers to the
+   * account that *invited* the current account to the dApp.
+   * <br /><br />
+   * This field is **optional** and *indexed*.
+   *
+   * @access public
+   * @readonly
+   * @var {string}
+   */
+  @Prop({ index: true })
+  public readonly referredBy?: string;
+
+  /**
+   * The account's referral code. This code should be used when inviting
+   * new users to the dApp. This field contains a unique random string of
+   * 8 characters.
    * <br /><br />
    * This field is **required**, *indexed* and values are expected
    * to be *unique*.
@@ -75,8 +88,8 @@ export class Account extends Transferable<AccountDTO> {
    * @readonly
    * @var {string}
    */
-  @Prop({ index: true })
-  public readonly referredBy?: string;
+  @Prop({ required: true, index: true, unique: true, type: String })
+  public readonly referralCode: string;
 
   /**
    * The account's total **transactions count**. Typically, this field
@@ -108,19 +121,6 @@ export class Account extends Transferable<AccountDTO> {
    */
   @Prop({ index: true, nullable: true })
   public readonly firstTransactionAt?: number;
-
-  /**
-   * The account's identified referral code.
-   * This field should contain randomly generated unique referral code.
-   * <br /><br />
-   * This field is required.
-   *
-   * @access public
-   * @readonly
-   * @var {string}
-   */
-  @Prop({ index: true, nullable: true })
-  public readonly referralCode?: string;
 
   /**
    * The account's first identified **transaction block**. Typically, this
@@ -218,11 +218,16 @@ export class Account extends Transferable<AccountDTO> {
    * @returns {Record<string, unknown>}    The individual document data that is used in a query.
    */
   public get toQuery(): Record<string, unknown> {
-    return {
-      address: this.address,
-      referralCode: this.referralCode,
-      referredBy: this.referredBy,
-    };
+    const query: Record<string, any> = {};
+
+    if (undefined !== this.address) query["address"] = this.address;
+
+    if (undefined !== this.referredBy) query["referredBy"] = this.referredBy;
+
+    if (undefined !== this.referralCode)
+      query["referralCode"] = this.referralCode;
+
+    return query;
   }
 
   /**
@@ -240,6 +245,7 @@ export class Account extends Transferable<AccountDTO> {
     dto.transactionsCount = doc.transactionsCount;
     dto.firstTransactionAt = doc.firstTransactionAt;
     dto.firstTransactionAtBlock = doc.firstTransactionAtBlock;
+    dto.referredBy = doc.referredBy;
     dto.referralCode = doc.referralCode;
     return dto;
   }

@@ -42,18 +42,19 @@ export class AccessTokenRequest {
   public challenge: string;
 
   /**
-   * Referral code that must be used for identification
-   * that user was referred by other user
+   * A referral code *may* be attached to this request to mark that the
+   * authenticating account was *invited* to the dApp by another account.
    * <br /><br />
-   * Can be optional
+   * Note that this property *must* contain a *valid*, 8-characters long,
+   * referral code previously attached to an `accounts` document.
    *
    * @access public
    * @var {string}
    */
   @ApiProperty({
-    example: "JOINFIT16667868627809199",
+    example: "JOINFIT22-4234432424",
     description:
-      "Referral code which is used for detecting if user was invited.",
+      "A referral code *may* be attached to this request to mark that the authenticating account was *invited* to the dApp by another account.",
   })
   public referralCode?: string;
 }

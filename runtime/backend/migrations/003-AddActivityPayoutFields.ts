@@ -32,9 +32,11 @@ export class AddActivityPayoutFields implements MigrationInterface {
    * @returns {Promise<void>}
    */
   public async up(db: Db): Promise<void> {
+    // uses collection `activities`
+    const collection = db.collection("activities");
+
     // update many `activities` documents such that
     // - the `payoutState` field contains 0 (Not_Started)
-    const collection = db.collection("activities");
     await collection.updateMany(
       {},
       [
@@ -42,6 +44,7 @@ export class AddActivityPayoutFields implements MigrationInterface {
       ]
     );
 
+    // creates an index for field `payoutState`
     await collection.createIndex("payoutState");
   }
 
@@ -56,9 +59,14 @@ export class AddActivityPayoutFields implements MigrationInterface {
    * @returns {Promise<void>}
    */
   public async down(db: Db): Promise<void> {
+    // uses collection `activities`
+    const collection = db.collection("activities");
+
+    // drops the index for field "referralCode"
+    await collection.dropIndex("payoutState");
+
     // update many `activities` documents such that
     // - the `payoutState` field is removed (unset)
-    const collection = db.collection("activities");
     await collection.updateMany(
       {},
       [

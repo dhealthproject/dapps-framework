@@ -92,6 +92,7 @@ describe("AppController", () => {
           firstTransactionAt: 0,
           firstTransactionAtBlock: 0,
           transactionsCount: 0,
+          referredBy: "fakeOtherAddress",
           referralCode: "otherUser",
         }),
       };
@@ -113,6 +114,7 @@ describe("AppController", () => {
         firstTransactionAtBlock: 0,
         integrations: ["strava"],
         transactionsCount: 0,
+        referredBy: "fakeOtherAddress",
         referralCode: "otherUser",
       });
     });
