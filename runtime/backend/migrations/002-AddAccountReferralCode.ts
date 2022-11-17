@@ -32,16 +32,19 @@ export class AddAccountReferralCode implements MigrationInterface {
    * @returns {Promise<void>}
    */
   public async up(db: Db): Promise<void> {
+    // uses collection `accounts`
+    const collection = db.collection("accounts");
+
     // update many `accounts` documents such that
     // - the `referralCode` field contains *a valid referral code*.
     // - the `referredBy` field contains `null`.
-    const collection = db.collection("accounts");
     await collection.updateMany(
       {},
       [
         {
           $set: {
             referralCode: {
+              // last 8 characters of "_id"
               $substr: [{ $toString: "$_id" }, 16, 8],
             },
             referredBy: null,
@@ -49,6 +52,9 @@ export class AddAccountReferralCode implements MigrationInterface {
         },
       ],
     );
+
+    // creates an index for field "referralCode"
+    await collection.createIndex("referralCode");
   }
 
   /**
@@ -62,10 +68,15 @@ export class AddAccountReferralCode implements MigrationInterface {
    * @returns {Promise<void>}
    */
   public async down(db: Db): Promise<void> {
+    // uses collection `accounts`
+    const collection = db.collection("accounts");
+
+    // drops the index for field "referralCode"
+    await collection.dropIndex("referralCode");
+
     // update many `accounts` documents such that
     // - the `referralCode` field is removed (unset)
     // - the `referredBy` field is removed (unset)
-    const collection = db.collection("accounts");
     await collection.updateMany(
       {},
       [

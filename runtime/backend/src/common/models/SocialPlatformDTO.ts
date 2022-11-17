@@ -38,7 +38,7 @@ export class SocialPlatformDTO extends BaseDTO {
     example: "facebook",
     description:
       'The identifier of the social platform, e.g. "facebook" or "twitter". ' +
-      'This field is used to *load icons* and must refer to an existing file.',
+      "This field is used to *load icons* and must refer to an existing file.",
   })
   public icon: string;
 

@@ -82,6 +82,9 @@ export interface CookiePayload {
  *   and is typically used to describe "one subscription".
  * - A `address` field that contains the authenticated account's
  *   dHealth Network Address. This is typically used as the "username".
+ * - An optional `referralCode` field that contains a referral code
+ *   previously attached to the account that invited the authenticating
+ *   account to the dApp.
  * <br /><br />
  * @example Using the `AuthenticationPayload` interface
  * ```ts
@@ -412,30 +415,6 @@ export class AuthService {
       lastSessionHash: payload.sub, // contains a transaction hash
     };
 
-    // if user new or he don't own refCode - generate and assign new code
-    // Ref code format JOINFIT + day timestamp + random number from 0 to 100000
-    if (!account || !account.referralCode) {
-      userData.referralCode = Math.random().toString(36).slice(-8);
-    }
-
-    // if payload has refCode - query account in DB with proper code
-    if (payload.referralCode) {
-      const referrer = await this.accountsService.findOne(
-        new AccountQuery({
-          referralCode: payload.referralCode,
-        } as AccountDocument),
-      );
-
-      // if user that refers exist & currently authenticating user address != referer address
-      if (
-        referrer &&
-        referrer.address &&
-        payload.address !== referrer.address
-      ) {
-        userData.referredBy = referrer.address;
-      }
-    }
-
     // prepare a result object (DTO) that holds only an
     // access token OR a pair of access- and refresh- tokens
     const accessTokenDTO: AccessTokenDTO = { accessToken };
@@ -456,6 +435,35 @@ export class AuthService {
       accessTokenDTO.refreshToken = refreshToken;
     }
     // /block: creating refresh token
+
+    // block: updating referral data
+    // automatically generate a new referral code given
+    // unknown `accounts` (by address).
+    if (!account || !account.referralCode) {
+      userData.referralCode = `JOINFIT-${Math.random().toString(36).slice(-8)}`;
+    }
+
+    // given a referral code in the authentication payload
+    // we *may* need to update the accounts document
+    if (payload.referralCode) {
+      const referrer = await this.accountsService.findOne(
+        new AccountQuery({
+          referralCode: payload.referralCode,
+        } as AccountDocument),
+      );
+
+      // given empty "referredBy" for account and valid
+      // referrer account, we keep track of this referral
+      if (
+        undefined !== referrer &&
+        undefined !== referrer.address &&
+        payload.address !== referrer.address &&
+        (account === undefined || account.referredBy === undefined)
+      ) {
+        userData.referredBy = referrer.address;
+      }
+    }
+    // /block: updating referral data
 
     // store tokens in `accounts` document
     // note that we store a *hash* of the refresh token
