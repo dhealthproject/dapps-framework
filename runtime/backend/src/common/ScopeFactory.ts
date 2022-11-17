@@ -157,7 +157,9 @@ export class ScopeFactory {
     // reads *all* enabled schedulers, note here that
     // each scope may define an *array* of schedulers
     const schedulerImports = scopes
-      .filter((s) => s !== "database" && s !== "eventEmittter" && s in Schedulers)
+      .filter(
+        (s) => s !== "database" && s !== "eventEmittter" && s in Schedulers,
+      )
       .map((s) => Schedulers[s]);
 
     // concatenates `Schedulers` that are *enabled* (opt-in)

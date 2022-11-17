@@ -74,7 +74,7 @@ const db = dappConfigLoader().database;
  */
 export const Schedulers: { [key: string]: any[] } = {
   database: [AppConfiguration.getDatabaseModule(db)],
-  eventEmitter: [ AppConfiguration.getEventEmitterModule() ],
+  eventEmitter: [AppConfiguration.getEventEmitterModule()],
   discovery: [
     AccountsModule,
     AssetsModule,
