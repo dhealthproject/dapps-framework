@@ -32,6 +32,7 @@ import { PayoutDocument, PayoutQuery } from "../../../../src/payout/models/Payou
 import { PayoutsService } from "../../../../src/payout/services/PayoutsService";
 import { SignerService } from "../../../../src/payout/services/SignerService";
 import { BroadcastActivityPayouts } from "../../../../src/payout/schedulers/ActivityPayouts/BroadcastActivityPayouts";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 const payoutMocks = [
   {
@@ -93,6 +94,7 @@ describe("payout/BroadcastActivityPayouts", () => {
         SignerService,
         ActivitiesService,
         Logger,
+        EventEmitter2,
         {
           provide: getModelToken("Payout"),
           useValue: MockModel,
