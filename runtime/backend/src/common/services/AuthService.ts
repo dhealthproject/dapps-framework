@@ -651,7 +651,8 @@ export class AuthService {
         const spec: Contract = Factory.createFromTransaction(t);
 
         // do we have the *relevant* challenge?
-        if (spec.signature === "elevate:auth") {
+        const dAppName = this.cookie.name.toLowerCase();
+        if (spec.signature === `${dAppName}:auth`) {
           const contract: Auth = spec as Auth;
           return (
             "challenge" in contract.inputs &&
