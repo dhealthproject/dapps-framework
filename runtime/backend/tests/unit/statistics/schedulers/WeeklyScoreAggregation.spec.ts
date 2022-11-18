@@ -186,7 +186,7 @@ describe("statistics/WeeklyScoreAggregation", () => {
       const result = (service as any).generatePeriod(date);
 
       // assert
-      expect(result).toBe("202209-03");
+      expect(result).toBe("2022-38");
     });
 
     it("should return correct result for weeks that span from last month", () => {
@@ -197,7 +197,7 @@ describe("statistics/WeeklyScoreAggregation", () => {
       const result = (service as any).generatePeriod(date);
 
       // assert
-      expect(result).toBe("202208-05");
+      expect(result).toBe("2022-35");
     });
 
     it("should return correct result for weeks that span from last year", () => {
@@ -208,7 +208,7 @@ describe("statistics/WeeklyScoreAggregation", () => {
       const result = (service as any).generatePeriod(date);
 
       // assert
-      expect(result).toBe("202112-04");
+      expect(result).toBe("2022-52");
     });
   });
 });

@@ -130,10 +130,12 @@ describe("worker/BaseCommand", () => {
       for(const passedParams of [["test"], ["test1", "test2"]]) {
         // prepare
         (fakeCommand as any).debugLog = jest.fn();
+        (fakeCommand as any).infoLog = jest.fn();
         // act
         await fakeCommand.run(passedParams, { debug: true });
         // assert
-        expect((fakeCommand as any).debugLog).toHaveBeenCalledTimes(7);
+        expect((fakeCommand as any).debugLog).toHaveBeenCalledTimes(6);
+        expect((fakeCommand as any).infoLog).toHaveBeenCalledTimes(1);
         expect((fakeCommand as any).debugLog).toHaveBeenCalledWith(
           `Arguments received: ["${passedParams.join('", "')}"]`
         );
@@ -143,12 +145,14 @@ describe("worker/BaseCommand", () => {
     it("should print only timing information given disabled debug mode", async () => {
       // prepare
       (fakeCommand as any).debugLog = jest.fn();
+      (fakeCommand as any).infoLog = jest.fn();
       // act
       await fakeCommand.run([], { debug: false });
       // assert
-      expect((fakeCommand as any).debugLog).toHaveBeenCalledTimes(2);
+      expect((fakeCommand as any).debugLog).toHaveBeenCalledTimes(1);
+      expect((fakeCommand as any).infoLog).toHaveBeenCalledTimes(1);
       expect((fakeCommand as any).debugLog).toHaveBeenNthCalledWith(1, `Initializing command "fake-command"`);
-      expect((fakeCommand as any).debugLog).toHaveBeenNthCalledWith(2, `Runtime duration: 0s`);
+      expect((fakeCommand as any).infoLog).toHaveBeenNthCalledWith(1, `Runtime duration: 0s`);
     });
 
     it("should not print any information given quiet mode", async () => {

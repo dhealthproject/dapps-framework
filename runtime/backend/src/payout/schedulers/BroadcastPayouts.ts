@@ -312,16 +312,14 @@ export abstract class BroadcastPayouts<
     });
     // }
 
-    // debug information about broadcast operations
-    if (options.debug && !options.quiet) {
-      this.debugLog(
-        `[${broadcastMode}] Now broadcasting ${broadcastTransactions.length} transaction(s)`,
-      );
-    }
-
     // (4) broadcast the (batch or stand-alone) transaction(s)
     // using delegated promises with nodes from dHealth Network
     if (!this.globalDryRun && !options.dryRun) {
+      // log information about broadcast operations
+      this.infoLog(
+        `Now broadcasting ${broadcastTransactions.length} transaction(s)`,
+      );
+
       // CAUTION: dry-run mode disables this block
       const repository = this.networkService.transactionRepository;
       await this.networkService.delegatePromises(
@@ -355,6 +353,13 @@ export abstract class BroadcastPayouts<
           payoutState: PayoutState.Broadcast,
         });
       }
+    }
+    // in dry-run mode:
+    else {
+      // log information about skipped operations
+      this.infoLog(
+        `Skipped broadcast of ${broadcastTransactions.length} transaction(s)`,
+      );
     }
 
     // no-return (void)

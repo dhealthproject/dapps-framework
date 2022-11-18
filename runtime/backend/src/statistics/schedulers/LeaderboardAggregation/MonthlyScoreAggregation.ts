@@ -12,6 +12,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { ConfigService } from "@nestjs/config";
+import moment from "moment";
 
 // internal dependencies
 import { StateService } from "../../../common/services/StateService";
@@ -107,9 +108,6 @@ export class MonthlyScoreAggregation extends LeaderboardAggregation {
    * @returns {string} The period string representation of today's search range.
    */
   protected generatePeriod(dateNow: Date): string {
-    // format: `{year}{month}`
-    return `${dateNow.getFullYear()}${("0" + (dateNow.getUTCMonth() + 1)).slice(
-      -2,
-    )}`;
+    return moment(dateNow).format("YYYYMM");
   }
 }

@@ -15,6 +15,7 @@ import { DappConfig } from "../common/models/DappConfig";
 import { ScopeFactory } from "../common/ScopeFactory";
 import { Schedulers } from "../common/Schedulers";
 import { LogService } from "../common/services/LogService";
+import { AppConfiguration } from "../AppConfiguration";
 
 /**
  * @class WorkerModule
@@ -32,7 +33,9 @@ export class WorkerModule {
    * @static
    * @readonly
    */
-  private static readonly logger = new LogService(WorkerModule.name);
+  private static readonly logger = new LogService(
+    AppConfiguration.dappName + "/worker",
+  );
 
   /**
    * The main method to take config input, initialize and return an instance of the module.
@@ -51,7 +54,7 @@ export class WorkerModule {
 
     // print activation information of all scopes
     const scopesJSON = JSON.stringify(actualScopes, undefined, 2);
-    WorkerModule.logger.debug(
+    WorkerModule.logger.log(
       `Found schedulers to be registered in scopes: ${scopesJSON}`,
     );
 

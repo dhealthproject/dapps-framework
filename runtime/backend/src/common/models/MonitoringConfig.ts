@@ -11,6 +11,14 @@
 import { StorageOptions } from ".";
 
 /**
+ *
+ */
+export interface LogStorageOptions {
+  type: StorageOptions;
+  level: string | "error" | "warn" | "info" | "debug";
+}
+
+/**
  * @label COMMON
  * @interface MonitoringConfig
  * @description The dApp monitoring configuration object. This configuration
@@ -29,9 +37,9 @@ export interface MonitoringConfig {
    *
    * @example `["console", "filesystem"]`
    * @access public
-   * @var {Transport[]}
+   * @var {LogStorageOptions[]}
    */
-  storage: StorageOptions[];
+  storage: LogStorageOptions[];
 
   /**
    * A log levels specification. This specifies each log level that the
@@ -48,36 +56,6 @@ export interface MonitoringConfig {
    * @var {Record<string, number>}
    */
   logLevels: Record<string, number>;
-
-  /**
-   * A log print level specification. This specifies at which level of
-   * the application logs should they be displayed and printed.
-   *
-   * @example `"info"`
-   * @access public
-   * @var {string}
-   */
-  logPrintLevel: string;
-
-  /**
-   * A log persistence level specification. This specifies at which level
-   * of the application logs should they be persisted into the database.
-   *
-   * @example `"error"`
-   * @access public
-   * @var {string}
-   */
-  logPersistLevel: string;
-
-  /**
-   * A log persistence collection specification. This specifies the
-   * database collection that will be used to persist logs.
-   *
-   * @example `"system-logs"`
-   * @access public
-   * @var {string}
-   */
-  logPersistCollection: string;
 
   /**
    * A log directory path. This specifies the path to the directory which

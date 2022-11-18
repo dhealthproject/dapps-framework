@@ -53,6 +53,7 @@ describe("worker/WorkerModule", () => {
       // prepare
       (WorkerModule as any).logger = {
         debug: jest.fn(),
+        log: jest.fn(),
       };
       const modules = [
         { name: "processor" },

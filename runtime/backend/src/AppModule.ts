@@ -71,7 +71,7 @@ export class AppModule {
    */
   public static register(configs: DappConfig): DynamicModule {
     // print activation information of all scopes
-    AppModule.logger.debug(
+    AppModule.logger.log(
       `Enabled scopes: ${JSON.stringify(configs.scopes, undefined, 2)}`,
     );
 

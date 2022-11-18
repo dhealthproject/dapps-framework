@@ -26,8 +26,10 @@ import { Request } from "express";
 
 // internal dependencies
 import { NetworkService } from "./NetworkService";
+import { LogService } from "./LogService";
 import { AccountsService } from "./AccountsService";
 import { ChallengesService } from "./ChallengesService";
+import { AppConfiguration } from "../../AppConfiguration";
 import { AccountDocument, AccountQuery } from "../models/AccountSchema";
 import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import {
@@ -322,6 +324,10 @@ export class AuthService {
       sub: transaction.transactionInfo.hash,
       address: authorizedAddr.plain(),
     };
+
+    // print INFO log for authorized log-in attempts
+    const logger = new LogService(AppConfiguration.dappName);
+    logger.log(`Authorizing log-in challenge for "${authorizedUser.address}"`);
 
     // stores a validated authentication challenge
     // in the database collection `authChallenges`

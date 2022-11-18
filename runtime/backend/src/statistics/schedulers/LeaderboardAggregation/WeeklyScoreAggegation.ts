@@ -12,6 +12,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { ConfigService } from "@nestjs/config";
+import moment from "moment";
 
 // internal dependencies
 import { StateService } from "../../../common/services/StateService";
@@ -72,7 +73,7 @@ export class WeeklyScoreAggregation extends LeaderboardAggregation {
       configService,
     );
     this.periodFormat = "W";
-    this.addCronJob("0 0 0 */3 * *"); // every 3 days (3 times per week)
+    this.addCronJob("0 0 0 */1 * *"); // every day (7 times per week)
   }
 
   /**
@@ -109,32 +110,13 @@ export class WeeklyScoreAggregation extends LeaderboardAggregation {
 
   /**
    * Method to generate period string representation of this week's search range.
-   * The result string is in format: `"{year}{month}-{week-of-month}"`.
+   * The result string is in format: `"{year}-{week-of-month}"`.
    *
    * @access protected
    * @param {Date} dateNow The current {@link Date} instance that is provided in {@link LeaderboardAggregation}.
    * @returns {string} The period string representation of today's search range.
    */
   protected generatePeriod(dateNow: Date): string {
-    const d = dateNow.getUTCDate();
-    const testDate = new Date(
-      dateNow.getUTCFullYear(),
-      dateNow.getUTCMonth(),
-      dateNow.getUTCDate(),
-    );
-    testDate.setDate(d - ((testDate.getUTCDay() + 6) % 7)); // adjust date to previous Monday
-    const week = Math.ceil(testDate.getUTCDate() / 7); // return week number of the month
-    let month = dateNow.getUTCMonth() + 1;
-    let year = dateNow.getUTCFullYear();
-    const weekFromPreviousMonth = week >= 3 && d <= 7;
-    if (weekFromPreviousMonth) {
-      month = month -= 1;
-      if (month === 0) {
-        month = 12;
-        year = dateNow.getUTCFullYear() - 1;
-      }
-    }
-    // format: `{year}{month}-{week-of-month}`
-    return `${year}${("0" + month).slice(-2)}-${("0" + week).slice(-2)}`;
+    return moment(dateNow).format("YYYY-W");
   }
 }
