@@ -13,7 +13,7 @@ import { HttpRequestHandler } from "@/kernel/remote/HttpRequestHandler";
 import { User } from "@/models/User";
 
 /**
- *
+ * @todo missing interface documentation
  */
 export interface AccessTokenDTO {
   accessToken: string;
@@ -21,7 +21,7 @@ export interface AccessTokenDTO {
 }
 
 /**
- * @class Auth
+ * @class AuthService
  * @description This class handles managing
  * of authentication related actions.
  * <br /><br />

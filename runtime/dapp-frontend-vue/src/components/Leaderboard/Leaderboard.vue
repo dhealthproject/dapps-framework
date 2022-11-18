@@ -19,11 +19,11 @@
       title="Leaderboard"
       @tabChange="onTabChange"
     />
-    <div v-if="getLeaderboardItems.length">
+    <div v-if="leaderboardItems && leaderboardItems.length > 0">
       <LeaderboardRow :data="currentUserItem" :current-player="true" />
       <LeaderboardRow
         v-for="(leader, index) in splicedItems"
-        :key="leader.avatar + index"
+        :key="leader.address + index"
         :data="leader"
       />
     </div>
@@ -32,14 +32,6 @@
       <p v-html="$t('leaderboard_no_items')" />
     </div>
   </div>
-
-  <!-- Custom LeaderboardItem item markup usage example -->
-  <!-- <LeaderboardRow :data="getLeaderboardItems[2]">
-      <template v-slot:default="props">
-        test v-slot
-        {{ props }}
-      </template>
-    </LeaderboardRow> -->
 </template>
 
 <script lang="ts" src="./Leaderboard.ts"></script>

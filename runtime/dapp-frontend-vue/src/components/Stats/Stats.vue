@@ -19,8 +19,8 @@
       </p>
       <div class="amount-small">
         <span
-          v-if="data && data.totalEarned"
-          v-html="`${data.totalEarned.toFixed(1)} $FIT earned`"
+          v-if="userStatistics && totalEarned"
+          v-html="`${totalEarned.toFixed(1)} $FIT earned`"
         /><InfoTip
           :title="$t('stats_tooltip_earned_title')"
           :text="$t('stats_tooltip_earned_text')"
@@ -29,14 +29,14 @@
     </div>
     <div class="dapp-stats__other">
       <div class="minutes">
-        <span class="minutes__amount" v-html="data.totalPracticedMinutes" />
+        <span class="minutes__amount" v-html="totalPracticedMinutes" />
         <span
           class="dapp-stats__other__label"
           v-html="$t('stats_minutes_exercised')"
         />
       </div>
       <div class="activities-list text-right">
-        <TopActivities :items="data.topActivities" />
+        <TopActivities :items="topActivities" />
         <span
           class="dapp-stats__other__label"
           v-html="$t('stats_top_activities')"
@@ -45,14 +45,14 @@
     </div>
     <div class="dapp-stats__referred">
       <ProgressBar
-        :steps="data.totalReferral"
-        :completed-steps="data.levelReferral"
+        :steps="numReferralSteps"
+        :completed-steps="levelReferral"
         :end-icon="'progress-medal.png'"
       />
     </div>
     <div class="dapp-stats__other">
       <div class="referred">
-        <span class="amount" v-html="data.friendsReferred" />
+        <span class="amount" v-html="totalReferral" />
         <span class="get-more"
           >{{ $t("stats_get_more") }}
           <InfoTip

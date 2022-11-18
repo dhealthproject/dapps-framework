@@ -10,6 +10,7 @@
 
 // external dependencies
 import { Component } from "vue-property-decorator";
+import { mapGetters } from "vuex";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
@@ -35,6 +36,12 @@ import "./OnboardingScreen.scss";
     handleBack: () => ({}),
     skipOnboarding: () => ({}),
   },
+  computed: {
+    ...mapGetters({
+      refCode: "auth/getRefCode",
+    }),
+    tutorialItems: () => ({}),
+  },
 })
 export default class OnboardingScreen extends MetaView {
   /**
@@ -47,13 +54,16 @@ export default class OnboardingScreen extends MetaView {
   public currentScreen = 0;
 
   /**
-   * This propery used for displaing
-   * refCode
+   * This property contains the value as set in the store under
+   * `auth/userRefCode`.
+   * <br /><br />
+   * The *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
    *
-   * @var {string | null}
    * @access public
+   * @var {string}
    */
-  public refCode: string | null = "";
+  public refCode!: string;
 
   /**
    * Returns all available configurations of the screns
@@ -130,28 +140,12 @@ export default class OnboardingScreen extends MetaView {
   }
 
   /**
-   * Sets refCode to the localStrorage, closes popup
-   *
-   * @returns void
-   * @access public
-   */
-  setRefcode(values: any) {
-    const { refCode } = values;
-
-    if (refCode) {
-      this.refCode = refCode;
-      localStorage.setItem("refCode", refCode);
-    }
-    this.$root.$emit("modal-close");
-  }
-
-  /**
    * Opens referral pop-up with specific configration
    *
    * @returns void
    * @access public
    */
-  handleReferral() {
+  public handleReferral() {
     this.$root.$emit("modal", {
       overlayColor: "rgba(19, 30, 25, 0.7)",
       type: "form",
@@ -166,7 +160,13 @@ export default class OnboardingScreen extends MetaView {
           name: "refCode",
         },
       ],
-      submitCallback: this.setRefcode,
+      submitCallback: async (values: any) => {
+        if (values !== undefined && "refCode" in values) {
+          await this.$store.commit("auth/setRefCode", values.refCode);
+        }
+
+        this.$root.$emit("modal-close");
+      },
     });
   }
 
@@ -177,12 +177,9 @@ export default class OnboardingScreen extends MetaView {
    * @returns void
    * @access public
    */
-  mounted() {
-    const code = localStorage.getItem("refCode");
-    this.refCode = code;
-
-    if (this.$route.params.refCode && !this.refCode) {
-      this.setRefcode(this.$route.params);
+  public async mounted() {
+    if (this.$route.params.refCode) {
+      await this.$store.commit("auth/setRefCode", this.$route.params.refCode);
     }
   }
 

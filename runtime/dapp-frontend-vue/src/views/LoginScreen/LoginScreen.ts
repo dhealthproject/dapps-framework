@@ -9,7 +9,7 @@
  */
 
 // external dependencies
-import { Auth as AuthContract } from "@dhealth/contracts";
+import { Auth as AuthContract, AuthParameters } from "@dhealth/contracts";
 import { DappQR } from "@dhealth/components";
 import {
   TransferTransaction,
@@ -223,11 +223,14 @@ export default class LoginScreen extends MetaView {
    * @returns {string}
    */
   protected get authContractJSON(): string {
-    // when we have a challenge, we can create the QR Code.
-    return new AuthContract({
+    // create authentication contract parameters
+    const authParameters: AuthParameters = {
       dappIdentifier: "elevate",
       challenge: this.authChallenge,
-    }).toJSON();
+    };
+
+    // when we have a challenge, we can create the QR Code.
+    return new AuthContract(authParameters).toJSON();
   }
 
   /**
@@ -270,20 +273,6 @@ export default class LoginScreen extends MetaView {
   }
 
   /**
-   * Sets refCode to the localStrorage, closes popup
-   *
-   * @returns void
-   * @access public
-   */
-  setRefcode(values: any) {
-    const { refCode } = values;
-
-    if (refCode) {
-      localStorage.setItem("refCode", refCode);
-    }
-  }
-
-  /**
    * This method is called upon *mounting* the component onto a Vue
    * app. For this component, it will populate the {@link authChallenge}
    * property with a valid authentication challenge as requested from
@@ -298,7 +287,7 @@ export default class LoginScreen extends MetaView {
     try {
       // make sure referral code is saved
       if (this.$route.params.refCode) {
-        this.setRefcode(this.$route.params);
+        await this.$store.commit("auth/setRefCode", this.$route.params.refCode);
       }
 
       // now start requesting for an access token and refresh token

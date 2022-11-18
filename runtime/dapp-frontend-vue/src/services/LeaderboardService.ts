@@ -7,23 +7,13 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
+import moment from "moment";
+
 // internal dependencies
 import { BackendService } from "./BackendService";
 import { HttpRequestHandler } from "@/kernel/remote/HttpRequestHandler";
-/**
- *
- */
-export interface LeaderboardItem {
-  type: string;
-  period: string;
-  address: string;
-  position: number;
-  assets: number;
-  avatar: string;
-  trendline?: string;
-  color?: string;
-  activities?: string[];
-}
+import { LeaderboardEntryDTO } from "@/models/LeaderboardDTO";
 
 /**
  * @class LeaderboardService
@@ -58,22 +48,57 @@ export class LeaderboardService extends BackendService {
 
    * @access public
    * @async
-   * @param   {string}    which     Type of the Leaderboard
+   * @param   {string}    period    Period of time for Leaderboard(monthly, weekly) 
    * @param   {string}    period    Period of time for Leaderboard(monthly, weekly) 
    * @returns {Promise<LeaderboardItem[]>}
    */
   public async getLeaderboard(
-    which: string,
-    period: string
-  ): Promise<LeaderboardItem[]> {
+    periodFormat: string = "D"
+  ): Promise<LeaderboardEntryDTO[]> {
+    // configure statistics request
+    const format = this.getDateFormatForPeriod(periodFormat);
+    const params = [
+      `period=${moment(new Date()).format(format)}`,
+      `periodFormat=${periodFormat}`,
+    ];
+
     const response = await this.handler.call(
-      this.getUrl(`statistics/leaderboards/${which}?period=${period}`),
+      this.getUrl(`statistics/leaderboards?${params.join("&")}`),
       "GET",
       {}, // no-body
       { withCredentials: true, credentials: "include" }
     );
 
     // responds with array of Leaderboard items
-    return response.data as LeaderboardItem[];
+    // PaginatedResultDTO adds one more "data"
+    return response.data.data as LeaderboardEntryDTO[];
+  }
+
+  /**
+   *
+   */
+  public async getUserLeaderboard(
+    userAddress: string,
+    periodFormat: string = "D"
+  ): Promise<LeaderboardEntryDTO> {
+    // configure statistics request
+    const format = this.getDateFormatForPeriod(periodFormat);
+    const params = [
+      `period=${moment(new Date()).format(format)}`,
+      `periodFormat=${periodFormat}`,
+    ];
+
+    const response = await this.handler.call(
+      this.getUrl(`statistics/leaderboards/${userAddress}?${params.join("&")}`),
+      "GET",
+      {}, // no-body
+      { withCredentials: true, credentials: "include" }
+    );
+
+    console.log("Service gets: ", response.data);
+
+    // responds with array of Leaderboard items
+    // PaginatedResultDTO adds one more "data"
+    return response.data as LeaderboardEntryDTO;
   }
 }

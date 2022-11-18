@@ -61,4 +61,27 @@ export abstract class BackendService {
   protected getUrl(endpoint: string): string {
     return `${this.baseUrl}/${endpoint.replace("^/", "")}`;
   }
+
+  /**
+   *
+   */
+  protected getDateFormatForPeriod(periodFormat: string): string {
+    // default is daily
+    let dateFormat = "YYYYMMDD";
+
+    // monthly
+    if (periodFormat === "M") {
+      dateFormat = "YYYYMM";
+    }
+    // yearly
+    else if (periodFormat === "Y") {
+      dateFormat = "YYYY";
+    }
+    // weekly
+    else if (periodFormat === "W") {
+      dateFormat = "YYYY-W";
+    }
+
+    return dateFormat;
+  }
 }

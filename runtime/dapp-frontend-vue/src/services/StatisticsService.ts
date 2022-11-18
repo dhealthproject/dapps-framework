@@ -7,12 +7,15 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
+import moment from "moment";
 
 // internal dependencies
 import { BackendService } from "./BackendService";
 import { HttpRequestHandler } from "@/kernel/remote/HttpRequestHandler";
+import { UserStatisticsDTO } from "@/models/UserStatisticsDTO";
 
-export class StatsService extends BackendService {
+export class StatisticsService extends BackendService {
   /**
    * This property sets the request handler used for the implemented
    * requests. This handler forwards the execution of the request to
@@ -31,9 +34,15 @@ export class StatsService extends BackendService {
    * @param params
    * @returns
    */
-  public async getStats(address: string) {
-    return await this.handler.call(
-      this.getUrl(`statistics/${address}`),
+  public async getUserStatistics(
+    address: string
+  ): Promise<UserStatisticsDTO[]> {
+    // configure statistics request
+    const params = [`period=${moment(new Date()).format("YYYYMMDD")}`];
+
+    // execute request
+    const response = await this.handler.call(
+      this.getUrl(`statistics/users/${address}?${params.join("&")}`),
       "GET",
       undefined, // no-body
       {
@@ -42,5 +51,9 @@ export class StatsService extends BackendService {
       },
       {} // no-headers
     );
+
+    // returns an array of statistics entries
+    // PaginatedResultDTO adds one more "data"
+    return response.data.data as UserStatisticsDTO[];
   }
 }

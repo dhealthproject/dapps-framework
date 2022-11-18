@@ -43,7 +43,7 @@
         <TopActivities :items="data.activities" />
       </div>
       <div class="dapp-leaderboard-item__amount text-right">
-        <span v-html="`$${data.assets} FIT`" />
+        <span v-html="`$${data.amount} FIT`" />
       </div>
     </div>
     <div v-else class="dapp-leaderboard-item__custom">

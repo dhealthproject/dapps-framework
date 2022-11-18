@@ -156,8 +156,7 @@ export const AuthModule = {
       try {
         const handler = new AuthService();
         const authChallenge: string = context.getters["getChallenge"];
-
-        const refCode = localStorage.getItem("refCode");
+        const refCode: string = context.getters["getRefCode"];
 
         // try authenticating the user and requesting an access token
         // this will only succeed provided that the end-user attached

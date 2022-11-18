@@ -122,7 +122,7 @@ export const AppModule = {
         await context.dispatch("fetchLanguage");
 
         // loads available social networks for share
-        await context.dispatch("fetchSocialItems");
+        await context.dispatch("fetchSocialPlatforms");
 
         // initialization is done after setup
         context.commit("setInitialized", true);
