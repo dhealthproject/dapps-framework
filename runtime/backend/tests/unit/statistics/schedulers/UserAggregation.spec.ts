@@ -21,6 +21,7 @@ import { StatisticsDocument, StatisticsModel, StatisticsQuery } from "../../../.
 import { UserAggregation } from "../../../../src/statistics/schedulers/UserAggregation/UserAggregation";
 import { StatisticsService } from "../../../../src/statistics/services/StatisticsService";
 import { UserAggregationStateData } from "../../../../src/statistics/models/UserAggregationStateData";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 describe("statistics/UserAggregation", () => {
   let service: UserAggregation;
@@ -43,6 +44,7 @@ describe("statistics/UserAggregation", () => {
         StateService, // requirement from UserAggregation
         QueryService, // requirement from UserAggregation
         StatisticsService, // requirement from UserAggregation
+        EventEmitter2, // requirement from UserAggregation
         {
           provide: getModelToken("Statistics"),
           useValue: MockModel,

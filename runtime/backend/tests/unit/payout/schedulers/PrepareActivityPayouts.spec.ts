@@ -31,6 +31,7 @@ import { PayoutsService } from "../../../../src/payout/services/PayoutsService";
 import { SignerService } from "../../../../src/payout/services/SignerService";
 import { MathService } from "../../../../src/payout/services/MathService";
 import { PrepareActivityPayouts } from "../../../../src/payout/schedulers/ActivityPayouts/PrepareActivityPayouts";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 const dE = 1000000; // elevate factor
 const mockActivityRewardWalkFormulaFirst = Math.round(Math.floor(
@@ -127,6 +128,7 @@ describe("payout/PrepareActivityPayouts", () => {
         SignerService,
         MathService,
         Logger,
+        EventEmitter2,
         {
           provide: getModelToken("Payout"),
           useValue: MockModel,
