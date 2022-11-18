@@ -13,22 +13,17 @@
 <template>
   <div class="dapp-screen-dashboard">
     <div class="container">
-      <!-- <h1
-        v-if="getIntegrations && getIntegrations.length"
-        class="dapp-screen-dashboard__title"
-        v-html="`${formatAddress(storedUserAddress, 'dashes')} dashboard`"
-      /> -->
       <DividedScreen v-if="getIntegrations && getIntegrations.length" :gap="81">
         <template v-slot:left>
           <Card :title="$t('dashboard_key_stats_title')" :showBorders="false">
-            <template v-slot:content><Stats :data="stats" /></template
+            <template v-slot:content><Stats /></template
           ></Card>
           <Card :title="$t('dashboard_referral_title')" :showBorders="false">
             <template v-slot:content>
               <div class="referral-box">
                 <img :src="getImageUrl('coins.png')" alt="Invite friends" />
                 <p class="text-center" v-html="$t('dashboard_referral_text')" />
-                <ReferralInput :val="ref" />
+                <ReferralInput :val="refInput" />
                 <UiButton :accent="true" @click="shareModal">
                   <img :src="getImageUrl('share-icon.svg')" alt="share" />
                   <span>Share your link</span>

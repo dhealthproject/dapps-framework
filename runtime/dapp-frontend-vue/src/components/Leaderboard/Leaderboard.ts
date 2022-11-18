@@ -15,7 +15,7 @@ import { mapGetters } from "vuex";
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
-import { LeaderboardItem } from "@/services/LeaderboardService";
+import { LeaderboardEntryDTO } from "@/models/LeaderboardDTO";
 
 // child components
 import Tabs from "@/components/Tabs/Tabs.vue";
@@ -33,20 +33,13 @@ export interface LeaderboardTab {
   },
   computed: {
     ...mapGetters({
-      getLeaderboardItems: "leaderboard/getLeaderboardItems",
       currentUserAddress: "auth/getCurrentUserAddress",
+      leaderboardItems: "leaderboard/getLeaderboardItems",
+      userLeaderboardEntry: "leaderboard/getUserLeaderboardEntry",
     }),
   },
 })
 export default class Leaderboard extends MetaView {
-  /**
-   * Leader board items getter
-   *
-   * @access public
-   * @var {getLeaderboardItems}
-   */
-  public getLeaderboardItems: LeaderboardItem[] | undefined;
-
   /**
    * This property contains the authenticated user's dHealth Accountsd
    * Address. This field is populated using the Vuex Store after a
@@ -60,6 +53,32 @@ export default class Leaderboard extends MetaView {
    * @var {string}
    */
   public currentUserAddress!: string;
+
+  /**
+   * This property maps to the store getter `leaderboard/getLeaderboardItems`
+   * and contains values defined with {@link LeaderboardEntryDTO}.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {LeaderboardEntryDTO}
+   */
+  public leaderboardItems!: LeaderboardEntryDTO[];
+
+  /**
+   * This property maps to the store getter `leaderboard/getLeaderboardItems`
+   * and contains values defined with {@link LeaderboardEntryDTO}.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {LeaderboardEntryDTO}
+   */
+  public userLeaderboardEntry!: LeaderboardEntryDTO;
 
   /**
    * This property contains the translator `Translations` instance.
@@ -77,14 +96,6 @@ export default class Leaderboard extends MetaView {
   public $t!: any;
 
   /**
-   * Prop which defines list of items in leaderboard table
-   *
-   * @access readonly
-   * @var {items}
-   */
-  @Prop({ default: () => [] }) readonly items?: LeaderboardItem[];
-
-  /**
    * Prop which defines amount of items to be shown, defaults to 10.
    * <br /><br />
    * The `!`-operator tells TypeScript that this value is required
@@ -100,9 +111,6 @@ export default class Leaderboard extends MetaView {
    * This computed property defines the *leaderboard tabs* for the currently
    * authenticated player.
    *
-   * @deprecated This method must be deprecated in favor the actual list of
-   * tabs as defined by the UI team.
-   *
    * @access protected
    * @returns {LeaderboardTab[]}
    */
@@ -110,11 +118,11 @@ export default class Leaderboard extends MetaView {
     return [
       {
         title: this.$t("leaderboard_tab_week"),
-        value: "weekly",
+        value: "W",
       },
       {
         title: this.$t("leaderboard_tab_all"),
-        value: "all",
+        value: "D",
       },
     ];
   }
@@ -126,18 +134,18 @@ export default class Leaderboard extends MetaView {
    * @returns {LeaderboardItem}
    * @deprecated should be deleted after api will provide user for leaderboard
    */
-
-  get currentUserItem() {
-    return {
-      type: "leaderboard",
-      period: "weekly",
-      address: this.currentUserAddress,
-      position: 89,
-      assets: 300,
-      avatar: "avatar4.png",
-      trendline: "up",
-      activities: ["running", "cycling"],
-    };
+  get currentUserItem(): LeaderboardEntryDTO {
+    return this.userLeaderboardEntry;
+    // return {
+    //   type: "leaderboard",
+    //   period: "weekly",
+    //   address: this.currentUserAddress,
+    //   position: 89,
+    //   assets: 300,
+    //   avatar: "avatar4.png",
+    //   trendline: "up",
+    //   activities: ["running", "cycling"],
+    // };
   }
 
   /**
@@ -149,13 +157,13 @@ export default class Leaderboard extends MetaView {
    */
   get splicedItems() {
     if (
-      this.getLeaderboardItems &&
-      this.itemsToShow > this.getLeaderboardItems?.length
+      this.leaderboardItems &&
+      this.itemsToShow < this.leaderboardItems.length
     ) {
-      return this.getLeaderboardItems;
-    } else {
-      return this.getLeaderboardItems?.splice(0, this.itemsToShow);
+      return this.leaderboardItems.splice(0, this.itemsToShow);
     }
+
+    return this.leaderboardItems;
   }
 
   /**
@@ -163,22 +171,21 @@ export default class Leaderboard extends MetaView {
    */
   async onTabChange(data: LeaderboardTab) {
     await this.$store.dispatch("leaderboard/fetchLeaderboard", {
-      which: this.currentUserAddress,
-      period: data.value,
-      vm: this,
+      periodFormat: data.value,
     });
   }
 
   /**
    * @todo missing method documentation
    */
-  async mounted() {
-    if (!this.getLeaderboardItems?.length) {
-      await this.$store.dispatch("leaderboard/fetchLeaderboard", {
-        which: this.currentUserAddress,
-        period: "weekly",
-        vm: this,
-      });
-    }
+  public async mounted() {
+    await this.$store.dispatch("leaderboard/fetchLeaderboard", {
+      periodFormat: this.leaderBoardTabs[0].value,
+    });
+
+    await this.$store.dispatch("leaderboard/fetchUserLeaderboardEntry", {
+      address: this.currentUserAddress,
+      periodFormat: this.leaderBoardTabs[0].value,
+    });
   }
 }

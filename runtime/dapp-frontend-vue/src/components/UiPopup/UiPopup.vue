@@ -104,10 +104,7 @@
           class="social-item"
         >
           <a :href="item.shareUrl" target="_blank" rel="noopener">
-            <img
-              :src="getImageUrl(`${item.icon}`)"
-              :alt="item.title"
-            />
+            <img :src="getImageUrl(`${item.icon}`)" :alt="item.title" />
             <span class="title" v-html="item.title" />
           </a>
         </div>

@@ -16,7 +16,7 @@ import { AuthModule } from "./AuthModule";
 import { AwaitLock } from "../AwaitLock";
 import { OAuthModule } from "./OAuthModule";
 import { LeaderboardModule } from "./LeaderboardModule";
-import { StatsModule } from "./StatsModule";
+import { StatisticsModule } from "./StatisticsModule";
 
 /**
  * @todo missing interface documentation
@@ -55,7 +55,7 @@ export const createStore = () => {
       auth: AuthModule,
       oauth: OAuthModule,
       leaderboard: LeaderboardModule,
-      stats: StatsModule,
+      statistics: StatisticsModule,
     },
     state: (): RootState => ({
       initialized: false,

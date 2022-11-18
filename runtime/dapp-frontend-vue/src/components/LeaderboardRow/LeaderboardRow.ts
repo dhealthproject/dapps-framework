@@ -17,6 +17,7 @@ import { MetaView } from "@/views/MetaView";
 // child components
 import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.vue";
 import TopActivities from "../TopActivities/TopActivities.vue";
+import { LeaderboardEntryDTO } from "@/models/LeaderboardDTO";
 
 // style resource
 import "./LeaderboardRow.scss";
@@ -48,7 +49,7 @@ export default class LeaderboardRow extends MetaView {
    * @access public
    * @var {data}
    */
-  @Prop({ default: () => ({}) }) data?: any;
+  @Prop({ default: () => ({}) }) data?: LeaderboardEntryDTO;
 
   /**
    * Prop that defines if current leader board item is for existing user

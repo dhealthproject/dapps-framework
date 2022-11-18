@@ -9,11 +9,16 @@
  */
 
 // external dependencies
-import { Component, Prop } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
+import InlineSvg from "vue-inline-svg";
+import { mapGetters } from "vuex";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
-import InlineSvg from "vue-inline-svg";
+import {
+  UserDataAggregateDTO,
+  UserStatisticsDTO,
+} from "@/models/UserStatisticsDTO";
 
 // child components
 import TopActivities from "../TopActivities/TopActivities.vue";
@@ -23,20 +28,6 @@ import InfoTip from "../InfoTip/InfoTip.vue";
 // style resource
 import "./Stats.scss";
 
-export type KnownActivities = "running" | "swimming" | "cycling";
-
-export interface StatsConfig {
-  address: string;
-  period: string;
-  periodFormat: string;
-  totalPracticedMinutes: number;
-  totalEarned: number;
-  topActivities: KnownActivities[];
-  totalReferral: number;
-  levelReferral: number;
-  friendsReferred: number;
-}
-
 @Component({
   components: {
     InlineSvg,
@@ -44,15 +35,40 @@ export interface StatsConfig {
     ProgressBar,
     InfoTip,
   },
+  computed: {
+    ...mapGetters({
+      currentUserAddress: "auth/getCurrentUserAddress",
+      userStatistics: "statistics/getUserStatistics",
+    }),
+  },
 })
 export default class Stats extends MetaView {
   /**
-   * Quickstats component configuration
+   * This property contains the authenticated user's dHealth Account
+   * Address. This field is populated using the Vuex Store after a
+   * successful request to the backend API's `/me` endpoint.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
    *
-   * @access readonly
-   * @var {data}
+   * @access public
+   * @var {string}
    */
-  @Prop({ default: () => ({}) }) readonly data?: StatsConfig;
+  public currentUserAddress!: string;
+
+  /**
+   * This property contains the user statistics and maps to a store
+   * getter named `statistics/getUserStatistics`.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {UserStatisticsDTO}
+   */
+  public userStatistics!: UserStatisticsDTO;
 
   /**
    * This property contains the translator `Translations` instance.
@@ -69,20 +85,114 @@ export default class Stats extends MetaView {
    */
   public $t!: any;
 
-  get fourDigitsAmount() {
+  /**
+   * @todo missing property documentation
+   * @todo this could also be a Prop assigned by parent
+   */
+  protected numReferralSteps: number = 5;
+
+  /**
+   *
+   */
+  private hasRequested: boolean = false;
+
+  /**
+   * @todo missing method documentation
+   */
+  public get statisticsData(): UserDataAggregateDTO | undefined {
+    if (
+      !this.hasRequested ||
+      !this.userStatistics ||
+      !this.userStatistics.data
+    ) {
+      return undefined;
+    }
+
+    return this.userStatistics.data;
+  }
+
+  /**
+   * @todo missing method documentation
+   */
+  public get totalEarned(): number {
+    if (!this.hasRequested || undefined === this.statisticsData) {
+      return 0;
+    }
+
+    return this.statisticsData.totalEarned ?? 0;
+  }
+
+  /**
+   * @todo missing method documentation
+   */
+  public get totalPracticedMinutes(): number {
+    if (!this.hasRequested || undefined === this.statisticsData) {
+      return 0;
+    }
+
+    return this.statisticsData.totalPracticedMinutes ?? 0;
+  }
+
+  /**
+   * @todo missing method documentation
+   */
+  public get topActivities(): string[] {
+    if (!this.hasRequested || undefined === this.statisticsData) {
+      return [];
+    }
+
+    return this.statisticsData.topActivities ?? [];
+  }
+
+  /**
+   * @todo missing method documentation
+   */
+  public get totalReferral(): number {
+    if (!this.hasRequested || undefined === this.statisticsData) {
+      return 0;
+    }
+
+    return this.statisticsData.totalReferral ?? 0;
+  }
+
+  /**
+   * @todo missing method documentation
+   */
+  public get levelReferral(): number {
+    if (!this.hasRequested || undefined === this.statisticsData) {
+      return 0;
+    }
+
+    return this.statisticsData.levelReferral ?? 0;
+  }
+
+  /**
+   * @todo missing method documentation
+   */
+  public get fourDigitsAmount() {
     const stringedAmount = `${(
-      Math.round((this.data?.totalEarned ?? 0) * 100) / 100
+      Math.round(this.totalEarned * 100) / 100
     ).toFixed(4)}`;
 
-    const firstDigit = `${(
-      Math.round((this.data?.totalEarned ?? 0) * 100) / 100
-    ).toFixed(2)}`;
+    const firstDigit = `${(Math.round(this.totalEarned * 100) / 100).toFixed(
+      2
+    )}`;
     const secondDigit = stringedAmount.slice(-2);
 
     return [firstDigit, secondDigit];
   }
 
-  mounted() {
-    this.$store.dispatch("stats/initialize");
+  /**
+   * @todo missing method documentation
+   */
+  public async mounted() {
+    if (undefined !== this.currentUserAddress) {
+      await this.$store.dispatch(
+        "statistics/fetchStatistics",
+        this.currentUserAddress
+      );
+
+      this.hasRequested = true;
+    }
   }
 }

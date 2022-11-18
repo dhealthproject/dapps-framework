@@ -66,11 +66,17 @@ export default class UiPopup extends MetaView {
   protected formFields: any = {};
 
   /**
-   * This property represents state getter for social items received from the backend
+   * This property maps to the store getter `app/socialApps` and contains
+   * values defined with {@link SocialPlatformDTO}.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
    *
-   * @var {SocialPlatformDTO}
+   * @access public
+   * @var {SocialPlatformDTO[]}
    */
-  protected fetchedSocialPlatforms?: SocialPlatformDTO[];
+  public fetchedSocialPlatforms!: SocialPlatformDTO[];
 
   /**
    * This property represents
@@ -175,7 +181,7 @@ export default class UiPopup extends MetaView {
           shareUrl: this.refCode
             ? item.shareUrl.replace("%REFERRAL_CODE%", this.refCode)
             : item.shareUrl.replace("/%REFERRAL_CODE%", ""),
-        }),
+        })
       );
     }
   }

@@ -66,10 +66,8 @@ export default class InfoTip extends MetaView {
 
       if (left > el.offsetWidth) {
         this.tipPosition = "right";
-        console.log("right");
       } else {
         this.tipPosition = "left";
-        console.log("left");
       }
     }
   }

@@ -19,8 +19,7 @@ import {
   CarouselItem,
   CarouselConfig,
 } from "@/views/Dashboard/components/EventsCarousel";
-import { StatsConfig } from "@/components/Stats/Stats";
-import { SocialItem } from "@/state";
+import { SocialPlatformDTO } from "@/models/SocialPlatformDTO";
 
 // child components
 import Card from "@/components/Card/Card.vue";
@@ -31,7 +30,7 @@ import DirectionTriangle from "@/components/DirectionTriangle/DirectionTriangle.
 import Tabs from "@/components/Tabs/Tabs.vue";
 import GenericList from "@/components/GenericList/GenericList.vue";
 import EventsCarousel from "@/views/Dashboard/components/EventsCarousel.vue";
-import Leaderboard from "@/views/Dashboard/components/Leaderboard.vue";
+import Leaderboard from "@/components/Leaderboard/Leaderboard.vue";
 import Stats from "@/components/Stats/Stats.vue";
 import ReferralInput from "@/components/ReferralInput/ReferralInput.vue";
 
@@ -75,9 +74,8 @@ export interface StatisticsTabItem {
       hasSnackBar: "app/hasSnackBar",
       currentUserAddress: "auth/getCurrentUserAddress",
       getIntegrations: "oauth/getIntegrations",
-      stats: "stats/getConfiguration",
       refCode: "auth/getRefCode",
-      fetchedSocialItems: "app/socialItems",
+      fetchedSocialPlatforms: "app/socialApps",
     }),
   },
 })
@@ -97,21 +95,17 @@ export default class Dashboard extends MetaView {
   public currentUserAddress!: string;
 
   /**
-   * This property represents state getter for social items received from the backend
-   *
-   * @var {ModalConfig}
-   */
-  protected fetchedSocialItems?: SocialItem[];
-
-  /**
-   * This property contains the authenticated user's dHealth Account
-   * Address. This field is getting populated on mounted hook. Used in title,
-   * to prevent displaying undefined instead of user address
+   * This property maps to the store getter `app/socialApps` and contains
+   * values defined with {@link SocialPlatformDTO}.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
    *
    * @access public
-   * @var {string}
+   * @var {SocialPlatformDTO[]}
    */
-  public storedUserAddress = "";
+  public fetchedSocialPlatforms!: SocialPlatformDTO[];
 
   /**
    * This property contains the translator `Translations` instance.
@@ -129,15 +123,6 @@ export default class Dashboard extends MetaView {
   public $t!: any;
 
   /**
-   * This property represents
-   * getRefCode store getter, value of refCode is getting set on mounted() hook into ref property
-   *
-   * @access public
-   * @var {string}
-   */
-  public refCode?: string;
-
-  /**
    * This property contains the list of integrations for current user.
    * This field is populated using the Vuex Store after a successful
    * setup of the oauth module.
@@ -152,24 +137,25 @@ export default class Dashboard extends MetaView {
   public getIntegrations!: string[];
 
   /**
-   * This property contains configuration object
-   * for Stats component :data prop
-   * setup of the stats module.
+   * This property contains the value as set in the store under
+   * `auth/userRefCode`.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
    *
    * @access public
-   * @var {StatsConfig}
-   */
-  public stats!: StatsConfig;
-
-  /**
-   * This property contains refcode,
-   * This property contains refCode,
-   * that will be set to refCode input on the dashboard
-   * and copied to clipboard
-   *
    * @var {string}
    */
-  public ref?: string | undefined = "";
+  public refCode!: string;
+
+  /**
+   * This property contains the referral code *input value*.
+   *
+   * @access protected
+   * @var {string}
+   */
+  protected refInput?: string | undefined = "";
 
   /**
    * This computed property defines the configuration of the `vueper`
@@ -374,7 +360,7 @@ export default class Dashboard extends MetaView {
     if (state && code && scope) {
       this.$root.$emit("toast", {
         title: "Great job!",
-        description: "We’ve integrated your account",
+        description: "We've integrated your account",
         state: "success",
         icon: "icons/like-icon.svg",
         dismissTimeout: 7000,
@@ -384,7 +370,7 @@ export default class Dashboard extends MetaView {
       await this.$router.replace({ name: "app.dashboard" });
     }
 
-    this.ref = this.refCode;
+    this.refInput = this.refCode;
   }
 
   /**
@@ -436,22 +422,16 @@ export default class Dashboard extends MetaView {
     await this.$store.dispatch("oauth/callback", this.currentUserAddress);
   }
 
+  /**
+   * @todo missing method documentation
+   */
   protected shareModal() {
-    const data = {
-      title: this.fetchedSocialItems ? this.fetchedSocialItems[0].title : "",
-      text: "join me on Elevate",
-      url: this.fetchedSocialItems ? this.fetchedSocialItems[0].url : "",
-    };
-    try {
-      navigator.share(data);
-    } catch (err) {
-      console.log(err);
-      this.$root.$emit("modal", {
-        type: "share",
-        overlayColor: "rgba(0, 0, 0, .50)",
-        width: 518,
-        modalBg: "#FFFFFF",
-      });
-    }
+    // display a custom modal popup
+    this.$root.$emit("modal", {
+      type: "share",
+      overlayColor: "rgba(0, 0, 0, .50)",
+      width: 518,
+      modalBg: "#FFFFFF",
+    });
   }
 }

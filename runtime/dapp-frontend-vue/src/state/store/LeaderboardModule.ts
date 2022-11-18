@@ -8,35 +8,35 @@
  * @license     LGPL-3.0
  */
 // external dependencies
+import Vue from "vue";
 import { ActionContext } from "vuex";
 
 // internal dependencies
 import { RootState } from "./Store";
-import {
-  LeaderboardItem,
-  LeaderboardService,
-} from "../../services/LeaderboardService";
+import { AwaitLock } from "../AwaitLock";
+import { LeaderboardEntryDTO } from "@/models/LeaderboardDTO";
+import { LeaderboardService } from "../../services/LeaderboardService";
+
+// creates an "async"-lock for state of pending initialization
+// this will be kept *locally* to this store module implementation
+const Lock = AwaitLock.create();
 
 /**
  * @todo missing interface documentation
  */
-export interface LeaderboardState {
-  leaderboardItems: LeaderboardItem[];
+export interface LeaderboardModuleState {
+  initialized: boolean;
+  leaderboardItems: LeaderboardEntryDTO[];
+  userLeaderboardEntry: LeaderboardEntryDTO;
 }
 
 /**
  * @todo missing interface documentation
  */
-export interface LeaderboardPayload {
-  which: string;
-  period: string;
-  vm?: any; // for a calling $root.$emit in case of error
-}
-
-/**
- * @todo missing interface documentation
- */
-export type LeaderboardContext = ActionContext<LeaderboardState, RootState>;
+export type LeaderboardContext = ActionContext<
+  LeaderboardModuleState,
+  RootState
+>;
 
 /**
  * @todo missing interface documentation
@@ -46,50 +46,109 @@ export const LeaderboardModule = {
   // module name must be included when calling a
   // mutation, getter or action, i.e. "app/getName".
   namespaced: true,
-  state: (): LeaderboardState => ({
+  state: (): LeaderboardModuleState => ({
+    initialized: false,
     leaderboardItems: [],
+    userLeaderboardEntry: {} as LeaderboardEntryDTO,
   }),
 
   getters: {
-    getLeaderboardItems: (state: LeaderboardState): LeaderboardItem[] =>
-      state.leaderboardItems,
+    getLeaderboardItems: (
+      state: LeaderboardModuleState
+    ): LeaderboardEntryDTO[] => state.leaderboardItems,
+
+    getUserLeaderboardEntry: (
+      state: LeaderboardModuleState
+    ): LeaderboardEntryDTO => state.userLeaderboardEntry,
   },
 
   mutations: {
     /**
      *
      */
-    setLeaderboardItems: (
-      state: LeaderboardState,
-      leaderboardItems: LeaderboardItem[]
-    ): any[] => (state.leaderboardItems = leaderboardItems),
+    setInitialized: (
+      state: LeaderboardModuleState,
+      payload: boolean
+    ): boolean => (state.initialized = payload),
 
-    addLeaderboardItem: (state: LeaderboardState, item: LeaderboardItem) =>
-      state.leaderboardItems.push(item),
+    /**
+     *
+     */
+    setLeaderboardItems: (
+      state: LeaderboardModuleState,
+      leaderboardItems: LeaderboardEntryDTO[]
+    ): any[] => Vue.set(state, "leaderboardItems", leaderboardItems),
+
+    /**
+     *
+     */
+    addLeaderboardItem: (
+      state: LeaderboardModuleState,
+      item: LeaderboardEntryDTO
+    ) => state.leaderboardItems.push(item),
+
+    /**
+     *
+     */
+    setUserLeaderboardEntry: (
+      state: LeaderboardModuleState,
+      leaderboardEntry: LeaderboardEntryDTO
+    ): LeaderboardEntryDTO =>
+      Vue.set(state, "userLeaderboardEntry", leaderboardEntry),
   },
 
   actions: {
     /**
      *
      */
+    async initialize(context: LeaderboardContext): Promise<boolean> {
+      const callback = () => {
+        // initialization is done after fetch
+        context.commit("setInitialized", true);
+      };
+
+      // acquire async lock until initialized
+      await Lock.initialize(callback, context);
+      return true;
+    },
+
+    /**
+     *
+     */
     async fetchLeaderboard(
       context: LeaderboardContext,
-      payload: LeaderboardPayload
+      payload: { periodFormat: string }
     ): Promise<void> {
-      const handler = new LeaderboardService();
-      let items: LeaderboardItem[] = [];
-
       try {
-        items = await handler.getLeaderboard(payload.which, payload.period);
+        const handler = new LeaderboardService();
+        const items: LeaderboardEntryDTO[] = await handler.getLeaderboard(
+          payload.periodFormat
+        );
+
         context.commit("setLeaderboardItems", items);
       } catch (err) {
         console.log("fetchLeaderboard", err);
-        payload.vm.$root.$emit("toast", {
-          state: "error",
-          title: "Error appeared",
-          description: "something went wrong",
-          dismissTimeout: 10000,
-        });
+      }
+    },
+
+    /**
+     *
+     */
+    async fetchUserLeaderboardEntry(
+      context: LeaderboardContext,
+      payload: { address: string; periodFormat: string }
+    ): Promise<void> {
+      try {
+        const handler = new LeaderboardService();
+        const entry: LeaderboardEntryDTO = await handler.getUserLeaderboard(
+          payload.address,
+          payload.periodFormat
+        );
+
+        console.log("Store gets: ", entry);
+        context.commit("setUserLeaderboardEntry", entry);
+      } catch (err) {
+        console.log("fetchLeaderboard", err);
       }
     },
   },

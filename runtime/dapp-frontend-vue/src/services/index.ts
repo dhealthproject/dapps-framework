@@ -12,4 +12,4 @@ export * from "./AuthService";
 export * from "./IntegrationsService";
 export * from "./LeaderboardService";
 export * from "./SocialService";
-export * from "./StatsService";
+export * from "./StatisticsService";
