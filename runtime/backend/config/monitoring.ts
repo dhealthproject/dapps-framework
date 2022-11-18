@@ -43,12 +43,12 @@ export default () => ({
    * A storage option field. This specifies logging transport options
    * that are enabled and to be applied.
    *
-   * @example `["console", "filesystem"]`
+   * @example `[{type: "console", level: "debug"}]`
    * @var {Transport[]}
    */
   storage: [
-    StorageOptions.CONSOLE,
-    StorageOptions.FILE_SYSTEM
+    { type: StorageOptions.CONSOLE, level: "debug" },
+    { type: StorageOptions.FILE_SYSTEM, level: "info" },
   ],
 
   /**
@@ -60,44 +60,21 @@ export default () => ({
    * <br /><br />
    * E.g. printing logs at level `"debug"` will automatically include logs at
    * level `"warn"` and `"error"`.
+   * <br /><br />
+   * Logging levels conform to RFC5424: severity of all levels is assumed to
+   * be numerically ascending from most important to least important. When you
+   * set log level as info, you get all data above from info like error, warn
+   * and info.
    *
-   * @example `{ none: 0, error: 1, warn: 2, debug: 4, info: 8 }`
+   * @example `{ error: 0, warn: 1, info: 2, debug: 3 }`
    * @var {Record<string, number>}
    */
   logLevels: {
-    none: 0,
-    error: 1,
-    warn: 2,
-    debug: 4,
-    info: 8,
+    error: 0,
+    warn: 1,
+    info: 2,
+    debug: 3,
   },
-
-  /**
-   * A log print level specification. This specifies at which level of
-   * the application logs should they be displayed and printed.
-   *
-   * @example `"debug"`
-   * @var {string}
-   */
-  logPrintLevel: "info",
-
-  /**
-   * A log persistence level specification. This specifies at which level
-   * of the application logs should they be persisted into the database.
-   *
-   * @example `"warn"`
-   * @var {string}
-   */
-  logPersistLevel: "error",
-
-  /**
-   * A log persistence collection specification. This specifies the
-   * database collection that will be used to persist logs.
-   *
-   * @example `"system-logs"`
-   * @var {string}
-   */
-  logPersistCollection: "system-logs",
 
   /**
    * A log directory path. This specifies the path to the directory which
@@ -106,7 +83,7 @@ export default () => ({
    * @example `"/example/directory/"`
    * @var {string}
    */
-  logDirectoryPath: "./logs/",
+  logDirectoryPath: process.env.LOGS_DIRECTORY_PATH ?? "/logs",
 
   /**
    * The log max file size limit. This specifies the max size in which logging
@@ -115,8 +92,8 @@ export default () => ({
    * Note that this value is in **bytes**. That means a max file size of `50kB`
    * will have value `50000`.
    *
-   * @example `256000`
+   * @example `5000000`
    * @var {number}
    */
-  logMaxFileSize: 256000,
+  logMaxFileSize: 25 * 1024 * 1024, // 25 Mb
 });

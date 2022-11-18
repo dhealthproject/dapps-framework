@@ -13,7 +13,7 @@ import { SignedTransaction, TransferTransaction } from "@dhealth/sdk";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Model } from "mongoose";
-import dayjs from "dayjs";
+import moment from "moment";
 
 // internal dependencies
 // common scope
@@ -288,7 +288,7 @@ export abstract class PreparePayouts<
       const contract: EarnContract = new EarnContract(
         {
           dappIdentifier: this.dappIdentifier,
-          date: dayjs(subjectDate).format("YYYY-MM-DD"), //XXX exact date?
+          date: moment(subjectDate).format("YYYY-MM-DD"), //XXX exact date?
           asset: mosaicId,
           amount: theAmount,
         },
@@ -305,6 +305,12 @@ export abstract class PreparePayouts<
       // (3) SIGN the transaction (make it storage-secure)
       // after this, the transaction *cannot be modified* anymore
       const signedTransfer = this.signerService.signTransaction(transfer);
+
+      // print INFO log for every transaction with tokens
+      this.infoLog(
+        `Signed a payout with assets: ` +
+          `${theAmount} ${mosaicId} (${signedTransfer.hash})`,
+      );
 
       // creates a `payouts` document that will be used
       // in follow-up steps (broadcast + verify)

@@ -258,10 +258,8 @@ export abstract class BaseCommand extends StatefulModule {
     // tracks ending moment
     const endTime = new Date().getTime();
 
-    // if not quiet, display info about total duration
-    if (!options.quiet) {
-      this.debugLog(`Runtime duration: ${(endTime - startTime) / 1000}s`);
-    }
+    // display info about total duration
+    this.infoLog(`Runtime duration: ${(endTime - startTime) / 1000}s`);
 
     // no-return (void)
   }

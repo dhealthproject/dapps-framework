@@ -16,6 +16,7 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
 // internal dependencies
 import { QueryModule } from "../../common/modules/QueryModule";
 import { AuthModule } from "../../common/modules/AuthModule";
+import { LogModule } from "../../common/modules/LogModule";
 import {
   AccountIntegration,
   AccountIntegrationSchema,
@@ -54,6 +55,7 @@ import { Activity, ActivitySchema } from "../models/ActivitySchema";
     AuthModule, // requirement from WebHooksService
     ActivitiesModule, // requirement from WebHooksService
     QueryModule, // requirement from WebHooksService
+    LogModule, // requirement from WebHooksService
   ],
   controllers: [WebHooksController],
   providers: [WebHooksService],

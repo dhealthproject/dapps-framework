@@ -81,6 +81,7 @@ export class LogService implements LoggerService {
     @Optional()
     protected context?: string,
   ) {
+    // @todo should use AppConfiguration
     this.dappConfig = dappConfigLoader();
     this.monitoringConfig = monitoringConfigLoader();
     this.logger = WinstonModule.createLogger({
@@ -116,64 +117,117 @@ export class LogService implements LoggerService {
    */
   private createTransports(): WinstonTransport[] {
     const transports: winston.transport[] = [];
-    // persist error logs
-    transports.push(
-      new winston.transports.MongoDB({
-        level: this.monitoringConfig.logPersistLevel,
-        //mongo database connection link
-        db: `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`,
-        options: {
-          useUnifiedTopology: true,
-        },
-        // A collection to save json formatted logs
-        collection: this.monitoringConfig.logPersistCollection,
-        label: this.context,
-      }),
-    );
+
+    // database-log-persistence DISABLED for now
+    // @todo configure "database" as a 3rd storage option.
+    // *always* persist logs in database if they are
+    // marked with the value of `config.logPersistLevel`
+    // transports.push(
+    //   new winston.transports.MongoDB({
+    //     level: this.monitoringConfig.logPersistLevel,
+    //     // mongo database connection link
+    //     // @todo use AppConfiguration.getDatabaseModule
+    //     db: `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`,
+    //     options: {
+    //       useUnifiedTopology: true,
+    //     },
+    //     // A collection to save json formatted logs
+    //     collection: this.monitoringConfig.logPersistCollection,
+    //     label: this.context,
+    //   }),
+    // );
+
+    // uses volume/global /logs folder
+    const logFile = `${this.dappConfig.dappName}.log`;
+    const errFile = `${this.dappConfig.dappName}-error.log`;
+    const logPath = this.monitoringConfig.logDirectoryPath;
+
     // get storage options from config
-    const storage = this.monitoringConfig.storage;
-    // for each existing value create a WinstonTransport instance
-    storage.forEach((option: string) => {
-      // common config
-      const winstonConfig: Record<string, object | string | number> = {
-        level: this.monitoringConfig.logPrintLevel,
-      };
-      if (option === StorageOptions.CONSOLE) {
-        // if storage is "console"
-        transports.push(new winston.transports.Console(winstonConfig));
-      } else if (option === StorageOptions.FILE_SYSTEM) {
-        // if storage is "filesystem"
-        // set filename
-        winstonConfig.filename = path.join(
-          this.monitoringConfig.logDirectoryPath,
-          `${this.dappConfig.dappName}.lo%DATE%`,
-        );
-        // get and set log rotation date pattern
-        winstonConfig.datePattern = "g";
-        // set max file size
-        winstonConfig.maxSize = this.monitoringConfig.logMaxFileSize;
-        const transport = new winston.transports.DailyRotateFile(winstonConfig);
-        // add to result list
-        transports.push(transport);
-      }
-    });
+    const storages = this.monitoringConfig.storage;
+    const storageTypes = storages.map((s) => s.type);
+
+    // do we display logs in the console?
+    if (storageTypes.includes(StorageOptions.CONSOLE)) {
+      // read console logging options
+      const options = storages.find((s) => s.type === StorageOptions.CONSOLE);
+
+      // configure console transport
+      transports.push(
+        new winston.transports.Console({
+          level: options.level,
+        }),
+      );
+    }
+
+    // do we persist logs in /logs?
+    if (storageTypes.includes(StorageOptions.FILE_SYSTEM)) {
+      // read filesystem logging options
+      const options = storages.find(
+        (s) => s.type === StorageOptions.FILE_SYSTEM,
+      );
+
+      transports.push(
+        // filesystem logs use daily rotation with
+        // a symbolic link at `logs/ELEVATE.log`
+        new winston.transports.DailyRotateFile({
+          level: options.level,
+          maxSize: this.monitoringConfig.logMaxFileSize,
+          // note that we *do not* use date-based rotation
+          // and use `g` here so that the filename will
+          // use `.log` and not display a date in filename
+          datePattern: "YYYYMMDD",
+          // filename is built up from configuration
+          // and replaces "%DATE%" which `g` from above
+          // e.g. /logs/ELEVATE.log-20221117
+          dirname: logPath,
+          filename: `${logFile}-%DATE%`,
+          // we also want the runtime to create a
+          // symbolic link that can be "tail'd"
+          createSymlink: true,
+          symlinkName: `${logFile}`,
+        }),
+        // error logs are additionally stored in their
+        // own `ELEVATE-error.log` file for further use
+        new winston.transports.File({
+          level: "error",
+          dirname: logPath,
+          filename: errFile,
+        }),
+      );
+    }
+
     return transports;
   }
 
   /**
-   * Write a 'log' level log.
+   * Write a 'log' level log. This method prints a log
+   * message with level `"info"`.
    *
    * @access public
    * @param {string} message The log message.
    * @param {string} context The log context.
    * @return {void}
    */
-  log(message: string, context?: string): void {
-    this.logger.log(message, context);
+  log(message: string, ...optionalParams: any[]): void {
+    this.logger.log(message, ...optionalParams);
   }
 
   /**
-   * Write an 'error' level log.
+   * Write a 'debug' level log. This method prints a log
+   * message with level `"debug"`.
+   *
+   * @access public
+   * @param {string} message The debug message.
+   * @param {string} context The debug context.
+   * @return {void}
+   */
+  debug(message: string, ...optionalParams: any[]): void {
+    this.logger.debug(message, ...optionalParams);
+  }
+
+  /**
+   * Write an 'error' level log. This method prints a log
+   * message with level `"error"`.
    *
    * @access public
    * @param {string} message  The error message.
@@ -181,44 +235,34 @@ export class LogService implements LoggerService {
    * @param {string} context  The error context.
    * @return {void}
    */
-  error(message: string, trace?: string, context?: string): void {
-    this.logger.error(message, trace, context);
+  error(message: string, ...optionalParams: any[]): void {
+    this.logger.error(message, ...optionalParams);
   }
 
   /**
-   * Write a 'warn' level log.
+   * Write a 'warn' level log. This method prints a log
+   * message with level `"warn"`.
    *
    * @access public
    * @param {string} message The warn message.
    * @param {string} context The warn context.
    * @return {void}
    */
-  warn(message: string, context?: string): void {
-    this.logger.warn(message, context);
+  warn(message: string, ...optionalParams: any[]): void {
+    this.logger.warn(message, ...optionalParams);
   }
 
   /**
-   * Write a 'debug' level log.
-   *
-   * @access public
-   * @param {string} message The debug message.
-   * @param {string} context The debug context.
-   * @return {void}
-   */
-  debug(message: string, context?: string): void {
-    this.logger.debug(message, context);
-  }
-
-  /**
-   * Write a 'verbose' level log.
+   * Write a 'verbose' level log. This method prints a log
+   * message with level `"debug"`.
    *
    * @access public
    * @param {string} message The verbose message.
    * @param {string} context The verbose context.
    * @return {void}
    */
-  verbose(message: string, context?: string): void {
-    this.logger.verbose(message, context);
+  verbose(message: string, ...optionalParams: any[]): void {
+    this.logger.verbose(message, ...optionalParams);
   }
 
   /**

@@ -9,7 +9,7 @@
  */
 // external dependencies
 import { ObjectLiteral } from "@dhealth/contracts";
-import dayjs from "dayjs";
+import moment from "moment";
 
 // internal dependencies
 import { OAuthEntity, OAuthEntityType } from "../OAuthEntity";
@@ -250,7 +250,7 @@ export class ActivityDataDTO extends BasicRemoteDTO {
     const activity = new ActivityDataDTO();
     activity.name = data.name;
     activity.sport = data.sport_type;
-    activity.startedAt = dayjs(data.start_date).toDate().valueOf();
+    activity.startedAt = moment(data.start_date).toDate().valueOf();
     activity.timezone = data.timezone;
     activity.startLocation = data.start_latlng;
     activity.endLocation = data.end_latlng;

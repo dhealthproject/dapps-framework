@@ -63,7 +63,6 @@ namespace HTTPResponses {
   export const UserStatisticsSearchResponseSchema = {
     schema: {
       allOf: [
-        { $ref: getSchemaPath(PaginatedResultDTO) },
         {
           properties: {
             data: {
@@ -175,14 +174,14 @@ export class LeaderboardsController {
   @ApiOperation({
     summary: "Get an authenticated user's owned leaderboard information",
     description:
-      "Request an authenticated user's owned leaderboard entries. This request will only succeed given a valid and secure server cookie or an access token in the bearer authorization header of the request.",
+      "Request an authenticated user's owned leaderboard entry. This request will only succeed given a valid and secure server cookie or an access token in the bearer authorization header of the request.",
   })
-  @ApiExtraModels(StatisticsDTO, PaginatedResultDTO)
+  @ApiExtraModels(StatisticsDTO)
   @ApiOkResponse(HTTPResponses.UserStatisticsSearchResponseSchema)
   protected async findByUser(
     @NestRequest() req: Request,
-    @Query() query: any,
-  ): Promise<PaginatedResultDTO<StatisticsDTO>> {
+    @Query() query: StatisticsQuery,
+  ): Promise<StatisticsDTO> {
     // read and decode access token, then find account in database
     const account: AccountDocument = await this.authService.getAccount(req);
 
@@ -204,12 +203,19 @@ export class LeaderboardsController {
     // reads leaderboard statistics from database
     const data = await this.statisticsService.find(safeQuery);
 
-    // wraps for transport using StatisticsDTO
-    return new PaginatedResultDTO<StatisticsDTO>(
-      data.data.map((d: StatisticsDocument) =>
-        Statistics.fillDTO(d, new StatisticsDTO()),
-      ),
-      data.pagination,
+    if (data && data.data && data.data.length > 0) {
+      return Statistics.fillDTO(data.data[0], new StatisticsDTO());
+    }
+
+    return Statistics.fillDTO(
+      {
+        address: account.address,
+        type: "leaderboard",
+        ...rest,
+        position: 0,
+        amount: 0,
+      } as StatisticsDocument,
+      new StatisticsDTO(),
     );
   }
 }

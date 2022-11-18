@@ -25,12 +25,18 @@ import dappConfigLoader from "../../config/dapp";
  * @returns {Promise<void>}
  */
 async function bootstrap(): Promise<void> {
+  // read configuration
+  const dappConfig: DappConfig = dappConfigLoader();
+
+  // create a logger instance
+  const logger = new LogService(dappConfig.dappName + "/worker");
+
   // create an instance of the scheduler with imported configs
   NestFactory.createApplicationContext(
     WorkerModule.register({
-      ...dappConfigLoader(),
+      ...dappConfig,
     } as DappConfig),
-    { logger: new LogService("SCHEDULERS") },
+    { logger },
   );
 }
 

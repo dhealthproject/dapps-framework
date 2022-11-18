@@ -111,7 +111,7 @@ export class UsersController {
   @ApiOkResponse(HTTPResponses.UserStatisticsSearchResponseSchema)
   protected async findByUser(
     @NestRequest() req: Request,
-    @Query() query: any,
+    @Query() query: StatisticsQuery,
   ): Promise<PaginatedResultDTO<StatisticsDTO>> {
     // read and decode access token, then find account in database
     const account: AccountDocument = await this.authService.getAccount(req);

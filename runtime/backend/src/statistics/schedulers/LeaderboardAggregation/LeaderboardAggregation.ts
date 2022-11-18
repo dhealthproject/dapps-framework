@@ -388,7 +388,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
     const scoreFields = this.config.fields;
 
     const group: Record<string, any> = {
-      _id: "$userAddress",
+      _id: "$address",
     };
     const sort: Record<string, any> = {};
     scoreFields.forEach((field) => {

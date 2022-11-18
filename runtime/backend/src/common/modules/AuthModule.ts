@@ -18,6 +18,7 @@ import { AccountsModule } from "../modules/AccountsModule";
 import { ChallengesModule } from "../modules/ChallengesModule";
 import { NetworkModule } from "../modules/NetworkModule";
 import { QueryModule } from "../modules/QueryModule";
+import { LogModule } from "../modules/LogModule";
 import { AuthService } from "../services/AuthService";
 import { AuthStrategy } from "../traits/AuthStrategy";
 import { AuthController } from "../routes/AuthController";
@@ -53,6 +54,7 @@ const auth = securityConfigLoader().auth;
     AccountsModule,
     ChallengesModule,
     PassportModule,
+    LogModule,
     JwtModule.register({
       // defines the secret token for *verifying* JwT tokens
       secret: auth.secret,

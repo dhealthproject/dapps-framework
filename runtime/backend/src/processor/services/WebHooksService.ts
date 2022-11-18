@@ -11,13 +11,15 @@
 import { Injectable, LoggerService } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
-import dayjs from "dayjs";
+import moment from "moment";
 
 // internal dependencies
 import { OAuthService } from "../../common/services/OAuthService";
 import { OAuthEntityType } from "../../common/drivers/OAuthEntity";
 import { StravaWebHookEventRequest } from "../../common/drivers/strava/StravaWebHookEventRequest";
 import { QueryService } from "../../common/services/QueryService";
+import { LogService } from "../../common/services/LogService";
+import { AppConfiguration } from "../../AppConfiguration";
 import {
   Activity,
   ActivityDocument,
@@ -27,7 +29,6 @@ import {
 import { ActivityDataDocument } from "../models/ActivityDataSchema";
 import { ProcessingState } from "../models/ProcessingStatusDTO";
 import { ActivitiesService } from "./ActivitiesService";
-import { LogService } from "../../common/services/LogService";
 
 // emitted events
 import { OnActivityCreated } from "../events/OnActivityCreated";
@@ -132,7 +133,7 @@ export class WebHooksService {
       // a Typescript `Date` is fundamentally specified as the number of
       // *milliseconds* that have elapsed since the starting epoch.
       const eventTime = new Date(event_time * 1000);
-      const eventDate = dayjs(eventTime).format("YYYYMMDD");
+      const eventDate = moment(eventTime).format("YYYYMMDD");
 
       // count the activities of this athlete up to this one *today*
       const countToday: number = await this.queryService.count(
@@ -173,6 +174,10 @@ export class WebHooksService {
         "processor.activity.created",
         OnActivityCreated.create(activitySlug),
       );
+
+      // print INFO for created activities
+      const logger = new LogService(AppConfiguration.dappName);
+      logger.log(`Saved incoming event from data provider "${providerName}"`);
 
       // returns the created `ActivityDocument`
       return activity;
@@ -272,6 +277,12 @@ export class WebHooksService {
       this.eventEmitter.emit(
         "processor.activity.downloaded",
         OnActivityDownloaded.create(activity.slug),
+      );
+
+      // print INFO for created activities
+      const logger = new LogService(AppConfiguration.dappName);
+      logger.log(
+        `Activity data downloaded from provider "${activity.provider}"`,
       );
 
       // populates this activity's *data* in `activityData`

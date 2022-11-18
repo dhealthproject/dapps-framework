@@ -13,7 +13,7 @@ import { LogLevel } from "@nestjs/common";
 
 // internal dependencies
 import {
-  TestMongoDBTransport,
+  TestFileTransportErrors,
   TestConsoleTransport,
   TestDailyRotateFileTransport,
   TestWinstonLogger,
@@ -58,9 +58,10 @@ describe("common/StateService", () => {
 
       // assert
       expect(result).toEqual([
-        new TestMongoDBTransport(),
+        //new TestMongoDBTransport(),
         new TestConsoleTransport(),
         new TestDailyRotateFileTransport(),
+        new TestFileTransportErrors(),
       ]);
     });
   });
@@ -73,6 +74,7 @@ describe("common/StateService", () => {
       // assert
       expect(TestWinstonLogger.log).toHaveBeenNthCalledWith(
         1,
+        "info",
         "test-log-message",
         "test-log-context"
       );

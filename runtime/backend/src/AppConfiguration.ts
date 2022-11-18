@@ -213,6 +213,19 @@ export class AppConfiguration {
   }
 
   /**
+   * This static helper *getter* method returns the curently configured
+   * dApp name as is used in multiple places of this runtime.
+   *
+   * @access public
+   * @static
+   * @returns {string}
+   */
+  public static get dappName(): string {
+    const dappConfig = dappConfigLoader();
+    return dappConfig.dappName;
+  }
+
+  /**
    * This static helper method returns all the configuration loaders. This
    * method *does not* interpret the content of configuration objects.
    * <br /><br />

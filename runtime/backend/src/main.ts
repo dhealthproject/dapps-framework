@@ -62,7 +62,7 @@ async function bootstrap(): Promise<void> {
   );
 
   // log about the app starting *also* in debug mode
-  logger.debug(`Starting ${packageJson.name} at v${packageJson.version}`);
+  logger.log(`Starting ${packageJson.name} at v${packageJson.version}`);
 
   // configures the request listener (HTTP server)
   const appPort = dappConfig.backendApp.port;
@@ -109,7 +109,7 @@ async function bootstrap(): Promise<void> {
   // start the app
   logger.debug(`Now listening for requests on port ${appPort}`);
   await app.listen(appPort);
-  logger.debug(`Accepting requests on: ${await app.getUrl()}`);
+  logger.log(`Accepting requests on: ${await app.getUrl()}`);
 }
 
 /**

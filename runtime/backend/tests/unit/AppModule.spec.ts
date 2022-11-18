@@ -73,6 +73,7 @@ describe("AppModule", () => {
       // prepare
       (AppModule as any).logger = {
         debug: jest.fn(),
+        log: jest.fn(),
       };
       const modules = [
         { name: "testModule1" },

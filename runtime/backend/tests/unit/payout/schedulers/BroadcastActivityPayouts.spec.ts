@@ -264,7 +264,8 @@ describe("payout/BroadcastActivityPayouts", () => {
   });
 
   describe("execute()", () => {
-    let debugLogMock: any;
+    let debugLogMock: any,
+        infoLogMock: any;
     const fetchSubjectsEmptyMock = jest.fn().mockReturnValue(Promise.resolve([]));
     const fetchSubjectsNonEmptyMock = jest.fn().mockReturnValue(Promise.resolve([
       {} as PayoutDocument,
@@ -326,6 +327,7 @@ describe("payout/BroadcastActivityPayouts", () => {
       countMock.mockClear();
 
       debugLogMock = jest.spyOn((command as any), "debugLog");
+      infoLogMock = jest.spyOn((command as any), "infoLog");
     });
 
     it("should initialize with correct state", async () => {
@@ -446,7 +448,8 @@ describe("payout/BroadcastActivityPayouts", () => {
 
       // assert
       expect(countMock).toHaveBeenCalledTimes(1);
-      expect(debugLogMock).toHaveBeenCalledTimes(3);
+      expect(debugLogMock).toHaveBeenCalledTimes(2);
+      expect(infoLogMock).toHaveBeenCalledTimes(1);
       expect((command as any).transactions).toBeDefined();
       expect(Object.keys((command as any).transactions).length).toBe(1); // <-- maxCount: 1
       expect(debugLogMock).toHaveBeenNthCalledWith(1,
@@ -456,8 +459,8 @@ describe("payout/BroadcastActivityPayouts", () => {
         `[DRY-RUN] Found ${expectedCount} broadcast-able transaction(s) ` +
         `in queue of ${payoutMocks.length} eligible payouts.`
       );
-      expect(debugLogMock).toHaveBeenNthCalledWith(3,
-        `[DRY-RUN] Now broadcasting ${expectedCount} transaction(s)`
+      expect(infoLogMock).toHaveBeenCalledWith(
+        `Skipped broadcast of ${expectedCount} transaction(s)`
       );
       expect(createFromPayloadMock).toHaveBeenCalledTimes(expectedCount);
     });

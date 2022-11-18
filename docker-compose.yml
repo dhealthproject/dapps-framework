@@ -26,6 +26,8 @@ services:
     env_file:
       - .env
     command: npm run start:prod
+    volumes:
+      - ./runtime/backend/logs:/logs
     networks:
       - dapp-net
     depends_on:

@@ -36,19 +36,15 @@ jest.mock("js-sha3", () => ({
 jest.mock("../../config/monitoring", () => {
   return () => ({
     storage: [
-      "console",
-      "filesystem"
+      { type: "console", level: "debug" },
+      { type: "filesystem", level: "info" },
     ],
     logLevels: {
-      none: 0,
-      error: 1,
-      warn: 2,
-      debug: 4,
-      info: 8,
+      error: 0,
+      warn: 1,
+      info: 2,
+      debug: 3,
     },
-    logPrintLevel: "info",
-    logPersistLevel: "error",
-    logPersistCollection: "system-logs",
     logDirectoryPath: "./logs/",
     logMaxFileSize: 1000,
   });
@@ -80,6 +76,7 @@ jest.mock("nest-winston", () => ({
 export class TestMongoDBTransport {};
 export class TestConsoleTransport {};
 export class TestDailyRotateFileTransport {};
+export class TestFileTransportErrors {};
 jest.mock("winston", () => ({
   format: {
     timestamp: jest.fn(),
@@ -91,6 +88,7 @@ jest.mock("winston", () => ({
     MongoDB: TestMongoDBTransport,
     Console: TestConsoleTransport,
     DailyRotateFile: TestDailyRotateFileTransport,
+    File: TestFileTransportErrors,
   }
 }));
 
@@ -234,3 +232,4 @@ process.env.BACKEND_PORT="4321";
 process.env.FRONTEND_DOMAIN="fake-frontend-host";
 process.env.FRONTEND_PORT="9876";
 process.env.ANOTHER_DB_NAME_THROUGH_ENV = "this-exists-only-in-mock";
+process.env.LOGS_DIRECTORY_PATH = "/logs";
