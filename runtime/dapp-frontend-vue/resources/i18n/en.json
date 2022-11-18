@@ -6,7 +6,9 @@
     "all_time": "All time",
     "this_week": "This Week",
     "skip": "skip",
-    "enter_referral": "Enter a Referral Code"
+    "enter_referral": "Enter a Referral Code",
+    "terms_and_conditions": "Terms & Conditions",
+    "word_here": "here"
   },
   "onboarding_screen": {
     "carousel": [
@@ -65,10 +67,16 @@
       "description": "After you have scanned the QR code with your mobile wallet, please confirm your connection to the dApp."
     }
   },
-  "dashboard_cta_strava_download_strava": "Don't have Strava? Download it",
-  "dashboard_cta_strava_welcome_text": "Welcome! Integrate an account to start earning tokens for your activities.",
-  "dashboard_cta_strava_start_earning": "At the moment, we only support STRAVA integration.",
-  "dashboard_cta_strava_integrate_strava": "Integrate with STRAVA",
+  "dashboard": {
+    "key_stats_title": "Key stats",
+    "referral_title": "Invite friends",
+    "referral_text": "Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et.",
+    "share_link_title": "Share your link",
+    "cta_strava_welcome_text": "Welcome! Integrate an account to start earning tokens for your activities.",
+    "cta_strava_start_earning": "At the moment, we only support STRAVA integration.",
+    "cta_strava_download_strava": "Don't have Strava? Download it",
+    "cta_strava_integrate_strava": "Integrate with STRAVA"
+  },
   "dashboard_statistics_tabs_alltime": "All time",
   "dashboard_statistics_tabs_today": "Today",
   "dashboard_statistics_label_minutes_practiced": "Minutes exercised",
@@ -76,14 +84,10 @@
   "dashboard_statistics_label_calories_burnt": "Calories burnt",
   "dashboard_statistics_label_friends_referred": "Friends referred",
   "dashboard_statistics_label_go1on1": "Go 1-on-1",
-  "dashboard_key_stats_title": "Key stats",
-  "dashboard_referral_title": "Invite friends",
-  "dashboard_referral_text": "Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et.",
   "dashboard_copy_referral_code": "Copy referral code",
   "dashboard_referral_copied": "Copied",
   "settings_integrations_description_text": "Allow ELEVATE to access your fitness data on your favorite applications to earn rewards",
   "settings_integrations_description_strava": "Fitness Activity",
-  "word_here": "here",
   "leaderboard_title": "Leaderboard",
   "leaderboard_tab_all": "All Time",
   "leaderboard_tab_week": "This Week",
