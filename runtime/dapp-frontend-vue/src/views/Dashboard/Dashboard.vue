@@ -15,21 +15,21 @@
     <div class="container">
       <DividedScreen v-if="getIntegrations && getIntegrations.length" :gap="81">
         <template v-slot:left>
-          <Card :title="$t('dashboard_key_stats_title')" :showBorders="false">
+          <Card :title="$t('dashboard.key_stats_title')" :showBorders="false">
             <template v-slot:content><Stats /></template
           ></Card>
-          <Card :title="$t('dashboard_referral_title')" :showBorders="false">
+          <Card :title="$t('dashboard.referral_title')" :showBorders="false">
             <template v-slot:content>
               <div class="referral-box">
                 <img :src="getImageUrl('coins.png')" alt="Invite friends" />
-                <p class="text-center" v-html="$t('dashboard_referral_text')" />
+                <p class="text-center" v-html="$t('dashboard.referral_text')" />
                 <ReferralInput :val="refInput" />
                 <UiButton :accent="true" @click="shareModal">
                   <img :src="getImageUrl('share-icon.svg')" alt="share" />
-                  <span>Share your link</span>
+                  <span v-html="$t('dashboard.share_link_title')" />
                 </UiButton>
                 <router-link :to="{ name: 'legal.terms-and-conditions' }">
-                  Terms & Conditions
+                  {{ $t("common.terms_and_conditions") }}
                 </router-link>
               </div>
             </template>
@@ -45,24 +45,24 @@
         <div class="dapp-activate-screen text-center">
           <img
             :src="getImageUrl('workout.svg')"
-            :alt="$t('dashboard_cta_strava_welcome_text')"
+            :alt="$t('dashboard.cta_strava_welcome_text')"
           />
           <h2 class="dapp-activate-screen__title">
-            {{ $t("dashboard_cta_strava_welcome_text") }}
+            {{ $t("dashboard.cta_strava_welcome_text") }}
           </h2>
           <p class="dapp-activate-screen__description">
-            {{ $t("dashboard_cta_strava_start_earning") }}
+            {{ $t("dashboard.cta_strava_start_earning") }}
           </p>
           <UiButton
             :accent="true"
             class="dapp-activate-screen__integrate"
             @click="oauthAuthorizeRedirect"
           >
-            {{ $t("dashboard_cta_strava_integrate_strava") }}
+            {{ $t("dashboard.cta_strava_integrate_strava") }}
           </UiButton>
           <p class="add-strava">
-            {{ $t("dashboard_cta_strava_download_strava") }}
-            &nbsp;<a href="#" target="_blank">{{ $t("word_here") }}</a>
+            {{ $t("dashboard.cta_strava_download_strava") }}
+            &nbsp;<a href="#" target="_blank">{{ $t("common.word_here") }}</a>
           </p>
         </div>
       </div>
