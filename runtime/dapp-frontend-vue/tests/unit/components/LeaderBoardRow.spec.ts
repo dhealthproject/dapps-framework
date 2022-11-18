@@ -13,6 +13,7 @@ import { expect } from "chai";
 import { mount, createLocalVue } from "@vue/test-utils";
 
 // internal dependencies
+import { LeaderboardEntryDTO } from "@/models/LeaderboardDTO";
 
 // components page being tested
 import LeaderboardRow from "@/components/LeaderboardRow/LeaderboardRow.vue";
@@ -33,15 +34,13 @@ const componentOptions = {
   },
   propsData: {
     data: {
-      type: "leaderboard",
-      period: "weekly",
       address: "NATZJETZTZCGGRBUYVQRBEUFN5LEGDRSTNF2GYA",
+      type: "leaderboard",
+      period: "2022-46",
+      periodFormat: "W",
       position: 2,
-      assets: 1905,
-      avatar: "avatar2.png",
-      trendline: "down",
-      activities: ["running", "cycling"],
-    },
+      amount: 1905,
+    } as LeaderboardEntryDTO,
   },
 };
 
@@ -72,10 +71,10 @@ describe("LeaderBoardRow -->", () => {
     );
   });
 
-  it("should display an avatar", () => {
-    expect(widget.find(".dapp-leaderboard-item__avatar img").exists()).to.be
-      .true;
-  });
+  // it("should display an avatar", () => {
+  //   expect(widget.find(".dapp-leaderboard-item__avatar img").exists()).to.be
+  //     .true;
+  // });
 
   it("should display properly formatted address", () => {
     expect(
@@ -83,27 +82,27 @@ describe("LeaderBoardRow -->", () => {
     ).to.be.equal("NATZJE...2GY");
   });
 
-  it("should display trendline", () => {
-    expect(widget.find(".dapp-triangle").exists()).to.be.true;
-  });
+  // it("should display trendline", () => {
+  //   expect(widget.find(".dapp-triangle").exists()).to.be.true;
+  // });
 
-  it("should display trendline with direction based on prop", () => {
-    expect(widget.find(".dapp-triangle .down").exists()).to.be.true;
-  });
+  // it("should display trendline with direction based on prop", () => {
+  //   expect(widget.find(".dapp-triangle .down").exists()).to.be.true;
+  // });
 
-  it("should display top activities", () => {
-    expect(widget.find(".dapp-activities").exists()).to.be.true;
-  });
+  // it("should display top activities", () => {
+  //   expect(widget.find(".dapp-activities").exists()).to.be.true;
+  // });
 
-  it("should display correct amount of activities", () => {
-    expect(widget.findAll(".dapp-activities li")).to.have.length(
-      widget.props("data").activities.length
-    );
-  });
+  // it("should display correct amount of activities", () => {
+  //   expect(widget.findAll(".dapp-activities li")).to.have.length(
+  //     widget.props("data").activities.length
+  //   );
+  // });
 
   it("should display correct amount of $FIT", () => {
     expect(
       widget.find(".dapp-leaderboard-item__amount span").text()
-    ).to.be.equal(`$${widget.props("data").assets} FIT`);
+    ).to.be.equal(`$${widget.props("data").amount} FIT`);
   });
 });
