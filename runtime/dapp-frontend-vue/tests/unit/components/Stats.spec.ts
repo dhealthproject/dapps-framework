@@ -19,12 +19,29 @@ import Stats from "@/components/Stats/Stats.vue";
 // creates local vue instance for tests
 const localVue = createLocalVue();
 localVue.use(Vuex);
-const actions = {
-  initialize: jest.fn(),
-};
 const $store = new Vuex.Store({
   state: {},
-  actions,
+  getters: {
+    "statistics/getUserStatistics": jest.fn().mockReturnValue({
+      address: "NATZJETZTZCGGRBUYVQRBEUFN5LEGDRSTNF2GYA",
+      type: "user",
+      period: "2022-46",
+      periodFormat: "W",
+      position: 2,
+      amount: 1.23,
+      data: {
+        totalEarned: 1.23,
+        totalPracticedMinutes: 456,
+      }
+    }),
+    "auth/getCurrentUserAddress": jest.fn().mockReturnValue(
+      "NATZJETZTZCGGRBUYVQRBEUFN5LEGDRSTNF2GYA",
+    )
+  },
+  actions: {
+    "initialize": jest.fn(),
+    "statistics/fetchStatistics": jest.fn(),
+  },
 });
 
 const getImageUrl = () => "../../../src/assets";
@@ -39,20 +56,7 @@ const componentOptions = {
     $route: { params: {} },
     $t: jest.fn(),
     $store,
-  },
-  propsData: {
-    data: {
-      address: "NATZJETZTZCGGRBUYVQRBEUFN5LEGDRSTNF2GYA",
-      period: "20220101",
-      periodFormat: "D",
-      totalPracticedMinutes: 1600,
-      totalEarned: 3.92,
-      topActivities: ["running", "cycling"],
-      totalReferral: 5,
-      levelReferral: 2,
-      friendsReferred: 20150,
-    },
-  },
+  }
 };
 
 describe("Stats -->", () => {
@@ -67,7 +71,7 @@ describe("Stats -->", () => {
   });
 
   it("should display first digit earned $FIT properly", () => {
-    expect(widget.vm.fourDigitsAmount[0]).to.be.equal("3.92");
+    expect(widget.vm.fourDigitsAmount[0]).to.be.equal("1.23");
   });
 
   it("should display second digit earned $FIT properly", () => {
@@ -76,7 +80,7 @@ describe("Stats -->", () => {
 
   it("should display practiced minutes", () => {
     expect(widget.find(".minutes__amount").text()).to.be.equal(
-      widget.props("data").totalPracticedMinutes.toString()
+      widget.vm.userStatistics.data.totalPracticedMinutes.toString()
     );
   });
 });
