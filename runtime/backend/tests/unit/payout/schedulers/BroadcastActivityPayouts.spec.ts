@@ -24,10 +24,11 @@ import { NetworkService } from "../../../../src/common/services/NetworkService";
 
 // processor scope
 import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/processor/models/ActivitySchema";
+import { ActivitiesService } from "../../../../src/processor/services/ActivitiesService";
 
 // payout scope
 import { PayoutState } from "../../../../src/payout/models/PayoutStatusDTO";
-import { Payout, PayoutDocument, PayoutQuery } from "../../../../src/payout/models/PayoutSchema";
+import { PayoutDocument, PayoutQuery } from "../../../../src/payout/models/PayoutSchema";
 import { PayoutsService } from "../../../../src/payout/services/PayoutsService";
 import { SignerService } from "../../../../src/payout/services/SignerService";
 import { BroadcastActivityPayouts } from "../../../../src/payout/schedulers/ActivityPayouts/BroadcastActivityPayouts";
@@ -71,6 +72,7 @@ describe("payout/BroadcastActivityPayouts", () => {
   let queryService: QueryService<ActivityDocument, ActivityModel>;
   let payoutsService: PayoutsService;
   let signerService: SignerService;
+  let activitiesService: ActivitiesService;
   let logger: Logger;
   let mockDate: Date;
 
@@ -89,6 +91,7 @@ describe("payout/BroadcastActivityPayouts", () => {
         NetworkService,
         PayoutsService,
         SignerService,
+        ActivitiesService,
         Logger,
         {
           provide: getModelToken("Payout"),
@@ -112,6 +115,7 @@ describe("payout/BroadcastActivityPayouts", () => {
     queryService = module.get<QueryService<ActivityDocument, ActivityModel>>(QueryService);
     payoutsService = module.get<PayoutsService>(PayoutsService);
     signerService = module.get<SignerService>(SignerService);
+    activitiesService = module.get<ActivitiesService>(ActivitiesService);
     logger = module.get<Logger>(Logger);
   });
 
@@ -230,39 +234,6 @@ describe("payout/BroadcastActivityPayouts", () => {
     });
   });
 
-  describe("updatePayoutSubject()", () => {
-    const queryCreateOrUpdateMock = jest.fn();
-    beforeEach(() => {
-      (command as any).queryService = {
-        createOrUpdate: queryCreateOrUpdateMock,
-      };
-
-      queryCreateOrUpdateMock.mockClear();
-    });
-
-    it("should filter subjects by slug and set payout state", async () => {
-      // prepare
-      const expectedSlug = "fake-payout-subject-slug";
-      const expectedData = { payoutState: PayoutState.Broadcast };
-
-      // act
-      await (command as any).updatePayoutSubject(
-        { slug: expectedSlug } as ActivityDocument,
-        expectedData,
-      );
-
-      // assert
-      expect(queryCreateOrUpdateMock).toHaveBeenCalledTimes(1);
-      expect(queryCreateOrUpdateMock).toHaveBeenCalledWith(
-        new ActivityQuery(
-          { slug: expectedSlug } as ActivityDocument,
-        ),
-        (command as any).model,
-        expectedData
-      );
-    });
-  });
-
   describe("execute()", () => {
     let debugLogMock: any,
         infoLogMock: any;
@@ -275,6 +246,7 @@ describe("payout/BroadcastActivityPayouts", () => {
     );
     const updatePayoutSubjectMock = jest.fn();
     const payoutsCreateOrUpdateMock = jest.fn();
+    const activitiesCreateOrUpdateMock = jest.fn();
     const networkDelegatePromisesMock = jest.fn().mockReturnValue(
       Promise.resolve(),
     );
@@ -316,6 +288,9 @@ describe("payout/BroadcastActivityPayouts", () => {
           announce: transactionAnnounceMock,
         }
       };
+      (command as any).activitiesService = {
+        createOrUpdate: activitiesCreateOrUpdateMock,
+      };
 
       fetchSubjectsEmptyMock.mockClear();
       fetchSubjectsNonEmptyMock.mockClear();
@@ -323,6 +298,7 @@ describe("payout/BroadcastActivityPayouts", () => {
       payoutsCreateOrUpdateMock.mockClear();
       updatePayoutSubjectMock.mockClear();
       networkDelegatePromisesMock.mockClear();
+      activitiesCreateOrUpdateMock.mockClear();
       serializeMock.mockClear();
       countMock.mockClear();
 
@@ -487,14 +463,12 @@ describe("payout/BroadcastActivityPayouts", () => {
 
       // assert
       expect(payoutsCreateOrUpdateMock).not.toHaveBeenCalled();
+      expect(activitiesCreateOrUpdateMock).not.toHaveBeenCalled();
     });
 
     it("should broadcast and update state given production mode", async () => {
       // prepare
       (command as any).globalDryRun = false;
-      const payoutFetchSubjectMock = jest.spyOn(Payout, "fetchSubject").mockReturnValue({
-        slug: "fake-payout-subject-slug",
-      } as any);
       (command as any).fetchSubjects = fetchSubjectsActualMock; // <-- non-empty
       const expectedCount = 2;
 
@@ -506,10 +480,9 @@ describe("payout/BroadcastActivityPayouts", () => {
       });
 
       // assert
-      expect(networkDelegatePromisesMock).toHaveBeenCalledTimes(1);
-      expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(2); // 2 payouts
-      expect(payoutFetchSubjectMock).toHaveBeenCalledTimes(2); // 2 subjects
-      expect(updatePayoutSubjectMock).toHaveBeenCalledTimes(2); // 2 subjects
+      expect(networkDelegatePromisesMock).toHaveBeenCalledTimes(1); // delegates all in one
+      expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount); // 2 payouts
+      expect(activitiesCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount); // 2 subjects
       expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(1,
         new PayoutQuery({
           userAddress: payoutMocks[0].userAddress,
@@ -530,13 +503,17 @@ describe("payout/BroadcastActivityPayouts", () => {
           payoutState: PayoutState.Broadcast,
         },
       );
-      expect(transactionAnnounceToPromiseMock).toHaveBeenCalledTimes(2);
-      expect(updatePayoutSubjectMock).toHaveBeenNthCalledWith(1, 
-        { slug: "fake-payout-subject-slug"},
+      expect(transactionAnnounceToPromiseMock).toHaveBeenCalledTimes(expectedCount);
+      expect(activitiesCreateOrUpdateMock).toHaveBeenNthCalledWith(1, 
+        new ActivityQuery({
+          slug: payoutMocks[0].subjectSlug
+        } as ActivityDocument),
         { payoutState: PayoutState.Broadcast },
       );
-      expect(updatePayoutSubjectMock).toHaveBeenNthCalledWith(2, 
-        { slug: "fake-payout-subject-slug"},
+      expect(activitiesCreateOrUpdateMock).toHaveBeenNthCalledWith(2, 
+        new ActivityQuery({
+          slug: payoutMocks[1].subjectSlug
+        } as ActivityDocument),
         { payoutState: PayoutState.Broadcast },
       );
     });

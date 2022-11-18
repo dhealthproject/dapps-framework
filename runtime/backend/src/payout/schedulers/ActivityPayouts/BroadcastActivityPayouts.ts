@@ -21,12 +21,13 @@ import { StateService } from "../../../common/services/StateService";
 import { QueryService } from "../../../common/services/QueryService";
 
 // processor scope
+// @todo decouple payout from processor by using dynamic "activities" query
 import {
   Activity,
   ActivityDocument,
   ActivityModel,
-  ActivityQuery,
 } from "../../../processor/models/ActivitySchema";
+import { ActivitiesService } from "../../../processor/services/ActivitiesService";
 
 // payout scope
 import {
@@ -84,6 +85,7 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
    * @param {PayoutsService}  payoutsService
    * @param {SignerService}   signerService
    * @param {NetworkService}  networkService
+   * @param {ActivitiesService}  activitiesService
    * @param {ActivityModel}   model
    */
   constructor(
@@ -96,6 +98,7 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
     protected readonly payoutsService: PayoutsService,
     protected readonly signerService: SignerService,
     protected readonly networkService: NetworkService,
+    protected readonly activitiesService: ActivitiesService,
     @InjectModel(Activity.name)
     protected readonly model: ActivityModel,
   ) {
@@ -107,6 +110,7 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
       payoutsService,
       signerService,
       networkService,
+      activitiesService,
     );
   }
 
@@ -206,27 +210,6 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
 
     // return 1 page's documents
     return page.data;
-  }
-
-  /**
-   * This method must *update* a payout subject document. Note
-   * that subjects *are the subject of a payout execution*.
-   *
-   * @param   {ActivityDocument}      subject     The document being updated.
-   * @param   {Record<string, any>}   updateData  The columns and their respective value.
-   * @returns {Promise<ActivityDocument>}    The updated document.
-   */
-  protected async updatePayoutSubject(
-    subject: ActivityDocument,
-    updateData: Record<string, any>,
-  ): Promise<ActivityDocument> {
-    return await this.queryService.createOrUpdate(
-      new ActivityQuery({
-        slug: subject.slug,
-      } as ActivityDocument),
-      this.model,
-      updateData,
-    );
   }
 
   /**

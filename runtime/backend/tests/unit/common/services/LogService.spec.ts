@@ -20,7 +20,7 @@ import {
 } from "../../../mocks/global";
 import { LogService } from "../../../../src/common/services/LogService";
 
-describe("common/StateService", () => {
+describe("common/LogService", () => {
   let service: LogService;
 
   beforeEach(async () => {
@@ -74,7 +74,6 @@ describe("common/StateService", () => {
       // assert
       expect(TestWinstonLogger.log).toHaveBeenNthCalledWith(
         1,
-        "info",
         "test-log-message",
         "test-log-context"
       );

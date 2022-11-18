@@ -105,39 +105,52 @@ describe('statistics/LeaderboardsController', () => {
   });
 
   describe("findByUser()", () => {
+    const statisticsDoc = {
+      address: "fakeAddress",
+      type: "leaderboard",
+      amount: 123,
+      position: 1,
+      period: "2022-46",
+      periodFormat: "W",
+    };
+
     it("should call correct method and respond with DTO", async () => {
       // prepare
+      // mock authentication
       const accountDoc = new Account();
       (accountDoc as any).address = "fakeAddress";
       const authServiceGetAccountCall = jest
         .spyOn(authService, "getAccount")
         .mockResolvedValue(accountDoc as any as AccountDocument);
-      const query = { address: "fakeAddress" };
-      const request = {} as Request;
-      const statisticsDoc = new Statistics();
-      (statisticsDoc as any).address = "fakeAddress";
+      // mock finder/searcher results
       const expectToFetchDocuments = new PaginatedResultDTO<StatisticsDocument>(
         [statisticsDoc as StatisticsDocument],
         { pageNumber: 1, pageSize: 20, total: 1 },
       );
-      const expectToMapToDTOs = new PaginatedResultDTO<StatisticsDTO>(
-        [{ address: "fakeAddress" } as StatisticsDTO],
-        { pageNumber: 1, pageSize: 20, total: 1 },
-      );
+      const expectToMapToOneDTO = statisticsDoc as StatisticsDTO;
       const serviceFindMock = jest
         .spyOn(statisticsService, "find")
         .mockResolvedValue(expectToFetchDocuments);
 
         // act
-      const result = await (controller as any).findByUser(request, query);
+      const result = await (controller as any).findByUser({} as Request, {
+        address: "fakeAddress",
+        period: "2022-46",
+        periodFormat: "W",
+      });
 
       // assert
       expect(authServiceGetAccountCall).toBeCalledTimes(1);
       expect(serviceFindMock).toBeCalledTimes(1);
       expect(serviceFindMock).toBeCalledWith(
-        new StatisticsQuery({ type: "leaderboard", address: "fakeAddress" } as StatisticsDocument),
+        new StatisticsQuery({
+          type: "leaderboard",
+          address: "fakeAddress",
+          period: "2022-46",
+          periodFormat: "W",
+        } as StatisticsDocument),
       );
-      expect(result).toEqual(expectToMapToDTOs);
+      expect(result).toEqual(expectToMapToOneDTO);
     });
   });
 });

@@ -23,6 +23,14 @@ import { NetworkService } from "../../common/services/NetworkService";
 import { StateService } from "../../common/services/StateService";
 import { QueryService } from "../../common/services/QueryService";
 
+// processor scope
+// @todo decouple payout from processor by using dynamic "activities" query
+import { ActivitiesService } from "../../processor/services/ActivitiesService";
+import {
+  ActivityQuery,
+  ActivityDocument,
+} from "../../processor/models/ActivitySchema";
+
 // payout scope
 import { Subjectable } from "../concerns/Subjectable";
 import { PayoutCommand, PayoutCommandOptions } from "./PayoutCommand";
@@ -118,6 +126,7 @@ export abstract class BroadcastPayouts<
    * @param {PayoutsService}  payoutsService
    * @param {SignerService}   signerService
    * @param {NetworkService}  networkService
+   * @param {ActivitiesService}  activitiesService
    */
   constructor(
     protected readonly configService: ConfigService,
@@ -126,6 +135,7 @@ export abstract class BroadcastPayouts<
     protected readonly payoutsService: PayoutsService,
     protected readonly signerService: SignerService,
     protected readonly networkService: NetworkService,
+    protected readonly activitiesService: ActivitiesService,
   ) {
     // required super call
     super(stateService);
@@ -193,19 +203,6 @@ export abstract class BroadcastPayouts<
    * @returns {Promise<PayoutDocument[]>}
    */
   protected abstract fetchSubjects(count: number): Promise<PayoutDocument[]>;
-
-  /**
-   * This method must *update* a payout subject document. Note
-   * that subjects *are the subject of a payout execution*.
-   *
-   * @param   {TDocument}             subject     The document being updated.
-   * @param   {Record<string, any>}   updateData  The columns and their respective value.
-   * @returns {Promise<TDocument>}    The updated document.
-   */
-  protected abstract updatePayoutSubject(
-    subject: TDocument,
-    updateData: Record<string, any>,
-  ): Promise<TDocument>;
 
   /**
    * This method implements the processor logic for this command
@@ -329,7 +326,7 @@ export abstract class BroadcastPayouts<
       // updates the *payouts* so that they won't be considered
       // a payout for future/parallel executions of this command
       // CAUTION: dry-run mode disables this block
-      for (let u = 0, max_s = options.maxCount; u < max_s; u++) {
+      for (let u = 0, max_s = broadcastTransactions.length; u < max_s; u++) {
         // retrieve full subject details
         const payout: PayoutDocument = payouts[u];
 
@@ -345,13 +342,15 @@ export abstract class BroadcastPayouts<
           },
         );
 
-        // fetches the *payout subject* (e.g. "activity")
-        const subject = await Payout.fetchSubject<TDocument>(payout);
-
         // updates the payout subject document (e.g. "activities" document)
-        await this.updatePayoutSubject(subject, {
-          payoutState: PayoutState.Broadcast,
-        });
+        await this.activitiesService.createOrUpdate(
+          new ActivityQuery({
+            slug: payout.subjectSlug,
+          } as ActivityDocument),
+          {
+            payoutState: PayoutState.Broadcast,
+          },
+        );
       }
     }
     // in dry-run mode:

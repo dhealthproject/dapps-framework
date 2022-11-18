@@ -434,7 +434,7 @@ describe("statistics/LeaderboardAggregation", () => {
         },
         {
           $group: {
-            _id: "$userAddress",
+            _id: "$address",
             amount: { $sum: "$amount" },
           },
         },
