@@ -71,21 +71,6 @@ export default class Stats extends MetaView {
   public userStatistics!: UserStatisticsDTO;
 
   /**
-   * This property contains the translator `Translations` instance.
-   * This field is populated using the Vuex Store after a successful
-   * setup of the internationalization features.
-   * <br /><br />
-   * The `!`-operator tells TypeScript that this value is required
-   * and the *public* access permits the Vuex Store to mutate this
-   * value when it is necessary.
-   *
-   * @access public
-   * @var {any}
-   * @todo Replace any with correct type of $t() function call
-   */
-  public $t!: any;
-
-  /**
    * @todo missing property documentation
    * @todo this could also be a Prop assigned by parent
    */

@@ -38,7 +38,7 @@
                 class="onboarding-steps__back"
                 :src="getImageUrl('icons/arrow-back.svg')"
                 @click="handleBack"
-                alt="Back"
+                :alt="$t('common.back')"
               />
             </template>
             <template v-slot:nav-center>
@@ -49,7 +49,7 @@
             <template v-slot:nav-right>
               <span
                 class="onboarding-steps__skip"
-                v-html="'skip'"
+                v-html="$t('common.skip')"
                 @click="skipOnboarding"
               />
             </template>
@@ -83,7 +83,7 @@
               v-if="!refCode"
               :type="'no-borders'"
               @click="handleReferral"
-              >Enter a Referral Code</UiButton
+              >{{ $t("common.enter_referral") }}</UiButton
             >
           </div>
         </div>

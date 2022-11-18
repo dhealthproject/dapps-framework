@@ -1,5 +1,70 @@
 {
   "langName": "en-US",
+  "common": {
+    "back": "Back",
+    "text_copied": "Copied",
+    "all_time": "All time",
+    "this_week": "This Week",
+    "skip": "skip",
+    "enter_referral": "Enter a Referral Code"
+  },
+  "onboarding_screen": {
+    "carousel": [
+      {
+        "id": "screen_1",
+        "title": "Burn calories with your activity and Earn crypto.",
+        "text": "Integrate your fitness apps & wearables to start earning crypto.",
+        "button": "Get Started",
+        "image": "login-slides/slide-1.jpg",
+        "mobileGradient":
+          "linear-gradient(180deg, #000000 -5.38%, rgba(44, 63, 81, 0) 27.55%, #395E81 66.26%, #1F94A4 100%);"
+      },
+      {
+        "id": "screen_2",
+        "title": "Participate in virtual challenges, globally.",
+        "text": "Join  Challenges and Events to earn tokens with others around the world.",
+        "button": "Next",
+        "image": "login-slides/slide-2.jpg",
+        "mobileGradient":
+          "linear-gradient(180deg, #000000 -5.38%, rgba(44, 63, 81, 0) 27.55%, #5D3981 63.28%, #391FA4 100%)"
+      },
+      {
+        "id": "screen_3",
+        "title": "Earn NFT Rewards depending on how well you perform.",
+        "text": "Earn unique NFT Medals & Sportscards that unlock special virtual events",
+        "button": "Connect your Wallet",
+        "image": "login-slides/slide-2.jpg",
+        "mobileGradient":
+          "linear-gradient(180deg, #000000 -5.38%, rgba(44, 63, 81, 0) 27.55%, #398149 63.28%, #81A41F 100%)"
+      }
+    ],
+    "modal": {
+      "referral_title": "Please enter your referral code below",
+      "placeholder": "49sfw58f"
+    }
+  },
+  "login_screen": {
+    "connect_wallet": "Connect your Wallet",
+    "in_four_steps": "In 4 easy steps...",
+    "steps": [
+      { "id": "tutorial_1", "text": "Open dHealth Signer app on your phone" },
+      { "id": "tutorial_2", "text": "Tap on scan from the bottom navigation bar" },
+      {
+        "id": "tutorial_3",
+        "text": "Point your phone to the screen to capture the code"
+      },
+      {
+        "id": "tutorial_4",
+        "text": "Confirm your connection  to the dApp on the mobile wallet."
+      }
+    ],
+    "tip": "Need help? Watch a Video Tutorial",
+    "tip_split": ["Need help? Watch a", "Video Tutorial"],
+    "on_mobile_tip": ["If you’re new to dHealth Network,", "download dHealth Signer App"],
+    "modal": {
+      "description": "After you have scanned the QR code with your mobile wallet, please confirm your connection to the dApp."
+    }
+  },
   "dashboard_cta_strava_download_strava": "Don't have Strava? Download it",
   "dashboard_cta_strava_welcome_text": "Welcome! Integrate an account to start earning tokens for your activities.",
   "dashboard_cta_strava_start_earning": "At the moment, we only support STRAVA integration.",
@@ -17,7 +82,7 @@
   "dashboard_copy_referral_code": "Copy referral code",
   "dashboard_referral_copied": "Copied",
   "settings_integrations_description_text": "Allow ELEVATE to access your fitness data on your favorite applications to earn rewards",
-  "settings_integrations_description_strava": "Quick description of Strava",
+  "settings_integrations_description_strava": "Fitness Activity",
   "word_here": "here",
   "leaderboard_title": "Leaderboard",
   "leaderboard_tab_all": "All Time",

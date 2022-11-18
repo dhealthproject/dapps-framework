@@ -40,6 +40,30 @@ export abstract class MetaView extends Vue {
   public metaInfo = this.metaConfigByName;
 
   /**
+   * This property contains the translator `Translations` instance.
+   * This field is populated using the Vuex Store after a successful
+   * setup of the internationalization features.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {any}
+   */
+  public $t?: any;
+
+  /**
+   * This property contains method which returns
+   * dynamic path to an image that located in
+   * src/assets
+   *
+   * @access public
+   * @var {string}
+   */
+  public getImageUrl!: (path: string) => string;
+
+  /**
    * Helper method to read the meta information
    * depending on the current instance's class
    * name.
