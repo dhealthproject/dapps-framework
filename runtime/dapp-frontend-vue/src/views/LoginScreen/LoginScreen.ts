@@ -186,18 +186,7 @@ export default class LoginScreen extends MetaView {
    * @returns {TutorialStepItem[]}
    */
   protected get tutorialItems(): TutorialStepItem[] {
-    return [
-      { id: "tutorial_1", text: "Open dHealth Signer app on your phone" },
-      { id: "tutorial_2", text: "Tap on scan from the bottom navigation bar" },
-      {
-        id: "tutorial_3",
-        text: "Point your phone to the screen to capture the code",
-      },
-      {
-        id: "tutorial_4",
-        text: "Confirm your connection  to the dApp on the mobile wallet.",
-      },
-    ];
+    return this.$t("login_screen.steps");
   }
 
   /**
@@ -305,8 +294,7 @@ export default class LoginScreen extends MetaView {
       this.$root.$emit("modal", {
         overlayColor: "rgba(19, 30, 25, 0.7)",
         type: "notification",
-        description:
-          "After you have scanned the QR code with your mobile wallet, please confirm your connection to the dApp.",
+        description: this.$t("login_screen.modal.description"),
         modalBg: "#6EE7EE",
         width: 456,
         illustration: "user-avatar.png",

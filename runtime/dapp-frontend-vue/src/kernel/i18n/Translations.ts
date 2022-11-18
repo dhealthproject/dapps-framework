@@ -7,6 +7,8 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// external dependencies
+import { get } from "lodash";
 // internal dependencies
 import translationsEn from "../../../resources/i18n/en.json";
 
@@ -14,7 +16,7 @@ import translationsEn from "../../../resources/i18n/en.json";
  *
  */
 export type TranslationDataset = {
-  [lang: string]: Record<string, string>;
+  [lang: string]: Record<string, string | any>;
 };
 
 /**
@@ -135,14 +137,18 @@ export class Translations {
     // finds translation key in dataset
     const translations = this.data[language];
     const fallbackI18n = this.data[Translations.defaultLanguage];
+    const nestedTranslations = get(translations, translationKey);
     if (
-      translations !== undefined &&
-      translationKey in translations &&
-      translations[translationKey] !== null &&
-      translations[translationKey] !== undefined
+      (translations !== undefined &&
+        translationKey in translations &&
+        translations[translationKey] !== null &&
+        translations[translationKey] !== undefined) ||
+      (nestedTranslations !== undefined && nestedTranslations !== null)
     ) {
       // returns translated
-      return translations[translationKey];
+      return translations[translationKey]
+        ? translations[translationKey]
+        : get(translations, translationKey);
     }
     // or try to fallback to default language
     else if (

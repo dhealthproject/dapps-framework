@@ -81,21 +81,6 @@ export default class Leaderboard extends MetaView {
   public userLeaderboardEntry!: LeaderboardEntryDTO;
 
   /**
-   * This property contains the translator `Translations` instance.
-   * This field is populated using the Vuex Store after a successful
-   * setup of the internationalization features.
-   * <br /><br />
-   * The `!`-operator tells TypeScript that this value is required
-   * and the *public* access permits the Vuex Store to mutate this
-   * value when it is necessary.
-   *
-   * @access public
-   * @var {any}
-   * @todo Replace any with correct type of $t() function call
-   */
-  public $t!: any;
-
-  /**
    * Prop which defines amount of items to be shown, defaults to 10.
    * <br /><br />
    * The `!`-operator tells TypeScript that this value is required

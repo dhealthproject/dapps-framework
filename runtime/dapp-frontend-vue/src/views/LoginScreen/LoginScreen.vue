@@ -15,12 +15,15 @@
       <template v-slot:nav-left>
         <inline-svg
           :src="getImageUrl('icons/arrow-back.svg')"
-          alt="Back"
+          :alt="$t('common.back')"
           @click="$router.go(-1)"
         />
       </template>
       <template v-slot:nav-center>
-        <h2 class="dapp-login-screen__title" v-html="'Connect your Wallet'" />
+        <h2
+          class="dapp-login-screen__title"
+          v-html="$t('login_screen.connect_wallet')"
+        />
       </template>
     </NavPanel>
     <div class="dapp-login-screen__container">
@@ -34,7 +37,7 @@
           />
         </template>
         <template v-slot:nav-center>
-          <h2 class="title">Connect your Wallet</h2>
+          <h2 class="title" v-html="$t('login_screen.connect_wallet')" />
         </template>
       </NavPanel>
       <div class="qr-wrapper">
@@ -44,7 +47,10 @@
             <Loader v-else />
           </template>
           <template v-slot:right>
-            <span class="qr-wrapper__title">In 4 easy steps...</span>
+            <span
+              class="qr-wrapper__title"
+              v-html="$t('login_screen.in_four_steps')"
+            />
             <ul class="qr-wrapper__list">
               <li v-for="(item, index) in tutorialItems" :key="index + item.id">
                 <span class="number">{{ index + 1 }}</span>
@@ -55,10 +61,13 @@
               ><a target="_blank" href="#"
                 ><img
                   :src="getImageUrl('icons/play-icon.svg')"
-                  alt="Need help? Watch a Video Tutorial" /></a
-              >Need help? Watch a&nbsp;
-              <a target="_blank" href="#">Video Tutorial</a></span
-            >
+                  :alt="$t('login_screen.tip')" /></a
+              >{{ $t("login_screen.tip_split[0]") }}&nbsp;
+              <a
+                target="_blank"
+                href="#"
+                v-html="$t('login_screen.tip_split[1]')"
+            /></span>
           </template>
         </DividedScreen>
       </div>
@@ -66,8 +75,12 @@
         <!-- <span class="on-mobile__title">Currently on a mobile device?</span>
         <UiButton :accent="true">Connect with dHealth Wallet</UiButton> -->
         <p class="on-mobile__link">
-          If you’re new to dHealth Network,
-          <a target="_blank" href="#">download dHealth Signer App</a>
+          {{ $t("login_screen.on_mobile_tip[0]") }}
+          <a
+            target="_blank"
+            href="#"
+            v-html="$t('login_screen.on_mobile_tip[1]')"
+          />
         </p>
       </div>
     </div>
