@@ -19,10 +19,12 @@ import { StateModule } from "../../../common/modules/StateModule";
 import { QueryModule } from "../../../common/modules/QueryModule";
 
 // processor scope
+// @todo decouple payout from processor by using dynamic "activities" query
 import {
   Activity,
   ActivitySchema,
 } from "../../../processor/models/ActivitySchema";
+import { ActivitiesModule } from "../../../processor/modules/ActivitiesModule";
 
 // payout scope
 import { PayoutsModule } from "../../modules/PayoutsModule";
@@ -42,6 +44,7 @@ import { BroadcastActivityPayouts } from "./BroadcastActivityPayouts";
     NetworkModule,
     QueryModule,
     PayoutsModule,
+    ActivitiesModule,
     MongooseModule.forFeature([
       { name: Activity.name, schema: ActivitySchema },
     ]),

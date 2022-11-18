@@ -241,24 +241,6 @@ export class Payout extends Transferable<PayoutDTO> {
     dto.assets = doc.payoutAssets;
     return dto;
   }
-
-  /**
-   *
-   */
-  public static async fetchSubject<TSubjectDocument>(
-    doc: PayoutDocument,
-  ): Promise<TSubjectDocument> {
-    if ("activities" === doc.subjectCollection) {
-      return await ActivityModel.findOne({
-        slug: doc.subjectSlug,
-      } as FilterQuery<TSubjectDocument>).exec();
-    }
-
-    throw new InvalidPayoutSubjectError(
-      `Subject collection "${doc.subjectCollection}" is not yet supported. ` +
-        `Please implement it inside PayoutSchema.fetchSubject() to add support.`,
-    );
-  }
 }
 
 /**
