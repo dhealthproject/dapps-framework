@@ -12,7 +12,6 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 // common scope
@@ -78,7 +77,6 @@ export class PrepareActivityPayouts extends PreparePayouts<
   /**
    * Constructs and prepares an instance of this scheduler.
    *
-   * @param {EventEmitter2}   eventEmitter
    * @param {ConfigService}   configService
    * @param {StateService}    stateService
    * @param {QueryService<ActivityDocument, ActivityModel>}    queryService
@@ -88,7 +86,6 @@ export class PrepareActivityPayouts extends PreparePayouts<
    * @param {ActivityModel}   model
    */
   constructor(
-    protected readonly eventEmitter: EventEmitter2,
     protected readonly configService: ConfigService,
     protected readonly stateService: StateService,
     protected readonly queryService: QueryService<

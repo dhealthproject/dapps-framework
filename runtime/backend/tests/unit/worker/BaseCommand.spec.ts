@@ -31,7 +31,7 @@ import { LogService } from "../../../src/common/services/LogService";
 // abstract methods as defined in `BaseCommand`.
 class MockBaseCommand extends BaseCommand {
   protected scope: Scope = "discovery";
-  protected logger: LogService = new LogService();
+  protected logger: LogService = new LogService("discovery:fake-command");
   protected get command(): string { return "fake-command"; }
   protected get signature(): string { return "fake-command --source TARGET_ACCOUNT"; }
   protected async runWithOptions(

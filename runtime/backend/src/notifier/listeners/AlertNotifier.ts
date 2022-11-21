@@ -16,7 +16,6 @@ import { OnEvent } from "@nestjs/event-emitter";
 import { AlertEvent } from "../../common/events/AlertEvent";
 import { NotifierFactory } from "../concerns/NotifierFactory";
 import { AlertsConfig } from "../../common/models/MonitoringConfig";
-import { LogService } from "../../common/services/LogService";
 import { Notifier } from "../models/Notifier";
 import { NotifierType } from "../models/NotifierType";
 import { DappHelper } from "../../common/concerns/DappHelper";
@@ -65,22 +64,17 @@ export class AlertNotifier {
   /**
    * Constructs and prepares an instance of this class.
    *
-   * @param {LogService}      logger
    * @param {ConfigService}   configService
    * @param {NotifierFactory} notifierFactory
    * @param {DappHelper}      dappHelper
    */
   constructor(
-    private readonly logger: LogService,
     private readonly configService: ConfigService,
     private readonly notifierFactory: NotifierFactory,
     private readonly dappHelper: DappHelper,
   ) {
     // get config
     this.alertsConfig = this.configService.get<AlertsConfig>("alerts");
-
-    // set context for this instance's logger
-    this.logger.setContext(`AlertsNotifier`);
 
     // get the notifier strategy from the configured transport method
     this.notifier = this.notifierFactory.getNotifier(
@@ -98,7 +92,6 @@ export class AlertNotifier {
   @OnEvent("event.log.warn", { async: true })
   protected handleLogWarnEvent(event: AlertEvent): void {
     // handle and process "AlertEvent" event
-    this.logger.debug("Caught a warning event.");
     if (this.alertsConfig.type.includes("warn")) {
       const dappName = this.configService.get<string>("dappName");
       const { timestamp, level, loggerContext, message, context } = event;
@@ -125,7 +118,6 @@ export class AlertNotifier {
   @OnEvent("event.log.error", { async: true })
   protected handleLogErrorEvent(event: AlertEvent): void {
     // handle and process "AlertEvent" event
-    this.logger.debug("Caught an error event.");
     if (this.alertsConfig.type.includes("error")) {
       const dappName = this.configService.get<string>("dappName");
       const { timestamp, level, loggerContext, message, trace, context } =

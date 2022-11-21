@@ -55,14 +55,14 @@ export class WebHooksService {
    * @access public
    * @constructor
    * @param {ActivityModel} model
-   * @param {LogService} logger
    * @param {QueryService<ActivityDocument, ActivityModel>} queryService
+   * @param {OAuthService} oauthService
+   * @param {ActivitiesService} activitiesService
    * @param {EventEmitter2} eventEmitter
    */
   public constructor(
     @InjectModel(Activity.name)
     private readonly model: ActivityModel,
-    protected readonly logger: LogService,
     private readonly queryService: QueryService<
       ActivityDocument,
       ActivityModel
@@ -70,10 +70,7 @@ export class WebHooksService {
     protected readonly oauthService: OAuthService,
     protected readonly activitiesService: ActivitiesService,
     private readonly eventEmitter: EventEmitter2,
-  ) {
-    // initializes a logger with correct name
-    this.logger.setContext(`processor/onActivityCreated`);
-  }
+  ) {}
 
   /**
    * This method handles incoming **events** from third-party
@@ -208,6 +205,9 @@ export class WebHooksService {
    */
   @OnEvent("processor.activity.created", { async: true })
   public async onActivityCreated(event: OnActivityCreated): Promise<void> {
+    // event listener logs are grouped
+    const logger = new LogService(`${AppConfiguration.dappName}/EVENTS`);
+
     // (1) reads an activity by slug from database, the
     // slug field requires its' values to be unique.
     const activity = await this.activitiesService.findOne(
@@ -229,6 +229,7 @@ export class WebHooksService {
       // @todo print error message in persistent log such that it can be investigated
       // this activity's processing state updates to `-1`
       this.onError(
+        logger,
         activity,
         `` +
           `Missing OAuth authorization for ${activity.provider} with ` +
@@ -272,9 +273,9 @@ export class WebHooksService {
       );
 
       // print INFO for created activities
-      const logger = new LogService(AppConfiguration.dappName);
       logger.log(
-        `Activity data downloaded from provider "${activity.provider}"`,
+        `Activity data for "${activity.slug}" ` +
+          `downloaded from provider "${activity.provider}"`,
       );
 
       // populates this activity's *data* in `activityData`
@@ -287,6 +288,7 @@ export class WebHooksService {
       // @todo print error message in persistent log such that it can be investigated
       // this activity's processing state updates to `-1`
       this.onError(
+        logger,
         activity,
         `` +
           `An error happened for ${activity.provider} during request with ` +
@@ -304,20 +306,22 @@ export class WebHooksService {
    *
    * @access private
    * @async
+   * @param   {LogService}        logger      A logger instance to use only one and the same.
    * @param   {ActivityDocument}  activity    The activity that produced an error.
    * @param   {string}            message     The error message.
    * @param   {string}            stack       (Optional) An optional error stack trace.
    * @returns {Promise<void>}
    */
   private async onError(
+    logger: LogService,
     activity: ActivityDocument,
     message: string,
     stack?: string,
   ): Promise<void> {
     //@todo print error message in persistent log such that it can be investigated
     if (undefined === stack) {
-      this.errorLog(message);
-    } else this.errorLog(message, stack);
+      logger.error(message);
+    } else logger.error(message, stack);
 
     // this activity's processing state updates to `-1`
     await this.onFailureActivityUpdate(activity);
@@ -370,31 +374,5 @@ export class WebHooksService {
       } as ActivityDocument),
       { activityData, processingState: ProcessingState.Processed },
     );
-  }
-
-  /**
-   * This method uses the {@link logger} to print debug messages.
-   *
-   * @param   {string}              message
-   * @param   {string|undefined}    context
-   * @returns {void}
-   */
-  protected debugLog(message: string, context?: string): void {
-    if (!!context) {
-      this.logger.debug(message, context);
-    } else this.logger.debug(message);
-  }
-
-  /**
-   * This method uses the {@link logger} to print error messages.
-   * Optionally, a `stack` can be passed to print a stack trace.
-   *
-   * @param   {string}              message
-   * @param   {string|undefined}    stack
-   * @param   {string|undefined}    context
-   * @returns {void}
-   */
-  protected errorLog(message: string, stack?: string, context?: string): void {
-    this.logger.error(message, stack, context);
   }
 }

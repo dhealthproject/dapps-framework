@@ -11,20 +11,18 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { MailerService } from "@nestjs-modules/mailer";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { AlertNotifier } from "../../../../src/notifier/listeners/AlertNotifier";
-import { LogService } from "../../../../src/common/services/LogService";
+import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { NotifierFactory } from "../../../../src/notifier/concerns/NotifierFactory";
 import { DappHelper } from "../../../../src/common/concerns/DappHelper";
 import { EmailNotifier } from "../../../../src/notifier/services/EmailNotifier";
-import { NetworkService } from "../../../../src/common/services/NetworkService";
-import { AlertEvent } from "../../../../src/common/models/AlertEvent";
-
+import { AlertEvent } from "../../../../src/common/events/AlertEvent";
 
 describe("notifier/AlertNotifier", () => {
   let service: AlertNotifier;
-  let logger: LogService;
   let configService: ConfigService;
   let notifierFactory: NotifierFactory;
   let dappHelper: DappHelper;
@@ -39,13 +37,19 @@ describe("notifier/AlertNotifier", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AlertNotifier,
-        LogService,
-        ConfigService,
-        NotifierFactory,
-        DappHelper,
-        EmailNotifier,
-        NetworkService,
-        EmailNotifier,
+        EventEmitter2, // requirement from AlertNotifier
+        DappHelper, // requirement from AlertNotifier
+        NotifierFactory, // requirement from AlertNotifier
+        EmailNotifier, // requirement from AlertNotifier
+        ConfigService, // requirement from DappHelper
+        NetworkService, // requirement from DappHelper
+        MailerService, // requirement from EmailNotifier
+        {
+          provide: NotifierFactory,
+          useValue: {
+            getNotifier: jest.fn().mockReturnValue(notifier)
+          },
+        }, // requirement from AlertNotifier
         {
           provide: ConfigService,
           useValue: {
@@ -55,22 +59,17 @@ describe("notifier/AlertNotifier", () => {
               recipient: "recipient@example.com",
             })
           },
-        },
-        {
-          provide: NotifierFactory,
-          useValue: {
-            getNotifier: jest.fn().mockReturnValue(notifier)
-          },
-        },
+        }, // overwrite of ConfigService
         {
           provide: MailerService,
-          useValue: MailerService,
-        },
+          useValue: {
+            sendMail: jest.fn().mockResolvedValue(true),
+          },
+        }, // overwrite of MailerService
       ],
     }).compile();
 
     service = module.get<AlertNotifier>(AlertNotifier);
-    logger = module.get<LogService>(LogService);
     configService = module.get<ConfigService>(ConfigService);
     notifierFactory = module.get<NotifierFactory>(NotifierFactory);
     dappHelper = module.get<DappHelper>(DappHelper);
@@ -84,9 +83,6 @@ describe("notifier/AlertNotifier", () => {
     it("should run correctly if alertsConfig type doesn't include 'warn' level", async () => {
       // prepare
       jest.clearAllMocks();
-      const loggerDebugCall = jest
-        .spyOn(logger, "debug")
-        .mockReturnValue();
       (service as any).alertsConfig = {
         type: ["error"],
       };
@@ -112,8 +108,6 @@ describe("notifier/AlertNotifier", () => {
       await (service as any).handleLogWarnEvent(alertEvent);
 
       // assert
-      expect(loggerDebugCall).toHaveBeenNthCalledWith(1, "Caught a warning event.");
-
       expect(configServiceGetCall).toHaveBeenCalledTimes(0);
       expect(dappHelperCreateDetailsTableHTMLCall).toHaveBeenCalledTimes(0);
       expect(notifierSendInternalCall).toHaveBeenCalledTimes(0);
@@ -122,9 +116,6 @@ describe("notifier/AlertNotifier", () => {
     it("should run correctly if alertsConfig type includes 'warn' level", async () => {
       // prepare
       jest.clearAllMocks();
-      const loggerDebugCall = jest
-        .spyOn(logger, "debug")
-        .mockReturnValue();
       (service as any).alertsConfig = {
         type: ["warn"],
       };
@@ -149,7 +140,6 @@ describe("notifier/AlertNotifier", () => {
       await (service as any).handleLogWarnEvent(alertEvent);
 
       // assert
-      expect(loggerDebugCall).toHaveBeenNthCalledWith(1, "Caught a warning event.");
       expect(configServiceGetCall).toHaveBeenNthCalledWith(1, "dappName");
       expect(dappHelperCreateDetailsTableHTMLCall).toHaveBeenNthCalledWith(1, [alertEvent]);
       expect(notifierSendInternalCall).toHaveBeenCalledTimes(1);
@@ -160,9 +150,6 @@ describe("notifier/AlertNotifier", () => {
     it("should run correctly if alertsConfig type doesn't include 'error' level", async () => {
       // prepare
       jest.clearAllMocks();
-      const loggerDebugCall = jest
-        .spyOn(logger, "debug")
-        .mockReturnValue();
       (service as any).alertsConfig = {
         type: ["warn"],
       };
@@ -188,7 +175,6 @@ describe("notifier/AlertNotifier", () => {
       await (service as any).handleLogErrorEvent(alertEvent);
 
       // assert
-      expect(loggerDebugCall).toHaveBeenNthCalledWith(1, "Caught an error event.");
       expect(configServiceGetCall).toHaveBeenCalledTimes(0);
       expect(dappHelperCreateDetailsTableHTMLCall).toHaveBeenCalledTimes(0);
       expect(notifierSendInternalCall).toHaveBeenCalledTimes(0);
@@ -197,9 +183,6 @@ describe("notifier/AlertNotifier", () => {
     it("should run correctly if alertsConfig type includes 'error' level", async () => {
       // prepare
       jest.clearAllMocks();
-      const loggerDebugCall = jest
-        .spyOn(logger, "debug")
-        .mockReturnValue();
       (service as any).alertsConfig = {
         type: ["error"],
       };
@@ -225,7 +208,6 @@ describe("notifier/AlertNotifier", () => {
       await (service as any).handleLogErrorEvent(alertEvent);
 
       // assert
-      expect(loggerDebugCall).toHaveBeenNthCalledWith(1, "Caught an error event.");
       expect(configServiceGetCall).toHaveBeenNthCalledWith(1, "dappName");
       expect(dappHelperCreateDetailsTableHTMLCall).toHaveBeenNthCalledWith(1, [alertEvent]);
       expect(notifierSendInternalCall).toHaveBeenCalledTimes(1);

@@ -10,6 +10,7 @@
 // external dependencies
 import { Test, TestingModule } from "@nestjs/testing";
 import { LogLevel } from "@nestjs/common";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import {
@@ -18,43 +19,41 @@ import {
   TestDailyRotateFileTransport,
   TestWinstonLogger,
 } from "../../../mocks/global";
+import { StorageOptions } from "../../../../src/common/models/StorageOptions";
 import { LogService } from "../../../../src/common/services/LogService";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 
 describe("common/LogService", () => {
   let service: LogService;
-  let eventEmitter: EventEmitter2;
+  let mockEmitFn: any;
 
   beforeEach(async () => {
+    mockEmitFn = jest.fn();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        LogService,
         EventEmitter2,
+        LogService,
+        {
+          provide: "EventEmitter",
+          useValue: {
+            emit: mockEmitFn,
+          }
+        },
       ],
     }).compile();
 
     service = module.get<LogService>(LogService);
-    eventEmitter = module.get<EventEmitter2>(EventEmitter2);
     (service as any).context = "test-context";
     (service as any).logger = TestWinstonLogger;
-    (service as any).eventEmitter = eventEmitter;
+    (service as any).eventEmitter = {
+      emit: mockEmitFn,
+    };
+
+    mockEmitFn.mockClear();
   });
 
   it("should be defined", () => {
     expect(service).toBeDefined();
-  });
-
-  describe("setContext", () => {
-    it("should set context of instance", () => {
-      // prepare
-      const expectedContext = "new-test-context";
-
-      // act
-      service.setContext(expectedContext);
-
-      // assert
-      expect((service as any).context).toBe(expectedContext);
-    });
   });
 
   describe("createTransports()", () => {
@@ -88,11 +87,6 @@ describe("common/LogService", () => {
 
   describe("error()", () => {
     it("should call winston logger's error() method and emit an event", () => {
-      // prepare
-      const eventEmitterEmitCall = jest
-        .spyOn(eventEmitter, "emit")
-        .mockReturnValue(true);
-
         // act
       service.error(
         "test-error-message",
@@ -107,17 +101,12 @@ describe("common/LogService", () => {
         "test-error-trace",
         "test-error-context",
       );
-      expect(eventEmitterEmitCall).toHaveBeenCalledTimes(1);
+      expect(mockEmitFn).toHaveBeenCalledTimes(1);
     });
   });
 
   describe("warn()", () => {
     it("should call winston logger's warn() method and emit an event", () => {
-      // prepare
-      const eventEmitterEmitCall = jest
-        .spyOn(eventEmitter, "emit")
-        .mockReturnValue(true);
-
       // act
       service.warn("test-warn-message", "test-warn-context");
 
@@ -127,7 +116,7 @@ describe("common/LogService", () => {
         "test-warn-message",
         "test-warn-context"
       );
-      expect(eventEmitterEmitCall).toHaveBeenCalledTimes(1);
+      expect(mockEmitFn).toHaveBeenCalledTimes(1);
     });
   });
 

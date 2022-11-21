@@ -47,11 +47,13 @@ jest.mock("../../config/monitoring", () => {
     },
     logDirectoryPath: "./logs/",
     logMaxFileSize: 1000,
+    enableAlerts: true,
     alerts: {
       type: ["warn", "error"],
       transport: "mail",
       recipient: "recipient@example.com",
     },
+    enableReports: true,
     reports: {
       type: ["warn", "error"],
       transport: "mail",
@@ -244,3 +246,8 @@ process.env.FRONTEND_DOMAIN="fake-frontend-host";
 process.env.FRONTEND_PORT="9876";
 process.env.ANOTHER_DB_NAME_THROUGH_ENV = "this-exists-only-in-mock";
 process.env.LOGS_DIRECTORY_PATH = "/logs";
+process.env.SMTP_HOST="fake.smtp.server";
+process.env.SMTP_PORT="587";
+process.env.SMTP_USER="fakeMailerUser";
+process.env.SMTP_PASSWORD="fakePassword";
+process.env.FROM="Fake Mailer <mailer@dhealth.foundation>";

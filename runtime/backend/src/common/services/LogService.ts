@@ -8,8 +8,13 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Injectable, LoggerService, LogLevel, Optional } from "@nestjs/common";
-import path from "path";
+import {
+  Inject,
+  Injectable,
+  LoggerService,
+  LogLevel,
+  Optional,
+} from "@nestjs/common";
 import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
@@ -22,13 +27,13 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { StorageOptions } from "../models/StorageOptions";
+import { DappConfig } from "../models/DappConfig";
+import { MonitoringConfig } from "../models/MonitoringConfig";
+import { AlertEvent } from "../events/AlertEvent";
 
 // configuration resources
-import { DappConfig } from "../models/DappConfig";
 import dappConfigLoader from "../../../config/dapp";
-import { MonitoringConfig } from "../models/MonitoringConfig";
 import monitoringConfigLoader from "../../../config/monitoring";
-import { AlertEvent } from "../events/AlertEvent";
 
 /**
  * @class LogService
@@ -89,50 +94,33 @@ export class LogService implements LoggerService {
   private readonly monitoringConfig: MonitoringConfig;
 
   /**
-   * The default constructor of this class.
-   */
-  constructor();
-
-  /**
-   * The constructor of this class with context.
+   * This injects the event emitter *at property level* such
+   * that instances of this class can be created without the
+   * event emitter injection.
+   * <br /><br />
+   * Dependency injection here is done using a *custom provider*
+   * named `EventEmitter` and defined in {@link LogModule}.
    *
-   * @param {string} context The identified context of this instance.
+   * @access protected
+   * @readonly
+   * @var {EventEmitter2}
    */
-  constructor(context: string);
-
-  /**
-   * The constructor of this class with context and event emitter.
-   *
-   * @param {string}        context       The identified context of this instance.
-   * @param {EventEmitter2} eventEmitter  The identified eventEmitter of this instance.
-   */
-  constructor(context: string, eventEmitter: EventEmitter2);
+  @Inject("EventEmitter")
+  protected readonly eventEmitter: EventEmitter2;
 
   /**
    * The constructor implementation of this class.
    *
    * @param {string}        context       The optional identified context of this instance.
-   * @param {EventEmitter2} eventEmitter  The optional identified eventEmitter of this instance.
    */
   constructor(
     @Optional()
-    protected context?: string,
-    @Optional()
-    protected eventEmitter?: EventEmitter2,
+    protected readonly context: string,
   ) {
     // @todo should use AppConfiguration
     this.dappConfig = dappConfigLoader();
     this.monitoringConfig = monitoringConfigLoader();
-    if (context) this.setLogger();
-  }
 
-  /**
-   * The setter of this instance's logger.
-   *
-   * @access private
-   * @returns {void}
-   */
-  private setLogger(): void {
     this.logger = WinstonModule.createLogger({
       levels: this.monitoringConfig.logLevels,
       format: winston.format.combine(
@@ -145,18 +133,6 @@ export class LogService implements LoggerService {
       ),
       transports: this.createTransports(),
     });
-  }
-
-  /**
-   * The setter of this instance's context.
-   *
-   * @access public
-   * @param {string} context The identified name of this instance.
-   * @returns {void}
-   */
-  public setContext(context: string): void {
-    this.context = context;
-    this.setLogger();
   }
 
   /**

@@ -43,8 +43,6 @@ describe("notifier/LogSchema", () => {
       expect(logToQuery).toEqual({
         timestamp,
         level,
-        message,
-        meta,
         label,
       });
     });
