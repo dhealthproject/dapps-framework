@@ -10,7 +10,8 @@
 // external dependencies
 import { get } from "lodash";
 // internal dependencies
-import translationsEn from "../../../resources/i18n/en.json";
+import translationsEn from "../../../resources/i18n/index";
+console.log({ translationsEn });
 
 /**
  *

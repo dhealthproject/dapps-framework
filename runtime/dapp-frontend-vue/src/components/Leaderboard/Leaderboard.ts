@@ -102,11 +102,11 @@ export default class Leaderboard extends MetaView {
   protected get leaderBoardTabs(): LeaderboardTab[] {
     return [
       {
-        title: this.$t("leaderboard_tab_week"),
+        title: this.$t("common.this_week"),
         value: "W",
       },
       {
-        title: this.$t("leaderboard_tab_all"),
+        title: this.$t("common.all_time"),
         value: "D",
       },
     ];

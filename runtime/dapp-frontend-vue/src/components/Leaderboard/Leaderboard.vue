@@ -29,7 +29,7 @@
     </div>
 
     <div v-else class="no-items flex items-center justify-center">
-      <p v-html="$t('leaderboard_no_items')" />
+      <p v-html="$t('dashboard.leaderboard_no_items')" />
     </div>
   </div>
 </template>

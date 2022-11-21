@@ -234,25 +234,25 @@ export default class Dashboard extends MetaView {
   protected get statisticsTabs(): StatisticsTabItem[] {
     return [
       {
-        title: this.$t("dashboard_statistics_tabs_alltime"),
+        title: this.$t("common.all_time"),
         quickStats: [
           {
-            title: this.$t("dashboard_statistics_label_minutes_practiced"),
+            title: this.$t("dashboard.statistics_label_minutes_practiced"),
             amount: 0,
             direction: "up",
           },
           {
-            title: this.$t("dashboard_statistics_label_fit_earned"),
+            title: this.$t("dashboard.statistics_label_fit_earned"),
             amount: 0,
             direction: "down",
           },
           {
-            title: this.$t("dashboard_statistics_label_calories_burnt"),
+            title: this.$t("dashboard.statistics_label_calories_burnt"),
             amount: 0,
             direction: "down",
           },
           {
-            title: this.$t("dashboard_statistics_label_friends_referred"),
+            title: this.$t("dashboard.statistics_label_friends_referred"),
             amount: 0,
             direction: "down",
           },
@@ -262,35 +262,35 @@ export default class Dashboard extends MetaView {
           {
             avatar: "friend1.png",
             name: "Yoga Maestro",
-            action: this.$t("dashboard_statistics_label_go1on1"),
+            action: this.$t("dashboard.statistics_label_go1on1"),
           },
           {
             avatar: "friend2.png",
             name: "Terminator",
-            action: this.$t("dashboard_statistics_label_go1on1"),
+            action: this.$t("dashboard.statistics_label_go1on1"),
           },
         ],
       },
       {
-        title: this.$t("dashboard_statistics_tabs_today"),
+        title: this.$t("common.today"),
         quickStats: [
           {
-            title: this.$t("dashboard_statistics_label_minutes_practiced"),
+            title: this.$t("dashboard.statistics_label_minutes_practiced"),
             amount: 0,
             direction: "down",
           },
           {
-            title: this.$t("dashboard_statistics_label_fit_earned"),
+            title: this.$t("dashboard.statistics_label_fit_earned"),
             amount: 0,
             direction: "down",
           },
           {
-            title: this.$t("dashboard_statistics_label_calories_burnt"),
+            title: this.$t("dashboard.statistics_label_calories_burnt"),
             amount: 0,
             direction: "up",
           },
           {
-            title: this.$t("dashboard_statistics_label_friends_referred"),
+            title: this.$t("dashboard.statistics_label_friends_referred"),
             amount: 0,
             direction: "down",
           },
@@ -300,12 +300,12 @@ export default class Dashboard extends MetaView {
           {
             avatar: "friend1.png",
             name: "Yoga Maestro",
-            action: this.$t("dashboard_statistics_label_go1on1"),
+            action: this.$t("dashboard.statistics_label_go1on1"),
           },
           {
             avatar: "friend2.png",
             name: "Terminator",
-            action: this.$t("dashboard_statistics_label_go1on1"),
+            action: this.$t("dashboard.statistics_label_go1on1"),
           },
         ],
       },
