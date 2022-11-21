@@ -88,7 +88,7 @@
     >
       <div class="flex flex-row justify-between items-center mb-[32px]">
         <div class="row-item">
-          <h3 class="title" v-html="$t('referral_share')" />
+          <h3 class="title" v-html="$t('common.word_share')" />
         </div>
         <div class="row-item">
           <inline-svg

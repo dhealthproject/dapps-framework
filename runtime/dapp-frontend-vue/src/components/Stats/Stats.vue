@@ -22,8 +22,8 @@
           v-if="userStatistics && totalEarned"
           v-html="`${totalEarned.toFixed(1)} $FIT earned`"
         /><InfoTip
-          :title="$t('stats_tooltip_earned_title')"
-          :text="$t('stats_tooltip_earned_text')"
+          :title="$t('dashboard.stats_tooltip_earned_title')"
+          :text="$t('dashboard.stats_tooltip_earned_text')"
         />
       </div>
     </div>
@@ -32,14 +32,14 @@
         <span class="minutes__amount" v-html="totalPracticedMinutes" />
         <span
           class="dapp-stats__other__label"
-          v-html="$t('stats_minutes_exercised')"
+          v-html="$t('dashboard.stats_minutes_exercised')"
         />
       </div>
       <div class="activities-list text-right">
         <TopActivities :items="topActivities" />
         <span
           class="dapp-stats__other__label"
-          v-html="$t('stats_top_activities')"
+          v-html="$t('dashboard.stats_top_activities')"
         />
       </div>
     </div>
@@ -54,16 +54,16 @@
       <div class="referred">
         <span class="amount" v-html="totalReferral" />
         <span class="get-more"
-          >{{ $t("stats_get_more") }}
+          >{{ $t("dashboard.stats_get_more") }}
           <InfoTip
-            :title="$t('stats_tooltip_referral_title')"
-            :text="$t('stats_tooltip_referral_text')"
+            :title="$t('dashboard.stats_tooltip_referral_title')"
+            :text="$t('dashboard.stats_tooltip_referral_text')"
         /></span>
       </div>
       <div class="text-right">
         <span
           class="dapp-stats__other__label"
-          v-html="$t('stats_friends_referred')"
+          v-html="$t('dashboard.stats_friends_referred')"
         />
       </div>
     </div>

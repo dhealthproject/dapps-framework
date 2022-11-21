@@ -55,7 +55,7 @@ export default class Settings extends MetaView {
   protected get integrationsList() {
     // translate the description
     const description: string = this.$t(
-      "settings_integrations_description_strava"
+      "settings.integrations_description_strava"
     );
 
     return [

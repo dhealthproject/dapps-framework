@@ -1,0 +1,28 @@
+{
+    "dashboard": {
+        "key_stats_title": "Key stats",
+        "referral_title": "Invite friends",
+        "referral_text": "Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et.",
+        "share_link_title": "Share your link",
+        "cta_strava_welcome_text": "Welcome! Integrate an account to start earning tokens for your activities.",
+        "cta_strava_start_earning": "At the moment, we only support STRAVA integration.",
+        "cta_strava_download_strava": "Don't have Strava? Download it",
+        "cta_strava_integrate_strava": "Integrate with STRAVA",
+        "statistics_label_minutes_practiced": "Minutes exercised",
+        "statistics_label_fit_earned": "$FIT earned",
+        "statistics_label_calories_burnt": "Calories burnt",
+        "statistics_label_friends_referred": "Friends referred",
+        "statistics_label_go1on1": "Go 1-on-1",
+        "copy_referral_code": "Copy referral code",
+        "leaderboard_title": "Leaderboard",
+        "leaderboard_no_items": "No items are loaded",
+        "stats_friends_referred": "Friends Referred",
+        "stats_tooltip_earned_title": "Total $FIT earned",
+        "stats_tooltip_earned_text": "The total number of $FIT token earned from your  fitness activities imported from Strava",
+        "stats_get_more": "30 more to get 5% boost and earn a digital medal",
+        "stats_top_activities": "Top Activities",
+        "stats_minutes_exercised": "Minutes Exercised",
+        "stats_tooltip_referral_title": "Elevate’s referral program",
+        "stats_tooltip_referral_text": "Invite 50 fitness buddies to join Elevate and get 5% boost for your earning, plus a really cool “Super friend” medal, and unblock next reward level"
+      }
+}

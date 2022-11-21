@@ -87,10 +87,10 @@ export default class ReferralInput extends MetaView {
 
     navigator.clipboard.writeText(val).then(() => {
       console.log("copied", this.val);
-      this.referralLabel = this.$t("dashboard_referral_copied");
+      this.referralLabel = this.$t("common.copied");
 
       this.copyTimer = setTimeout(() => {
-        this.referralLabel = this.$t("dashboard_copy_referral_code");
+        this.referralLabel = this.$t("dashboard.copy_referral_code");
       }, 2000);
     });
   }

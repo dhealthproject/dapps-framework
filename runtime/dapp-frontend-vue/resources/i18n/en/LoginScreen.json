@@ -1,0 +1,24 @@
+{
+    "login_screen": {
+        "connect_wallet": "Connect your Wallet",
+        "in_four_steps": "In 4 easy steps...",
+        "steps": [
+          { "id": "tutorial_1", "text": "Open dHealth Signer app on your phone" },
+          { "id": "tutorial_2", "text": "Tap on scan from the bottom navigation bar" },
+          {
+            "id": "tutorial_3",
+            "text": "Point your phone to the screen to capture the code"
+          },
+          {
+            "id": "tutorial_4",
+            "text": "Confirm your connection  to the dApp on the mobile wallet."
+          }
+        ],
+        "tip": "Need help? Watch a Video Tutorial",
+        "tip_split": ["Need help? Watch a", "Video Tutorial"],
+        "on_mobile_tip": ["If you’re new to dHealth Network,", "download dHealth Signer App"],
+        "modal": {
+          "description": "After you have scanned the QR code with your mobile wallet, please confirm your connection to the dApp."
+        }
+      }
+}

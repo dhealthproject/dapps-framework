@@ -16,7 +16,7 @@
       <div class="description">
         <div class="container text-left">
           <p>
-            {{ $t("settings_integrations_description_text") }}
+            {{ $t("settings.integrations_description_text") }}
           </p>
         </div>
       </div>
