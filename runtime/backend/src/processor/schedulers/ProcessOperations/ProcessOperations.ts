@@ -13,7 +13,6 @@ import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
 import { Contract } from "@dhealth/contracts";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { QueryParameters } from "../../../common/concerns/Queryable";
@@ -116,7 +115,8 @@ export class ProcessOperations extends ProcessorCommand {
   /**
    * Constructs and prepares an instance of this scheduler.
    *
-   * @param {LogService}   logger
+   * @param {OperationModel}   model
+   * @param {TransactionModel}   transactionModel
    * @param {ConfigService}   configService
    * @param {StateService}   stateService
    * @param {NetworkService}  networkService
@@ -127,8 +127,6 @@ export class ProcessOperations extends ProcessorCommand {
     @InjectModel(Operation.name) protected readonly model: OperationModel,
     @InjectModel(Transaction.name)
     protected readonly transactionModel: TransactionModel,
-    protected readonly logger: LogService,
-    protected readonly eventEmitter: EventEmitter2,
     protected readonly configService: ConfigService,
     protected readonly stateService: StateService,
     protected readonly networkService: NetworkService,
@@ -144,9 +142,6 @@ export class ProcessOperations extends ProcessorCommand {
     // sets default state data
     this.lastPageNumber = 1;
     this.totalNumberOfOperations = 0;
-
-    // prepares execution logger
-    this.logger.setContext(`${this.scope}/${this.command}`);
   }
 
   /**
@@ -250,6 +245,9 @@ export class ProcessOperations extends ProcessorCommand {
     if (!contracts || !contracts.length || !operations || !operations.length) {
       return;
     }
+
+    // prepares execution logger
+    this.logger = new LogService(`${this.scope}/${this.command}`);
 
     // display starting moment information also in non-debug mode
     this.debugLog(

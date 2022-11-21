@@ -93,7 +93,7 @@ describe("AppModule", () => {
         module: AppModule,
         imports: modules,
         controllers: [AppController],
-        providers: [AppService, EventEmitter2],
+        providers: [AppService],
       }
 
       // act

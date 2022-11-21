@@ -27,22 +27,22 @@
  * @since v0.3.0
  */
 export interface TransportConfig {
-  mail: MailConfig;
+  mailer: MailerConfig;
 }
 
 /**
  * @label NOTIFIER
- * @interface MailConfig
+ * @interface MailerConfig
  * @description The dApp transport email configuration object. This configuration
  * object is used to determine dApp email information.
  * <br /><br />
  * This interface is mainly used **internally** to restrict the configuration
  * values provided to some modules or services and methods.
  *
- * @link MailConfig:NOTIFIER
+ * @link MailerConfig:NOTIFIER
  * @since v0.3.2
  */
-export interface MailConfig {
+export interface MailerConfig {
   host: string;
   port: string | number;
   user: string;

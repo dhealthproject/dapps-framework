@@ -37,7 +37,7 @@ export default () => ({
    * @see TransportConfig
    * @var {TransportConfig}
    */
-  mail: {
+  mailer: {
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
     user: process.env.SMTP_USER,

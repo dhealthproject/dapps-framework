@@ -16,7 +16,6 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import helmet from "helmet";
 import childProcess from "child_process";
 import cookieParser from "cookie-parser";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { AppModule } from "./AppModule";
@@ -60,7 +59,7 @@ async function bootstrap(): Promise<void> {
   );
 
   // create a logger instance
-  const logger = new LogService(dappConfig.dappName, app.get(EventEmitter2));
+  const logger = new LogService(dappConfig.dappName);
   app.useLogger(logger);
 
   // log about the app starting *also* in debug mode

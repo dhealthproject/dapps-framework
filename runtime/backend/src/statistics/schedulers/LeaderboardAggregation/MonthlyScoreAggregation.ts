@@ -12,28 +12,33 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { ConfigService } from "@nestjs/config";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 import moment from "moment";
 
 // internal dependencies
+// common scope
 import { StateService } from "../../../common/services/StateService";
 import { QueryService } from "../../../common/services/QueryService";
+import { NetworkService } from "../../../common/services/NetworkService";
+
+// discovery scope
 import {
   Asset,
   AssetDocument,
   AssetModel,
 } from "../../../discovery/models/AssetSchema";
-import { NetworkService } from "../../../common/services/NetworkService";
+
+// processor scope
+import {
+  Activity,
+  ActivityModel,
+} from "../../../processor/models/ActivitySchema";
+
+// statistics scope
+import { LeaderboardAggregation } from "./LeaderboardAggregation";
 import {
   Statistics,
   StatisticsModel,
 } from "../../../statistics/models/StatisticsSchema";
-import { LeaderboardAggregation } from "./LeaderboardAggregation";
-import {
-  Activity,
-  ActivityDocument,
-} from "../../../processor/models/ActivitySchema";
-import { LogService } from "../../../common/services/LogService";
 
 /**
  * @class MonthlyScoreAggregation
@@ -48,20 +53,19 @@ export class MonthlyScoreAggregation extends LeaderboardAggregation {
   /**
    * Constructs and prepares an instance of this scheduler.
    *
-   * @param {LogService}          logger
-   * @param {EventEmitter2}       eventEmitter
-   * @param {SchedulerRegistry}   schedulerRegistry
-   * @param {StateService}        stateService
-   * @param {queriesService}      queriesService
-   * @param {NetworkService}      networkService
-   * @param {ConfigService}       configService
+   * @param   {StatisticsModel}     model
+   * @param   {AssetModel}          assetModel
+   * @param   {ActivityModel}       activityModel
+   * @param   {SchedulerRegistry}   schedulerRegistry
+   * @param   {StateService}        stateService
+   * @param   {QueryService}        queriesService
+   * @param   {NetworkService}      networkService
+   * @param   {ConfigService}       configService
    */
   constructor(
     @InjectModel(Statistics.name) protected readonly model: StatisticsModel,
-    @InjectModel(Asset.name) protected assetModel: AssetDocument,
-    @InjectModel(Activity.name) protected activityModel: ActivityDocument,
-    protected readonly logger: LogService,
-    protected readonly eventEmitter: EventEmitter2,
+    @InjectModel(Asset.name) protected assetModel: AssetModel,
+    @InjectModel(Activity.name) protected activityModel: ActivityModel,
     protected readonly schedulerRegistry: SchedulerRegistry,
     protected readonly stateService: StateService,
     protected readonly queriesService: QueryService<AssetDocument, AssetModel>,
@@ -72,8 +76,6 @@ export class MonthlyScoreAggregation extends LeaderboardAggregation {
       model,
       assetModel,
       activityModel,
-      logger,
-      eventEmitter,
       schedulerRegistry,
       stateService,
       queriesService,
@@ -81,7 +83,6 @@ export class MonthlyScoreAggregation extends LeaderboardAggregation {
       configService,
     );
     this.periodFormat = "M";
-    this.setLoggerContext();
     this.addCronJob("0 0 0 */3 * *"); // every 3 days (up to 12 times per month)
   }
 

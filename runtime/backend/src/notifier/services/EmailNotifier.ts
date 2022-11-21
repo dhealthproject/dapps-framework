@@ -54,6 +54,9 @@ export class EmailNotifier implements Notifier {
   public async sendPublic(
     emailDetails: ISendMailOptions,
   ): Promise<SentMessageInfo> {
+    // @todo there is no difference between internal and public...
+    // @todo public emails should always use a specific templating
+    // @todo public emails should always be correctly signed, etc.
     return await this.mailerService.sendMail(emailDetails);
   }
 }

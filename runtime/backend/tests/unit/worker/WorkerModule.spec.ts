@@ -72,7 +72,6 @@ describe("worker/WorkerModule", () => {
       const expectedResult = {
         module: WorkerModule,
         imports: modules,
-        providers: [EventEmitter2],
       };
 
       // act

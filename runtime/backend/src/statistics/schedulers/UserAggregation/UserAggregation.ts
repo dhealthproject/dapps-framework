@@ -13,7 +13,6 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron, SchedulerRegistry } from "@nestjs/schedule";
 import { PipelineStage } from "mongoose";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 // common scope
@@ -59,7 +58,6 @@ export class UserAggregation extends StatisticsCommand {
    *
    * @param {StatisticsModel}     model
    * @param {ActivityModel}       activityModel
-   * @param {EventEmitter2}       eventEmitter
    * @param {SchedulerRegistry}   schedulerRegistry
    * @param {StateService}        stateService
    * @param {QueryService}        queryService
@@ -69,7 +67,6 @@ export class UserAggregation extends StatisticsCommand {
     protected readonly model: StatisticsModel,
     @InjectModel(Activity.name)
     protected readonly activityModel: ActivityDocument,
-    protected readonly eventEmitter: EventEmitter2,
     protected readonly schedulerRegistry: SchedulerRegistry,
     protected readonly stateService: StateService,
     protected readonly queryService: QueryService<

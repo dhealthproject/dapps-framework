@@ -13,7 +13,6 @@ import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
 import { PublicAccount, NetworkType } from "@dhealth/sdk";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { QueryParameters } from "../../../common/concerns/Queryable";
@@ -91,7 +90,6 @@ export class DiscoverAccounts extends DiscoveryCommand {
    * Params will be automatically injected upon called.
    *
    * @param {LogService}      logger
-   * @param {EventEmitter2}   eventEmitter
    * @param {ConfigService}   configService
    * @param {StateService}   statesService
    * @param {NetworkService}  networkService
@@ -101,7 +99,6 @@ export class DiscoverAccounts extends DiscoveryCommand {
   constructor(
     @InjectModel(Account.name) protected readonly model: AccountModel,
     protected readonly logger: LogService,
-    protected readonly eventEmitter: EventEmitter2,
     protected readonly configService: ConfigService,
     protected readonly statesService: StateService,
     protected readonly networkService: NetworkService,

@@ -15,7 +15,7 @@ import { MailerModule } from "@nestjs-modules/mailer";
 import { EmailNotifier } from "../services/EmailNotifier";
 
 // configuration resources
-import { MailConfig } from "../models/TransportConfig";
+import { MailerConfig } from "../models/TransportConfig";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 
 /**
@@ -30,9 +30,9 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        const mailConfig = configService.get<MailConfig>("mail");
+        const mailConfig = configService.get<MailerConfig>("mailer");
         return {
-          transport: `smtps://${mailConfig.user}:${mailConfig.password}@${mailConfig.host}`,
+          transport: `smtp://${mailConfig.user}:${mailConfig.password}@${mailConfig.host}:${mailConfig.port}`,
           defaults: {
             from: mailConfig.from,
           },

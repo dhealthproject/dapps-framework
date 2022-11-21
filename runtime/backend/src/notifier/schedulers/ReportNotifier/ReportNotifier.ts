@@ -14,7 +14,6 @@ import { SchedulerRegistry } from "@nestjs/schedule";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { PipelineStage } from "mongoose";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { NotifierCommand, NotifierCommandOptions } from "../NotifierCommand";
@@ -23,13 +22,11 @@ import { ReportNotifierStateData } from "../../models/ReportNotifierStateData";
 import { NotifierFactory } from "../../../notifier/concerns/NotifierFactory";
 import { NotifierType } from "../../../notifier/models/NotifierType";
 import { Notifier } from "../../../notifier/models/Notifier";
-import { LogService } from "../../../common/services/LogService";
 import { Log, LogDocument, LogModel } from "../../../common/models/LogSchema";
 import { QueryService } from "../../../common/services/QueryService";
 import { DappHelper } from "../../../common/concerns/DappHelper";
-
-// configuration resources
-import { ReportsConfig } from "../../../common/models";
+import { ReportsConfig } from "../../../common/models/MonitoringConfig";
+import { LogService } from "../../../common/services/LogService";
 
 /**
  * @class ReportNotifier
@@ -83,8 +80,6 @@ export class ReportNotifier extends NotifierCommand {
    * Constructs and prepares an instance of this scheduler.
    *
    * @param {LogDocument} model
-   * @param {LogService} logger
-   * @param {EventEmitter2} eventEmitter
    * @param {ConfigService} configService
    * @param {QueryService} queryService
    * @param {StateService} stateService
@@ -93,9 +88,7 @@ export class ReportNotifier extends NotifierCommand {
    * @param {DappHelper} dappHelper
    */
   constructor(
-    @InjectModel(Log.name) protected readonly model: LogDocument,
-    protected readonly logger: LogService,
-    protected readonly eventEmitter: EventEmitter2,
+    @InjectModel(Log.name) protected readonly model: LogModel,
     protected readonly configService: ConfigService,
     protected readonly queryService: QueryService<LogDocument, LogModel>,
     protected readonly stateService: StateService,
@@ -107,13 +100,13 @@ export class ReportNotifier extends NotifierCommand {
     this.lastExecutedAt = new Date().valueOf();
     this.reportsConfig = this.configService.get<ReportsConfig>("reports");
     this.periodFormat = this.reportsConfig.period;
-    this.logger.setContext(
-      `${this.scope}/${this.command}`, // includes /(D|M|W)
-    );
     this.notifier = notifierFactory.getNotifier(
       this.reportsConfig.transport as NotifierType,
     );
     this.addCronJob();
+
+    // prepares execution logger
+    this.logger = new LogService(`${this.scope}/${this.command}`);
   }
 
   /**
@@ -249,7 +242,6 @@ export class ReportNotifier extends NotifierCommand {
     // executes the actual command logic (this will call aggregate())
     await this.run([this.periodFormat], {
       debug: true,
-      quiet: false,
     });
   }
 

@@ -13,28 +13,39 @@ import { SchedulerRegistry } from "@nestjs/schedule";
 import { PipelineStage } from "mongoose";
 import { CronJob } from "cron";
 import { ConfigService } from "@nestjs/config";
-import { EventEmitter2 } from "@nestjs/event-emitter";
+import { InjectModel } from "@nestjs/mongoose";
 
 // internal dependencies
+// common scope
 import { StateService } from "../../../common/services/StateService";
+import { NetworkService } from "../../../common/services/NetworkService";
+import { QueryService } from "../../../common/services/QueryService";
+import { LogService } from "../../../common/services/LogService";
+
+// discovery scope
+import {
+  Asset,
+  AssetDocument,
+  AssetModel,
+} from "../../../discovery/models/AssetSchema";
+
+// processor scope
+import {
+  Activity,
+  ActivityModel,
+} from "../../../processor/models/ActivitySchema";
+
+// statistics scope
+import { Statistics, StatisticsModel } from "../../models/StatisticsSchema";
 import {
   StatisticsCommand,
   StatisticsCommandOptions,
 } from "../StatisticsCommand";
-import { QueryService } from "../../../common/services/QueryService";
-import {
-  AssetDocument,
-  AssetModel,
-} from "../../../discovery/models/AssetSchema";
-import { NetworkService } from "../../../common/services/NetworkService";
-import { StatisticsModel } from "../../models/StatisticsSchema";
 import {
   LeaderboardConfig,
   ScoreSchedulerConfig,
 } from "../../../common/models/StatisticsConfig";
-import { ActivityDocument } from "../../../processor/models/ActivitySchema";
 import { LeaderboardAggregationStateData } from "../../models/LeaderboardAggregationStateData";
-import { LogService } from "../../../common/services/LogService";
 
 /**
  * @class LeaderboardAggregation
@@ -77,20 +88,22 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
   /**
    * Constructs and prepares an instance of this scheduler.
    *
-   * @param { LogService } logger
-   * @param { EventEmitter2 } eventEmitter
-   * @param { SchedulerRegistry } schedulerRegistry
-   * @param { StateService } stateService
-   * @param { QueryService } queriesService
-   * @param { NetworkService } networkService
-   * @param { ConfigService } configService
+   * @param   {StatisticsModel}     model
+   * @param   {AssetModel}          assetModel
+   * @param   {ActivityModel}       activityModel
+   * @param   {SchedulerRegistry}   schedulerRegistry
+   * @param   {StateService}        stateService
+   * @param   {QueryService}        queriesService
+   * @param   {NetworkService}      networkService
+   * @param   {ConfigService}       configService
    */
   constructor(
+    @InjectModel(Statistics.name)
     protected readonly model: StatisticsModel,
-    protected readonly assetModel: AssetDocument,
-    protected readonly activityModel: ActivityDocument,
-    protected readonly logger: LogService,
-    protected readonly eventEmitter: EventEmitter2,
+    @InjectModel(Asset.name)
+    protected readonly assetModel: AssetModel,
+    @InjectModel(Activity.name)
+    protected readonly activityModel: ActivityModel,
     protected readonly schedulerRegistry: SchedulerRegistry,
     protected readonly stateService: StateService,
     protected readonly queriesService: QueryService<AssetDocument, AssetModel>,
@@ -157,21 +170,6 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
   }
 
   /**
-   * Setter method to set the context of this instance's logger.
-   * Subclasses will be **required** to call this method in their
-   * constructor after the `periodFormat` value is set.
-   *
-   * @access protected
-   * @return {void}
-   */
-  protected setLoggerContext(): void {
-    // setup debug logger
-    this.logger.setContext(
-      `${this.scope}/${this.command}`, // includes /(D|M|W)
-    );
-  }
-
-  /**
    * Method to create and run a cronjob automatically. Subclasses will
    * be **required** to call this method in their constructor with the
    * desired cron expression.
@@ -219,6 +217,9 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    * @returns {Promise<void>}
    */
   public async runAsScheduler(): Promise<void> {
+    // prepares execution logger
+    this.logger = new LogService(`${this.scope}/${this.command}`);
+
     // display starting moment information *also* in debug mode
     this.debugLog(
       `Starting leaderboard aggregation type: ${this.periodFormat}`,

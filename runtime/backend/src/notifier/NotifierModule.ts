@@ -14,7 +14,6 @@ import { AlertNotifier } from "./listeners/AlertNotifier";
 
 // internal dependencies
 import { EmailNotifierModule } from "./modules/EmailNotifierModule";
-import { HelpersModule, LogModule } from "../common/modules";
 
 /**
  * @label NOTIFIER
@@ -35,8 +34,8 @@ import { HelpersModule, LogModule } from "../common/modules";
  * @since v0.3.2
  */
 @Module({
-  imports: [EmailNotifierModule, LogModule, HelpersModule],
+  imports: [EmailNotifierModule],
   providers: [AlertNotifier, NotifierFactory],
-  exports: [AlertNotifier],
+  exports: [AlertNotifier, NotifierFactory],
 })
 export class NotifierModule {}

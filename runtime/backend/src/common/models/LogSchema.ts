@@ -23,7 +23,7 @@ import { LogDTO } from "./LogDTO";
  * @description This class defines the **exact** fields that are
  * stored in the corresponding MongoDB documents. It should be
  * used whenever database *documents* are being handled or read
- * for the `system-logs` collection.
+ * for the `logs` collection.
  * <br /><br />
  * Note that this class uses the generic {@link Transferable} trait to
  * enable a `toDTO()` method on the model.
@@ -33,7 +33,7 @@ import { LogDTO } from "./LogDTO";
  */
 @Schema({
   timestamps: true,
-  collection: "system-logs",
+  collection: "logs",
 })
 export class Log extends Transferable<LogDTO> {
   /**
@@ -48,7 +48,7 @@ export class Log extends Transferable<LogDTO> {
    * @access public
    * @var {string}
    */
-  public collectionName = "system-logs";
+  public collectionName = "logs";
 
   /**
    * The timestamp in which the log occurred and was persisted.
@@ -112,8 +112,6 @@ export class Log extends Transferable<LogDTO> {
     return {
       timestamp: this.timestamp,
       level: this.level,
-      message: this.message,
-      meta: this.meta,
       label: this.label,
     };
   }

@@ -187,7 +187,6 @@ describe("notifier/ReportNotifier", () => {
         [ "W" ],
         {
           debug: true,
-          quiet: false,
         }
       )
     });
@@ -246,7 +245,6 @@ describe("notifier/ReportNotifier", () => {
         {
           periodFormat: "W",
           debug: true,
-          quiet: false,
         }
       );
 

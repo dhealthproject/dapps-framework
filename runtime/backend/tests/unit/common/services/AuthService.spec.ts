@@ -26,6 +26,10 @@ let factoryCreatedContract = {
     challenge: "test-challenge",
   },
 };
+let validContractPayload = {
+  contract: "elevate:auth",
+  challenge: "test-challenge",
+};
 let createFromTransactionCall = jest.fn().mockReturnValue(factoryCreatedContract);
 jest.mock("@dhealth/contracts", () => ({
   Factory: {
@@ -382,13 +386,22 @@ describe("common/AuthService", () => {
           toPromise: jest.fn().mockResolvedValue({})
         }),
       };
+      const mockValidTransferWithChallenge = {
+        type: TransactionType.TRANSFER,
+        message: {
+          payload: JSON.stringify(validContractPayload)
+        }
+      };
       const networkServiceDelegatePromisesCall = jest.fn().mockResolvedValue([
-        { data: [{ key: "value" }] },
+        {
+          data: [mockValidTransferWithChallenge], // <-- inject transfer with challenge
+        },
       ]);
       (authService as any).networkService = {
         transactionRepository,
         delegatePromises: networkServiceDelegatePromisesCall
       };
+      (authService as any).cookie = { name: "ELEVATE" };
 
       // act
       const result = await (authService as any).findRecentChallenge("test-challenge");
@@ -396,7 +409,7 @@ describe("common/AuthService", () => {
       // assert
       expect(getTransactionQueryCall).toHaveBeenCalledTimes(1);
       expect(networkServiceDelegatePromisesCall).toHaveBeenCalledTimes(1);
-      expect(result).toStrictEqual({ key: "value" });
+      expect(result).toStrictEqual(mockValidTransferWithChallenge);
     });
 
     it("should return undefined if contract signature is not 'elevate:auth'", async () => {
