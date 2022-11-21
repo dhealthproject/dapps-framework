@@ -16,7 +16,7 @@
       class="dapp-screen-footer__default flex row justify-around"
     >
       <span class="dapp-screen-footer__copy"
-        >&copy; dHealth dApps Framework</span
+        >&copy; {{ $t("common.copy") }}</span
       >
       <nav class="text-right">
         <ul>
@@ -34,7 +34,7 @@
       <div
         class="dapp-screen-footer__empty__copy text-[20px] font-bold text-[#8A8A8A] pb-[4px]"
       >
-        © {{ new Date().getFullYear() }} dHealth. All Rights Reserved
+        © {{ new Date().getFullYear() }} {{ $t("common.all_rights_reserved") }}
       </div>
       <div class="dapp-screen-footer__empty__links">
         <router-link
