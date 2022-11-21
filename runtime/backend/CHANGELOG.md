@@ -3,6 +3,85 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.0][0.5.0] - 24-Nov-2022
+
+#### Added
+
+- [@dhealthdapps/backend] feat(api): enable integrations query by remote 
+- [@dhealthdapps/backend] feat(api): add activity data processing
+- [@dhealthdapps/backend] test: add unit tests for OAuthService.callProviderAPI
+- [@dhealthdapps/backend] feat(database): add database migrations implementation
+- [@dhealthdapps/backend] feat(routes): add statistics endpoint
+- [@dhealthdapps/backend] feat(api): add relevant documentation for events, add OnActivityDownloaded
+- [@dhealthdapps/backend] feat(scopes): add payout scope implementation draft with ActivityPayouts
+- [@dhealthdapps/backend] config: add earn contract discovery source
+- [@dhealthdapps/backend] test(api): add tests for PreparePayouts and BroadcastPayouts
+- [@dhealthdapps/backend] feat(api): add updatePayoutSubject implementation for payout state updates
+- [@dhealthdapps/backend] feat(api): update payout amount formula, add unit tests and document
+- [@dhealthdapps/backend] perf(api): add broadcast limit, adjust formula given E=0
+- [@dhealthdapps/backend] test(api): add unit test for broadcastable payouts query
+- [@dhealthdapps/backend] feat(database): add data field to schema
+- [@dhealthdapps/backend] refactor(api): update implementation for UserAggregation and StatisticsModule with routes
+- [@dhealthdapps/backend] test(schedulers): add relevant unit tests in Statistics scope
+- [@dhealthdapps/backend] feat(common): add monitoring configs, log service and relevant classes/types
+- [@dhealthdapps/backend] test: add & update tests for LogService
+- [@dhealthdapps/backend] feat(common): create LogModule and allow LogService to be injectable as well as to be created using constructor
+- [@dhealthdapps/backend] fix(tests): delta with payouts merge, fixes jest open handles, mocks winston
+- [@dhealthdapps/backend] refactor(schedulers): add DiscoveryCommand.getNextSource, add booster assets
+- [@dhealthdapps/backend] test(schedulers): add unit tests for refactored DiscoveryCommand.getNextSource
+- [@dhealthdapps/backend] feat(database): add ref code generating to db on login
+- [@dhealthdapps/backend] fix(frontend): place ref code as param instead of query, add ref code to login request
+- [@dhealthdapps/backend] feat(database): add storing referred by value
+- [@dhealthdapps/backend] feat(database): add querying by refcode and referredby
+- [@dhealthdapps/backend] feat(database): rename ref code to referral code in db, generate random string 8 characters
+- [@dhealthdapps/backend] feat(database): add referral code migration
+- [@dhealthdapps/backend] config: update dapp config, monitoring config & add transport config
+- [@dhealthdapps/backend] feat(common): add alerts event emission to LogService
+- [@dhealthdapps/backend] feat: add notifier scope, use event emitter for alerts
+- [@dhealthdapps/backend] refactor: add level to AlertEvent and update AlertNotifier
+- [@dhealthdapps/backend] test: add unit tests for notifier scope
+- [@dhealthdapps/backend] docs(notifier): add index files in notifier scope
+- [@dhealthdapps/backend] refactor: add LeaderboardsModule export to classes.ts
+- [@dhealthdapps/backend] refactor(api): update event emitter injection, now only in LogModule and WebHooksModule
+- [@dhealthdapps/backend] fix(api): update mailer configuration
+- [@dhealthdapps/backend] refactor(api): update to import LogModule and inject LogService
+
+#### Changed
+
+- [@dhealthdapps/backend] refactor(api): update Strava data discovery and update onActivityCreated
+- [@dhealthdapps/backend] refactor(api): add tests for OAuth implementation, add CipherService, add mongo operations
+- [@dhealthdapps/backend] fix(common): remove accidentally commited file
+- [@dhealthdapps/backend] refactor(api): implement entity definition for OAuth entities (profile, activity)
+- [@dhealthdapps/backend] test(api): improve consistency on unit test labels, add payout unit tests
+- [@dhealthdapps/backend] chore(build): make db reset script explicit
+- [@dhealthdaps/backend] refactor(database): add fields isManual and sufferScore for more analysis
+- [@dhealthdapps/backend] fix(schedulers): add aggregate logic to user aggregation scheduler
+- [@dhealthdapps/backend] fix(services): add nest error fix
+- [@dhealthdapps/backend] fix(config): decoupled earn asset in assets config
+- [@dhealthdapps/backend] fix(schedulers): discover assets use discovery.sources
+- [@dhealthdapps/backend] fix(database): change of random generating params
+- [@dhealthdapps/backend] feat(api): add social config and route to the backend
+- [@dhealthdapps/backend] refactor(api): finalize referral update for merge
+- [@dhealthdapps/backend] refactor(api): update monitoring implementation with error log, update statistics
+- [@dhealthdapps/backend] refactor: change log service usage, inject event emitter
+- [@dhealthdapps/backend] refactor: update log service context in main.ts
+- [@dhealthdapps/backend] refactor: add event emitter to user aggregation & payout scheduler
+- [@dhealthdapps/frontend] fix: linter issues
+
+#### Fixed
+
+- [@dhealthdapps/backend] fix(api): Strava query parameters compatibility
+- [@dhealthdapps/backend] fix(api): Strava /oauth/token fields compatibility
+- [@dhealthdapps/backend] fix(api): event propagation of activity slugidentifier
+- [@dhealthdapps/backend] fix(api): update OAuth implementation to store timestamps in milliseconds (driver dependent)
+- [@dhealthdapps/backend] fix(schedulers): fix type error
+- [@dhealthdapps/backend] fix(database): update referral migration
+- [@dhealthdapps/backend] fix(api): update payouts broadcast and fix leaderboard unit tests
+- [@dhealthdapps/backend] fix: use of dapp configuration in authentication
+- [@dhealthdapps/backend] test: fix all failed unit tests
+- [@dhealthdapps/backend] refactor: fix lint
+- [@dhealthdapps/backend] test: fix failed tests
+
 ## [0.4.0][0.4.0] - 19-Oct-2022
 
 #### Added
@@ -148,6 +227,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: add implementation for schedulers enabled through scopes and more refactor (types)
 
 
+[0.5.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.4.0..v0.5.0
 [0.4.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.4.0
 [0.3.1]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0
