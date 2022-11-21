@@ -66,10 +66,7 @@ async function bootstrap(): Promise<void> {
   );
 
   // // create a logger instance
-  const logger = new LogService(
-    dappConfig.dappName,
-    app.get(EventEmitter2),
-  );
+  const logger = new LogService(dappConfig.dappName, app.get(EventEmitter2));
 
   // // create a logger instance
   app.useLogger(logger);

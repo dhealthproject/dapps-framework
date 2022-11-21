@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.0][0.5.0] - 24-Nov-2022
+
+#### Added
+
+- [@dhealth/contracts] feat(contracts): add asset and amount to Earn contract
+- [@dhealth/contracts] feat(api): TransactionParameters now includes recipientAddress, maxFee and deadline
+- [@dhealth/contracts] feat(contracts): add contracts for Burn, Handshake and Consent operations
+
 ## [0.3.0][0.3.0] - 01-Sep-2022
 
 #### Added
@@ -24,4 +32,5 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealth/contracts] fix(api): facade contract classes use public inputs and parameters
 
 
+[0.5.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.4.0..v0.5.0
 [0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0

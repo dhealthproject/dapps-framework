@@ -3,6 +3,42 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.0][0.5.0] - 24-Nov-2022
+
+#### Added
+
+- [@dhealthdapps/frontend] feat(widgets): add statistics component, top activities component, global scss media queries configuration
+- [@dhealthdapps/frontend] feat(screens): apply global media mixin
+- [@dhealthdapps/frontend] feat(widgets): add fix for tooltip bug, moved texts to i18n translations
+- [@dhealthdapps/frontend] feat(state): made translations getter available globally
+- [@dhealthdapps/frontend] feat(widgets): add share popup
+- [@dhealthdapps/frontend] fix(widgets): apply navigator share for mobile
+- [@dhealthdapps/frontend] feat(tests): add new tests for the frontend
+- [@dhealthdapps/frontend] feat(tests): add component tests
+- [@dhealthdapps/frontend] feat(tests): add component tests
+- [@dhealthdapps/frontend] feat(tests): add ui popup tests
+
+#### Changed
+
+- [@dhealthdapps/frontend] style: remove commented code
+- [@dhealthdapps/frontend] fix(screens): use fetchchallenge to fix reload state
+- [@dhealthdapps/frontend] fix(screens): restored before destroy hook
+- [@dhealthdapps/frontend] refactor(api): update statistics and leaderboards discovery with referral merge
+
+#### Fixed
+
+- [@dhealthdapps/frontend] fix(api): access token refresh does not contain remote identifier
+- [@dhealthdapps/frontend] fix(state): remove mock of leaderboard items, add correct font family for stats
+- [@dhealthdapps/frontend] fix(style): linter issues
+- [@dhealthdapps/frontend] fix(deps): added module declaration
+- [@dhealthdapps/frontend] fix(widgets): hide modal screen in modal after successful login
+- [@dhealthdapps/frontend] fix(widgets): dashboard state changes and remove mock from leaderboard
+- [@dhealthdapps/frontend] fix(style): lint applied lint fixes
+- [@dhealthdapps/frontend] fix(screens): add footer to authorized screens, remove address from top of dashboard, dashboard address undefined fix
+- [@dhealthdapps/frontend] fix(widgets): add setting real ref code to input, remove ref code after being used
+- [@dhealthdapps/frontend] fix(tests): header compilation error fix
+- [@dhealthdapps/frontend] fix(tests): update component inputs and setters
+
 ## [0.4.0][0.4.0] - 19-Oct-2022
 
 #### Added
@@ -145,6 +181,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] feat(theme): adds tailwindcss@3.0.x and moves assets to resources/
 
 
+[0.5.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.4.0..v0.5.0
 [0.4.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.4.0
 [0.3.1]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0

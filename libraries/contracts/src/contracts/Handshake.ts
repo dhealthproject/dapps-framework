@@ -91,7 +91,7 @@ export interface HandshakeParameters extends ContractParameters {
    * @example `"..."`
    * @var {string}
    */
-   operation: string;
+  operation: string;
 }
 
 /**
@@ -209,11 +209,10 @@ export class Handshake extends Contract {
     super(inputs, version, parameters);
 
     // @throws MissingContractFieldError given missing obligatory field
-    Assertions.assertObligatoryFields([
-      "issuer",
-      "recipient",
-      "operation",
-    ], Object.keys(inputs));
+    Assertions.assertObligatoryFields(
+      ["issuer", "recipient", "operation"],
+      Object.keys(inputs)
+    );
   }
 
   /**
