@@ -1,6 +1,6 @@
 {
   "name": "@dhealthdapps/frontend",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "homepage": "https://github.com/dhealthproject/dapps-framework/tree/main/runtime/dapp-frontend-vue#readme",
   "description": "dHealth dApps Frontend with Vue",
   "author": "dHealth Network <devs@dhealth.foundation>",
@@ -41,8 +41,8 @@
     "await-lock": "^2.2.2",
     "axios": "^0.27.2",
     "crypto-browserify": "^3.12.0",
-    "moment": "^2.29.4",
     "flush-promises": "^1.0.2",
+    "moment": "^2.29.4",
     "postcss": "^8.4.14",
     "register-service-worker": "^1.7.2",
     "sinon": "^14.0.0",

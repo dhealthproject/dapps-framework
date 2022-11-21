@@ -1,6 +1,6 @@
 {
   "name": "@dhealth/components",
-  "version": "0.4.1-alpha.365+84a6c0b",
+  "version": "0.5.0",
   "homepage": "https://github.com/dhealthproject/dapps-framework/tree/main/libraries/ui-components#readme",
   "description": "Components Library for dApps Development with dHealth Network",
   "author": "dHealth Network <devs@dhealth.foundation>",

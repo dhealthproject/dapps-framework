@@ -71,7 +71,8 @@ describe("contracts/Handshake", () => {
         new Handshake({
           dappIdentifier: "fake-dapp",
           //issuer: "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE", // <-- missing issuer
-          recipient: "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE",
+          recipient:
+            "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE",
           operation: mockTransactionHash,
         } as HandshakeParameters);
       } catch (e) {
@@ -84,7 +85,8 @@ describe("contracts/Handshake", () => {
       try {
         new Handshake({
           dappIdentifier: "fake-dapp",
-          issuer: "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE",
+          issuer:
+            "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE",
           //recipient: "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE", // <-- missing recipient
           operation: mockTransactionHash,
         } as HandshakeParameters);
@@ -98,8 +100,10 @@ describe("contracts/Handshake", () => {
       try {
         new Handshake({
           dappIdentifier: "fake-dapp",
-          issuer: "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE",
-          recipient: "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE",
+          issuer:
+            "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE",
+          recipient:
+            "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE",
           //operation: mockTransactionHash, // <-- missing operation
         } as HandshakeParameters);
       } catch (e) {
