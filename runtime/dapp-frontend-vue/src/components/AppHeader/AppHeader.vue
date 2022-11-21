@@ -61,20 +61,22 @@
             </ul>
             <UiButton :accent="true">
               <img :src="getImageUrl('icons/chain-icon.svg')" alt="Refer" />
-              Refer a Friend
+              {{ $t("common.refer_friend") }}
             </UiButton>
           </div>
           <div class="dapp-screen-header__menu-overlay__footer text-left">
             <div class="legal-credentials">
-              <span class="powered">© dHealth Foundation, 2022</span>
+              <span class="powered"
+                >© {{ $t("common.foundation") }} {{ new Date().getFullYear() }}
+              </span>
             </div>
 
             <div class="legal-links">
-              <router-link :to="{}" v-html="'Privacy Policy'" />
+              <router-link :to="{}" v-html="$t('common.privacy_policy')" />
               <span class="divider">|</span>
               <router-link
                 :to="{ name: 'legal.terms-of-service' }"
-                v-html="'Terms of Service'"
+                v-html="$t('common.terms_of_service')"
               />
             </div>
           </div>
