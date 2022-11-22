@@ -10,6 +10,7 @@
 // external dependencies
 import { Module } from "@nestjs/common";
 import { MailerModule } from "@nestjs-modules/mailer";
+import * as SMTPTransport from "nodemailer/lib/smtp-transport";
 
 // internal dependencies
 import { EmailNotifier } from "../services/EmailNotifier";
@@ -32,7 +33,20 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
       useFactory: (configService: ConfigService) => {
         const mailConfig = configService.get<MailerConfig>("mailer");
         return {
-          transport: `smtp://${mailConfig.user}:${mailConfig.password}@${mailConfig.host}:${mailConfig.port}`,
+          transport: {
+            host: mailConfig.host,
+            port: mailConfig.port,
+            secure: false,
+            auth: {
+              type: "login",
+              user: mailConfig.user,
+              pass: process.env.SMTP_PASSWORD,
+            },
+            tls: {
+              requestCert: false,
+              rejectUnauthorized: false,
+            },
+          } as SMTPTransport.Options,
           defaults: {
             from: mailConfig.from,
           },

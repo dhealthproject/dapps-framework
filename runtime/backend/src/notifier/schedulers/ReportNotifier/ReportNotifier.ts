@@ -104,9 +104,17 @@ export class ReportNotifier extends NotifierCommand {
       this.reportsConfig.transport as NotifierType,
     );
     this.addCronJob();
+    this.initLogger();
+  }
 
-    // prepares execution logger
-    this.logger = new LogService(`${this.scope}/${this.command}`);
+  /**
+   *
+   */
+  private initLogger() {
+    if (undefined === this.logger) {
+      // prepares execution logger
+      this.logger = new LogService(`${this.scope}/${this.command}`);
+    }
   }
 
   /**
@@ -232,6 +240,9 @@ export class ReportNotifier extends NotifierCommand {
    * @returns {Promise<void>}
    */
   public async runAsScheduler(): Promise<void> {
+    // make sure we have a logger instance
+    this.initLogger();
+
     // display starting moment information in debug mode
     this.debugLog(`Starting notifier report type: ${this.periodFormat}`);
 
@@ -257,6 +268,9 @@ export class ReportNotifier extends NotifierCommand {
    * @returns {Promise<void>}
    */
   public async report(options?: NotifierCommandOptions): Promise<void> {
+    // make sure we have a logger instance
+    this.initLogger();
+
     // keep track of last execution
     this.lastExecutedAt = new Date().valueOf();
 
