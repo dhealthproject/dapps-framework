@@ -32,14 +32,14 @@ const $store = new Vuex.Store({
       data: {
         totalEarned: 1.23,
         totalPracticedMinutes: 456,
-      }
+      },
     }),
-    "auth/getCurrentUserAddress": jest.fn().mockReturnValue(
-      "NATZJETZTZCGGRBUYVQRBEUFN5LEGDRSTNF2GYA",
-    )
+    "auth/getCurrentUserAddress": jest
+      .fn()
+      .mockReturnValue("NATZJETZTZCGGRBUYVQRBEUFN5LEGDRSTNF2GYA"),
   },
   actions: {
-    "initialize": jest.fn(),
+    initialize: jest.fn(),
     "statistics/fetchStatistics": jest.fn(),
   },
 });
@@ -56,7 +56,7 @@ const componentOptions = {
     $route: { params: {} },
     $t: jest.fn(),
     $store,
-  }
+  },
 };
 
 describe("Stats -->", () => {
