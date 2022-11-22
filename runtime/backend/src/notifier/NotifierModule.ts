@@ -13,6 +13,7 @@ import { NotifierFactory } from "./concerns/NotifierFactory";
 import { AlertNotifier } from "./listeners/AlertNotifier";
 
 // internal dependencies
+import { HelpersModule } from "../common/modules/HelpersModule";
 import { EmailNotifierModule } from "./modules/EmailNotifierModule";
 
 /**
@@ -34,7 +35,10 @@ import { EmailNotifierModule } from "./modules/EmailNotifierModule";
  * @since v0.3.2
  */
 @Module({
-  imports: [EmailNotifierModule],
+  imports: [
+    HelpersModule,
+    EmailNotifierModule,
+  ],
   providers: [AlertNotifier, NotifierFactory],
   exports: [AlertNotifier, NotifierFactory],
 })
