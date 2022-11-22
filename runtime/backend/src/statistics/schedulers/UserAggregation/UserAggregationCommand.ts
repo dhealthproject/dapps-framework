@@ -14,6 +14,7 @@ import { ScheduleModule } from "@nestjs/schedule";
 
 // internal dependencies
 // common scope
+import { LogModule } from "../../../common/modules/LogModule";
 import { StateModule } from "../../../common/modules/StateModule";
 import { QueryModule } from "../../../common/modules/QueryModule";
 
@@ -40,6 +41,7 @@ import {
     StateModule,
     QueryModule,
     StatisticsModule,
+    LogModule,
     MongooseModule.forFeature([
       { name: Statistics.name, schema: StatisticsSchema },
       { name: Activity.name, schema: ActivitySchema },

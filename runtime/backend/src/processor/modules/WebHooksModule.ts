@@ -11,9 +11,9 @@
 // external dependencies
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { EventEmitterModule } from "@nestjs/event-emitter";
 
 // internal dependencies
+import { AppConfiguration } from "../../AppConfiguration";
 import { QueryModule } from "../../common/modules/QueryModule";
 import { AuthModule } from "../../common/modules/AuthModule";
 import { LogModule } from "../../common/modules/LogModule";
@@ -28,7 +28,7 @@ import { Activity, ActivitySchema } from "../models/ActivitySchema";
 
 /**
  * @label PROCESSOR
- * @class OperationsModule
+ * @class WebHooksModule
  * @description The main definition for the Web Hooks module.
  *
  * @since v0.3.2
@@ -45,13 +45,7 @@ import { Activity, ActivitySchema } from "../models/ActivitySchema";
         schema: ActivitySchema,
       }, // requirement from ActivitiesModule
     ]),
-    EventEmitterModule.forRoot({
-      wildcard: false,
-      delimiter: ".",
-      maxListeners: 5,
-      verboseMemoryLeak: true,
-      ignoreErrors: false,
-    }), // requirement from WebHooksService
+    AppConfiguration.getEventEmitterModule(), // requirement from WebHooksService
     AuthModule, // requirement from WebHooksService
     ActivitiesModule, // requirement from WebHooksService
     QueryModule, // requirement from WebHooksService

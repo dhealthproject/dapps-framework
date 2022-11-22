@@ -109,8 +109,9 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
     protected readonly queriesService: QueryService<AssetDocument, AssetModel>,
     protected readonly networkService: NetworkService,
     protected readonly configService: ConfigService,
+    protected readonly logService: LogService,
   ) {
-    super(stateService);
+    super(logService, stateService);
     this.lastExecutedAt = new Date().valueOf();
   }
 
@@ -218,7 +219,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    */
   public async runAsScheduler(): Promise<void> {
     // prepares execution logger
-    this.logger = new LogService(`${this.scope}/${this.command}`);
+    this.logger.setContext(`${this.scope}/${this.command}`);
 
     // display starting moment information *also* in debug mode
     this.debugLog(

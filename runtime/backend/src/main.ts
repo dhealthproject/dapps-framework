@@ -11,8 +11,9 @@
 // and *does not* export any classes or interfaces and types.
 
 // external dependencies
-import { NestFactory } from "@nestjs/core";
+import { NestApplication, NestFactory } from "@nestjs/core";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 import helmet from "helmet";
 import childProcess from "child_process";
 import cookieParser from "cookie-parser";
@@ -50,16 +51,27 @@ async function bootstrap(): Promise<void> {
   // CAUTION: this will fail with a `ConfigurationError`
   AppModule.checkConfiguration();
 
+  // create a logger instance
+  // const logger = new LogService(
+  //   dappConfig.dappName,
+  //   new EventEmitter2(),
+  // );
+
   // create app instance
-  const app = await NestFactory.create(
+  const app: NestApplication = await NestFactory.create(
     AppModule.register({
       ...dappConfig,
     } as DappConfig),
-    { logger: new LogService(dappConfig.dappName) },
+    // { logger },
   );
 
-  // create a logger instance
-  const logger = new LogService(dappConfig.dappName);
+  // // create a logger instance
+  const logger = new LogService(
+    dappConfig.dappName,
+    app.get(EventEmitter2),
+  );
+
+  // // create a logger instance
   app.useLogger(logger);
 
   // log about the app starting *also* in debug mode

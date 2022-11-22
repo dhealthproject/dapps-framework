@@ -49,7 +49,7 @@ describe("common/LogService", () => {
       emit: mockEmitFn,
     };
 
-    mockEmitFn.mockClear();
+    jest.clearAllMocks();
   });
 
   it("should be defined", () => {

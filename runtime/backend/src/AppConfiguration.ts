@@ -10,7 +10,11 @@
 // external dependencies
 import { MongooseModule } from "@nestjs/mongoose";
 import { EventEmitterModule } from "@nestjs/event-emitter";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { DynamicModule } from "@nestjs/common";
+import { MailerModule } from "@nestjs-modules/mailer";
 import { Account, Address, PublicAccount } from "@dhealth/sdk";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
 
 // internal dependencies
 import { ConfigurationError } from "./common/errors/ConfigurationError";
@@ -34,7 +38,10 @@ import { PayoutConfig } from "./payout/models/PayoutConfig";
 import { ProcessorConfig } from "./processor/models/ProcessorConfig";
 
 // notifier scope
-import { TransportConfig } from "./notifier/models/TransportConfig";
+import {
+  MailerConfig,
+  TransportConfig,
+} from "./notifier/models/TransportConfig";
 
 // import configuration resources
 import assetsConfigLoader from "../config/assets";
@@ -91,7 +98,12 @@ export class AppConfiguration {
    * @static
    * @var {EventEmitterModule}
    */
-  private static EVENT_EMITTER: EventEmitterModule;
+  private static EVENT_EMITTER: DynamicModule;
+
+  /**
+   *
+   */
+  private static MAILER: DynamicModule;
 
   /**
    * The dApp assets configuration. This configuration object is used to
@@ -344,18 +356,57 @@ export class AppConfiguration {
    * @static
    * @returns   {MongooseModule}    A `@nestjs/mongoose` MongooseModule object.
    */
-  public static getEventEmitterModule(): EventEmitterModule {
-    // singleton instance for database
-    AppConfiguration.EVENT_EMITTER = EventEmitterModule.forRoot({
-      wildcard: false,
-      delimiter: ".",
-      maxListeners: 5,
-      verboseMemoryLeak: true,
-      ignoreErrors: false,
-    });
+  public static getEventEmitterModule(): DynamicModule {
+    // singleton instance for event emitter
+    if (undefined === AppConfiguration.EVENT_EMITTER) {
+      AppConfiguration.EVENT_EMITTER = EventEmitterModule.forRoot({
+        wildcard: false,
+        delimiter: ".",
+        maxListeners: 5,
+        verboseMemoryLeak: true,
+        ignoreErrors: false,
+      });
+    }
 
     // return singleton instance
     return AppConfiguration.EVENT_EMITTER;
+  }
+
+  /**
+   *
+   */
+  public static getMailerModule(): DynamicModule {
+    // singleton instance for mailer
+    if (undefined === AppConfiguration.MAILER) {
+      AppConfiguration.MAILER = MailerModule.forRootAsync({
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => {
+          const mailConfig = configService.get<MailerConfig>("mailer");
+          return {
+            transport: {
+              host: mailConfig.host,
+              port: mailConfig.port,
+              secure: false,
+              auth: {
+                type: "login",
+                user: mailConfig.user,
+                pass: process.env.SMTP_PASSWORD,
+              },
+              tls: {
+                requestCert: false,
+                rejectUnauthorized: false,
+              },
+            } as SMTPTransport.Options,
+            defaults: {
+              from: mailConfig.from,
+            },
+          };
+        },
+        inject: [ConfigService],
+      });
+    }
+
+    return AppConfiguration.MAILER;
   }
 
   /**

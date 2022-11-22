@@ -11,7 +11,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getModelToken } from "@nestjs/mongoose";
 import { ConfigService } from "@nestjs/config";
-import { Logger } from "@nestjs/common";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
@@ -19,6 +19,7 @@ import { MockModel } from "../../../mocks/global";
 // common scope
 import { StateService } from "../../../../src/common/services/StateService";
 import { QueryService } from "../../../../src/common/services/QueryService";
+import { LogService } from "../../../../src/common/services/LogService";
 
 // processor scope
 import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/processor/models/ActivitySchema";
@@ -31,7 +32,6 @@ import { PayoutsService } from "../../../../src/payout/services/PayoutsService";
 import { SignerService } from "../../../../src/payout/services/SignerService";
 import { MathService } from "../../../../src/payout/services/MathService";
 import { PrepareActivityPayouts } from "../../../../src/payout/schedulers/ActivityPayouts/PrepareActivityPayouts";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 
 const dE = 1000000; // elevate factor
 const mockActivityRewardWalkFormulaFirst = Math.round(Math.floor(
@@ -115,7 +115,7 @@ describe("payout/PrepareActivityPayouts", () => {
   let payoutsService: PayoutsService;
   let signerService: SignerService;
   let mathService: MathService;
-  let logger: Logger;
+  let logger: LogService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -127,7 +127,6 @@ describe("payout/PrepareActivityPayouts", () => {
         PayoutsService,
         SignerService,
         MathService,
-        Logger,
         EventEmitter2,
         {
           provide: getModelToken("Payout"),
@@ -141,6 +140,14 @@ describe("payout/PrepareActivityPayouts", () => {
           provide: getModelToken("State"),
           useValue: MockModel,
         },
+        {
+          provide: LogService,
+          useValue: {
+            log: jest.fn(),
+            debug: jest.fn(),
+            error: jest.fn(),
+          },
+        },
       ]
     }).compile();
 
@@ -151,7 +158,7 @@ describe("payout/PrepareActivityPayouts", () => {
     payoutsService = module.get<PayoutsService>(PayoutsService);
     signerService = module.get<SignerService>(SignerService);
     mathService = module.get<MathService>(MathService);
-    logger = module.get<Logger>(Logger);
+    logger = module.get<LogService>(LogService);
   });
 
   it("should be defined", () => {

@@ -150,16 +150,12 @@ export class ScopeFactory {
     // in **cronjobs** the database is always added
     // in addition to the configuration module.
     // Note: does **not** modify {@link baseImports}.
-    const requiredImports = this.baseImports
-      .concat(Schedulers["database"])
-      .concat(Schedulers["eventEmitter"]);
+    const requiredImports = this.baseImports.concat(Schedulers["database"]);
 
     // reads *all* enabled schedulers, note here that
     // each scope may define an *array* of schedulers
     const schedulerImports = scopes
-      .filter(
-        (s) => s !== "database" && s !== "eventEmittter" && s in Schedulers,
-      )
+      .filter((s) => s !== "database" && s in Schedulers)
       .map((s) => Schedulers[s]);
 
     // concatenates `Schedulers` that are *enabled* (opt-in)

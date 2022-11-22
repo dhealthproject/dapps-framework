@@ -17,6 +17,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { NetworkModule } from "../../../common/modules/NetworkModule";
 import { StateModule } from "../../../common/modules/StateModule";
 import { QueryModule } from "../../../common/modules/QueryModule";
+import { LogModule } from "../../../common/modules/LogModule";
 
 // processor scope
 // @todo decouple payout from processor by using dynamic "activities" query
@@ -45,6 +46,7 @@ import { BroadcastActivityPayouts } from "./BroadcastActivityPayouts";
     QueryModule,
     PayoutsModule,
     ActivitiesModule,
+    LogModule,
     MongooseModule.forFeature([
       { name: Activity.name, schema: ActivitySchema },
     ]),

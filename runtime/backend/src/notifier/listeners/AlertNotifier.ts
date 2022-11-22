@@ -11,6 +11,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { OnEvent } from "@nestjs/event-emitter";
+import moment from "moment";
 
 // internal dependencies
 import { AlertEvent } from "../../common/events/AlertEvent";
@@ -19,6 +20,7 @@ import { AlertsConfig } from "../../common/models/MonitoringConfig";
 import { Notifier } from "../models/Notifier";
 import { NotifierType } from "../models/NotifierType";
 import { DappHelper } from "../../common/concerns/DappHelper";
+import { LogService } from "../../common/services/LogService";
 
 /**
  * @class AlertNotifier
@@ -38,7 +40,10 @@ import { DappHelper } from "../../common/concerns/DappHelper";
  * | `event.log.warn`     | The event in which a warning log occured in the application. |
  * | `event.log.error`    | The event in which an error log occured in the application. |
  *
- * @since v0.3.2
+ * @todo this class must verify when latest alerts was/were raised
+ * @todo it should not send emails every 30 seconds given an error
+ * @todo alerts can be differentiated using context and message
+ * @since v0.5.0
  */
 @Injectable()
 export class AlertNotifier {
@@ -80,28 +85,35 @@ export class AlertNotifier {
     this.notifier = this.notifierFactory.getNotifier(
       this.alertsConfig.transport as NotifierType,
     );
+
+    const logger = new LogService("testing");
+    logger.debug(`Config: ${JSON.stringify(this.alertsConfig, undefined, 2)}`);
   }
 
   /**
-   * Main method to handle `event.log.warn` event.
+   * Main method to handle `notifier.alerts.warn` event.
    *
    * @access protected
    * @param event
    * @return {void}
    */
-  @OnEvent("event.log.warn", { async: true })
-  protected handleLogWarnEvent(event: AlertEvent): void {
+  @OnEvent("notifier.alerts.warn", { async: true })
+  protected async handleLogWarnEvent(event: AlertEvent): Promise<void> {
+    const logger = new LogService("testing");
+    logger.debug(`CAUGHT warn`);
     // handle and process "AlertEvent" event
     if (this.alertsConfig.type.includes("warn")) {
       const dappName = this.configService.get<string>("dappName");
+      const dappUrl = this.configService.get<string>("frontendApp.url");
       const { timestamp, level, loggerContext, message, context } = event;
-      this.notifier.sendInternal({
+      const dateFormat = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
+      await this.notifier.sendInternal({
         to: this.alertsConfig.recipient,
-        subject: `[${dappName}] Warning: Production warning happened at ${new Date()}`,
-        text: `Warning: Production warning happened at ${new Date()} ${this.dappHelper.createDetailsTableHTML(
+        subject: `[${dappName}] WARNING on dApp (${dappUrl}) at ${dateFormat}`,
+        text: `WARNING on dApp (${dappUrl}) at ${dateFormat} ${this.dappHelper.createDetailsTableHTML(
           [{ timestamp, level, loggerContext, message, context }],
         )}`,
-        html: `Warning: Production warning happened at <b>${new Date()}</b><br /><br /> ${this.dappHelper.createDetailsTableHTML(
+        html: `WARNING on dApp (${dappUrl}) at <b>${dateFormat}</b><br /><br /> ${this.dappHelper.createDetailsTableHTML(
           [{ timestamp, level, loggerContext, message, context }],
         )}`, // HTML body content
       });
@@ -109,26 +121,30 @@ export class AlertNotifier {
   }
 
   /**
-   * Main method to handle `event.log.error` event.
+   * Main method to handle `notifier.alerts.error` event.
    *
    * @access protected
    * @param event
    * @return {void}
    */
-  @OnEvent("event.log.error", { async: true })
-  protected handleLogErrorEvent(event: AlertEvent): void {
+  @OnEvent("notifier.alerts.error", { async: true })
+  protected async handleLogErrorEvent(event: AlertEvent): Promise<void> {
+    const logger = new LogService("testing");
+    logger.debug(`CAUGHT error`);
     // handle and process "AlertEvent" event
     if (this.alertsConfig.type.includes("error")) {
       const dappName = this.configService.get<string>("dappName");
+      const dappUrl = this.configService.get<string>("frontendApp.url");
       const { timestamp, level, loggerContext, message, trace, context } =
         event;
-      this.notifier.sendInternal({
+      const dateFormat = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
+      await this.notifier.sendInternal({
         to: this.alertsConfig.recipient,
-        subject: `[${dappName}] Error: Production error happened at ${new Date()}`,
-        text: `Error: Production error happened at ${new Date()} ${this.dappHelper.createDetailsTableHTML(
+        subject: `[${dappName}] ERROR on dApp (${dappUrl}) at ${dateFormat}`,
+        text: `ERROR on dApp (${dappUrl}) at ${dateFormat} ${this.dappHelper.createDetailsTableHTML(
           [{ timestamp, level, loggerContext, message, trace, context }],
         )}`,
-        html: `Error: Production error happened at <b>${new Date()}</b><br /><br /> ${this.dappHelper.createDetailsTableHTML(
+        html: `ERROR on dApp (${dappUrl}) at <b>${dateFormat}</b><br /><br /> ${this.dappHelper.createDetailsTableHTML(
           [{ timestamp, level, loggerContext, message, trace, context }],
         )}`, // HTML body content
       });

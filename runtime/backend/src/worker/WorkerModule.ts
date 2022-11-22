@@ -65,4 +65,41 @@ export class WorkerModule {
       imports: modules,
     } as DynamicModule;
   }
+
+  /**
+   * This method validates the dApp configuration object. It uses
+   * the {@link AppConfiguration} class to perform validations of
+   * all configuration fields that are used in this runtime.
+   * <br /><br />
+   * Note that this method will create an instance of the external
+   * {@link MongooseModule} to perform a validation of connectivity
+   * with the database.
+   *
+   * @access public
+   * @static
+   * @returns {void}    Returns blank given correct configuration.
+   * @throws {ConfigurationError}   Given any error in configuration of the dApp.
+   */
+  public static checkConfiguration(): void {
+    // interprets/initializes configuration
+    const config = new AppConfiguration();
+
+    // (1) verify the instance configuration fields
+    AppConfiguration.checkMandatoryFields(config);
+
+    // (2) verify the instance database connectivity
+    AppConfiguration.checkDatabaseConnection(config);
+
+    // (3) verify the instance network connectivity
+    AppConfiguration.checkNetworkConnection(config);
+
+    // (4) verify the instance assets configuration
+    AppConfiguration.checkMandatoryAssets(config);
+
+    // (5) verify the instance security configuration
+    AppConfiguration.checkSecuritySettings(config);
+
+    // (6) verify the instance scoped configurations
+    AppConfiguration.checkApplicationScopes(config);
+  }
 }

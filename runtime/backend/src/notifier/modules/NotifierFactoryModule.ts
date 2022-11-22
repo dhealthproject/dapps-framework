@@ -7,23 +7,26 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+
 // external dependencies
 import { Module } from "@nestjs/common";
 
 // internal dependencies
-import { EmailNotifier } from "../services/EmailNotifier";
-import { AppConfiguration } from "../../AppConfiguration";
+import { EmailNotifierModule } from "./EmailNotifierModule";
+import { NotifierFactory } from "../concerns/NotifierFactory";
 
 /**
  * @label NOTIFIER
- * @class EmailNotifierModule
- * @description The main definition for the email notifier module.
+ * @class NotifierFactoryModule
+ * @description The main definition for the Alerts module.
  *
- * @since v0.3.2
+ * @since v0.5.0
  */
 @Module({
-  imports: [AppConfiguration.getMailerModule()],
-  providers: [EmailNotifier],
-  exports: [EmailNotifier],
+  imports: [
+    EmailNotifierModule, // requirement from NotifierFactory
+  ],
+  providers: [NotifierFactory],
+  exports: [NotifierFactory],
 })
-export class EmailNotifierModule {}
+export class NotifierFactoryModule {}

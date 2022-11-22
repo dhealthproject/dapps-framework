@@ -119,8 +119,11 @@ export abstract class BaseCommand extends StatefulModule {
    *
    * @access public
    */
-  public constructor(protected readonly stateService: StateService) {
-    super(stateService);
+  public constructor(
+    protected readonly logger: LogService,
+    protected readonly stateService: StateService,
+  ) {
+    super(logger, stateService);
     this.dappConfig = dappConfigLoader();
     this.networkConfig = networkConfigLoader();
   }
@@ -180,7 +183,7 @@ export abstract class BaseCommand extends StatefulModule {
     options?: BaseCommandOptions,
   ): Promise<void> {
     // prepares execution logger and arguments
-    this.logger = new LogService(`${this.scope}/${this.command}`);
+    this.logger.setContext(`${this.scope}/${this.command}`);
     this.argv = passedParams;
 
     // if not quiet, display info about start of execution

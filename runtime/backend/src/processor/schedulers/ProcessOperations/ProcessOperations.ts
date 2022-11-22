@@ -122,6 +122,7 @@ export class ProcessOperations extends ProcessorCommand {
    * @param {NetworkService}  networkService
    * @param {TransactionsService}  transactionsService
    * @param {OperationsService}  operationsService
+   * @param {LogService}  logService
    */
   constructor(
     @InjectModel(Operation.name) protected readonly model: OperationModel,
@@ -135,9 +136,10 @@ export class ProcessOperations extends ProcessorCommand {
       TransactionModel
     >,
     protected readonly operationsService: OperationsService,
+    protected readonly logService: LogService,
   ) {
     // required super call
-    super(stateService);
+    super(logService, stateService);
 
     // sets default state data
     this.lastPageNumber = 1;
@@ -245,9 +247,6 @@ export class ProcessOperations extends ProcessorCommand {
     if (!contracts || !contracts.length || !operations || !operations.length) {
       return;
     }
-
-    // prepares execution logger
-    this.logger = new LogService(`${this.scope}/${this.command}`);
 
     // display starting moment information also in non-debug mode
     this.debugLog(

@@ -10,12 +10,15 @@
 // external dependencies
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { EventEmitter2, EventEmitterModule } from "@nestjs/event-emitter";
 
 // internal dependencies
+import { AppConfiguration } from "../../AppConfiguration";
 import { QueryModule } from "../modules/QueryModule";
 import { Log, LogSchema } from "../models/LogSchema";
 import { LogService } from "../services/LogService";
+
+// @todo decouple from notifier scope
+import { AlertsModule } from "../../notifier/modules/AlertsModule";
 
 /**
  * @class LogModule
@@ -31,22 +34,10 @@ import { LogService } from "../services/LogService";
         schema: LogSchema,
       }, // requirement from LogModule
     ]),
-    EventEmitterModule.forRoot({
-      wildcard: false,
-      delimiter: ".",
-      maxListeners: 5,
-      verboseMemoryLeak: true,
-      ignoreErrors: false,
-    }), // requirement from LogService
+    AlertsModule,
     QueryModule, // requirement from LogService
   ],
-  providers: [
-    LogService,
-    {
-      provide: "EventEmitter",
-      useClass: EventEmitter2,
-    }, // requirement from LogService
-  ],
+  providers: [LogService],
   exports: [LogService],
 })
 export class LogModule {}

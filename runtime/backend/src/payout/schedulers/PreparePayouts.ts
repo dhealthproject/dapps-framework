@@ -9,7 +9,7 @@
  */
 // external dependencies
 import { Earn as EarnContract } from "@dhealth/contracts";
-import { SignedTransaction, TransferTransaction } from "@dhealth/sdk";
+import { TransferTransaction } from "@dhealth/sdk";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Model } from "mongoose";
@@ -18,6 +18,7 @@ import moment from "moment";
 // internal dependencies
 // common scope
 import { AssetParameters } from "../../common/models/AssetsConfig";
+import { LogService } from "../../common/services/LogService";
 import { QueryService } from "../../common/services/QueryService";
 import { StateService } from "../../common/services/StateService";
 
@@ -128,9 +129,10 @@ export abstract class PreparePayouts<
     protected readonly queryService: QueryService<TDocument, TModel>,
     protected readonly payoutsService: PayoutsService,
     protected readonly signerService: SignerService,
+    protected readonly logService: LogService,
   ) {
     // required super call
-    super(stateService);
+    super(logService, stateService);
 
     // sets default state data
     this.totalNumberPrepared = 0;

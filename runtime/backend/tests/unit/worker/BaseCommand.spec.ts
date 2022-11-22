@@ -7,13 +7,6 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-jest.mock("../../../src/common/services/LogService", () => ({
-  LogService: jest.fn(() => ({
-    log: jest.fn(),
-    debug: jest.fn(),
-    error: jest.fn(),
-  }))
-}));
 // external dependencies
 import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
@@ -31,7 +24,6 @@ import { LogService } from "../../../src/common/services/LogService";
 // abstract methods as defined in `BaseCommand`.
 class MockBaseCommand extends BaseCommand {
   protected scope: Scope = "discovery";
-  protected logger: LogService = new LogService("discovery:fake-command");
   protected get command(): string { return "fake-command"; }
   protected get signature(): string { return "fake-command --source TARGET_ACCOUNT"; }
   protected async runWithOptions(
@@ -40,6 +32,12 @@ class MockBaseCommand extends BaseCommand {
 
   // mocks the internal StateService
   protected stateService: any = { findOne: jest.fn(), updateOne: jest.fn() };
+  protected logger: any = {
+    setContext: jest.fn(),
+    log: jest.fn(),
+    debug: jest.fn(),
+    error: jest.fn(),
+  }
 
   // mocks a fake method to test arguments storage
   public getArgv(): string[] { return this.argv; }
@@ -70,6 +68,7 @@ describe("worker/BaseCommand", () => {
   // global injectable service setup
   let fakeCommand: MockBaseCommand;
   let stateService: StateService;
+  let logService: LogService;
   let queryService: QueryService<StateDocument, StateModel>;
 
   // each test gets its own TestingModule (injectable)
@@ -82,6 +81,7 @@ describe("worker/BaseCommand", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MockBaseCommand,
+        LogService, // requirement from BaseCommand
         StateService, // requirement from BaseCommand
         QueryService, // requirement from StateService
         {
@@ -93,6 +93,7 @@ describe("worker/BaseCommand", () => {
 
     fakeCommand = module.get<MockBaseCommand>(MockBaseCommand);
     stateService = module.get<StateService>(StateService);
+    logService = module.get<LogService>(LogService);
     queryService = module.get<QueryService<StateDocument, StateModel>>(QueryService);
   });
 

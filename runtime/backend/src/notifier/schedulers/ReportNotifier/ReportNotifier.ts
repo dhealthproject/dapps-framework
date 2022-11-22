@@ -14,6 +14,7 @@ import { SchedulerRegistry } from "@nestjs/schedule";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { PipelineStage } from "mongoose";
+import moment from "moment";
 
 // internal dependencies
 import { NotifierCommand, NotifierCommandOptions } from "../NotifierCommand";
@@ -95,8 +96,9 @@ export class ReportNotifier extends NotifierCommand {
     protected readonly schedulerRegistry: SchedulerRegistry,
     protected readonly notifierFactory: NotifierFactory,
     protected readonly dappHelper: DappHelper,
+    protected readonly logService: LogService,
   ) {
-    super(stateService);
+    super(logService, stateService);
     this.lastExecutedAt = new Date().valueOf();
     this.reportsConfig = this.configService.get<ReportsConfig>("reports");
     this.periodFormat = this.reportsConfig.period;
@@ -111,10 +113,8 @@ export class ReportNotifier extends NotifierCommand {
    *
    */
   private initLogger() {
-    if (undefined === this.logger) {
-      // prepares execution logger
-      this.logger = new LogService(`${this.scope}/${this.command}`);
-    }
+    // prepares execution logger
+    this.logger.setContext(`${this.scope}/${this.command}`);
   }
 
   /**
@@ -316,21 +316,27 @@ export class ReportNotifier extends NotifierCommand {
     // also display debug message when no operations are executed
     else if (options.debug && !options.quiet && !results.length) {
       this.debugLog(`No log subjects found`);
+
+      // do not send e-mail if empty
+      return;
     }
 
     // send notifications using configured transport method
     const dappName = this.configService.get<string>("dappName");
+    const dappUrl = this.configService.get<string>("frontendApp.url");
+    const dateStart = moment(startDate).format("YYYY-MM-DD");
+    const dateEnd = moment(endDate).format("YYYY-MM-DD");
     this.notifier.sendInternal({
       to: this.reportsConfig.recipient,
-      subject: `[${dappName}] Production logs happened from ${startDate} to ${endDate}`,
-      text: `Please find production logs from ${startDate} to ${endDate} attached in this email.`,
-      html: `Please find production logs from <b>${startDate}</b> to <b>${endDate}</b> attached in this email.`,
+      subject: `[${dappName}] LOGS REPORT for dApp (${dappUrl}) from ${dateStart} to ${dateEnd}`,
+      text: `The production logs for ${dappName} (${dappUrl}) from ${dateStart} to ${dateEnd} can be found as an attachment to this email.`,
+      html: `The production logs for ${dappName} (${dappUrl}) from <b>${dateStart}</b> to <b>${dateEnd}</b> can be found as an attachment to this email.`,
       attachments: [
         {
           // binary buffer as an attachment
           filename: "logs.html",
           content: Buffer.from(
-            `<b>Logs for ${startDate} - ${endDate}: </b><br /><br /> ${this.dappHelper.createDetailsTableHTML(
+            `<b>Logs for ${dappUrl} between ${dateStart} - ${dateEnd}: </b><br /><br /> ${this.dappHelper.createDetailsTableHTML(
               results,
             )}`,
             "utf-8",

@@ -16,9 +16,10 @@ import moment from "moment";
 
 // internal dependencies
 // common scope
-import { StateService } from "../../../common/services/StateService";
-import { QueryService } from "../../../common/services/QueryService";
+import { LogService } from "../../../common/services/LogService";
 import { NetworkService } from "../../../common/services/NetworkService";
+import { QueryService } from "../../../common/services/QueryService";
+import { StateService } from "../../../common/services/StateService";
 
 // discovery scope
 import {
@@ -71,6 +72,7 @@ export class WeeklyScoreAggregation extends LeaderboardAggregation {
     protected readonly queriesService: QueryService<AssetDocument, AssetModel>,
     protected readonly networkService: NetworkService,
     protected readonly configService: ConfigService,
+    protected readonly logService: LogService,
   ) {
     super(
       model,
@@ -81,6 +83,7 @@ export class WeeklyScoreAggregation extends LeaderboardAggregation {
       queriesService,
       networkService,
       configService,
+      logService,
     );
     this.periodFormat = "W";
     this.addCronJob("0 0 0 */1 * *"); // every day (7 times per week)

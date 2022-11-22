@@ -94,6 +94,7 @@ export class PrepareActivityPayouts extends PreparePayouts<
     >,
     protected readonly payoutsService: PayoutsService,
     protected readonly signerService: SignerService,
+    protected readonly logService: LogService,
     protected readonly mathService: MathService,
     @InjectModel(Activity.name)
     protected readonly model: ActivityModel,
@@ -105,6 +106,7 @@ export class PrepareActivityPayouts extends PreparePayouts<
       queryService,
       payoutsService,
       signerService,
+      logService,
     );
   }
 
@@ -358,7 +360,7 @@ export class PrepareActivityPayouts extends PreparePayouts<
   @Cron("*/30 * * * * *", { name: "payout:cronjobs:prepare" })
   public async runAsScheduler(): Promise<void> {
     // prepares execution logger
-    this.logger = new LogService(`${this.scope}/${this.command}`);
+    this.logger.setContext(`${this.scope}/${this.command}`);
 
     // display starting moment information also in non-debug mode
     this.debugLog(

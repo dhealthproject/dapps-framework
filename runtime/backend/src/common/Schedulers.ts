@@ -10,6 +10,7 @@
 // internal dependencies
 // common scope
 import { AppConfiguration } from "../AppConfiguration";
+import { LogModule } from "./modules/LogModule";
 
 // discovery scope
 import { AccountsModule } from "../discovery/modules/AccountsModule";
@@ -74,7 +75,6 @@ const db = dappConfigLoader().database;
  */
 export const Schedulers: { [key: string]: any[] } = {
   database: [AppConfiguration.getDatabaseModule(db)],
-  eventEmitter: [AppConfiguration.getEventEmitterModule()],
   discovery: [
     AccountsModule,
     AssetsModule,

@@ -13,6 +13,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import { Account, AccountSchema } from "../../common/models/AccountSchema";
+import { LogModule } from "../../common/modules/LogModule";
 import { QueryModule } from "../../common/modules/QueryModule";
 import { AccountsModule as CommonAccountsModule } from "../../common/modules/AccountsModule";
 import { AccountsService } from "../../common/services/AccountsService";
@@ -34,6 +35,7 @@ import { AccountsController } from "../routes/AccountsController";
   imports: [
     MongooseModule.forFeature([{ name: Account.name, schema: AccountSchema }]),
     QueryModule,
+    //LogModule,
   ],
   controllers: [AccountsController],
 })
