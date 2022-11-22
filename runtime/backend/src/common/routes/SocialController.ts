@@ -111,6 +111,7 @@ export class SocialController {
     description:
       "Request a list of social platforms that are enabled through the configuration",
   })
+  @ApiExtraModels(SocialPlatformDTO)
   @ApiOkResponse(HTTPResponses.SocialPlatformsResponseSchema)
   protected find(): SocialPlatformDTO[] {
     // read all platform configurations
