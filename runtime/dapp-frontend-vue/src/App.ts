@@ -103,7 +103,6 @@ export default class App extends MetaView {
    * @access protected
    */
   protected toastConfig: any = {};
-
   /**
    *
    */

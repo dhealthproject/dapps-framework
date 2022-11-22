@@ -18,7 +18,8 @@
       :width="16"
       class="dapp-logo__image"
     />
-    {{ userBalance ? userBalance.toFixed(2) : 0 }} $FIT
+    <!-- @todo: 2 should be replaced with value from config -->
+    {{ formatAmount(userBalance, 2) }} $FIT
   </div>
 </template>
 
