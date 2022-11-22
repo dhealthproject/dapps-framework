@@ -69,7 +69,6 @@ export default () => ({
    */
   scopes: [
     "database",
-    "eventEmitter",
     "discovery",
     "payout",
     "processor",

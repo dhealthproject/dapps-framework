@@ -19,9 +19,10 @@ import { Model } from "mongoose";
 
 // internal dependencies
 // common scope
+import { LogService } from "../../common/services/LogService";
 import { NetworkService } from "../../common/services/NetworkService";
-import { StateService } from "../../common/services/StateService";
 import { QueryService } from "../../common/services/QueryService";
+import { StateService } from "../../common/services/StateService";
 
 // processor scope
 // @todo decouple payout from processor by using dynamic "activities" query
@@ -35,7 +36,7 @@ import {
 import { Subjectable } from "../concerns/Subjectable";
 import { PayoutCommand, PayoutCommandOptions } from "./PayoutCommand";
 import { PayoutBroadcastStateData } from "../models/PayoutBroadcastStateData";
-import { Payout, PayoutDocument, PayoutQuery } from "../models/PayoutSchema";
+import { PayoutDocument, PayoutQuery } from "../models/PayoutSchema";
 import { PayoutState } from "../models/PayoutStatusDTO";
 import { PayoutsService } from "../services/PayoutsService";
 import { SignerService } from "../services/SignerService";
@@ -136,9 +137,10 @@ export abstract class BroadcastPayouts<
     protected readonly signerService: SignerService,
     protected readonly networkService: NetworkService,
     protected readonly activitiesService: ActivitiesService,
+    protected readonly logService: LogService,
   ) {
     // required super call
-    super(stateService);
+    super(logService, stateService);
 
     // setup batching
     this.batchSize = this.configService.get<number>("payouts.batchSize");

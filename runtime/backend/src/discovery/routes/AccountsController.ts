@@ -71,7 +71,10 @@ export class AccountsController {
    * @constructor
    * @param {AccountsService} accountsService
    */
-  constructor(private readonly accountsService: AccountsService) {}
+  constructor(
+    //private readonly logService: LogService,
+    private readonly accountsService: AccountsService,
+  ) {}
 
   /**
    * Handler of the `/accounts` endpoint. Returns all account

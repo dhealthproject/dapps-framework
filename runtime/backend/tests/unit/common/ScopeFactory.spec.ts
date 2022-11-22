@@ -463,12 +463,11 @@ describe("common/ScopeFactory", () => {
       const result3 = MockFactory.create(configDto3).getSchedulers();
 
       // assert
-      expect(result1).toEqual([ConfigModuleMock, MongooseModuleMock, EventEmitterModuleMock]);
-      expect(result2).toEqual([ConfigModuleMock, MongooseModuleMock, EventEmitterModuleMock]);
+      expect(result1).toEqual([ConfigModuleMock, MongooseModuleMock]);
+      expect(result2).toEqual([ConfigModuleMock, MongooseModuleMock]);
       expect(result3).toEqual([
         ConfigModuleMock,
         MongooseModuleMock,
-        EventEmitterModuleMock,
         AccountsDiscoveryModuleMock,
         AssetsModuleMock,
         TransactionsModuleMock,
@@ -513,7 +512,6 @@ describe("common/ScopeFactory", () => {
       expect(result).toStrictEqual([
         ConfigModuleMock,
         MongooseModuleMock,
-        EventEmitterModuleMock,
         AccountsDiscoveryModuleMock,
         AssetsModuleMock,
         TransactionsModuleMock,
@@ -555,7 +553,7 @@ describe("common/ScopeFactory", () => {
       const result = MockFactory.create(configDto).getSchedulers();
 
       // assert
-      expect(result).toEqual([ConfigModuleMock, MongooseModuleMock, EventEmitterModuleMock]);
+      expect(result).toEqual([ConfigModuleMock, MongooseModuleMock]);
     });
 
     it("should return correct list of enabled schedulers for processor", () => {
@@ -591,7 +589,6 @@ describe("common/ScopeFactory", () => {
       expect(result).toEqual([
         ConfigModuleMock,
         MongooseModuleMock,
-        EventEmitterModuleMock,
         OperationsModuleMock,
         ProcessOperationsCommandMock,
       ]);

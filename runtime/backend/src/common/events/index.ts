@@ -10,3 +10,6 @@
 // generics / interfaces
 export * from "./BaseEvent";
 export * from "./BaseEventListener";
+
+// custom events
+export * from "./AlertEvent";

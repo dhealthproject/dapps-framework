@@ -13,6 +13,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
+import { LogService } from "../../../../src/common/services/LogService";
 import { StateService } from "../../../../src/common/services/StateService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { PayoutCommand, PayoutCommandOptions } from "../../../../src/payout/schedulers/PayoutCommand";
@@ -32,12 +33,14 @@ class TestPayoutCommand extends PayoutCommand {
 describe("payout/PayoutCommand", () => {
   let payoutCommand: PayoutCommand;
   let statesService: StateService;
+  let logService: LogService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StateService,
         QueryService,
+        LogService,
         {
           provide: getModelToken("State"),
           useValue: MockModel,
@@ -46,7 +49,8 @@ describe("payout/PayoutCommand", () => {
     }).compile();
 
     statesService = module.get<StateService>(StateService);
-    payoutCommand = new TestPayoutCommand(statesService);
+    logService = module.get<LogService>(LogService);
+    payoutCommand = new TestPayoutCommand(logService, statesService);
   });
 
   describe("runWithOptions()", () => {

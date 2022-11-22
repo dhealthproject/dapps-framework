@@ -8,9 +8,9 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
+import { LogService } from "../../../../src/common/services/LogService";
 import { StateService } from "../../../../src/common/services/StateService";
 import { StatisticsCommand, StatisticsCommandOptions } from "../../../../src/statistics/schedulers/StatisticsCommand";
-
 
 class StatisticsCommandMock extends StatisticsCommand {
   public aggregate(options?: StatisticsCommandOptions): Promise<void> {
@@ -25,12 +25,16 @@ class StatisticsCommandMock extends StatisticsCommand {
 }
 
 class StateServiceMock extends StateService {}
+class LogServiceMock extends LogService {}
 
 describe("statistics/StatisticsCommand", () => {
   let service: StatisticsCommand;
 
   beforeEach(() => {
-    service = new StatisticsCommandMock(new StateServiceMock({}, {} as any));
+    service = new StatisticsCommandMock(
+      new LogServiceMock(),
+      new StateServiceMock({}, {} as any)
+    );
   });
 
   describe("parseCollection()", () => {

@@ -94,28 +94,16 @@ export class LogService implements LoggerService {
   private readonly monitoringConfig: MonitoringConfig;
 
   /**
-   * This injects the event emitter *at property level* such
-   * that instances of this class can be created without the
-   * event emitter injection.
-   * <br /><br />
-   * Dependency injection here is done using a *custom provider*
-   * named `EventEmitter` and defined in {@link LogModule}.
-   *
-   * @access protected
-   * @readonly
-   * @var {EventEmitter2}
-   */
-  @Inject("EventEmitter")
-  protected readonly eventEmitter: EventEmitter2;
-
-  /**
    * The constructor implementation of this class.
    *
    * @param {string}        context       The optional identified context of this instance.
    */
-  constructor(
-    @Optional()
-    protected readonly context: string,
+  public constructor();
+  public constructor(context: string);
+  public constructor(context: string, eventEmitter: EventEmitter2);
+  public constructor(
+    @Optional() protected context?: string,
+    @Optional() protected eventEmitter?: EventEmitter2,
   ) {
     // @todo should use AppConfiguration
     this.dappConfig = dappConfigLoader();
@@ -133,6 +121,129 @@ export class LogService implements LoggerService {
       ),
       transports: this.createTransports(),
     });
+  }
+
+  /**
+   * Set the optional context which is prepended to the log
+   * message for any level.
+   *
+   * @param   {string}    context
+   * @returns {LogService}
+   */
+  public setContext(context: string) {
+    this.context = context;
+    return this;
+  }
+
+  /**
+   * Write a 'log' level log. This method prints a log
+   * message with level `"info"`.
+   *
+   * @access public
+   * @param {string} message The log message.
+   * @param {string} context The log context.
+   * @return {void}
+   */
+  public log(message: string, ...optionalParams: any[]): void {
+    this.logger.log(message, ...optionalParams);
+  }
+
+  /**
+   * Write a 'debug' level log. This method prints a log
+   * message with level `"debug"`.
+   *
+   * @access public
+   * @param {string} message The debug message.
+   * @param {string} context The debug context.
+   * @return {void}
+   */
+  public debug(message: string, ...optionalParams: any[]): void {
+    this.logger.debug(message, ...optionalParams);
+  }
+
+  /**
+   * Write an 'error' level log. This method prints a log
+   * message with level `"error"`.
+   *
+   * @access public
+   * @param {string} message  The error message.
+   * @param {string} trace    The error trace.
+   * @param {string} context  The error context.
+   * @return {void}
+   */
+  public error(message: string, ...optionalParams: any[]): void {
+    this.logger.error(message, ...optionalParams);
+
+    // do we need an *alert* sent through e-mail?
+    if (this.monitoringConfig.enableAlerts && this.eventEmitter) {
+      this.logger.debug("Emitting event: notifier.alerts.error");
+      const result = this.eventEmitter.emit(
+        "notifier.alerts.error",
+        AlertEvent.create(
+          new Date(),
+          "error",
+          this.context,
+          message,
+          optionalParams.length > 0 ? optionalParams[0] : undefined,
+          optionalParams.length > 1 ? optionalParams[1] : undefined,
+        ),
+      );
+      this.logger.debug(`Event emitted: ${result ? "1" : "0"}`);
+    }
+  }
+
+  /**
+   * Write a 'warn' level log. This method prints a log
+   * message with level `"warn"`.
+   *
+   * @access public
+   * @param {string} message The warn message.
+   * @param {string} context The warn context.
+   * @return {void}
+   */
+  public warn(message: string, ...optionalParams: any[]): void {
+    this.logger.warn(message, ...optionalParams);
+
+    // do we need an *alert* sent through e-mail?
+    if (this.monitoringConfig.enableAlerts && this.eventEmitter) {
+      this.logger.debug("Emitting event: notifier.alerts.warn");
+      const result = this.eventEmitter.emit(
+        "notifier.alerts.warn",
+        AlertEvent.create(
+          new Date(),
+          "warn",
+          this.context,
+          message,
+          optionalParams.length > 0 ? optionalParams[0] : undefined,
+          optionalParams.length > 1 ? optionalParams[1] : undefined,
+        ),
+      );
+      this.logger.debug(`Event emitted: ${result ? "1" : "0"}`);
+    }
+  }
+
+  /**
+   * Write a 'verbose' level log. This method prints a log
+   * message with level `"debug"`.
+   *
+   * @access public
+   * @param {string} message The verbose message.
+   * @param {string} context The verbose context.
+   * @return {void}
+   */
+  public verbose(message: string, ...optionalParams: any[]): void {
+    this.logger.verbose(message, ...optionalParams);
+  }
+
+  /**
+   * Set log levels.
+   *
+   * @access public
+   * @param {LogLevel[]} levels The log level values.
+   * @return {void}
+   */
+  public setLogLevels(levels: LogLevel[]): void {
+    this.logger.setLogLevels(levels);
   }
 
   /**
@@ -224,104 +335,5 @@ export class LogService implements LoggerService {
     }
 
     return transports;
-  }
-
-  /**
-   * Write a 'log' level log. This method prints a log
-   * message with level `"info"`.
-   *
-   * @access public
-   * @param {string} message The log message.
-   * @param {string} context The log context.
-   * @return {void}
-   */
-  log(message: string, ...optionalParams: any[]): void {
-    this.logger.log(message, ...optionalParams);
-  }
-
-  /**
-   * Write a 'debug' level log. This method prints a log
-   * message with level `"debug"`.
-   *
-   * @access public
-   * @param {string} message The debug message.
-   * @param {string} context The debug context.
-   * @return {void}
-   */
-  debug(message: string, ...optionalParams: any[]): void {
-    this.logger.debug(message, ...optionalParams);
-  }
-
-  /**
-   * Write an 'error' level log. This method prints a log
-   * message with level `"error"`.
-   *
-   * @access public
-   * @param {string} message  The error message.
-   * @param {string} trace    The error trace.
-   * @param {string} context  The error context.
-   * @return {void}
-   */
-  error(message: string, ...optionalParams: any[]): void {
-    this.logger.error(message, ...optionalParams);
-
-    // do we need an *alert* sent through e-mail?
-    if (this.monitoringConfig.enableAlerts && this.eventEmitter) {
-      this.eventEmitter.emit("event.log.error", {
-        timestamp: new Date(),
-        level: "error",
-        loggerContext: this.context,
-        message,
-        ...optionalParams,
-      } as AlertEvent);
-    }
-  }
-
-  /**
-   * Write a 'warn' level log. This method prints a log
-   * message with level `"warn"`.
-   *
-   * @access public
-   * @param {string} message The warn message.
-   * @param {string} context The warn context.
-   * @return {void}
-   */
-  warn(message: string, ...optionalParams: any[]): void {
-    this.logger.warn(message, ...optionalParams);
-
-    // do we need an *alert* sent through e-mail?
-    if (this.monitoringConfig.enableAlerts && this.eventEmitter) {
-      this.eventEmitter.emit("event.log.warn", {
-        timestamp: new Date(),
-        level: "warn",
-        loggerContext: this.context,
-        message,
-        ...optionalParams,
-      } as AlertEvent);
-    }
-  }
-
-  /**
-   * Write a 'verbose' level log. This method prints a log
-   * message with level `"debug"`.
-   *
-   * @access public
-   * @param {string} message The verbose message.
-   * @param {string} context The verbose context.
-   * @return {void}
-   */
-  verbose(message: string, ...optionalParams: any[]): void {
-    this.logger.verbose(message, ...optionalParams);
-  }
-
-  /**
-   * Set log levels.
-   *
-   * @access public
-   * @param {LogLevel[]} levels The log level values.
-   * @return {void}
-   */
-  setLogLevels(levels: LogLevel[]): void {
-    this.logger.setLogLevels(levels);
   }
 }

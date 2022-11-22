@@ -8,7 +8,8 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { NestFactory } from "@nestjs/core";
+import { NestApplication, NestFactory } from "@nestjs/core";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { WorkerModule } from "./WorkerModule";
@@ -28,16 +29,32 @@ async function bootstrap(): Promise<void> {
   // read configuration
   const dappConfig: DappConfig = dappConfigLoader();
 
+  // verify configuration integrity
+  // CAUTION: this will fail with a `ConfigurationError`
+  WorkerModule.checkConfiguration();
+
   // create a logger instance
-  const logger = new LogService(dappConfig.dappName + "/worker");
+  // const logger = new LogService(
+  //   dappConfig.dappName + "/worker",
+  //   new EventEmitter2(),
+  // );
 
   // create an instance of the scheduler with imported configs
-  await NestFactory.createApplicationContext(
+  const app: any = await NestFactory.createApplicationContext(
     WorkerModule.register({
       ...dappConfig,
     } as DappConfig),
-    { logger },
+    // { logger },
   );
+
+  // create a logger instance
+  const logger = new LogService(
+    dappConfig.dappName + "/worker",
+    app.get(EventEmitter2),
+  );
+
+  // create a logger instance
+  app.useLogger(logger);
 }
 
 // bootstrap the scheduler

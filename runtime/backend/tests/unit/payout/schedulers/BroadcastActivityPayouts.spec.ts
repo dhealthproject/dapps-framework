@@ -18,6 +18,7 @@ import { TransactionMapping } from "@dhealth/sdk";
 import { MockModel } from "../../../mocks/global";
 
 // common scope
+import { LogService } from "../../../../src/common/services/LogService";
 import { StateService } from "../../../../src/common/services/StateService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
@@ -74,7 +75,7 @@ describe("payout/BroadcastActivityPayouts", () => {
   let payoutsService: PayoutsService;
   let signerService: SignerService;
   let activitiesService: ActivitiesService;
-  let logger: Logger;
+  let logger: LogService;
   let mockDate: Date;
 
   beforeEach(async () => {
@@ -93,7 +94,6 @@ describe("payout/BroadcastActivityPayouts", () => {
         PayoutsService,
         SignerService,
         ActivitiesService,
-        Logger,
         EventEmitter2,
         {
           provide: getModelToken("Payout"),
@@ -107,6 +107,14 @@ describe("payout/BroadcastActivityPayouts", () => {
           provide: getModelToken("State"),
           useValue: MockModel,
         },
+        {
+          provide: LogService,
+          useValue: {
+            log: jest.fn(),
+            debug: jest.fn(),
+            error: jest.fn(),
+          },
+        },
       ]
     }).compile();
 
@@ -118,7 +126,7 @@ describe("payout/BroadcastActivityPayouts", () => {
     payoutsService = module.get<PayoutsService>(PayoutsService);
     signerService = module.get<SignerService>(SignerService);
     activitiesService = module.get<ActivitiesService>(ActivitiesService);
-    logger = module.get<Logger>(Logger);
+    logger = module.get<LogService>(LogService);
   });
 
   it("should be defined", () => {

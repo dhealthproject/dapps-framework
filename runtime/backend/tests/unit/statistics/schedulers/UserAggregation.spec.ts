@@ -11,7 +11,7 @@
 import { getModelToken } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule/dist/scheduler.registry";
 import { Test, TestingModule } from "@nestjs/testing";
-import { Logger } from "@nestjs/common";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { QueryService } from "../../../../src/common/services/QueryService";
@@ -21,14 +21,14 @@ import { StatisticsDocument, StatisticsModel, StatisticsQuery } from "../../../.
 import { UserAggregation } from "../../../../src/statistics/schedulers/UserAggregation/UserAggregation";
 import { StatisticsService } from "../../../../src/statistics/services/StatisticsService";
 import { UserAggregationStateData } from "../../../../src/statistics/models/UserAggregationStateData";
-import { EventEmitter2 } from "@nestjs/event-emitter";
+import { LogService } from "../../../../src/common/services/LogService";
 
 describe("statistics/UserAggregation", () => {
   let service: UserAggregation;
   let queryService: QueryService<StatisticsDocument, StatisticsModel>;
   let statesService: StateService;
   let statisticsService: StatisticsService;
-  let logger: Logger;
+  let logger: LogService;
 
   let mockDate: Date;
   let module: TestingModule;
@@ -58,8 +58,9 @@ describe("statistics/UserAggregation", () => {
           useValue: MockModel,
         }, // requirement from UserAggregation
         {
-          provide: Logger,
+          provide: LogService,
           useValue: {
+            setContext: jest.fn(),
             log: jest.fn(),
             debug: jest.fn(),
             error: jest.fn(),
@@ -72,7 +73,7 @@ describe("statistics/UserAggregation", () => {
     queryService = module.get<QueryService<StatisticsDocument, StatisticsModel>>(QueryService);
     statesService = module.get<StateService>(StateService);
     statisticsService = module.get<StatisticsService>(StatisticsService);
-    logger = module.get<Logger>(Logger);
+    logger = module.get<LogService>(LogService);
   });
 
   afterEach(() => {

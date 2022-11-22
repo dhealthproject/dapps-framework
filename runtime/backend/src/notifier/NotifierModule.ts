@@ -9,12 +9,11 @@
  */
 // external dependencies
 import { Module } from "@nestjs/common";
-import { NotifierFactory } from "./concerns/NotifierFactory";
-import { AlertNotifier } from "./listeners/AlertNotifier";
 
 // internal dependencies
-import { HelpersModule } from "../common/modules/HelpersModule";
 import { EmailNotifierModule } from "./modules/EmailNotifierModule";
+import { NotifierFactoryModule } from "./modules/NotifierFactoryModule";
+import { AlertsModule } from "./modules/AlertsModule";
 
 /**
  * @label NOTIFIER
@@ -26,7 +25,8 @@ import { EmailNotifierModule } from "./modules/EmailNotifierModule";
  * This scoped module currently features the following submodules:
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
- * | {@link EmailNotifierModule:NOTIFIER} | `notifier` | `/notifier/emailnotifier` | Module with schedulers, collections and routes around **notifier**. |
+ * | {@link EmailNotifierModule:NOTIFIER} | N/A | N/A | Module with configuration and services around **mailer** automations. |
+ * | {@link AlertsModule:NOTIFIER} | N/A | N/A | Module with event listener for transporting alerts with the **mailer** or other transports. |
  * <br /><br />
  * Note also that in {@link Schedulers:COMMON}, we map the following **schedulers**
  * to this module:
@@ -36,10 +36,10 @@ import { EmailNotifierModule } from "./modules/EmailNotifierModule";
  */
 @Module({
   imports: [
-    HelpersModule,
+    // imports factories and listeners
     EmailNotifierModule,
+    NotifierFactoryModule,
+    AlertsModule,
   ],
-  providers: [AlertNotifier, NotifierFactory],
-  exports: [AlertNotifier, NotifierFactory],
 })
 export class NotifierModule {}

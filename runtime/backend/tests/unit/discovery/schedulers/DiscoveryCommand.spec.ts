@@ -34,6 +34,7 @@ import { NetworkConfig } from "../../../../src/common/models/NetworkConfig";
 import { StateDocument, StateModel, StateQuery } from "../../../../src/common/models/StateSchema";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { StateService } from "../../../../src/common/services/StateService";
+import { LogService } from "../../../../src/common/services/LogService";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../../../../src/discovery/schedulers/DiscoveryCommand";
 
 // configuration resources
@@ -69,6 +70,7 @@ describe("discovery/DiscoveryCommand", () => {
   // global injectable service setup
   let fakeCommand: MockDiscoveryCommand;
   let stateService: StateService;
+  let logService: LogService;
   let queryService: QueryService<StateDocument, StateModel>;
   let expectedNetworkConfig: NetworkConfig = networkConfigLoader();
   let expectedDappConfig: DappConfig = dappConfigLoader();
@@ -79,6 +81,7 @@ describe("discovery/DiscoveryCommand", () => {
       providers: [
         QueryService,
         StateService,
+        LogService,
         {
           provide: getModelToken("State"),
           useValue: MockModel,
@@ -89,6 +92,7 @@ describe("discovery/DiscoveryCommand", () => {
 
     fakeCommand = module.get<MockDiscoveryCommand>(MockDiscoveryCommand);
     stateService = module.get<StateService>(StateService);
+    logService = module.get<LogService>(LogService);
     queryService = module.get<QueryService<StateDocument, StateModel>>(QueryService);
 
     // clears mocks calls

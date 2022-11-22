@@ -16,6 +16,7 @@ import { MockModel } from "../../../mocks/global";
 import { StateService } from "../../../../src/common/services/StateService";
 import { ProcessorCommand, ProcessorCommandOptions } from "../../../../src/processor/schedulers/ProcessorCommand";
 import { QueryService } from "../../../../src/common/services/QueryService";
+import { LogService } from "../../../../src/common/services/LogService";
 
 class TestProcessorCommand extends ProcessorCommand {
   public process(options?: ProcessorCommandOptions): Promise<void> {
@@ -32,12 +33,14 @@ class TestProcessorCommand extends ProcessorCommand {
 describe("processor/ProcessorCommand", () => {
   let processorCommand: ProcessorCommand;
   let statesService: StateService;
+  let logService: LogService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StateService,
         QueryService,
+        LogService,
         {
           provide: getModelToken("State"),
           useValue: MockModel,
@@ -46,7 +49,8 @@ describe("processor/ProcessorCommand", () => {
     }).compile();
 
     statesService = module.get<StateService>(StateService);
-    processorCommand = new TestProcessorCommand(statesService);
+    logService = module.get<LogService>(LogService);
+    processorCommand = new TestProcessorCommand(logService, statesService);
   });
 
   describe("parseCollection()", () => {

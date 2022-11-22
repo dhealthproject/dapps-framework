@@ -24,6 +24,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { SchedulerRegistry } from "@nestjs/schedule/dist/scheduler.registry";
 import { MailerService } from "@nestjs-modules/mailer";
+import moment from "moment";
 
 // internal dependencies
 import { MockModel } from "../../../../../tests/mocks/global";
@@ -297,7 +298,8 @@ describe("notifier/ReportNotifier", () => {
       }
       const configServiceGetCall = jest
         .spyOn(configService, "get")
-        .mockReturnValue("test-dapp-name");
+        .mockReturnValueOnce("test-dapp-name")
+        .mockReturnValueOnce("test-url");
       jest.spyOn((service as any), "debugLog");
       const startDate = new Date();
       const endDate = new Date();
@@ -323,6 +325,8 @@ describe("notifier/ReportNotifier", () => {
       const dappHelperCreateDetailsTableHTMLCall = jest
         .spyOn(dappHelper, "createDetailsTableHTML")
         .mockReturnValue("test-html-content");
+      const dateStart = moment(startDate).format("YYYY-MM-DD");
+      const dateEnd = moment(endDate).format("YYYY-MM-DD");
 
       // act
       await service.report(
@@ -351,15 +355,15 @@ describe("notifier/ReportNotifier", () => {
         1,
         {
           to: "recipient@example.com",
-          subject: `[test-dapp-name] Production logs happened from ${startDate} to ${endDate}`,
-          text: `Please find production logs from ${startDate} to ${endDate} attached in this email.`,
-          html: `Please find production logs from <b>${startDate}</b> to <b>${endDate}</b> attached in this email.`,
+          subject: `[test-dapp-name] LOGS REPORT for dApp (test-url) from ${dateStart} to ${dateEnd}`,
+          text: `The production logs for test-dapp-name (test-url) from ${dateStart} to ${dateEnd} can be found as an attachment to this email.`,
+          html: `The production logs for test-dapp-name (test-url) from <b>${dateStart}</b> to <b>${dateEnd}</b> can be found as an attachment to this email.`,
           attachments: [
             {
               // binary buffer as an attachment
               filename: "logs.html",
               content: Buffer.from(
-                `<b>Logs for ${startDate} - ${endDate}: </b><br /><br /> test-html-content`,
+                `<b>Logs for test-url between ${dateStart} - ${dateEnd}: </b><br /><br /> test-html-content`,
                 "utf-8",
               ),
             },

@@ -9,3 +9,5 @@
  */
 // exported modules
 export * from "./EmailNotifierModule";
+export * from "./NotifierFactoryModule";
+export * from "./AlertsModule";

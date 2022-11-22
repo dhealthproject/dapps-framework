@@ -74,8 +74,9 @@ export class UserAggregation extends StatisticsCommand {
       ActivityModel
     >,
     protected readonly statisticsService: StatisticsService,
+    protected readonly logService: LogService,
   ) {
-    super(stateService);
+    super(logService, stateService);
     this.lastExecutedAt = new Date().valueOf();
   }
   /**
@@ -186,7 +187,7 @@ export class UserAggregation extends StatisticsCommand {
   @Cron("0 */10 * * * *", { name: "statistics:cronjobs:user-aggregation" })
   public async runAsScheduler(): Promise<void> {
     // setup debug logger
-    this.logger = new LogService(`${this.scope}/${this.command}`);
+    this.logger.setContext(`${this.scope}/${this.command}`);
 
     // display starting moment information *also* in debug mode
     this.debugLog(`Starting user aggregation type: ${this.periodFormat}`);

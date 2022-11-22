@@ -21,7 +21,7 @@ import {
   Transaction,
   TransactionSchema,
 } from "../../../common/models/TransactionSchema";
-import { LogModule } from "../../../common/modules";
+import { LogModule } from "../../../common/modules/LogModule";
 
 // processor scope
 import { OperationsModule } from "../../modules/OperationsModule";

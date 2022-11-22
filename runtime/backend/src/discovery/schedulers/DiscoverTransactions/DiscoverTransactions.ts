@@ -181,9 +181,10 @@ export class DiscoverTransactions extends DiscoveryCommand {
     protected readonly stateService: StateService,
     protected readonly networkService: NetworkService,
     protected readonly transactionsService: TransactionsService,
+    protected readonly logService: LogService,
   ) {
     // required super call
-    super(stateService);
+    super(logService, stateService);
 
     // sets default state data
     this.lastPageNumber = 1;

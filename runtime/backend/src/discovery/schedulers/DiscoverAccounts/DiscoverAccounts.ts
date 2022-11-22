@@ -104,9 +104,10 @@ export class DiscoverAccounts extends DiscoveryCommand {
     protected readonly networkService: NetworkService,
     protected readonly accountsService: AccountsService,
     protected readonly transactionsService: TransactionsService,
+    protected readonly logService: LogService,
   ) {
     // required super call
-    super(statesService);
+    super(logService, statesService);
 
     // sets default state data
     this.lastPageNumber = 1;

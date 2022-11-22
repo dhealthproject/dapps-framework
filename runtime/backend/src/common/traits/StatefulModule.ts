@@ -14,6 +14,7 @@ import { LoggerService } from "@nestjs/common";
 import { StateService } from "../services/StateService";
 import { StateDocument, StateQuery } from "../models/StateSchema";
 import { StateData } from "../models/StateData";
+import { LogService } from "../services/LogService";
 
 /**
  * @abstract
@@ -41,9 +42,9 @@ export abstract class StatefulModule {
    * by extending modules to use a common log process.
    *
    * @access protected
-   * @var {LoggerService}
+   * @var {LogService}
    */
-  protected logger: LoggerService;
+  //protected logger: LogService;
 
   /**
    * Constructs a stateful module. This naming refers to a *nest* injectable
@@ -54,7 +55,10 @@ export abstract class StatefulModule {
    *
    * @param   {StateService}    stateService
    */
-  public constructor(protected readonly stateService: StateService) {}
+  public constructor(
+    protected readonly logger: LogService,
+    protected readonly stateService: StateService,
+  ) {}
 
   /**
    * Creates a **state query** for this discovery service. Each

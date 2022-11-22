@@ -25,7 +25,6 @@ import { HelpersModule } from "../../../common/modules/HelpersModule";
 import { ReportNotifier } from "./ReportNotifier";
 import { NotifierFactory } from "../../concerns/NotifierFactory";
 import { EmailNotifierModule } from "../../modules/EmailNotifierModule";
-import { AlertNotifier } from "../../listeners/AlertNotifier";
 
 /**
  * @class ReportNotifierCommand
@@ -44,7 +43,7 @@ import { AlertNotifier } from "../../listeners/AlertNotifier";
     EmailNotifierModule,
     HelpersModule,
   ],
-  providers: [NotifierFactory, ReportNotifier, AlertNotifier],
-  exports: [ReportNotifier, AlertNotifier],
+  providers: [NotifierFactory, ReportNotifier],
+  exports: [ReportNotifier],
 })
 export class ReportNotifierCommand {}

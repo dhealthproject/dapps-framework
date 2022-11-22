@@ -52,7 +52,6 @@ const db = dappConfigLoader().database;
  */
 export const Scopes: { [key: string]: any } = {
   database: AppConfiguration.getDatabaseModule(db),
-  eventEmitter: AppConfiguration.getEventEmitterModule(),
   discovery: DiscoveryModule,
   payout: PayoutModule,
   processor: ProcessorModule,

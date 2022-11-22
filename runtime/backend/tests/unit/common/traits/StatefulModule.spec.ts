@@ -8,16 +8,18 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { StateService } from "@/classes";
+import { StateService } from "../../../../src/common/services/StateService";
+import { LogService } from "../../../../src/common/services/LogService";
 import { StatefulModule } from "../../../../src/common/traits/StatefulModule";
 
 describe("common/StatefulModule", () => {
+  const logService = {};
   const stateService = {};
   const debugCall = jest.fn();
   const errorCall = jest.fn();
   class StatefulModuleTest extends StatefulModule {
-    constructor(stateService: StateService) {
-      super(stateService);
+    constructor(logService: LogService, stateService: StateService) {
+      super(logService, stateService);
       (this as any).logger = { debug: debugCall, error: errorCall }
     }
 
@@ -33,7 +35,10 @@ describe("common/StatefulModule", () => {
   describe("debugLog()", () => {
     it("should call debug method from logger with context", () => {
       // prepare
-      const statefulModule = new StatefulModuleTest((stateService as any));
+      const statefulModule = new StatefulModuleTest(
+        (logService as any),
+        (stateService as any)
+      );
 
       // act
       (statefulModule as any).debugLog("test-message", "test-context");
@@ -45,7 +50,10 @@ describe("common/StatefulModule", () => {
 
     it("should call debug method from logger without context", () => {
       // prepare
-      const statefulModule = new StatefulModuleTest((stateService as any));
+      const statefulModule = new StatefulModuleTest(
+        (logService as any),
+        (stateService as any)
+      );
 
       // act
       (statefulModule as any).debugLog("test-message");
@@ -59,7 +67,10 @@ describe("common/StatefulModule", () => {
   describe("errorLog()", () => {
     it("should call error method from logger with correct params", () => {
       // prepare
-      const statefulModule = new StatefulModuleTest((stateService as any));
+      const statefulModule = new StatefulModuleTest(
+        (logService as any),
+        (stateService as any)
+      );
 
       // act
       (statefulModule as any).errorLog("test-message", "test-stack", "test-context");
