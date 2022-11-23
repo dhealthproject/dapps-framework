@@ -15,11 +15,16 @@ import { RootState } from "./Store";
 import { AwaitLock } from "../AwaitLock";
 import { Translations } from "../../kernel/i18n/Translations";
 import { SocialService } from "../../services/SocialService";
+import { ConfigService } from "../../services/ConfigService";
 import { SocialPlatformDTO } from "../../models/SocialPlatformDTO";
+import { ConfigDTO } from "../../models/ConfigDTO";
 
 // configuration
 import packageConfig from "../../../package.json";
 import dappConfig from "../../../config/dapp.json";
+
+// Union type for configuration
+export type ConfigType = ConfigDTO | undefined;
 
 /**
  * @todo missing interface documentation
@@ -33,6 +38,7 @@ export interface AppState {
   displaySnackBar: boolean;
   i18n: Translations;
   socialApps: SocialPlatformDTO[];
+  config: ConfigType;
 }
 
 /**
@@ -61,6 +67,7 @@ export const AppModule = {
     displaySnackBar: false,
     i18n: new Translations(Translations.defaultLanguage),
     socialApps: [],
+    config: undefined,
   }),
 
   getters: {
@@ -72,6 +79,7 @@ export const AppModule = {
     getBackendURL: (state: AppState): string => state.backendUrl,
     i18n: (state: AppState): Translations => state.i18n,
     socialApps: (state: AppState): SocialPlatformDTO[] => state.socialApps,
+    getConfig: (state: AppState): ConfigType => state.config,
   },
 
   mutations: {
@@ -110,6 +118,12 @@ export const AppModule = {
      */
     setSocialPlatforms: (state: AppState, payload: SocialPlatformDTO[]) =>
       (state.socialApps = payload),
+
+    /**
+     *
+     */
+    setConfig: (state: AppState, payload: ConfigType) =>
+      (state.config = payload),
   },
 
   actions: {
@@ -118,6 +132,9 @@ export const AppModule = {
      */
     async initialize(context: AppContext): Promise<boolean> {
       const callback = async () => {
+        // load dapp configuration from the backend
+        await context.dispatch("fetchConfig");
+
         // loads custom language settings
         await context.dispatch("fetchLanguage");
 
@@ -163,6 +180,23 @@ export const AppModule = {
         return items;
       } catch (err) {
         console.log("ERROR fetchSocialPlatforms", err);
+      }
+    },
+
+    /**
+     *
+     */
+    async fetchConfig(context: AppContext) {
+      if (!context.getters.getConfig) {
+        const handler = new ConfigService();
+        try {
+          const response = await handler.getConfig();
+
+          context.commit("setConfig", response);
+          return response;
+        } catch (err) {
+          console.log("ERROR fetchConfig", err);
+        }
       }
     },
   },
