@@ -13,6 +13,7 @@ import { Module } from "@nestjs/common";
 // internal dependencies
 import { DappHelper } from "../concerns/DappHelper";
 import { NetworkModule } from "./NetworkModule";
+import { ConfigController } from "../routes/ConfigController";
 
 /**
  * @class HelpersModule
@@ -24,5 +25,6 @@ import { NetworkModule } from "./NetworkModule";
   imports: [NetworkModule],
   providers: [DappHelper],
   exports: [DappHelper],
+  controllers: [ConfigController],
 })
 export class HelpersModule {}

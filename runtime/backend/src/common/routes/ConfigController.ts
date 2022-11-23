@@ -13,25 +13,24 @@ import { ApiTags } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { AssetParameters } from "../models";
 
+export interface BaseConfig {
+  dappName: string;
+  digitsAmount: number;
+  mosaicId: string;
+}
+
 /**
  * @label COMMON
- * @class SocialController
+ * @class ConfigController
  * @description The social controller of the app. Handles requests
- * about *social platforms*. Typically, these requests are used by
- * the frontend runtime to determine dynamic referral links.
- * <br /><br />
- * This controller defines the following routes:
- * | URI | HTTP method | Class method | Description |
- * | --- | --- | --- | --- |
- * | `/social/platforms` | **`GET`** | {@link SocialController.find} | Responds with a {@link SocialPlatformDTO} object that contains a social platforms link details. |
- * | `/social/share/:provider` | **`GET`** | {@link SocialController.share} | Responds with a {@link SocialPlatformDTO} object that contains a social platforms link details. |
- * <br /><br />
+ * about *Configuration details*. Typically, these requests are used by
+ * the frontend runtime to get dynamic app configuration.
  *
  * @since v0.5.0
  */
-@ApiTags("Social Platforms")
-@Controller("social")
-export class SocialController {
+@ApiTags("Configuration endpoints")
+@Controller("config")
+export class ConfigController {
   /**
    * Constructs an instance of this controller.
    *
@@ -39,8 +38,14 @@ export class SocialController {
    */
   public constructor(private readonly configService: ConfigService) {}
 
-  @Get("config")
-  getConfig() {
+  /**
+   * Returns base configuration for the frontend app.
+   *
+   * @param {ConfigService} configService   A nestjs ConfigService instance (automatically injected).
+   * @returns {BaseConfig}
+   */
+  @Get()
+  getConfig(): BaseConfig {
     const dappName = this.configService.get<string>("dappName");
     const asset = this.configService.get<AssetParameters>("assets.earn");
     const mosaicId = asset.mosaicId;

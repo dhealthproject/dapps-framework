@@ -24,8 +24,13 @@
  */
 export default {
   install(Vue: any) {
-    Vue.prototype.formatAmount = (amount: number, divisibility: number) => {
-      return amount / Math.pow(10, divisibility);
+    Vue.prototype.formatAmount = function (
+      amount: number,
+      divisibility: number | undefined = undefined
+    ) {
+      const config = this.$store.getters["app/getConfig"];
+      const defaultDigits = config.digitsAmount;
+      return amount / Math.pow(10, divisibility ?? defaultDigits);
     };
   },
 };
