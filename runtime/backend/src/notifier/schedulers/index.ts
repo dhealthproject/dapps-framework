@@ -7,6 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// exported schedulers
-export * from "./ReportNotifier";
+// abstract command module
 export * from "./NotifierCommand";
+
+// exported schedulers
+export * from "./ReportNotifier/ReportNotifierCommand";
+export * from "./ReportNotifier/ReportNotifier";

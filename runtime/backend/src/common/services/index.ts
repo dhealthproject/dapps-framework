@@ -10,8 +10,9 @@
 // services index
 export * from "./AccountsService";
 export * from "./AuthService";
-export * from "./CipherService";
 export * from "./ChallengesService";
+export * from "./CipherService";
+export * from "./LogService";
 export * from "./NetworkService";
 export * from "./OAuthService";
 export * from "./QueryService";

@@ -11,6 +11,7 @@
 export * from "./ProcessorConfig";
 
 // database models
+export * from "./ActivityDataSchema";
 export * from "./ActivitySchema";
 export * from "./OperationSchema";
 
@@ -19,5 +20,12 @@ export * from "./OperationProcessorStateData";
 export * from "./OperationTypes";
 
 // specialized data transfer objects
+export * from "./ActivityDataDTO";
 export * from "./ActivityDTO";
+export * from "./GeolocationDTO";
+export * from "./GeolocationLineDTO";
+export * from "./GeolocationPointDTO";
+export * from "./GeolocationPolygonDTO";
 export * from "./OperationDTO";
+export * from "./OperationTypes";
+export * from "./ProcessingStatusDTO";

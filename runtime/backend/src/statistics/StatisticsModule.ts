@@ -15,7 +15,7 @@ import { Module } from "@nestjs/common";
 import { StatisticsModule as ModuleImpl } from "./modules/StatisticsModule";
 
 /**
- * @label STATISTICS
+ * @label SCOPES
  * @class StatisticsModule
  * @description The statistics scope's main module. This module
  * is loaded by the software when `"statistics"` is present in

@@ -16,7 +16,7 @@ import { NotifierFactoryModule } from "./modules/NotifierFactoryModule";
 import { AlertsModule } from "./modules/AlertsModule";
 
 /**
- * @label NOTIFIER
+ * @label SCOPES
  * @class NotifierModule
  * @description The notifier scope's main module. This module
  * is loaded by the software when `"notifier"` is present in

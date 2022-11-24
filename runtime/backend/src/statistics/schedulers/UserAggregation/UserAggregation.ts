@@ -7,7 +7,6 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-
 // external dependencies
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";

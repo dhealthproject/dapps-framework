@@ -21,6 +21,7 @@ export type Scope =
   | string
   | "database"
   | "discovery"
+  | "notifier"
   | "payout"
   | "processor"
-  | "worker";
+  | "statistics";

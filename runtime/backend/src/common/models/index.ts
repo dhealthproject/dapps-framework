@@ -12,23 +12,25 @@ export * from "./AssetsConfig";
 export * from "./DappConfig";
 export * from "./DatabaseConfig";
 export * from "./DiscoveryConfig";
+export * from "./MonitoringConfig";
 export * from "./NetworkConfig";
 export * from "./OAuthConfig";
 export * from "./SecurityConfig";
+export * from "./SocialConfig";
 export * from "./StatisticsConfig";
-export * from "./MonitoringConfig";
 
 // database models
 export * from "./AccountIntegrationSchema";
 export * from "./AccountSchema";
 export * from "./AuthChallengeSchema";
+export * from "./LogSchema";
 export * from "./StateSchema";
 export * from "./TransactionSchema";
-export * from "./LogSchema";
 
 // generic types / utilities
 export * from "./BaseDTO";
 export * from "./PaginatedResultDTO";
+export * from "./ResponseStatusDTO";
 export * from "./Scope";
 export * from "./StateData";
 export * from "./StorageOptions";
@@ -38,7 +40,10 @@ export * from "./AccessTokenDTO";
 export * from "./AccountDTO";
 export * from "./AccountIntegrationDTO";
 export * from "./AuthChallengeDTO";
+export * from "./BaseDTO";
+export * from "./LogDTO";
 export * from "./ProfileDTO";
+export * from "./SocialPlatformDTO";
 export * from "./StateDTO";
 export * from "./StatusDTO";
 export * from "./LogDTO";

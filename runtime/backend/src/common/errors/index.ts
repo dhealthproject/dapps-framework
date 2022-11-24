@@ -8,5 +8,6 @@
  * @license     LGPL-3.0
  */
 // error handling classes
-export * from "./RuntimeError";
+export * from "./CompilerError";
 export * from "./ConfigurationError";
+export * from "./RuntimeError";

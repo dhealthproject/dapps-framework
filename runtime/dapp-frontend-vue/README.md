@@ -36,6 +36,7 @@ lerna run serve --stream --scope @dhealthdapps/frontend
 
 Use the following available resources to get help:
 
+- [Framework Documentation][docs-framework]
 - [dHealth Documentation][docs]
 - Join the community on [Discord][discord] 
 - If you found a bug, [open a new issue][issues]
@@ -54,5 +55,6 @@ Licensed under the [LGPL v3.0](LICENSE)
 [license]: https://opensource.org/licenses/LGPL-3.0
 [parent-url]: https://dhealth.network
 [docs]: https://docs.dhealth.com
+[docs-framework]: https://dhealthproject.github.io/dapps-framework/
 [issues]: https://github.com/dhealthproject/dapps-framework/issues
 [discord]: https://discord.gg/P57WHbmZjk

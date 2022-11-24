@@ -8,7 +8,9 @@
  * @license     LGPL-3.0
  */
 // generics / interfaces
+export * from "./BasicRemoteDTO";
 export * from "./OAuthDriver";
+export * from "./OAuthEntity";
 export * from "./HttpRequestHandler";
 
 // specialized driver implementations

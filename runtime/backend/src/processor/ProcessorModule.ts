@@ -16,7 +16,7 @@ import { OperationsModule } from "./modules/OperationsModule";
 import { WebHooksModule } from "./modules/WebHooksModule";
 
 /**
- * @label ProcessorModule
+ * @label SCOPES
  * @class ProcessorModule
  * @description The processor scope's main module. This module
  * is loaded by the software when `"processor"` is present in
