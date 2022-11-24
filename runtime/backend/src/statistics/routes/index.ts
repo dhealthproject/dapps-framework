@@ -9,3 +9,4 @@
  */
 // routes index
 export * from "./LeaderboardsController";
+export * from "./UsersController";

@@ -18,4 +18,4 @@ export * from "./StravaWebHookEventRequest";
 export * from "./StravaWebHookSubscriptionResponse";
 
 // entities
-export * from "./ActivityDataDTO";
+export { ActivityDataDTO as StravaActivityDataDTO } from "./ActivityDataDTO";

@@ -41,13 +41,27 @@ lerna run serve --stream --scope @dhealthdapps/backend
 ## Database management
 
 ```bash
-npx typeorm migration:create migrations/StateUpdate
+# show the status of database migrations
+lerna run db:migration:show --stream --scope @dhealthdapps/backend
+
+# create a new database migration (please rename afterwards)
+lerna run db:migration:create --stream --scope @dhealthdapps/backend
+
+# run all pending database migrations
+lerna run db:migration:up --stream --scope @dhealthdapps/backend
+
+# undo the latest migration run
+lerna run db:migration:down --stream --scope @dhealthdapps/backend
+
+# undo all the migration previously run
+lerna run db:migration:reset --stream --scope @dhealthdapps/backend
 ```
 
 ## Getting help
 
 Use the following available resources to get help:
 
+- [Framework Documentation][docs-framework]
 - [dHealth Documentation][docs]
 - Join the community on [Discord][discord]
 - If you found a bug, [open a new issue][issues]
@@ -66,5 +80,6 @@ Licensed under the [LGPL v3.0](LICENSE)
 [license]: https://opensource.org/licenses/LGPL-3.0
 [parent-url]: https://dhealth.com
 [docs]: https://docs.dhealth.com
+[docs-framework]: https://dhealthproject.github.io/dapps-framework/
 [issues]: https://github.com/dhealthproject/dapps-framework/issues
 [discord]: https://discord.gg/P57WHbmZjk

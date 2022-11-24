@@ -12,7 +12,6 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
-import { AppConfiguration } from "../../AppConfiguration";
 import { QueryModule } from "../modules/QueryModule";
 import { Log, LogSchema } from "../models/LogSchema";
 import { LogService } from "../services/LogService";

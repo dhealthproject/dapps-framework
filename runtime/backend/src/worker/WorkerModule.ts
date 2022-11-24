@@ -18,6 +18,7 @@ import { LogService } from "../common/services/LogService";
 import { AppConfiguration } from "../AppConfiguration";
 
 /**
+ * @label SCOPES
  * @class WorkerModule
  * @description The module definition class for app's scheduler.
  * Each cronjobs will be imported based on input configuration values.

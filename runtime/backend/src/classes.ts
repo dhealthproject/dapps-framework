@@ -69,9 +69,13 @@ export * from "./processor/schedulers";
 export * from "./processor/services";
 
 // statistics scope
-export * from "./statistics/modules";
+// CAUTION: exports StatisticsModule:SCOPES manually
+export * from "./statistics/StatisticsModule";
+// CAUTION: exports StatisticsModule:STATISTICS manually
+export {
+  StatisticsModule as StatisticsModuleImpl,
+} from "./statistics/modules/StatisticsModule";
 export * from "./statistics/models";
-export * from "./statistics/modules";
 export * from "./statistics/routes";
 export * from "./statistics/schedulers";
 export * from "./statistics/services";

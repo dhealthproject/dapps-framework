@@ -17,7 +17,7 @@ import { TransactionsModule } from "./modules/TransactionsModule";
 import { BlocksModule } from "./modules/BlocksModule";
 
 /**
- * @label DISCOVERY
+ * @label SCOPES
  * @class DiscoveryModule
  * @description The discovery scope's main module. This module
  * is loaded by the software when `"discovery"` is present in

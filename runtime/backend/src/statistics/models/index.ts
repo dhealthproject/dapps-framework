@@ -12,6 +12,9 @@ export * from "./StatisticsSchema";
 
 // generic types / utilities
 export * from "./LeaderboardAggregationStateData";
+export * from "./StatisticsDataType";
+export * from "./UserAggregationStateData";
+export * from "./UserStatisticsFields";
 
 // specialized data transfer objects
 export * from "./StatisticsDTO";

@@ -14,7 +14,7 @@ import { Module } from "@nestjs/common";
 import { PayoutsModule } from "./modules/PayoutsModule";
 
 /**
- * @label PayoutModule
+ * @label SCOPES
  * @class PayoutModule
  * @description The payout scope's main module. This module
  * is loaded by the software when `"payout"` is present in
