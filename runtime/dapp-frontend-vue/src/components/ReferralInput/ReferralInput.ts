@@ -29,7 +29,7 @@ export default class ReferralInput extends MetaView {
   /**
    * This prop represents value displayed in input
    *
-   * @var {val}
+   * @var {string}
    */
   @Prop({ default: "", required: true }) val?: string;
 
@@ -37,14 +37,14 @@ export default class ReferralInput extends MetaView {
    * This prop represents value displayed in input
    * defaults to "default"
    *
-   * @var {type}
+   * @var {"default" | "link"}
    */
   @Prop({ default: "default" }) type?: "default" | "link";
 
   /**
    * This prop represents value displayed in input
    *
-   * @var {referralLabel}
+   * @var {string}
    */
   public referralLabel = "Copy referral code";
 
@@ -53,9 +53,9 @@ export default class ReferralInput extends MetaView {
    * that calls "Copy referral code" label
    *
    * @access public
-   * @var {copyTimer}
+   * @var {any}
    */
-  protected copyTimer?: ReturnType<typeof setTimeout>;
+  protected copyTimer?: any;
 
   /**
    * This property contains the translator `Translations` instance.
@@ -96,7 +96,9 @@ export default class ReferralInput extends MetaView {
    * @returns {void}
    */
   copyToClipBoard(evt: any, val: string) {
-    clearTimeout(this.copyTimer);
+    if (undefined !== this.copyTimer) {
+      clearTimeout(this.copyTimer);
+    }
 
     navigator.clipboard.writeText(val).then(() => {
       console.log("copied", this.val);
