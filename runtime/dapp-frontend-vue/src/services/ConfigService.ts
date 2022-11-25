@@ -51,7 +51,7 @@ export class ConfigService extends BackendService {
       {} // no-headers
     );
 
-    // return received config
-    return response.data;
+    // responds with a singular configuration object
+    return response.data as ConfigDTO;
   }
 }

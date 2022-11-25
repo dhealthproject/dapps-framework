@@ -18,21 +18,21 @@
  * ```typescript
  * const entry = {
  *   dappName: "Elevate",
- *   digitsAmount: 2,
- *   mosaicId: "39E0C49FA322A459";
+ *   earnAssetDivisibility: 2,
+ *   earnAssetIdentifier: "39E0C49FA322A459";
  * ```
  * <br /><br />
  * #### Properties
  *
  * @param   {string}    dappName          Contains name of the dapp.
- * @param   {number}    digitsAmount      Contains amount of symbols that will be displayed after formatting.
- * @param   {string}    mosaicId          Contains mosaic id of token.
+ * @param   {number}    earnAssetDivisibility      Contains amount of symbols that will be displayed after formatting.
+ * @param   {string}    earnAssetIdentifier          Contains mosaic id of token.
  *
  * @since v0.5.0
  */
 
 export interface ConfigDTO {
   dappName: string;
-  digitsAmount: number;
-  mosaicId: string;
+  earnAssetDivisibility: number;
+  earnAssetIdentifier: string;
 }

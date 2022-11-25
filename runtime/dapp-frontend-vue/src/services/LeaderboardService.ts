@@ -95,10 +95,7 @@ export class LeaderboardService extends BackendService {
       { withCredentials: true, credentials: "include" }
     );
 
-    console.log("Service gets: ", response.data);
-
-    // responds with array of Leaderboard items
-    // PaginatedResultDTO adds one more "data"
+    // responds with a singular Leaderboard item
     return response.data as LeaderboardEntryDTO;
   }
 }

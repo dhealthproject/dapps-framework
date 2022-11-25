@@ -29,7 +29,7 @@ export default {
       divisibility: number | undefined = undefined
     ) {
       const config = this.$store.getters["app/getConfig"];
-      const defaultDigits = config.digitsAmount;
+      const defaultDigits = config.earnAssetDivisibility;
       return amount / Math.pow(10, divisibility ?? defaultDigits);
     };
   },
