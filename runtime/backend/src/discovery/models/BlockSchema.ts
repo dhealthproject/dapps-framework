@@ -117,6 +117,27 @@ export class Block extends Transferable<BlockDTO> {
   public readonly updatedAt?: Date;
 
   /**
+   * Constructor for `Block`.
+   *
+   * @param {number} height The height of this block.
+   * @param {string} harvester The harvester wallet address.
+   * @param {number} timestamp Timestamp of the block, in standard nano seconds.
+   * @param {number} countTransactions The number of transactions included in this block.
+   */
+  constructor(
+    height?: number,
+    harvester?: string,
+    timestamp?: number,
+    countTransactions?: number,
+  ) {
+    super();
+    this.height = height;
+    this.harvester = harvester;
+    this.timestamp = timestamp;
+    this.countTransactions = countTransactions;
+  }
+
+  /**
    * This method implements a specialized query format to query items
    * individually, as documents, in the collection: `operations`.
    *

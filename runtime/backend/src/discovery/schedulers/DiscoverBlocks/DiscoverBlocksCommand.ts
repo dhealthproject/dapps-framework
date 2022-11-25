@@ -16,6 +16,8 @@ import { ScheduleModule } from "@nestjs/schedule";
 import { StateModule } from "../../../common/modules/StateModule";
 import { Block, BlockSchema } from "../../../discovery/models/BlockSchema";
 import { LogModule } from "../../../common/modules";
+import { TransactionsModule } from "../../../discovery/modules/TransactionsModule";
+import { HelpersModule } from "../../../common/modules/HelpersModule";
 
 // private implementation
 import { DiscoverBlocks } from "./DiscoverBlocks";
@@ -35,6 +37,8 @@ import { BlocksModule } from "../../../discovery/modules/BlocksModule";
     NetworkModule,
     BlocksModule,
     LogModule,
+    TransactionsModule,
+    HelpersModule,
     MongooseModule.forFeature([{ name: Block.name, schema: BlockSchema }]),
   ],
   providers: [DiscoverBlocks],

@@ -51,4 +51,14 @@ export class BlockDiscoveryStateData implements StateData {
    * @var {number}
    */
   public totalNumberOfBlocks: number;
+
+  /**
+   * Contains the **last range of block** that has
+   * been processed using the *block* discovery. This
+   * data field is used to persist last run checkpoint.
+   *
+   * @access public
+   * @var {number}
+   */
+  public lastRange: number;
 }

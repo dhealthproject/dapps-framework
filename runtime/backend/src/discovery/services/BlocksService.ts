@@ -13,6 +13,7 @@ import { InjectModel } from "@nestjs/mongoose";
 
 // internal dependencies
 import { QueryService } from "../../common/services/QueryService";
+import { Queryable } from "../../common/concerns/Queryable";
 import {
   Block,
   BlockDocument,
@@ -32,7 +33,7 @@ export class BlocksService {
    * The constructor of the service.
    *
    * @constructor
-   * @param {AssetModel} model
+   * @param {BlockModel} model
    * @param {QueriesService} queriesService
    */
   constructor(
@@ -61,5 +62,18 @@ export class BlocksService {
 
     // https://simplernerd.com/typescript-convert-bool/
     return !!document;
+  }
+
+  /**
+   * Method to update a batch of blocks.
+   *
+   * @async
+   * @param   {BlockModel[]} blockDocuments
+   * @returns {Promise<number>}
+   */
+  public async createOrUpdateBatch(
+    blockDocuments: BlockModel[],
+  ): Promise<number> {
+    return await this.queriesService.updateBatch(this.model, blockDocuments);
   }
 }

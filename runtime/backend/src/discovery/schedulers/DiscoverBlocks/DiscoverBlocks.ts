@@ -12,6 +12,7 @@ import { BlockInfo, BlockOrderBy, Order, Page } from "@dhealth/sdk";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
+import { ConfigService } from "@nestjs/config";
 
 // internal dependencies
 import { StateService } from "../../../common/services/StateService";
@@ -23,11 +24,16 @@ import {
 } from "../../../discovery/models/BlockSchema";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
 import { BlockDiscoveryStateData } from "../../models/BlockDiscoveryStateData";
-import { ConfigService } from "@nestjs/config";
 import { NetworkService } from "../../../common/services/NetworkService";
 import { StateDocument, StateQuery } from "../../../common/models/StateSchema";
 import { BlocksService } from "../../../discovery/services/BlocksService";
 import { LogService } from "../../../common/services/LogService";
+import { TransactionsService } from "../../../discovery/services/TransactionsService";
+import {
+  TransactionDocument,
+  TransactionQuery,
+} from "../../../common/models/TransactionSchema";
+import { DappHelper } from "../../../common/concerns/DappHelper";
 
 /**
  * @class DiscoverBlocks
@@ -76,6 +82,15 @@ export class DiscoverBlocks extends DiscoveryCommand {
   private totalNumberOfBlocks: number;
 
   /**
+   * Memory store for the last processed range of blocks. This is used
+   * in {@link getStateData} to update the latest execution state.
+   *
+   * @access private
+   * @var {number}
+   */
+  private lastRange: number;
+
+  /**
    * Configuration field for the page size to be read. This is used
    * to determine how many blocks are queried per page from
    * the database.
@@ -94,6 +109,9 @@ export class DiscoverBlocks extends DiscoveryCommand {
    * @param {StateService}   stateService
    * @param {NetworkService}  networkService
    * @param {BlocksService}  blocksService
+   * @param {LogService}  logService
+   * @param {TransactionsService}  transactionsService
+   * @param {DappHelper}  dappHelper
    */
   constructor(
     @InjectModel(Block.name) protected readonly model: BlockModel,
@@ -103,14 +121,11 @@ export class DiscoverBlocks extends DiscoveryCommand {
     protected readonly networkService: NetworkService,
     protected readonly blocksService: BlocksService,
     protected readonly logService: LogService,
+    protected readonly transactionsService: TransactionsService,
+    protected readonly dappHelper: DappHelper,
   ) {
     // required super call
     super(logService, stateService);
-
-    // sets default state data
-    this.lastPageNumber = 1;
-    this.lastExecutedAt = new Date().valueOf();
-    this.totalNumberOfBlocks = 0;
   }
 
   /**
@@ -165,6 +180,7 @@ export class DiscoverBlocks extends DiscoveryCommand {
   protected getStateData(): BlockDiscoveryStateData {
     return {
       totalNumberOfBlocks: this.totalNumberOfBlocks,
+      lastRange: this.lastRange,
       lastPageNumber: this.lastPageNumber,
       lastExecutedAt: this.lastExecutedAt,
     } as BlockDiscoveryStateData;
@@ -197,43 +213,26 @@ export class DiscoverBlocks extends DiscoveryCommand {
     } as DiscoveryCommandOptions);
   }
 
+  /**
+   * This method implements the discovery logic for this command
+   * that will find relevant *subjects*. Subjects in this command
+   * are **blocks** of which are included in transactions.
+   * <br /><br />
+   *
+   * @access public
+   * @async
+   * @param   {DiscoveryCommandOptions}   options
+   * @returns {Promise<void>}
+   */
   public async discover(options?: DiscoveryCommandOptions): Promise<void> {
     // display starting moment information in debug mode
     if (options.debug && !options.quiet) {
       this.debugLog("Starting blocks discovery");
     }
 
-    // get the latest blocks page number
-    if (
-      !!this.state &&
-      !!this.state.data &&
-      "lastPageNumber" in this.state.data
-    ) {
-      this.lastPageNumber = this.state.data.lastPageNumber;
-    }
-
-    // check for the total number of blocks
-    const blocksState = await this.stateService.findOne(
-      new StateQuery({
-        name: "discovery:DiscoverBlocks",
-      } as StateDocument),
-    );
-
-    this.totalNumberOfBlocks =
-      !!blocksState && "totalNumberOfBlocks" in blocksState.data
-        ? blocksState.data.totalNumberOfBlocks
-        : 0;
-
-    // if we reached the end of blocks, we want
-    // to continue *only* with recent blocks in
-    // the next runs of blocks discovery
-    if (
-      this.totalNumberOfBlocks > 0 &&
-      this.lastPageNumber * this.usePageSize > this.totalNumberOfBlocks
-    ) {
-      this.lastPageNumber =
-        Math.floor(this.totalNumberOfBlocks / this.usePageSize) + 1;
-    }
+    // synchronize this run's state with the persisted state
+    // create new with default values if not existed
+    await this.synchronizeStateData();
 
     // display debug information about configuration
     if (options.debug && !options.quiet) {
@@ -245,58 +244,114 @@ export class DiscoverBlocks extends DiscoveryCommand {
     // get the block repository from network service
     const blockRepository = this.networkService.blockRepository;
 
+    // number of skipped blocks
     let nSkipped = 0;
 
-    // (1) each round queries a page of 100 blocks *from the blockchain*
-    // and save relevant information that are of said blocks
-    for (
-      let i = this.lastPageNumber, max = this.lastPageNumber + 5;
-      i < max;
-      i++
+    // in case of last run queried last page, we want to query again to check
+    // if there's new item added. In case of normal run, we also want to query
+    // again to get block heights and ranges from the transactions
+    const transactions = await this.transactionsService.find(
+      new TransactionQuery({} as TransactionDocument, {
+        pageNumber: this.lastPageNumber,
+        pageSize: this.usePageSize,
+        sort: "creationBlock",
+        order: "asc",
+      }),
+    );
+    let currentBlockHeights = transactions.data.map(
+      (transaction: TransactionDocument) => transaction.creationBlock,
+    );
+    let currentRanges = this.createRanges(currentBlockHeights);
+
+    // if the last run result was not the last page, and we processed all of them,
+    // we continue discovering blocks with the next page of transactions.
+    if (
+      currentRanges.length === 0 ||
+      (currentRanges.indexOf(this.lastRange) === currentRanges.length - 1 &&
+        !transactions.isLastPage())
     ) {
-      // fetches blocks *from the database* (mongo)
-      const blocks: Page<BlockInfo> = await blockRepository
+      // query the next page of transactions
+      const transactions = await this.transactionsService.find(
+        new TransactionQuery({} as TransactionDocument, {
+          pageNumber: ++this.lastPageNumber,
+          pageSize: this.usePageSize,
+          sort: "creationBlock",
+          order: "asc",
+        }),
+      );
+
+      // set currentBlockHeights
+      currentBlockHeights = transactions.data.map(
+        (transaction: TransactionDocument) => transaction.creationBlock,
+      );
+      // current ranges to process
+      currentRanges = this.createRanges(currentBlockHeights);
+    }
+
+    // processes 5 ranges from the current ranges. For each range, send a request
+    // to the network node to get information of the blocks within the range
+    const blockDocuments: BlockDocument[] = [];
+    const pageBlockPromises: Promise<Page<BlockInfo>>[] = [];
+    let rangeIndex = currentRanges.includes(this.lastRange)
+      ? currentRanges.indexOf(this.lastRange) + 1
+      : 0;
+    const maxRangeIndex = rangeIndex + 5;
+    // processes 5 ranges inside the range list and makes sure the range index
+    // is not larger than the range list's length
+    for (
+      rangeIndex;
+      rangeIndex < maxRangeIndex && rangeIndex < currentRanges.length;
+      rangeIndex++
+    ) {
+      // send request to network node
+      const pageBlocks: Promise<Page<BlockInfo>> = blockRepository
         .search({
           orderBy: BlockOrderBy.Height,
-          order: Order.Asc,
-          pageNumber: this.lastPageNumber,
-          pageSize: this.usePageSize,
+          offset: currentRanges[rangeIndex].toString(),
+          pageSize: 100,
+          order: Order.Desc,
+          pageNumber: 1,
         })
         .toPromise();
-
-      // if data is empty, break out of loop
-      // otherwise increase last page number
-      if (blocks.data.length < 1) {
-        break;
-      } else {
-        this.lastPageNumber++;
-      }
-
-      for (const blockEntry of blocks.data) {
-        // retrieve existence information
-        const documentExists: boolean = await this.blocksService.exists(
-          new BlockQuery({
-            height: blockEntry.height.compact(),
-          } as BlockDocument),
+      pageBlockPromises.push(pageBlocks);
+    }
+    const pageBlocks = (await Promise.all(pageBlockPromises))
+      .map((pageBlock: Page<BlockInfo>) => pageBlock.data)
+      .flat();
+    // processes each block information of the result
+    for (const blockInfo of pageBlocks) {
+      const blockInfoHeight = blockInfo.height.compact();
+      // if the result block is included in current block height list
+      // extracted from transactions
+      if (currentBlockHeights.includes(blockInfoHeight)) {
+        // check if block has already existed in the database
+        const blockExists = await this.blocksService.exists(
+          new BlockQuery({ height: blockInfoHeight } as BlockDocument),
         );
-
-        // skip update for known assets
-        if (true === documentExists) {
+        // if block exists, continue to the next item
+        if (blockExists) {
           nSkipped++;
           continue;
         }
-
-        // store the discovered asset in `assets`
-        await this.model.create({
-          height: blockEntry.height.compact(),
-          harvester: blockEntry.signer.address.plain(),
-          timestamp: blockEntry.timestamp,
-          countTransactions: blockEntry.totalTransactionsCount,
-        });
-
-        // Update total number of blocks discovered
-        this.totalNumberOfBlocks++;
+        // if block hasn't existed yet, create a block document from
+        // the result blockinfo and add to the batch.
+        const blockDocument = new Block(
+          blockInfo.height.compact(),
+          blockInfo.signer.address.plain(),
+          this.dappHelper.getNetworkTimestampFromUInt64(blockInfo.timestamp),
+          blockInfo.totalTransactionsCount,
+        );
+        blockDocuments.push(blockDocument as BlockDocument);
       }
+    }
+    // set the range back 1 index of the rangeIndex (due to the for loop
+    // ending at last index + 1).
+    this.lastRange = currentRanges[rangeIndex - 1];
+    // save the batch to database if not empty
+    if (blockDocuments.length > 0) {
+      await this.blocksService.createOrUpdateBatch(blockDocuments);
+      this.totalNumberOfBlocks += blockDocuments.length;
+      blockDocuments;
     }
 
     // Display number of skipped block entries
@@ -310,5 +365,63 @@ export class DiscoverBlocks extends DiscoveryCommand {
     // this discovery method.
 
     // no-return (void)
+  }
+
+  /**
+   * Synchronize on-memory state of this scheduler with the database persited
+   * state.
+   * <br /><br />
+   * If persisted state doesn't existed, update memory with default
+   * values so they can be used to construct a new state which will be saved
+   * to the database.
+   *
+   * @access private
+   * @async
+   * @returns {Promise<void>}
+   */
+  private async synchronizeStateData(): Promise<void> {
+    // get current block state from db
+    const blockState = await this.stateService.findOne(
+      new StateQuery({
+        name: "discovery:DiscoverBlocks",
+      } as StateDocument),
+    );
+    const { lastPageNumber, lastExecutedAt, totalNumberOfBlocks, lastRange } =
+      blockState?.data
+        ? // gets state data from db
+          blockState.data
+        : // sets default state data if persisted state doesn't existed
+          {
+            lastPageNumber: 1,
+            lastExecutedAt: new Date().valueOf(),
+            totalNumberOfBlocks: 0,
+            lastRange: 0,
+          };
+    // set in-memory state values for this scheduler
+    this.lastPageNumber = lastPageNumber;
+    this.lastExecutedAt = lastExecutedAt;
+    this.totalNumberOfBlocks = totalNumberOfBlocks;
+    this.lastRange = lastRange;
+  }
+
+  /**
+   * Method to calculate and return the ranges (each range has a size of 100)
+   * of the block heights that need to be queried.
+   * Each range is a number indicating the last block height of the range.
+   * <br /><br />
+   * e.g. range has value 100 means the range will be 0-100.
+   *
+   * @access private
+   * @param {number[]} blockHeights The list of block heights to calculate ranges from.
+   * @returns {number[]}
+   */
+  private createRanges(blockHeights: number[]): number[] {
+    const ranges: number[] = [];
+    blockHeights.forEach((blockHeight: number) => {
+      if (ranges.length === 0 || ranges[ranges.length - 1] < blockHeight) {
+        ranges.push(blockHeight + 100);
+      }
+    });
+    return ranges;
   }
 }
