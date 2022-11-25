@@ -62,7 +62,7 @@ export class DappConfigDTO extends BaseDTO {
    */
   @ApiProperty({
     type: "number",
-    example: "6",
+    example: 6,
     description:
       "The number of decimal places that are considered for the configured asset.",
   })
@@ -83,7 +83,7 @@ export class DappConfigDTO extends BaseDTO {
    */
   @ApiProperty({
     type: "string",
-    example: "https://example.com",
+    example: "4ADBC6CEF9393B90",
     description: "The URL used to *share content* on said social platform.",
   })
   public earnAssetIdentifier: string;

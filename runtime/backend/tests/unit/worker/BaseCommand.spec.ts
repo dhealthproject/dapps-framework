@@ -167,7 +167,7 @@ describe("worker/BaseCommand", () => {
       expect((fakeCommand as any).debugLog).not.toHaveBeenCalled(); // not!
     });
 
-    it("should print error information given failing runWithOptions", async () => {
+    it("should forward-throw error given failing runWithOptions", async () => {
       // prepare: creates another testing module (`MockFAILING`)
       const module: TestingModule = await Test.createTestingModule({
         providers: [
@@ -178,46 +178,21 @@ describe("worker/BaseCommand", () => {
             useValue: MockModel,
           },
           MockFailingBaseCommand,
-      ]})
-      .compile();
+      ]}).compile();
+
       fakeCommand = module.get<MockFailingBaseCommand>(MockFailingBaseCommand);
 
       // prepare: overwrites the `errorLog` method for spying
       (fakeCommand as any).errorLog = jest.fn();
 
       // act
-      await fakeCommand.run([], { debug: true });
-
-      // assert
-      expect((fakeCommand as any).errorLog).toHaveBeenCalled();
-    });
-
-    it("should print empty error information with undefined stack given failing runWithOptions", async () => {
-      // prepare: creates another testing module (`MockFAILING`)
-      const module: TestingModule = await Test.createTestingModule({
-        providers: [
-          QueryService,
-          StateService,
-          {
-            provide: getModelToken("State"),
-            useValue: MockModel,
-          },
-          MockFailingBaseCommand,
-      ]})
-      .compile();
-      fakeCommand = module.get<MockFailingBaseCommand>(MockFailingBaseCommand);
-      jest.spyOn((fakeCommand as any), "runWithOptions").mockImplementation(() => {
-        throw {};
-      });
-
-      // prepare: overwrites the `errorLog` method for spying
-      (fakeCommand as any).errorLog = jest.fn();
-
-      // act
-      await fakeCommand.run([], { debug: true });
-
-      // assert
-      expect((fakeCommand as any).errorLog).toHaveBeenCalledWith({}, undefined);
+      try {
+        await fakeCommand.run([], { debug: true });
+      }
+      catch (e: any) {
+        // assert
+        expect(e.message).toStrictEqual("Something went wrong.");
+      }
     });
 
     it("should call stateService.findOne to read current state", async () => {
