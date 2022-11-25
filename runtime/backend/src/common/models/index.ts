@@ -41,6 +41,7 @@ export * from "./AccountDTO";
 export * from "./AccountIntegrationDTO";
 export * from "./AuthChallengeDTO";
 export * from "./BaseDTO";
+export * from "./DappConfigDTO";
 export * from "./LogDTO";
 export * from "./ProfileDTO";
 export * from "./SocialPlatformDTO";
