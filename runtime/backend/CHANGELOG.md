@@ -1,44 +1,3 @@
-# Change Log
-
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
-
-## 0.5.1 (2022-11-24)
-
-
-
-# 0.5.0 (2022-11-24)
-
-
-
-# 0.4.0-hotfix.350+d1bd309 (2022-10-21)
-
-
-
-# 0.4.0 (2022-10-19)
-
-
-
-## 0.3.1 (2022-09-12)
-
-
-
-# 0.3.0 (2022-09-01)
-
-
-
-## 0.2.1 (2022-07-18)
-
-
-
-# 0.1.0 (2022-06-19)
-
-**Note:** Version bump only for package @dhealthdapps/backend
-
-
-
-
-
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
@@ -86,6 +45,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor(api): update event emitter injection, now only in LogModule and WebHooksModule
 - [@dhealthdapps/backend] fix(api): update mailer configuration
 - [@dhealthdapps/backend] refactor(api): update to import LogModule and inject LogService
+- [@dhealthdapps/backend] fix(api): error handling in BaseCommand to forward-throw
+- [@dhealthdapps/backend] fix(tests): add unit tests for new controller
+- [@dhealthdapps/backend] feat(routes): add get config route
 
 #### Changed
 
@@ -95,7 +57,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor(api): implement entity definition for OAuth entities (profile, activity)
 - [@dhealthdapps/backend] test(api): improve consistency on unit test labels, add payout unit tests
 - [@dhealthdapps/backend] chore(build): make db reset script explicit
-- [@dhealthdaps/backend] refactor(database): add fields isManual and sufferScore for more analysis
+- [@dhealthdapps/backend] refactor(database): add fields isManual and sufferScore for more analysis
 - [@dhealthdapps/backend] fix(schedulers): add aggregate logic to user aggregation scheduler
 - [@dhealthdapps/backend] fix(services): add nest error fix
 - [@dhealthdapps/backend] fix(config): decoupled earn asset in assets config
@@ -107,7 +69,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: change log service usage, inject event emitter
 - [@dhealthdapps/backend] refactor: update log service context in main.ts
 - [@dhealthdapps/backend] refactor: add event emitter to user aggregation & payout scheduler
-- [@dhealthdapps/frontend] fix: linter issues
+- [@dhealthdapps/backend] fix(tests): add relevant ConfigController test, fix BaseCommand
 
 #### Fixed
 

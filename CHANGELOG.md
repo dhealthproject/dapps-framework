@@ -49,6 +49,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor(api): update event emitter injection, now only in LogModule and WebHooksModule
 - [@dhealthdapps/backend] fix(api): update mailer configuration
 - [@dhealthdapps/backend] refactor(api): update to import LogModule and inject LogService
+- [@dhealthdapps/backend] fix(api): error handling in BaseCommand to forward-throw
+- [@dhealthdapps/backend] fix(tests): add unit tests for new controller
+- [@dhealthdapps/backend] feat(routes): add get config route
 - [@dhealthdapps/frontend] feat(widgets): add statistics component, top activities component, global scss media queries configuration
 - [@dhealthdapps/frontend] feat(screens): apply global media mixin
 - [@dhealthdapps/frontend] feat(widgets): add fix for tooltip bug, moved texts to i18n translations
@@ -59,6 +62,15 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] feat(tests): add component tests
 - [@dhealthdapps/frontend] feat(tests): add component tests
 - [@dhealthdapps/frontend] feat(tests): add ui popup tests
+- [@dhealthdapps/frontend] fix(i18n): move onboarding, loginscreen translations to en.json
+- [@dhealthdapps/frontend] fix(i18n): move dashboard to json
+- [@dhealthdapps/frontend] fix(i18n): move translations to separate json files
+- [@dhealthdapps/frontend] fix(i18n): move static text to json
+- [@dhealthdapps/frontend] fix: linter and ReferralInput syntax error
+- [@dhealthdapps/frontend] fix(widgets): add format amount method for components
+- [@dhealthdapps/frontend] fix(state): add fetching of config from the backend, state props
+- [@dhealthdapps/frontend] tests: update existing test for formatAmount check
+- [@dhealthdapps/frontend] fix: remove debug, update config
 
 #### Changed
 
@@ -71,7 +83,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor(api): implement entity definition for OAuth entities (profile, activity)
 - [@dhealthdapps/backend] test(api): improve consistency on unit test labels, add payout unit tests
 - [@dhealthdapps/backend] chore(build): make db reset script explicit
-- [@dhealthdaps/backend] refactor(database): add fields isManual and sufferScore for more analysis
+- [@dhealthdapps/backend] refactor(database): add fields isManual and sufferScore for more analysis
 - [@dhealthdapps/backend] fix(schedulers): add aggregate logic to user aggregation scheduler
 - [@dhealthdapps/backend] fix(services): add nest error fix
 - [@dhealthdapps/backend] fix(config): decoupled earn asset in assets config
@@ -83,6 +95,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: change log service usage, inject event emitter
 - [@dhealthdapps/backend] refactor: update log service context in main.ts
 - [@dhealthdapps/backend] refactor: add event emitter to user aggregation & payout scheduler
+- [@dhealthdapps/backend] fix(tests): add relevant ConfigController test, fix BaseCommand
 - [@dhealthdapps/frontend] fix: linter issues
 - [@dhealthdapps/frontend] style: remove commented code
 - [@dhealthdapps/frontend] fix(screens): use fetchchallenge to fix reload state
@@ -113,6 +126,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] fix(widgets): add setting real ref code to input, remove ref code after being used
 - [@dhealthdapps/frontend] fix(tests): header compilation error fix
 - [@dhealthdapps/frontend] fix(tests): update component inputs and setters
+- [@dhealthdapps/frontend] fix: update class property type
 
 ## [0.4.0][0.4.0] - 19-Oct-2022
 

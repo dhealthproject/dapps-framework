@@ -6,7 +6,7 @@
       "npmClientArgs": ["--no-package-lock"]
     },
     "publish": {
-      "conventionalCommits": true
+      "conventionalCommits": false 
     }
   },
   "packages": ["libraries/*", "runtime/*"]

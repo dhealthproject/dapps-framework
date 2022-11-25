@@ -1,40 +1,3 @@
-# Change Log
-
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
-
-## 0.5.1 (2022-11-24)
-
-
-
-# 0.5.0 (2022-11-24)
-
-
-
-# 0.4.0 (2022-10-19)
-
-
-
-## 0.3.1 (2022-09-12)
-
-
-
-# 0.3.0 (2022-09-01)
-
-
-
-## 0.2.1 (2022-07-18)
-
-
-
-# 0.1.0 (2022-06-19)
-
-**Note:** Version bump only for package @dhealthdapps/frontend
-
-
-
-
-
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
@@ -54,6 +17,15 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] feat(tests): add component tests
 - [@dhealthdapps/frontend] feat(tests): add component tests
 - [@dhealthdapps/frontend] feat(tests): add ui popup tests
+- [@dhealthdapps/frontend] fix(i18n): move onboarding, loginscreen translations to en.json
+- [@dhealthdapps/frontend] fix(i18n): move dashboard to json
+- [@dhealthdapps/frontend] fix(i18n): move translations to separate json files
+- [@dhealthdapps/frontend] fix(i18n): move static text to json
+- [@dhealthdapps/frontend] fix: linter and ReferralInput syntax error
+- [@dhealthdapps/frontend] fix(widgets): add format amount method for components
+- [@dhealthdapps/frontend] fix(state): add fetching of config from the backend, state props
+- [@dhealthdapps/frontend] tests: update existing test for formatAmount check
+- [@dhealthdapps/frontend] fix: remove debug, update config
 
 #### Changed
 
@@ -75,6 +47,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] fix(widgets): add setting real ref code to input, remove ref code after being used
 - [@dhealthdapps/frontend] fix(tests): header compilation error fix
 - [@dhealthdapps/frontend] fix(tests): update component inputs and setters
+- [@dhealthdapps/frontend] fix: update class property type
 
 ## [0.4.0][0.4.0] - 19-Oct-2022
 
