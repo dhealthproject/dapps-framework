@@ -31,6 +31,7 @@ const componentOptions = {
     $router: {
       push: jest.fn(),
     },
+    $t: jest.fn(),
     $store: {
       dispatch: jest.fn(),
       commit: jest.fn(),
