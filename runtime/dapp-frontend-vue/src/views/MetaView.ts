@@ -54,6 +54,15 @@ export abstract class MetaView extends Vue {
   public $t?: any;
 
   /**
+   * This property represents method for formatting
+   * provided amount based on provided digits amount
+   *
+   * @access public
+   * @var {any}
+   */
+  public formatAmount?: any;
+
+  /**
    * This property contains method which returns
    * dynamic path to an image that located in
    * src/assets

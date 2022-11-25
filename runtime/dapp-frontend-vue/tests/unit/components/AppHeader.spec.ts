@@ -20,12 +20,18 @@ const localVue = createLocalVue();
 
 const getImageUrl = () => "../../../src/assets";
 
+const formatAmount = (amount: number, divisibility: number) => {
+  return amount / Math.pow(10, divisibility);
+};
+
 const componentOptions = {
   localVue,
   getImageUrl,
+  formatAmount,
   stubs: ["router-link"],
   mocks: {
     getImageUrl,
+    formatAmount,
     $route: { params: {} },
   },
 };

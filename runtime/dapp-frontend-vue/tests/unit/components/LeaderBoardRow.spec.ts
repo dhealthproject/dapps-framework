@@ -23,14 +23,20 @@ const localVue = createLocalVue();
 
 const getImageUrl = () => "../../../src/assets";
 
+const formatAmount = (amount: number, divisibility: number) => {
+  return amount / Math.pow(10, divisibility);
+};
+
 const componentOptions = {
   localVue,
   getImageUrl,
+  formatAmount,
   stubs: ["router-link"],
   mocks: {
     getImageUrl,
     formatAddress: jest.fn(() => "NATZJE...2GY"),
     $route: { params: {} },
+    formatAmount,
   },
   propsData: {
     data: {
@@ -100,9 +106,11 @@ describe("LeaderBoardRow -->", () => {
   //   );
   // });
 
-  it("should display correct amount of $FIT", () => {
+  it("should display correctly formatted amount of $FIT", () => {
     expect(
       widget.find(".dapp-leaderboard-item__amount span").text()
-    ).to.be.equal(`$${widget.props("data").amount} FIT`);
+    ).to.be.equal(
+      `$${widget.vm.formatAmount(widget.props("data").amount, 2)} FIT`
+    );
   });
 });

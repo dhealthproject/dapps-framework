@@ -27,6 +27,7 @@ const componentOptions = {
   mocks: {
     getImageUrl,
     $route: { params: {} },
+    $t: jest.fn(),
   },
   propsData: {
     layout: "empty",
