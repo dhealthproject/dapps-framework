@@ -251,11 +251,10 @@ export abstract class BaseCommand extends StatefulModule {
         );
       }
     } catch (e: any) {
-      // @todo Should provide failures stacktrace + database copy
-      this.errorLog(
-        undefined !== e && "message" in e ? e.message : e,
-        undefined !== e && "stack" in e ? e.stack : undefined,
-      );
+      // forward-throw this exception as this will execute error handling
+      // and forward this error to `AlertNotifier` such that the team is
+      // made aware of the error by email and other configured transports
+      throw e;
     }
 
     // tracks ending moment
