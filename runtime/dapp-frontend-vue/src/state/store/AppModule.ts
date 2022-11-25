@@ -191,7 +191,6 @@ export const AppModule = {
         const handler = new ConfigService();
         try {
           const response = await handler.getConfig();
-
           context.commit("setConfig", response);
           return response;
         } catch (err) {
