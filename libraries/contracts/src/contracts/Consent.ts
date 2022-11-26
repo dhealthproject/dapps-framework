@@ -311,8 +311,8 @@ export class Consent extends Contract {
     // compatibility for signing transactions with dHealth
     // Mobile Wallet - We attach a 0-amount DHP entry because
     // dHealth Mobile Wallet *always* expects a mosaics entry.
-    let assetId: string = this.parameters.currencyMosaicId;
-    let amount: number = 0;
+    const assetId: string = this.parameters.currencyMosaicId;
+    const amount: number = 0;
 
     // returns a dHealth Network transfer transaction attachment
     return [new Mosaic(new MosaicId(assetId), UInt64.fromUint(amount))];

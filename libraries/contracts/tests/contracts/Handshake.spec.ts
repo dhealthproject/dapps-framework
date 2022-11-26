@@ -142,7 +142,7 @@ describe("contracts/Handshake", () => {
       instance = new Handshake(mockContractParameters);
     });
 
-    it("should include 'asset', 'amount' and 'proof' fields", () => {
+    it("should include 'issuer', 'recipient' and 'operation' fields", () => {
       // prepare
       instance = new Handshake(mockContractParameters);
 
@@ -150,12 +150,12 @@ describe("contracts/Handshake", () => {
       const body: ObjectLiteral = instance.body;
 
       // assert
-      expect("asset" in body).to.be.equal(true);
-      expect("amount" in body).to.be.equal(true);
-      expect("proof" in body).to.be.equal(true);
-      expect(body.asset).to.be.equal("4ADBC6CEF9393B90");
-      expect(body.amount).to.be.equal(123);
-      expect(body.proof).to.be.equal(mockTransactionHash);
+      expect("issuer" in body).to.be.equal(true);
+      expect("recipient" in body).to.be.equal(true);
+      expect("operation" in body).to.be.equal(true);
+      expect(body.issuer).to.be.equal("71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE");
+      expect(body.recipient).to.be.equal("71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE");
+      expect(body.operation).to.be.equal(mockTransactionHash);
     });
   });
 

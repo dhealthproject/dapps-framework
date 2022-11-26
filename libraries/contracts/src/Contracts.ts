@@ -24,7 +24,10 @@ import { dHealthNetwork } from "./types/dHealthNetwork";
 
 // contracts and parameters
 import { Auth, AuthParameters } from "./contracts/Auth";
+import { Burn, BurnParameters } from "./contracts/Burn";
+import { Consent, ConsentParameters } from "./contracts/Consent";
 import { Earn, EarnParameters } from "./contracts/Earn";
+import { Handshake, HandshakeParameters } from "./contracts/Handshake";
 import { Referral, ReferralParameters } from "./contracts/Referral";
 import { Welcome, WelcomeParameters } from "./contracts/Welcome";
 
@@ -45,7 +48,10 @@ export {
 
   // exported contracts
   Auth,
+  Burn,
+  Consent,
   Earn,
+  Handshake,
   Referral,
   Welcome,
 
@@ -68,7 +74,10 @@ export type {
 
   // per-contract parameters
   AuthParameters,
+  BurnParameters,
+  ConsentParameters,
   EarnParameters,
+  HandshakeParameters,
   ReferralParameters,
   WelcomeParameters,
 };

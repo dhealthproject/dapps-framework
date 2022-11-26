@@ -135,7 +135,7 @@ describe("contracts/Consent", () => {
       instance = new Consent(mockContractParameters);
     });
 
-    it("should include 'challenge' field", () => {
+    it("should include 'level', 'scope' and 'purpose' fields", () => {
       // prepare
       instance = new Consent(mockContractParameters);
 
@@ -143,8 +143,12 @@ describe("contracts/Consent", () => {
       const body: ObjectLiteral = instance.body;
 
       // assert
-      expect("challenge" in body).to.be.equal(true);
-      expect(body.challenge).to.be.equal("another-challenge");
+      expect("level" in body).to.be.equal(true);
+      expect("scope" in body).to.be.equal(true);
+      expect("purpose" in body).to.be.equal(true);
+      expect(body.level).to.be.equal("read");
+      expect(body.scope).to.be.equal("fakeScopeHash");
+      expect(body.purpose).to.be.equal("encrypted purpose message");
     });
   });
 

@@ -220,7 +220,7 @@ describe("contracts/Burn", () => {
       expect(transaction.message.payload).to.be.equal(expectedJSON);
     });
 
-    it("should include asset and amount in JSON payload", () => {
+    it("should include base asset asset in transaction mosaics", () => {
       // prepare
       instance = new Burn({
         dappIdentifier: "fake-dapp",
@@ -241,7 +241,7 @@ describe("contracts/Burn", () => {
       expect(transaction.message.payload).to.be.equal(expectedJSON);
       expect(transaction.mosaics).to.not.be.undefined;
       expect(transaction.mosaics.length).to.be.equal(1);
-      expect(transaction.mosaics[0].id.toHex()).to.be.equal("4ADBC6CEF9393B90");
+      expect(transaction.mosaics[0].id.toHex()).to.be.equal("39E0C49FA322A459");
     });
   });
 });

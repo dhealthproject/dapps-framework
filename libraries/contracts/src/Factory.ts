@@ -16,7 +16,10 @@ import type { NetworkParameters } from "./types/NetworkParameters";
 import type { ContractParameters } from "./types/ContractParameters";
 import { Contract } from "./Contract";
 import { Auth, AuthParameters } from "./contracts/Auth";
+import { Burn, BurnParameters } from "./contracts/Burn";
+import { Consent, ConsentParameters } from "./contracts/Consent";
 import { Earn, EarnParameters } from "./contracts/Earn";
+import { Handshake, HandshakeParameters } from "./contracts/Handshake";
 import { Referral, ReferralParameters } from "./contracts/Referral";
 import { Welcome, WelcomeParameters } from "./contracts/Welcome";
 import { InvalidContractError } from "./errors/InvalidContractError";
@@ -291,6 +294,21 @@ export class Factory {
     // eslint-disable-next-line
     else if (contract.match(/^([a-z0-9\._\-]+):welcome$/)) {
       return new Welcome(inputs as WelcomeParameters, version, parameters);
+    }
+    // (5) e.g. "elevate:burn" contract
+    // eslint-disable-next-line
+    else if (contract.match(/^([a-z0-9\._\-]+):burn$/)) {
+      return new Burn(inputs as BurnParameters, version, parameters);
+    }
+    // (6) e.g. "folio:consent" contract
+    // eslint-disable-next-line
+    else if (contract.match(/^([a-z0-9\._\-]+):consent$/)) {
+      return new Consent(inputs as ConsentParameters, version, parameters);
+    }
+    // (7) e.g. "folio:handshake" contract
+    // eslint-disable-next-line
+    else if (contract.match(/^([a-z0-9\._\-]+):handshake$/)) {
+      return new Handshake(inputs as HandshakeParameters, version, parameters);
     }
 
     // Not Supported Yet

@@ -77,10 +77,6 @@ export interface BurnParameters extends ContractParameters {
    * Contains the amount of asset(s) attached to this operations,
    * i.e. this corresponds to the *mosaic amount* as presented in
    * the resulting *transfer transaction*'s *mosaics* field.
-   * <br /><br />
-   * For the purpose of backwards compatibility, the `amount` input *may*
-   * be *empty* because previous versions of this contract (v0) did not
-   * include an amount of rewarded assets.
    *
    * @access public
    * @example `1`
@@ -318,8 +314,8 @@ export class Burn extends Contract {
     // compatibility for signing transactions with dHealth
     // Mobile Wallet - We attach a 0-amount DHP entry because
     // dHealth Mobile Wallet *always* expects a mosaics entry.
-    let assetId: string = this.parameters.currencyMosaicId;
-    let amount: number = 0;
+    const assetId: string = this.parameters.currencyMosaicId;
+    const amount: number = 0;
 
     // returns a dHealth Network transfer transaction attachment
     return [new Mosaic(new MosaicId(assetId), UInt64.fromUint(amount))];
