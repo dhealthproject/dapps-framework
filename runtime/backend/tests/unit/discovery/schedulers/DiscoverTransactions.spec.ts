@@ -236,8 +236,18 @@ describe("discovery/DiscoverTransactions", () => {
         });
 
         // assert
-        expect(logger.debug).toHaveBeenNthCalledWith(1, "Starting transactions discovery for source \"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\"");
-        expect(logger.debug).toHaveBeenNthCalledWith(2, "Last discovery for \"discovery:DiscoverTransactions:NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\" ended with page: \"1\"");
+        expect(logger.debug).toHaveBeenNthCalledWith(
+          1,
+          "Starting transactions discovery for source " +
+          "\"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\"", // message
+          "discovery:DiscoverTransactions", // <-- + context
+        );
+        expect(logger.debug).toHaveBeenNthCalledWith(
+          2,
+          "Last discovery for \"discovery:DiscoverTransactions:NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\" " +
+          "ended with page: \"1\"", // message
+          "discovery:DiscoverTransactions", // <-- + context
+        );
       });
 
       it("should set totalNumberOfTransactions if exists", async () => {

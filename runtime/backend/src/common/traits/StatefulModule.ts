@@ -79,26 +79,22 @@ export abstract class StatefulModule {
    * This method uses the {@link logger} to print info messages.
    *
    * @param   {string}              message
-   * @param   {string|undefined}    context
    * @returns {void}
    */
-  protected infoLog(message: string, context?: string): void {
-    if (!!context) {
-      this.logger.log(message, context);
-    } else this.logger.log(message);
+  protected infoLog(message: string): void {
+    const context = `${this.stateIdentifier}`;
+    this.logger.log(message, context);
   }
 
   /**
    * This method uses the {@link logger} to print debug messages.
    *
    * @param   {string}              message
-   * @param   {string|undefined}    context
    * @returns {void}
    */
-  protected debugLog(message: string, context?: string): void {
-    if (!!context) {
-      this.logger.debug(message, context);
-    } else this.logger.debug(message);
+  protected debugLog(message: string): void {
+    const context = `${this.stateIdentifier}`;
+    this.logger.debug(message, context);
   }
 
   /**
@@ -110,8 +106,9 @@ export abstract class StatefulModule {
    * @param   {string|undefined}    context
    * @returns {void}
    */
-  protected errorLog(message: string, stack?: string, context?: string): void {
-    this.logger.error(message, stack, context);
+  protected errorLog(message: string, stack?: string): void {
+    const context = `${this.stateIdentifier}`;
+    this.logger.error(message, context, stack);
   }
 
   /**

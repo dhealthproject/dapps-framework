@@ -24,7 +24,7 @@ describe("common/StatefulModule", () => {
     }
 
     public get stateIdentifier(): string {
-      throw new Error('Method not implemented.');
+      return "test-context";
     }
   }
 
@@ -33,22 +33,7 @@ describe("common/StatefulModule", () => {
   });
 
   describe("debugLog()", () => {
-    it("should call debug method from logger with context", () => {
-      // prepare
-      const statefulModule = new StatefulModuleTest(
-        (logService as any),
-        (stateService as any)
-      );
-
-      // act
-      (statefulModule as any).debugLog("test-message", "test-context");
-
-      // assert
-      expect(debugCall).toBeCalledTimes(1);
-      expect(debugCall).toBeCalledWith("test-message", "test-context");
-    });
-
-    it("should call debug method from logger without context", () => {
+    it("should use base context and forward to logger debug method", () => {
       // prepare
       const statefulModule = new StatefulModuleTest(
         (logService as any),
@@ -60,7 +45,7 @@ describe("common/StatefulModule", () => {
 
       // assert
       expect(debugCall).toBeCalledTimes(1);
-      expect(debugCall).toBeCalledWith("test-message");
+      expect(debugCall).toBeCalledWith("test-message", "test-context");
     });
   });
 
@@ -73,11 +58,11 @@ describe("common/StatefulModule", () => {
       );
 
       // act
-      (statefulModule as any).errorLog("test-message", "test-stack", "test-context");
+      (statefulModule as any).errorLog("test-message", "test-stack");
 
       // assert
       expect(errorCall).toBeCalledTimes(1);
-      expect(errorCall).toBeCalledWith("test-message", "test-stack", "test-context");
+      expect(errorCall).toBeCalledWith("test-message", "test-context", "test-stack");
     });
   });
 });

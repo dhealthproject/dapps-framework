@@ -168,7 +168,9 @@ export class LogService implements LoggerService {
    * @return {void}
    */
   public log(message: string, ...optionalParams: any[]): void {
-    this.logger.log(message, this.getModule(), ...optionalParams);
+    const context = optionalParams[0] ?? this.getModule();
+    const rest = optionalParams.splice(1); // remove first
+    this.logger.log(message, context, ...rest);
   }
 
   /**
@@ -181,7 +183,9 @@ export class LogService implements LoggerService {
    * @return {void}
    */
   public debug(message: string, ...optionalParams: any[]): void {
-    this.logger.debug(message, this.getModule(), ...optionalParams);
+    const context = optionalParams[0] ?? this.getModule();
+    const rest = optionalParams.splice(1); // remove first
+    this.logger.debug(message, context, ...rest);
   }
 
   /**
@@ -195,7 +199,9 @@ export class LogService implements LoggerService {
    * @return {void}
    */
   public error(message: string, ...optionalParams: any[]): void {
-    this.logger.error(message, this.getModule(), ...optionalParams);
+    const context = optionalParams[0] ?? this.getModule();
+    const rest = optionalParams.splice(1); // remove first
+    this.logger.error(message, context, ...rest);
 
     // do we need an *alert* sent through e-mail?
     if (this.monitoringConfig.enableAlerts && this.eventEmitter) {
@@ -223,7 +229,9 @@ export class LogService implements LoggerService {
    * @return {void}
    */
   public warn(message: string, ...optionalParams: any[]): void {
-    this.logger.warn(message, this.getModule(), ...optionalParams);
+    const context = optionalParams[0] ?? this.getModule();
+    const rest = optionalParams.splice(1); // remove first
+    this.logger.warn(message, context, ...rest);
 
     // do we need an *alert* sent through e-mail?
     if (this.monitoringConfig.enableAlerts && this.eventEmitter) {
@@ -251,7 +259,9 @@ export class LogService implements LoggerService {
    * @return {void}
    */
   public verbose(message: string, ...optionalParams: any[]): void {
-    this.logger.verbose(message, this.getModule(), ...optionalParams);
+    const context = optionalParams[0] ?? this.getModule();
+    const rest = optionalParams.splice(1); // remove first
+    this.logger.verbose(message, context, ...rest);
   }
 
   /**

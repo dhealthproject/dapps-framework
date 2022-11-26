@@ -247,9 +247,22 @@ describe("discovery/DiscoverAccounts", () => {
       });
 
       // assert
-      expect(logger.debug).toHaveBeenNthCalledWith(1, "Starting accounts discovery for source \"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\"");
-      expect(logger.debug).toHaveBeenNthCalledWith(2, "Last accounts discovery ended with page: \"1\"");
-      expect(logger.debug).toHaveBeenNthCalledWith(3, "Found 0 new accounts from transactions");
+      expect(logger.debug).toHaveBeenNthCalledWith(
+        1,
+        "Starting accounts discovery for source " + 
+        "\"NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY\"", // message
+        "discovery:DiscoverAccounts", // <-- + context
+      );
+      expect(logger.debug).toHaveBeenNthCalledWith(
+        2,
+        "Last accounts discovery ended with page: \"1\"", // message
+        "discovery:DiscoverAccounts", // <-- + context
+      );
+      expect(logger.debug).toHaveBeenNthCalledWith(
+        3,
+        "Found 0 new accounts from transactions", // message
+        "discovery:DiscoverAccounts", // <-- + context
+      );
     });
 
     it("should stop querying batches of transactions given an empty page", async () => {

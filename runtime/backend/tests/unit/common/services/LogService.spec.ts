@@ -79,8 +79,32 @@ describe("common/LogService", () => {
       expect(TestWinstonLogger.log).toHaveBeenNthCalledWith(
         1,
         "test-log-message",
-        "test-context",
         "test-log-context",
+      );
+    });
+
+    it("should forward optional parameters to winston", () => {
+      // act
+      service.log("test-log-message", "test-log-context", "test-param");
+
+      // assert
+      expect(TestWinstonLogger.log).toHaveBeenNthCalledWith(
+        1,
+        "test-log-message",
+        "test-log-context",
+        "test-param",
+      );
+    });
+
+    it("should use default context given empty optionals", () => {
+      // act
+      service.log("test-log-message");
+
+      // assert
+      expect(TestWinstonLogger.log).toHaveBeenNthCalledWith(
+        1,
+        "test-log-message",
+        "test-context", // L45
       );
     });
   });
@@ -90,19 +114,43 @@ describe("common/LogService", () => {
         // act
       service.error(
         "test-error-message",
-        "test-error-trace",
         "test-error-context",
+        "test-error-trace",
       );
 
       // assert
       expect(TestWinstonLogger.error).toHaveBeenNthCalledWith(
         1,
         "test-error-message",
-        "test-context",
-        "test-error-trace",
         "test-error-context",
+        "test-error-trace",
       );
       expect(mockEmitFn).toHaveBeenCalledTimes(1);
+    });
+
+    it("should forward optional parameters to winston", () => {
+      // act
+      service.error("test-log-message", "test-log-context", "test-param");
+
+      // assert
+      expect(TestWinstonLogger.error).toHaveBeenNthCalledWith(
+        1,
+        "test-log-message",
+        "test-log-context",
+        "test-param",
+      );
+    });
+
+    it("should use default context given empty optionals", () => {
+      // act
+      service.error("test-log-message");
+
+      // assert
+      expect(TestWinstonLogger.error).toHaveBeenNthCalledWith(
+        1,
+        "test-log-message",
+        "test-context", // L45
+      );
     });
   });
 
@@ -115,10 +163,34 @@ describe("common/LogService", () => {
       expect(TestWinstonLogger.warn).toHaveBeenNthCalledWith(
         1,
         "test-warn-message",
-        "test-context",
         "test-warn-context"
       );
       expect(mockEmitFn).toHaveBeenCalledTimes(1);
+    });
+
+    it("should forward optional parameters to winston", () => {
+      // act
+      service.warn("test-warn-message", "test-warn-context", "test-param");
+
+      // assert
+      expect(TestWinstonLogger.warn).toHaveBeenNthCalledWith(
+        1,
+        "test-warn-message",
+        "test-warn-context",
+        "test-param",
+      );
+    });
+
+    it("should use default context given empty optionals", () => {
+      // act
+      service.warn("test-warn-message");
+
+      // assert
+      expect(TestWinstonLogger.warn).toHaveBeenNthCalledWith(
+        1,
+        "test-warn-message",
+        "test-context", // L45
+      );
     });
   });
 
@@ -131,8 +203,32 @@ describe("common/LogService", () => {
       expect(TestWinstonLogger.debug).toHaveBeenNthCalledWith(
         1,
         "test-debug-message",
-        "test-context",
         "test-debug-context"
+      );
+    });
+
+    it("should forward optional parameters to winston", () => {
+      // act
+      service.debug("test-debug-message", "test-debug-context", "test-param");
+
+      // assert
+      expect(TestWinstonLogger.debug).toHaveBeenNthCalledWith(
+        1,
+        "test-debug-message",
+        "test-debug-context",
+        "test-param",
+      );
+    });
+
+    it("should use default context given empty optionals", () => {
+      // act
+      service.debug("test-debug-message");
+
+      // assert
+      expect(TestWinstonLogger.debug).toHaveBeenNthCalledWith(
+        1,
+        "test-debug-message",
+        "test-context", // L45
       );
     });
   });
@@ -146,8 +242,32 @@ describe("common/LogService", () => {
       expect(TestWinstonLogger.verbose).toHaveBeenNthCalledWith(
         1,
         "test-verbose-message",
-        "test-context",
         "test-verbose-context"
+      );
+    });
+
+    it("should forward optional parameters to winston", () => {
+      // act
+      service.verbose("test-verbose-message", "test-verbose-context", "test-param");
+
+      // assert
+      expect(TestWinstonLogger.verbose).toHaveBeenNthCalledWith(
+        1,
+        "test-verbose-message",
+        "test-verbose-context",
+        "test-param",
+      );
+    });
+
+    it("should use default context given empty optionals", () => {
+      // act
+      service.verbose("test-verbose-message");
+
+      // assert
+      expect(TestWinstonLogger.verbose).toHaveBeenNthCalledWith(
+        1,
+        "test-verbose-message",
+        "test-context", // L45
       );
     });
   });
