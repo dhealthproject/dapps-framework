@@ -91,7 +91,7 @@ export class ConfigController {
     // transform to DTO
     return {
       dappName,
-      authRegistry: authRegistry.shift(), // @todo should return many
+      authRegistry: authRegistry[0], // @todo should return many
       earnAssetDivisibility: asset.divisibility,
       earnAssetIdentifier: asset.mosaicId,
     } as DappConfigDTO;

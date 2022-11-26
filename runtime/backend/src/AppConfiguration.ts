@@ -617,6 +617,18 @@ export class AppConfiguration {
       );
     }
 
+    // (3) `auth.registries` cannot be empty
+    if (
+      undefined === auth ||
+      !("registries" in auth) ||
+      !auth.registries.length
+    ) {
+      throw new ConfigurationError(
+        `The configuration field "auth.registries" must contain an array ` +
+          `with at least one address of an account on dHealth Network.`,
+      );
+    }
+
     return true;
   }
 
