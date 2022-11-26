@@ -186,7 +186,7 @@ export class UserAggregation extends StatisticsCommand {
   @Cron("0 */10 * * * *", { name: "statistics:cronjobs:user-aggregation" })
   public async runAsScheduler(): Promise<void> {
     // setup debug logger
-    this.logger.setContext(`${this.scope}/${this.command}`);
+    this.logger.setModule(`${this.scope}/${this.command}`);
 
     // display starting moment information *also* in debug mode
     this.debugLog(`Starting user aggregation type: ${this.periodFormat}`);

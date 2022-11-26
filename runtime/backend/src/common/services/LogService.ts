@@ -26,6 +26,7 @@ import "winston-daily-rotate-file";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
+import { AppConfiguration } from "../../AppConfiguration";
 import { StorageOptions } from "../models/StorageOptions";
 import { DappConfig } from "../models/DappConfig";
 import { MonitoringConfig } from "../models/MonitoringConfig";
@@ -74,6 +75,15 @@ export class LogService implements LoggerService {
   private logger: LoggerService;
 
   /**
+   * The module name used to add more clarity about the
+   * log messages that are created.
+   *
+   * @access private
+   * @var {string}
+   */
+  private module: string;
+
+  /**
    * An instance of {@link DappConfig} that will be used
    * to get necessary dapp information for this class.
    *
@@ -109,18 +119,13 @@ export class LogService implements LoggerService {
     this.dappConfig = dappConfigLoader();
     this.monitoringConfig = monitoringConfigLoader();
 
-    this.logger = WinstonModule.createLogger({
-      levels: this.monitoringConfig.logLevels,
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.ms(),
-        nestWinstonModuleUtilities.format.nestLike(this.context, {
-          colors: true,
-        }),
-        winston.format.metadata(),
-      ),
-      transports: this.createTransports(),
-    });
+    // set context to avoid emptiness
+    if (!this.context || !this.context.length) {
+      this.context = this.dappConfig.dappName;
+    }
+
+    // create a winston logger instance
+    this.setupLogger();
   }
 
   /**
@@ -130,8 +135,26 @@ export class LogService implements LoggerService {
    * @param   {string}    context
    * @returns {LogService}
    */
-  public setContext(context: string) {
+  public setContext(context: string): LogService {
+    // update context
     this.context = context;
+
+    // update logger instance
+    return this.setupLogger();
+  }
+
+  /**
+   * Set the optional module which is prepended as well to the
+   * log message for any level.
+   * <br /><br />
+   * The module is used to indicate clearly which combination of
+   * scope and command is being executed, e.g. `discovery/DiscoverBlocks`.
+   *
+   * @param   {string}    module    A module name, e.g. `discovery/DiscoverAccounts`.
+   * @returns {LogService}
+   */
+  public setModule(module: string): LogService {
+    this.module = module;
     return this;
   }
 
@@ -145,7 +168,7 @@ export class LogService implements LoggerService {
    * @return {void}
    */
   public log(message: string, ...optionalParams: any[]): void {
-    this.logger.log(message, ...optionalParams);
+    this.logger.log(message, this.getModule(), ...optionalParams);
   }
 
   /**
@@ -158,7 +181,7 @@ export class LogService implements LoggerService {
    * @return {void}
    */
   public debug(message: string, ...optionalParams: any[]): void {
-    this.logger.debug(message, ...optionalParams);
+    this.logger.debug(message, this.getModule(), ...optionalParams);
   }
 
   /**
@@ -172,12 +195,11 @@ export class LogService implements LoggerService {
    * @return {void}
    */
   public error(message: string, ...optionalParams: any[]): void {
-    this.logger.error(message, ...optionalParams);
+    this.logger.error(message, this.getModule(), ...optionalParams);
 
     // do we need an *alert* sent through e-mail?
     if (this.monitoringConfig.enableAlerts && this.eventEmitter) {
-      this.logger.debug("Emitting event: notifier.alerts.error");
-      const result = this.eventEmitter.emit(
+      /*const result = */ this.eventEmitter.emit(
         "notifier.alerts.error",
         AlertEvent.create(
           new Date(),
@@ -188,7 +210,6 @@ export class LogService implements LoggerService {
           optionalParams.length > 1 ? optionalParams[1] : undefined,
         ),
       );
-      this.logger.debug(`Event emitted: ${result ? "1" : "0"}`);
     }
   }
 
@@ -202,12 +223,11 @@ export class LogService implements LoggerService {
    * @return {void}
    */
   public warn(message: string, ...optionalParams: any[]): void {
-    this.logger.warn(message, ...optionalParams);
+    this.logger.warn(message, this.getModule(), ...optionalParams);
 
     // do we need an *alert* sent through e-mail?
     if (this.monitoringConfig.enableAlerts && this.eventEmitter) {
-      this.logger.debug("Emitting event: notifier.alerts.warn");
-      const result = this.eventEmitter.emit(
+      /*const result = */ this.eventEmitter.emit(
         "notifier.alerts.warn",
         AlertEvent.create(
           new Date(),
@@ -218,7 +238,6 @@ export class LogService implements LoggerService {
           optionalParams.length > 1 ? optionalParams[1] : undefined,
         ),
       );
-      this.logger.debug(`Event emitted: ${result ? "1" : "0"}`);
     }
   }
 
@@ -232,7 +251,7 @@ export class LogService implements LoggerService {
    * @return {void}
    */
   public verbose(message: string, ...optionalParams: any[]): void {
-    this.logger.verbose(message, ...optionalParams);
+    this.logger.verbose(message, this.getModule(), ...optionalParams);
   }
 
   /**
@@ -247,6 +266,41 @@ export class LogService implements LoggerService {
   }
 
   /**
+   * This method serves to initialize the logger instance. Note
+   * that the {@link LogService.context} field may be changed and
+   * requires a reset of the logger instance.
+   *
+   * @access private
+   * @returns {LogService}
+   */
+  private setupLogger(): LogService {
+    // setup the logger instance
+    this.logger = WinstonModule.createLogger({
+      levels: this.monitoringConfig.logLevels,
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.ms(),
+        nestWinstonModuleUtilities.format.nestLike(this.context, {
+          colors: true,
+        }),
+      ),
+      transports: this.createTransports(),
+    });
+
+    return this;
+  }
+
+  /**
+   * Getter method to retrieve either the module or the context.
+   *
+   * @access private
+   * @returns {string}
+   */
+  private getModule(): string {
+    return this.module ?? this.context;
+  }
+
+  /**
    * Method to return a list of {@link WinstonsTransport} according to current
    * existing {@link MonitoringConfig} values.
    *
@@ -255,25 +309,6 @@ export class LogService implements LoggerService {
    */
   private createTransports(): WinstonTransport[] {
     const transports: winston.transport[] = [];
-
-    // database-log-persistence DISABLED for now
-    // @todo configure "database" as a 3rd storage option.
-    // *always* persist logs in database if they are
-    // marked with the value of `config.logPersistLevel`
-    // transports.push(
-    //   new winston.transports.MongoDB({
-    //     level: this.monitoringConfig.logPersistLevel,
-    //     // mongo database connection link
-    //     // @todo use AppConfiguration.getDatabaseModule
-    //     db: `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`,
-    //     options: {
-    //       useUnifiedTopology: true,
-    //     },
-    //     // A collection to save json formatted logs
-    //     collection: this.monitoringConfig.logPersistCollection,
-    //     label: this.context,
-    //   }),
-    // );
 
     // uses volume/global /logs folder
     const logFile = `${this.dappConfig.dappName}.log`;
@@ -304,6 +339,7 @@ export class LogService implements LoggerService {
         (s) => s.type === StorageOptions.FILE_SYSTEM,
       );
 
+      // configure filesystem transport
       transports.push(
         // filesystem logs use daily rotation with
         // a symbolic link at `logs/ELEVATE.log`
@@ -330,6 +366,25 @@ export class LogService implements LoggerService {
           level: "error",
           dirname: logPath,
           filename: errFile,
+        }),
+      );
+    }
+
+    // do we persist logs in database?
+    if (storageTypes.includes(StorageOptions.DATABASE)) {
+      // read filesystem logging options
+      const options = storages.find((s) => s.type === StorageOptions.DATABASE);
+
+      // configure database transport
+      transports.push(
+        new winston.transports.MongoDB({
+          level: options.level,
+          db: AppConfiguration.getDatabaseUrl(),
+          options: {
+            useUnifiedTopology: true,
+          },
+          collection: "logs",
+          label: this.context,
         }),
       );
     }

@@ -56,6 +56,9 @@ import socialConfigLoader from "../config/social";
 import monitoringConfigLoader from "../config/monitoring";
 import transportConfigLoader from "../config/transport";
 
+// configuration resources
+const db = dappConfigLoader().database;
+
 /**
  * @class AppConfiguration
  * @description The main configuration module used for verifications
@@ -328,21 +331,33 @@ export class AppConfiguration {
    * @param     {DatabaseConfig}    config    A database configuration object.
    * @returns   {MongooseModule}    A `@nestjs/mongoose` MongooseModule object.
    */
-  public static getDatabaseModule(config: DatabaseConfig): MongooseModule {
+  public static getDatabaseModule(): MongooseModule {
     // singleton instance for database
     if (undefined === AppConfiguration.DATABASE) {
       AppConfiguration.DATABASE = MongooseModule.forRoot(
-        `mongodb://` +
-          `${config.user}:${process.env.DB_PASS}` +
-          `@` +
-          `${config.host}:${config.port}` +
-          `/` +
-          `${config.name}?authSource=admin`,
+        AppConfiguration.getDatabaseUrl(),
       );
     }
 
     // return singleton instance
     return AppConfiguration.DATABASE;
+  }
+
+  /**
+   * This method returns the database URL which can be used to connect
+   * to the mongo server.
+   *
+   * @returns {string}
+   */
+  public static getDatabaseUrl(): string {
+    return (
+      `mongodb://` +
+      `${db.user}:${process.env.DB_PASS}` +
+      `@` +
+      `${db.host}:${db.port}` +
+      `/` +
+      `${db.name}?authSource=admin`
+    );
   }
 
   /**
@@ -491,7 +506,8 @@ export class AppConfiguration {
     const { database } = config.dapp;
 
     try {
-      AppConfiguration.getDatabaseModule(database);
+      // tries connection
+      AppConfiguration.getDatabaseModule();
     } catch (e) {
       throw new ConfigurationError(
         `Could not establish a connection to the database with host: ` +

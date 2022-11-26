@@ -33,18 +33,11 @@ async function bootstrap(): Promise<void> {
   // CAUTION: this will fail with a `ConfigurationError`
   WorkerModule.checkConfiguration();
 
-  // create a logger instance
-  // const logger = new LogService(
-  //   dappConfig.dappName + "/worker",
-  //   new EventEmitter2(),
-  // );
-
   // create an instance of the scheduler with imported configs
   const app: any = await NestFactory.createApplicationContext(
     WorkerModule.register({
       ...dappConfig,
     } as DappConfig),
-    // { logger },
   );
 
   // create a logger instance

@@ -334,9 +334,8 @@ export class PrepareActivityPayouts extends PreparePayouts<
     }
 
     // make sure to work only with *integers* (always absolute amounts)
-    return Math.round(
-      Math.floor(amount * Math.pow(10, this.earnAsset.divisibility)),
-    );
+    const divisibility: number = parseInt("" + this.earnAsset.divisibility);
+    return Math.round(Math.floor(amount * Math.pow(10, divisibility)));
   }
 
   /**
@@ -360,7 +359,7 @@ export class PrepareActivityPayouts extends PreparePayouts<
   @Cron("*/30 * * * * *", { name: "payout:cronjobs:prepare" })
   public async runAsScheduler(): Promise<void> {
     // prepares execution logger
-    this.logger.setContext(`${this.scope}/${this.command}`);
+    this.logger.setModule(`${this.scope}/${this.command}`);
 
     // display starting moment information also in non-debug mode
     this.debugLog(

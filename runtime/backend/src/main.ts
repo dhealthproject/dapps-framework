@@ -51,18 +51,11 @@ async function bootstrap(): Promise<void> {
   // CAUTION: this will fail with a `ConfigurationError`
   AppModule.checkConfiguration();
 
-  // create a logger instance
-  // const logger = new LogService(
-  //   dappConfig.dappName,
-  //   new EventEmitter2(),
-  // );
-
   // create app instance
   const app: NestApplication = await NestFactory.create(
     AppModule.register({
       ...dappConfig,
     } as DappConfig),
-    // { logger },
   );
 
   // // create a logger instance

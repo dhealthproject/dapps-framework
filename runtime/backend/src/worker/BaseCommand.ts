@@ -126,6 +126,9 @@ export abstract class BaseCommand extends StatefulModule {
     super(logger, stateService);
     this.dappConfig = dappConfigLoader();
     this.networkConfig = networkConfigLoader();
+
+    // initialize base context for schedulers/worker commands
+    this.logger.setContext(this.dappConfig.dappName + "/worker");
   }
 
   /**
@@ -183,7 +186,7 @@ export abstract class BaseCommand extends StatefulModule {
     options?: BaseCommandOptions,
   ): Promise<void> {
     // prepares execution logger and arguments
-    this.logger.setContext(`${this.scope}/${this.command}`);
+    this.logger.setModule(`${this.scope}/${this.command}`);
     this.argv = passedParams;
 
     // if not quiet, display info about start of execution

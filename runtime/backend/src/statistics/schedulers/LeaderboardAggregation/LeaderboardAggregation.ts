@@ -219,7 +219,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    */
   public async runAsScheduler(): Promise<void> {
     // prepares execution logger
-    this.logger.setContext(`${this.scope}/${this.command}`);
+    this.logger.setModule(`${this.scope}/${this.command}`);
 
     // display starting moment information *also* in debug mode
     this.debugLog(

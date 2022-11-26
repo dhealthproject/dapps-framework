@@ -19,7 +19,6 @@ import {
   TestDailyRotateFileTransport,
   TestWinstonLogger,
 } from "../../../mocks/global";
-import { StorageOptions } from "../../../../src/common/models/StorageOptions";
 import { LogService } from "../../../../src/common/services/LogService";
 
 describe("common/LogService", () => {
@@ -80,7 +79,8 @@ describe("common/LogService", () => {
       expect(TestWinstonLogger.log).toHaveBeenNthCalledWith(
         1,
         "test-log-message",
-        "test-log-context"
+        "test-context",
+        "test-log-context",
       );
     });
   });
@@ -98,6 +98,7 @@ describe("common/LogService", () => {
       expect(TestWinstonLogger.error).toHaveBeenNthCalledWith(
         1,
         "test-error-message",
+        "test-context",
         "test-error-trace",
         "test-error-context",
       );
@@ -114,6 +115,7 @@ describe("common/LogService", () => {
       expect(TestWinstonLogger.warn).toHaveBeenNthCalledWith(
         1,
         "test-warn-message",
+        "test-context",
         "test-warn-context"
       );
       expect(mockEmitFn).toHaveBeenCalledTimes(1);
@@ -129,6 +131,7 @@ describe("common/LogService", () => {
       expect(TestWinstonLogger.debug).toHaveBeenNthCalledWith(
         1,
         "test-debug-message",
+        "test-context",
         "test-debug-context"
       );
     });
@@ -143,6 +146,7 @@ describe("common/LogService", () => {
       expect(TestWinstonLogger.verbose).toHaveBeenNthCalledWith(
         1,
         "test-verbose-message",
+        "test-context",
         "test-verbose-context"
       );
     });

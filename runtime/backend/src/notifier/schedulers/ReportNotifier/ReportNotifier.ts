@@ -114,7 +114,7 @@ export class ReportNotifier extends NotifierCommand {
    */
   private initLogger() {
     // prepares execution logger
-    this.logger.setContext(`${this.scope}/${this.command}`);
+    this.logger.setModule(`${this.scope}/${this.command}`);
   }
 
   /**

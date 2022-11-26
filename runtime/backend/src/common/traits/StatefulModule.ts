@@ -7,9 +7,6 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// external dependencies
-import { LoggerService } from "@nestjs/common";
-
 // internal dependencies
 import { StateService } from "../services/StateService";
 import { StateDocument, StateQuery } from "../models/StateSchema";
@@ -35,16 +32,6 @@ export abstract class StatefulModule {
    * @var {StateDocument}
    */
   protected state: StateDocument;
-
-  /**
-   * This property permits to log information to the console or in files
-   * depending on the configuration. This logger instance can be accessed
-   * by extending modules to use a common log process.
-   *
-   * @access protected
-   * @var {LogService}
-   */
-  //protected logger: LogService;
 
   /**
    * Constructs a stateful module. This naming refers to a *nest* injectable

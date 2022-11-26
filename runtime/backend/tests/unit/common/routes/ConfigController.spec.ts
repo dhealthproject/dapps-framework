@@ -24,6 +24,15 @@ jest.mock("../../../../config/assets", () => {
     }
   });
 });
+jest.mock("../../../../config/security", () => {
+  return () => ({
+    auth: {
+      registries: [
+        "fake-registry-address",
+      ]
+    }
+  });
+});
 
 // external dependencies
 import { Test, TestingModule } from "@nestjs/testing";
@@ -34,19 +43,23 @@ import { ConfigController } from "../../../../src/common/routes/ConfigController
 import { DappConfigDTO } from "../../../../src/common/models/DappConfigDTO";
 import { AssetsConfig } from "../../../../src/common/models/AssetsConfig";
 import { DappConfig } from "../../../../src/common/models/DappConfig";
+import { SecurityConfig } from "../../../../src/common/models/SecurityConfig";
 
 // configuration resources
 import dappConfigLoader from "../../../../config/dapp";
 import assetsConfigLoader from "../../../../config/assets";
+import securityConfigLoader from "../../../../config/security";
 
 describe("common/ConfigController", () => {
   let controller: ConfigController,
       assetsConfig: AssetsConfig,
-      dappConfig: DappConfig;
+      dappConfig: DappConfig,
+      securityConfig: SecurityConfig;
 
   beforeEach(async () => {
     dappConfig = dappConfigLoader();
     assetsConfig = assetsConfigLoader();
+    securityConfig = securityConfigLoader();
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ConfigController],
@@ -62,16 +75,18 @@ describe("common/ConfigController", () => {
     expect(controller).toBeDefined();
   });
 
-  describe("getConfig()", () => {
-    it("should return correct configuration", async () => {
+  describe("find()", () => {
+    it("should return configuration using config service", async () => {
       // prepare
       (controller as any).configService = {
         get: jest.fn()
           .mockReturnValueOnce(dappConfig.dappName)
-          .mockReturnValueOnce(assetsConfig.assets.earn),
+          .mockReturnValueOnce(assetsConfig.assets.earn)
+          .mockReturnValueOnce(securityConfig.auth.registries),
       };
       const expectedResult: DappConfigDTO = {
         dappName: dappConfig.dappName,
+        authRegistry: securityConfig.auth.registries[0],
         earnAssetDivisibility: assetsConfig.assets.earn.divisibility,
         earnAssetIdentifier: assetsConfig.assets.earn.mosaicId,
       };

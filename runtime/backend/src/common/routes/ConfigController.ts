@@ -86,10 +86,12 @@ export class ConfigController {
     // read configuration from backend runtime
     const dappName = this.configService.get<string>("dappName");
     const asset = this.configService.get<AssetParameters>("assets.earn");
+    const authRegistry = this.configService.get<string[]>("auth.registries");
 
     // transform to DTO
     return {
       dappName,
+      authRegistry: authRegistry.shift(), // @todo should return many
       earnAssetDivisibility: asset.divisibility,
       earnAssetIdentifier: asset.mosaicId,
     } as DappConfigDTO;

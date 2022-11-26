@@ -52,9 +52,9 @@ export default () => ({
    */
   auth: {
     registries: [
-      "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY",
+      process.env.SECURITY_AUTH_REGISTRIES_ADDRESS_1,
     ],
-    secret: process.env.AUTH_TOKEN_SECRET,
+    secret: process.env.SECURITY_AUTH_TOKEN_SECRET,
     challengeSize: 8,
   },
 

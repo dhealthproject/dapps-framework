@@ -9,6 +9,7 @@
  */
 // external dependencies
 import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { MailerService, ISendMailOptions } from "@nestjs-modules/mailer";
 import { SentMessageInfo } from "nodemailer";
 
@@ -24,12 +25,23 @@ import { Notifier } from "../models/Notifier";
 @Injectable()
 export class EmailNotifier implements Notifier {
   /**
+   *
+   */
+  private enableMailer: boolean;
+
+  /**
    * The constructor of the service.
    *
    * @constructor
    * @param {MailerService} mailerService
    */
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly mailerService: MailerService,
+  ) {
+    // is the mailer enabled?
+    this.enableMailer = this.configService.get<boolean>("enableMailer");
+  }
 
   /**
    * Method to send email notifications internally.
@@ -41,7 +53,11 @@ export class EmailNotifier implements Notifier {
   public async sendInternal(
     emailDetails: ISendMailOptions,
   ): Promise<SentMessageInfo> {
-    return await this.mailerService.sendMail(emailDetails);
+    if (true === this.enableMailer) {
+      return await this.mailerService.sendMail(emailDetails);
+    }
+
+    return undefined;
   }
 
   /**
@@ -54,9 +70,13 @@ export class EmailNotifier implements Notifier {
   public async sendPublic(
     emailDetails: ISendMailOptions,
   ): Promise<SentMessageInfo> {
-    // @todo there is no difference between internal and public...
-    // @todo public emails should always use a specific templating
-    // @todo public emails should always be correctly signed, etc.
-    return await this.mailerService.sendMail(emailDetails);
+    if (true === this.enableMailer) {
+      // @todo there is no difference between internal and public...
+      // @todo public emails should always use a specific templating
+      // @todo public emails should always be correctly signed, etc.
+      return await this.mailerService.sendMail(emailDetails);
+    }
+
+    return undefined;
   }
 }

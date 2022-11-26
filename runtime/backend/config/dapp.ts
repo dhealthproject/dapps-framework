@@ -54,7 +54,7 @@ export default () => ({
    * @example `"71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE"`
    * @var {string}
    */
-  dappPublicKey: "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE",
+  dappPublicKey: process.env.MAIN_PUBLIC_KEY,
 
   /**
    * An array of {@link Scope:COMMON} that represents the enabled
@@ -72,8 +72,8 @@ export default () => ({
     "discovery",
     "payout",
     "processor",
-    "statistics",
     "notifier",
+    "statistics",
   ],
 
   /**
@@ -106,7 +106,7 @@ export default () => ({
     url: process.env.FRONTEND_URL,
     host: process.env.FRONTEND_DOMAIN,
     port: process.env.FRONTEND_PORT,
-    https: false
+    https: process.env.FRONTEND_USE_HTTPS === "true"
   },
 
   /**
@@ -121,7 +121,7 @@ export default () => ({
     url: process.env.BACKEND_URL,
     host: process.env.BACKEND_DOMAIN,
     port: process.env.BACKEND_PORT,
-    https: false
+    https: process.env.BACKEND_USE_HTTPS === "true"
   },
 
   /**
@@ -147,9 +147,9 @@ export default () => ({
      * @var {DiscoveryConfig}
      */
     sources: [
-      "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY", // authAuthority (login contract)
-      "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY", // main interactions account
-      "NCNQMX5JEENRMIGNFJC3UGHDUO3HAYQZK7ZIJUA", // earnAuthority (earn contract)
+      process.env.MAIN_ADDRESS,
+      process.env.PAYOUT_CONTRACT_ADDRESS,
+      process.env.SECURITY_AUTH_REGISTRIES_ADDRESS_1,
     ],
   }
 });

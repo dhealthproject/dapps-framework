@@ -95,6 +95,7 @@ describe("statistics/MonthlyScoreAggregation", () => {
           provide: LogService,
           useValue: {
             setContext: jest.fn(),
+            setModule: jest.fn(),
             log: jest.fn(),
             debug: jest.fn(),
             error: jest.fn(),

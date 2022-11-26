@@ -30,13 +30,21 @@ class MockBaseCommand extends BaseCommand {
     options: BaseCommandOptions,
   ): Promise<void> {}
 
-  // mocks the internal StateService
-  protected stateService: any = { findOne: jest.fn(), updateOne: jest.fn() };
-  protected logger: any = {
-    setContext: jest.fn(),
-    log: jest.fn(),
-    debug: jest.fn(),
-    error: jest.fn(),
+  // mocks constructor to provide logger
+  public constructor() {
+    super(
+      {
+        setContext: jest.fn(),
+        setModule: jest.fn(),
+        log: jest.fn(),
+        debug: jest.fn(),
+        error: jest.fn(),
+      } as any, // fake logger
+      {
+        findOne: jest.fn(),
+        updateOne: jest.fn(),
+      } as any,  // fake state
+    )
   }
 
   // mocks a fake method to test arguments storage
@@ -70,6 +78,7 @@ describe("worker/BaseCommand", () => {
   let stateService: StateService;
   let logService: LogService;
   let queryService: QueryService<StateDocument, StateModel>;
+  let logger: LogService;
 
   // each test gets its own TestingModule (injectable)
   let mockDate: Date;
@@ -80,14 +89,23 @@ describe("worker/BaseCommand", () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        MockBaseCommand,
-        LogService, // requirement from BaseCommand
         StateService, // requirement from BaseCommand
         QueryService, // requirement from StateService
         {
           provide: getModelToken("State"),
           useValue: MockModel,
         }, // requirement from StateService
+        {
+          provide: LogService,
+          useValue: {
+            setContext: jest.fn(),
+            setModule: jest.fn(),
+            log: jest.fn(),
+            debug: jest.fn(),
+            error: jest.fn(),
+          },
+        }, // requirement from BaseCommand
+        MockBaseCommand,
     ]})
     .compile();
 
@@ -95,6 +113,9 @@ describe("worker/BaseCommand", () => {
     stateService = module.get<StateService>(StateService);
     logService = module.get<LogService>(LogService);
     queryService = module.get<QueryService<StateDocument, StateModel>>(QueryService);
+    logger = module.get<LogService>(LogService);
+
+    jest.clearAllMocks();
   });
 
   // testing internals
@@ -177,6 +198,16 @@ describe("worker/BaseCommand", () => {
             provide: getModelToken("State"),
             useValue: MockModel,
           },
+          {
+            provide: LogService,
+            useValue: {
+              setContext: jest.fn(),
+              setModule: jest.fn(),
+              log: jest.fn(),
+              debug: jest.fn(),
+              error: jest.fn(),
+            },
+          }, // requirement from BaseCommand
           MockFailingBaseCommand,
       ]}).compile();
 

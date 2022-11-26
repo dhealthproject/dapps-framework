@@ -28,6 +28,11 @@
  */
 export default () => ({
   /**
+   *
+   */
+  enableMailer: process.env.ENABLE_MAILER === "true",
+
+  /**
    * A mail transport method configuration field. This includes connection
    * and mailing details such as host, port, user, and password. This field
    * also includes a default `"from"` email address which in which emails
@@ -42,6 +47,6 @@ export default () => ({
     port: process.env.SMTP_PORT,
     user: process.env.SMTP_USER,
     password: process.env.SMTP_PASSWORD,
-    from: process.env.FROM,
+    from: process.env.SMTP_FROM,
   },
 });

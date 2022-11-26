@@ -9,6 +9,7 @@
  */
 // external dependencies
 import { MailerService } from "@nestjs-modules/mailer";
+import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
 // internal dependencies
@@ -16,16 +17,17 @@ import { NotifierFactory } from "../../../../src/notifier/concerns/NotifierFacto
 import { EmailNotifier } from "../../../../src/notifier/services/EmailNotifier";
 import { NotifierType } from "../../../../src/notifier/models/NotifierType";
 
-
 describe("notifier/NotifierFactory", () => {
   let service: NotifierFactory;
   let emailNotifier: EmailNotifier;
+  let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         NotifierFactory,
         EmailNotifier,
+        ConfigService,
         {
           provide: MailerService,
           useValue: MailerService,
@@ -35,6 +37,7 @@ describe("notifier/NotifierFactory", () => {
 
     service = module.get<NotifierFactory>(NotifierFactory);
     emailNotifier = module.get<EmailNotifier>(EmailNotifier);
+    configService = module.get<ConfigService>(ConfigService);
   });
 
   it("should be defined", () => {

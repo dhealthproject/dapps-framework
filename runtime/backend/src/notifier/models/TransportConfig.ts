@@ -27,6 +27,7 @@
  * @since v0.3.0
  */
 export interface TransportConfig {
+  enableMailer: boolean;
   mailer: MailerConfig;
 }
 

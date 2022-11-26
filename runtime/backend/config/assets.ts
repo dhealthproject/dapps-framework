@@ -21,6 +21,8 @@
  *  - The information of the token that is used to reward users for 5 referrals.
  *  - The information of the token that is used to reward users for 10 referrals.
  *  - The information of the token that is used to reward users for 15 referrals.
+ * 3. A config object for the PROGRESS reward assets include:
+ *  - The information of the token that is used to reward users for achieving 1km distance.
  * <br /><br />
  * CAUTION: By modifying the content of this configuration field,
  * *changes* may occur for the assets discovery schedulers and may
@@ -88,7 +90,7 @@ export default () => ({
        * @example `"123ABC"`
        * @var {string}
        */
-      mosaicId: "4ADBC6CEF9393B90",
+      mosaicId: process.env.ASSETS_EARN_IDENTIFIER,
 
       /**
        * The divisibility of the activity reward token.
@@ -96,7 +98,7 @@ export default () => ({
        * @example `6`
        * @var {number}
        */
-      divisibility: 6,
+      divisibility: parseInt(process.env.ASSETS_EARN_DIVISIBILITY),
 
       /**
        * The symbol of the activity reward token.
@@ -104,7 +106,7 @@ export default () => ({
        * @example `"FIT"`
        * @var {string}
        */
-      symbol: "FIT"
+      symbol: process.env.ASSETS_EARN_SYMBOL
     }
   },
 
@@ -133,7 +135,7 @@ export default () => ({
          * @example `"123ABC"`
          * @var {string}
          */
-        mosaicId: "55E3CA759248A895",
+        mosaicId: process.env.ASSETS_BOOST5_IDENTIFIER,
 
         /**
          * The divisibility of the boost5 reward token in hexadecimals.
@@ -144,7 +146,7 @@ export default () => ({
          * @example `0`
          * @var {number}
          */
-        divisibility: 0,
+        divisibility: parseInt(process.env.ASSETS_BOOST5_DIVISIBILITY),
 
         /**
          * The symbol of the boost5 reward token in hexadecimals.
@@ -152,7 +154,7 @@ export default () => ({
          * @example `"BOOST"`
          * @var {string}
          */
-        symbol: "BOOST"
+        symbol: process.env.ASSETS_BOOST5_SYMBOL
       },
 
       /**
@@ -168,7 +170,7 @@ export default () => ({
          * @example `"123ABC"`
          * @var {string}
          */
-        mosaicId: "2CAA578DEE9043C4",
+        mosaicId: process.env.ASSETS_BOOST10_IDENTIFIER,
 
         /**
          * The divisibility of the boost10 reward token in hexadecimals.
@@ -179,7 +181,7 @@ export default () => ({
          * @example `0`
          * @var {number}
          */
-        divisibility: 0,
+        divisibility: parseInt(process.env.ASSETS_BOOST10_DIVISIBILITY),
 
         /**
          * The symbol of the boost10 reward token in hexadecimals.
@@ -187,7 +189,7 @@ export default () => ({
          * @example `"BOOST"`
          * @var {string}
          */
-        symbol: "BOOST"
+        symbol: process.env.ASSETS_BOOST10_SYMBOL
       },
 
       /**
@@ -203,7 +205,7 @@ export default () => ({
          * @example `"123ABC"`
          * @var {string}
          */
-        mosaicId: "002CE74736C839FE",
+        mosaicId: process.env.ASSETS_BOOST15_IDENTIFIER,
 
         /**
          * The divisibility of the boost15 reward token in hexadecimals.
@@ -214,7 +216,7 @@ export default () => ({
          * @example `0`
          * @var {number}
          */
-        divisibility: 0,
+        divisibility: parseInt(process.env.ASSETS_BOOST15_DIVISIBILITY),
 
         /**
          * The symbol of the boost15 reward token in hexadecimals.
@@ -222,7 +224,49 @@ export default () => ({
          * @example `"BOOST"`
          * @var {string}
          */
-        symbol: "BOOST"
+        symbol: process.env.ASSETS_BOOST15_SYMBOL
+      },
+    },
+    /**
+     * The config object for `PROGRESS` reward assets.
+     *
+     * @var { progress: { progress1: object } }
+     */
+    progress: {
+      /**
+       * The information of the token that is used to reward users for achieving
+       * a progress of 1km.
+       *
+       * @example `{ mosaicId: "123ABC", divisibility: 0, symbol: "ABC" }`
+       * @var { mosaicId: string, divisibility: number, symbol: string }
+       */
+      progress1: {
+        /**
+         * The mosaic Id of the progress1 reward token in hexadecimals.
+         *
+         * @example `"123ABC"`
+         * @var {string}
+         */
+        mosaicId: process.env.ASSETS_PROGRESS1_IDENTIFIER,
+
+        /**
+         * The divisibility of the progress1 reward token in hexadecimals.
+         * <br /><br />
+         * Note that this value is 0, meaning that this token is not divisible and thus
+         * cannot have be stored or transferred with values that are not integers.
+         *
+         * @example `0`
+         * @var {number}
+         */
+        divisibility: parseInt(process.env.ASSETS_PROGRESS1_DIVISIBILITY),
+
+        /**
+         * The symbol of the progress1 reward token in hexadecimals.
+         *
+         * @example `"BOOST"`
+         * @var {string}
+         */
+        symbol: process.env.ASSETS_PROGRESS1_SYMBOL
       },
     }
   },

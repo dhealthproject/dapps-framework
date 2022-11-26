@@ -48,8 +48,22 @@ class MockDiscoveryCommand extends DiscoveryCommand {
   protected get command(): string { return "fake-command"; }
   protected get signature(): string { return "fake-command --source TARGET_ACCOUNT"; }
 
-  // mocks the internal StateService
-  protected stateService: any = { findOne: jest.fn(), updateOne: jest.fn() };
+  // mocks constructor to provide logger
+  public constructor() {
+    super(
+      {
+        setContext: jest.fn(),
+        setModule: jest.fn(),
+        log: jest.fn(),
+        debug: jest.fn(),
+        error: jest.fn(),
+      } as any, // fake logger
+      {
+        findOne: jest.fn(),
+        updateOne: jest.fn(),
+      } as any,  // fake state
+    )
+  }
 
   // mocks a fake discovery method to test processes
   public async discover(options?: DiscoveryCommandOptions): Promise<void> {}
@@ -81,10 +95,19 @@ describe("discovery/DiscoveryCommand", () => {
       providers: [
         QueryService,
         StateService,
-        LogService,
         {
           provide: getModelToken("State"),
           useValue: MockModel,
+        },
+        {
+          provide: LogService,
+          useValue: {
+            setContext: jest.fn(),
+            setModule: jest.fn(),
+            log: jest.fn(),
+            debug: jest.fn(),
+            error: jest.fn(),
+          },
         },
         MockDiscoveryCommand,
     ]})

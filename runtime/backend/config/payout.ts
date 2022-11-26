@@ -48,7 +48,7 @@ export default () => ({
    * @example `false`
    * @var {boolean}
    */
-  globalDryRun: true,
+  globalDryRun: process.env.PAYOUT_GLOBAL_DRY_RUN === "true",
 
   /**
    * Configuration object for the payouts scope. This configuration
@@ -82,7 +82,7 @@ export default () => ({
      * @example `"71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE"`
      * @var {string}
      */
-    issuerPrivateKey: process.env.ISSUER_PRIVATE_KEY,
+    issuerPrivateKey: process.env.PAYOUT_ISSUER_PRIVATE_KEY,
 
     /**
      * A public key that is used to announce payouts on the network. This
@@ -97,7 +97,7 @@ export default () => ({
      * @example `"71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE"`
      * @var {string}
      */
-    signerPublicKey: process.env.SIGNER_PUBLIC_KEY,
+    signerPublicKey: process.env.PAYOUT_CONTRACT_PUBLIC_KEY,
 
     /**
      * 

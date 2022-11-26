@@ -15,10 +15,6 @@ import { StatisticsModule } from "../statistics/StatisticsModule";
 import { NotifierModule } from "../notifier/NotifierModule";
 import { AppConfiguration } from "../AppConfiguration";
 
-// configuration resources
-import dappConfigLoader from "../../config/dapp";
-const db = dappConfigLoader().database;
-
 /**
  * @label COMMON
  * @module Scopes
@@ -51,7 +47,7 @@ const db = dappConfigLoader().database;
  * @since v0.1.0
  */
 export const Scopes: { [key: string]: any } = {
-  database: AppConfiguration.getDatabaseModule(db),
+  database: AppConfiguration.getDatabaseModule(),
   discovery: DiscoveryModule,
   payout: PayoutModule,
   processor: ProcessorModule,

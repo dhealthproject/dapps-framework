@@ -236,7 +236,7 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
   @Cron("5 */1 * * * *", { name: "payout:cronjobs:broadcast" })
   public async runAsScheduler(): Promise<void> {
     // prepares execution logger
-    this.logger.setContext(`${this.scope}/${this.command}`);
+    this.logger.setModule(`${this.scope}/${this.command}`);
 
     // display starting moment information also in non-debug mode
     this.debugLog(

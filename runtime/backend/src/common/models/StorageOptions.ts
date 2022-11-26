@@ -18,4 +18,5 @@
 export enum StorageOptions {
   CONSOLE = "console",
   FILE_SYSTEM = "filesystem",
+  DATABASE = "database",
 }

@@ -43,6 +43,26 @@ export class DappConfigDTO extends BaseDTO {
   public dappName: string;
 
   /**
+   * A public key or address of an account on dHealth Network which
+   * is used as a registry for operations of authentication.
+   * <br /><br />
+   * Note that by changing this configuration field, it will affect the
+   * contract payloads that are written on-chain because the authentication
+   * registry is included in transactions and contract payloads.
+   *
+   * @access public
+   * @var {string}
+   */
+  @ApiProperty({
+    type: "string",
+    example: "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY",
+    description:
+      "A public key or address of an account on dHealth Network which " +
+      "is used as a registry for operations of authentication.",
+  })
+  public authRegistry: string;
+
+  /**
    * The number of decimal places that are considered for the
    * configured **earn** asset.
    * <br /><br />
@@ -66,7 +86,7 @@ export class DappConfigDTO extends BaseDTO {
     description:
       "The number of decimal places that are considered for the configured asset.",
   })
-  public earnAssetDivisibility: number;
+  public earnAssetDivisibility: string | number;
 
   /**
    * The mosaic identifier for the configured **earn** asset.

@@ -30,7 +30,7 @@
 export interface AssetParameters {
   mosaicId: string;
   namespaceId?: string;
-  divisibility: number;
+  divisibility: string | number;
   symbol: string;
 }
 

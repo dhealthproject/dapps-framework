@@ -39,10 +39,6 @@ import { UserAggregationCommand } from "../statistics/schedulers/UserAggregation
 // notifier scope
 import { ReportNotifierCommand } from "../notifier/schedulers/ReportNotifier/ReportNotifierCommand";
 
-// configuration resources
-import dappConfigLoader from "../../config/dapp";
-const db = dappConfigLoader().database;
-
 /**
  * @label COMMON
  * @module Schedulers
@@ -74,7 +70,7 @@ const db = dappConfigLoader().database;
  * @since v0.1.0
  */
 export const Schedulers: { [key: string]: any[] } = {
-  database: [AppConfiguration.getDatabaseModule(db)],
+  database: [AppConfiguration.getDatabaseModule()],
   discovery: [
     AccountsModule,
     AssetsModule,

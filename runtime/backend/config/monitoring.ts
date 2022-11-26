@@ -53,6 +53,7 @@ export default () => ({
   storage: [
     { type: StorageOptions.CONSOLE, level: "debug" },
     { type: StorageOptions.FILE_SYSTEM, level: "info" },
+    { type: StorageOptions.DATABASE, level: "warn" },
   ],
 
   /**
@@ -104,7 +105,7 @@ export default () => ({
   /**
    *
    */
-  enableAlerts: true,
+  enableAlerts: process.env.MONITORING_ENABLE_ALERTS === "true",
 
   /**
    * The alerts configuration options.
@@ -116,13 +117,13 @@ export default () => ({
   alerts: {
     type: ["warn", "error"], // send mails for ERRORs and WARNs
     transport: "mail", // currently only mail supported
-    recipient: "dev-alerts@dhealth.foundation",
+    recipient: process.env.MONITORING_ALERTS_MAIL,
   },
 
   /**
    *
    */
-  enableReports: true,
+  enableReports: process.env.MONITORING_ENABLE_REPORTS === "true",
 
   /**
    * The reports configuration options.
@@ -135,6 +136,6 @@ export default () => ({
     type: ["warn", "error"],
     transport: "mail", // currently only mail supported
     period: "W", // daily, weekly, monthly, yearly
-    recipient: "dev-reports@dhealth.foundation",
+    recipient: process.env.MONITORING_REPORTS_MAIL,
   },
 });

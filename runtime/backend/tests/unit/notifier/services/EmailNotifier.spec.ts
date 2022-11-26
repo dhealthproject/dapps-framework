@@ -9,26 +9,34 @@
  */
 // external dependencies
 import { MailerService } from "@nestjs-modules/mailer";
+import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
 // internal dependencies
 import { EmailNotifier } from "../../../../src/notifier/services/EmailNotifier";
 
-
 describe("notifier/EmailNotifier", () => {
   let service: EmailNotifier;
+  let configService: ConfigService;
 
   let sendMailCall = jest.fn().mockResolvedValue(true);
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EmailNotifier,
+        ConfigService,
         {
           provide: MailerService,
           useValue: {
             sendMail: sendMailCall,
           },
-        },
+        }, // overwrite of MailerService
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn().mockReturnValue(true), // enableMailer
+          },
+        }, // overwrite of ConfigService
       ],
     }).compile();
 
