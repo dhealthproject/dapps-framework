@@ -7,6 +7,7 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+export * from "./ConfigDTO";
 export * from "./LeaderboardDTO";
 export * from "./SnackBarConfig";
 export * from "./SocialPlatformDTO";

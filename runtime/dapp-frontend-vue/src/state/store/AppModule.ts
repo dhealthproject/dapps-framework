@@ -192,6 +192,9 @@ export const AppModule = {
         try {
           const response = await handler.getConfig();
           context.commit("setConfig", response);
+          context.commit("auth/setAuthRegistry", response.authRegistry, {
+            root: true,
+          });
           return response;
         } catch (err) {
           console.log("ERROR fetchConfig", err);

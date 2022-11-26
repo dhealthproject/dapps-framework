@@ -28,6 +28,7 @@ export interface AuthState {
   currentUserAddress?: string;
   isProviderIntegrated?: boolean;
   userRefCode?: string;
+  authRegistry?: string;
 }
 
 /**
@@ -55,6 +56,7 @@ export const AuthModule = {
     refreshToken: undefined,
     currentUserAddress: undefined,
     userRefCode: undefined,
+    authRegistry: undefined,
   }),
 
   getters: {
@@ -67,6 +69,8 @@ export const AuthModule = {
     getCurrentUserAddress: (state: AuthState): string | undefined =>
       state.currentUserAddress,
     getRefCode: (state: AuthState): string | undefined => state.userRefCode,
+    getAuthRegistry: (state: AuthState): string | undefined =>
+      state.authRegistry,
   },
 
   mutations: {
@@ -111,6 +115,9 @@ export const AuthModule = {
 
     setRefCode: (state: AuthState, refCode: string) =>
       (state.userRefCode = refCode),
+
+    setAuthRegistry: (state: AuthState, registry: string) =>
+      (state.authRegistry = registry),
   },
 
   actions: {

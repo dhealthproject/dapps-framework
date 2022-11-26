@@ -17,7 +17,8 @@
  * @example Using the `ConfigDTO` interface
  * ```typescript
  * const entry = {
- *   dappName: "Elevate",
+ *   dappName: "ELEVATE",
+ *   authRegistry: "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY",
  *   earnAssetDivisibility: 2,
  *   earnAssetIdentifier: "39E0C49FA322A459";
  * ```
@@ -25,6 +26,7 @@
  * #### Properties
  *
  * @param   {string}    dappName          Contains name of the dapp.
+ * @param   {string}    authRegistry      Contains the address of dHealth Account used as a registry for authentication.
  * @param   {number}    earnAssetDivisibility      Contains amount of symbols that will be displayed after formatting.
  * @param   {string}    earnAssetIdentifier          Contains mosaic id of token.
  *
@@ -33,6 +35,7 @@
 
 export interface ConfigDTO {
   dappName: string;
+  authRegistry: string;
   earnAssetDivisibility: number;
   earnAssetIdentifier: string;
 }

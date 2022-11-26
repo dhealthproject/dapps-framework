@@ -39,11 +39,6 @@ export interface AccessTokenDTO {
  */
 export class AuthService extends BackendService {
   /**
-   *
-   */
-  public static authRegistry = "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY";
-
-  /**
    * This property sets the request handler used for the implemented
    * requests. This handler forwards the execution of the request to
    * `axios`.

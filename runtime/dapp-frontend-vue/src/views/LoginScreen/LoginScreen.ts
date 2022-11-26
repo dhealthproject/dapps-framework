@@ -30,7 +30,7 @@ import InlineSvg from "vue-inline-svg";
 import { MetaView } from "@/views/MetaView";
 import ElevateLogo from "@/components/ElevateLogo/ElevateLogo.vue";
 import DividedScreen from "@/components/DividedScreen/DividedScreen.vue";
-import { AccessTokenDTO, AuthService } from "@/services/AuthService";
+import { AccessTokenDTO } from "@/services/AuthService";
 import NavPanel from "@/components/NavPanel/NavPanel.vue";
 import UiButton from "@/components/UiButton/UiButton.vue";
 import Loader from "@/components/Loader/Loader.vue";
@@ -87,6 +87,7 @@ export interface TutorialStepItem {
     ...mapGetters({
       isAuthenticated: "auth/isAuthenticated",
       authChallenge: "auth/getChallenge",
+      authRegistry: "auth/getAuthRegistry",
     }),
     tutorialItems: () => ({}),
   },
@@ -125,6 +126,21 @@ export default class LoginScreen extends MetaView {
    * @var {string}
    */
   public authChallenge!: string;
+
+  /**
+   * This property contains the *authentication registry* as it
+   * is requested from the backend API. This registry contains the
+   * address of the recipient of the authentication transaction on
+   * dHealth Network.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {string}
+   */
+  public authRegistry!: string;
 
   /**
    * This property contains the *authentication state* as it
@@ -248,7 +264,7 @@ export default class LoginScreen extends MetaView {
       Deadline.create(1616978397),
       // uses ELEVATE's authentication registry as a first draft
       // @todo This should be part of the configuration of ELEVATE
-      Address.createFromRawAddress(AuthService.authRegistry),
+      Address.createFromRawAddress(this.authRegistry),
       // setting 0-mosaic is necessary to reach backwards-compatibility
       // with dHealth Mobile Wallet QR Code Scanner, which requires it.
       [new Mosaic(new MosaicId("39E0C49FA322A459"), UInt64.fromUint(0))],

@@ -145,7 +145,6 @@ export const LeaderboardModule = {
           payload.periodFormat
         );
 
-        console.log("Store gets: ", entry);
         context.commit("setUserLeaderboardEntry", entry);
       } catch (err) {
         console.log("fetchLeaderboard", err);
