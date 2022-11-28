@@ -38,8 +38,8 @@ lerna-debug.log*
 data
 !data/.gitkeep
 
-# Do not checkin .env file
-.env
+# Do not checkin .env files
+*.env
 
 # Documentation
 docs/

@@ -18,14 +18,16 @@ services:
   backend:
     user: '1000:1000'
     container_name: dapp-backend
+    environment:
+      - NODE_ENV=$NODE_ENV
     build:
       context: runtime/backend
-      target: production
+      target: ${NODE_ENV}
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
     env_file:
-      - .env
-    command: npm run start:prod
+      - '${NODE_ENV}.env'
+    command: npm run start:${NODE_ENV}
     volumes:
       - ./runtime/backend/logs:/logs
     networks:
