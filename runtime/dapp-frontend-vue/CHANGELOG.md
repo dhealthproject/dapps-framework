@@ -33,6 +33,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] fix(screens): use fetchchallenge to fix reload state
 - [@dhealthdapps/frontend] fix(screens): restored before destroy hook
 - [@dhealthdapps/frontend] refactor(api): update statistics and leaderboards discovery with referral merge
+- [@dhealthdapps/frontend] feat(api): read authentication registry from config
 
 #### Fixed
 

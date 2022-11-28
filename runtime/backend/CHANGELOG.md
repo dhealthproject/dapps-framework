@@ -48,6 +48,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] fix(api): error handling in BaseCommand to forward-throw
 - [@dhealthdapps/backend] fix(tests): add unit tests for new controller
 - [@dhealthdapps/backend] feat(routes): add get config route
+- [@dhealthdapps/backend] fix: update leaderboards to use sub-sum routine with array
 
 #### Changed
 
@@ -70,6 +71,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: update log service context in main.ts
 - [@dhealthdapps/backend] refactor: add event emitter to user aggregation & payout scheduler
 - [@dhealthdapps/backend] fix(tests): add relevant ConfigController test, fix BaseCommand
+- [@dhealthdapps/backend] refactor(config): update configuration feed, fix log context
+- [@dhealthdapps/backend] tests: add logging context and generic parameters
+- [@dhealthdapps/backend] fix: make auth.registries obligatory
 
 #### Fixed
 

@@ -10,6 +10,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealth/contracts] feat(contracts): add asset and amount to Earn contract
 - [@dhealth/contracts] feat(api): TransactionParameters now includes recipientAddress, maxFee and deadline
 - [@dhealth/contracts] feat(contracts): add contracts for Burn, Handshake and Consent operations
+- [@dhealth/contracts] feat(api): add exports for Burn, Consent and Handshake contracts
 
 ## [0.3.0][0.3.0] - 01-Sep-2022
 

@@ -11,6 +11,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealth/contracts] feat(contracts): add asset and amount to Earn contract
 - [@dhealth/contracts] feat(api): TransactionParameters now includes recipientAddress, maxFee and deadline
 - [@dhealth/contracts] feat(contracts): add contracts for Burn, Handshake and Consent operations
+- [@dhealth/contracts] feat(api): add exports for Burn, Consent and Handshake contracts
 - [@dhealthdapps/backend] feat(api): enable integrations query by remote 
 - [@dhealthdapps/backend] feat(api): add activity data processing
 - [@dhealthdapps/backend] test: add unit tests for OAuthService.callProviderAPI
@@ -96,11 +97,15 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: update log service context in main.ts
 - [@dhealthdapps/backend] refactor: add event emitter to user aggregation & payout scheduler
 - [@dhealthdapps/backend] fix(tests): add relevant ConfigController test, fix BaseCommand
+- [@dhealthdapps/backend] refactor(config): update configuration feed, fix log context
+- [@dhealthdapps/backend] tests: add logging context and generic parameters
+- [@dhealthdapps/backend] fix: make auth.registries obligatory
 - [@dhealthdapps/frontend] fix: linter issues
 - [@dhealthdapps/frontend] style: remove commented code
 - [@dhealthdapps/frontend] fix(screens): use fetchchallenge to fix reload state
 - [@dhealthdapps/frontend] fix(screens): restored before destroy hook
 - [@dhealthdapps/frontend] refactor(api): update statistics and leaderboards discovery with referral merge
+- [@dhealthdapps/frontend] feat(api): read authentication registry from config
 
 #### Fixed
 
@@ -115,6 +120,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] test: fix all failed unit tests
 - [@dhealthdapps/backend] refactor: fix lint
 - [@dhealthdapps/backend] test: fix failed tests
+- [@dhealthdapps/backend] fix: update leaderboards to use sub-sum routine with array
 - [@dhealthdapps/frontend] fix(api): access token refresh does not contain remote identifier
 - [@dhealthdapps/frontend] fix(state): remove mock of leaderboard items, add correct font family for stats
 - [@dhealthdapps/frontend] fix(style): linter issues
