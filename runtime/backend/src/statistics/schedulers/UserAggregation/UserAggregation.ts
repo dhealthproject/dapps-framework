@@ -248,7 +248,7 @@ export class UserAggregation extends StatisticsCommand {
 
     // period is in daily format
     const periodFormat = this.periodFormat;
-    const period = this.generatePeriod(new Date());
+    const period = this.getNextPeriod(new Date());
 
     // for each aggregation document, we now create a statistics
     // document and attach the data in its `data` field
@@ -283,7 +283,7 @@ export class UserAggregation extends StatisticsCommand {
    * @param {Date} dateNow The current {@link Date} instance that is passed from {@link LeaderboardAggregation}.
    * @returns {string} The period string representation of today's search range.
    */
-  protected generatePeriod(dateNow: Date): string {
+  protected getNextPeriod(dateNow: Date): string {
     // format: `{year}{month}{day}`
     return (
       `${dateNow.getUTCFullYear()}` +

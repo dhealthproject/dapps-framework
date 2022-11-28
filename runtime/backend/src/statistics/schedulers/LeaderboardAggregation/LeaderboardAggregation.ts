@@ -303,7 +303,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
     }
 
     // for each asset in result
-    const period = this.generatePeriod(dateNow);
+    const period = this.getNextPeriod(dateNow);
     let position = 1;
     for (const result of results) {
       // create a new leaderboard object
@@ -354,7 +354,18 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    * @param {Date} date
    * @returns {string}
    */
-  protected abstract generatePeriod(date: Date): string;
+  protected abstract getNextPeriod(date: Date): string;
+
+  /**
+   * Abstract method to generate the *previous* period string for a date
+   * instance.
+   *
+   * @access protected
+   * @abstract
+   * @param {Date} date
+   * @returns {string}
+   */
+  protected abstract getPrevPeriod(date: Date): string;
 
   /**
    * Method to get the score scheduler config values for this
@@ -402,16 +413,10 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
     startDate: Date,
     endDate: Date,
   ): PipelineStage[] {
-    const scoreFields = this.config.fields;
-
-    const group: Record<string, any> = {
-      _id: "$address",
-    };
-    const sort: Record<string, any> = {};
-    scoreFields.forEach((field) => {
-      group[field] = { $sum: `$${field}` };
-      sort[`${field}`] = -1;
-    });
+    // @todo the fields configuration may need different aggregation
+    // @todo practices as for example now we aggregate a column in a
+    // @todo multi-object array and therefor require a sub-sum routine
+    const fields = this.config.fields;
     return [
       {
         $match: {
@@ -419,12 +424,22 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
             $gte: startDate,
             $lt: endDate,
           },
+          "activityData.isManual": {
+            $eq: false,
+          },
         },
       },
       {
-        $group: group,
+        $group: {
+          _id: "$address",
+          amount: {
+            $sum: {
+              $sum: `$${fields[0]}`,
+            },
+          },
+        },
       },
-      { $sort: sort },
+      { $sort: { amount: -1 } },
     ];
   }
 }

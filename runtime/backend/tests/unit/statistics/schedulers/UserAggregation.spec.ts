@@ -161,7 +161,7 @@ describe("statistics/UserAggregation", () => {
         .mockReturnValue({});
       jest.spyOn(queryService, "aggregate")
         .mockResolvedValue([{ _id: "test-id", amount: 1 }] as any);
-      jest.spyOn((service as any), "generatePeriod")
+      jest.spyOn((service as any), "getNextPeriod")
         .mockReturnValue("test-period-string");
 
       // act
@@ -192,7 +192,7 @@ describe("statistics/UserAggregation", () => {
         .mockReturnValue({});
       jest.spyOn(queryService, "aggregate")
         .mockResolvedValue([] as any);
-      jest.spyOn((service as any), "generatePeriod")
+      jest.spyOn((service as any), "getNextPeriod")
         .mockReturnValue("test-period-string");
 
       // act
@@ -233,7 +233,7 @@ describe("statistics/UserAggregation", () => {
           }
         ] as any);
       const serviceGeneratePeriodCall = jest
-        .spyOn((service as any), "generatePeriod")
+        .spyOn((service as any), "getNextPeriod")
         .mockReturnValue("test-period-string");
       const expectedDate = new Date();
 

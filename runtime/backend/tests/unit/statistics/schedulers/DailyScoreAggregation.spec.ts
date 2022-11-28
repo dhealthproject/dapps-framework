@@ -159,7 +159,7 @@ describe("statistics/DailyScoreAggregation", () => {
     });
   });
 
-  describe("generatePeriod()", () => {
+  describe("getNextPeriod()", () => {
     beforeEach(() => configGetCallMock.mockClear());
 
     it("should return correct result", () => {
@@ -167,7 +167,7 @@ describe("statistics/DailyScoreAggregation", () => {
       const date = new Date(Date.UTC(2022, 1, 1, 10, 10, 10, 10)); // 01/02/2022 at 10:10:10:010
 
       // act
-      const result = (service as any).generatePeriod(date);
+      const result = (service as any).getNextPeriod(date);
 
       // assert
       expect(result).toBe("20220201");

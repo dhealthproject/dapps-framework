@@ -11,18 +11,18 @@
 const configGetCallMock: any = jest.fn().mockReturnValue({
   daily_score: {
     type: "D",
-    collection: "assets",
-    fields: ["amount"],
+    collection: "activities",
+    fields: ["activityAssets.amount"],
   },
   weekly_score: {
     type: "W",
-    collection: "assets",
-    fields: ["amount"],
+    collection: "activities",
+    fields: ["activityAssets.amount"],
   },
   monthly_score: {
     type: "M",
-    collection: "assets",
-    fields: ["amount"],
+    collection: "activities",
+    fields: ["activityAssets.amount"],
   },
 });
 
@@ -224,8 +224,8 @@ describe("statistics/LeaderboardAggregation", () => {
       }
       jest.spyOn((service as any), "config", "get").mockReturnValue({
         type: "D",
-        collection: "assets",
-        fields: ["amount"],
+        collection: "activities",
+        fields: ["activityAssets.amount"],
       });
       const serviceDebugLogCall = jest
         .spyOn((service as any), "debugLog");
@@ -235,7 +235,7 @@ describe("statistics/LeaderboardAggregation", () => {
         .mockReturnValue({});
       jest.spyOn(queriesService, "aggregate")
         .mockResolvedValue([{ _id: "test-id", amount: 1 }] as any);
-      jest.spyOn((service as any), "generatePeriod")
+      jest.spyOn((service as any), "getNextPeriod")
         .mockReturnValue("test-period-string");
 
       // act
@@ -262,8 +262,8 @@ describe("statistics/LeaderboardAggregation", () => {
       }
       jest.spyOn((service as any), "config", "get").mockReturnValue({
         type: "D",
-        collection: "assets",
-        fields: ["amount"],
+        collection: "activities",
+        fields: ["activityAssets.amount"],
       });
       const serviceDebugLogCall = jest
         .spyOn((service as any), "debugLog");
@@ -273,7 +273,7 @@ describe("statistics/LeaderboardAggregation", () => {
         .mockReturnValue({});
       jest.spyOn(queriesService, "aggregate")
         .mockResolvedValue([] as any);
-      jest.spyOn((service as any), "generatePeriod")
+      jest.spyOn((service as any), "getNextPeriod")
         .mockReturnValue("test-period-string");
 
       // act
@@ -301,7 +301,7 @@ describe("statistics/LeaderboardAggregation", () => {
       jest.spyOn((service as any), "config", "get").mockReturnValue({
         type: "D",
         collection: "activities",
-        fields: ["amount"],
+        fields: ["activityAssets.amount"],
       });
       const mockDateRange = { startDate: new Date(), endDate: new Date()};
       const serviceCreateQueryDatesCalll = jest
@@ -316,7 +316,7 @@ describe("statistics/LeaderboardAggregation", () => {
           { _id: "test-address", amount: 1 }
         ] as any);
       const serviceGeneratePeriodCall = jest
-        .spyOn((service as any), "generatePeriod")
+        .spyOn((service as any), "getNextPeriod")
         .mockReturnValue("test-period-string");
       const expectedDate = new Date();
       const modelFindOneAndUpdateCall = jest
@@ -365,18 +365,18 @@ describe("statistics/LeaderboardAggregation", () => {
       const expectedConfig = {
         daily_score: {
           type: "D",
-          collection: "assets",
-          fields: ["amount"],
+          collection: "activities",
+          fields: ["activityAssets.amount"],
         },
         weekly_score: {
           type: "W",
-          collection: "assets",
-          fields: ["amount"],
+          collection: "activities",
+          fields: ["activityAssets.amount"],
         },
         monthly_score: {
           type: "M",
-          collection: "assets",
-          fields: ["amount"],
+          collection: "activities",
+          fields: ["activityAssets.amount"],
         },
       };
       const expectedResults = [
@@ -434,12 +434,19 @@ describe("statistics/LeaderboardAggregation", () => {
               $gte: mockDate,
               $lt: mockDate,
             },
+            "activityData.isManual": {
+              $eq: false,
+            }
           },
         },
         {
           $group: {
             _id: "$address",
-            amount: { $sum: "$amount" },
+            amount: {
+              $sum: {
+                $sum: "$activityAssets.amount"
+              }
+            },
           },
         },
         { $sort: { amount: -1 } },

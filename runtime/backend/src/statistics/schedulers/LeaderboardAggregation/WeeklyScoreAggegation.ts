@@ -129,7 +129,19 @@ export class WeeklyScoreAggregation extends LeaderboardAggregation {
    * @param {Date} dateNow The current {@link Date} instance that is provided in {@link LeaderboardAggregation}.
    * @returns {string} The period string representation of today's search range.
    */
-  protected generatePeriod(dateNow: Date): string {
+  protected getNextPeriod(dateNow: Date): string {
     return moment(dateNow).format("YYYY-W");
+  }
+
+  /**
+   * Method to generate the *previous* period string representation given a
+   * data. The result string is in format: `{year}{month}{day}`.
+   *
+   * @access protected
+   * @param {Date} dateNow The current {@link Date} instance that is passed from {@link LeaderboardAggregation}.
+   * @returns {string} The period string representation of `dateNow - 1week` search range.
+   */
+  protected getPrevPeriod(dateNow: Date): string {
+    return moment(dateNow).subtract(1, "week").format("YYYY-W");
   }
 }

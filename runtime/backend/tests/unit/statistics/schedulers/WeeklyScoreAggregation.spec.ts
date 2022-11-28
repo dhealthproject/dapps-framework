@@ -181,13 +181,13 @@ describe("statistics/WeeklyScoreAggregation", () => {
     });
   });
 
-  describe("generatePeriod()", () => {
+  describe("getNextPeriod()", () => {
     it("should return correct result for normal weeks", () => {
       // prepare
       const date = new Date(Date.UTC(2022, 8, 22, 10, 10, 10, 10)); // 22/09/2022 at 10:10:10:010
 
       // act
-      const result = (service as any).generatePeriod(date);
+      const result = (service as any).getNextPeriod(date);
 
       // assert
       expect(result).toBe("2022-38");
@@ -198,7 +198,7 @@ describe("statistics/WeeklyScoreAggregation", () => {
       const date = new Date(Date.UTC(2022, 8, 2, 10, 10, 10, 10)); // 02/09/2022 at 10:10:10:010
 
       // act
-      const result = (service as any).generatePeriod(date);
+      const result = (service as any).getNextPeriod(date);
 
       // assert
       expect(result).toBe("2022-35");
@@ -209,7 +209,7 @@ describe("statistics/WeeklyScoreAggregation", () => {
       const date = new Date(Date.UTC(2022, 0, 2, 10, 10, 10, 10)); // 02/01/2022 at 10:10:10:010
 
       // act
-      const result = (service as any).generatePeriod(date);
+      const result = (service as any).getNextPeriod(date);
 
       // assert
       expect(result).toBe("2022-52");

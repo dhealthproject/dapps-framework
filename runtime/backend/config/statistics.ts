@@ -56,7 +56,7 @@ export default () => ({
       daily_score: {
         type: "D", // <-- can be directly from date format, i.e. moment().format("D") <-- thats why "D"
         collection: "activities", // <-- later we may change this to "activities"
-        fields: ["amount"], // <-- by which fields do we tell the score
+        fields: ["activityAssets.amount"], // <-- by which fields do we tell the score
       },
 
       /**
@@ -67,7 +67,7 @@ export default () => ({
       weekly_score: {
         type: "W",
         collection: "activities", // <-- later we may change this to "activities"
-        fields: ["amount"], // <-- by which fields do we tell the score
+        fields: ["activityAssets.amount"], // <-- by which fields do we tell the score
       },
 
       /**
@@ -78,7 +78,7 @@ export default () => ({
       monthly_score: {
         type: "M",
         collection: "activities", // <-- later we may change this to "activities"
-        fields: ["amount"], // <-- by which fields do we tell the score
+        fields: ["activityAssets.amount"], // <-- by which fields do we tell the score
       },
     }
   }

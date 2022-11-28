@@ -145,13 +145,13 @@ describe("statistics/MonthlyScoreAggregation", () => {
     });
   });
 
-  describe("generatePeriod()", () => {
+  describe("getNextPeriod()", () => {
     it("should return correct result", () => {
       // prepare
       const date = new Date(Date.UTC(2022, 1, 7, 10, 10, 10, 10)); // 07/02/2022 at 10:10:10:010
 
       // act
-      const result = (service as any).generatePeriod(date);
+      const result = (service as any).getNextPeriod(date);
 
       // assert
       expect(result).toBe("202202");
