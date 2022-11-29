@@ -121,6 +121,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: fix lint
 - [@dhealthdapps/backend] test: fix failed tests
 - [@dhealthdapps/backend] fix: update leaderboards to use sub-sum routine with array
+- [@dhealthdapps/backend] fix(api): update migration index, add missing field for accounts
 - [@dhealthdapps/frontend] fix(api): access token refresh does not contain remote identifier
 - [@dhealthdapps/frontend] fix(state): remove mock of leaderboard items, add correct font family for stats
 - [@dhealthdapps/frontend] fix(style): linter issues
@@ -133,6 +134,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] fix(tests): header compilation error fix
 - [@dhealthdapps/frontend] fix(tests): update component inputs and setters
 - [@dhealthdapps/frontend] fix: update class property type
+- [@dhealthdapps/frontend] fix(tests): add missing mock for auth/getAuthRegistry
 
 ## [0.4.0][0.4.0] - 19-Oct-2022
 

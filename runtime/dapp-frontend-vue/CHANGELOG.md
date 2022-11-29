@@ -49,6 +49,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] fix(tests): header compilation error fix
 - [@dhealthdapps/frontend] fix(tests): update component inputs and setters
 - [@dhealthdapps/frontend] fix: update class property type
+- [@dhealthdapps/frontend] fix(tests): add missing mock for auth/getAuthRegistry
 
 ## [0.4.0][0.4.0] - 19-Oct-2022
 

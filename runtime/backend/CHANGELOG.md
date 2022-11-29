@@ -88,6 +88,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] test: fix all failed unit tests
 - [@dhealthdapps/backend] refactor: fix lint
 - [@dhealthdapps/backend] test: fix failed tests
+- [@dhealthdapps/backend] fix(api): update migration index, add missing field for accounts
 
 ## [0.4.0][0.4.0] - 19-Oct-2022
 
