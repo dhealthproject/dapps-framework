@@ -1,6 +1,6 @@
 {
   "name": "@dhealthdapps/backend",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "homepage": "https://github.com/dhealthproject/dapps-framework/tree/main/runtime/backend#readme",
   "description": "dHealth ELEVATE API",
   "author": "dHealth Network <devs@dhealth.foundation>",
