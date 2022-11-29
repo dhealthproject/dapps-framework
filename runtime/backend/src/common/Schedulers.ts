@@ -34,6 +34,7 @@ import { BroadcastActivityPayouts } from "../payout/schedulers/ActivityPayouts/B
 // statistics scope
 import { LeaderboardsAggregationCommand } from "../statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand";
 import { UserAggregationCommand } from "../statistics/schedulers/UserAggregation/UserAggregationCommand";
+import UserTopActivitiesCommand from "../statistics/schedulers/UserTopActivities/UserTopActivitiesCommand";
 
 // notifier scope
 import { ReportNotifierCommand } from "../notifier/schedulers/ReportNotifier/ReportNotifierCommand";
@@ -79,6 +80,7 @@ export const Schedulers: { [key: string]: any[] } = {
     DiscoverAssetsCommand,
     DiscoverTransactionsCommand,
     DiscoverBlocksCommand,
+    UserTopActivitiesCommand,
   ],
   payout: [PayoutsModule, ActivityPayoutsCommand],
   processor: [OperationsModule, ProcessOperationsCommand],
