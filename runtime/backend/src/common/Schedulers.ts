@@ -10,7 +10,6 @@
 // internal dependencies
 // common scope
 import { AppConfiguration } from "../AppConfiguration";
-import { LogModule } from "./modules/LogModule";
 
 // discovery scope
 import { DiscoveryAccountsModule } from "../discovery/modules/DiscoveryAccountsModule";
