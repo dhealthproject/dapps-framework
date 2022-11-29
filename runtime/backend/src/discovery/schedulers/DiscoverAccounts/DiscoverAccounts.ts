@@ -349,6 +349,7 @@ export class DiscoverAccounts extends DiscoveryCommand {
       // store the discovered address in `accounts`
       await this.model.create({
         address: this.discoveredAddresses[i],
+        referralCode: Math.random().toString(36).slice(-8),
       });
     }
 

@@ -53,8 +53,10 @@ export class AddAccountReferralCode implements MigrationInterface {
       ],
     );
 
-    // creates an index for field "referralCode"
-    await collection.createIndex("referralCode");
+    if (!collection.indexExists("referralCode")) {
+      // creates an index for field "referralCode"
+      await collection.createIndex("referralCode");
+    }
   }
 
   /**
@@ -71,8 +73,10 @@ export class AddAccountReferralCode implements MigrationInterface {
     // uses collection `accounts`
     const collection = db.collection("accounts");
 
-    // drops the index for field "referralCode"
-    await collection.dropIndex("referralCode");
+    if (collection.indexExists("referralCode")) {
+      // drops the index for field "referralCode"
+      await collection.dropIndex("referralCode");
+    }
 
     // update many `accounts` documents such that
     // - the `referralCode` field is removed (unset)
