@@ -88,7 +88,7 @@ export const Schedulers: { [key: string]: any[] } = {
     LeaderboardsAggregationCommand,
     UserAggregationCommand,
   ],
-  notifier: [ReportNotifierCommand],
+  notifier: [ReportNotifierCommand.register()],
   oauth: [],
   users: [],
 };

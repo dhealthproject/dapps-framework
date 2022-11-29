@@ -10,7 +10,7 @@
 // external dependencies
 import { Injectable, LogLevel } from "@nestjs/common";
 import { CronJob } from "cron";
-import { SchedulerRegistry } from "@nestjs/schedule";
+import { Cron, SchedulerRegistry } from "@nestjs/schedule";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { PipelineStage } from "mongoose";
@@ -30,6 +30,7 @@ import { ReportsConfig } from "../../../common/models/MonitoringConfig";
 import { LogService } from "../../../common/services/LogService";
 
 /**
+ * @abstract
  * @class ReportNotifier
  * @description The concrete implementation for the report notifier
  * scheduler. Contains source code for the execution logic of a
@@ -37,8 +38,7 @@ import { LogService } from "../../../common/services/LogService";
  *
  * @since v0.3.2
  */
-@Injectable()
-export class ReportNotifier extends NotifierCommand {
+export abstract class ReportNotifier extends NotifierCommand {
   /**
    * The period format i.e. `"D"`, `"W"` or `"M"`.
    *
@@ -87,9 +87,10 @@ export class ReportNotifier extends NotifierCommand {
    * @param {SchedulerRegistry} schedulerRegistry
    * @param {NotifierFactory} notifierFactory
    * @param {DappHelper} dappHelper
+   * @param {LogService} logService
    */
   constructor(
-    @InjectModel(Log.name) protected readonly model: LogModel,
+    protected readonly model: LogModel,
     protected readonly configService: ConfigService,
     protected readonly queryService: QueryService<LogDocument, LogModel>,
     protected readonly stateService: StateService,
@@ -101,18 +102,15 @@ export class ReportNotifier extends NotifierCommand {
     super(logService, stateService);
     this.lastExecutedAt = new Date().valueOf();
     this.reportsConfig = this.configService.get<ReportsConfig>("reports");
-    this.periodFormat = this.reportsConfig.period;
     this.notifier = notifierFactory.getNotifier(
       this.reportsConfig.transport as NotifierType,
     );
-    this.addCronJob();
-    this.initLogger();
   }
 
   /**
    *
    */
-  private initLogger() {
+  protected initLogger() {
     // prepares execution logger
     this.logger.setModule(`${this.scope}/${this.command}`);
   }
@@ -173,61 +171,29 @@ export class ReportNotifier extends NotifierCommand {
   }
 
   /**
-   * Method to create and run a cronjob automatically. Subclasses will
-   * be **required** to call this method in their constructor with the
-   * desired cron expression.
-   *
-   * @access protected
-   * @returns {void}
-   */
-  protected addCronJob(): void {
-    // initialize a dynamic cronjob
-    const job = new CronJob(
-      this.cronExpression, // cronTime
-      this.runAsScheduler.bind(this), // onTick
-      undefined, // empty onComplete
-      false, // "startNow" (done with L183)
-      undefined, // timeZone
-      undefined, // empty resolves to default context
-      true, // "runOnInit"
-    );
-
-    // also register in nestjs schedulers
-    this.schedulerRegistry.addCronJob(
-      `notifier:cronjobs:reportNotifier:${this.periodFormat}`,
-      job,
-    );
-
-    // also, always *schedule* when initialized
-    job.start();
-  }
-
-  /**
-   * Getter to return the cron expression for this instance.
-   * Returned value will be based on this instance's period
-   * format string.
-   *
-   * @access private
-   * @return {string}
-   */
-  private get cronExpression(): string {
-    switch (this.periodFormat) {
-      case "D":
-        return "0 0 */24 * * *"; // every 24 hours (1 time per day)
-      case "W":
-        return "0 0 0 */7 * *"; // every 7 days (1 times per week)
-      case "M":
-        return "0 0 0 1 * *"; // every day 1 of month (once per month)
-      default:
-        return "0 0 0 */7 * *"; // default: every 7 days (1 times per week)
-    }
-  }
-
-  /**
    * This method is the **entry point** of this scheduler. Due to
    * the usage of the `Cron` decorator, and the implementation
    * the nest backend runtime is able to discover this when the
-   * `processor` scope is enabled.
+   * `notifier` scope is enabled.
+   * <br /><br />
+   * This method is necessary to make sure this command is run
+   * with the correct `--collection` option.
+   * <br /><br />
+   * This method must be implemented in sub-classes with a proper
+   * cron expression value.
+   *
+   * @see BaseCommand
+   * @access public
+   * @abstract
+   * @returns {void}
+   */
+  public abstract runAsScheduler(): void;
+
+  /**
+   * This method is the **second entry point** of this scheduler. Due to
+   * the usage of the `Cron` decorator, and the implementation
+   * the nest backend runtime is able to discover this when the
+   * `notifier` scope is enabled.
    * <br /><br />
    * This method is necessary to make sure this command is run
    * with the correct `--collection` option.
@@ -239,7 +205,7 @@ export class ReportNotifier extends NotifierCommand {
    * @param   {BaseCommandOptions}  options
    * @returns {Promise<void>}
    */
-  public async runAsScheduler(): Promise<void> {
+  public async runScheduler(): Promise<void> {
     // make sure we have a logger instance
     this.initLogger();
 

@@ -38,6 +38,7 @@ import { DappHelper } from "../../../../../src/common/concerns/DappHelper";
 import { EmailNotifier } from "../../../../../src/notifier/services/EmailNotifier";
 import { NetworkService } from "../../../../../src/common/services/NetworkService";
 import { ReportNotifierStateData } from "../../../../../src/notifier/models/ReportNotifierStateData";
+import { DailyReportNotifier } from "@/notifier/schedulers/ReportNotifier/DailyReportNotifier";
 
 describe("notifier/ReportNotifier", () => {
   let service: ReportNotifier;
@@ -56,7 +57,7 @@ describe("notifier/ReportNotifier", () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ReportNotifier,
+        DailyReportNotifier,
         {
           provide: getModelToken("Log"),
           useClass: MockModel,
@@ -103,7 +104,7 @@ describe("notifier/ReportNotifier", () => {
       ],
     }).compile();
 
-    service = module.get<ReportNotifier>(ReportNotifier);
+    service = module.get<ReportNotifier>(DailyReportNotifier);
     logger = module.get<LogService>(LogService);
     configService = module.get<ConfigService>(ConfigService);
     queryService = module.get<QueryService<LogDocument, LogModel>>(QueryService);

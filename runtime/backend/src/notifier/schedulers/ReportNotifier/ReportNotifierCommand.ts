@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Module } from "@nestjs/common";
+import { DynamicModule, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ScheduleModule } from "@nestjs/schedule";
 
@@ -22,9 +22,14 @@ import { Log, LogSchema } from "../../../common/models/LogSchema";
 import { HelpersModule } from "../../../common/modules/HelpersModule";
 
 // notifier scope
-import { ReportNotifier } from "./ReportNotifier";
 import { NotifierFactory } from "../../concerns/NotifierFactory";
 import { EmailNotifierModule } from "../../modules/EmailNotifierModule";
+
+// configuration resources
+import monitoringConfigLoader from "../../../../config/monitoring";
+import { DailyReportNotifier } from "./DailyReportNotifier";
+import { WeeklyReportNotifier } from "./WeeklyReportNotifier";
+import { MonthlyReportNotifier } from "./MonthlyReportNotifier";
 
 /**
  * @class ReportNotifierCommand
@@ -32,18 +37,39 @@ import { EmailNotifierModule } from "../../modules/EmailNotifierModule";
  *
  * @since v0.3.2
  */
-@Module({
-  imports: [
-    StateModule,
-    ScheduleModule.forRoot(),
-    MongooseModule.forFeature([{ name: Log.name, schema: LogSchema }]),
-    LogModule,
-    QueryModule,
-    NetworkModule,
-    EmailNotifierModule,
-    HelpersModule,
-  ],
-  providers: [NotifierFactory, ReportNotifier],
-  exports: [ReportNotifier],
-})
-export class ReportNotifierCommand {}
+@Module({})
+export class ReportNotifierCommand {
+  public static register() {
+    const periodFormat = monitoringConfigLoader().reports.period;
+    const reportNotifier = ReportNotifierCommand.getNotifierClass(periodFormat);
+    return {
+      module: ReportNotifierCommand,
+      imports: [
+        StateModule,
+        ScheduleModule.forRoot(),
+        MongooseModule.forFeature([{ name: Log.name, schema: LogSchema }]),
+        LogModule,
+        QueryModule,
+        NetworkModule,
+        EmailNotifierModule,
+        HelpersModule,
+      ],
+      providers: [
+        NotifierFactory,
+        reportNotifier,
+      ],
+      exports: [
+        reportNotifier,
+      ]
+    } as DynamicModule;
+  }
+
+  private static getNotifierClass(periodFormat: string) {
+    switch(periodFormat) {
+      case "D": return DailyReportNotifier;
+      case "W": return WeeklyReportNotifier;
+      case "M": return MonthlyReportNotifier;
+      default: return MonthlyReportNotifier;
+    };
+  }
+}

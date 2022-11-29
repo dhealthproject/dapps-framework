@@ -135,7 +135,7 @@ export default () => ({
   reports: {
     type: ["warn", "error"],
     transport: "mail", // currently only mail supported
-    period: "W", // daily, weekly, monthly, yearly
+    period: "W", // daily: D, weekly: W, monthly: M
     recipient: process.env.MONITORING_REPORTS_MAIL,
   },
 });
