@@ -168,41 +168,29 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
   }
 
   /**
-   * Method to create and run a cronjob automatically. Subclasses will
-   * be **required** to call this method in their constructor with the
-   * desired cron expression.
-   *
-   * @access protected
-   * @param   {string} cronExpression
-   * @returns {void}
-   */
-  protected addCronJob(cronExpression: string): void {
-    // initialize a dynamic cronjob
-    const job = new CronJob(
-      cronExpression, // cronTime
-      this.runAsScheduler.bind(this), // onTick
-      undefined, // empty onComplete
-      false, // "startNow" (done with L183)
-      undefined, // timeZone
-      undefined, // empty resolves to default context
-      true, // "runOnInit"
-    );
-
-    // also register in nestjs schedulers
-    this.schedulerRegistry.addCronJob(
-      `statistics:cronjobs:leaderboards:${this.periodFormat}`,
-      job,
-    );
-
-    // also, always *schedule* when initialized
-    job.start();
-  }
-
-  /**
    * This method is the **entry point** of this scheduler. Due to
    * the usage of the `Cron` decorator, and the implementation
    * the nest backend runtime is able to discover this when the
-   * `processor` scope is enabled.
+   * `statistics` scope is enabled.
+   * <br /><br />
+   * This method is necessary to make sure this command is run
+   * with the correct `--collection` option.
+   * <br /><br />
+   * This method must be implemented in sub-classes with a proper
+   * cron expression value.
+   *
+   * @see BaseCommand
+   * @access public
+   * @async
+   * @returns {void}
+   */
+   public abstract runAsScheduler(): void;
+
+  /**
+   * This method is the **second entry point** of this scheduler. Due to
+   * the usage of the `Cron` decorator, and the implementation
+   * the nest backend runtime is able to discover this when the
+   * `statistics` scope is enabled.
    * <br /><br />
    * This method is necessary to make sure this command is run
    * with the correct `--collection` option.
@@ -210,11 +198,9 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    * @see BaseCommand
    * @access public
    * @async
-   * @param   {string[]}            passedParams
-   * @param   {BaseCommandOptions}  options
    * @returns {Promise<void>}
    */
-  public async runAsScheduler(): Promise<void> {
+  public async runScheduler(): Promise<void> {
     // prepares execution logger
     this.logger.setModule(`${this.scope}/${this.command}`);
 

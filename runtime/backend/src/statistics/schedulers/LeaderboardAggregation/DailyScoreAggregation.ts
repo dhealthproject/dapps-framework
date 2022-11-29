@@ -10,7 +10,7 @@
 // external dependencies
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { SchedulerRegistry } from "@nestjs/schedule";
+import { Cron, SchedulerRegistry } from "@nestjs/schedule";
 import { ConfigService } from "@nestjs/config";
 import moment from "moment";
 
@@ -83,7 +83,27 @@ export class DailyScoreAggregation extends LeaderboardAggregation {
       logService,
     );
     this.periodFormat = "D";
-    this.addCronJob("0 0 */3 * * *"); // every 3 hours (8 times per day)
+  }
+
+  /**
+   * This method is the **entry point** of this scheduler. Due to
+   * the usage of the `Cron` decorator, and the implementation
+   * the nest backend runtime is able to discover this when the
+   * `statistics` scope is enabled.
+   * <br /><br />
+   * This method is necessary to make sure this command is run
+   * with the correct `--collection` option.
+   * <br /><br />
+   * This cron method runs **every 3 hours (8 times per day)**.
+   *
+   * @see BaseCommand
+   * @access public
+   * @async
+   * @returns {Promise<void>}
+   */
+  @Cron("0 0 */3 * * *", { name: `statistics/LeaderboardAggregation/D` })
+  public async runAsScheduler(): Promise<void> {
+    this.runScheduler();
   }
 
   /**

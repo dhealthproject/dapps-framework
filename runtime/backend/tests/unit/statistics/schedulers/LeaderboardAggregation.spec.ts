@@ -195,7 +195,7 @@ describe("statistics/LeaderboardAggregation", () => {
         .mockResolvedValue();
 
       // act
-      await service.runAsScheduler();
+      await service.runScheduler();
 
       // assert
       expect(serviceDebugLogCall).toHaveBeenNthCalledWith(
