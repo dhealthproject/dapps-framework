@@ -10,7 +10,7 @@
 
 // external dependencies
 import { Injectable } from "@nestjs/common";
-import { Cron, SchedulerRegistry, CronExpression } from "@nestjs/schedule";
+import { Cron } from "@nestjs/schedule";
 import { InjectModel } from "@nestjs/mongoose";
 
 // statistics scope
@@ -32,6 +32,11 @@ import {
   ActivityDocument,
   ActivityModel,
 } from "../../../processor/models/ActivitySchema";
+import {
+  StatisticsDocument,
+  StatisticsQuery,
+} from "../../models/StatisticsSchema";
+import { PipelineStage } from "mongoose";
 
 @Injectable()
 export class UserTopActivities extends StatisticsCommand {
@@ -87,15 +92,13 @@ export class UserTopActivities extends StatisticsCommand {
   }
 
   public async aggregate(options?: StatisticsCommandOptions): Promise<void> {
-    const aggregationQuery = this.createAggregationQuery();
+    const aggregationQuery = await this.createAggregationQuery();
 
     // query statistics aggregation
     const results = await this.queryService.aggregate(
       aggregationQuery,
       this.activityModel,
     );
-
-    console.log({ results });
 
     // debug information about upcoming database operations
     if (options.debug && !options.quiet && results.length > 0) {
@@ -106,7 +109,28 @@ export class UserTopActivities extends StatisticsCommand {
       this.debugLog(`No aggregation subjects found`);
     }
 
+    // period is in daily format
+    const periodFormat = this.periodFormat;
+    const period = this.getNextPeriod(new Date());
+
     for (const result of results) {
+      const address = result._id; // L278 set userAddress as _id
+
+      // find one and create new (if not exists) or update (if exists)
+      await this.statisticsService.createOrUpdate(
+        new StatisticsQuery({
+          address,
+          period,
+          type: this.TYPE,
+        } as StatisticsDocument),
+        {
+          periodFormat,
+          amount: result.totalAssetsAmount,
+          data: {
+            topActivities: result.sport,
+          },
+        },
+      );
     }
   }
 
@@ -133,7 +157,7 @@ export class UserTopActivities extends StatisticsCommand {
    * @returns {Promise<void>}
    */
   // "0 */10 * * * *"
-  @Cron(CronExpression.EVERY_10_SECONDS, {
+  @Cron("0 */10 * * * *", {
     name: "statistics:cronjobs:user-top-activities",
   })
   public async runAsScheduler(): Promise<void> {
@@ -192,7 +216,24 @@ export class UserTopActivities extends StatisticsCommand {
    *
    * @access private
    */
-  private createAggregationQuery() {
+  private async createAggregationQuery(): Promise<PipelineStage[]> {
     return [{ $group: { _id: "$activityData.sport", count: { $sum: 1 } } }];
+  }
+
+  /**
+   * Method to generate period string representation of today's search range.
+   * The result string is in format: `{year}{month}{day}`.
+   *
+   * @access protected
+   * @param {Date} dateNow The current {@link Date} instance that is passed from {@link LeaderboardAggregation}.
+   * @returns {string} The period string representation of today's search range.
+   */
+  protected getNextPeriod(dateNow: Date): string {
+    // format: `{year}{month}{day}`
+    return (
+      `${dateNow.getUTCFullYear()}` +
+      `${("0" + (dateNow.getUTCMonth() + 1)).slice(-2)}` +
+      `${("0" + dateNow.getUTCDate()).slice(-2)}`
+    );
   }
 }
