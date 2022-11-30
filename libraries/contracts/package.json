@@ -1,6 +1,6 @@
 {
   "name": "@dhealth/contracts",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "homepage": "https://github.com/dhealthproject/dapps-framework/tree/main/libraries/contracts#readme",
   "description": "Contracts for dApps Development with dHealth Network",
   "author": "dHealth Network <devs@dhealth.foundation>",
