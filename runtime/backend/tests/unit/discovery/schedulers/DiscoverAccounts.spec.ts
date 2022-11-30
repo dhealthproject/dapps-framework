@@ -150,6 +150,7 @@ describe("discovery/DiscoverAccounts", () => {
 
     // overwrites the internal model (injected)
     (service as any).model = new MockModel();
+    (service as any).getUserReferralCode = jest.fn().mockReturnValue("JOINFIT-12345678");
   });
 
   it("should be defined", () => {
@@ -478,7 +479,10 @@ describe("discovery/DiscoverAccounts", () => {
 
     it ("should create a document given non-existing address", async () => {
       // prepare
-      const expectedData = { address: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY" };
+      const expectedData = {
+        address: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        referralCode: "JOINFIT-12345678", // getUserReferralCode mocked (L153)
+      };
       (service as any).discoveredAddresses = ["NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY"];
       (service as any).accountsService.exists = jest.fn().mockReturnValue(false); // force non-existence
 

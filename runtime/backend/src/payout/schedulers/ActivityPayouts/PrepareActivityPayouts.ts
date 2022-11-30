@@ -300,7 +300,10 @@ export class PrepareActivityPayouts extends PreparePayouts<
     // common transformations and factor
     // Strava expresses in calories not `kcal`
     const kC = C / 1000;
-    const dE = 1000000; // ELEVATE factor
+
+    // dHealth ELEVATE factor (depends on divisibility)
+    const divisibility: number = parseInt("" + this.earnAsset.divisibility);
+    const dE = Math.pow(10, divisibility); // ELEVATE factor
 
     // @see https://developers.strava.com/docs/reference/#api-models-SportType
     // This method uses abbreviated variable names in order to keep
@@ -334,7 +337,6 @@ export class PrepareActivityPayouts extends PreparePayouts<
     }
 
     // make sure to work only with *integers* (always absolute amounts)
-    const divisibility: number = parseInt("" + this.earnAsset.divisibility);
     return Math.round(Math.floor(amount * Math.pow(10, divisibility)));
   }
 

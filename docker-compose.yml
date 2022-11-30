@@ -8,7 +8,7 @@ services:
       context: runtime/dapp-frontend-vue
       target: production
     ports:
-      - ${FRONTEND_PORT}:8080
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
     env_file:
       - runtime/dapp-frontend-vue/.env
     command: npm run serve:prod
@@ -22,7 +22,7 @@ services:
       context: runtime/backend
       target: production
     ports:
-      - ${BACKEND_PORT}:7903
+      - ${BACKEND_PORT}:${BACKEND_PORT}
     env_file:
       - .env
     command: npm run start:prod

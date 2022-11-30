@@ -33,33 +33,35 @@ import { SignerService } from "../../../../src/payout/services/SignerService";
 import { MathService } from "../../../../src/payout/services/MathService";
 import { PrepareActivityPayouts } from "../../../../src/payout/schedulers/ActivityPayouts/PrepareActivityPayouts";
 
-const dE = 1000000; // elevate factor
+const dE_2 = 100; // elevate factor with div=2
+const dE_3 = 1000; // elevate factor with div=3
+const dE_6 = 1000000; // elevate factor with div=6
 const mockActivityRewardWalkFormulaFirst = Math.round(Math.floor(
-  ((((2+5)/(4/60))*(3+5+(1/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
+  ((((2+5)/(4/60))*(3+5+(1/1000))/dE_2)*1.2*100) * 100 // <-- 2 zeros (L172)
 ));
 
 const mockActivityRewardWalkFormulaSecond = Math.round(Math.floor(
-  ((((4+1)/(2/60))*(3+1+(5/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
+  ((((4+1)/(2/60))*(3+1+(5/1000))/dE_2)*1.2*100) * 100 // <-- 2 zeros (L172)
 ));
 
 const mockActivityRewardWalkFormulaThird = Math.round(Math.floor(
-  ((((8+5)/(6/60))*(0.8+5+(9/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
+  ((((8+5)/(6/60))*(0.8+5+(9/1000))/dE_2)*1.2*100) * 100 // <-- 2 zeros (L172)
 ));
 
 const mockActivityRewardWalkFormulaFirstAdjusted = Math.round(Math.floor(
-  ((((2+5)/(4/60))*(0.8+5+(1/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
+  ((((2+5)/(4/60))*(0.8+5+(1/1000))/dE_2)*1.2*100) * 100 // <-- 2 zeros (L172)
 ));
 
 const mockActivityRewardWalkFormulaFirstDiv3 = Math.round(Math.floor(
-  ((((2+5)/(4/60))*(3+5+(1/1000))/dE)*1.2*100) * 1000 // <-- 3 zeros
+  ((((2+5)/(4/60))*(3+5+(1/1000))/dE_3)*1.2*100) * 1000 // <-- 3 zeros
 ));
 
 const mockActivityRewardWalkFormulaFirstDiv6 = Math.round(Math.floor(
-  ((((2+5)/(4/60))*(3+5+(1/1000))/dE)*1.2*100) * 1000000 // <-- 6 zeros
+  ((((2+5)/(4/60))*(3+5+(1/1000))/dE_6)*1.2*100) * 1000000 // <-- 6 zeros
 ));
 
 const mockActivityRewardWalkFormulaSecondAdjusted = Math.round(Math.floor(
-  ((((4+1)/(2/60))*(0.8+1+(5/1000))/dE)*1.2*100) * 100 // <-- 2 zeros (L172)
+  ((((4+1)/(2/60))*(0.8+1+(5/1000))/dE_2)*1.2*100) * 100 // <-- 2 zeros (L172)
 ));
 
 const activityMocks = [
