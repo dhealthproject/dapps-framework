@@ -38,7 +38,7 @@ const componentOptions = {
       getters: {
         "auth/isAuthenticated": true,
         "auth/getChallenge": "rwrwer",
-        "auth/getAuthRegistry": "fake-registry"
+        "auth/getAuthRegistry": "fake-registry",
       },
     },
   },

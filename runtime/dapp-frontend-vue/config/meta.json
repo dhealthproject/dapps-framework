@@ -1,30 +1,30 @@
 {
   "manifest": {
-    "name": "dHealth dApp",
-    "short_name": "dHealth dApp",
-    "description": "dHealth dApp is built with dHealth dApp Framework"
+    "name": "ELEVATE",
+    "short_name": "ELEVATE",
+    "description": "Earn $FIT for daily activities"
   },
   "App": {
     "htmlAttrs": { "lang": "en", "amp": true },
-    "title": "dHealth dApp",
-    "description": "dHealth dApp is built with dHealth dApp Framework",
-    "author": "dHealth Network: https://dhealth.network",
-    "base": "example-dapp.dhealth.com",
-    "og:title": "dHealth dApp",
+    "title": "ELEVATE",
+    "description": "Earn $FIT for daily activities",
+    "author": "dHealth Network: https://dhealth.com",
+    "base": "elevate.dhealth.com",
+    "og:title": "ELEVATE",
     "og:type": "website",
-    "og:url": "example-dapp.dhealth.com",
-    "og:image": "https://example-dapp.dhealth.com/img/icons/android-chrome-192x192.png"
+    "og:url": "elevate.dhealth.com",
+    "og:image": "https://elevate.dhealth.com/img/icons/android-chrome-192x192.png"
   },
   "Assembler": {
-    "title": "Assembled page | dHealth dApp",
-    "description": "dHealth dApp is built with dHealth dApps Framework. This page assembled dynamically."
+    "title": "Assembled page | ELEVATE",
+    "description": "Earn $FIT for daily activities"
   },
   "Dashboard": {
-    "title": "Dashboard | dHealth dApp",
-    "description": "dHealth dApp is built with dHealth dApps Framework."
+    "title": "Dashboard | ELEVATE",
+    "description": "Earn $FIT for daily activities"
   },
   "LoginScreen": {
-    "title": "Sign in | dHealth dApp",
-    "description": "dHealth dApp is built with dHealth dApps Framework."
+    "title": "Sign in | ELEVATE",
+    "description": "Earn $FIT for daily activities"
   }
 }
