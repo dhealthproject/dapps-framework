@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.5.4][0.5.4] - 24-Nov-2022
+## [0.5.5][0.5.5] - 24-Nov-2022
 
 #### Added
 
@@ -33,5 +33,5 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealth/contracts] fix(api): facade contract classes use public inputs and parameters
 
 
-[0.5.4]: https://github.com/dhealthproject/dapps-framework/compare/v0.4.0..v0.5.4
+[0.5.5]: https://github.com/dhealthproject/dapps-framework/compare/v0.4.0..v0.5.5
 [0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0
