@@ -92,6 +92,14 @@
     box-shadow: 4px 4px 1px 1px $black;
     background-color: $base-grey;
 
+    .login-mobile {
+      display: none;
+
+      @include devices(mobile) {
+        display: inline-block;
+      }
+    }
+
     &__title {
       display: block;
       margin-bottom: 16px;
@@ -102,11 +110,16 @@
 
       @include devices(mobile) {
         text-align: center;
+        display: none;
       }
     }
 
     &__list {
       text-align: left;
+
+      @include devices(mobile) {
+        display: none;
+      } 
 
       li {
         display: flex;
@@ -142,9 +155,11 @@
       font-weight: 500;
       font-size: 12px;
       line-height: 130%;
+      display: inline-block;
 
       @include devices(mobile) {
         justify-content: center;
+        margin-top: 20px;
       }
 
       a {
@@ -160,6 +175,10 @@
     .base {
       border: none;
       background-color: transparent;
+
+      @include devices(mobile) {
+        display: none;
+      } 
 
       img {
         display: inline-block;

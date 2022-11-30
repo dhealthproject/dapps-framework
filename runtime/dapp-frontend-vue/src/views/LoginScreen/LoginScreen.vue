@@ -45,6 +45,13 @@
           <template v-slot:left>
             <DappQR v-if="qrConfig" :qrCode="qrConfig" class="qr-code" />
             <Loader v-else />
+            <a
+              :href="mobileHref"
+              target="_blank"
+              rel="noopener"
+              class="login-mobile dapp-ui-button__component"
+              v-html="$t('login_screen.sign_mobile')"
+            />
           </template>
           <template v-slot:right>
             <span

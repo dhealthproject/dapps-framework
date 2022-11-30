@@ -278,6 +278,16 @@ export default class LoginScreen extends MetaView {
   }
 
   /**
+   * This method returns payload necessary for mobile to open Signer App for an authentication
+   *
+   * @access protected
+   * @returns {string}
+   */
+  protected get mobileHref(): string {
+    return `dhealth://sign?payload=${this.qrConfig?.toJSON()}`;
+  }
+
+  /**
    * This method is called upon *mounting* the component onto a Vue
    * app. For this component, it will populate the {@link authChallenge}
    * property with a valid authentication challenge as requested from

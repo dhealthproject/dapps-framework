@@ -17,6 +17,10 @@
   box-shadow: 4px 5px 0px $black;
   border: 1px solid $login-dark;
 
+  @include devices(laptop) {
+    padding: 16px;
+  }
+
   &__total-earned {
     background-color: $stats-teal-light;
     padding: 16px 16px 12px;
@@ -27,6 +31,10 @@
       font-family: "Dotrice";
       font-size: 72px;
       line-height: 100%;
+
+      @include devices(laptop) {
+        font-size: 64px;
+      }
 
       .dark {
         color: $button-text-dark;

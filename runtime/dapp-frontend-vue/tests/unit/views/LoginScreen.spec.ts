@@ -67,6 +67,12 @@ describe("LoginScreen -->", () => {
     expect(widget.find(".dapp-nav-panel__left").exists()).to.be.true;
   });
 
+  it("should display display button on mobile", () => {
+    expect(widget.find(".login-mobile").text()).to.be.equal(
+      "Sign with Signer App"
+    );
+  });
+
   it("should display qr code", () => {
     // await widget.vm.$nextTick();
     // expect(widget.find(".qr-code").exists()).to.be.true;

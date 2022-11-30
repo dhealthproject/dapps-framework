@@ -2,6 +2,7 @@
     "login_screen": {
         "connect_wallet": "Connect your Wallet",
         "in_four_steps": "In 4 easy steps...",
+        "sign_mobile": "Sign with Signer App",
         "steps": [
           { "id": "tutorial_1", "text": "Open dHealth Signer app on your phone" },
           { "id": "tutorial_2", "text": "Tap on scan from the bottom navigation bar" },
