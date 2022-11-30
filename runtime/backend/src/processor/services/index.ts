@@ -8,5 +8,4 @@
  * @license     LGPL-3.0
  */
 // services index
-export * from "./ActivitiesService";
 export * from "./OperationsService";

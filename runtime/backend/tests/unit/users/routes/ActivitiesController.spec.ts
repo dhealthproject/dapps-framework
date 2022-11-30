@@ -21,12 +21,12 @@ import { AccountsService } from "../../../../src/common/services/AccountsService
 import { AuthService } from "../../../../src/common/services/AuthService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { QueryService } from "../../../../src/common/services/QueryService";
-import { ActivitiesService } from "../../../../src/processor/services/ActivitiesService";
-import { ActivitiesController } from "../../../../src/processor/routes/ActivitiesController";
-import { ActivityDocument } from "../../../../src/processor/models/ActivitySchema";
+import { ActivitiesService } from "../../../../src/users/services/ActivitiesService";
+import { ActivitiesController } from "../../../../src/users/routes/ActivitiesController";
+import { ActivityDocument } from "../../../../src/users/models/ActivitySchema";
 import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 
-describe("processor/ActivitiesController", () => {
+describe("users/ActivitiesController", () => {
   let controller: ActivitiesController;
   let activitiesService: ActivitiesService;
   let authService: AuthService;

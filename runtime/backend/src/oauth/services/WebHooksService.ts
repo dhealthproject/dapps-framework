@@ -25,10 +25,10 @@ import {
   ActivityDocument,
   ActivityModel,
   ActivityQuery,
-} from "../../processor/models/ActivitySchema";
-import { ActivityDataDocument } from "../../processor/models/ActivityDataSchema";
-import { ProcessingState } from "../../processor/models/ProcessingStatusDTO";
-import { ActivitiesService } from "../../processor/services/ActivitiesService";
+} from "../../users/models/ActivitySchema";
+import { ActivityDataDocument } from "../../users/models/ActivityDataSchema";
+import { ProcessingState } from "../../users/models/ProcessingStatusDTO";
+import { ActivitiesService } from "../../users/services/ActivitiesService";
 
 // emitted events
 import { OnActivityCreated } from "../events/OnActivityCreated";

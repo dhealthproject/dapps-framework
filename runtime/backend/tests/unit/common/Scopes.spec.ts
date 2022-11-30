@@ -104,16 +104,6 @@ jest.mock("../../../src/processor/modules/OperationsModule", () => {
   return { OperationsModule: OperationsModuleMock };
 });
 
-const ActivitiesModuleMock: any = jest.fn();
-jest.mock("../../../src/processor/modules/ActivitiesModule", () => {
-  return { ActivitiesModule: ActivitiesModuleMock };
-});
-
-const WebHooksModuleMock: any = jest.fn();
-jest.mock("../../../src/oauth/modules/WebHooksModule", () => {
-  return { WebHooksModule: WebHooksModuleMock };
-});
-
 // payout scope
 const PayoutModuleMock: any = jest.fn();
 jest.mock("../../../src/payout/PayoutModule", () => {
@@ -143,9 +133,25 @@ jest.mock("../../../src/notifier/NotifierModule", () => {
 });
 
 // oauth scope
+const WebHooksModuleMock: any = jest.fn();
+jest.mock("../../../src/oauth/modules/WebHooksModule", () => {
+  return { WebHooksModule: WebHooksModuleMock };
+});
+
 const OAuthModuleMock: any = jest.fn();
 jest.mock("../../../src/oauth/OAuthModule", () => {
   return { OAuthModule: OAuthModuleMock };
+});
+
+// users scope
+const ActivitiesModuleMock: any = jest.fn();
+jest.mock("../../../src/users/modules/ActivitiesModule", () => {
+  return { ActivitiesModule: ActivitiesModuleMock };
+});
+
+const UsersModuleMock: any = jest.fn();
+jest.mock("../../../src/users/UsersModule", () => {
+  return { UsersModule: UsersModuleMock };
 });
 
 // schedulers

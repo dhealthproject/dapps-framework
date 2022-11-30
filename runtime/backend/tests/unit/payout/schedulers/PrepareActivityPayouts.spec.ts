@@ -21,9 +21,9 @@ import { StateService } from "../../../../src/common/services/StateService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { LogService } from "../../../../src/common/services/LogService";
 
-// processor scope
-import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/processor/models/ActivitySchema";
-import { ProcessingState } from "../../../../src/processor/models/ProcessingStatusDTO";
+// users scope
+import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/users/models/ActivitySchema";
+import { ProcessingState } from "../../../../src/users/models/ProcessingStatusDTO";
 
 // payout scope
 import { PayoutState } from "../../../../src/payout/models/PayoutStatusDTO";

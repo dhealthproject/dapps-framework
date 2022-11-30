@@ -19,12 +19,12 @@ import { LogService } from "../../../common/services/LogService";
 import { QueryService } from "../../../common/services/QueryService";
 import { StateService } from "../../../common/services/StateService";
 
-// processor scope
+// users scope
 import {
   Activity,
   ActivityDocument,
   ActivityModel,
-} from "../../../processor/models/ActivitySchema";
+} from "../../../users/models/ActivitySchema";
 
 // statistics scope
 import {

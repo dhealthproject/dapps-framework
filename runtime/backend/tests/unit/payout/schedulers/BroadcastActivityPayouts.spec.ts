@@ -22,9 +22,9 @@ import { StateService } from "../../../../src/common/services/StateService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 
-// processor scope
-import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/processor/models/ActivitySchema";
-import { ActivitiesService } from "../../../../src/processor/services/ActivitiesService";
+// users scope
+import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/users/models/ActivitySchema";
+import { ActivitiesService } from "../../../../src/users/services/ActivitiesService";
 
 // payout scope
 import { PayoutState } from "../../../../src/payout/models/PayoutStatusDTO";

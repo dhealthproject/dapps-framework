@@ -8,5 +8,4 @@
  * @license     LGPL-3.0
  */
 // modules index
-export * from "./ActivitiesModule";
 export * from "./OperationsModule";

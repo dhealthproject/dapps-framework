@@ -15,6 +15,7 @@ import { StatisticsModule } from "../statistics/StatisticsModule";
 import { NotifierModule } from "../notifier/NotifierModule";
 import { OAuthModule } from "../oauth/OAuthModule";
 import { AppConfiguration } from "../AppConfiguration";
+import { UsersModule } from "../users/UsersModule";
 
 /**
  * @label COMMON
@@ -56,4 +57,5 @@ export const Scopes: { [key: string]: any } = {
   statistics: StatisticsModule,
   notifier: NotifierModule,
   oauth: OAuthModule,
+  users: UsersModule,
 };

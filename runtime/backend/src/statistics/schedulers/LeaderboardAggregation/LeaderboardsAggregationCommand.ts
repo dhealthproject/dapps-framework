@@ -28,11 +28,8 @@ import { MonthlyScoreAggregation } from "./MonthlyScoreAggregation";
 // discovery scope
 import { Asset, AssetSchema } from "../../../discovery/models/AssetSchema";
 
-// processor scope
-import {
-  Activity,
-  ActivitySchema,
-} from "../../../processor/models/ActivitySchema";
+// users scope
+import { Activity, ActivitySchema } from "../../../users/models/ActivitySchema";
 
 /**
  * @class LeaderboardAggregationCommand

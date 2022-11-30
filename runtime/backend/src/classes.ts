@@ -87,6 +87,7 @@ export * from "./notifier/schedulers";
 export * from "./notifier/services";
 
 // oauth scope
+export * from "./oauth/OAuthModule";
 export * from "./oauth/drivers";
 export * from "./oauth/events";
 export * from "./oauth/models";
@@ -94,6 +95,13 @@ export * from "./oauth/modules";
 export * from "./oauth/requests";
 export * from "./oauth/routes";
 export * from "./oauth/services";
+
+// users scope
+export * from "./users/UsersModule";
+export * from "./users/models";
+export * from "./users/modules";
+export * from "./users/routes";
+export * from "./users/services";
 
 // worker scope
 export * from "./worker/WorkerModule";

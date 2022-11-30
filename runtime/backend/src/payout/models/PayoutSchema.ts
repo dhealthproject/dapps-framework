@@ -18,8 +18,8 @@ import { Documentable } from "../../common/concerns/Documentable";
 import { Transferable } from "../../common/concerns/Transferable";
 import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
 
-// processor scope
-import { ActivityModel } from "../../processor/models/ActivitySchema";
+// users scope
+import { ActivityModel } from "../../users/models/ActivitySchema";
 
 // payout scope
 import { PayoutDTO } from "./PayoutDTO";

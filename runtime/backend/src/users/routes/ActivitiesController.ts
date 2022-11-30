@@ -78,7 +78,7 @@ namespace HTTPResponses {
 }
 
 /**
- * @label PROCESSOR
+ * @label USERS
  * @class ActivitiesController
  * @description The activities controller of the app. Handles requests
  * about *activities* that are available in the database.

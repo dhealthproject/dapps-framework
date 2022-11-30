@@ -24,4 +24,6 @@ export type Scope =
   | "notifier"
   | "payout"
   | "processor"
-  | "statistics";
+  | "statistics"
+  | "oauth"
+  | "users";

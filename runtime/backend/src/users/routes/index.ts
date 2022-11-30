@@ -8,4 +8,4 @@
  * @license     LGPL-3.0
  */
 // routes index
-export * from "./OperationsController";
+export * from "./ActivitiesController";

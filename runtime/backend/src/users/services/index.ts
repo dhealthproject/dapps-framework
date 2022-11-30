@@ -7,5 +7,5 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// routes index
-export * from "./OperationsController";
+// services index
+export * from "./ActivitiesService";

@@ -7,15 +7,15 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// configuration models
-export * from "./ProcessorConfig";
-
 // database models
-export * from "./OperationSchema";
-
-// generic types / utilities
-export * from "./OperationProcessorStateData";
-export * from "./OperationTypes";
+export * from "./ActivityDataSchema";
+export * from "./ActivitySchema";
 
 // specialized data transfer objects
-export * from "./OperationDTO";
+export * from "./ActivityDataDTO";
+export * from "./ActivityDTO";
+export * from "./GeolocationDTO";
+export * from "./GeolocationLineDTO";
+export * from "./GeolocationPointDTO";
+export * from "./GeolocationPolygonDTO";
+export * from "./ProcessingStatusDTO";

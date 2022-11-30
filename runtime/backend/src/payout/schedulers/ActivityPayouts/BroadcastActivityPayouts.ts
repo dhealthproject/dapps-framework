@@ -20,14 +20,13 @@ import { NetworkService } from "../../../common/services/NetworkService";
 import { StateService } from "../../../common/services/StateService";
 import { QueryService } from "../../../common/services/QueryService";
 
-// processor scope
-// @todo decouple payout from processor by using dynamic "activities" query
+// users scope
 import {
   Activity,
   ActivityDocument,
   ActivityModel,
-} from "../../../processor/models/ActivitySchema";
-import { ActivitiesService } from "../../../processor/services/ActivitiesService";
+} from "../../../users/models/ActivitySchema";
+import { ActivitiesService } from "../../../users/services/ActivitiesService";
 
 // payout scope
 import {

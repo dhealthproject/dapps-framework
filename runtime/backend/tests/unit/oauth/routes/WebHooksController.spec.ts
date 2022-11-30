@@ -22,8 +22,8 @@ import { CipherService } from "../../../../src/common/services/CipherService";
 import { OAuthProviderParameters } from "../../../../src/oauth/models/OAuthConfig";
 import { AccountIntegrationDocument } from "../../../../src/common/models/AccountIntegrationSchema";
 import { WebHooksService } from "../../../../src/oauth/services/WebHooksService";
-import { ActivitiesService } from "../../../../src/processor/services/ActivitiesService";
-import { ActivityDocument } from "../../../../src/processor/models/ActivitySchema";
+import { ActivitiesService } from "../../../../src/users/services/ActivitiesService";
+import { ActivityDocument } from "../../../../src/users/models/ActivitySchema";
 import { LogService } from "../../../../src/common/services/LogService";
 
 // tested module

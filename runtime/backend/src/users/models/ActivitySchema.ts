@@ -18,7 +18,7 @@ import { Documentable } from "../../common/concerns/Documentable";
 import { Transferable } from "../../common/concerns/Transferable";
 import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
 
-// processor scope
+// users scope
 import { ActivityDTO } from "./ActivityDTO";
 import { ActivityData, ActivityDataSchema } from "./ActivityDataSchema";
 import { ProcessingState } from "./ProcessingStatusDTO";

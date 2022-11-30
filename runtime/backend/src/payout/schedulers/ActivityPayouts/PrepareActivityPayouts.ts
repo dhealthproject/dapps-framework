@@ -19,14 +19,14 @@ import { LogService } from "../../../common/services/LogService";
 import { QueryService } from "../../../common/services/QueryService";
 import { StateService } from "../../../common/services/StateService";
 
-// processor scope
+// users scope
 import {
   Activity,
   ActivityDocument,
   ActivityModel,
   ActivityQuery,
-} from "../../../processor/models/ActivitySchema";
-import { ProcessingState } from "../../../processor/models/ProcessingStatusDTO";
+} from "../../../users/models/ActivitySchema";
+import { ProcessingState } from "../../../users/models/ProcessingStatusDTO";
 
 // payout scope
 import { PayoutsService } from "../../services/PayoutsService";

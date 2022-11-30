@@ -8,10 +8,10 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
-import { ActivityDTO } from "../../../../src/processor/models/ActivityDTO";
-import { Activity, ActivityDocument } from "../../../../src/processor/models/ActivitySchema";
+import { ActivityDTO } from "../../../../src/users/models/ActivityDTO";
+import { Activity, ActivityDocument } from "../../../../src/users/models/ActivitySchema";
 
-describe("processor/ActivitySchema", () => {
+describe("users/ActivitySchema", () => {
   describe("toQuery()", () => {
     it("should return correct value", () => {
       // prepare

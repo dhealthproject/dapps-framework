@@ -13,9 +13,9 @@ import { getModelToken } from "@nestjs/mongoose";
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
-import { ActivitiesService } from "../../../../src/processor/services/ActivitiesService";
+import { ActivitiesService } from "../../../../src/users/services/ActivitiesService";
 import { QueryService } from "../../../../src/common/services/QueryService";
-import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/processor/models/ActivitySchema";
+import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/users/models/ActivitySchema";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 
 describe("processor/ActivitiesService", () => {

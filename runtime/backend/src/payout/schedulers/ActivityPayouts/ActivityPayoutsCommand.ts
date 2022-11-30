@@ -19,13 +19,9 @@ import { StateModule } from "../../../common/modules/StateModule";
 import { QueryModule } from "../../../common/modules/QueryModule";
 import { LogModule } from "../../../common/modules/LogModule";
 
-// processor scope
-// @todo decouple payout from processor by using dynamic "activities" query
-import {
-  Activity,
-  ActivitySchema,
-} from "../../../processor/models/ActivitySchema";
-import { ActivitiesModule } from "../../../processor/modules/ActivitiesModule";
+// users scope
+import { Activity, ActivitySchema } from "../../../users/models/ActivitySchema";
+import { ActivitiesModule } from "../../../users/modules/ActivitiesModule";
 
 // payout scope
 import { PayoutsModule } from "../../modules/PayoutsModule";

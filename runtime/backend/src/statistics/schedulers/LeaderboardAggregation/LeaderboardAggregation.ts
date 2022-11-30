@@ -29,11 +29,8 @@ import {
   AssetModel,
 } from "../../../discovery/models/AssetSchema";
 
-// processor scope
-import {
-  Activity,
-  ActivityModel,
-} from "../../../processor/models/ActivitySchema";
+// users scope
+import { Activity, ActivityModel } from "../../../users/models/ActivitySchema";
 
 // statistics scope
 import { Statistics, StatisticsModel } from "../../models/StatisticsSchema";

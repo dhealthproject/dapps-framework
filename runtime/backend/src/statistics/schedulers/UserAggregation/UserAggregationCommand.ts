@@ -23,11 +23,8 @@ import { Statistics, StatisticsSchema } from "../../models/StatisticsSchema";
 import { StatisticsModule } from "../../modules/StatisticsModule";
 import { UserAggregation } from "./UserAggregation";
 
-// processor scope
-import {
-  Activity,
-  ActivitySchema,
-} from "../../../processor/models/ActivitySchema";
+// users scope
+import { Activity, ActivitySchema } from "../../../users/models/ActivitySchema";
 
 /**
  * @class UserAggregationCommand

@@ -22,12 +22,9 @@ import {
   AccountIntegrationSchema,
 } from "../../common/models/AccountIntegrationSchema";
 
-// processor scope
-import { ActivitiesModule } from "../../processor/modules/ActivitiesModule";
-import {
-  Activity,
-  ActivitySchema,
-} from "../../processor/models/ActivitySchema";
+// users scope
+import { ActivitiesModule } from "../../users/modules/ActivitiesModule";
+import { Activity, ActivitySchema } from "../../users/models/ActivitySchema";
 
 // oauth scope
 import { AppConfiguration } from "../../AppConfiguration";
