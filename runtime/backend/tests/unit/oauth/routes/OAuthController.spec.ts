@@ -258,4 +258,41 @@ describe("common/OAuthController", () => {
       });
     });
   });
+
+  describe("getProfile()", () => {
+    it("should call correct method and respond with DTO", async () => {
+      // prepare
+      (controller as any).authService = {
+        getAccount: jest.fn().mockReturnValue({
+          address: "fakeAddress",
+          firstTransactionAt: 0,
+          firstTransactionAtBlock: 0,
+          transactionsCount: 0,
+          referredBy: "fakeOtherAddress",
+          referralCode: "otherUser",
+        }),
+      };
+      (controller as any).oauthService = {
+        getIntegrations: jest.fn().mockReturnValue({
+          data: [
+            { name: "strava" }
+          ],
+        }),
+      };
+
+      // act
+      const profile = await (controller as any).getProfile({});
+
+      // assert
+      expect(profile).toStrictEqual({
+        address: "fakeAddress",
+        firstTransactionAt: 0,
+        firstTransactionAtBlock: 0,
+        integrations: ["strava"],
+        transactionsCount: 0,
+        referredBy: "fakeOtherAddress",
+        referralCode: "otherUser",
+      });
+    });
+  });
 });
