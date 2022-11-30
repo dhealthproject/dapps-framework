@@ -262,7 +262,11 @@ export abstract class BroadcastPayouts<
 
     // (2) for each discovered subject, we can now broadcast the payout
     // so we update the database document so that it reflects that
-    for (let j = 0, max_s = options.maxCount; j < max_s; j++) {
+    for (
+      let j = 0, max_s = Math.min(payouts.length, options.maxCount);
+      j < max_s;
+      j++
+    ) {
       // retrieve full subject details
       const payout: PayoutDocument = payouts[j];
 
