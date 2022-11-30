@@ -371,7 +371,7 @@ describe("processor/WebHooksService", () => {
       );
     });
 
-    it ("should emit correct event 'processor.activity.created'", async () => {
+    it ("should emit correct event 'oauth.activity.created'", async () => {
       // prepare
       mockDate = new Date(2022, 0, 22); // <-- 0 is january
       const countMock = jest.fn().mockReturnValue(0);
@@ -399,7 +399,7 @@ describe("processor/WebHooksService", () => {
       // assert
       expect(emitMock).toHaveBeenCalledTimes(1);
       expect(emitMock).toHaveBeenCalledWith(
-        "processor.activity.created",
+        "oauth.activity.created",
         OnActivityCreated.create(activitySlug),
       );
     });

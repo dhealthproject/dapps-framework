@@ -11,7 +11,7 @@
  * @label EVENTS
  * @class OnActivityDownloaded
  * @description An event class that is attached to *emitted events* as a payload
- * for events with the name `processor.activities.downloaded`.
+ * for events with the name `oauth.activities.downloaded`.
  * <br /><br />
  * This class can also be used to implement the event emitter.
  * <br /><br />

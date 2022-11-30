@@ -78,7 +78,7 @@ export class WebHooksService {
    * <br /><br />
    * After a successful execution of processing an incoming event,
    * this method will *fire an internal event* with the identifier:
-   * `processor.activity.created`. This event can be caught to use
+   * `oauth.activity.created`. This event can be caught to use
    * the fulfilled (completed) activity details in other places.
    *
    * @access public
@@ -163,7 +163,7 @@ export class WebHooksService {
 
       // internal event emission
       this.eventEmitter.emit(
-        "processor.activity.created",
+        "oauth.activity.created",
         OnActivityCreated.create(activitySlug),
       );
 
@@ -182,7 +182,7 @@ export class WebHooksService {
 
   /**
    * This method serves as an **event listener** for the internal
-   * event with identifier `processor.activity.created`. The main
+   * event with identifier `oauth.activity.created`. The main
    * purpose of this listener is to *request activity details* from
    * a data provider.
    * <br /><br />
@@ -203,7 +203,7 @@ export class WebHooksService {
    * @emits     {@link OnActivityDownloaded}     Given a successful activity details download from data provider (downloading success).
    * @throws    {Error}               Given missing OAuth authorization, unreachable/invalid Strava request or any other error occurs while requesting activity details.
    */
-  @OnEvent("processor.activity.created", { async: true })
+  @OnEvent("oauth.activity.created", { async: true })
   public async onActivityCreated(event: OnActivityCreated): Promise<void> {
     // event listener logs are grouped
     const logger = new LogService(`${AppConfiguration.dappName}/EVENTS`);
@@ -268,7 +268,7 @@ export class WebHooksService {
 
       // internal event emission
       this.eventEmitter.emit(
-        "processor.activity.downloaded",
+        "oauth.activity.downloaded",
         OnActivityDownloaded.create(activity.slug),
       );
 
