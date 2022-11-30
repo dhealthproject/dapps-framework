@@ -153,8 +153,12 @@ describe("contracts/Handshake", () => {
       expect("issuer" in body).to.be.equal(true);
       expect("recipient" in body).to.be.equal(true);
       expect("operation" in body).to.be.equal(true);
-      expect(body.issuer).to.be.equal("71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE");
-      expect(body.recipient).to.be.equal("71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE");
+      expect(body.issuer).to.be.equal(
+        "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE"
+      );
+      expect(body.recipient).to.be.equal(
+        "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE"
+      );
       expect(body.operation).to.be.equal(mockTransactionHash);
     });
   });
