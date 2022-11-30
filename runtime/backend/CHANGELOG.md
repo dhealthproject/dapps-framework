@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.5.0][0.5.0] - 24-Nov-2022
+## [0.5.4][0.5.4] - 24-Nov-2022
 
 #### Added
 
@@ -89,6 +89,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: fix lint
 - [@dhealthdapps/backend] test: fix failed tests
 - [@dhealthdapps/backend] fix(api): update migration index, add missing field for accounts
+- [@dhealthdapps/backend] fix(api): update amount generation with divisibility change and fix docker ports
 
 ## [0.4.0][0.4.0] - 19-Oct-2022
 
@@ -235,7 +236,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: add implementation for schedulers enabled through scopes and more refactor (types)
 
 
-[0.5.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.4.0..v0.5.0
+[0.5.4]: https://github.com/dhealthproject/dapps-framework/compare/v0.4.0..v0.5.4
 [0.4.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.4.0
 [0.3.1]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.2.0..v0.3.0

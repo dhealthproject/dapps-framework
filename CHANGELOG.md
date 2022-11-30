@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.5.0][0.5.0] - 24-Nov-2022
+## [0.5.4][0.5.4] - 24-Nov-2022
 
 #### Added
 
@@ -122,6 +122,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] test: fix failed tests
 - [@dhealthdapps/backend] fix: update leaderboards to use sub-sum routine with array
 - [@dhealthdapps/backend] fix(api): update migration index, add missing field for accounts
+- [@dhealthdapps/backend] fix(api): update amount generation with divisibility change and fix docker ports
 - [@dhealthdapps/frontend] fix(api): access token refresh does not contain remote identifier
 - [@dhealthdapps/frontend] fix(state): remove mock of leaderboard items, add correct font family for stats
 - [@dhealthdapps/frontend] fix(style): linter issues
@@ -135,6 +136,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] fix(tests): update component inputs and setters
 - [@dhealthdapps/frontend] fix: update class property type
 - [@dhealthdapps/frontend] fix(tests): add missing mock for auth/getAuthRegistry
+- [@dhealthdapps/frontend] fix: update app metadata and linter
 
 ## [0.4.0][0.4.0] - 19-Oct-2022
 
@@ -480,7 +482,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: add implementation for schedulers enabled through scopes and more refactor (types)
 
 
-[0.5.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.4.0..v0.5.0
+[0.5.4]: https://github.com/dhealthproject/dapps-framework/compare/v0.4.0..v0.5.4
 [0.4.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.4.0
 [0.4.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.4.0
 [0.3.1]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.3.1
