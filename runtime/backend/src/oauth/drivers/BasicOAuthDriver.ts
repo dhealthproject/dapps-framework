@@ -8,12 +8,18 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
+// common scope
+import {
+  HttpMethod,
+  HttpRequestHandler,
+} from "../../common/drivers/HttpRequestHandler";
+import { AccessTokenDTO } from "../../common/models/AccessTokenDTO";
+import { ResponseStatusDTO } from "../../common/models/ResponseStatusDTO";
+
+// oauth scope
 import { OAuthDriver } from "./OAuthDriver";
 import { OAuthEntity, OAuthEntityType } from "./OAuthEntity";
-import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import { OAuthProviderParameters } from "../models/OAuthConfig";
-import { ResponseStatusDTO } from "../models/ResponseStatusDTO";
-import { HttpMethod, HttpRequestHandler } from "./HttpRequestHandler";
 
 /**
  * @class BasicOAuthDriver

@@ -14,7 +14,6 @@ export * from "./DatabaseConfig";
 export * from "./DiscoveryConfig";
 export * from "./MonitoringConfig";
 export * from "./NetworkConfig";
-export * from "./OAuthConfig";
 export * from "./SecurityConfig";
 export * from "./SocialConfig";
 export * from "./StatisticsConfig";

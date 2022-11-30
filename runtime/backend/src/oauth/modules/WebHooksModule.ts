@@ -13,7 +13,7 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
-import { AppConfiguration } from "../../AppConfiguration";
+// common scope
 import { QueryModule } from "../../common/modules/QueryModule";
 import { AuthModule } from "../../common/modules/AuthModule";
 import { LogModule } from "../../common/modules/LogModule";
@@ -21,13 +21,22 @@ import {
   AccountIntegration,
   AccountIntegrationSchema,
 } from "../../common/models/AccountIntegrationSchema";
+
+// processor scope
+import { ActivitiesModule } from "../../processor/modules/ActivitiesModule";
+import {
+  Activity,
+  ActivitySchema,
+} from "../../processor/models/ActivitySchema";
+
+// oauth scope
+import { AppConfiguration } from "../../AppConfiguration";
 import { WebHooksController } from "../routes/WebHooksController";
-import { ActivitiesModule } from "./ActivitiesModule";
 import { WebHooksService } from "../services/WebHooksService";
-import { Activity, ActivitySchema } from "../models/ActivitySchema";
+import { OAuthService } from "../services";
 
 /**
- * @label PROCESSOR
+ * @label OAUTH
  * @class WebHooksModule
  * @description The main definition for the Web Hooks module.
  *
@@ -39,7 +48,7 @@ import { Activity, ActivitySchema } from "../models/ActivitySchema";
       {
         name: AccountIntegration.name,
         schema: AccountIntegrationSchema,
-      }, // requirement from OAuthModule
+      }, // requirement from OAuthService
       {
         name: Activity.name,
         schema: ActivitySchema,
@@ -52,6 +61,6 @@ import { Activity, ActivitySchema } from "../models/ActivitySchema";
     LogModule, // requirement from WebHooksService
   ],
   controllers: [WebHooksController],
-  providers: [WebHooksService],
+  providers: [WebHooksService, OAuthService],
 })
 export class WebHooksModule {}

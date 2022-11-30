@@ -8,4 +8,4 @@
  * @license     LGPL-3.0
  */
 // requests index
-export * from "./AccessTokenRequest";
+export * from "./OAuthCallbackRequest";

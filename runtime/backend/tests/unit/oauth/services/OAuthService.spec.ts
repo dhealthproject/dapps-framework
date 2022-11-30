@@ -29,15 +29,15 @@ import { CipherService } from "../../../../src/common/services/CipherService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { AuthService } from "../../../../src/common/services/AuthService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
-import { OAuthService } from "../../../../src/common/services/OAuthService";
+import { OAuthService } from "../../../../src/oauth/services/OAuthService";
 import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
-import { OAuthCallbackRequest } from "../../../../src/common/requests/OAuthCallbackRequest";
+import { OAuthCallbackRequest } from "../../../../src/oauth/requests/OAuthCallbackRequest";
 import {
   AccountIntegrationDocument,
   AccountIntegrationQuery,
 } from "../../../../src/common/models/AccountIntegrationSchema";
-import { OAuthEntityType } from "../../../../src/common/drivers/OAuthEntity";
+import { OAuthEntityType } from "../../../../src/oauth/drivers/OAuthEntity";
 
 describe("common/OAuthService", () => {
   let mockDate: Date;

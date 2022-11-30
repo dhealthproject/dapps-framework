@@ -61,7 +61,6 @@ export * from "./payout/services";
 
 // processor scope
 export * from "./processor/ProcessorModule";
-export * from "./processor/events";
 export * from "./processor/models";
 export * from "./processor/modules";
 export * from "./processor/routes";
@@ -86,6 +85,15 @@ export * from "./notifier/models";
 export * from "./notifier/modules";
 export * from "./notifier/schedulers";
 export * from "./notifier/services";
+
+// oauth scope
+export * from "./oauth/drivers";
+export * from "./oauth/events";
+export * from "./oauth/models";
+export * from "./oauth/modules";
+export * from "./oauth/requests";
+export * from "./oauth/routes";
+export * from "./oauth/services";
 
 // worker scope
 export * from "./worker/WorkerModule";

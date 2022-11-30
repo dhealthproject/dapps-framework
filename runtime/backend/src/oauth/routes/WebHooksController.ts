@@ -29,14 +29,14 @@ import {
 import { Response } from "express";
 
 // internal dependencies
-import { OAuthService } from "../../common/services/OAuthService";
+import { OAuthService } from "../services/OAuthService";
 import { WebHooksService } from "../services/WebHooksService";
 
 // @todo this needs another abstraction layer to permit multi-providers
 // @todo should instead be moved in OAuthService and use available drivers
-import { StravaWebHookEventRequest } from "../../common/drivers/strava/StravaWebHookEventRequest";
-import { StravaWebHookSubscriptionRequest } from "../../common/drivers/strava/StravaWebHookSubscriptionRequest";
-import { StravaWebHookSubscriptionResponse } from "../../common/drivers/strava/StravaWebHookSubscriptionResponse";
+import { StravaWebHookEventRequest } from "../drivers/strava/StravaWebHookEventRequest";
+import { StravaWebHookSubscriptionRequest } from "../drivers/strava/StravaWebHookSubscriptionRequest";
+import { StravaWebHookSubscriptionResponse } from "../drivers/strava/StravaWebHookSubscriptionResponse";
 
 namespace HTTPResponses {
   // creates a variable that we include in a namespace
@@ -60,7 +60,7 @@ namespace HTTPResponses {
 }
 
 /**
- * @label PROCESSOR
+ * @label OAUTH
  * @class WebHooksController
  * @description The web hooks controller of the app. Handles requests
  * that are issued from *third-party data providers* such as Strava or

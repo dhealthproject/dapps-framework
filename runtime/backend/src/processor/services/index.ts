@@ -10,4 +10,3 @@
 // services index
 export * from "./ActivitiesService";
 export * from "./OperationsService";
-export * from "./WebHooksService";

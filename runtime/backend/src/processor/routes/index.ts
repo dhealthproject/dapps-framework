@@ -10,4 +10,3 @@
 // routes index
 export * from "./ActivitiesController";
 export * from "./OperationsController";
-export * from "./WebHooksController";

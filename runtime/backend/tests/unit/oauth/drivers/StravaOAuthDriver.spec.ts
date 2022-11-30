@@ -9,10 +9,10 @@
  */
 // internal dependencies
 import { httpQueryStringParser } from "../../../mocks/global";
-import { BasicOAuthDriver } from "../../../../src/common/drivers/BasicOAuthDriver";
-import { StravaOAuthDriver } from "../../../../src/common/drivers/StravaOAuthDriver";
-import { OAuthEntityType } from "../../../../src/common/drivers/OAuthEntity";
-import { OAuthProviderParameters } from "../../../../src/common/models/OAuthConfig";
+import { BasicOAuthDriver } from "../../../../src/oauth/drivers/BasicOAuthDriver";
+import { StravaOAuthDriver } from "../../../../src/oauth/drivers/StravaOAuthDriver";
+import { OAuthEntityType } from "../../../../src/oauth/drivers/OAuthEntity";
+import { OAuthProviderParameters } from "../../../../src/oauth/models/OAuthConfig";
 
 // fakes an extension to test the getter-only
 // dataField and codeField that are used internally

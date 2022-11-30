@@ -8,4 +8,13 @@
  * @license     LGPL-3.0
  */
 // generics / interfaces
-export * from "./HttpRequestHandler";
+export * from "./BasicRemoteDTO";
+export * from "./OAuthDriver";
+export * from "./OAuthEntity";
+
+// specialized driver implementations
+export * from "./BasicOAuthDriver";
+export * from "./StravaOAuthDriver";
+
+// specialized driver type definitions
+export * from "../../oauth/drivers/strava";

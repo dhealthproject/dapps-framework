@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
-import { ActivityDataDTO } from "../../../../../src/common/drivers/strava/ActivityDataDTO";
+import { ActivityDataDTO } from "../../../../../src/oauth/drivers/strava/ActivityDataDTO";
 
 describe("common/ActivityDataDTO", () => {
   let mockDate: Date;

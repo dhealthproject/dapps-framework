@@ -110,7 +110,7 @@ jest.mock("../../../src/processor/modules/ActivitiesModule", () => {
 });
 
 const WebHooksModuleMock: any = jest.fn();
-jest.mock("../../../src/processor/modules/WebHooksModule", () => {
+jest.mock("../../../src/oauth/modules/WebHooksModule", () => {
   return { WebHooksModule: WebHooksModuleMock };
 });
 
@@ -140,6 +140,12 @@ jest.mock("../../../src/statistics/modules/StatisticsModule", () => {
 const NotifierModuleMock: any = jest.fn();
 jest.mock("../../../src/notifier/NotifierModule", () => {
   return { NotifierModule: NotifierModuleMock };
+});
+
+// oauth scope
+const OAuthModuleMock: any = jest.fn();
+jest.mock("../../../src/oauth/OAuthModule", () => {
+  return { OAuthModule: OAuthModuleMock };
 });
 
 // schedulers

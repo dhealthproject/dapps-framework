@@ -8,8 +8,11 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
+// common scope
+import { AccessTokenDTO } from "../../common/models/AccessTokenDTO";
+
+// oauth scope
 import { OAuthEntity, OAuthEntityType } from "./OAuthEntity";
-import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import { BasicOAuthDriver } from "./BasicOAuthDriver";
 import { OAuthProviderParameters } from "../models/OAuthConfig";
 

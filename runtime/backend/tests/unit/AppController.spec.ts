@@ -22,7 +22,7 @@ import { ChallengesService } from "../../src/common/services/ChallengesService";
 import { NetworkService } from "../../src/common/services/NetworkService";
 import { AuthService } from "../../src/common/services/AuthService";
 import { QueryService } from "../../src/common/services/QueryService";
-import { OAuthService } from "../../src/common/services/OAuthService";
+import { OAuthService } from "../../src/oauth/services/OAuthService";
 import { CipherService } from "../../src/common/services/CipherService";
 import { NotifierFactory } from "../../src/notifier/concerns/NotifierFactory";
 import { EmailNotifier } from "../../src/notifier/services/EmailNotifier";
@@ -105,13 +105,6 @@ describe("AppController", () => {
           referralCode: "otherUser",
         }),
       };
-      (appController as any).oauthService = {
-        getIntegrations: jest.fn().mockReturnValue({
-          data: [
-            { name: "strava" }
-          ],
-        }),
-      };
 
       // act
       const profile = await appController.fakeGetProfile({});
@@ -121,7 +114,7 @@ describe("AppController", () => {
         address: "fakeAddress",
         firstTransactionAt: 0,
         firstTransactionAtBlock: 0,
-        integrations: ["strava"],
+        integrations: undefined,
         transactionsCount: 0,
         referredBy: "fakeOtherAddress",
         referralCode: "otherUser",

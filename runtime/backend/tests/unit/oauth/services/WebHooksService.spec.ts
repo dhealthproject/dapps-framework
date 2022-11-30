@@ -16,12 +16,12 @@ import { ConfigService } from "@nestjs/config";
 // internal dependencies
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { CipherService } from "../../../../src/common/services/CipherService";
-import { OAuthService } from "../../../../src/common/services/OAuthService";
-import { WebHooksService } from "../../../../src/processor/services/WebHooksService";
+import { OAuthService } from "../../../../src/oauth/services/OAuthService";
+import { WebHooksService } from "../../../../src/oauth/services/WebHooksService";
 import { ActivitiesService } from "../../../../src/processor/services/ActivitiesService";
 import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/processor/models/ActivitySchema";
-import { StravaWebHookEventRequest } from "../../../../src/common/drivers/strava/StravaWebHookEventRequest";
-import { OnActivityCreated } from "../../../../src/processor/events/OnActivityCreated";
+import { StravaWebHookEventRequest } from "../../../../src/oauth/drivers/strava/StravaWebHookEventRequest";
+import { OnActivityCreated } from "../../../../src/oauth/events/OnActivityCreated";
 import { LogService } from "../../../../src/common/services/LogService";
 
 describe("processor/WebHooksService", () => {

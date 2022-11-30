@@ -29,7 +29,6 @@ import { AuthGuard } from "./common/traits/AuthGuard";
 import { AccountDTO } from "./common/models/AccountDTO";
 import { Account, AccountDocument } from "./common/models/AccountSchema";
 import { ProfileDTO } from "./common/models/ProfileDTO";
-import { OAuthService } from "./classes";
 
 // configuration resources
 import dappConfigLoader from "../config/dapp";
@@ -85,10 +84,7 @@ export class AppController {
    * @constructor
    * @param {AuthService} authService
    */
-  constructor(
-    private readonly authService: AuthService,
-    private readonly oauthService: OAuthService,
-  ) {
+  constructor(private readonly authService: AuthService) {
     // read from configuration fields
     this.dappName = dappConfigLoader().dappName;
   }
@@ -136,13 +132,9 @@ export class AppController {
     // wrap into a safe transferable DTO
     const accountDto: AccountDTO = Account.fillDTO(account, new ProfileDTO());
 
-    // fills additional profile information
-    const integrations = await this.oauthService.getIntegrations(account);
-
     // returns wrapped `ProfileDTO`
     return {
       ...accountDto,
-      integrations: integrations.data.map((i) => i.name),
     } as ProfileDTO;
   }
 }

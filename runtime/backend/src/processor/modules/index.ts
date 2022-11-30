@@ -10,4 +10,3 @@
 // modules index
 export * from "./ActivitiesModule";
 export * from "./OperationsModule";
-export * from "./WebHooksModule";

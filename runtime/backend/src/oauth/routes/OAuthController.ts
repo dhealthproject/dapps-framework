@@ -29,11 +29,13 @@ import {
 import { Request, Response } from "express";
 
 // internal dependencies
-import { AuthGuard } from "../traits/AuthGuard";
-import { AuthService } from "../services/AuthService";
+import { AuthGuard } from "../../common/traits/AuthGuard";
+import { AuthService } from "../../common/services/AuthService";
 import { OAuthService } from "../services/OAuthService";
-import { AccountDocument } from "../models/AccountSchema";
-import { StatusDTO } from "../models/StatusDTO";
+import { Account, AccountDocument } from "../../common/models/AccountSchema";
+import { StatusDTO } from "../../common/models/StatusDTO";
+import { ProfileDTO } from "../../common/models/ProfileDTO";
+import { AccountDTO } from "../../common/models/AccountDTO";
 
 // requests
 import { OAuthAuthorizeRequest } from "../requests/OAuthAuthorizeRequest";
@@ -51,6 +53,24 @@ namespace HTTPResponses {
             data: {
               type: "array",
               items: { $ref: getSchemaPath(StatusDTO) },
+            },
+          },
+        },
+      ],
+    },
+  };
+
+  // creates a variable that we include in a namespace
+  // and configure the OpenAPI schema for the response
+  // maps to the HTTP response of `/me`
+  export const MeResponseSchema = {
+    schema: {
+      allOf: [
+        {
+          properties: {
+            data: {
+              type: "array",
+              items: { $ref: getSchemaPath(ProfileDTO) },
             },
           },
         },
@@ -77,7 +97,7 @@ namespace HTTPResponses {
  * @since v0.3.0
  */
 @ApiTags("OAuth")
-@Controller("oauth")
+@Controller()
 export class OAuthController {
   /**
    * Constructs an instance of this controller.
@@ -102,7 +122,7 @@ export class OAuthController {
    * @returns
    */
   @UseGuards(AuthGuard)
-  @Get(":provider/authorize")
+  @Get("oauth/:provider/authorize")
   @ApiOperation({
     summary: "Provider OAuth Authorization (Step 1)",
     description:
@@ -158,7 +178,7 @@ export class OAuthController {
    * @returns
    */
   @UseGuards(AuthGuard)
-  @Get(":provider/callback")
+  @Get("oauth/:provider/callback")
   @ApiOperation({
     summary: "Provider OAuth Callback (Step 2)",
     description:
@@ -184,5 +204,46 @@ export class OAuthController {
       // @todo Add error handling for HTTP exceptions
       throw e;
     }
+  }
+
+  /**
+   * Requests a user's profile information. This endpoint is
+   * protected and a valid access token must be attached in
+   * the `Authorization` request header, in signed cookies or
+   * in browser cookies.
+   * <br /><br />
+   * The request is secured using the {@link AuthGuard} guard
+   * which attaches a `payload` to the request object.
+   *
+   * @method GET
+   * @access protected
+   * @async
+   * @param   {Request}  req            An `express` request used to extract the authenticated user payload.
+   * @returns Promise<AccountDTO>       An authenticated user's profile information ("account" information).
+   */
+  @UseGuards(AuthGuard)
+  @Get("me")
+  @ApiOperation({
+    summary: "Get an authenticated user's profile details",
+    description:
+      "Request an authenticated user's profile details. This request will only succeed given a valid and secure server cookie or an access token in the bearer authorization header of the request.",
+  })
+  @ApiExtraModels(ProfileDTO)
+  @ApiOkResponse(HTTPResponses.MeResponseSchema)
+  protected async getProfile(@NestRequest() req: Request): Promise<ProfileDTO> {
+    // read and decode access token, then find account in database
+    const account: AccountDocument = await this.authService.getAccount(req);
+
+    // wrap into a safe transferable DTO
+    const accountDto: AccountDTO = Account.fillDTO(account, new ProfileDTO());
+
+    // fills additional profile information
+    const integrations = await this.oauthService.getIntegrations(account);
+
+    // returns wrapped `ProfileDTO`
+    return {
+      ...accountDto,
+      integrations: integrations.data.map((i) => i.name),
+    } as ProfileDTO;
   }
 }

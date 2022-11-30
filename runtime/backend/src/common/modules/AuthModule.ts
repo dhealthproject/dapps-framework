@@ -31,8 +31,6 @@ import {
   AccountIntegrationSchema,
 } from "../models/AccountIntegrationSchema";
 import { Account, AccountSchema } from "../models/AccountSchema";
-import { OAuthController } from "../routes/OAuthController";
-import { OAuthService } from "../services/OAuthService";
 import { CipherService } from "../services/CipherService";
 import { SocialController } from "../routes/SocialController";
 
@@ -67,8 +65,8 @@ const auth = securityConfigLoader().auth;
       { name: AccountIntegration.name, schema: AccountIntegrationSchema },
     ]),
   ],
-  controllers: [AuthController, OAuthController, SocialController],
-  providers: [AuthService, AuthStrategy, CipherService, OAuthService],
-  exports: [AuthService, OAuthService, CipherService],
+  controllers: [AuthController, SocialController],
+  providers: [AuthService, AuthStrategy, CipherService],
+  exports: [AuthService, CipherService],
 })
 export class AuthModule {}

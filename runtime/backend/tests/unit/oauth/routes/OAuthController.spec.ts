@@ -20,8 +20,8 @@ import { JwtService } from "@nestjs/jwt";
 import { HttpException } from "@nestjs/common";
 
 // internal dependencies
-import { OAuthController } from "../../../../src/common/routes/OAuthController";
-import { OAuthService } from "../../../../src/common/services/OAuthService";
+import { OAuthController } from "../../../../src/oauth/routes/OAuthController";
+import { OAuthService } from "../../../../src/oauth/services/OAuthService";
 import { AuthService } from "../../../../src/common/services/AuthService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
@@ -190,6 +190,43 @@ describe("common/OAuthController", () => {
       expect(result).rejects.toThrowError(expectedError);
       expect(authServiceGetAccountCall).toHaveBeenCalledTimes(1);
       expect(oauthServiceOauthCallbackCall).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe("getProfile()", () => {
+    it("should call correct method and respond with DTO", async () => {
+      // prepare
+      (controller as any).authService = {
+        getAccount: jest.fn().mockReturnValue({
+          address: "fakeAddress",
+          firstTransactionAt: 0,
+          firstTransactionAtBlock: 0,
+          transactionsCount: 0,
+          referredBy: "fakeOtherAddress",
+          referralCode: "otherUser",
+        }),
+      };
+      (controller as any).oauthService = {
+        getIntegrations: jest.fn().mockReturnValue({
+          data: [
+            { name: "strava" }
+          ],
+        }),
+      };
+
+      // act
+      const profile = await (controller as any).getProfile({});
+
+      // assert
+      expect(profile).toStrictEqual({
+        address: "fakeAddress",
+        firstTransactionAt: 0,
+        firstTransactionAtBlock: 0,
+        integrations: ["strava"],
+        transactionsCount: 0,
+        referredBy: "fakeOtherAddress",
+        referralCode: "otherUser",
+      });
     });
   });
 });

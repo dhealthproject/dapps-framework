@@ -8,15 +8,15 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Injectable, LoggerService } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import moment from "moment";
 
 // internal dependencies
-import { OAuthService } from "../../common/services/OAuthService";
-import { OAuthEntityType } from "../../common/drivers/OAuthEntity";
-import { StravaWebHookEventRequest } from "../../common/drivers/strava/StravaWebHookEventRequest";
+import { OAuthService } from "./OAuthService";
+import { OAuthEntityType } from "../drivers/OAuthEntity";
+import { StravaWebHookEventRequest } from "../drivers/strava/StravaWebHookEventRequest";
 import { QueryService } from "../../common/services/QueryService";
 import { LogService } from "../../common/services/LogService";
 import { AppConfiguration } from "../../AppConfiguration";
@@ -25,10 +25,10 @@ import {
   ActivityDocument,
   ActivityModel,
   ActivityQuery,
-} from "../models/ActivitySchema";
-import { ActivityDataDocument } from "../models/ActivityDataSchema";
-import { ProcessingState } from "../models/ProcessingStatusDTO";
-import { ActivitiesService } from "./ActivitiesService";
+} from "../../processor/models/ActivitySchema";
+import { ActivityDataDocument } from "../../processor/models/ActivityDataSchema";
+import { ProcessingState } from "../../processor/models/ProcessingStatusDTO";
+import { ActivitiesService } from "../../processor/services/ActivitiesService";
 
 // emitted events
 import { OnActivityCreated } from "../events/OnActivityCreated";

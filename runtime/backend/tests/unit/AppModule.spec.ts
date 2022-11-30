@@ -22,7 +22,7 @@ import { ScopeFactory } from "../../src/common/ScopeFactory";
 import { AppController } from "../../src/AppController";
 import { AppService } from "../../src/AppService";
 import { AuthService } from "../../src/common/services/AuthService";
-import { OAuthService } from "../../src/common/services/OAuthService";
+import { OAuthService } from "../../src/oauth/services/OAuthService";
 import { NetworkService } from "../../src/common/services/NetworkService";
 import { AccountsService } from "../../src/common/services/AccountsService";
 import { ChallengesService } from "../../src/common/services/ChallengesService";

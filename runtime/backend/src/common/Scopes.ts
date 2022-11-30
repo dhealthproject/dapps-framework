@@ -13,6 +13,7 @@ import { PayoutModule } from "../payout/PayoutModule";
 import { ProcessorModule } from "../processor/ProcessorModule";
 import { StatisticsModule } from "../statistics/StatisticsModule";
 import { NotifierModule } from "../notifier/NotifierModule";
+import { OAuthModule } from "../oauth/OAuthModule";
 import { AppConfiguration } from "../AppConfiguration";
 
 /**
@@ -35,6 +36,7 @@ import { AppConfiguration } from "../AppConfiguration";
  * | `processor` | {@link ProcessorModule} | A processing scope that consists in detecting invoice updates and processing payments. |
  * | `statistics` | {@link StatisticsModule} | A statistics scope that consists in aggregate data into meaningful statistics and measurements. |
  * | `notifier` | {@link NotifierModule} | A notifier scope that consists in aggregate monitoring logs into meaningful alerts and reports. |
+ * | `oauth` | {@link OAuthModule} | An oauth scope that consists in @todo. |
  * <br /><br />
  * A `scheduler` scope is also included with {@link SchedulerModule} but
  * this one executes in a *parallel* process and thereby should not be
@@ -53,4 +55,5 @@ export const Scopes: { [key: string]: any } = {
   processor: ProcessorModule,
   statistics: StatisticsModule,
   notifier: NotifierModule,
+  oauth: OAuthModule,
 };

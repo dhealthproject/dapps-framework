@@ -7,5 +7,5 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-// requests index
-export * from "./AccessTokenRequest";
+// configuration models
+export * from "./OAuthConfig";

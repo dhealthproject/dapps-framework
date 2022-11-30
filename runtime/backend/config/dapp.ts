@@ -74,6 +74,7 @@ export default () => ({
     "processor",
     "notifier",
     "statistics",
+    "oauth",
   ],
 
   /**

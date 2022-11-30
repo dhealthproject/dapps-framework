@@ -8,12 +8,12 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
-import { StravaWebHookSubscriptionResponse } from "../../../../../src/common/drivers/strava";
+import { StravaWebHookSubscriptionFields } from "../../../../../src/oauth/drivers/strava";
 
-describe("common/StravaWebHookSubscriptionResponse", () => {
+describe("common/StravaWebHookEventRequest", () => {
   it("should be defined", () => {
     // act
-    const instance = new StravaWebHookSubscriptionResponse();
+    const instance = new StravaWebHookSubscriptionFields();
 
     // assert
     expect(instance).toBeDefined();

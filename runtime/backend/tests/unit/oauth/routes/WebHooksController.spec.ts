@@ -16,18 +16,18 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
-import { OAuthService } from "../../../../src/common/services/OAuthService";
+import { OAuthService } from "../../../../src/oauth/services/OAuthService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { CipherService } from "../../../../src/common/services/CipherService";
-import { OAuthProviderParameters } from "../../../../src/common/models/OAuthConfig";
+import { OAuthProviderParameters } from "../../../../src/oauth/models/OAuthConfig";
 import { AccountIntegrationDocument } from "../../../../src/common/models/AccountIntegrationSchema";
-import { WebHooksService } from "../../../../src/processor/services/WebHooksService";
+import { WebHooksService } from "../../../../src/oauth/services/WebHooksService";
 import { ActivitiesService } from "../../../../src/processor/services/ActivitiesService";
 import { ActivityDocument } from "../../../../src/processor/models/ActivitySchema";
 import { LogService } from "../../../../src/common/services/LogService";
 
 // tested module
-import { WebHooksController } from "../../../../src/processor/routes/WebHooksController";
+import { WebHooksController } from "../../../../src/oauth/routes/WebHooksController";
 
 describe("processor/WebHooksController", () => {
   let controller: WebHooksController;

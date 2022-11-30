@@ -15,20 +15,20 @@ import { sha3_256 } from "js-sha3";
 import moment from "moment";
 
 // internal dependencies
-import { QueryService } from "./QueryService";
-import { CipherService } from "./CipherService";
+import { QueryService } from "../../common/services/QueryService";
+import { CipherService } from "../../common/services/CipherService";
 import { OAuthProviderParameters } from "../models/OAuthConfig";
-import { AccountDocument } from "../models/AccountSchema";
+import { AccountDocument } from "../../common/models/AccountSchema";
 import {
   AccountIntegration,
   AccountIntegrationDocument,
   AccountIntegrationModel,
   AccountIntegrationQuery,
-} from "../models/AccountIntegrationSchema";
-import { PaginatedResultDTO } from "../models/PaginatedResultDTO";
-import { ResponseStatusDTO } from "../models/ResponseStatusDTO";
+} from "../../common/models/AccountIntegrationSchema";
+import { PaginatedResultDTO } from "../../common/models/PaginatedResultDTO";
+import { ResponseStatusDTO } from "../../common/models/ResponseStatusDTO";
 import { OAuthCallbackRequest } from "../requests/OAuthCallbackRequest";
-import { HttpMethod } from "../drivers/HttpRequestHandler";
+import { HttpMethod } from "../../common/drivers/HttpRequestHandler";
 
 // OAuth Drivers Implementation
 import { OAuthDriver } from "../drivers/OAuthDriver";

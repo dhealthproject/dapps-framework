@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 /**
- * @label COMMON
+ * @label OAUTH
  * @type OAuthProviderParameters
  * @description This interface consists of a set of configuration
  * fields that must be provided to configure a custom OAuth provider.
@@ -29,7 +29,7 @@
  * }
  * ```
  *
- * @link OAuthConfig:COMMON
+ * @link OAuthConfig:OAUTH
  * @since v0.3.0
  */
 export interface OAuthProviderParameters {
@@ -46,7 +46,7 @@ export interface OAuthProviderParameters {
 }
 
 /**
- * @label COMMON
+ * @label OAUTH
  * @type OAuthProviderType
  * @description This interface consists of a set of configuration
  * fields that must be provided to configure a custom OAuth provider.
@@ -55,20 +55,20 @@ export interface OAuthProviderParameters {
  * this type such that they are correctly understood and configured
  * for the backend runtime endpoints (`/oauth`).
  *
- * @link OAuthConfig:COMMON
+ * @link OAuthConfig:OAUTH
  * @since v0.3.0
  */
 export type OAuthProviderType = string | "strava";
 
 /**
- * @label COMMON
+ * @label OAUTH
  * @type OAuthProvidersMap
  * @description An OAuth Providers configuration object.
  * This configuration field consists of a key as listed
  * in {@link ProviderType} and a parameters object as
  * defined by {@link ProviderParameters}.
  *
- * @link OAuthConfig:COMMON
+ * @link OAuthConfig:OAUTH
  * @since v0.3.0
  */
 export type OAuthProvidersMap = {
@@ -76,7 +76,7 @@ export type OAuthProvidersMap = {
 };
 
 /**
- * @label COMMON
+ * @label OAUTH
  * @interface OAuthConfig
  * @description The dApp security configuration. This configuration
  * object is used to determine communication, transport and process
@@ -100,7 +100,7 @@ export interface OAuthConfig {
    * }
    * ```
    *
-   * @link OAuthProvidersMap:COMMON
+   * @link OAuthProvidersMap:OAUTH
    * @access public
    * @var {OAuthProvidersMap}
    */

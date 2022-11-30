@@ -24,7 +24,7 @@ import { ConfigurationError } from "./common/errors/ConfigurationError";
 import { AssetsConfig } from "./common/models/AssetsConfig";
 import { DappConfig } from "./common/models/DappConfig";
 import { NetworkConfig } from "./common/models/NetworkConfig";
-import { OAuthConfig } from "./common/models/OAuthConfig";
+import { OAuthConfig } from "./oauth/models/OAuthConfig";
 import { SecurityConfig } from "./common/models/SecurityConfig";
 import { StatisticsConfig } from "./common/models/StatisticsConfig";
 import { SocialConfig } from "./common/models/SocialConfig";
