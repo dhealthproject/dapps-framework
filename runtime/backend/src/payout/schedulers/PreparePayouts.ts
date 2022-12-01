@@ -273,14 +273,21 @@ export abstract class PreparePayouts<
       const mosaicId: string = this.getAssetIdentifier();
       const theAmount: number = this.getAssetAmount(subject);
 
-      // empty reward amounts are *not* rewarded
-      // CAUTION: this disables manual activity rewards
+      // CAUTION: this disables manual activity rewards and makes
+      // sure that `activities` documents with `activityData.isManual`
+      // set to `true` are never considered for payouts. This ensures
+      // empty reward amounts are *not rewarded* on dHealth Network.
       if (theAmount <= 0) {
         // update `payouts` state to `Not_Eligible`
         await this.payoutsService.createOrUpdate(
           new PayoutQuery(payoutQuery as PayoutDocument),
           { payoutState: PayoutState.Not_Eligible },
         );
+
+        // update `activities` state to `Not_Eligible`
+        await this.updatePayoutSubject(subject, {
+          payoutState: PayoutState.Not_Eligible,
+        });
 
         // continue to next payout
         continue;

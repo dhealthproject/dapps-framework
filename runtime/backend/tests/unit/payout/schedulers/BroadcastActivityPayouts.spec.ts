@@ -11,7 +11,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getModelToken } from "@nestjs/mongoose";
 import { ConfigService } from "@nestjs/config";
-import { Logger } from "@nestjs/common";
 import { TransactionMapping } from "@dhealth/sdk";
 
 // internal dependencies
@@ -42,6 +41,7 @@ const payoutMocks = [
     userAddress: "fake-owner1",
     signedBytes: "fake-signed-bytes1",
     transactionHash: "fake-hash1",
+    payoutState: PayoutState.Prepared,
   } as PayoutDocument,
   {
     subjectSlug: "fake-subject2",
@@ -49,6 +49,7 @@ const payoutMocks = [
     userAddress: "fake-owner2",
     signedBytes: "fake-signed-bytes2",
     transactionHash: "fake-hash2",
+    payoutState: PayoutState.Prepared,
   } as PayoutDocument,
   {
     subjectSlug: "fake-subject3",
@@ -56,6 +57,7 @@ const payoutMocks = [
     userAddress: "fake-owner3",
     signedBytes: "fake-signed-bytes3",
     transactionHash: "fake-hash3",
+    payoutState: PayoutState.Prepared,
   } as PayoutDocument,
   {
     subjectSlug: "fake-subject4",
@@ -63,8 +65,18 @@ const payoutMocks = [
     userAddress: "fake-owner4",
     signedBytes: "fake-signed-bytes4",
     transactionHash: "fake-hash4",
+    payoutState: PayoutState.Prepared,
   } as PayoutDocument,
 ];
+
+const notEligiblePayoutMock = {
+  subjectSlug: "fake-subject5",
+  subjectCollection: "activities",
+  userAddress: "fake-owner5",
+  signedBytes: "fake-signed-bytes5",
+  transactionHash: "fake-hash5",
+  payoutState: PayoutState.Not_Eligible,
+} as PayoutDocument;
 
 describe("payout/BroadcastActivityPayouts", () => {
   let command: BroadcastActivityPayouts;
@@ -210,7 +222,8 @@ describe("payout/BroadcastActivityPayouts", () => {
       const queryFindMock = jest.spyOn(queryService, "find");
 
       // act
-      await (command as any).fetchSubjects(2);
+      const useManualLimit = 2;
+      await (command as any).fetchSubjects(useManualLimit);
 
       // assert
       expect(queryFindMock).toHaveBeenCalledTimes(1);
@@ -221,7 +234,7 @@ describe("payout/BroadcastActivityPayouts", () => {
         } as PayoutDocument,
         {
           pageNumber: 1,
-          pageSize: 2,
+          pageSize: useManualLimit,
           sort: "createdAt",
           order: "asc",
         },
@@ -238,7 +251,11 @@ describe("payout/BroadcastActivityPayouts", () => {
         },
         {
           $facet: {
-            data: [{ $skip: 0 }, { $limit: 2 }, { $sort: { createdAt: 1 } }],
+            data: [
+              { $skip: 0 },
+              { $limit: useManualLimit },
+              { $sort: { createdAt: 1 } },
+            ],
             metadata: [{ $count: "total" }],
           },
         },
@@ -304,18 +321,9 @@ describe("payout/BroadcastActivityPayouts", () => {
         createOrUpdate: activitiesCreateOrUpdateMock,
       };
 
-      fetchSubjectsEmptyMock.mockClear();
-      fetchSubjectsNonEmptyMock.mockClear();
-      fetchSubjectsActualMock.mockClear();
-      payoutsCreateOrUpdateMock.mockClear();
-      updatePayoutSubjectMock.mockClear();
-      networkDelegatePromisesMock.mockClear();
-      activitiesCreateOrUpdateMock.mockClear();
-      serializeMock.mockClear();
-      countMock.mockClear();
-
       debugLogMock = jest.spyOn((command as any), "debugLog");
       infoLogMock = jest.spyOn((command as any), "infoLog");
+      jest.clearAllMocks();
     });
 
     it("should initialize with correct state", async () => {
@@ -436,21 +444,34 @@ describe("payout/BroadcastActivityPayouts", () => {
 
       // assert
       expect(countMock).toHaveBeenCalledTimes(1);
-      expect(debugLogMock).toHaveBeenCalledTimes(2);
-      expect(infoLogMock).toHaveBeenCalledTimes(1);
       expect((command as any).transactions).toBeDefined();
-      expect(Object.keys((command as any).transactions).length).toBe(1); // <-- maxCount: 1
-      expect(debugLogMock).toHaveBeenNthCalledWith(1,
-        `[DRY-RUN] The dry-run mode is enabled for this command`
-      );
-      expect(debugLogMock).toHaveBeenNthCalledWith(2,
-        `[DRY-RUN] Found ${expectedCount} broadcast-able transaction(s) ` +
-        `in queue of ${payoutMocks.length} eligible payouts.`
-      );
-      expect(infoLogMock).toHaveBeenCalledWith(
-        `Skipped broadcast of ${expectedCount} transaction(s)`
-      );
+      expect(Object.keys((command as any).transactions).length).toBe(1); // 1 payouts
       expect(createFromPayloadMock).toHaveBeenCalledTimes(expectedCount);
+      expect(createFromPayloadMock).toHaveBeenNthCalledWith(1, payoutMocks[0].signedBytes, false);
+    });
+
+    it("should re-build transaction using correct signed payloads", async () => {
+      // prepare
+      (command as any).fetchSubjects = fetchSubjectsActualMock; // <-- 4 payouts
+      const createFromPayloadMock = jest.spyOn(TransactionMapping, "createFromPayload")
+        .mockReturnValue(transactionMock as any);
+      const expectedCount = 4;
+
+      // act
+      await command.execute({
+        maxCount: expectedCount,
+        dryRun: true, // <-- dry-run
+        debug: true,
+      });
+
+      // assert
+      expect((command as any).transactions).toBeDefined();
+      expect(Object.keys((command as any).transactions).length).toBe(4); // 4 payouts
+      expect(createFromPayloadMock).toHaveBeenCalledTimes(expectedCount);
+      expect(createFromPayloadMock).toHaveBeenNthCalledWith(1, payoutMocks[0].signedBytes, false);
+      expect(createFromPayloadMock).toHaveBeenNthCalledWith(2, payoutMocks[1].signedBytes, false);
+      expect(createFromPayloadMock).toHaveBeenNthCalledWith(3, payoutMocks[2].signedBytes, false);
+      expect(createFromPayloadMock).toHaveBeenNthCalledWith(4, payoutMocks[3].signedBytes, false);
     });
 
     it("should not broadcast transaction given dry-run mode", async () => {
@@ -478,10 +499,50 @@ describe("payout/BroadcastActivityPayouts", () => {
       expect(activitiesCreateOrUpdateMock).not.toHaveBeenCalled();
     });
 
+    it("should broadcast a maximum number of payouts given maxCount", async () => {
+      // prepare
+      (command as any).globalDryRun = false;
+      (command as any).fetchSubjects = fetchSubjectsActualMock; // <-- 4 payouts
+      const expectedCount = 1; // <-- maxCount=1
+
+      // act
+      await command.execute({
+        maxCount: 1,
+        dryRun: false, // <-- production
+        debug: true,
+      });
+
+      // assert
+      expect(networkDelegatePromisesMock).toHaveBeenCalledTimes(1); // delegates all in one
+      expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount); // maxCount=1
+      expect(activitiesCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount); // maxCount=1
+      expect(transactionAnnounceToPromiseMock).toHaveBeenCalledTimes(expectedCount); // maxCount=1
+    });
+
+    it("should broadcast a maximum number of payouts given data limitation", async () => {
+      // prepare
+      (command as any).globalDryRun = false;
+      (command as any).fetchSubjects = fetchSubjectsActualMock; // <-- 4 payouts
+      const expectedCount = payoutMocks.length; // <-- mocked array
+
+      // act
+      await command.execute({
+        maxCount: 10, // <-- higher than number of payouts
+        dryRun: false, // <-- production
+        debug: true,
+      });
+
+      // assert
+      expect(networkDelegatePromisesMock).toHaveBeenCalledTimes(1); // delegates all in one
+      expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
+      expect(activitiesCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
+      expect(transactionAnnounceToPromiseMock).toHaveBeenCalledTimes(expectedCount);
+    });
+
     it("should broadcast and update state given production mode", async () => {
       // prepare
       (command as any).globalDryRun = false;
-      (command as any).fetchSubjects = fetchSubjectsActualMock; // <-- non-empty
+      (command as any).fetchSubjects = fetchSubjectsActualMock; // <-- 4 payouts
       const expectedCount = 2;
 
       // act
@@ -528,6 +589,191 @@ describe("payout/BroadcastActivityPayouts", () => {
         } as ActivityDocument),
         { payoutState: PayoutState.Broadcast },
       );
+    });
+
+    it("should not broadcast payouts that are flagged Not_Eligible", async () => {
+      // prepare
+      (command as any).globalDryRun = false;
+      const fetchSubjectManualMock = jest.fn().mockReturnValue(
+        Promise.resolve(
+          payoutMocks.concat(notEligiblePayoutMock), // adds 1 Not_Eligible payout
+        ),
+      ); // <-- 4 payouts
+      (command as any).fetchSubjects = fetchSubjectManualMock;
+      const expectedCount = payoutMocks.length; // <-- does not contain Not_Eligible
+
+      // act
+      await command.execute({
+        maxCount: 10,
+        dryRun: false, // <-- production
+        debug: true,
+      });
+
+      // assert
+      expect(networkDelegatePromisesMock).toHaveBeenCalledTimes(1); // delegates all in one
+      expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
+      expect(activitiesCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
+      expect(transactionAnnounceToPromiseMock).toHaveBeenCalledTimes(expectedCount);
+    });
+
+    it("should broadcast all payouts and update state correctly", async () => {
+      // prepare
+      (command as any).globalDryRun = false;
+      const fetchSubjectManualMock = fetchSubjectsActualMock; // <-- 4 payouts
+      (command as any).fetchSubjects = fetchSubjectManualMock;
+      const expectedCount = payoutMocks.length; // <-- 4 payouts
+
+      // act
+      await command.execute({
+        maxCount: expectedCount,
+        dryRun: false, // <-- production
+        debug: true,
+      });
+
+      // assert
+      expect(networkDelegatePromisesMock).toHaveBeenCalledTimes(1); // delegates all in one
+      expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
+      expect(activitiesCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
+      expect(transactionAnnounceToPromiseMock).toHaveBeenCalledTimes(expectedCount);
+      expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(1,
+        new PayoutQuery({
+          userAddress: payoutMocks[0].userAddress,
+          subjectSlug: payoutMocks[0].subjectSlug,
+          subjectCollection: "activities",
+        } as PayoutDocument),
+        {
+          payoutState: PayoutState.Broadcast,
+        },
+      );
+      expect(activitiesCreateOrUpdateMock).toHaveBeenNthCalledWith(1, 
+        new ActivityQuery({
+          slug: payoutMocks[0].subjectSlug
+        } as ActivityDocument),
+        { payoutState: PayoutState.Broadcast },
+      );
+      expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(2,
+        new PayoutQuery({
+          userAddress: payoutMocks[1].userAddress,
+          subjectSlug: payoutMocks[1].subjectSlug,
+          subjectCollection: "activities",
+        } as PayoutDocument),
+        {
+          payoutState: PayoutState.Broadcast,
+        },
+      );
+      expect(activitiesCreateOrUpdateMock).toHaveBeenNthCalledWith(2, 
+        new ActivityQuery({
+          slug: payoutMocks[1].subjectSlug
+        } as ActivityDocument),
+        { payoutState: PayoutState.Broadcast },
+      );
+      expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(3,
+        new PayoutQuery({
+          userAddress: payoutMocks[2].userAddress,
+          subjectSlug: payoutMocks[2].subjectSlug,
+          subjectCollection: "activities",
+        } as PayoutDocument),
+        {
+          payoutState: PayoutState.Broadcast,
+        },
+      );
+      expect(activitiesCreateOrUpdateMock).toHaveBeenNthCalledWith(3, 
+        new ActivityQuery({
+          slug: payoutMocks[2].subjectSlug
+        } as ActivityDocument),
+        { payoutState: PayoutState.Broadcast },
+      );
+      expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(4,
+        new PayoutQuery({
+          userAddress: payoutMocks[3].userAddress,
+          subjectSlug: payoutMocks[3].subjectSlug,
+          subjectCollection: "activities",
+        } as PayoutDocument),
+        {
+          payoutState: PayoutState.Broadcast,
+        },
+      );
+      expect(activitiesCreateOrUpdateMock).toHaveBeenNthCalledWith(4, 
+        new ActivityQuery({
+          slug: payoutMocks[3].subjectSlug
+        } as ActivityDocument),
+        { payoutState: PayoutState.Broadcast },
+      );
+    });
+
+    it("should print correct info-level log given broadcast operation", async () => {
+      // prepare
+      (command as any).globalDryRun = false;
+      const fetchSubjectManualMock = fetchSubjectsActualMock; // <-- 4 payouts
+      (command as any).fetchSubjects = fetchSubjectManualMock;
+      const expectedCount = payoutMocks.length; // <-- 4 payouts
+
+      // act
+      await command.execute({
+        maxCount: expectedCount,
+        dryRun: false, // <-- production
+        debug: true,
+      });
+
+      // assert
+      expect(networkDelegatePromisesMock).toHaveBeenCalledTimes(1); // delegates all in one
+      expect(infoLogMock).toHaveBeenCalledTimes(1);
+      expect(infoLogMock).toHaveBeenCalledWith(
+        `Now broadcasting ${expectedCount} transaction(s)`,
+      );
+    });
+
+    it("should map re-built transfer transactions using correct hash", async () => {
+      // prepare
+      (command as any).globalDryRun = false;
+      const fetchSubjectManualMock = fetchSubjectsActualMock; // <-- 4 payouts
+      (command as any).fetchSubjects = fetchSubjectManualMock;
+      const createFromPayloadMock = jest.spyOn(TransactionMapping, "createFromPayload")
+        .mockImplementation((signedBytes: string, isEmbedded: boolean) => {
+          const payoutMock = payoutMocks.find(p => p.signedBytes === signedBytes);
+          return {
+            serialize: serializeMock,
+            transactionInfo: {
+              hash: payoutMock.transactionHash, // <-- each payout has 1 hash
+            },
+            signer: {
+              publicKey: "fake-signer-publicKey1"
+            },
+            type: "fake-type",
+            networkType: "fake-network",
+          } as any;
+        });
+      const expectedCount = payoutMocks.length; // <-- 4 payouts
+
+      // act
+      await command.execute({
+        maxCount: expectedCount,
+        dryRun: false, // <-- production
+        debug: true,
+      });
+
+      // assert
+      expect(networkDelegatePromisesMock).toHaveBeenCalledTimes(1); // delegates all in one
+      expect((command as any).transactions).toBeDefined();
+      expect((command as any).transactionHashes).toBeDefined();
+      expect((command as any).transactionHashes.length).toBe(expectedCount);
+
+      const transactionHashes = (command as any).transactionHashes;
+      transactionHashes.forEach((hash: string) => {
+        const payoutMock = payoutMocks.find(p => p.transactionHash === hash);
+        expect(hash in (command as any).transactions).toBe(true);
+        expect((command as any).transactions[hash]).toStrictEqual({
+          serialize: serializeMock,
+          transactionInfo: {
+            hash: payoutMock.transactionHash, // <-- each payout has 1 hash
+          },
+          signer: {
+            publicKey: "fake-signer-publicKey1"
+          },
+          type: "fake-type",
+          networkType: "fake-network",
+        } as any);
+      });
     });
   });
 });

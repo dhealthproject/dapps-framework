@@ -109,6 +109,36 @@ const activityMocks = [
   } as ActivityDocument,
 ];
 
+const manualActivityMock = {
+  slug: "fake-slug1",
+  address: "fake-owner1",
+  createdAt: new Date(),
+  activityData: {
+    sport: "Walk",
+    calories: 1,
+    distance: 2,
+    elevation: 3,
+    elapsedTime: 4,
+    kilojoules: 5,
+    isManual: true,
+  }
+} as ActivityDocument;
+
+const emptyActivityMock = {
+  slug: "fake-slug1",
+  address: "fake-owner1",
+  createdAt: new Date(),
+  activityData: {
+    sport: "Walk",
+    calories: 0,
+    distance: 0,
+    elevation: 0,
+    elapsedTime: 0,
+    kilojoules: 0,
+    isManual: true,
+  }
+} as ActivityDocument;
+
 describe("payout/PrepareActivityPayouts", () => {
   let command: PrepareActivityPayouts;
   let configService: ConfigService;
@@ -636,6 +666,59 @@ describe("payout/PrepareActivityPayouts", () => {
           signedBytes: mockSignedPayload,
           transactionHash: mockTransactionHash,
         },
+      );
+    });
+
+    it("should set state to Not_Eligible for empty amounts", async () => {
+      // prepare
+      const fetchSubjectsManualMock = jest.fn().mockReturnValue(
+        Promise.resolve([
+          manualActivityMock, // <-- activityData.isManual=true
+          emptyActivityMock, // <-- "theAmount"=0
+        ]),
+      );
+      (command as any).fetchSubjects = fetchSubjectsManualMock; // <-- non-empty
+
+      // act
+      await command.execute({
+        dryRun: true,
+        debug: true,
+      });
+
+      // assert
+      expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(2); // 2 payout
+      expect(updatePayoutSubjectMock).toHaveBeenCalledTimes(2); // 2 activities
+      expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(1,
+        new PayoutQuery({
+          subjectSlug: manualActivityMock.slug,
+          subjectCollection: "activities",
+          userAddress: manualActivityMock.address,
+        } as PayoutDocument),
+        {
+          payoutState: PayoutState.Not_Eligible, // <-- payouts.payoutState=Not_Eligible
+        },
+      );
+      expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(1,
+        new PayoutQuery({
+          subjectSlug: emptyActivityMock.slug,
+          subjectCollection: "activities",
+          userAddress: emptyActivityMock.address,
+        } as PayoutDocument),
+        {
+          payoutState: PayoutState.Not_Eligible, // <-- payouts.payoutState=Not_Eligible
+        },
+      );
+      expect(updatePayoutSubjectMock).toHaveBeenNthCalledWith(1,
+        manualActivityMock,
+        {
+          payoutState: PayoutState.Not_Eligible, // <-- activities.payoutState=Not_Eligible
+        }
+      );
+      expect(updatePayoutSubjectMock).toHaveBeenNthCalledWith(2,
+        emptyActivityMock,
+        {
+          payoutState: PayoutState.Not_Eligible, // <-- activities.payoutState=Not_Eligible
+        }
       );
     });
   });

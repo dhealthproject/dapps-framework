@@ -94,6 +94,15 @@ export abstract class BroadcastPayouts<
   protected transactions: Record<string, TransferTransaction>;
 
   /**
+   * Contains an array of transaction hashes that are ready to
+   * be broadcast to the network.
+   *
+   * @access protected
+   * @var {string[]}
+   */
+  protected transactionHashes: string[];
+
+  /**
    * Memory store for the last time of execution. This is used
    * in {@link getStateData} to update the latest execution state.
    *
@@ -103,17 +112,33 @@ export abstract class BroadcastPayouts<
   private lastExecutedAt: number;
 
   /**
+   * Contains a *boolean* value that determines whether the runtime
+   * is currently using a **global dry-run mode**.
+   * <br /><br />
+   * Note that **dry-run mode** disables payout broadcasts, as such
+   * transactions will *not* appear on dHealth Network.
    *
+   * @access protected
+   * @var {boolean}
    */
   protected globalDryRun: boolean;
 
   /**
+   * Contains a *boolean* value that determines whether transactions
+   * must be batched if possible (aggregate complete).
    *
+   * @access protected
+   * @var {boolean}
    */
   protected enableBatches: boolean;
 
   /**
+   * Contains the *size of batches*. This field is only used given
+   * {@link BroadcastPayouts.enableBatches} is `true` and determines
+   * the size of transaction batches.
    *
+   * @access protected
+   * @var {number}
    */
   protected batchSize: number;
 
@@ -154,6 +179,7 @@ export abstract class BroadcastPayouts<
     // configures dry-run mode
     this.globalDryRun = this.configService.get<boolean>("globalDryRun");
     this.transactions = {};
+    this.transactionHashes = [];
   }
 
   /**
@@ -270,6 +296,11 @@ export abstract class BroadcastPayouts<
       // retrieve full subject details
       const payout: PayoutDocument = payouts[j];
 
+      // forcefully skip non-eligible payouts
+      if (payout.payoutState !== PayoutState.Prepared) {
+        continue;
+      }
+
       // rebuilds the transaction from signed payload
       const transfer: TransferTransaction =
         TransactionMapping.createFromPayload(
@@ -278,6 +309,7 @@ export abstract class BroadcastPayouts<
         ) as TransferTransaction;
 
       // store a copy of the re-built transfer instance
+      this.transactionHashes.push(payout.transactionHash);
       this.transactions[payout.transactionHash] = transfer;
     }
 
@@ -301,18 +333,17 @@ export abstract class BroadcastPayouts<
     // stand-alone (multi-broadcast)
     // else {
     // each transaction is broadcast on its own
-    const broadcastTransactions: SignedTransaction[] = Object.keys(
-      this.transactions,
-    ).map((transactionHash) => {
-      const t = this.transactions[transactionHash];
-      return new SignedTransaction(
-        t.serialize(),
-        transactionHash,
-        t.signer.publicKey,
-        t.type,
-        t.networkType,
-      );
-    });
+    const broadcastTransactions: SignedTransaction[] =
+      this.transactionHashes.map((transactionHash) => {
+        const t = this.transactions[transactionHash];
+        return new SignedTransaction(
+          t.serialize(),
+          transactionHash,
+          t.signer.publicKey,
+          t.type,
+          t.networkType,
+        );
+      });
     // }
 
     // (4) broadcast the (batch or stand-alone) transaction(s)
@@ -332,9 +363,18 @@ export abstract class BroadcastPayouts<
       // updates the *payouts* so that they won't be considered
       // a payout for future/parallel executions of this command
       // CAUTION: dry-run mode disables this block
-      for (let u = 0, max_s = broadcastTransactions.length; u < max_s; u++) {
+      for (
+        let u = 0, max_s = Math.min(payouts.length, options.maxCount);
+        u < max_s;
+        u++
+      ) {
         // retrieve full subject details
         const payout: PayoutDocument = payouts[u];
+
+        // forcefully skip non-eligible payouts
+        if (payout.payoutState !== PayoutState.Prepared) {
+          continue;
+        }
 
         // updates the `payouts` entry
         await this.payoutsService.createOrUpdate(
