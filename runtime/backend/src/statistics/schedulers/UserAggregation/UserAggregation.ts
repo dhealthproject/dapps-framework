@@ -302,27 +302,21 @@ export class UserAggregation extends StatisticsCommand {
    * @returns {PipelineStage[]}
    */
   private createAggregationQuery(): PipelineStage[] {
-    const scoreFields: any = {
-      totalAssetsAmount: "activityAssets.amount",
-      totalSecondsPracticed: "activityData.elapsedTime",
-    };
-    const group: Record<string, any> = {
-      _id: "$address",
-    };
-
-    // sums up values of fields as defined:
-    // "activityAssets.amount": total amount of $FIT earned
-    // "activityData.elapsedTime": total amount of seconds practiced
-    // the result set is sorted in *descending* order using `amount`
-    Object.keys(scoreFields).forEach((field) => {
-      group[field] = { $sum: `$${scoreFields[field]}` };
-    });
     return [
       {
         $match: { address: { $exists: true } },
       },
       {
-        $group: group,
+        $group: {
+          _id: "$address",
+          totalAssetsAmount: {
+            // array of array
+            $sum: { $sum: "$activityAssets.amount" },
+          },
+          totalSecondsPracticed: {
+            $sum: "$activityData.elapsedTime",
+          },
+        },
       },
       {
         // sort by amount DESC

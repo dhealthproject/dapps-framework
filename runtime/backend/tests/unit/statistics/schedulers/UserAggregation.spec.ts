@@ -146,15 +146,33 @@ describe("statistics/UserAggregation", () => {
     })
   });
 
+  describe("getNextPeriod()", () => {
+    it("should use correct YYYYMMDD format for period", () => {
+      // act
+      const period = (service as any).getNextPeriod(new Date());
+
+      // assert
+      expect(period).toBeDefined();
+      expect(period).toBe("20220201");
+    });
+  });
+
   describe("aggregate()", () => {
-    it("should use correct configuration and logging", async () => {
-      // prepare
+    let statisticsCreateOrUpdateMock = jest.fn();
+    beforeEach(() => {
       (service as any).logger = logger;
       (service as any).state = {
         data: {
           lastExecutedAt: new Date().valueOf()
         }
-      }
+      };
+
+      (statisticsService as any).createOrUpdate = statisticsCreateOrUpdateMock;
+      (service as any).statisticsService = statisticsService;
+    });
+
+    it("should use correct configuration and logging", async () => {
+      // prepare
       const serviceDebugLogCall = jest
         .spyOn((service as any), "debugLog");
       jest.spyOn((service as any), "createAggregationQuery")
@@ -178,14 +196,8 @@ describe("statistics/UserAggregation", () => {
       expect(serviceDebugLogCall).toHaveBeenNthCalledWith(2, "Found 1 aggregation subjects");
     });
 
-    it("should use correct configuration and logging when if no leaderboard found", async () => {
+    it("should use correct configuration and logging given empty leaderboard", async () => {
       // prepare
-      (service as any).logger = logger;
-      (service as any).state = {
-        data: {
-          lastExecutedAt: new Date().valueOf()
-        }
-      }
       const serviceDebugLogCall = jest
         .spyOn((service as any), "debugLog");
       jest.spyOn((service as any), "createAggregationQuery")
@@ -211,15 +223,6 @@ describe("statistics/UserAggregation", () => {
 
     it("should run correctly", async () => {
       // prepare
-      (service as any).logger = logger;
-      (service as any).state = {
-        data: {
-          lastExecutedAt: new Date().valueOf()
-        }
-      };
-      const statisticsCreateOrUpdateMock = jest.fn();
-      (statisticsService as any).createOrUpdate = statisticsCreateOrUpdateMock;
-      (service as any).statisticsService = statisticsService;
       const serviceCreateAggregationQueryCall = jest
         .spyOn((service as any), "createAggregationQuery")
         .mockReturnValue({});
@@ -266,6 +269,78 @@ describe("statistics/UserAggregation", () => {
         },
       );
     });
+
+    it("should group results by address and order by amount desc", async () => {
+      // prepare
+      const aggregateMocks = [
+        {
+          _id: "test-address2",
+          totalAssetsAmount: 789,
+          totalSecondsPracticed: 123,
+        },
+        {
+          _id: "test-address1",
+          totalAssetsAmount: 123,
+          totalSecondsPracticed: 456,
+        },
+      ];
+      const serviceCreateAggregationQueryCall = jest
+        .spyOn((service as any), "createAggregationQuery")
+        .mockReturnValue({});
+      const queryServiceAggregateCall = jest
+        .spyOn(queryService, "aggregate")
+        .mockResolvedValue(aggregateMocks as any);
+      const serviceGeneratePeriodCall = jest
+        .spyOn((service as any), "getNextPeriod")
+        .mockReturnValue("test-period-string");
+      const expectedDate = new Date();
+
+      // act
+      await service.aggregate(
+        {
+          periodFormat: "D",
+          debug: true
+        }
+      );
+
+      // assert
+      expect(serviceCreateAggregationQueryCall).toHaveBeenCalledTimes(1);
+      expect(queryServiceAggregateCall).toHaveBeenNthCalledWith(1, {}, MockModel);
+      expect(serviceGeneratePeriodCall).toHaveBeenNthCalledWith(1, expectedDate);
+      expect(statisticsCreateOrUpdateMock).toHaveBeenCalledTimes(2);
+      expect(statisticsCreateOrUpdateMock).toHaveBeenNthCalledWith(
+        1,
+        new StatisticsQuery({
+          type: "user",
+          period: "test-period-string",
+          address: aggregateMocks[0]._id, // <-- uses correct address
+        } as StatisticsDocument),
+        {
+          periodFormat: "D",
+          amount: aggregateMocks[0].totalAssetsAmount,
+          data: {
+            totalEarned: aggregateMocks[0].totalAssetsAmount,
+            totalPracticedMinutes: Math.ceil(aggregateMocks[0].totalSecondsPracticed/60),
+          },
+        },
+      );
+      expect(statisticsCreateOrUpdateMock).toHaveBeenNthCalledWith(
+        2,
+        new StatisticsQuery({
+          type: "user",
+          period: "test-period-string",
+          address: aggregateMocks[1]._id, // <-- uses correct address
+        } as StatisticsDocument),
+        {
+          periodFormat: "D",
+          amount: aggregateMocks[1].totalAssetsAmount,
+          data: {
+            totalEarned: aggregateMocks[1].totalAssetsAmount,
+            totalPracticedMinutes: Math.ceil(aggregateMocks[1].totalSecondsPracticed/60),
+          },
+        },
+      );
+    });
   });
 
   describe("createAggregationQuery()", () => {
@@ -286,7 +361,7 @@ describe("statistics/UserAggregation", () => {
         {
           $group: {
             _id: "$address",
-            totalAssetsAmount: { $sum: "$activityAssets.amount" },
+            totalAssetsAmount: { $sum: { $sum: "$activityAssets.amount" } },
             totalSecondsPracticed: { $sum: "$activityData.elapsedTime" },
           },
         },
