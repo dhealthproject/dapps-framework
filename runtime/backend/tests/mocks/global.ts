@@ -214,6 +214,20 @@ export class MockModel {
       }))
       .call(this, param);
   }
+  static aggregate(param: any) {
+    return jest
+      .fn((param) => ({
+        param: () => param,
+        exec: () =>
+          Promise.resolve([
+            {
+              data: [{}],
+              metadata: [{ total: 1 }],
+            },
+          ]),
+      }))
+      .call(this, param);
+  }
 }
 
 // Creates a HTTP Query Parameters parser that
