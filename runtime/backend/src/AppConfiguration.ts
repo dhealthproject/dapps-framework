@@ -23,7 +23,6 @@ import { ConfigurationError } from "./common/errors/ConfigurationError";
 // common scope
 import { AssetsConfig } from "./common/models/AssetsConfig";
 import { DappConfig } from "./common/models/DappConfig";
-import { DatabaseConfig } from "./common/models/DatabaseConfig";
 import { NetworkConfig } from "./common/models/NetworkConfig";
 import { OAuthConfig } from "./common/models/OAuthConfig";
 import { SecurityConfig } from "./common/models/SecurityConfig";
@@ -79,8 +78,8 @@ export class AppConfiguration {
    * to limit the number of instances created which open a request to
    * connect to the database.
    * <br /><br />
-   * Storage of a *singular* database connection adapter is how we make
-   * sure that the database is only connected to once.
+   * Storage of a *singular* database adapter permits to define a
+   * singleton pattern around *database connection* and *query execution*.
    *
    * @access private
    * @static
@@ -94,17 +93,27 @@ export class AppConfiguration {
    * to limit the number of instances created which serves as the application's
    * internal event emitter/handler.
    * <br /><br />
-   * Storage of a *singular* event emitter adapter is how we make
-   * sure that the application is using only one.
+   * Storage of a *singular* event emitter adapter permits to define a
+   * singleton pattern around *event emitters* and *event listeners*.
    *
    * @access private
    * @static
-   * @var {EventEmitterModule}
+   * @var {DynamicModule | EventEmitterModule}
    */
   private static EVENT_EMITTER: DynamicModule;
 
   /**
-   *
+   * The dApp mailer module using {@link MailerModule} from `@nestjs-modules/mailer`.
+   * This object is *not* available outside of this class and is defined to limit
+   * the number of instances created which serves as the application's internal
+   * and public mailer.
+   * <br /><br />
+   * Storage of a *singular* mailing adapter permits to define a singleton
+   * pattern around *mailer services* for public and internal mailing.
+   * 
+   * @access private
+   * @static
+   * @var {DynamicModule | MailerModule}
    */
   private static MAILER: DynamicModule;
 
@@ -328,7 +337,6 @@ export class AppConfiguration {
    *
    * @access public
    * @static
-   * @param     {DatabaseConfig}    config    A database configuration object.
    * @returns   {MongooseModule}    A `@nestjs/mongoose` MongooseModule object.
    */
   public static getDatabaseModule(): MongooseModule {
@@ -369,7 +377,7 @@ export class AppConfiguration {
    *
    * @access public
    * @static
-   * @returns   {MongooseModule}    A `@nestjs/mongoose` MongooseModule object.
+   * @returns {DynamicModule | EventEmitterModule}
    */
   public static getEventEmitterModule(): DynamicModule {
     // singleton instance for event emitter
@@ -388,7 +396,14 @@ export class AppConfiguration {
   }
 
   /**
+   * This method initializes the internal *mailer module*.
+   * <br /><br />
+   * You should not have to call this method manually, it is used inside
+   * {@link EmailNotifierModule} to perform the configuration of mailers.
    *
+   * @access public
+   * @static
+   * @returns {DynamicModule | MailerModule}
    */
   public static getMailerModule(): DynamicModule {
     // singleton instance for mailer
@@ -448,7 +463,7 @@ export class AppConfiguration {
     // (2) `dappPublicKey` cannot be empty
     if (undefined === dappPublicKey || !dappPublicKey.length) {
       throw new ConfigurationError(
-        `The configuration field "dappName" cannot be empty.`,
+        `The configuration field "dappPublicKey" cannot be empty.`,
       );
     }
 

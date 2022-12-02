@@ -66,7 +66,7 @@ describe("AppModule", () => {
     appModule = module.get<AppModule>(AppModule);
   });
 
-  it("to be defined", () => {
+  it("should be defined", () => {
     expect(appModule).toBeDefined();
   });
 

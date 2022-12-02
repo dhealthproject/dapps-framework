@@ -30,7 +30,7 @@ describe("AppService", () => {
     configService = module.get<ConfigService>(ConfigService);
   });
 
-  it("to be defined", () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 });
