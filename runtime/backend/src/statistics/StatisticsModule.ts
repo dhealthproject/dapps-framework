@@ -26,7 +26,7 @@ import { StatisticsImplementationModule } from "./modules/StatisticsImplementati
  * This scoped module currently features the following submodules:
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
- * | {@link StatisticsImplementationModule:STATISTICS} | `statistics` | `/statistics/leaderboards` | Module with schedulers, collections and routes around **leaderboards**. |
+ * | {@link StatisticsImplementationModule} | `statistics` | `/statistics/leaderboards` | Module with schedulers, collections and routes around **leaderboards**. |
  * <br /><br />
  * #### Events
  *
@@ -37,10 +37,10 @@ import { StatisticsImplementationModule } from "./modules/StatisticsImplementati
  *
  * Note also that in {@link Schedulers}, we map the following **schedulers**
  * to this module:
- * - A {@link DailyScoreAggregation:STATISTICS} *scheduler* that produces *daily* leaderboards in the background every 3 hours.
- * - A {@link WeeklyScoreAggregation:STATISTICS} *scheduler* that produces *daily* leaderboards in the background every 3 days.
- * - A {@link MonthlyScoreAggregation:STATISTICS} *scheduler* that produces *daily* leaderboards in the background every 3 days.
- * - A {@link UserAggregation:STATISTICS} *scheduler* that produces *daily* user aggregation in the background every minute.
+ * - A {@link DailyScoreAggregation} *scheduler* that produces *daily* leaderboards in the background every 3 hours.
+ * - A {@link WeeklyScoreAggregation} *scheduler* that produces *daily* leaderboards in the background every 3 days.
+ * - A {@link MonthlyScoreAggregation} *scheduler* that produces *daily* leaderboards in the background every 3 days.
+ * - A {@link UserAggregation} *scheduler* that produces *daily* user aggregation in the background every minute.
  *
  * @since v0.3.2
  */

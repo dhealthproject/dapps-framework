@@ -61,8 +61,8 @@ import { ReportNotifierCommand } from "../notifier/schedulers/ReportNotifier/Rep
  * | `processor` | {@link ProcessOperations} | A processor command that interprets discovered transactions and maps them to dApp operations. |
  * | `payout`| {@link PrepareActivityPayouts} | A payout command that prepares activity reward transactions and signs them such that they can be broadcast to dHealth Network. |
  * | `payout`| {@link BroadcastActivityPayouts} | A payout command that broadcasts activity reward transactions to dHealth Network. |
- * | `statistics` | {@link LeaderboardAggregation:STATISTICS} | A statistics command that aggregates and sorts user rewards for activities and creates leaderboards. |
- * | `statistics`| {@link UserAggregation:STATISTICS} | A statistics command that aggregates and sorts user rewards for activities and creates user statistics. |
+ * | `statistics` | {@link LeaderboardAggregation} | A statistics command that aggregates and sorts user rewards for activities and creates leaderboards. |
+ * | `statistics`| {@link UserAggregation} | A statistics command that aggregates and sorts user rewards for activities and creates user statistics. |
  * | `notifier`  | {@link ReportNotifierCommand} | A notifier command that aggregates and sorts persisted warn/error logs and periodically creates and send reports. |
  * <br /><br />
  *
