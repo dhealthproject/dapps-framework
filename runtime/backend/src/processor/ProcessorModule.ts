@@ -25,13 +25,13 @@ import { OperationsModule } from "./modules/OperationsModule";
  * This scoped module currently features the following submodules:
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
- * | {@link OperationsModule:PROCESSOR} | `operations` | `/operations` | Module with schedulers, collections and routes around **dApp operations**. |
+ * | {@link OperationsModule} | `operations` | `/operations` | Module with schedulers, collections and routes around **dApp operations**. |
  * <br /><br />
  * #### Notes
  *
  * Note also that in {@link Schedulers}, we map the following **schedulers**
  * to this module:
- * - A {@link ProcessOperations:PROCESSOR} *scheduler* that processes operations using transactions, in the background.
+ * - A {@link ProcessOperations} *scheduler* that processes operations using transactions, in the background.
  *
  * @since v0.3.0
  */

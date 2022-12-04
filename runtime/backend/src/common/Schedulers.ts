@@ -58,7 +58,7 @@ import { ReportNotifierCommand } from "../notifier/schedulers/ReportNotifier/Rep
  * | `discovery` | {@link DiscoverTransactions} | A discovery command that retrieves transactions information from the network. |
  * | `discovery` | {@link DiscoverAccounts} | A discovery command that retrieves accounts information from the database using discovered transactions. |
  * | `discovery` | {@link DiscoverAssets} | A discovery command that retrieves assets information from the database using discovered transactions. |
- * | `processor` | {@link ProcessOperations:PROCESSOR} | A processor command that interprets discovered transactions and maps them to dApp operations. |
+ * | `processor` | {@link ProcessOperations} | A processor command that interprets discovered transactions and maps them to dApp operations. |
  * | `payout`| {@link PrepareActivityPayouts} | A payout command that prepares activity reward transactions and signs them such that they can be broadcast to dHealth Network. |
  * | `payout`| {@link BroadcastActivityPayouts} | A payout command that broadcasts activity reward transactions to dHealth Network. |
  * | `statistics` | {@link LeaderboardAggregation:STATISTICS} | A statistics command that aggregates and sorts user rewards for activities and creates leaderboards. |

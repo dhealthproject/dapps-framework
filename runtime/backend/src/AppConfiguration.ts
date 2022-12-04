@@ -777,7 +777,7 @@ export class AppConfiguration {
 
   /**
    * This method is used internally to validate the configuration of
-   * the {@link ProcessorModule:PROCESSOR}.
+   * the {@link ProcessorModule}.
    *
    * @access protected
    * @static
