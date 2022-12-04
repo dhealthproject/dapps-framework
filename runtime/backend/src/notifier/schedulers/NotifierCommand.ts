@@ -56,7 +56,7 @@ export abstract class NotifierCommand extends BaseCommand {
    * available.
    * <br /><br />
    * This property is required through the extension of
-   * {@link BaseCommand:WORKER}.
+   * {@link BaseCommand}.
    *
    * @access protected
    * @var {Scope}
@@ -82,7 +82,7 @@ export abstract class NotifierCommand extends BaseCommand {
    * e.g. "scope:name"
    * <br /><br />
    * This property is required through the extension of
-   * {@link BaseCommand:WORKER} but is intentionally forwarded
+   * {@link BaseCommand} but is intentionally forwarded
    * to further *child classes* such that **each command defines
    * its own command name**.
    *
@@ -100,7 +100,7 @@ export abstract class NotifierCommand extends BaseCommand {
    * e.g. "command <argument> [--option value]"
    * <br /><br />
    * This property is required through the extension of
-   * {@link BaseCommand:WORKER} but is intentionally forwarded
+   * {@link BaseCommand} but is intentionally forwarded
    * to further *child classes* such that **each command defines
    * its own command signature**.
    *
