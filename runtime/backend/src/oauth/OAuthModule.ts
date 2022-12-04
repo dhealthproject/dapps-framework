@@ -44,8 +44,8 @@ import { WebHooksModule } from "./modules";
  * This scoped module currently features the following events:
  * | Class | Name | Link | Description |
  * | --- | --- | --- | --- |
- * | `OnActivityCreated` | `oauth.activity.created` | {@link OnActivityCreated:EVENTS} | Event that is *emitted* in {@link WebHooksService.eventHandler} when an activity is created in database. |
- * | `OnActivityDownloaded` | `oauth.activity.downloaded` | {@link OnActivityDownloaded:EVENTS} | Event that is *emitted* in {@link WebHooksService.onActivityCreated} when an activity is successfully downloaded from the data provider. |
+ * | `OnActivityCreated` | `oauth.activity.created` | {@link OnActivityCreated} | Event that is *emitted* in {@link WebHooksService.eventHandler} when an activity is created in database. |
+ * | `OnActivityDownloaded` | `oauth.activity.downloaded` | {@link OnActivityDownloaded} | Event that is *emitted* in {@link WebHooksService.onActivityCreated} when an activity is successfully downloaded from the data provider. |
  * <br /><br />
  * #### Listeners
  *

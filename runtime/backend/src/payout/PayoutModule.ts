@@ -48,7 +48,7 @@ import { PayoutsModule } from "./modules/PayoutsModule";
  * This scoped module currently features the following events:
  * | Class | Name | Link | Description |
  * | --- | --- | --- | --- |
- * | `OnPayoutCreated` | `payout.created` | {@link OnPayoutCreated:EVENTS} | Event that is *emitted* when a payout is created on the network. |
+ * | `OnPayoutCreated` | `payout.created` | {@link OnPayoutCreated} | Event that is *emitted* when a payout is created on the network. |
  * <br /><br />
  * #### Notes
  *
