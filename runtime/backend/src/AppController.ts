@@ -62,7 +62,7 @@ namespace HTTPResponses {
  * | URI | HTTP method | Class method | Description |
  * | --- | --- | --- | --- |
  * | `/hello` | **`GET`** | {@link AppController.getHello} | Prints a greeting message with the currently running dApp name. |
- * | `/me` | **`GET`** | {@link AppController.getProfile} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Server cookie or Bearer authorization header). Responds with the authenticated user information for valid (authenticated) requests. |
+ * | `/me` | **`GET`** | {@link AppController.getProfile} | Uses the {@link AuthGuard} to validate the required **access token** (Server cookie or Bearer authorization header). Responds with the authenticated user information for valid (authenticated) requests. |
  *
  * @since v0.1.0
  */

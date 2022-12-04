@@ -23,7 +23,7 @@ import { AccountsController } from "../routes/AccountsController";
  * @label DISCOVERY
  * @class DiscoveryAccountsModule
  * @description The main definition for the Accounts module. Note that
- * this module extends the {@link AccountsModule:COMMON} from the common scope
+ * this module extends the {@link AccountsModule} from the common scope
  * to *include* database *entities and schema definition*.
  * <br /><br />
  * This module *enables* routes (API) to query accounts.

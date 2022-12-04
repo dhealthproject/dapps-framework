@@ -28,7 +28,7 @@ import { AlertsModule } from "./modules/AlertsModule";
  * | {@link EmailNotifierModule:NOTIFIER} | N/A | N/A | Module with configuration and services around **mailer** automations. |
  * | {@link AlertsModule:NOTIFIER} | N/A | N/A | Module with event listener for transporting alerts with the **mailer** or other transports. |
  * <br /><br />
- * Note also that in {@link Schedulers:COMMON}, we map the following **schedulers**
+ * Note also that in {@link Schedulers}, we map the following **schedulers**
  * to this module:
  * - A {@link ReportNotifier:NOTIFIER} *scheduler* that sends reports in the background every day/week/month depends on reports configuration.
  *

@@ -29,7 +29,7 @@ import { OperationsModule } from "./modules/OperationsModule";
  * <br /><br />
  * #### Notes
  *
- * Note also that in {@link Schedulers:COMMON}, we map the following **schedulers**
+ * Note also that in {@link Schedulers}, we map the following **schedulers**
  * to this module:
  * - A {@link ProcessOperations:PROCESSOR} *scheduler* that processes operations using transactions, in the background.
  *

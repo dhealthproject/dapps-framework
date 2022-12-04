@@ -15,7 +15,7 @@ import { SocialPlatformDTO } from "./SocialPlatformDTO";
  * @type SocialPlatformsMap
  * @description App share configuration object.
  *
- * @link SocialPlatformsMap:COMMON
+ * @link SocialPlatformsMap
  * @since v0.3.0
  */
 export type SocialPlatformsMap = {
@@ -46,7 +46,7 @@ export interface SocialConfig {
    * }
    * ```
    *
-   * @link SocialPlatformsMap:COMMON
+   * @link SocialPlatformsMap
    * @access public
    * @var {SocialPlatformsMap}
    */

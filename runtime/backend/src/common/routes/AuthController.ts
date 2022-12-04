@@ -123,9 +123,9 @@ namespace HTTPResponses {
  * | URI | HTTP method | Class method | Description |
  * | --- | --- | --- | --- |
  * | `/auth/challenge` | **`GET`** | {@link AuthController.getAuthCode} | Responds with an *authentication challenge* that **MUST** be attached on-chain for a successful authentication. |
- * | `/auth/token` | **`POST`** | {@link AuthController.getAccessToken} | Accepts a `challenge` in the request body and validates it using {@link AuthService:COMMON} |
- * | `/auth/refresh` | **`GET`** | {@link AuthController.refreshTokens} | Uses the {@link RefreshGuard:COMMON} to validate the required **refresh token** (Bearer authorization header) and *creates* a new access token, extending a session's lifetime. |
- * | `/auth/logout` | **`GET`** | {@link AuthController.logout} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Server cookie or Bearer authorization header). Revokes a user's access token (invalidate). The access token cannot be used anymore, a new access token must be requested instead. |
+ * | `/auth/token` | **`POST`** | {@link AuthController.getAccessToken} | Accepts a `challenge` in the request body and validates it using {@link AuthService} |
+ * | `/auth/refresh` | **`GET`** | {@link AuthController.refreshTokens} | Uses the {@link RefreshGuard} to validate the required **refresh token** (Bearer authorization header) and *creates* a new access token, extending a session's lifetime. |
+ * | `/auth/logout` | **`GET`** | {@link AuthController.logout} | Uses the {@link AuthGuard} to validate the required **access token** (Server cookie or Bearer authorization header). Revokes a user's access token (invalidate). The access token cannot be used anymore, a new access token must be requested instead. |
  * <br /><br />
  *
  * @since v0.2.0

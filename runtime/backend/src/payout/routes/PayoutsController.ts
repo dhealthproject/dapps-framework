@@ -83,7 +83,7 @@ namespace HTTPResponses {
  * | URI | HTTP method | Class method | Description |
  * | --- | --- | --- | --- |
  * | `/payouts` | **`GET`** | {@link PayoutsController.find} | Responds with a pageable {@link PaginatedResultDTO} that contains {@link PayoutDTO} objects. |
- * | `/payouts/:address` | **`GET`** | {@link PayoutsController.findByUser} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Server cookie or Bearer authorization header). Responds with a pageable {@link PaginatedResultDTO} that contains {@link PayoutDTO} objects. |
+ * | `/payouts/:address` | **`GET`** | {@link PayoutsController.findByUser} | Uses the {@link AuthGuard} to validate the required **access token** (Server cookie or Bearer authorization header). Responds with a pageable {@link PaginatedResultDTO} that contains {@link PayoutDTO} objects. |
  * <br /><br />
  *
  * @since v0.3.2

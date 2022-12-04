@@ -12,7 +12,7 @@
  * @interface PayoutAccountsConfig
  * @description The dApp payout accounts configuration.
  *
- * @link PayoutConfig:COMMON
+ * @link PayoutConfig
  * @since v0.4.0
  */
 export interface PayoutAccountsConfig {

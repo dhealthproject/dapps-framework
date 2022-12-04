@@ -33,9 +33,9 @@ import dappConfigLoader from "../config/dapp";
  * This scoped module currently features the following submodules:
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
- * | {@link AccountsModule:COMMON} | `accounts` | `/accounts` | Module with schedulers, collections and routes around **dApp accounts**. |
- * | {@link AuthModule:COMMON} | N/A | `/auth` | Module with schedulers, collections and routes around **dApp authentication**. |
- * | {@link ChallengesModule:COMMON} | `authchallenges` | `/auth/challenge` | Module with schedulers, collections and routes around **authentication challenges**. |
+ * | {@link AccountsModule} | `accounts` | `/accounts` | Module with schedulers, collections and routes around **dApp accounts**. |
+ * | {@link AuthModule} | N/A | `/auth` | Module with schedulers, collections and routes around **dApp authentication**. |
+ * | {@link ChallengesModule} | `authchallenges` | `/auth/challenge` | Module with schedulers, collections and routes around **authentication challenges**. |
  *
  * @since v0.1.0
  */
@@ -58,7 +58,7 @@ export class AppModule {
    * modules in the main (root) application module.
    * <br /><br />
    * Note that the `AppModule` itself injects some modules as well including
-   * {@link DiscoveryAccountsModule:DISCOVERY}, {@link AuthModule:COMMON} and {@link ChallengesModule:COMMON}
+   * {@link DiscoveryAccountsModule:DISCOVERY}, {@link AuthModule} and {@link ChallengesModule}
    * which are necessary to the good functioning of the backend runtime.
    * <br /><br />
    * All other dependency injections are performed dynamically based on the

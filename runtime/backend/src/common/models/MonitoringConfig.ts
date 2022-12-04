@@ -118,7 +118,7 @@ export interface MonitoringConfig {
  * This interface is mainly used **internally** to restrict the configuration
  * values provided to some modules or services and methods.
  *
- * @link AlertsConfig:COMMON
+ * @link AlertsConfig
  * @since v0.3.2
  */
 export interface AlertsConfig {
@@ -136,7 +136,7 @@ export interface AlertsConfig {
  * This interface is mainly used **internally** to restrict the configuration
  * values provided to some modules or services and methods.
  *
- * @link ReportsConfig:COMMON
+ * @link ReportsConfig
  * @since v0.3.2
  */
 export interface ReportsConfig extends AlertsConfig {

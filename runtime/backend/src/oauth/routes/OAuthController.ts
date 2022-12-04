@@ -91,8 +91,8 @@ namespace HTTPResponses {
  * This controller defines the following routes:
  * | URI | HTTP method | Class method | Description |
  * | --- | --- | --- | --- |
- * | `/oauth/:provider/authorize` | **`GET`** | {@link OAuthController.authorize} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Server cookie or Bearer authorization header). Redirects the user to the third-party provider OAuth Authorization URL for valid requests. |
- * | `/oauth/:provider/callback` | **`GET`** | {@link OAuthController.callback} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Server cookie or Bearer authorization header). Requests an *access token* and *refresh token* from the third-party provider and finalizes the authorization process. |
+ * | `/oauth/:provider/authorize` | **`GET`** | {@link OAuthController.authorize} | Uses the {@link AuthGuard} to validate the required **access token** (Server cookie or Bearer authorization header). Redirects the user to the third-party provider OAuth Authorization URL for valid requests. |
+ * | `/oauth/:provider/callback` | **`GET`** | {@link OAuthController.callback} | Uses the {@link AuthGuard} to validate the required **access token** (Server cookie or Bearer authorization header). Requests an *access token* and *refresh token* from the third-party provider and finalizes the authorization process. |
  *
  * @since v0.3.0
  */

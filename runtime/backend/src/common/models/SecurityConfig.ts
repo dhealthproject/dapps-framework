@@ -24,7 +24,7 @@
  * }
  * ```
  *
- * @link SecurityConfig:COMMON
+ * @link SecurityConfig
  * @since v0.3.0
  */
 export type AuthParameters = {
@@ -61,7 +61,7 @@ export type AuthParameters = {
  * { origin: true }
  * ```
  *
- * @link SecurityConfig:COMMON
+ * @link SecurityConfig
  * @since v0.3.0
  */
 export type CrossOriginParameters = {
@@ -82,7 +82,7 @@ export interface SecurityConfig {
   /**
    * An authentication configuration object. This consists of parameters
    * that are necessary to process *authentication* for end-users.
-   * This configuration option uses the {@link AuthParameters:COMMON}
+   * This configuration option uses the {@link AuthParameters}
    * type and consists of a list of dHealth Account Addresses or Public
    * Keys that are used for authentication purposes (registry), as well
    * as an authentication secret which is used for signing access tokens.
@@ -96,7 +96,7 @@ export interface SecurityConfig {
    * }
    * ```
    *
-   * @link AuthParameters:COMMON
+   * @link AuthParameters
    * @access public
    * @var {AuthParameters}
    */
@@ -105,7 +105,7 @@ export interface SecurityConfig {
   /**
    * A CORS configuration object. This consists of parameters
    * that are necessary to secure API Requests of this backend runtime.
-   * This configuration option uses the {@link CrossOriginParameters:COMMON}
+   * This configuration option uses the {@link CrossOriginParameters}
    * type and consists of an **origin** configuration to enable/disable
    * CORS and restrict the originators of requests to the API.
    * <br /><br />
@@ -114,7 +114,7 @@ export interface SecurityConfig {
    * { origin: "*" }
    * ```
    *
-   * @link CrossOriginParameters:COMMON
+   * @link CrossOriginParameters
    * @access public
    * @var {CrossOriginParameters}
    */

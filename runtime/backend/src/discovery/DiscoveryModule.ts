@@ -31,7 +31,7 @@ import { BlocksModule } from "./modules/BlocksModule";
  * | {@link AssetsModule:DISCOVERY} | `assets` | `/assets` | Module with schedulers, collections and routes around **dApp assets**. |
  * | {@link BlocksModule:DISCOVERY} | `blocks` | `/blocks` | Module with schedulers, collections and routes around **network blocks**. |
  * <br /><br />
- * Note also that in {@link Schedulers:COMMON}, we map the following **schedulers**
+ * Note also that in {@link Schedulers}, we map the following **schedulers**
  * to this module:
  * - A {@link DiscoverTransactions:DISCOVERY} *scheduler* that discovers transactions in the background every minute.
  * - A {@link DiscoverAccounts:DISCOVERY} *scheduler* that discovers accounts in the background every two minutes.

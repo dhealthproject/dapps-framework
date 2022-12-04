@@ -30,7 +30,7 @@ import { DiscoveryConfig } from "./DiscoveryConfig";
  * } as AppConnectionPayload;
  * ```
  *
- * @link DappConfig:COMMON
+ * @link DappConfig
  * @since v0.3.0
  */
 export type AppConnectionPayload = {

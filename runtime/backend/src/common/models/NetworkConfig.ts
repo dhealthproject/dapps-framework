@@ -22,7 +22,7 @@
  *  } as DefaultNodePayload;
  * ```
  *
- * @link NetworkConfig:COMMON
+ * @link NetworkConfig
  * @since v0.3.0
  */
 export type DefaultNodePayload = {
@@ -47,7 +47,7 @@ export type DefaultNodePayload = {
  * const myNode2 = { url: "http://dual-02.dhealth.cloud", port: 3000 } as NodeConnectionPayload;
  * ```
  *
- * @link NetworkConfig:COMMON
+ * @link NetworkConfig
  * @since v0.3.0
  */
 export type NodeConnectionPayload = {
@@ -80,7 +80,7 @@ export type NodeConnectionPayload = {
  * }
  * ```
  *
- * @link NetworkConfig:COMMON
+ * @link NetworkConfig
  * @since v0.3.0
  */
 export type NetworkParameters = {
@@ -106,7 +106,7 @@ export type NetworkParameters = {
 export interface NetworkConfig {
   /**
    * A default operation network node to connect to.
-   * This configuration option uses the {@link DefaultNodePayload:COMMON}
+   * This configuration option uses the {@link DefaultNodePayload}
    * type and consists of an URL and a publicKey that are used
    * to establish the connection and query info of the default node.
    * <br /><br />
@@ -121,7 +121,7 @@ export interface NetworkConfig {
 
   /**
    * A list of operating network nodes that can be connected to.
-   * This configuration option uses the {@link NodeConnectionPayload:COMMON}
+   * This configuration option uses the {@link NodeConnectionPayload}
    * type and consists of an URL and an optional port that are used
    * to establish the connection with the node.
    * <br /><br />
@@ -137,7 +137,7 @@ export interface NetworkConfig {
   /**
    * A network configuration object. This consists of parameters that
    * are necessary to connect to *operating nodes* on dHealth Network.
-   * This configuration option uses the {@link NetworkParameters:COMMON}
+   * This configuration option uses the {@link NetworkParameters}
    * type and consists of network connection parameters.
    * <br /><br />
    * Important network connection parameters include the network type,

@@ -15,7 +15,7 @@
  *  - A collection name - of which schedulers will use to aggregate statistics from.
  *  - A fields array - which the schedulers will use to sum up for score.
  *
- * @link StatisticsConfig:COMMON
+ * @link StatisticsConfig
  * @since v0.3.2
  */
 export type ScoreSchedulerConfig = {
@@ -31,7 +31,7 @@ export type ScoreSchedulerConfig = {
  *  - `daily_score`: the score config values for daily statistics aggregation.
  *  - `weekly_score`: the score config values for weekly statistics aggregation.
  *  - `monthly_score`: the score config values for monthly statistics aggregation.
- * @link StatisticsConfig:COMMON
+ * @link StatisticsConfig
  * @since v0.3.2
  */
 export type LeaderboardConfig = {

@@ -29,7 +29,7 @@ import { TransactionDocument } from "../../common/models/TransactionSchema";
  * }
  * ```
  *
- * @link ProcessorConfig:COMMON
+ * @link ProcessorConfig
  * @since v0.3.0
  */
 export type OperationParameters = {

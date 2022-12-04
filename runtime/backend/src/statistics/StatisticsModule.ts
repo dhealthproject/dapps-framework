@@ -35,7 +35,7 @@ import { StatisticsImplementationModule } from "./modules/StatisticsImplementati
  * <br /><br />
  * #### Notes
  *
- * Note also that in {@link Schedulers:COMMON}, we map the following **schedulers**
+ * Note also that in {@link Schedulers}, we map the following **schedulers**
  * to this module:
  * - A {@link DailyScoreAggregation:STATISTICS} *scheduler* that produces *daily* leaderboards in the background every 3 hours.
  * - A {@link WeeklyScoreAggregation:STATISTICS} *scheduler* that produces *daily* leaderboards in the background every 3 days.

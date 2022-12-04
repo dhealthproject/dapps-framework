@@ -25,7 +25,7 @@ import type { StateData } from "./StateData";
  * used whenever database *documents* are being handled or read
  * for the `states` collection.
  * <br /><br />
- * Note that this class uses the generic {@link Transferable:COMMON} trait to
+ * Note that this class uses the generic {@link Transferable} trait to
  * enable a `toDTO()` method on the model.
  *
  * @todo Timestamp fields should be **numbers** to avoid timezone issues.
@@ -149,7 +149,7 @@ export class State extends Transferable<StateDTO> {
  * `StateDocument` which is a mixin that comprises of
  * {@link State} and this `Documentable` class.
  * <br /><br />
- * In class {@link Queryable:COMMON}, the first generic accepted
+ * In class {@link Queryable}, the first generic accepted
  * permits to use *documents* that are typed with this, to filter
  * results in a documents query.
  *

@@ -87,7 +87,7 @@ namespace HTTPResponses {
  * | URI | HTTP method | Class method | Description |
  * | --- | --- | --- | --- |
  * | `/activities` | **`GET`** | {@link ActivitiesController.find} | Responds with a pageable {@link PaginatedResultDTO} that contains {@link ActivityDTO} objects. |
- * | `/activities/:address` | **`GET`** | {@link ActivitiesController.findByUser} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Server cookie or Bearer authorization header). Responds with a pageable {@link PaginatedResultDTO} that contains {@link ActivityDTO} objects. |
+ * | `/activities/:address` | **`GET`** | {@link ActivitiesController.findByUser} | Uses the {@link AuthGuard} to validate the required **access token** (Server cookie or Bearer authorization header). Responds with a pageable {@link PaginatedResultDTO} that contains {@link ActivityDTO} objects. |
  * <br /><br />
  *
  * @since v0.3.2

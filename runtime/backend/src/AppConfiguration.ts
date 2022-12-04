@@ -302,7 +302,7 @@ export class AppConfiguration {
    * method *does not* interpret the content of configuration objects.
    * <br /><br />
    * This method is used during the nestjs initialization process inside
-   * the private constructor of {@link ScopeFactory:COMMON}.
+   * the private constructor of {@link ScopeFactory}.
    *
    * @access public
    * @static
@@ -328,7 +328,7 @@ export class AppConfiguration {
    * This method initializes the internal *database connection adapter*.
    * <br /><br />
    * You should not have to call this method manually, it is used inside
-   * {@link Schedulers:COMMON} and {@link Scopes:COMMON} to perform the
+   * {@link Schedulers} and {@link Scopes} to perform the
    * configuration of database adapters.
    * <br /><br />
    * CAUTION: this method opens the database connection, which requires
@@ -372,7 +372,7 @@ export class AppConfiguration {
    * This method initializes the internal *event emitter adapter*.
    * <br /><br />
    * You should not have to call this method manually, it is used inside
-   * {@link Schedulers:COMMON} and {@link Scopes:COMMON} to perform the
+   * {@link Schedulers} and {@link Scopes} to perform the
    * configuration of event emitter adapters.
    *
    * @access public

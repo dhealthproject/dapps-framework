@@ -24,7 +24,7 @@
  * }
  * ```
  *
- * @link AssetsConfig:COMMON
+ * @link AssetsConfig
  * @since v0.3.0
  */
 export interface AssetParameters {
@@ -44,7 +44,7 @@ export interface AssetParameters {
  * type such that they are correctly understood and configured
  * for the backend runtime endpoints.
  *
- * @link AssetsConfig:COMMON
+ * @link AssetsConfig
  * @since v0.3.0
  */
 export type AssetType = string | "base" | "earn";
@@ -59,7 +59,7 @@ export type AssetType = string | "base" | "earn";
  * type such that they are correctly understood and configured
  * for the backend runtime endpoints.
  *
- * @link AssetsConfig:COMMON
+ * @link AssetsConfig
  * @since v0.3.0
  */
 export type BoosterGroup = string | "referral" | "progress";
@@ -72,7 +72,7 @@ export type BoosterGroup = string | "referral" | "progress";
  * in {@link AssetType} and a parameters object as
  * defined by {@link AssetParameters}.
  *
- * @link AssetsConfig:COMMON
+ * @link AssetsConfig
  * @since v0.3.0
  */
 export type DiscoverableAssetsMap = {
@@ -87,7 +87,7 @@ export type DiscoverableAssetsMap = {
  * in {@link BoosterGroup} and a configuration object as
  * defined by {@link DiscoverableAssetsMap}.
  *
- * @link AssetsConfig:COMMON
+ * @link AssetsConfig
  * @since v0.3.0
  */
 export type BoosterAssetsMap = {
@@ -121,7 +121,7 @@ export interface AssetsConfig {
    * }
    * ```
    *
-   * @link DiscoverableAssetsMap:COMMON
+   * @link DiscoverableAssetsMap
    * @access public
    * @var {DiscoverableAssetsMap}
    */
@@ -145,8 +145,8 @@ export interface AssetsConfig {
    * }
    * ```
    *
-   * @link BoosterGroup:COMMON
-   * @link DiscoverableAssetsMap:COMMON
+   * @link BoosterGroup
+   * @link DiscoverableAssetsMap
    * @access public
    * @var {BoosterAssetsMap}
    */

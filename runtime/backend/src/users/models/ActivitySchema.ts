@@ -281,7 +281,7 @@ export class Activity extends Transferable<ActivityDTO> {
  * `ActivityDocument` which is a mixin that comprises of
  * {@link Activity} and this `Documentable` class.
  * <br /><br />
- * In class {@link Queryable:COMMON}, the first generic accepted
+ * In class {@link Queryable}, the first generic accepted
  * permits to use *documents* that are typed with this, to filter
  * results in a documents query.
  *

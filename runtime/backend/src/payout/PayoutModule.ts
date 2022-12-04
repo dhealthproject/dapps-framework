@@ -52,7 +52,7 @@ import { PayoutsModule } from "./modules/PayoutsModule";
  * <br /><br />
  * #### Notes
  *
- * Note also that in {@link Schedulers:COMMON}, we map the following **schedulers**
+ * Note also that in {@link Schedulers}, we map the following **schedulers**
  * to this module:
  * - A {@link PrepareActivityPayouts:PAYOUT} *scheduler* that prepares and signs payouts in the background.
  * - A {@link BroadcastActivityPayouts:PAYOUT} *scheduler* that broadcasts payouts in the background.

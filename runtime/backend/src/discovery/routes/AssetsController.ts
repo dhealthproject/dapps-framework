@@ -83,7 +83,7 @@ namespace HTTPResponses {
  * | URI | HTTP method | Class method | Description |
  * | --- | --- | --- | --- |
  * | `/assets` | **`GET`** | {@link AssetsController.find} | Responds with a pageable {@link PaginatedResultDTO} that contains {@link AssetDTO} objects. |
- * | `/assets/:address` | **`GET`** | {@link AssetsController.findByUser} | Uses the {@link AuthGuard:COMMON} to validate the required **access token** (Server cookie or Bearer authorization header). Responds with a pageable {@link PaginatedResultDTO} that contains {@link AssetDTO} objects. |
+ * | `/assets/:address` | **`GET`** | {@link AssetsController.findByUser} | Uses the {@link AuthGuard} to validate the required **access token** (Server cookie or Bearer authorization header). Responds with a pageable {@link PaginatedResultDTO} that contains {@link AssetDTO} objects. |
  * <br /><br />
  *
  * @since v0.3.0
