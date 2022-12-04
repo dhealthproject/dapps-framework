@@ -28,7 +28,7 @@ export type SocialPlatformsMap = {
  * @description The dApp social networks share configuration. This
  * configuration defines list and params of the social networks
  * in which dapp can share referral codes.
- * @link SocialConfig:CONFIG
+ * @link SocialConfig
  * @since v0.3.0
  */
 export interface SocialConfig {

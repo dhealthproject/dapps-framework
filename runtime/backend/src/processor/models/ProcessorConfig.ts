@@ -45,7 +45,7 @@ export type OperationParameters = {
  * object is used to determine how information is processed into
  * *operations* for this dApp.
  *
- * @link ProcessorConfig:CONFIG
+ * @link ProcessorConfig
  * @since v0.2.0
  */
 export interface ProcessorConfig {

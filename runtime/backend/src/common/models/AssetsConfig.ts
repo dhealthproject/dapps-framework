@@ -101,7 +101,7 @@ export type BoosterAssetsMap = {
  * object is used to determine which *mosaics* are used from the
  * dHealth Network and how they should be formatted.
  *
- * @link AssetsConfig:CONFIG
+ * @link AssetsConfig
  * @since v0.3.0
  */
 export interface AssetsConfig {

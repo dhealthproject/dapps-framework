@@ -27,7 +27,7 @@ export interface LogStorageOptions {
  * This interface is mainly used **internally** to restrict the configuration
  * values provided to some modules or services and methods.
  *
- * @link MonitoringConfig:CONFIG
+ * @link MonitoringConfig
  * @since v0.3.2
  */
 export interface MonitoringConfig {

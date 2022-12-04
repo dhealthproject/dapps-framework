@@ -48,7 +48,7 @@ export type LeaderboardConfig = {
  * object is used to determine souce collection and source fields to read from
  * in order to aggregate statistics information.
  *
- * @link StatisticsConfig:CONFIG
+ * @link StatisticsConfig
  * @since v0.3.2
  */
 export interface StatisticsConfig {

@@ -60,7 +60,7 @@ export interface PayoutAccountsConfig {
  * object is used to determine how payouts are created for this
  * dApp and determines the source configuration.
  *
- * @link PayoutConfig:CONFIG
+ * @link PayoutConfig
  * @since v0.4.0
  */
 export interface PayoutConfig {

@@ -75,7 +75,7 @@ export type CrossOriginParameters = {
  * object is used to determine communication, transport and process
  * that are used in security-critical scopes.
  *
- * @link SecurityConfig:CONFIG
+ * @link SecurityConfig
  * @since v0.3.0
  */
 export interface SecurityConfig {

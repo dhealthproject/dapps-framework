@@ -123,7 +123,7 @@ export class AppConfiguration {
    * paid for transactions issued by this dApp.
    * <br /><br />
    * #### Reference
-   * {@link AssetsConfig:CONFIG}
+   * {@link AssetsConfig}
    *
    * @access protected
    * @var {AssetsConfig}
@@ -137,7 +137,7 @@ export class AppConfiguration {
    * backend runtime.
    * <br /><br />
    * #### Reference
-   * {@link DappConfig:CONFIG}
+   * {@link DappConfig}
    *
    * @access protected
    * @var {DappConfig}
@@ -149,7 +149,7 @@ export class AppConfiguration {
    * determine communication, transport and network information.
    * <br /><br />
    * #### Reference
-   * {@link NetworkConfig:CONFIG}
+   * {@link NetworkConfig}
    *
    * @access protected
    * @var {NetworkConfig}
@@ -161,7 +161,7 @@ export class AppConfiguration {
    * determine communication, transport and processes that are used to
    * connect and integrate with custom *data providers*.
    * #### Reference
-   * {@link OAuthConfig:CONFIG}
+   * {@link OAuthConfig}
    *
    * @access protected
    * @var {OAuthConfig}
@@ -177,7 +177,7 @@ export class AppConfiguration {
    * the payout scope is disabled.
    * <br /><br />
    * #### Reference
-   * {@link PayoutConfig:CONFIG}
+   * {@link PayoutConfig}
    *
    * @access protected
    * @var {PayoutConfig}
@@ -189,7 +189,7 @@ export class AppConfiguration {
    * determine how information is processed into *operations* for this dApp.
    * <br /><br />
    * #### Reference
-   * {@link ProcessorConfig:CONFIG}
+   * {@link ProcessorConfig}
    *
    * @access protected
    * @var {ProcessorConfig}
@@ -202,7 +202,7 @@ export class AppConfiguration {
    * that are critical to the security of a runtime.
    * <br /><br />
    * #### Reference
-   * {@link SecurityConfig:CONFIG}
+   * {@link SecurityConfig}
    *
    * @access protected
    * @var {SecurityConfig}
@@ -215,7 +215,7 @@ export class AppConfiguration {
    * enable much faster aggregated data access (e.g. leaderboards).
    * <br /><br />
    * #### Reference
-   * {@link StatisticsConfig:CONFIG}
+   * {@link StatisticsConfig}
    *
    * @access protected
    * @var {StatisticsConfig}
@@ -227,7 +227,7 @@ export class AppConfiguration {
    * used to determine social platforms are integrated to *share content*.
    * <br /><br />
    * #### Reference
-   * {@link SocialConfig:CONFIG}
+   * {@link SocialConfig}
    *
    * @access protected
    * @var {SocialConfig}
@@ -239,7 +239,7 @@ export class AppConfiguration {
    * object is used to determine dApp monitoring information.
    * <br /><br />
    * #### Reference
-   * {@link MonitoringConfig:CONFIG}
+   * {@link MonitoringConfig}
    *
    * @access protected
    * @var {MonitoringConfig}
@@ -251,7 +251,7 @@ export class AppConfiguration {
    * is used to determine dApp monitoring transport information.
    * <br /><br />
    * #### Reference
-   * {@link TransportConfig:CONFIG}
+   * {@link TransportConfig}
    *
    * @access protected
    * @var {TransportConfig}

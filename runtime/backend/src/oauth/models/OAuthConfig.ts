@@ -82,7 +82,7 @@ export type OAuthProvidersMap = {
  * object is used to determine communication, transport and process
  * that are used in security-critical scopes.
  *
- * @link OAuthConfig:CONFIG
+ * @link OAuthConfig
  * @since v0.3.0
  */
 export interface OAuthConfig {

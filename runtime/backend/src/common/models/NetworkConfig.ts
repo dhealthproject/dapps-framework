@@ -100,7 +100,7 @@ export type NetworkParameters = {
  * object is used to determine communication, transport and network
  * information.
  *
- * @link NetworkConfig:CONFIG
+ * @link NetworkConfig
  * @since v0.2.0
  */
 export interface NetworkConfig {
