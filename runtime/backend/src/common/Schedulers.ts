@@ -13,7 +13,7 @@ import { AppConfiguration } from "../AppConfiguration";
 import { LogModule } from "./modules/LogModule";
 
 // discovery scope
-import { AccountsModule } from "../discovery/modules/AccountsModule";
+import { DiscoveryAccountsModule } from "../discovery/modules/DiscoveryAccountsModule";
 import { AssetsModule } from "../discovery/modules/AssetsModule";
 import { BlocksModule } from "../discovery/modules/BlocksModule";
 import { TransactionsModule } from "../discovery/modules/TransactionsModule";
@@ -72,7 +72,7 @@ import { ReportNotifierCommand } from "../notifier/schedulers/ReportNotifier/Rep
 export const Schedulers: { [key: string]: any[] } = {
   database: [AppConfiguration.getDatabaseModule()],
   discovery: [
-    AccountsModule,
+    DiscoveryAccountsModule,
     AssetsModule,
     TransactionsModule,
     BlocksModule,

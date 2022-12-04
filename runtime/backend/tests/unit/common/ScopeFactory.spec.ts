@@ -80,8 +80,8 @@ jest.mock("../../../src/discovery/DiscoveryModule", () => {
 });
 
 const AccountsDiscoveryModuleMock: any = jest.fn();
-jest.mock("../../../src/discovery/modules/AccountsModule", () => {
-  return { AccountsModule: AccountsDiscoveryModuleMock };
+jest.mock("../../../src/discovery/modules/DiscoveryAccountsModule", () => {
+  return { DiscoveryAccountsModule: AccountsDiscoveryModuleMock };
 });
 
 const AssetsModuleMock: any = jest.fn();

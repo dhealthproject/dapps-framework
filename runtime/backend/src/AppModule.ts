@@ -58,7 +58,7 @@ export class AppModule {
    * modules in the main (root) application module.
    * <br /><br />
    * Note that the `AppModule` itself injects some modules as well including
-   * {@link AccountsModule:DISCOVERY}, {@link AuthModule:COMMON} and {@link ChallengesModule:COMMON}
+   * {@link DiscoveryAccountsModule:DISCOVERY}, {@link AuthModule:COMMON} and {@link ChallengesModule:COMMON}
    * which are necessary to the good functioning of the backend runtime.
    * <br /><br />
    * All other dependency injections are performed dynamically based on the

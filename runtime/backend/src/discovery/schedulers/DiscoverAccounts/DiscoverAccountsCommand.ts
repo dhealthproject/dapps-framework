@@ -16,7 +16,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { NetworkModule } from "../../../common/modules/NetworkModule";
 import { StateModule } from "../../../common/modules/StateModule";
 import { Account, AccountSchema } from "../../../common/models/AccountSchema";
-import { AccountsModule } from "../../modules/AccountsModule";
+import { DiscoveryAccountsModule } from "../../modules/DiscoveryAccountsModule";
 import { TransactionsModule } from "../../modules/TransactionsModule";
 import {
   Transaction,
@@ -38,7 +38,7 @@ import { DiscoverAccounts } from "./DiscoverAccounts";
     ScheduleModule.forRoot(),
     StateModule,
     NetworkModule,
-    AccountsModule,
+    DiscoveryAccountsModule,
     TransactionsModule,
     LogModule,
     MongooseModule.forFeature([

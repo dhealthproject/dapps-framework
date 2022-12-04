@@ -31,15 +31,7 @@ export * from "./common/routes";
 export * from "./common/services";
 export * from "./common/traits";
 export * from "./common/types";
-// explicitely not exporting AccountsModule:COMMON
-export {
-  AuthModule,
-  ChallengesModule,
-  HelpersModule,
-  NetworkModule,
-  QueryModule,
-  StateModule,
-} from "./common/modules";
+export * from "./common/modules";
 
 // discovery scope
 export * from "./discovery/DiscoveryModule";

@@ -134,7 +134,7 @@ export class ScopeFactory {
    * <br /><br />
    * i.e. if you *enable* the `discovery` scope by setting
    * `"scopes": ["discovery"]` in your config/dapp.json, this
-   * method will register the {@link AccountsModule} and the
+   * method will register the {@link DiscoveryAccountsModule} and the
    * {@link DiscoverAccountsCommand}.
    * <br /><br />
    * Note that this method returns only {@link Schedulers}

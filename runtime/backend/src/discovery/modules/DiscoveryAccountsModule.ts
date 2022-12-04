@@ -15,13 +15,13 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Account, AccountSchema } from "../../common/models/AccountSchema";
 import { LogModule } from "../../common/modules/LogModule";
 import { QueryModule } from "../../common/modules/QueryModule";
-import { AccountsModule as CommonAccountsModule } from "../../common/modules/AccountsModule";
+import { AccountsModule } from "../../common/modules/AccountsModule";
 import { AccountsService } from "../../common/services/AccountsService";
 import { AccountsController } from "../routes/AccountsController";
 
 /**
  * @label DISCOVERY
- * @class AccountsModule
+ * @class DiscoveryAccountsModule
  * @description The main definition for the Accounts module. Note that
  * this module extends the {@link AccountsModule:COMMON} from the common scope
  * to *include* database *entities and schema definition*.
@@ -39,4 +39,4 @@ import { AccountsController } from "../routes/AccountsController";
   ],
   controllers: [AccountsController],
 })
-export class AccountsModule extends CommonAccountsModule {}
+export class DiscoveryAccountsModule extends AccountsModule {}

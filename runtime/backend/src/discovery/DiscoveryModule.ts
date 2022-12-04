@@ -11,7 +11,7 @@
 import { Module } from "@nestjs/common";
 
 // internal dependencies
-import { AccountsModule } from "./modules/AccountsModule";
+import { DiscoveryAccountsModule } from "./modules/DiscoveryAccountsModule";
 import { AssetsModule } from "./modules/AssetsModule";
 import { TransactionsModule } from "./modules/TransactionsModule";
 import { BlocksModule } from "./modules/BlocksModule";
@@ -27,7 +27,7 @@ import { BlocksModule } from "./modules/BlocksModule";
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
  * | {@link TransactionsModule:DISCOVERY} | `transactions` | `/transactions` | Module with schedulers, collections and routes around **dApp transactions**. |
- * | {@link AccountsModule:DISCOVERY} | `accounts` | `/accounts` | Module with schedulers, collections and routes around **dApp accounts**. |
+ * | {@link DiscoveryAccountsModule:DISCOVERY} | `accounts` | `/accounts` | Module with schedulers, collections and routes around **dApp accounts**. |
  * | {@link AssetsModule:DISCOVERY} | `assets` | `/assets` | Module with schedulers, collections and routes around **dApp assets**. |
  * | {@link BlocksModule:DISCOVERY} | `blocks` | `/blocks` | Module with schedulers, collections and routes around **network blocks**. |
  * <br /><br />
@@ -43,7 +43,7 @@ import { BlocksModule } from "./modules/BlocksModule";
 @Module({
   imports: [
     // imports routes and DTOs
-    AccountsModule,
+    DiscoveryAccountsModule,
     TransactionsModule,
     AssetsModule,
     BlocksModule,

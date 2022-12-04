@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // modules index
-export * from "./AccountsModule";
+export * from "./DiscoveryAccountsModule";
 export * from "./AssetsModule";
 export * from "./BlocksModule";
 export * from "./TransactionsModule";
