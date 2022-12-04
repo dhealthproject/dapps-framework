@@ -225,7 +225,7 @@ jest.mock(
   }
 );
 
-const ReportNotifierCommandMock: any = jest.fn();
+const ReportNotifierCommandMock: any = { register: jest.fn() };
 jest.mock(
   "../../../src/notifier/schedulers/ReportNotifier/ReportNotifierCommand",
   () => {

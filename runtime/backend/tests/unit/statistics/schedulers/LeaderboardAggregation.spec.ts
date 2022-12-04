@@ -32,6 +32,7 @@ import { SchedulerRegistry } from "@nestjs/schedule/dist/scheduler.registry";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { MailerService } from "@nestjs-modules/mailer";
 
 // mock cron dependency
 const jobStartCall = jest.fn();
@@ -55,6 +56,7 @@ import { WeeklyScoreAggregation } from "../../../../src/statistics/schedulers/Le
 import { MonthlyScoreAggregation } from "../../../../src/statistics/schedulers/LeaderboardAggregation/MonthlyScoreAggregation";
 import { LeaderboardAggregationStateData } from "../../../../src/statistics/models/LeaderboardAggregationStateData";
 import { LogService } from "../../../../src/common/services/LogService";
+import { EmailNotifier } from "../../../../src/notifier/services/EmailNotifier";
 
 describe("statistics/LeaderboardAggregation", () => {
   let service: LeaderboardAggregation;
@@ -62,6 +64,7 @@ describe("statistics/LeaderboardAggregation", () => {
   let statesService: StateService;
   let configService: ConfigService;
   let logger: LogService;
+  let emailNotifier: EmailNotifier;
 
   let mockDate: Date;
   let module: TestingModule;
@@ -81,6 +84,7 @@ describe("statistics/LeaderboardAggregation", () => {
         NetworkService,
         ConfigService,
         EventEmitter2,
+        EmailNotifier,
         {
           provide: getModelToken("Statistics"),
           useValue: MockModel,
@@ -107,6 +111,12 @@ describe("statistics/LeaderboardAggregation", () => {
             error: jest.fn(),
           },
         },
+        {
+          provide: MailerService,
+          useValue: {
+            sendMail: jest.fn().mockResolvedValue(true),
+          },
+        },
       ],
     }).compile();
 
@@ -115,6 +125,7 @@ describe("statistics/LeaderboardAggregation", () => {
     statesService = module.get<StateService>(StateService);
     configService = module.get<ConfigService>(ConfigService);
     logger = module.get<LogService>(LogService);
+    emailNotifier = module.get<EmailNotifier>(EmailNotifier);
 
     (service as any).configService = {
       get: configGetCallMock,
@@ -161,29 +172,6 @@ describe("statistics/LeaderboardAggregation", () => {
     });
   });
 
-  describe("addCronJob()", () => {
-    it("should run correctly", () => {
-      // prepare
-      // clear calls from constructor in test initialization
-      jest.clearAllMocks();
-      const serviceRunAsSchedulerCall = jest
-        .spyOn(Function.prototype, "bind")
-        .mockReturnValue(jest.fn());
-      const schedulerRegistryAddCronJobCall = jest.fn();
-      (service as any).schedulerRegistry = {
-        addCronJob: schedulerRegistryAddCronJobCall
-      };
-
-      // act
-      (service as any).addCronJob("*/1 * * * *");
-
-      // assert
-      expect(serviceRunAsSchedulerCall).toHaveBeenCalledTimes(1);
-      expect(schedulerRegistryAddCronJobCall).toHaveBeenCalledTimes(1);
-      expect(jobStartCall).toHaveBeenCalledTimes(1);
-    });
-  });
-
   describe("runAsScheduler()", () => {
     it("should run correctly and print correct logs", async () => {
       // prepare
@@ -193,9 +181,10 @@ describe("statistics/LeaderboardAggregation", () => {
       const serviceRunCall = jest
         .spyOn(service, "run")
         .mockResolvedValue();
+      (service as any).notifier = emailNotifier;
 
       // act
-      await service.runScheduler();
+      await service.runAsScheduler();
 
       // assert
       expect(serviceDebugLogCall).toHaveBeenNthCalledWith(

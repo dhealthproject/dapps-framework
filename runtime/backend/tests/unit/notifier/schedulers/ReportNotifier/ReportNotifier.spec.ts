@@ -38,7 +38,8 @@ import { DappHelper } from "../../../../../src/common/concerns/DappHelper";
 import { EmailNotifier } from "../../../../../src/notifier/services/EmailNotifier";
 import { NetworkService } from "../../../../../src/common/services/NetworkService";
 import { ReportNotifierStateData } from "../../../../../src/notifier/models/ReportNotifierStateData";
-import { DailyReportNotifier } from "@/notifier/schedulers/ReportNotifier/DailyReportNotifier";
+import { WeeklyReportNotifier } from "../../../../../src/notifier/schedulers/ReportNotifier/WeeklyReportNotifier";
+import { Notifier } from "../../../../../src/notifier/models/Notifier";
 
 describe("notifier/ReportNotifier", () => {
   let service: ReportNotifier;
@@ -48,6 +49,7 @@ describe("notifier/ReportNotifier", () => {
   let stateService: StateService;
   let notifierFactory: NotifierFactory;
   let dappHelper: DappHelper;
+  let emailNotifier: Notifier;
 
   let mockDate: Date;
   beforeEach(async () => {
@@ -57,7 +59,7 @@ describe("notifier/ReportNotifier", () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        DailyReportNotifier,
+        WeeklyReportNotifier,
         {
           provide: getModelToken("Log"),
           useClass: MockModel,
@@ -104,13 +106,16 @@ describe("notifier/ReportNotifier", () => {
       ],
     }).compile();
 
-    service = module.get<ReportNotifier>(DailyReportNotifier);
+    service = module.get<ReportNotifier>(WeeklyReportNotifier);
     logger = module.get<LogService>(LogService);
     configService = module.get<ConfigService>(ConfigService);
     queryService = module.get<QueryService<LogDocument, LogModel>>(QueryService);
     stateService = module.get<StateService>(StateService);
-    notifierFactory = module.get<NotifierFactory>(NotifierFactory);
     dappHelper = module.get<DappHelper>(DappHelper);
+    emailNotifier = module.get<EmailNotifier>(EmailNotifier);
+    notifierFactory = module.get<NotifierFactory>(NotifierFactory);
+
+    (service as any).notifier = emailNotifier;
   });
 
   afterEach(() => {
@@ -147,27 +152,7 @@ describe("notifier/ReportNotifier", () => {
     });
   });
 
-  describe("get cronExpression()", () => {
-    it("should return correct result", () => {
-      // prepare
-      const expectedResults = [
-        "0 0 0 */7 * *",
-        "0 0 */24 * * *",
-        "0 0 0 */7 * *",
-        "0 0 0 1 * *",
-      ];
-      [null, "D", "W", "M"].forEach((periodFormat, index) => {
-        // act
-        (service as any).periodFormat = periodFormat;
-        const result = (service as any).cronExpression;
-
-        // assert
-        expect(result).toBe(expectedResults[index]);
-      });
-    });
-  });
-
-  describe("runAsScheduler()", () => {
+  describe("runScheduler()", () => {
     it("should run correctly and print correct logs", async () => {
       // prepare
       const serviceDebugLogCall = jest
@@ -178,7 +163,7 @@ describe("notifier/ReportNotifier", () => {
         .mockResolvedValue();
 
       // act
-      await service.runAsScheduler();
+      await service.runScheduler();
 
       // assert
       expect(serviceDebugLogCall).toHaveBeenNthCalledWith(
@@ -206,14 +191,14 @@ describe("notifier/ReportNotifier", () => {
       const expectedError = new Error("Report notifer transport is not defined");
 
       // act
-      const result = service.runAsScheduler();
+      const result = service.runScheduler();
 
       // assert
+      expect(result).rejects.toThrow(expectedError);
       expect(serviceDebugLogCall).toHaveBeenNthCalledWith(
         1,
         "Starting notifier report type: W"
       );
-      expect(result).rejects.toThrow(expectedError);
       expect(serviceRunCall).toHaveBeenCalledTimes(0);
     });
   });
@@ -322,13 +307,14 @@ describe("notifier/ReportNotifier", () => {
       const queryServiceAggregateCall = jest
         .spyOn(queryService, "aggregate")
         .mockResolvedValue(results);
-      const notifier = { sendInternal: jest.fn() };
-      (service as any).notifier = notifier;
       const dappHelperCreateDetailsTableHTMLCall = jest
         .spyOn(dappHelper, "createDetailsTableHTML")
         .mockReturnValue("test-html-content");
       const dateStart = moment(startDate).format("YYYY-MM-DD");
       const dateEnd = moment(endDate).format("YYYY-MM-DD");
+      const emailNotifierSendInternalCall = jest
+        .spyOn(emailNotifier, "sendInternal")
+        .mockResolvedValue(true);
 
       // act
       await service.report(
@@ -353,7 +339,7 @@ describe("notifier/ReportNotifier", () => {
         endDate,
       )
       expect(configServiceGetCall).toHaveBeenNthCalledWith(1, "dappName");
-      expect(notifier.sendInternal).toHaveBeenNthCalledWith(
+      expect(emailNotifierSendInternalCall).toHaveBeenNthCalledWith(
         1,
         {
           to: "recipient@example.com",
