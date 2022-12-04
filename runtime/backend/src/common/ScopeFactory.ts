@@ -72,7 +72,10 @@ export class ScopeFactory {
       ConfigModule.forRoot({
         load: AppConfiguration.getLoaders(),
         isGlobal: true,
-        envFilePath: [`${process.env.NODE_ENV}.env`, `${process.env.NODE_ENV}.env-sample`],
+        envFilePath: [
+          `${process.env.NODE_ENV}.env`,
+          `${process.env.NODE_ENV}.env-sample`,
+        ],
       }),
     ];
   }

@@ -13,9 +13,11 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 import { QueryModule } from "../../common/modules/QueryModule";
-import { AccountSession, AccountSessionSchema } from "../models/AccountSessionSchema";
+import {
+  AccountSession,
+  AccountSessionSchema,
+} from "../models/AccountSessionSchema";
 import { AccountSessionsService } from "../services/AccountSessionsService";
-
 
 /**
  * @label COMMON

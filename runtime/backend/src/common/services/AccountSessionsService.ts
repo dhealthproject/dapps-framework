@@ -38,7 +38,8 @@ export class AccountSessionsService {
    * @param {QueriesService} queriesService
    */
   constructor(
-    @InjectModel(AccountSession.name) private readonly model: AccountSessionModel,
+    @InjectModel(AccountSession.name)
+    private readonly model: AccountSessionModel,
     private readonly queriesService: QueryService<
       AccountSessionDocument,
       AccountSessionModel
@@ -106,7 +107,9 @@ export class AccountSessionsService {
    * @param   {AccountSessionQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @returns {Promise<AccountSessionDocument>}  The resulting `accounts` document.
    */
-  public async findOne(query: AccountSessionQuery): Promise<AccountSessionDocument> {
+  public async findOne(
+    query: AccountSessionQuery,
+  ): Promise<AccountSessionDocument> {
     return await this.queriesService.findOne(query, this.model);
   }
 
@@ -140,7 +143,12 @@ export class AccountSessionsService {
    * @param   {AccountSessionModel[]} accountDocuments
    * @returns {Promise<number>}
    */
-  public async updateBatch(accountSessionDocuments: AccountSessionModel[]): Promise<number> {
-    return await this.queriesService.updateBatch(this.model, accountSessionDocuments);
+  public async updateBatch(
+    accountSessionDocuments: AccountSessionModel[],
+  ): Promise<number> {
+    return await this.queriesService.updateBatch(
+      this.model,
+      accountSessionDocuments,
+    );
   }
 }

@@ -30,7 +30,7 @@ import { AccountSessionDTO } from "./AccountSessionDTO";
  * @todo Timestamp fields should be **numbers** to avoid timezone issues.
  * @since v0.3.2
  */
- @Schema({
+@Schema({
   timestamps: true,
   collection: "account-sessions",
 })
@@ -95,31 +95,31 @@ export class AccountSession extends Transferable<AccountSessionDTO> {
   public readonly accessToken?: string;
 
   /**
-  * The JWT refresh token that can be attached in the **bearer
-  * authorization header** of HTTP requests to `/auth/token` to
-  * indicate that a user's access token must be refreshed.
-  * <br /><br />
-  * This field is **optional** and *not indexed*.
-  * <br /><br />
-  * See more details in {@link AccessTokenDTO}.
-  *
-  * @access public
-  * @readonly
-  * @var {string}
-  */
+   * The JWT refresh token that can be attached in the **bearer
+   * authorization header** of HTTP requests to `/auth/token` to
+   * indicate that a user's access token must be refreshed.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
+   * <br /><br />
+   * See more details in {@link AccessTokenDTO}.
+   *
+   * @access public
+   * @readonly
+   * @var {string}
+   */
   @Prop({ index: true, nullable: true })
   public readonly refreshTokenHash?: string;
 
   /**
-  * The transaction hash that is/was attached to the **last**
-  * authenticated *session* of this account.
-  * <br /><br />
-  * This field is **optional** and *not indexed*.
-  *
-  * @access public
-  * @readonly
-  * @var {string}
-  */
+   * The transaction hash that is/was attached to the **last**
+   * authenticated *session* of this account.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
+   *
+   * @access public
+   * @readonly
+   * @var {string}
+   */
   @Prop({ nullable: true })
   public readonly lastSessionHash?: string;
 
@@ -152,30 +152,30 @@ export class AccountSession extends Transferable<AccountSessionDTO> {
   public readonly referralCode: string;
 
   /**
-  * The document's creation timestamp. This field **does not** reflect the
-  * date of creation of an account but rather the date of creation of the
-  * cached database entry.
-  * <br /><br />
-  * This field is **optional** and *indexed*.
-  *
-  * @access public
-  * @readonly
-  * @var {Date}
-  */
+   * The document's creation timestamp. This field **does not** reflect the
+   * date of creation of an account but rather the date of creation of the
+   * cached database entry.
+   * <br /><br />
+   * This field is **optional** and *indexed*.
+   *
+   * @access public
+   * @readonly
+   * @var {Date}
+   */
   @Prop({ index: true })
   public readonly createdAt?: Date;
 
   /**
-  * The document's update timestamp. This field **does not** reflect the
-  * date of update of an account but rather the date of update of the
-  * cached database entry.
-  * <br /><br />
-  * This field is **optional** and *not indexed*.
-  *
-  * @access public
-  * @readonly
-  * @var {Date}
-  */
+   * The document's update timestamp. This field **does not** reflect the
+   * date of update of an account but rather the date of update of the
+   * cached database entry.
+   * <br /><br />
+   * This field is **optional** and *not indexed*.
+   *
+   * @access public
+   * @readonly
+   * @var {Date}
+   */
   @Prop()
   public readonly updatedAt?: Date;
 
@@ -202,7 +202,10 @@ export class AccountSession extends Transferable<AccountSessionDTO> {
    * @param   {AccountSessionDTO}        dto   The DTO object that will be populated with values.
    * @returns {AccountSessionDTO}        The `dto` object with fields set.
    */
-  public static fillDTO(doc: AccountSessionDocument, dto: AccountSessionDTO): AccountSessionDTO {
+  public static fillDTO(
+    doc: AccountSessionDocument,
+    dto: AccountSessionDTO,
+  ): AccountSessionDTO {
     dto.address = doc.address;
     dto.accessToken = doc.accessToken;
     dto.refreshTokenHash = doc.refreshTokenHash;
@@ -229,7 +232,7 @@ export class AccountSession extends Transferable<AccountSessionDTO> {
  *
  * @since v0.3.2
  */
- export type AccountSessionDocument = AccountSession & Documentable;
+export type AccountSessionDocument = AccountSession & Documentable;
 
 /**
  * @class AccountSessionModel
@@ -292,7 +295,8 @@ export class AccountSessionQuery extends Queryable<AccountSessionDocument> {
  *
  * @since v0.3.2
  */
-export const AccountSessionSchema = SchemaFactory.createForClass(AccountSession);
+export const AccountSessionSchema =
+  SchemaFactory.createForClass(AccountSession);
 
 // This call to **loadClass** on the schema object enables instance
 // methods on the {@link AccountSession} class to be called when the model gets

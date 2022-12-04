@@ -37,7 +37,10 @@ import {
   AuthChallengeDocument,
   AuthChallengeQuery,
 } from "../models/AuthChallengeSchema";
-import { AccountSessionDocument, AccountSessionQuery } from "../models/AccountSessionSchema";
+import {
+  AccountSessionDocument,
+  AccountSessionQuery,
+} from "../models/AccountSessionSchema";
 import { AccountSessionsService } from "./AccountSessionsService";
 
 // configuration resources
@@ -273,7 +276,6 @@ export class AuthService {
     // read and decode access token
     const token: string = AuthService.extractToken(request, cookieName);
 
-
     // find account session in database
     const accountSession = await this.accountSessionsService.findOne(
       new AccountSessionQuery({
@@ -303,9 +305,11 @@ export class AuthService {
    * @returns {Promise<AuthenticationPayload>}  An authenticated account session described with {@link AuthenticationPayload}.
    * @throws  {HttpException}           Given challenge could not be found in recent transactions.
    */
-  public async validateChallenge(
-    { challenge, sub, registry }: AccessTokenRequest,
-  ): Promise<AuthenticationPayload> {
+  public async validateChallenge({
+    challenge,
+    sub,
+    registry,
+  }: AccessTokenRequest): Promise<AuthenticationPayload> {
     // does not permit multiple usage of challenges
     const challengeUsed: boolean = await this.challengesService.exists(
       new AuthChallengeQuery({
@@ -322,7 +326,8 @@ export class AuthService {
     // query latest 100 transactions + unconfirmed transactions
     // to find the challenge, possibly, in the "recent" storage
     const transaction: TransferTransaction = await this.findRecentChallenge(
-      registry, challenge
+      registry,
+      challenge,
     );
 
     // responds with error if the `challenge` could **not** be found
@@ -381,9 +386,10 @@ export class AuthService {
     let accessToken: string, refreshToken: string;
 
     // finds the related `account-sessions` document (if any)
-    const accountSession: AccountSessionDocument = await this.accountSessionsService.findOne(
-      this.getAccountSessionQuery(payload),
-    );
+    const accountSession: AccountSessionDocument =
+      await this.accountSessionsService.findOne(
+        this.getAccountSessionQuery(payload),
+      );
 
     // tries to read tokens from `account-sessions` document
     if (null !== accountSession) {
@@ -478,7 +484,8 @@ export class AuthService {
         undefined !== referrer &&
         undefined !== referrer.address &&
         payload.address !== referrer.address &&
-        (accountSession === undefined || accountSession.referredBy === undefined)
+        (accountSession === undefined ||
+          accountSession.referredBy === undefined)
       ) {
         userData.referredBy = referrer.address;
       }
@@ -523,17 +530,21 @@ export class AuthService {
   ): Promise<AccessTokenDTO> {
     // find existing refresh token to user and refresh
     // the attached *access token* if necessary
-    const accountSession: AccountSessionDocument = await this.accountSessionsService.findOne(
-      new AccountSessionQuery({
-        address: userAddress,
-        refreshTokenHash: sha3_256(refreshToken),
-      } as AccountSessionDocument),
-    );
+    const accountSession: AccountSessionDocument =
+      await this.accountSessionsService.findOne(
+        new AccountSessionQuery({
+          address: userAddress,
+          refreshTokenHash: sha3_256(refreshToken),
+        } as AccountSessionDocument),
+      );
 
     // responds with error if the account session was not
     // previously logged-in, the refresh call is invalid
     // 401: Unauthorized
-    if (undefined === accountSession || undefined === accountSession.lastSessionHash) {
+    if (
+      undefined === accountSession ||
+      undefined === accountSession.lastSessionHash
+    ) {
       throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
     }
 
@@ -553,9 +564,12 @@ export class AuthService {
     });
 
     // store new accessToken in `account-sessions` document
-    await this.accountSessionsService.createOrUpdate(this.getAccountSessionQuery(payload), {
-      accessToken,
-    });
+    await this.accountSessionsService.createOrUpdate(
+      this.getAccountSessionQuery(payload),
+      {
+        accessToken,
+      },
+    );
 
     // return only access token, this is a follow-up call
     // as we *already* have an active refresh token created
@@ -571,7 +585,9 @@ export class AuthService {
    * @param   {AuthenticationPayload}   payload
    * @returns {AccountSessionQuery}
    */
-  protected getAccountSessionQuery(payload: AuthenticationPayload): AccountSessionQuery {
+  protected getAccountSessionQuery(
+    payload: AuthenticationPayload,
+  ): AccountSessionQuery {
     return new AccountSessionQuery({
       address: payload.address,
       sub: payload.sub,
@@ -601,9 +617,8 @@ export class AuthService {
     }
 
     // get the parsed dHealth account address from the registry
-    const authRegistryAddress: Address = AccountsService.createAddress(
-      registry,
-    );
+    const authRegistryAddress: Address =
+      AccountsService.createAddress(registry);
 
     // returns a REST-compatible query
     return {

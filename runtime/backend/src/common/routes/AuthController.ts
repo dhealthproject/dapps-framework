@@ -35,7 +35,10 @@ import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import { AccessTokenRequest } from "../requests/AccessTokenRequest";
 import { AuthChallengeDTO } from "../models/AuthChallengeDTO";
 import { StatusDTO } from "../models/StatusDTO";
-import { AccountSessionDocument, AccountSessionQuery } from "../models/AccountSessionSchema";
+import {
+  AccountSessionDocument,
+  AccountSessionQuery,
+} from "../models/AccountSessionSchema";
 import { AccountSessionsService } from "../services/AccountSessionsService";
 
 namespace HTTPResponses {

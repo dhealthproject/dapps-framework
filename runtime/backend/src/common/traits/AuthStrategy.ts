@@ -21,7 +21,10 @@ import { AuthenticationPayload } from "../services/AuthService";
 // configuration resources
 import dappConfigLoader from "../../../config/dapp";
 import securityConfigLoader from "../../../config/security";
-import { AccountSessionDocument, AccountSessionQuery } from "../models/AccountSessionSchema";
+import {
+  AccountSessionDocument,
+  AccountSessionQuery,
+} from "../models/AccountSessionSchema";
 import { AccountSessionsService } from "../services/AccountSessionsService";
 const conf = dappConfigLoader();
 const auth = securityConfigLoader().auth;
@@ -40,7 +43,9 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
   /**
    *
    */
-  public constructor(private readonly accountSessionsService: AccountSessionsService) {
+  public constructor(
+    private readonly accountSessionsService: AccountSessionsService,
+  ) {
     super({
       // determines the *token* extraction method
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -79,12 +84,13 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
   ): Promise<AuthenticationPayload> {
     // finds an `accounts` document that corresponds
     // the authentication payload's dHealth address.
-    const accountSession: AccountSessionDocument = await this.accountSessionsService.findOne(
-      new AccountSessionQuery({
-        address: payload.address,
-        sub: payload.sub,
-      } as AccountSessionDocument),
-    );
+    const accountSession: AccountSessionDocument =
+      await this.accountSessionsService.findOne(
+        new AccountSessionQuery({
+          address: payload.address,
+          sub: payload.sub,
+        } as AccountSessionDocument),
+      );
 
     // re-build the authentication payload
     return {

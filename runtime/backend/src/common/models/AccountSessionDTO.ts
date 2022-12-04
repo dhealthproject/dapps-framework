@@ -83,7 +83,8 @@ export class AccountSessionDTO extends BaseDTO {
   @ApiProperty({
     type: "string",
     example: "5d60ad3bcd08fa119b77a7e5ef72dae509d291e33ccf75d93b4c155e61db55d7",
-    description: "The JWT sub value that can be attached in the **bearer authorization header** of HTTP requests to serve as a unique identity of each device.",
+    description:
+      "The JWT sub value that can be attached in the **bearer authorization header** of HTTP requests to serve as a unique identity of each device.",
   })
   public sub: string;
 
@@ -139,8 +140,7 @@ export class AccountSessionDTO extends BaseDTO {
    */
   @ApiProperty({
     type: "string",
-    example:
-      "3BB567908EFB0A6B642EE984D4DEC7CA4854266984DCB416164350B2A1078089",
+    example: "3BB567908EFB0A6B642EE984D4DEC7CA4854266984DCB416164350B2A1078089",
     description:
       "The transaction hash that is/was attached to the last authenticated session of this account.",
   })

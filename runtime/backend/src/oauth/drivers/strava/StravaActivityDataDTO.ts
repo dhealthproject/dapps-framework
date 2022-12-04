@@ -246,7 +246,9 @@ export class StravaActivityDataDTO extends BasicRemoteDTO {
    * @param   {ObjectLiteral | any}   data   The `data` field of the API Response (contains the entity columns).
    * @returns {StravaActivityDataDTO}       The extracted object literal that contains the entity columns.
    */
-  public static createFromDTO(data: ObjectLiteral | any): StravaActivityDataDTO {
+  public static createFromDTO(
+    data: ObjectLiteral | any,
+  ): StravaActivityDataDTO {
     const activity = new StravaActivityDataDTO();
     activity.name = data.name;
     activity.sport = data.sport_type;
