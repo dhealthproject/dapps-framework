@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
-import { ActivityDataDTO } from "../../../../../src/oauth/drivers/strava/ActivityDataDTO";
+import { StravaActivityDataDTO } from "../../../../../src/oauth/drivers/strava/StravaActivityDataDTO";
 
 describe("common/ActivityDataDTO", () => {
   let mockDate: Date;
@@ -25,7 +25,7 @@ describe("common/ActivityDataDTO", () => {
       const expectedSport = "fake-sport";
 
       // act
-      const instance = ActivityDataDTO.createFromDTO({
+      const instance = StravaActivityDataDTO.createFromDTO({
         // the following fields use Strava's API field names
         name: expectedName,
         sport_type: expectedSport,
@@ -59,7 +59,7 @@ describe("common/ActivityDataDTO", () => {
       };
 
       // act
-      const instance = ActivityDataDTO.createFromDTO({
+      const instance = StravaActivityDataDTO.createFromDTO({
         // the following fields use Strava's API field names
         name: expectedData.name,
         sport_type: expectedData.sport,
@@ -95,7 +95,7 @@ describe("common/ActivityDataDTO", () => {
   });
 
   describe("toDocument()", () => {
-    let activityDataDTO: ActivityDataDTO,
+    let activityDataDTO: StravaActivityDataDTO,
         expectedData: any;
     beforeEach(() => {
       expectedData = {
@@ -117,7 +117,7 @@ describe("common/ActivityDataDTO", () => {
         sufferScore: 11,
       };
 
-      activityDataDTO = ActivityDataDTO.createFromDTO({
+      activityDataDTO = StravaActivityDataDTO.createFromDTO({
         // the following fields use Strava's API field names
         name: expectedData.name,
         sport_type: expectedData.sport,

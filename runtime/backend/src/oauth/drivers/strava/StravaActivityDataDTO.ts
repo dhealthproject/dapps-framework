@@ -17,7 +17,7 @@ import { BasicRemoteDTO } from "../BasicRemoteDTO";
 
 /**
  * @label STRAVA
- * @class ActivityDataDTO
+ * @class StravaActivityDataDTO
  * @description This class defines the fields and methods of an
  * **activity** as defined by the *Strava API*.
  * <br /><br />
@@ -31,7 +31,7 @@ import { BasicRemoteDTO } from "../BasicRemoteDTO";
  * @link https://developers.strava.com/docs/reference/#api-models-DetailedActivity
  * @since v0.4.0
  */
-export class ActivityDataDTO extends BasicRemoteDTO {
+export class StravaActivityDataDTO extends BasicRemoteDTO {
   /**
    * The type of entity represented in this object.
    *
@@ -244,10 +244,10 @@ export class ActivityDataDTO extends BasicRemoteDTO {
    * @access public
    * @static
    * @param   {ObjectLiteral | any}   data   The `data` field of the API Response (contains the entity columns).
-   * @returns {ActivityDataDTO}       The extracted object literal that contains the entity columns.
+   * @returns {StravaActivityDataDTO}       The extracted object literal that contains the entity columns.
    */
-  public static createFromDTO(data: ObjectLiteral | any): ActivityDataDTO {
-    const activity = new ActivityDataDTO();
+  public static createFromDTO(data: ObjectLiteral | any): StravaActivityDataDTO {
+    const activity = new StravaActivityDataDTO();
     activity.name = data.name;
     activity.sport = data.sport_type;
     activity.startedAt = moment(data.start_date).toDate().valueOf();
@@ -273,7 +273,7 @@ export class ActivityDataDTO extends BasicRemoteDTO {
    * the correct format and are always transformed correctly.
    * <br /><br />
    * To create an instance of this class, you must use the static method
-   * {@link ActivityDataDTO.createFromDTO}.
+   * {@link StravaActivityDataDTO.createFromDTO}.
    *
    * @access protected
    */

@@ -17,7 +17,7 @@ import { BasicOAuthDriver } from "./BasicOAuthDriver";
 import { OAuthProviderParameters } from "../models/OAuthConfig";
 
 // driver-owned entities and classes
-import { ActivityDataDTO } from "./strava/ActivityDataDTO";
+import { StravaActivityDataDTO } from "./strava/StravaActivityDataDTO";
 
 /**
  * @class StravaOAuthDriver
@@ -100,7 +100,7 @@ export class StravaOAuthDriver extends BasicOAuthDriver {
     switch (type) {
       case OAuthEntityType.Activity:
         // map Strava-activity to database columns
-        return ActivityDataDTO.createFromDTO(data).toDocument();
+        return StravaActivityDataDTO.createFromDTO(data).toDocument();
 
       default:
       case OAuthEntityType.Custom:
