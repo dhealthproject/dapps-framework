@@ -41,7 +41,7 @@ import { PayoutsModule } from "./modules/PayoutsModule";
  * This scoped module currently features the following submodules:
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
- * | {@link PayoutsModule:PAYOUT} | `payouts` | `/payouts` | Module with schedulers, collections and routes around **dApp payouts**. |
+ * | {@link PayoutsModule} | `payouts` | `/payouts` | Module with schedulers, collections and routes around **dApp payouts**. |
  * <br /><br />
  * #### Events
  *
@@ -54,8 +54,8 @@ import { PayoutsModule } from "./modules/PayoutsModule";
  *
  * Note also that in {@link Schedulers}, we map the following **schedulers**
  * to this module:
- * - A {@link PrepareActivityPayouts:PAYOUT} *scheduler* that prepares and signs payouts in the background.
- * - A {@link BroadcastActivityPayouts:PAYOUT} *scheduler* that broadcasts payouts in the background.
+ * - A {@link PrepareActivityPayouts} *scheduler* that prepares and signs payouts in the background.
+ * - A {@link BroadcastActivityPayouts} *scheduler* that broadcasts payouts in the background.
  *
  * @since v0.4.0
  */

@@ -735,7 +735,7 @@ export class AppConfiguration {
 
   /**
    * This method is used internally to validate the configuration of
-   * the {@link PayoutModule:PAYOUT}.
+   * the {@link PayoutModule}.
    *
    * @access public
    * @static
