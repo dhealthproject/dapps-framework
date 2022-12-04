@@ -25,7 +25,7 @@ import { ActivitiesModule } from "./modules/ActivitiesModule";
  * This scoped module currently features the following submodules:
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
- * | {@link ActivitiesModule:USERS} | `activities` | `/activities` | Module with schedulers, collections and routes around **activities**. |
+ * | {@link ActivitiesModule} | `activities` | `/activities` | Module with schedulers, collections and routes around **activities**. |
  * <br /><br />
  *
  * @since v0.5.3

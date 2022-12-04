@@ -19,7 +19,7 @@ import { ActivitiesController } from "../routes/ActivitiesController";
 import { ActivitiesService } from "../services/ActivitiesService";
 
 /**
- * @label USER
+ * @label USERS
  * @class ActivitiesModule
  * @description The main definition for the Activities module.
  *
