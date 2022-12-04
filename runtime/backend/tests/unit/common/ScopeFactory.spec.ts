@@ -133,8 +133,8 @@ jest.mock("../../../src/statistics/StatisticsModule", () => {
 });
 
 const StatisticsModuleImplMock: any = jest.fn();
-jest.mock("../../../src/statistics/modules/StatisticsModule", () => {
-  return { StatisticsModule: StatisticsModuleImplMock };
+jest.mock("../../../src/statistics/modules/StatisticsImplementationModule", () => {
+  return { StatisticsImplementationModule: StatisticsModuleImplMock };
 });
 
 // notifier scope

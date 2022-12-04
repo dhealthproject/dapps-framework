@@ -23,7 +23,7 @@ import { StatisticsService } from "../services/StatisticsService";
 
 /**
  * @label STATISTICS
- * @class LeaderboardsModule
+ * @class StatisticsImplementationModule
  * @description The main definition for the Leaderboards module.
  *
  * @since v0.5.0
@@ -45,4 +45,4 @@ import { StatisticsService } from "../services/StatisticsService";
   ],
   exports: [StatisticsService],
 })
-export class StatisticsModule {}
+export class StatisticsImplementationModule {}

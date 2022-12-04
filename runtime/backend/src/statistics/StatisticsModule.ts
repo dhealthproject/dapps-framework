@@ -12,7 +12,7 @@ import { Module } from "@nestjs/common";
 
 // internal dependencies
 // statistics scope
-import { StatisticsModule as ModuleImpl } from "./modules/StatisticsModule";
+import { StatisticsImplementationModule } from "./modules/StatisticsImplementationModule";
 
 /**
  * @label SCOPES
@@ -26,7 +26,7 @@ import { StatisticsModule as ModuleImpl } from "./modules/StatisticsModule";
  * This scoped module currently features the following submodules:
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
- * | {@link StatisticsModule:STATISTICS} | `statistics` | `/statistics/leaderboards` | Module with schedulers, collections and routes around **leaderboards**. |
+ * | {@link StatisticsImplementationModule:STATISTICS} | `statistics` | `/statistics/leaderboards` | Module with schedulers, collections and routes around **leaderboards**. |
  * <br /><br />
  * #### Events
  *
@@ -47,7 +47,7 @@ import { StatisticsModule as ModuleImpl } from "./modules/StatisticsModule";
 @Module({
   imports: [
     // imports routes and DTOs
-    ModuleImpl,
+    StatisticsImplementationModule,
   ],
 })
 export class StatisticsModule {}

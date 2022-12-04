@@ -20,7 +20,7 @@ import { QueryModule } from "../../../common/modules/QueryModule";
 
 // statistics scope
 import { Statistics, StatisticsSchema } from "../../models/StatisticsSchema";
-import { StatisticsModule } from "../../modules/StatisticsModule";
+import { StatisticsImplementationModule } from "../../modules/StatisticsImplementationModule";
 import { UserAggregation } from "./UserAggregation";
 
 // users scope
@@ -37,7 +37,7 @@ import { Activity, ActivitySchema } from "../../../users/models/ActivitySchema";
     ScheduleModule.forRoot(),
     StateModule,
     QueryModule,
-    StatisticsModule,
+    StatisticsImplementationModule,
     LogModule,
     MongooseModule.forFeature([
       { name: Statistics.name, schema: StatisticsSchema },
