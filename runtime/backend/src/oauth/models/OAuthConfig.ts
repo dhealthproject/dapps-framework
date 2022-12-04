@@ -29,7 +29,7 @@
  * }
  * ```
  *
- * @link OAuthConfig:OAUTH
+ * @link OAuthConfig
  * @since v0.3.0
  */
 export interface OAuthProviderParameters {
@@ -55,7 +55,7 @@ export interface OAuthProviderParameters {
  * this type such that they are correctly understood and configured
  * for the backend runtime endpoints (`/oauth`).
  *
- * @link OAuthConfig:OAUTH
+ * @link OAuthConfig
  * @since v0.3.0
  */
 export type OAuthProviderType = string | "strava";
@@ -68,7 +68,7 @@ export type OAuthProviderType = string | "strava";
  * in {@link ProviderType} and a parameters object as
  * defined by {@link ProviderParameters}.
  *
- * @link OAuthConfig:OAUTH
+ * @link OAuthConfig
  * @since v0.3.0
  */
 export type OAuthProvidersMap = {
@@ -100,7 +100,7 @@ export interface OAuthConfig {
    * }
    * ```
    *
-   * @link OAuthProvidersMap:OAUTH
+   * @link OAuthProvidersMap
    * @access public
    * @var {OAuthProvidersMap}
    */

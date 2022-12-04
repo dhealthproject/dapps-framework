@@ -37,7 +37,7 @@ import { WebHooksModule } from "./modules";
  * This scoped module currently features the following submodules:
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
- * | {@link WebHooksModule:OAUTH} | N/A | `/webhook/:provider` | Module with schedulers, collections and routes around **Web Hooks**. |
+ * | {@link WebHooksModule} | N/A | `/webhook/:provider` | Module with schedulers, collections and routes around **Web Hooks**. |
  * <br /><br />
  * #### Events
  *
