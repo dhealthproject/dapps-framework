@@ -25,12 +25,12 @@ import { AlertsModule } from "./modules/AlertsModule";
  * This scoped module currently features the following submodules:
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
- * | {@link EmailNotifierModule:NOTIFIER} | N/A | N/A | Module with configuration and services around **mailer** automations. |
- * | {@link AlertsModule:NOTIFIER} | N/A | N/A | Module with event listener for transporting alerts with the **mailer** or other transports. |
+ * | {@link EmailNotifierModule} | N/A | N/A | Module with configuration and services around **mailer** automations. |
+ * | {@link AlertsModule} | N/A | N/A | Module with event listener for transporting alerts with the **mailer** or other transports. |
  * <br /><br />
  * Note also that in {@link Schedulers}, we map the following **schedulers**
  * to this module:
- * - A {@link ReportNotifier:NOTIFIER} *scheduler* that sends reports in the background every day/week/month depends on reports configuration.
+ * - A {@link ReportNotifier} *scheduler* that sends reports in the background every day/week/month depends on reports configuration.
  *
  * @since v0.3.2
  */
