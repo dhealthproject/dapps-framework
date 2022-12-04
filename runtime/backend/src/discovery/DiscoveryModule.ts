@@ -26,17 +26,17 @@ import { BlocksModule } from "./modules/BlocksModule";
  * This scoped module currently features the following submodules:
  * | Module | Mongo collection(s) | Routes | Description |
  * | --- | --- | --- | --- |
- * | {@link TransactionsModule:DISCOVERY} | `transactions` | `/transactions` | Module with schedulers, collections and routes around **dApp transactions**. |
- * | {@link DiscoveryAccountsModule:DISCOVERY} | `accounts` | `/accounts` | Module with schedulers, collections and routes around **dApp accounts**. |
- * | {@link AssetsModule:DISCOVERY} | `assets` | `/assets` | Module with schedulers, collections and routes around **dApp assets**. |
- * | {@link BlocksModule:DISCOVERY} | `blocks` | `/blocks` | Module with schedulers, collections and routes around **network blocks**. |
+ * | {@link TransactionsModule} | `transactions` | `/transactions` | Module with schedulers, collections and routes around **dApp transactions**. |
+ * | {@link DiscoveryAccountsModule} | `accounts` | `/accounts` | Module with schedulers, collections and routes around **dApp accounts**. |
+ * | {@link AssetsModule} | `assets` | `/assets` | Module with schedulers, collections and routes around **dApp assets**. |
+ * | {@link BlocksModule} | `blocks` | `/blocks` | Module with schedulers, collections and routes around **network blocks**. |
  * <br /><br />
  * Note also that in {@link Schedulers}, we map the following **schedulers**
  * to this module:
- * - A {@link DiscoverTransactions:DISCOVERY} *scheduler* that discovers transactions in the background every minute.
- * - A {@link DiscoverAccounts:DISCOVERY} *scheduler* that discovers accounts in the background every two minutes.
- * - A {@link DiscoverAssets:DISCOVERY} *scheduler* that discovers assets in the background every two minutes.
- * - A {@link DiscoverBlocks:DISCOVERY} *scheduler* that discovers assets in the background every two minutes.
+ * - A {@link DiscoverTransactions} *scheduler* that discovers transactions in the background every minute.
+ * - A {@link DiscoverAccounts} *scheduler* that discovers accounts in the background every two minutes.
+ * - A {@link DiscoverAssets} *scheduler* that discovers assets in the background every two minutes.
+ * - A {@link DiscoverBlocks} *scheduler* that discovers assets in the background every two minutes.
  *
  * @since v0.1.0
  */
