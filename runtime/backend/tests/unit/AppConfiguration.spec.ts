@@ -10,6 +10,22 @@
 // force-mock the environment configuration
 import "../mocks/config";
 
+// import overwrites for @dhealth/sdk
+// These following mocks are used in this unit test series.
+// Mocks a subset of "@dhealth/sdk" including classes:
+// - PublicAccount to return a valid Address
+// - Address to always return a formattable valid Address
+const mockPublicAccountCreate = jest.fn();
+const mockAddressCreate = jest.fn();
+jest.mock("@dhealth/sdk", () => ({
+  PublicAccount: {
+    createFromPublicKey: mockPublicAccountCreate,
+  },
+  Address: {
+    createFromRawAddress: mockAddressCreate,
+  }
+}));
+
 // force-mock the mongoose module `forRoot` call
 const mongooseForRootCall: any = jest.fn(() => MongooseModuleMock);
 const MongooseModuleMock: any = { forRoot: mongooseForRootCall };
@@ -30,6 +46,9 @@ const MailerModuleMock: any = { forRootAsync: mailerForRootAsyncCall };
 jest.mock("@nestjs-modules/mailer", () => {
   return { MailerModule: MailerModuleMock };
 });
+
+// external dependencies
+import { PublicAccount } from "@dhealth/sdk"; // mocked!
 
 // internal dependencies
 import { AppConfiguration } from "../../src/AppConfiguration";
@@ -619,6 +638,61 @@ describe("AppConfiguration", () => {
       // this test uses untouched configuration
       // act
       const actual = AppConfiguration.checkSecuritySettings(service);
+
+      // assert
+      expect(actual).toBe(true); // <-- mocked config is valid
+    });
+  });
+
+  describe("checkApplicationScopes()", () => {
+    beforeEach(() => {
+      service = new AppConfiguration();
+    });
+
+    it("should check the configuration of activated scopes", () => {
+      // prepare
+      const mockCheckDiscoverySettings = jest.fn();
+      const mockCheckProcessorSettings = jest.fn();
+      const mockCheckPayoutSettings = jest.fn();
+      (AppConfiguration as any).checkDiscoverySettings = mockCheckDiscoverySettings;
+      (AppConfiguration as any).checkProcessorSettings = mockCheckProcessorSettings;
+      (AppConfiguration as any).checkPayoutSettings = mockCheckPayoutSettings;
+
+      // act
+      AppConfiguration.checkApplicationScopes(service);
+      
+      // assert
+      expect(mockCheckDiscoverySettings).toHaveBeenCalledTimes(1);
+      expect(mockCheckProcessorSettings).toHaveBeenCalledTimes(1);
+      expect(mockCheckPayoutSettings).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not check the configuration of disabled scopes", () => {
+      // prepare
+      (service as any).dapp = {
+        ...(service as any).dapp,
+        scopes: ["discovery", "database"], // payout + processor disabled
+      }
+      const mockCheckDiscoverySettings = jest.fn();
+      const mockCheckProcessorSettings = jest.fn();
+      const mockCheckPayoutSettings = jest.fn();
+      (AppConfiguration as any).checkDiscoverySettings = mockCheckDiscoverySettings;
+      (AppConfiguration as any).checkProcessorSettings = mockCheckProcessorSettings;
+      (AppConfiguration as any).checkPayoutSettings = mockCheckPayoutSettings;
+
+      // act
+      AppConfiguration.checkApplicationScopes(service);
+
+      // assert
+      expect(mockCheckDiscoverySettings).toHaveBeenCalledTimes(1);
+      expect(mockCheckProcessorSettings).not.toHaveBeenCalled();
+      expect(mockCheckPayoutSettings).not.toHaveBeenCalled();
+    });
+
+    it("should return true given a valid configuration object", () => {
+      // this test uses untouched configuration
+      // act
+      const actual = AppConfiguration.checkApplicationScopes(service);
 
       // assert
       expect(actual).toBe(true); // <-- mocked config is valid
