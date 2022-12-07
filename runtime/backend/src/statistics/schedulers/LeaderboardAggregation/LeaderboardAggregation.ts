@@ -184,7 +184,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
    * @async
    * @returns {void}
    */
-   public abstract runAsScheduler(): void;
+  public abstract runAsScheduler(): void;
 
   /**
    * This method is the **second entry point** of this scheduler. Due to

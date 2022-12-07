@@ -54,7 +54,16 @@ export class WeeklyReportNotifier extends ReportNotifier {
     protected readonly dappHelper: DappHelper,
     protected readonly logService: LogService,
   ) {
-    super(model, configService, queryService, stateService, schedulerRegistry, notifierFactory, dappHelper, logService);
+    super(
+      model,
+      configService,
+      queryService,
+      stateService,
+      schedulerRegistry,
+      notifierFactory,
+      dappHelper,
+      logService,
+    );
     this.periodFormat = "W";
     this.initLogger();
   }

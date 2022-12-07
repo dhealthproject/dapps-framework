@@ -54,22 +54,21 @@ export class ReportNotifierCommand {
         EmailNotifierModule,
         HelpersModule,
       ],
-      providers: [
-        NotifierFactory,
-        reportNotifier,
-      ],
-      exports: [
-        reportNotifier,
-      ]
+      providers: [NotifierFactory, reportNotifier],
+      exports: [reportNotifier],
     } as DynamicModule;
   }
 
   private static getNotifierClass(periodFormat: string) {
-    switch(periodFormat) {
-      case "D": return DailyReportNotifier;
-      case "W": return WeeklyReportNotifier;
-      case "M": return MonthlyReportNotifier;
-      default: return MonthlyReportNotifier;
-    };
+    switch (periodFormat) {
+      case "D":
+        return DailyReportNotifier;
+      case "W":
+        return WeeklyReportNotifier;
+      case "M":
+        return MonthlyReportNotifier;
+      default:
+        return MonthlyReportNotifier;
+    }
   }
 }
