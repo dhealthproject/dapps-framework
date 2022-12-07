@@ -19,7 +19,7 @@ import { UsersModule } from "../users/UsersModule";
 
 /**
  * @label COMMON
- * @module Scopes
+ * @type Scopes
  * @description This exported constant enumerates all available **scoped**
  * modules. Scopes are opt-in and only enabled if they are present in a
  * dApp's configuration files (config/dapp.json).
@@ -37,7 +37,8 @@ import { UsersModule } from "../users/UsersModule";
  * | `processor` | {@link ProcessorModule} | A processing scope that consists in detecting invoice updates and processing payments. |
  * | `statistics` | {@link StatisticsModule} | A statistics scope that consists in aggregate data into meaningful statistics and measurements. |
  * | `notifier` | {@link NotifierModule} | A notifier scope that consists in aggregate monitoring logs into meaningful alerts and reports. |
- * | `oauth` | {@link OAuthModule} | An oauth scope that consists in @todo. |
+ * | `oauth` | {@link OAuthModule} | A oauth scope that consists in enabling OAuth data providers (e.g. Strava) and web hooks capabilities. |
+ * | `users` | {@link UsersModule} | A user scope that consists in defining specific user profile information such as Activities data for Strava. |
  * <br /><br />
  * A `scheduler` scope is also included with {@link SchedulerModule} but
  * this one executes in a *parallel* process and thereby should not be

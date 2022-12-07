@@ -89,6 +89,7 @@ jest.mock("../../config/dapp", () => {
       "notifier",
       "statistics",
       "oauth",
+      "users",
     ],
     database: {
       host: process.env.DB_HOST,

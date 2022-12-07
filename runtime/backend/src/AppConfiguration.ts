@@ -818,6 +818,9 @@ export class AppConfiguration {
     // configuration file `processor.ts`
     const { providers } = config.oauth;
 
+    // configuration file `dapp.ts`
+    const { scopes } = config.dapp;
+
     // (1) `providers` cannot be empty
     if (undefined === providers) {
       throw new ConfigurationError(
@@ -829,6 +832,13 @@ export class AppConfiguration {
     if (!("strava" in providers) || undefined === providers.strava) {
       throw new ConfigurationError(
         `The configuration field "providers.strava" cannot be empty.`,
+      );
+    }
+
+    // (3) oauth scope *requires* users scope
+    if (!scopes.includes("users")) {
+      throw new ConfigurationError(
+        `The application scope "users" cannot be disabled.`,
       );
     }
 

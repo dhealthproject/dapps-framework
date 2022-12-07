@@ -41,7 +41,7 @@ import { ReportNotifierCommand } from "../notifier/schedulers/ReportNotifier/Rep
 
 /**
  * @label COMMON
- * @module Schedulers
+ * @type Schedulers
  * @description This exported constant enumerates all available **scheduler**
  * modules. Schedulers are opt-in through the **scopes** field value of a
  * dApp's configuration files (config/dapp.json). Schedulers always belong to
@@ -89,4 +89,6 @@ export const Schedulers: { [key: string]: any[] } = {
     UserAggregationCommand,
   ],
   notifier: [ReportNotifierCommand],
+  oauth: [],
+  users: [],
 };
