@@ -44,15 +44,15 @@ import { WebHooksModule } from "./modules";
  * This scoped module currently features the following events:
  * | Class | Name | Link | Description |
  * | --- | --- | --- | --- |
- * | `OnActivityCreated` | `processor.activity.created` | {@link OnActivityCreated:EVENTS} | Event that is *emitted* in {@link WebHooksService.eventHandler} when an activity is created in database. |
- * | `OnActivityDownloaded` | `processor.activity.downloaded` | {@link OnActivityDownloaded:EVENTS} | Event that is *emitted* in {@link WebHooksService.onActivityCreated} when an activity is successfully downloaded from the data provider. |
+ * | `OnActivityCreated` | `oauth.activity.created` | {@link OnActivityCreated:EVENTS} | Event that is *emitted* in {@link WebHooksService.eventHandler} when an activity is created in database. |
+ * | `OnActivityDownloaded` | `oauth.activity.downloaded` | {@link OnActivityDownloaded:EVENTS} | Event that is *emitted* in {@link WebHooksService.onActivityCreated} when an activity is successfully downloaded from the data provider. |
  * <br /><br />
  * #### Listeners
  *
  * This scoped module currently features the following listeners:
  * | Class | Event | Link | Description |
  * | --- | --- | --- | --- |
- * | `WebHooksService.onActivityCreated` | `processor.activity.created` | {@link WebHooksService.onActivityCreated} | Event listener that *instructs* the runtime backend to run an *activity download* command. |
+ * | `WebHooksService.onActivityCreated` | `oauth.activity.created` | {@link WebHooksService.onActivityCreated} | Event listener that *instructs* the runtime backend to run an *activity download* command. |
  *
  * @since v0.5.3
  */

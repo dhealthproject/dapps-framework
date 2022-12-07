@@ -10,22 +10,6 @@
 // force-mock the environment configuration
 import "../mocks/config";
 
-// import overwrites for @dhealth/sdk
-// These following mocks are used in this unit test series.
-// Mocks a subset of "@dhealth/sdk" including classes:
-// - PublicAccount to return a valid Address
-// - Address to always return a formattable valid Address
-const mockPublicAccountCreate = jest.fn();
-const mockAddressCreate = jest.fn();
-jest.mock("@dhealth/sdk", () => ({
-  PublicAccount: {
-    createFromPublicKey: mockPublicAccountCreate,
-  },
-  Address: {
-    createFromRawAddress: mockAddressCreate,
-  }
-}));
-
 // force-mock the mongoose module `forRoot` call
 const mongooseForRootCall: any = jest.fn(() => MongooseModuleMock);
 const MongooseModuleMock: any = { forRoot: mongooseForRootCall };
@@ -47,19 +31,16 @@ jest.mock("@nestjs-modules/mailer", () => {
   return { MailerModule: MailerModuleMock };
 });
 
-// external dependencies
-import { PublicAccount } from "@dhealth/sdk"; // mocked!
-
 // internal dependencies
 import { AppConfiguration } from "../../src/AppConfiguration";
 import { AssetsConfig } from "../../src/common/models/AssetsConfig";
 import { DappConfig } from "../../src/common/models/DappConfig";
 import { MonitoringConfig } from "../../src/common/models/MonitoringConfig";
 import { NetworkConfig } from "../../src/common/models/NetworkConfig";
-import { OAuthConfig } from "../../src/common/models/OAuthConfig";
 import { SecurityConfig } from "../../src/common/models/SecurityConfig";
 import { SocialConfig } from "../../src/common/models/SocialConfig";
 import { StatisticsConfig } from "../../src/common/models/StatisticsConfig";
+import { OAuthConfig } from "../../src/oauth/models/OAuthConfig";
 import { PayoutConfig } from "../../src/payout/models/PayoutConfig";
 import { ProcessorConfig } from "../../src/processor/models/ProcessorConfig";
 import { TransportConfig } from "../../src/notifier/models/TransportConfig";
@@ -654,9 +635,11 @@ describe("AppConfiguration", () => {
       const mockCheckDiscoverySettings = jest.fn();
       const mockCheckProcessorSettings = jest.fn();
       const mockCheckPayoutSettings = jest.fn();
+      const mockCheckOAuthSettings = jest.fn();
       (AppConfiguration as any).checkDiscoverySettings = mockCheckDiscoverySettings;
       (AppConfiguration as any).checkProcessorSettings = mockCheckProcessorSettings;
       (AppConfiguration as any).checkPayoutSettings = mockCheckPayoutSettings;
+      (AppConfiguration as any).checkOAuthSettings = mockCheckOAuthSettings;
 
       // act
       AppConfiguration.checkApplicationScopes(service);
@@ -665,6 +648,7 @@ describe("AppConfiguration", () => {
       expect(mockCheckDiscoverySettings).toHaveBeenCalledTimes(1);
       expect(mockCheckProcessorSettings).toHaveBeenCalledTimes(1);
       expect(mockCheckPayoutSettings).toHaveBeenCalledTimes(1);
+      expect(mockCheckOAuthSettings).toHaveBeenCalledTimes(1);
     });
 
     it("should not check the configuration of disabled scopes", () => {
@@ -676,9 +660,11 @@ describe("AppConfiguration", () => {
       const mockCheckDiscoverySettings = jest.fn();
       const mockCheckProcessorSettings = jest.fn();
       const mockCheckPayoutSettings = jest.fn();
+      const mockCheckOAuthSettings = jest.fn();
       (AppConfiguration as any).checkDiscoverySettings = mockCheckDiscoverySettings;
       (AppConfiguration as any).checkProcessorSettings = mockCheckProcessorSettings;
       (AppConfiguration as any).checkPayoutSettings = mockCheckPayoutSettings;
+      (AppConfiguration as any).checkOAuthSettings = mockCheckOAuthSettings;
 
       // act
       AppConfiguration.checkApplicationScopes(service);
@@ -687,6 +673,7 @@ describe("AppConfiguration", () => {
       expect(mockCheckDiscoverySettings).toHaveBeenCalledTimes(1);
       expect(mockCheckProcessorSettings).not.toHaveBeenCalled();
       expect(mockCheckPayoutSettings).not.toHaveBeenCalled();
+      expect(mockCheckOAuthSettings).not.toHaveBeenCalled();
     });
 
     it("should return true given a valid configuration object", () => {

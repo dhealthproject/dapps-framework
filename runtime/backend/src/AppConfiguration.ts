@@ -110,7 +110,7 @@ export class AppConfiguration {
    * <br /><br />
    * Storage of a *singular* mailing adapter permits to define a singleton
    * pattern around *mailer services* for public and internal mailing.
-   * 
+   *
    * @access private
    * @static
    * @var {DynamicModule | MailerModule}
@@ -675,6 +675,11 @@ export class AppConfiguration {
       AppConfiguration.checkProcessorSettings(config);
     }
 
+    // OAUTH SCOPE configuration
+    if (scopes.includes("oauth")) {
+      AppConfiguration.checkOAuthSettings(config);
+    }
+
     return true;
   }
 
@@ -794,6 +799,36 @@ export class AppConfiguration {
     if (undefined === operations || !operations.length) {
       throw new ConfigurationError(
         `The configuration field "operations" must be a non-empty array.`,
+      );
+    }
+
+    return true;
+  }
+
+  /**
+   * This method is used internally to validate the configuration of
+   * the {@link OAuthModule:PROCESSOR}.
+   *
+   * @access protected
+   * @static
+   * @param   {AppConfiguration}     config       The full runtime configuration.
+   * @returns {boolean}     Returns true given valid configuration.
+   */
+  protected static checkOAuthSettings(config: AppConfiguration): boolean {
+    // configuration file `processor.ts`
+    const { providers } = config.oauth;
+
+    // (1) `providers` cannot be empty
+    if (undefined === providers) {
+      throw new ConfigurationError(
+        `The configuration field "providers" cannot be empty.`,
+      );
+    }
+
+    // (2) `providers.strava` cannot be empty
+    if (!("strava" in providers) || undefined === providers.strava) {
+      throw new ConfigurationError(
+        `The configuration field "providers.strava" cannot be empty.`,
       );
     }
 
