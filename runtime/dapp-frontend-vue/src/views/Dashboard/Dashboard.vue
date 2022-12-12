@@ -23,7 +23,10 @@
               <div class="referral-box">
                 <img :src="getImageUrl('coins.png')" alt="Invite friends" />
                 <p class="text-center" v-html="$t('dashboard.referral_text')" />
-                <ReferralInput :val="refInput" />
+                <ReferralInput
+                  :val="refInput"
+                  :placeholder="$t('dashboard.copy_referral_code')"
+                />
                 <UiButton :accent="true" @click="shareModal">
                   <img :src="getImageUrl('share-icon.svg')" alt="share" />
                   <span v-html="$t('dashboard.share_link_title')" />

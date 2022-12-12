@@ -15,10 +15,7 @@
     <input :value="transformedValue" :class="`${type}`" type="text" readonly />
     <div @click="copyToClipBoard($event, transformedValue)" class="copy">
       <span :class="`${type}`" class="text" v-html="referralLabel" />
-      <img
-        :src="getImageUrl('copy-icon.svg')"
-        :alt="$t('dashboard.copy_referral_code')"
-      />
+      <img :src="getImageUrl('copy-icon.svg')" :alt="placeholder" />
     </div>
   </div>
 </template>

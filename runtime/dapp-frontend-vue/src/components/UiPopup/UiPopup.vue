@@ -111,7 +111,11 @@
           </a>
         </div>
       </div>
-      <ReferralInput type="link" :val="refCode" />
+      <ReferralInput
+        type="link"
+        :placeholder="$t('dashboard.copy_referral_link')"
+        :val="refCode"
+      />
     </div>
   </div>
 </template>

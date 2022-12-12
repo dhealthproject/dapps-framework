@@ -34,19 +34,27 @@ export default class ReferralInput extends MetaView {
   @Prop({ default: "", required: true }) val?: string;
 
   /**
+   * This prop represents text displayed as placeholder, e.g. "Copy referral code"
+   *
+   * @var {string}
+   */
+  @Prop({ default: "" }) placeholder?: string;
+
+  /**
    * This prop represents value displayed in input
    * defaults to "default"
    *
    * @var {"default" | "link"}
    */
-  @Prop({ default: "default" }) type?: "default" | "link";
+  @Prop({ default: "default" })
+  type?: "default" | "link";
 
   /**
    * This prop represents value displayed in input
    *
    * @var {string}
    */
-  public referralLabel = "Copy referral code";
+  public referralLabel: string | undefined = "";
 
   /**
    * This property is used to store a pointer to the timeout
@@ -66,6 +74,12 @@ export default class ReferralInput extends MetaView {
    */
   public refCode?: string;
 
+  /**
+   * This computed property returns referral code string depending on type
+   *
+   * @access protected
+   * @returns {string}
+   */
   protected get transformedValue() {
     return this.type === "link"
       ? `${process.env.VUE_APP_FRONTEND_URL}/${this.val}`
@@ -90,8 +104,12 @@ export default class ReferralInput extends MetaView {
       this.referralLabel = this.$t("common.copied");
 
       this.copyTimer = setTimeout(() => {
-        this.referralLabel = this.$t("dashboard.copy_referral_code");
+        this.referralLabel = this.placeholder;
       }, 2000);
     });
+  }
+
+  public mounted() {
+    this.referralLabel = this.placeholder;
   }
 }
