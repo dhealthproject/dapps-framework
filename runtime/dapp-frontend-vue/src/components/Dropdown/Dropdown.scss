@@ -33,35 +33,63 @@
 
   &__actions {
     position: absolute;
-    right: 0;
-    top: 100%;
+    right: 50%;
+    transform: translateX(64%);
+    top: 50px;
     background-color: $white;
-    width: 150px;
-    padding: 10px;
-    border-radius: 8px;
+    width: 216px;
+    padding: 4px 0;
+    border-radius: 16px;
     z-index: 1;
 
     @include devices(laptop) {
-      right: -100%;
+      right: 0;
     }
 
     .action {
       display: flex;
       flex-direction: row;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       text-align: left;
       cursor: pointer;
-      padding: 7px 0;
-      border-bottom: 1px solid $base-grey;
+      padding: 8px;
+      border-bottom: 1px solid $grey-darker;
+      font-size: 14px;
+      line-height: 140%;
+
+      &.red {
+        color: $base-red-dark;
+
+        .icon {
+          path {
+            fill: $base-red-dark;
+          }
+        }
+      }
 
       &:last-child {
         border-bottom: none;
       }
 
-      img {
-        margin-right: 10px;
+      .icon {
+        display: inline-block;
+        margin-right: 8px;
+
+        path {
+          fill: $button-text-dark;
+        }
       }
     }
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }

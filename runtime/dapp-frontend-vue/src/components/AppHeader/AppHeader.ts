@@ -120,14 +120,15 @@ export default class AppHeader extends MetaView {
   get dropDownItems() {
     return [
       {
-        text: "Settings",
-        action: () => this.$router.push({ name: "app.settings" }),
-        icon: "icons/menu-settings.svg",
+        text: this.$t("common.dropdown_refer_earn"),
+        action: () => this.$router.push({ name: "app.dashboard" }),
+        icon: "icons/refer-earn.svg",
       },
       {
-        text: "Disconnect wallet",
+        text: this.$t("common.disconnect_wallet"),
         action: () => this.disconnectWallet(),
-        icon: "icons/menu-settings.svg",
+        icon: "icons/logout.svg",
+        isRed: true,
       },
     ];
   }

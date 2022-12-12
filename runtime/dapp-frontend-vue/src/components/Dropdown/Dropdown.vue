@@ -11,7 +11,7 @@
 -->
 
 <template>
-  <div class="dapp-dropdown">
+  <div class="dapp-dropdown" v-click-outside="hideActions">
     <div class="dapp-dropdown__default" @click="isOpen = !isOpen">
       <img
         :src="getImageUrl('avatar-blank.svg')"
@@ -30,10 +30,15 @@
         <div
           v-for="(item, index) in items"
           :key="index"
+          :class="{ red: item.isRed }"
           class="action"
           @click="handleItemClick($event, item.action)"
         >
-          <img :src="getImageUrl(item.icon)" :alt="item.text" />
+          <inline-svg
+            :src="getImageUrl(item.icon)"
+            class="icon"
+            alt="item.text"
+          />
           {{ item.text }}
         </div>
       </div>

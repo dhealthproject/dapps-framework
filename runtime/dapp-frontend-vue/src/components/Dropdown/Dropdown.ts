@@ -10,6 +10,7 @@
 
 // external dependencies
 import { Component, Prop } from "vue-property-decorator";
+import InlineSvg from "vue-inline-svg";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
@@ -18,6 +19,9 @@ import { MetaView } from "@/views/MetaView";
 import "./Dropdown.scss";
 
 @Component({
+  components: {
+    InlineSvg,
+  },
   data: () => ({
     isOpen: false,
   }),
@@ -38,6 +42,12 @@ export default class Dropdown extends MetaView {
    * @var {isOpen}
    */
   public isOpen = false;
+
+  hideActions() {
+    if (this.isOpen) {
+      this.isOpen = false;
+    }
+  }
 
   /**
    * Method that calls action passed in item,
