@@ -287,6 +287,19 @@ export default class LoginScreen extends MetaView {
     return `dhealth://sign?payload=${this.qrConfig?.toJSON()}`;
   }
 
+  public get getMobileOS() {
+    const ua = navigator.userAgent;
+    if (/android/i.test(ua)) {
+      return "Android";
+    } else if (
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+    ) {
+      return "iOS";
+    }
+    return "Other";
+  }
+
   /**
    * This method is called upon *mounting* the component onto a Vue
    * app. For this component, it will populate the {@link authChallenge}

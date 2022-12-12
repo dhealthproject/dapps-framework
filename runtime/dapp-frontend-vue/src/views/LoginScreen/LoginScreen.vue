@@ -85,7 +85,11 @@
           {{ $t("login_screen.on_mobile_tip[0]") }}
           <a
             target="_blank"
-            href="#"
+            :href="
+              getMobileOS === 'iOS'
+                ? 'https://apps.apple.com/us/app/dhealth-wallet/id1600418789'
+                : 'https://play.google.com/store/apps/details?id=com.dhealth.wallet&gl=ES'
+            "
             v-html="$t('login_screen.on_mobile_tip[1]')"
           />
         </p>
