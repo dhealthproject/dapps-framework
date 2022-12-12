@@ -34,6 +34,7 @@ import { Account, AccountSchema } from "../models/AccountSchema";
 import { CipherService } from "../services/CipherService";
 import { SocialController } from "../routes/SocialController";
 import { AccountsModule } from "./AccountsModule";
+import { AuthGateway } from "../gateways/AuthGateway";
 
 // configuration resources
 import securityConfigLoader from "../../../config/security";
@@ -49,6 +50,7 @@ const auth = securityConfigLoader().auth;
  */
 @Module({
   imports: [
+    AuthGateway,
     NetworkModule,
     QueryModule,
     AccountsModule,
@@ -69,7 +71,13 @@ const auth = securityConfigLoader().auth;
     ]),
   ],
   controllers: [AuthController, SocialController],
-  providers: [AuthService, AuthStrategy, RefreshStrategy, CipherService],
+  providers: [
+    AuthService,
+    AuthStrategy,
+    RefreshStrategy,
+    CipherService,
+    AuthGateway,
+  ],
   exports: [AuthService, CipherService],
 })
 export class AuthModule {}

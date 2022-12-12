@@ -12,9 +12,9 @@ import { SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
 import { BaseGateway } from "./BaseGateway";
 
 @WebSocketGateway()
-export default class AuthGateway extends BaseGateway {
+export class AuthGateway extends BaseGateway {
   @SubscribeMessage("auth.open")
-  open() {
+  open(message: any) {
     console.log("AUTHGATEWAY: Connection open");
   }
 

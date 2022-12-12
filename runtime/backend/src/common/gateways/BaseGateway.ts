@@ -23,13 +23,13 @@ import dappConfigLoader from "../../../config/dapp";
 
 const dappConfig = dappConfigLoader();
 
-@WebSocketGateway({
+@WebSocketGateway(80, {
   namespace: `${dappConfig.dappName}`,
   cors: {
     origin: process.env.FRONTEND_URL,
   },
 })
-export abstract class BaseGateway
+export class BaseGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer()
@@ -44,10 +44,12 @@ export abstract class BaseGateway
 
   handleDisconnect(client: any) {
     console.log("BASEGATEWAY: Client disconnected");
-    this.clients = this.clients.filter(
-      (clientId) => clientId !== client.challenge,
-    );
+    this.clients = this.clients.filter((clientId) => clientId !== client);
   }
 
-  afterInit: (server: Server) => any;
+  afterInit(server: Server) {
+    console.log({ server });
+
+    console.log("GATEWAY INITIALIZED");
+  }
 }

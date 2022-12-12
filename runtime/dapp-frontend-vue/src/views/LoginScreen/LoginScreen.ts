@@ -277,6 +277,8 @@ export default class LoginScreen extends MetaView {
     );
   }
 
+  public wsConnection: any;
+
   /**
    * This method returns payload necessary for mobile to open Signer App for an authentication
    *
@@ -318,6 +320,9 @@ export default class LoginScreen extends MetaView {
    */
   public async mounted() {
     this.qrConfig = this.createLoginQRCode();
+
+    this.wsConnection = new WebSocket("wss://localhost:80/ELEVATE");
+
     try {
       // make sure referral code is saved
       if (this.$route.params.refCode) {
