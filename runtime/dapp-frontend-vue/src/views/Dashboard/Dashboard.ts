@@ -313,6 +313,25 @@ export default class Dashboard extends MetaView {
   }
 
   /**
+   * This method returns current operation system of user
+   *
+   * @access protected
+   * @returns {string}
+   */
+  public get getMobileOS() {
+    const ua = navigator.userAgent;
+    if (/android/i.test(ua)) {
+      return "Android";
+    } else if (
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+    ) {
+      return "iOS";
+    }
+    return "Other";
+  }
+
+  /**
    * This hook is called upon mounting the component on the App. It
    * should handle the *initialization* of the screen and interpret
    * the request query if necessary.

@@ -287,6 +287,12 @@ export default class LoginScreen extends MetaView {
     return `dhealth://sign?payload=${this.qrConfig?.toJSON()}`;
   }
 
+  /**
+   * This method returns current operation system of user
+   *
+   * @access protected
+   * @returns {string}
+   */
   public get getMobileOS() {
     const ua = navigator.userAgent;
     if (/android/i.test(ua)) {

@@ -62,7 +62,15 @@
           </UiButton>
           <p class="add-strava">
             {{ $t("dashboard.cta_strava_download_strava") }}
-            &nbsp;<a href="#" target="_blank">{{ $t("common.word_here") }}</a>
+            &nbsp;<a
+              :href="
+                getMobileOS === 'iOS'
+                  ? 'https://apps.apple.com/us/app/strava-run-ride-hike/id426826309'
+                  : 'https://play.google.com/store/apps/details?id=com.strava&hl=en&gl=US'
+              "
+              target="_blank"
+              >{{ $t("common.word_here") }}</a
+            >
           </p>
         </div>
       </div>
