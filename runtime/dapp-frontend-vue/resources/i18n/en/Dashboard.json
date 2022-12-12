@@ -2,7 +2,6 @@
     "dashboard": {
         "key_stats_title": "Key stats",
         "referral_title": "Invite friends",
-        "referral_text": "Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et.",
         "share_link_title": "Share your link",
         "cta_strava_welcome_text": "Welcome! Integrate an account to start earning tokens for your activities.",
         "cta_strava_start_earning": "At the moment, we only support STRAVA integration.",
@@ -24,6 +23,8 @@
         "stats_top_activities": "Top Activities",
         "stats_minutes_exercised": "Minutes Exercised",
         "stats_tooltip_referral_title": "Elevate’s referral program",
-        "stats_tooltip_referral_text": "Invite 50 fitness buddies to join Elevate and get 5% boost for your earning, plus a really cool “Super friend” medal, and unblock next reward level"
+        "stats_tooltip_referral_text": "Invite 50 fitness buddies to join Elevate and get 5% boost for your earning, plus a really cool “Super friend” medal, and unblock next reward level",
+        "refer_boost": "Refer a Friend for 2x Boost",
+        "referral_text": "The best way to get in shape is to do it with friends! Invite your friends to join you at Elevate and keep each other accountable."
       }
 }

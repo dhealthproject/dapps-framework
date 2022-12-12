@@ -22,6 +22,7 @@
             <template v-slot:content>
               <div class="referral-box">
                 <img :src="getImageUrl('coins.png')" alt="Invite friends" />
+                <h2 v-html="$t('dashboard.refer_boost')" />
                 <p class="text-center" v-html="$t('dashboard.referral_text')" />
                 <ReferralInput
                   :val="refInput"

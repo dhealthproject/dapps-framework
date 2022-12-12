@@ -10,7 +10,10 @@
  */
 -->
 <template>
-  <div class="dapp-screen-header">
+  <div
+    :class="{ 'no-margin': $route.name === 'app.settings' }"
+    class="dapp-screen-header"
+  >
     <div class="container flex row items-center justify-between">
       <transition name="slide">
         <div

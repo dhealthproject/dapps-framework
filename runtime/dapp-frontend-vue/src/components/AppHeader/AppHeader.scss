@@ -16,6 +16,10 @@
   border-bottom: 1px solid $black;
   margin-bottom: 32px !important;
 
+  &.no-margin {
+    margin-bottom: 0 !important;
+  }
+
   // temporary fix for QR and DappButton bgcolor
   .style-primary {
     background-color: transparent !important;
