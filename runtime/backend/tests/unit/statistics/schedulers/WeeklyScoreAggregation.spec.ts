@@ -181,6 +181,21 @@ describe("statistics/WeeklyScoreAggregation", () => {
     });
   });
 
+  describe("runAsScheduler()", () => {
+    it("should call runScheduler()", async () => {
+      // prepare
+      const runSchedulerCall = jest
+        .spyOn(service, "runScheduler")
+        .mockResolvedValue();
+
+      // act
+      await service.runAsScheduler();
+
+      // assert
+      expect(runSchedulerCall).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("getNextPeriod()", () => {
     it("should return correct result for normal weeks", () => {
       // prepare
@@ -213,6 +228,41 @@ describe("statistics/WeeklyScoreAggregation", () => {
 
       // assert
       expect(result).toBe("2022-52");
+    });
+  });
+
+  describe("getPrevPeriod()", () => {
+    it("should return correct result for normal weeks", () => {
+      // prepare
+      const date = new Date(Date.UTC(2022, 8, 22, 10, 10, 10, 10)); // 22/09/2022 at 10:10:10:010
+
+      // act
+      const result = (service as any).getPrevPeriod(date);
+
+      // assert
+      expect(result).toBe("2022-37");
+    });
+
+    it("should return correct result for weeks that span from last month", () => {
+      // prepare
+      const date = new Date(Date.UTC(2022, 8, 2, 10, 10, 10, 10)); // 02/09/2022 at 10:10:10:010
+
+      // act
+      const result = (service as any).getPrevPeriod(date);
+
+      // assert
+      expect(result).toBe("2022-34");
+    });
+
+    it("should return correct result for weeks that span from last year", () => {
+      // prepare
+      const date = new Date(Date.UTC(2022, 0, 2, 10, 10, 10, 10)); // 02/01/2022 at 10:10:10:010
+
+      // act
+      const result = (service as any).getPrevPeriod(date);
+
+      // assert
+      expect(result).toBe("2021-51");
     });
   });
 });

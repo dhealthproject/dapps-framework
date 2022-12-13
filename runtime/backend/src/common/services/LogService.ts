@@ -200,7 +200,7 @@ export class LogService implements LoggerService {
    */
   public error(message: string, ...optionalParams: any[]): void {
     const context = optionalParams[0] ?? this.getModule();
-    const rest = optionalParams.splice(1); // remove first
+    const rest = optionalParams.slice().splice(1); // remove first
     this.logger.error(message, context, ...rest);
 
     // do we need an *alert* sent through e-mail?
@@ -230,7 +230,7 @@ export class LogService implements LoggerService {
    */
   public warn(message: string, ...optionalParams: any[]): void {
     const context = optionalParams[0] ?? this.getModule();
-    const rest = optionalParams.splice(1); // remove first
+    const rest = optionalParams.slice().splice(1); // remove first
     this.logger.warn(message, context, ...rest);
 
     // do we need an *alert* sent through e-mail?

@@ -9,6 +9,20 @@
  */
 // force-mock the environment configuration
 import "../mocks/config";
+import "../mocks/global";
+import {
+  mockDappConfigLoaderCall,
+  mockAssetsConfigLoaderCall,
+  mockNetworkConfigLoaderCall,
+  mockOauthConfigLoaderCall,
+  mockPayoutConfigLoaderCall,
+  mockProcessorConfigLoaderCall,
+  mockSecurityConfigLoaderCall,
+  mockStatisticsConfigLoaderCall,
+  mockSocialConfigLoaderCall,
+  mockMonitoringConfigLoaderCall,
+  mockTransportConfigLoaderCall,
+} from "../mocks/config";
 
 // force-mock the mongoose module `forRoot` call
 const mongooseForRootCall: any = jest.fn(() => MongooseModuleMock);
@@ -31,8 +45,12 @@ jest.mock("@nestjs-modules/mailer", () => {
   return { MailerModule: MailerModuleMock };
 });
 
+// external dependencies
+import { Account, Address, PublicAccount } from "@dhealth/sdk";
+
 // internal dependencies
 import { AppConfiguration } from "../../src/AppConfiguration";
+import { ConfigurationError } from "../../src/common/errors/ConfigurationError";
 import { AssetsConfig } from "../../src/common/models/AssetsConfig";
 import { DappConfig } from "../../src/common/models/DappConfig";
 import { MonitoringConfig } from "../../src/common/models/MonitoringConfig";
@@ -101,6 +119,25 @@ describe("AppConfiguration", () => {
   });
 
   describe("constructor()", () => {
+
+    it("should use correct configuration loaders", () => {
+      // act
+      service = new AppConfiguration();
+
+      // assert
+      expect(mockDappConfigLoaderCall).toHaveBeenCalledTimes(1);
+      expect(mockAssetsConfigLoaderCall).toHaveBeenCalledTimes(1);
+      expect(mockNetworkConfigLoaderCall).toHaveBeenCalledTimes(1);
+      expect(mockOauthConfigLoaderCall).toHaveBeenCalledTimes(1);
+      expect(mockPayoutConfigLoaderCall).toHaveBeenCalledTimes(1);
+      expect(mockProcessorConfigLoaderCall).toHaveBeenCalledTimes(1);
+      expect(mockSecurityConfigLoaderCall).toHaveBeenCalledTimes(1);
+      expect(mockStatisticsConfigLoaderCall).toHaveBeenCalledTimes(1);
+      expect(mockSocialConfigLoaderCall).toHaveBeenCalledTimes(1);
+      expect(mockMonitoringConfigLoaderCall).toHaveBeenCalledTimes(1);
+      expect(mockTransportConfigLoaderCall).toHaveBeenCalledTimes(1);
+    });
+
     it("should load dapp configuration correctly", () => {
       // act
       service = new AppConfiguration();
@@ -418,6 +455,54 @@ describe("AppConfiguration", () => {
         .toThrow(`The configuration field "discovery.sources" must be a non-empty array.`);
     });
 
+    it("should throw error given any missing mandatory configuration fields", () => {
+      const mandatoryFields: any = [
+        { name: "dappName", value: undefined },
+        { name: "dappPublicKey", value: undefined },
+        { name: "scopes", value: undefined },
+        { name: "scopes", value: ["other-scope"] },
+        { name: "backendApp", value: undefined },
+        { name: "discovery", value: undefined },
+        { name: "discovery", value: null },
+        { name: "discovery", value: {} },
+        { name: "discovery", value: [] },
+        { name: "discovery", value: { sources: undefined } },
+        { name: "discovery", value: { sources: [] } },
+      ];
+      const expectedErrorMessages = [
+        `The configuration field "dappName" cannot be empty.`,
+        `The configuration field "dappPublicKey" cannot be empty.`,
+        `The configuration field "scopes" must be a non-empty array.`,
+        `The application scopes "database" and "discovery" cannot be disabled.`,
+        `The configuration field "backendApp" cannot be empty.`,
+        `The configuration field "discovery.sources" must be a non-empty array.`,
+        `Cannot use 'in' operator to search for 'sources' in null`,
+        `The configuration field "discovery.sources" must be a non-empty array.`,
+        `The configuration field "discovery.sources" must be a non-empty array.`,
+        `The configuration field "discovery.sources" must be a non-empty array.`,
+        `The configuration field "discovery.sources" must be a non-empty array.`,
+      ];
+      mandatoryFields.forEach((field: {name: string, value: any}, index: number) => {
+        // prepare
+        const config: any = {
+          dapp: {
+            dappName: "test-dappName",
+            dappPublicKey: "test-dappPublicKey",
+            scopes: [ "database", "discovery" ],
+            backendApp: { url: "test-url" },
+            discovery: { sources: ["test-source"] }  
+          }
+        };
+        config.dapp[field.name] = field.value;
+
+        // act
+        const result = () => AppConfiguration.checkMandatoryFields(config);
+
+        // assert
+        expect(result).toThrowError(new ConfigurationError(expectedErrorMessages[index]));
+      });
+    });
+
     it("should return true given a valid configuration object", () => {
       // this test uses untouched configuration
       // act
@@ -524,6 +609,64 @@ describe("AppConfiguration", () => {
         .toThrow(`The configuration field "network.epochAdjustment" cannot be empty.`);
     });
 
+    it("should throw error given any missing mandatory configuration fields", () => {
+      const mandatoryFields: any = [
+        { name: "defaultNode", value: undefined },
+        { name: "defaultNode", value: {
+            defaultNode: {
+              url: "test-url",
+            }
+          }
+        },
+        { name: "network", value: undefined },
+        { name: "network", value: {
+            epochAdjustment: "test-epochAdjustment",
+            networkIdentifier: "test-networkIdentifier",
+          }
+        },
+        { name: "network", value: {
+            generationHash: "test-generationHash",
+            epochAdjustment: "test-epochAdjustment",
+          }
+        },
+        { name: "network", value: {
+            generationHash: "test-generationHash",
+            networkIdentifier: "test-networkIdentifier",
+          }
+        },
+      ];
+      const expectedErrorMessages = [
+        `The configuration field "defaultNode" cannot be empty.`,
+        `The configuration field "defaultNode" cannot be empty.`,
+        `The configuration field "network.generationHash" cannot be empty.`,
+        `The configuration field "network.generationHash" cannot be empty.`,
+        `The configuration field "network.networkIdentifier" cannot be empty.`,
+        `The configuration field "network.epochAdjustment" cannot be empty.`,
+      ];
+      mandatoryFields.forEach((field: {name: string, value: any}, index: number) => {
+        // prepare
+        const config: any = {
+          network: {
+            defaultNode: {
+              url: "test-url",
+            },
+            network: {
+              generationHash: "test-generationHash",
+              networkIdentifier: "test-networkIdentifier",
+              epochAdjustment: "test-epochAdjustment",
+            },
+          }
+        };
+        config.network[field.name] = field.value;
+
+        // act
+        const result = () => AppConfiguration.checkNetworkConnection(config);
+
+        // assert
+        expect(result).toThrowError(new ConfigurationError(expectedErrorMessages[index]));
+      });
+    });
+
     it("should return true given a valid configuration object", () => {
       // this test uses untouched configuration
       // act
@@ -615,6 +758,73 @@ describe("AppConfiguration", () => {
       );
     });
 
+    it("should throw error given any missing mandatory configuration fields", () => {
+      const mandatoryFields: any = [
+        { name: "auth", value: undefined },
+        { name: "auth", value: {
+            challengeSize: 3,
+            registries: [ "test-registry" ],
+          }
+        },
+        { name: "auth", value: {
+            secret: "",
+            challengeSize: 3,
+            registries: [ "test-registry" ],
+          }
+        },
+        { name: "auth", value: {
+            secret: "test-secret",
+            registries: [ "test-registry" ],
+          }
+        },
+        { name: "auth", value: {
+            secret: "test-secret",
+            challengeSize: 2,
+            registries: [ "test-registry" ],
+          }
+        },
+        { name: "auth", value: {
+            secret: "test-secret",
+            challengeSize: 3,
+          }
+        },
+        { name: "auth", value: {
+            secret: "test-secret",
+            challengeSize: 3,
+            registries: [],
+          }
+        },
+      ];
+      const expectedErrorMessages = [
+        `The configuration field "auth.secret" cannot be empty.`,
+        `The configuration field "auth.secret" cannot be empty.`,
+        `The configuration field "auth.secret" cannot be empty.`,
+        `The configuration field "auth.challengeSize" must contain a number greater than or equal to 3.`,
+        `The configuration field "auth.challengeSize" must contain a number greater than or equal to 3.`,
+        `The configuration field "auth.registries" must contain an array with at least one address of an account on dHealth Network.`,
+        `The configuration field "auth.registries" must contain an array with at least one address of an account on dHealth Network.`,
+      ];
+      mandatoryFields.forEach((field: {name: string, value: any}, index: number) => {
+        // prepare
+        const config: any = {
+          security: {
+            auth: {
+              secret: "test-secret",
+              challengeSize: 3,
+              registries: [ "test-registry" ],
+            },  
+          }
+        };
+        config.security[field.name] = field.value;
+
+        // act
+        const result = () => AppConfiguration.checkSecuritySettings(config);
+
+        // assert
+        expect(result).toThrowError(new ConfigurationError(expectedErrorMessages[index]));
+      });
+    });
+
     it("should return true given a valid configuration object", () => {
       // this test uses untouched configuration
       // act
@@ -686,4 +896,3 @@ describe("AppConfiguration", () => {
     });
   });
 });
-

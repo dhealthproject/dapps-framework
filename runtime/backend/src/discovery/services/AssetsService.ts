@@ -22,6 +22,7 @@ import {
 import {
   AssetParameters,
   AssetsConfig,
+  DiscoverableAssetsMap,
 } from "../../common/models/AssetsConfig";
 import { QueryService } from "../../common/services/QueryService";
 
@@ -177,7 +178,7 @@ export class AssetsService {
       "namespaceId" in baseAsset &&
       mosaicOrNamespaceId === baseAsset.namespaceId
     ) {
-      return baseAsset.mosaicId;
+      return (baseAsset as AssetParameters).mosaicId;
     }
 
     // optional EARN mosaic configuration
@@ -188,19 +189,40 @@ export class AssetsService {
         "namespaceId" in earnAsset &&
         mosaicOrNamespaceId === earnAsset.namespaceId
       ) {
-        return earnAsset.mosaicId;
+        return (earnAsset as AssetParameters).mosaicId;
       }
     } catch (error) {}
 
     // optional BOOSTERS mosaic configuration
     try {
-      // BOOSTERS asset
-      const boostersAsset = AssetsService.getAssetParameters("boosters");
-      if (
-        "namespaceId" in boostersAsset &&
-        mosaicOrNamespaceId === boostersAsset.namespaceId
-      ) {
-        return boostersAsset.mosaicId;
+      // REFERRAL asset
+      const referralAssets = AssetsService.getAssetParameters("referral");
+      for (const referralAssetId in referralAssets) {
+        const referralAsset = (referralAssets as DiscoverableAssetsMap)[
+          referralAssetId
+        ];
+        if (
+          "namespaceId" in referralAsset &&
+          mosaicOrNamespaceId === referralAsset.namespaceId
+        ) {
+          return referralAsset.mosaicId;
+        }
+      }
+    } catch (error) {}
+
+    try {
+      // PROGRESS asset
+      const progressAssets = AssetsService.getAssetParameters("progress");
+      for (const progressAssetId in progressAssets) {
+        const progressAsset = (progressAssets as DiscoverableAssetsMap)[
+          progressAssetId
+        ];
+        if (
+          "namespaceId" in progressAsset &&
+          mosaicOrNamespaceId === progressAsset.namespaceId
+        ) {
+          return progressAsset.mosaicId;
+        }
       }
     } catch (error) {}
 
@@ -219,10 +241,13 @@ export class AssetsService {
    * @returns {AssetParameters}
    * @throws  {Error}     Given unknown or invalid `assetType` parameter.
    */
-  protected static getAssetParameters(assetType: string): AssetParameters {
+  protected static getAssetParameters(
+    assetType: string,
+  ): AssetParameters | DiscoverableAssetsMap {
     // reads discoverable asset from configuration
     const assetsConfig = assetsConfigLoader() as AssetsConfig;
-    const asset = assetsConfig.assets[assetType];
+    const asset =
+      assetsConfig.assets[assetType] ?? assetsConfig.boosters[assetType];
 
     // throw an error if the asset is unknown
     if (undefined === asset) {

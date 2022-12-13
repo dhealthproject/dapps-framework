@@ -18,6 +18,7 @@ import {
   TestConsoleTransport,
   TestDailyRotateFileTransport,
   TestWinstonLogger,
+  TestMongoDBTransport,
 } from "../../../mocks/global";
 import { LogService } from "../../../../src/common/services/LogService";
 
@@ -67,6 +68,35 @@ describe("common/LogService", () => {
         new TestDailyRotateFileTransport(),
         new TestFileTransportErrors(),
       ]);
+    });
+
+    it("should include database transport if it exists in config", () => {
+      // prepare
+      (service as any).monitoringConfig.storage = [
+        { type: "database", level: "debug" },
+      ];
+
+      // act
+      const result = (service as any).createTransports();
+
+      // assert
+      expect(result).toEqual([
+        new TestMongoDBTransport()
+      ]);
+    });
+  });
+
+  describe("setModule()", () => {
+    it("should set module and return class instance", () => {
+      // prepare
+      const expectedResultModule = "test-module";
+
+      // act
+      const result = service.setModule(expectedResultModule);
+
+      // assert
+      expect(result).toBeInstanceOf(LogService);
+      expect((result as any).module).toEqual(expectedResultModule);
     });
   });
 
@@ -288,6 +318,32 @@ describe("common/LogService", () => {
 
       // assert
       expect(TestWinstonLogger.setLogLevels).toHaveBeenNthCalledWith(1, expectedLevels);
+    });
+  });
+
+  describe("getModule()", () => {
+    it("should return module if module exists", () => {
+      // prepare
+      const expectedResult = "test-module";
+      (service as any).module = expectedResult;
+
+      // act
+      const result = (service as any).getModule();
+
+      // assert
+      expect(result).toEqual(expectedResult);
+    });
+
+    it("should return context if module doesn't exist", () => {
+      // prepare
+      const expectedResult = "test-context";
+      (service as any).context = expectedResult;
+
+      // act
+      const result = (service as any).getModule();
+
+      // assert
+      expect(result).toEqual(expectedResult);
     });
   });
 });

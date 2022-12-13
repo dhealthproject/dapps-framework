@@ -33,6 +33,8 @@ import { SignerService } from "../../../../src/payout/services/SignerService";
 import { MathService } from "../../../../src/payout/services/MathService";
 import { PrepareActivityPayouts } from "../../../../src/payout/schedulers/ActivityPayouts/PrepareActivityPayouts";
 import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
+import { PayoutPreparationStateData } from "../../../../src/payout/models/PayoutPreparationStateData";
+import { PayoutCommandOptions } from "../../../../src/payout/schedulers/PayoutCommand";
 
 const mockActivityRewardWalkFormulaFirst = Math.round(Math.floor(
   ((2/4)*1.2) * 100 // <-- 2 zeros (L172)
@@ -194,6 +196,46 @@ describe("payout/PrepareActivityPayouts", () => {
     expect(command).toBeDefined();
   });
 
+  it(`should set correct dappName`, () => {
+    // prepare
+    const configServiceGetCall = jest
+      .spyOn(configService, "get")
+      .mockReturnValue("test-dappName");
+
+    // act
+    const result = new PrepareActivityPayouts(
+      configService,
+      stateService,
+      queryService,
+      payoutsService,
+      signerService,
+      logger,
+      mathService,
+      MockModel,
+    );
+
+    // assert
+    expect(configServiceGetCall).toHaveBeenNthCalledWith(3, "dappName");
+    expect((result as any).dappIdentifier).toBe("test-dappname");
+  });
+
+  describe("getStateData()", () => {
+    it("should return correct instance", () => {
+      // prepare
+      const totalNumberPrepared = 1;
+      (command as any).totalNumberPrepared = totalNumberPrepared;
+      const expectedResult = {
+        totalNumberPrepared, 
+      } as PayoutPreparationStateData;
+
+      // act
+      const result = (command as any).getStateData();
+
+      // assert
+      expect(result).toStrictEqual(expectedResult);
+    });
+  });
+
   describe("get command()", () => {
     it("should return correct result", () => {
       // act
@@ -312,20 +354,19 @@ describe("payout/PrepareActivityPayouts", () => {
     });
 
     it("should use correct formula given sport type", () => {
-      // act
-      const resultWalk = (command as any).getAssetAmount(activityMock);
-      const resultRun = (command as any).getAssetAmount({
-        ...activityMock,
-        activityData: {
-          ...activityMock.activityData,
-          sport: "Run", // <-- forces run type
-        },
-      });
+      ["", "Walk", "Run", "Ride", "Swim"].forEach((sport: string) => {
+        // act
+        const result = (command as any).getAssetAmount({
+          ...activityMock,
+          activityData: {
+            ...activityMock.activityData,
+            sport, // <-- forces run type
+          },
+        });
 
-      // assert
-      expect(resultWalk).not.toBe(0);
-      expect(resultRun).not.toBe(0);
-      expect(resultWalk).not.toBe(resultRun);
+        // assert
+        expect(result).not.toBe(0);
+      });
     });
 
     it("should convert to a correct absolute amount", () => {
@@ -570,6 +611,9 @@ describe("payout/PrepareActivityPayouts", () => {
       const expectedAssets2 = [
         { amount: mockActivityRewardReverse, mosaicId: "fake-identifier" },
       ];
+      (command as any).state = {
+        data: { totalNumberPrepared: null }
+      }
 
       // act
       await command.execute({
@@ -657,6 +701,36 @@ describe("payout/PrepareActivityPayouts", () => {
         {
           payoutState: PayoutState.Not_Eligible, // <-- activities.payoutState=Not_Eligible
         }
+      );
+    });
+  });
+
+  describe("runAsScheduler()", () => {
+    it("should call correct methods and run correctly", async () => {
+      // prepare
+      const loggerSetModuleCall = jest
+        .spyOn(logger, "setModule")
+        .mockReturnValue(logger);
+      const debugLogCall = jest
+        .spyOn((command as any), "debugLog")
+        .mockReturnValue(true);
+      const runCall = jest
+        .spyOn(command, "run")
+        .mockResolvedValue();
+
+      // act
+      await command.runAsScheduler();
+
+      // assert
+      expect(loggerSetModuleCall).toHaveBeenNthCalledWith(1, "payout/PrepareActivityPayouts");
+      expect(debugLogCall).toHaveBeenNthCalledWith(1, `Starting payout preparation for subjects type: activities`);
+      expect(debugLogCall).toHaveBeenNthCalledWith(2, `Total number of payouts prepared: "0"`);
+      expect(runCall).toHaveBeenNthCalledWith(
+        1,
+        ["activities"],
+        {
+          debug: true,
+        } as PayoutCommandOptions
       );
     });
   });

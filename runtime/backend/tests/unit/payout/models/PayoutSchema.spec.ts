@@ -18,10 +18,14 @@ describe("payout/PayoutSchema", () => {
       const slug = "test-slug";
       const collection = "test-collection";
       const address = "test-address";
+      const payoutState = "test-payoutState";
+      const transactionHash = "test-transactionHash";
       const payout: Payout = new Payout();
       (payout as any).subjectSlug = slug;
       (payout as any).subjectCollection = collection;
       (payout as any).userAddress = address;
+      (payout as any).payoutState = payoutState;
+      (payout as any).transactionHash = transactionHash;
 
       // act
       const payoutToQuery = payout.toQuery;
@@ -31,6 +35,8 @@ describe("payout/PayoutSchema", () => {
         userAddress: address,
         subjectSlug: slug,
         subjectCollection: collection,
+        payoutState: payoutState,
+        transactionHash: transactionHash,
       });
     });
   });

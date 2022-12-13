@@ -15,14 +15,18 @@ describe("common/AccountSchema", () => {
     it("should return correct value", () => {
       // prepare
       const address = "test-address";
+      const referredBy = "test-referredBy";
+      const referralCode = "test-referralCode";
       const account: Account = new Account();
       (account as any).address = address;
+      (account as any).referredBy = referredBy;
+      (account as any).referralCode = referralCode;
 
       // act
       const accountToQuery = account.toQuery;
 
       // assert
-      expect(accountToQuery).toEqual({ address });
+      expect(accountToQuery).toEqual({ address, referredBy, referralCode });
     });
   });
 });

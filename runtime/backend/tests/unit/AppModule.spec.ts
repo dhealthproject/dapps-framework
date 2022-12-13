@@ -29,6 +29,7 @@ import { AccountSessionsService } from "../../src/common/services/AccountSession
 import { ChallengesService } from "../../src/common/services/ChallengesService";
 import { QueryService } from "../../src/common/services/QueryService";
 import { CipherService } from "../../src/common/services/CipherService";
+import { AppConfiguration } from "../../src/AppConfiguration";
 
 describe("AppModule", () => {
   let appModule: AppModule;
@@ -109,6 +110,42 @@ describe("AppModule", () => {
       expect(scopeFactoryCreateCall).toHaveBeenCalledTimes(1);
       expect(scopeFactoryGetModulesCall).toHaveBeenCalledTimes(1);
       expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe("static checkConfiguration()", () => {
+    it("should check all configurations", () => {
+      // prepare
+      const config = new AppConfiguration();
+      const appConfigurationCheckMandatoryFieldsCall = jest
+        .spyOn(AppConfiguration, "checkMandatoryFields")
+        .mockReturnValue(true);
+      const appConfigurationCheckDatabaseConnectionCall = jest
+        .spyOn(AppConfiguration, "checkDatabaseConnection")
+        .mockReturnValue(true);
+      const appConfigurationCheckNetworkConnectionCall = jest
+        .spyOn(AppConfiguration, "checkNetworkConnection")
+        .mockReturnValue(true);
+      const appConfigurationCheckMandatoryAssetsCall = jest
+        .spyOn(AppConfiguration, "checkMandatoryAssets")
+        .mockReturnValue(true);
+      const appConfigurationCheckSecuritySettingsCall = jest
+        .spyOn(AppConfiguration, "checkSecuritySettings")
+        .mockReturnValue(true);
+      const appConfigurationCheckApplicationScopesCall = jest
+        .spyOn(AppConfiguration, "checkApplicationScopes")
+        .mockReturnValue(true);
+
+      // act
+      AppModule.checkConfiguration();
+
+      // assert
+      expect(appConfigurationCheckMandatoryFieldsCall).toHaveBeenNthCalledWith(1, config);
+      expect(appConfigurationCheckDatabaseConnectionCall).toHaveBeenNthCalledWith(1, config);
+      expect(appConfigurationCheckNetworkConnectionCall).toHaveBeenNthCalledWith(1, config);
+      expect(appConfigurationCheckMandatoryAssetsCall).toHaveBeenNthCalledWith(1, config);
+      expect(appConfigurationCheckSecuritySettingsCall).toHaveBeenNthCalledWith(1, config);
+      expect(appConfigurationCheckApplicationScopesCall).toHaveBeenNthCalledWith(1, config);
     });
   });
 });

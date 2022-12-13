@@ -58,4 +58,19 @@ describe("discovery/BlocksService", () => {
       expect(result).toBe(true);
     });
   });
+
+  describe("createOrUpdateBatch()", () => {
+    it("should call correct method", async () => {
+      // prepare
+      const queriesServiceUpdateBatchCall = jest
+        .spyOn(queriesService, "updateBatch")
+        .mockResolvedValue(1);
+
+      // act
+      await (service as any).createOrUpdateBatch([] as BlockDocument[]);
+
+      // assert
+      expect(queriesServiceUpdateBatchCall).toHaveBeenNthCalledWith(1, MockModel, []);
+    });
+  });
 });

@@ -24,6 +24,37 @@ const mockAssetsLoaderCall = jest.fn().mockReturnValue({
       namespaceId: "fake-earn-namespace-id",
       divisibility: 6,
       symbol: "fake-earn-symbol"
+    },
+  },
+  boosters: {
+    referral: {
+      boost5: {
+        mosaicId: "fake-boost5-mosaic-id",
+        namespaceId: "fake-boost5-namespace-id",
+        divisibility: 0,
+        symbol: "fake-boost5-symbol"
+      },
+      boost10: {
+        mosaicId: "fake-boost10-mosaic-id",
+        namespaceId: "fake-boost10-namespace-id",
+        divisibility: 0,
+        symbol: "fake-boost10-symbol"
+      },
+      boost15: {
+        mosaicId: "fake-boost15-mosaic-id",
+        namespaceId: "fake-boost15-namespace-id",
+        divisibility: 0,
+        symbol: "fake-boost15-symbol"
+      },
+    },
+
+    progress: {
+      progress1: {
+        mosaicId: "fake-progress1-mosaic-id",
+        namespaceId: "fake-progress1-namespace-id",
+        divisibility: 0,
+        symbol: "fake-progress1-symbol"
+      },
     }
   },
 } as AssetsConfig);
@@ -322,6 +353,32 @@ describe("discovery/AssetsService", () => {
       // prepare
       const namespaceId = "fake-earn-namespace-id";
       const expectedId = "fake-earn-mosaic-id"; // <-- overwrites with MosaicId
+
+      // act
+      const result: string = AssetsService.formatMosaicId(namespaceId);
+
+      // assert
+      expect(result).toBeDefined();
+      expect(result).toBe(expectedId); // <-- overwrites with MosaicId
+    });
+
+    it("should return booster referral mosaic id given known namespaceId of boosterAsset", () => {
+      // prepare
+      const namespaceId = "fake-boost15-namespace-id";
+      const expectedId = "fake-boost15-mosaic-id"; // <-- overwrites with MosaicId
+
+      // act
+      const result: string = AssetsService.formatMosaicId(namespaceId);
+
+      // assert
+      expect(result).toBeDefined();
+      expect(result).toBe(expectedId); // <-- overwrites with MosaicId
+    });
+
+    it("should return booster progress mosaic id given known namespaceId of boosterAsset", () => {
+      // prepare
+      const namespaceId = "fake-progress1-namespace-id";
+      const expectedId = "fake-progress1-mosaic-id"; // <-- overwrites with MosaicId
 
       // act
       const result: string = AssetsService.formatMosaicId(namespaceId);

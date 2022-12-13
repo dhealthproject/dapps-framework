@@ -12,6 +12,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { getModelToken } from "@nestjs/mongoose";
 import { ConfigService } from "@nestjs/config";
 import { TransactionMapping } from "@dhealth/sdk";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
@@ -31,8 +32,8 @@ import { PayoutState } from "../../../../src/payout/models/PayoutStatusDTO";
 import { PayoutDocument, PayoutQuery } from "../../../../src/payout/models/PayoutSchema";
 import { PayoutsService } from "../../../../src/payout/services/PayoutsService";
 import { SignerService } from "../../../../src/payout/services/SignerService";
-import { BroadcastActivityPayouts } from "../../../../src/payout/schedulers/ActivityPayouts/BroadcastActivityPayouts";
-import { EventEmitter2 } from "@nestjs/event-emitter";
+import { BroadcastActivityPayouts, BroadcastActivityPayoutsCommandOptions } from "../../../../src/payout/schedulers/ActivityPayouts/BroadcastActivityPayouts";
+import { PayoutBroadcastStateData } from "../../../../src/payout/models/PayoutBroadcastStateData";
 
 const payoutMocks = [
   {
@@ -260,6 +261,22 @@ describe("payout/BroadcastActivityPayouts", () => {
           },
         },
       ]);
+    });
+  });
+
+  describe("getStateData()", () => {
+    it("should return correct instance", () => {
+      // prepare
+      (command as any).lastExecutedAt = 0;
+      const expectedResult = {
+        lastExecutedAt: 0,
+      } as PayoutBroadcastStateData;
+
+      // act
+      const result = (command as any).getStateData();
+
+      // assert
+      expect(result).toEqual(expectedResult);
     });
   });
 
@@ -774,6 +791,35 @@ describe("payout/BroadcastActivityPayouts", () => {
           networkType: "fake-network",
         } as any);
       });
+    });
+  });
+
+  describe("runAsScheduler()", () => {
+    it("should call correct methods and run correctly", async () => {
+      // prepare
+      const loggerSetModuleCall = jest
+        .spyOn(logger, "setModule")
+        .mockReturnValue(logger);
+      const debugLogCall = jest
+        .spyOn((command as any), "debugLog")
+        .mockReturnValue(true);
+      const runCall = jest
+        .spyOn(command, "run")
+        .mockResolvedValue();
+
+      // act
+      await command.runAsScheduler();
+
+      // assert
+      expect(loggerSetModuleCall).toHaveBeenNthCalledWith(1, "payout/BroadcastActivityPayouts");
+      expect(debugLogCall).toHaveBeenNthCalledWith(1, `Starting payout broadcast for subjects type: activities`);
+      expect(runCall).toHaveBeenNthCalledWith(
+        1,
+        ["activities"], {
+          maxCount: 3, // <-- MAXIMUM 3 BROADCASTS per round
+          debug: true,
+        } as BroadcastActivityPayoutsCommandOptions
+      );
     });
   });
 });

@@ -17,6 +17,7 @@ import {
   NetworkService,
   NetworkConnectionPayload,
 } from "../../../../src/common/services/NetworkService";
+jest.useFakeTimers();
 
 const createTransactionRepositoryCall: any = jest.fn(
   (url) => () => `transactionRepository-${url}`,
@@ -60,11 +61,16 @@ describe("common/NetworkService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [NetworkService, ConfigService],
+      providers: [
+        NetworkService,
+        ConfigService
+      ],
     }).compile();
 
     service = module.get<NetworkService>(NetworkService);
     configService = module.get<ConfigService>(ConfigService);
+
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -402,25 +408,69 @@ describe("common/NetworkService", () => {
   });
 
   describe("delegatePromises()", () => {
-    it("should request to node failed, try with a different node", async () => {
+    it("should call reduce() & set timeout for each sub-promise", async () => {
       // prepare
-      const promiseAllCall = jest
-        .spyOn(Promise, "all")
-        .mockRejectedValueOnce(new Error())
-        .mockResolvedValue([]);
-      const getNextAvailableNodeCall = jest
-        .spyOn((service as any), "getNextAvailableNode")
-        .mockReturnValue({});
+      const promisesParamValue = [] as Promise<any>[];
+      jest.runAllTimers(); // <- explicitly tell jest to run all setTimeout, setInterval
+      jest.runAllTicks(); // <- explicitly tell jest to run all Promise callback
+      jest.spyOn((promisesParamValue as any), "reduce").mockImplementation(async (...args: unknown[]) => {
+        let funct = args[0] as Function;
+        await funct();
+        jest.runAllTicks(); // <- explicitly tell jest to run all Promise callback
+        jest.runOnlyPendingTimers();
+        return await Promise.resolve({});
+      });
 
       // act
-      const result = await service.delegatePromises(
-        [Promise.resolve()]
-      );
+      const result = await service.delegatePromises(promisesParamValue);
 
       // assert
-      expect(getNextAvailableNodeCall).toHaveBeenCalledTimes(1);
-      expect(promiseAllCall).toHaveBeenCalledTimes(2);
-      expect(result).toEqual([]);
+      expect(result).toEqual([{}]);
+    });
+
+    it("should request to node failed, try with a different node", async () => {
+      const promiseAllResults: any[] = [
+        [new Error(), []],
+        [new Error(), new Error(), new Error(), new Error()]
+      ];
+      const expectedResults: any[] = [[], new Error("Aborting node requests due to too many trials.")];
+      for (let i = 0; i < promiseAllResults.length; i++) {
+        // prepare
+        jest.clearAllMocks();
+        const promiseAllResult = promiseAllResults[i];
+        let promiseAllCall = jest.spyOn(Promise, "all");
+        for (const promiseAllResultItem of promiseAllResult) {
+          if (promiseAllResultItem instanceof Error) {
+            promiseAllCall = promiseAllCall.mockRejectedValueOnce(promiseAllResultItem);
+          } else {
+            promiseAllCall = promiseAllCall.mockResolvedValue(promiseAllResultItem);
+          }
+        }
+        const getNextAvailableNodeCall = jest
+          .spyOn((service as any), "getNextAvailableNode")
+          .mockReturnValue({});
+
+        // act
+        let result;
+        if (expectedResults[i] instanceof Error) {
+          result = service.delegatePromises(
+            [Promise.resolve()]
+          );  
+        } else {
+          result = await service.delegatePromises(
+            [Promise.resolve()]
+          ); 
+        }
+
+        // assert
+        if (expectedResults[i] instanceof Error) {
+          expect(result).rejects.toThrow(expectedResults[i]);
+        } else {
+          expect(getNextAvailableNodeCall).toHaveBeenCalledTimes(1);
+          expect(promiseAllCall).toHaveBeenCalledTimes(2);
+          expect(result).toEqual(expectedResults[i]);
+        }
+      }
     });
   });
 });

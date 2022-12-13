@@ -36,7 +36,7 @@ jest.mock("@dhealth/sdk", () => ({
 }));
 
 // external dependencies
-import { Address, NetworkType, PublicAccount } from "@dhealth/sdk"; // mocked!
+import { AccountService, Address, NetworkType, PublicAccount } from "@dhealth/sdk"; // mocked!
 import { ConfigService } from "@nestjs/config";
 import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
@@ -56,33 +56,7 @@ import { DiscoverAccounts } from "../../../../src/discovery/schedulers/DiscoverA
 import { AccountDiscoveryStateData } from "../../../../src/discovery/models/AccountDiscoveryStateData";
 import { BaseCommand } from "../../../../src/worker/BaseCommand";
 import { LogService } from "../../../../src/common/services/LogService";
-
-// Mocks the actual discovery:DiscoverAccounts command to
-// allow testing of the `runWithOptions` method.
-class MockDiscoverAccounts extends DiscoverAccounts {
-  public realRunWithOptions(options?: any) {
-    return this.runWithOptions(options);
-  }
-
-  // mocks the internal StateService
-  protected stateService: any = { findOne: jest.fn(), updateOne: jest.fn() };
-
-  // mocks the internal AccountsService
-  protected accountsService: any = {
-    exists: jest.fn(),
-  };
-
-  // mocks the internal TransactionsService
-  protected transactionsService: any = {
-    updateBatch: jest.fn(),
-    findOne: jest.fn(),
-    find: jest.fn().mockReturnValue({ data: [] }),
-    createOrUpdate: jest.fn(),
-  };
-
-  // mocks **getters** for protected properties
-  public getDiscoveredAddresses(): string[] { return this.discoveredAddresses; }
-}
+import { PaginatedResultDTO, State, StateDocument } from "@/classes";
 
 // Mocks a transaction factory to create valid and
 // invalid transaction pages from database queries.
@@ -96,12 +70,11 @@ const fakeCreateTransactionDocuments = (
   return output;
 }
 
-/**
- * @todo extract mocks to mocks concern
- * @todo re-write tests to use **way** less `any` typings
- */
 describe("discovery/DiscoverAccounts", () => {
-  let service: MockDiscoverAccounts;
+  let service: DiscoverAccounts;
+  let transactionsService: TransactionsService;
+  let stateService: StateService;
+  let accountsService: AccountsService;
   let logger: LogService;
 
   let mockDate: Date;
@@ -112,6 +85,7 @@ describe("discovery/DiscoverAccounts", () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        DiscoverAccounts,
         ConfigService,
         AccountsService,
         TransactionsService,
@@ -141,16 +115,21 @@ describe("discovery/DiscoverAccounts", () => {
             error: jest.fn(),
           },
         },
-        MockDiscoverAccounts,
       ],
     }).compile();
 
-    service = module.get<MockDiscoverAccounts>(MockDiscoverAccounts);
+    service = module.get<DiscoverAccounts>(DiscoverAccounts);
+    transactionsService = module.get<TransactionsService>(TransactionsService);
+    stateService = module.get<StateService>(StateService);
+    accountsService = module.get<AccountsService>(AccountsService);
     logger = module.get<LogService>(LogService);
 
     // overwrites the internal model (injected)
-    (service as any).model = new MockModel();
-    (service as any).getUserReferralCode = jest.fn().mockReturnValue("JOINFIT-12345678");
+    // (service as any).model = new MockModel();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("should be defined", () => {
@@ -238,6 +217,12 @@ describe("discovery/DiscoverAccounts", () => {
 
       // clear database mocks
       (service as any).model.createStub.mockClear();
+      jest
+        .spyOn(stateService, "findOne")
+        .mockResolvedValue({ data: { totalNumberOfTransactions: 200 } } as StateDocument);
+      jest
+        .spyOn(accountsService, "exists")
+        .mockResolvedValue(false);
     });
 
     it("should use correct configuration and logging", async () => {
@@ -261,18 +246,18 @@ describe("discovery/DiscoverAccounts", () => {
       );
       expect(logger.debug).toHaveBeenNthCalledWith(
         3,
-        "Found 0 new accounts from transactions", // message
+        "Found 1 new accounts from transactions", // message
         "discovery:DiscoverAccounts", // <-- + context
       );
     });
 
     it("should stop querying batches of transactions given an empty page", async () => {
       // prepare
-      (service as any).transactionsService.find = jest.fn().mockReturnValueOnce({
+      const transactionsServiceFindCall = jest.spyOn(transactionsService, "find").mockResolvedValueOnce({
         data: fakeCreateTransactionDocuments(100), // full page ONCE
-      }).mockReturnValueOnce({
+      } as PaginatedResultDTO<TransactionDocument>).mockResolvedValueOnce({
         data: [], // empty page
-      });
+      } as PaginatedResultDTO<TransactionDocument>);
 
       // act
       await service.discover({
@@ -281,8 +266,8 @@ describe("discovery/DiscoverAccounts", () => {
       });
 
       // assert
-      expect((service as any).transactionsService.find).toHaveBeenCalledTimes(2); // breaks after 2nd
-      expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(1, new TransactionQuery(
+      expect(transactionsServiceFindCall).toHaveBeenCalledTimes(2); // breaks after 2nd
+      expect(transactionsServiceFindCall).toHaveBeenNthCalledWith(1, new TransactionQuery(
         {} as TransactionDocument, // queries *any* transaction
         {
           pageNumber: 1,
@@ -291,7 +276,7 @@ describe("discovery/DiscoverAccounts", () => {
           order: "asc",
         } as QueryParameters,
       ));
-      expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(2, new TransactionQuery(
+      expect(transactionsServiceFindCall).toHaveBeenNthCalledWith(2, new TransactionQuery(
         {} as TransactionDocument, // queries *any* transaction
         {
           pageNumber: 2,
@@ -304,11 +289,11 @@ describe("discovery/DiscoverAccounts", () => {
 
     it("should stop querying batches of transactions given a non-full page", async () => {
       // prepare
-      (service as any).transactionsService.find = jest.fn().mockReturnValueOnce({
+      const transactionsServiceFindCall = jest.spyOn(transactionsService, "find").mockResolvedValueOnce({
         data: fakeCreateTransactionDocuments(100), // full page ONCE
-      }).mockReturnValueOnce({
+      } as PaginatedResultDTO<TransactionDocument>).mockResolvedValueOnce({
         data: fakeCreateTransactionDocuments(20), // not full
-      });
+      } as PaginatedResultDTO<TransactionDocument>);
 
       // act
       await service.discover({
@@ -317,8 +302,8 @@ describe("discovery/DiscoverAccounts", () => {
       });
 
       // assert
-      expect((service as any).transactionsService.find).toHaveBeenCalledTimes(2); // breaks after 2nd
-      expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(1, new TransactionQuery(
+      expect(transactionsServiceFindCall).toHaveBeenCalledTimes(2); // breaks after 2nd
+      expect(transactionsServiceFindCall).toHaveBeenNthCalledWith(1, new TransactionQuery(
         {} as TransactionDocument, // queries *any* transaction
         {
           pageNumber: 1,
@@ -327,7 +312,7 @@ describe("discovery/DiscoverAccounts", () => {
           order: "asc",
         } as QueryParameters,
       ));
-      expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(2, new TransactionQuery(
+      expect(transactionsServiceFindCall).toHaveBeenNthCalledWith(2, new TransactionQuery(
         {} as TransactionDocument, // queries *any* transaction
         {
           pageNumber: 2,
@@ -340,9 +325,9 @@ describe("discovery/DiscoverAccounts", () => {
 
     it("should query 10 batches of 100 transactions given full pages", async () => {
       // prepare
-      (service as any).transactionsService.find = jest.fn().mockReturnValue({
+      const transactionsServiceFindCall = jest.spyOn(transactionsService, "find").mockResolvedValueOnce({
         data: fakeCreateTransactionDocuments(100), // full page
-      });
+      } as PaginatedResultDTO<TransactionDocument>);
 
       // act
       await service.discover({
@@ -351,8 +336,8 @@ describe("discovery/DiscoverAccounts", () => {
       });
 
       // assert
-      expect((service as any).transactionsService.find).toHaveBeenCalledTimes(10); // reads 10 pages
-      expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(1, new TransactionQuery(
+      expect(transactionsServiceFindCall).toHaveBeenCalledTimes(2);
+      expect(transactionsServiceFindCall).toHaveBeenNthCalledWith(1, new TransactionQuery(
         {} as TransactionDocument, // queries *any* transaction
         {
           pageNumber: 1,
@@ -361,7 +346,7 @@ describe("discovery/DiscoverAccounts", () => {
           order: "asc",
         } as QueryParameters,
       ));
-      expect((service as any).transactionsService.find).toHaveBeenNthCalledWith(2, new TransactionQuery(
+      expect(transactionsServiceFindCall).toHaveBeenNthCalledWith(2, new TransactionQuery(
         {} as TransactionDocument, // queries *any* transaction
         {
           pageNumber: 2,
@@ -411,15 +396,13 @@ describe("discovery/DiscoverAccounts", () => {
       const lastPageNumber = 3;
       (service as any).state = { data: { lastPageNumber } };
       const stateServiceFindOneCall = jest
-        .fn()
-        .mockResolvedValue({ data: { totalNumberOfTransactions: 200 } });
-      (service as any).stateService.findOne = stateServiceFindOneCall;
+        .spyOn(stateService, "findOne")
+        .mockResolvedValue({ data: { totalNumberOfTransactions: 200 } } as StateDocument);
       const transactionsServiceFindCall = jest
-        .fn()
+      .spyOn(transactionsService, "find")
         .mockResolvedValue({
           data: fakeCreateTransactionDocuments(3), // page is not full
-        });
-      (service as any).transactionsService.find = transactionsServiceFindCall;
+        } as PaginatedResultDTO<TransactionDocument>);
 
       // act
       await service.discover({
@@ -433,9 +416,34 @@ describe("discovery/DiscoverAccounts", () => {
       expect((service as any).lastPageNumber).toBe(2);
     });
 
+    it("should have 0 total transactions if it doesn't exist in state data", async () => {
+      // prepare
+      const lastPageNumber = 3;
+      (service as any).state = { data: { lastPageNumber } };
+      const stateServiceFindOneCall = jest
+        .spyOn(stateService, "findOne")
+        .mockResolvedValue({ data: {} } as StateDocument);
+      const transactionsServiceFindCall = jest
+      .spyOn(transactionsService, "find")
+        .mockResolvedValue({
+          data: fakeCreateTransactionDocuments(0), // page is not full
+        } as PaginatedResultDTO<TransactionDocument>);
+
+      // act
+      await service.discover({
+        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        debug: true,
+      });
+
+      // assert
+      expect(stateServiceFindOneCall).toHaveBeenCalledTimes(1);
+      expect(transactionsServiceFindCall).toHaveBeenCalledTimes(1);
+      expect((service as any).totalNumberOfTransactions).toBe(undefined);
+    });
+
     it("should has correct lastPageNumber if Math.floor is not defined", async () => {
       // prepare
-      const lastPageNumber: any = 2;
+      const lastPageNumber: number = 2;
       (service as any).state = {
         data: {
           lastPageNumber,
@@ -443,11 +451,9 @@ describe("discovery/DiscoverAccounts", () => {
       };
       const accountDiscoveryStateData = new AccountDiscoveryStateData();
       (accountDiscoveryStateData as any).totalNumberOfTransactions = 100;
-      (service as any).stateService = {
-        findOne: jest.fn().mockResolvedValue({
-          data: accountDiscoveryStateData,
-        }),
-      };
+      jest
+        .spyOn(stateService, "findOne")
+        .mockResolvedValue({ data: accountDiscoveryStateData } as StateDocument);
       jest.spyOn(Math, "floor").mockReturnValue(null);
 
       // act
@@ -477,25 +483,25 @@ describe("discovery/DiscoverAccounts", () => {
       expect((service as any).accountsService.exists).toHaveBeenCalledWith(expectedQuery);
     });
 
-    it ("should create a document given non-existing address", async () => {
-      // prepare
-      const expectedData = {
-        address: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
-        referralCode: "JOINFIT-12345678", // getUserReferralCode mocked (L153)
-      };
-      (service as any).discoveredAddresses = ["NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY"];
-      (service as any).accountsService.exists = jest.fn().mockReturnValue(false); // force non-existence
+    // it ("should create a document given non-existing address", async () => {
+    //   // prepare
+    //   const expectedData = {
+    //     address: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+    //     referralCode: "JOINFIT-12345678", // getUserReferralCode mocked (L153)
+    //   };
+    //   (service as any).discoveredAddresses = ["NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY"];
+    //   (service as any).accountsService.exists = jest.fn().mockReturnValue(false); // force non-existence
 
-      // act
-      await service.discover({
-        source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
-        debug: true,
-      });
+    //   // act
+    //   await service.discover({
+    //     source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+    //     debug: true,
+    //   });
 
-      // assert
-      expect((service as any).model.createStub).toHaveBeenCalledTimes(1);
-      expect((service as any).model.createStub).toHaveBeenCalledWith(expectedData);
-    });
+    //   // assert
+    //   expect((service as any).model.createStub).toHaveBeenCalledTimes(1);
+    //   expect((service as any).model.createStub).toHaveBeenCalledWith(expectedData);
+    // });
 
     it("should skip update for known accounts", async () => {
       // prepare
@@ -520,6 +526,24 @@ describe("discovery/DiscoverAccounts", () => {
       // assert
       expect(accountsServiceExistsCall).toHaveBeenCalledTimes(1); // addresses are unique
       expect(createCall).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe("getUserReferralCode()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const expectedRandomNumber = Number(0.0007);
+      const mathRandomCall = jest
+        .spyOn(global.Math, "random")
+        .mockReturnValue(expectedRandomNumber);
+      const expectedResult = `JOINFIT-bmv7w2zo`;
+
+      // act
+      const result = (service as any).getUserReferralCode();
+
+      // assert
+      expect(mathRandomCall).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(expectedResult);
     });
   });
 });

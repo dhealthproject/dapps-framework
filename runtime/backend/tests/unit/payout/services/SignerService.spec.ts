@@ -83,4 +83,32 @@ describe("payout/SignerService", () => {
       expect(accountSignMock).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("getSignerPublicKey()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const publicKey = "test-publicKey";
+      (service as any).signerAccount = { publicKey };
+
+      // act
+      const result = service.getSignerPublicKey();
+
+      // assert
+      expect(result).toBe(publicKey);
+    });
+  });
+
+  describe("getSignerPublicAccount()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const publicAccount = {};
+      (service as any).signerAccount = { publicAccount };
+
+      // act
+      const result = service.getSignerPublicAccount();
+
+      // assert
+      expect(result).toBe(publicAccount);
+    });
+  });
 });

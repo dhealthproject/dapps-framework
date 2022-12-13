@@ -17,7 +17,6 @@ import { EmailNotifier } from "../../../../src/notifier/services/EmailNotifier";
 
 describe("notifier/EmailNotifier", () => {
   let service: EmailNotifier;
-  let configService: ConfigService;
 
   let sendMailCall = jest.fn().mockResolvedValue(true);
   beforeEach(async () => {
@@ -43,6 +42,10 @@ describe("notifier/EmailNotifier", () => {
     service = module.get<EmailNotifier>(EmailNotifier);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should be defined", () => {
     expect(service).toBeDefined();
   });
@@ -57,13 +60,25 @@ describe("notifier/EmailNotifier", () => {
     });
   });
 
-  describe("sendInternal()", () => {
+  describe("sendPublic()", () => {
     it("should call sendMail() from mailerService", async () => {
       // act
       await service.sendPublic({});
 
       // assert
       expect(sendMailCall).toHaveBeenNthCalledWith(1, {});
+    });
+
+    it("should return undefined if mailer is not enabled", async () => {
+      // prepare
+      (service as any).enableMailer = false;
+
+      // act
+      const result = await service.sendPublic({});
+
+      // assert
+      expect(sendMailCall).toHaveBeenCalledTimes(0);
+      expect(result).toBeUndefined();
     });
   });
 });

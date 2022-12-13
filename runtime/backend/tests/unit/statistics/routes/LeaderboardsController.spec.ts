@@ -38,7 +38,12 @@ describe('statistics/LeaderboardsController', () => {
   let statisticsService: StatisticsService;
   let authService: AuthService;
 
+  let mockDate: Date;
   beforeEach(async () => {
+    mockDate = new Date(Date.UTC(2022, 1, 1)); // UTC 1643673600000
+    jest.useFakeTimers("modern");
+    jest.setSystemTime(mockDate);
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [LeaderboardsController],
       providers: [
@@ -134,6 +139,53 @@ describe('statistics/LeaderboardsController', () => {
         { pageNumber: 1, pageSize: 20, total: 1 },
       );
       const expectToMapToOneDTO = statisticsDoc as StatisticsDTO;
+      const serviceFindMock = jest
+        .spyOn(statisticsService, "find")
+        .mockResolvedValue(expectToFetchDocuments);
+
+        // act
+      const result = await (controller as any).findByUser({} as Request, {
+        address: "fakeAddress",
+        period: "2022-46",
+        periodFormat: "W",
+      });
+
+      // assert
+      expect(authServiceGetAccountCall).toBeCalledTimes(1);
+      expect(serviceFindMock).toBeCalledTimes(1);
+      expect(serviceFindMock).toBeCalledWith(
+        new StatisticsQuery({
+          type: "leaderboard",
+          address: "fakeAddress",
+          period: "2022-46",
+          periodFormat: "W",
+        } as StatisticsDocument),
+      );
+      expect(result).toEqual(expectToMapToOneDTO);
+    });
+
+    it("should call correct method and respond with default DTO if data is not available", async () => {
+      // prepare
+      // mock authentication
+      const accountDoc = new Account();
+      (accountDoc as any).address = "fakeAddress";
+      const authServiceGetAccountCall = jest
+        .spyOn(authService, "getAccount")
+        .mockResolvedValue(accountDoc as any as AccountDocument);
+      // mock finder/searcher results
+      const expectToFetchDocuments = new PaginatedResultDTO<StatisticsDocument>(
+        [],
+        { pageNumber: 1, pageSize: 20, total: 0 },
+      );
+      const expectToMapToOneDTO = {
+        address: "fakeAddress",
+        type: "leaderboard",
+        position: 0,
+        amount: 0,
+        data: undefined,
+        period: "2022-46",
+        periodFormat: "W",
+      } as StatisticsDTO;
       const serviceFindMock = jest
         .spyOn(statisticsService, "find")
         .mockResolvedValue(expectToFetchDocuments);

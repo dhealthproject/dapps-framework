@@ -213,7 +213,7 @@ describe("statistics/LeaderboardAggregation", () => {
       }
       jest.spyOn((service as any), "config", "get").mockReturnValue({
         type: "D",
-        collection: "activities",
+        collection: "assets",
         fields: ["activityAssets.amount"],
       });
       const serviceDebugLogCall = jest

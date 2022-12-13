@@ -250,7 +250,6 @@ describe("common/BasicOAuthDriver", () => {
       await basicDriver.executeRequest(
         "fake-access-token",
         "/my-precious/api/endpoint",
-        "GET",
       );
 
       // assert

@@ -84,18 +84,17 @@ describe("common/ConfigController", () => {
           .mockReturnValueOnce(assetsConfig.assets.earn)
           .mockReturnValueOnce(securityConfig.auth.registries),
       };
-      const expectedResult: DappConfigDTO = {
-        dappName: dappConfig.dappName,
-        authRegistry: securityConfig.auth.registries[0],
-        earnAssetDivisibility: assetsConfig.assets.earn.divisibility,
-        earnAssetIdentifier: assetsConfig.assets.earn.mosaicId,
-      };
+      const expectedResult: DappConfigDTO = new DappConfigDTO();
+      expectedResult.dappName = dappConfig.dappName;
+      expectedResult.authRegistry = securityConfig.auth.registries[0];
+      expectedResult.earnAssetDivisibility = assetsConfig.assets.earn.divisibility;
+      expectedResult.earnAssetIdentifier = assetsConfig.assets.earn.mosaicId;
 
       // act
       const result = await controller.find();
 
       // assert
-      expect(result).toStrictEqual(expectedResult);
+      expect(result).toEqual(expectedResult);
     });
   });
 });

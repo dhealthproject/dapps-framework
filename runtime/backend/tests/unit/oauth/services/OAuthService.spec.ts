@@ -39,6 +39,7 @@ import {
   AccountIntegrationQuery,
 } from "../../../../src/common/models/AccountIntegrationSchema";
 import { OAuthEntityType } from "../../../../src/oauth/drivers/OAuthEntity";
+import { HttpMethod } from "../../../../src/common/drivers/HttpRequestHandler";
 
 describe("common/OAuthService", () => {
   let mockDate: Date;
@@ -301,22 +302,7 @@ describe("common/OAuthService", () => {
       } as AccountIntegrationDocument), (oauthService as any).model);
     });
 
-    it("should accept any provider name in string format", () => {
-      // act
-      oauthService.getIntegration(
-        "other",
-        "fake-address",
-      );
-
-      // assert
-      expect(findOneMock).toHaveBeenCalledTimes(1);
-      expect(findOneMock).toHaveBeenCalledWith(new AccountIntegrationQuery({
-        name: "other",
-        address: "fake-address",
-      } as AccountIntegrationDocument), (oauthService as any).model);
-    });
-
-    it("should accept any remote identifier in string format", () => {
+    it("should accept any provider name & remote identifier in string format", () => {
       // act
       oauthService.getIntegration(
         "other",
@@ -946,6 +932,34 @@ describe("common/OAuthService", () => {
         undefined, undefined, undefined,
       );
     });
+
+    it("should have driver sending request with input http options", async () => {
+      // prepare
+      const httpOptions = {
+        method: "GET" as HttpMethod,
+        body: { key: "value" },
+        options: { option: "value" },
+        headers: { header: "value" },
+      };
+
+      // act
+      await oauthService.callProviderAPI(
+        "/custom/api/endpoint",
+        theAuthorization,
+        httpOptions,
+      );
+
+      // assert
+      expect(executeRequestMock).toHaveBeenNthCalledWith(
+        1,
+        cipherDecryptMock(),
+        "/custom/api/endpoint",
+        httpOptions.method,
+        httpOptions.body,
+        httpOptions.options,
+        httpOptions.headers,
+      );
+    });
   });
 
   describe("extractProviderEntity()", () => {
@@ -1006,6 +1020,34 @@ describe("common/OAuthService", () => {
         expectedData,
         undefined, // optional entity type
       );
+    });
+  });
+
+  describe("getIntegrationByRemoteIdentifier()", () => {
+    it("should call findOne() from queryService", async () => {
+      // prepare
+      const providerParamValue = "test-provider";
+      const remoteIdentifierParamValue = "test-remoteIdentifier";
+      const findOneMock = jest.fn();
+      (oauthService as any).queryService = {
+        findOne: findOneMock
+      };
+
+      // act
+      await oauthService.getIntegrationByRemoteIdentifier(
+        providerParamValue,
+        remoteIdentifierParamValue,
+      );
+
+      // assert
+      expect(findOneMock).toHaveBeenNthCalledWith(
+        1,
+        new AccountIntegrationQuery({
+          name: providerParamValue,
+          remoteIdentifier: remoteIdentifierParamValue,
+        } as AccountIntegrationDocument),
+        MockModel,
+      )
     });
   });
 });

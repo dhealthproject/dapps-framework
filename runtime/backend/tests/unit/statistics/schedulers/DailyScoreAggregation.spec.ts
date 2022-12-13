@@ -159,6 +159,21 @@ describe("statistics/DailyScoreAggregation", () => {
     });
   });
 
+  describe("runAsScheduler()", () => {
+    it("should call runScheduler()", async () => {
+      // prepare
+      const runSchedulerCall = jest
+        .spyOn(service, "runScheduler")
+        .mockResolvedValue();
+
+      // act
+      await service.runAsScheduler();
+
+      // assert
+      expect(runSchedulerCall).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("getNextPeriod()", () => {
     beforeEach(() => configGetCallMock.mockClear());
 
@@ -168,6 +183,19 @@ describe("statistics/DailyScoreAggregation", () => {
 
       // act
       const result = (service as any).getNextPeriod(date);
+
+      // assert
+      expect(result).toBe("20220201");
+    });
+  });
+
+  describe("getPrevPeriod()", () => {
+    it("should return correct result", () => {
+          // prepare
+      const date = new Date(Date.UTC(2022, 1, 2, 10, 10, 10, 10)); // 01/02/2022 at 10:10:10:010
+
+      // act
+      const result = (service as any).getPrevPeriod(date);
 
       // assert
       expect(result).toBe("20220201");

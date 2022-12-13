@@ -15,17 +15,32 @@ describe("users/ActivitySchema", () => {
   describe("toQuery()", () => {
     it("should return correct value", () => {
       // prepare
+      const address = "test-address";
       const slug = "test-slug";
       const dateSlug = "test-dateSlug";
+      const remoteIdentifier = "test-remoteIdentifier";
+      const processingState = "test-processingState";
+      const payoutState = "test-payoutState";
       const activity: Activity = new Activity();
+      (activity as any).address = address;
       (activity as any).slug = slug;
       (activity as any).dateSlug = dateSlug;
+      (activity as any).remoteIdentifier = remoteIdentifier;
+      (activity as any).processingState = processingState;
+      (activity as any).payoutState = payoutState;
 
       // act
       const stateToQuery = activity.toQuery;
 
       // assert
-      expect(stateToQuery).toEqual({ slug, dateSlug });
+      expect(stateToQuery).toEqual({
+        address,
+        slug,
+        dateSlug,
+        remoteIdentifier,
+        processingState,
+        payoutState,
+      });
     });
   });
 

@@ -281,6 +281,7 @@ describe("common/StravaOAuthDriver", () => {
       // act
       const actual = stravaDriver.getEntityDefinition(
         expectedData,
+        3
       );
 
       // assert

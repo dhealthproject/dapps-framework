@@ -77,340 +77,329 @@ process.env.FROM="Fake Mailer <mailer@dhealth.foundation>";
 // #############################
 // config/dapp.ts
 // #############################
-jest.mock("../../config/dapp", () => {
-  return () => ({
-    dappName: "FAKEDAPP",
-    dappPublicKey: process.env.MAIN_PUBLIC_KEY,
-    scopes: [
-      "database",
-      "discovery",
-      "payout",
-      "processor",
-      "notifier",
-      "statistics",
-      "oauth",
-      "users",
+export const mockDappConfigLoaderCall = jest.fn().mockReturnValue({
+  dappName: "FAKEDAPP",
+  dappPublicKey: process.env.MAIN_PUBLIC_KEY,
+  scopes: [
+    "database",
+    "discovery",
+    "payout",
+    "processor",
+    "notifier",
+    "statistics",
+    "oauth",
+    "users",
+  ],
+  database: {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    name: process.env.DB_NAME,
+    user: process.env.DB_USER,
+  },
+  frontendApp: {
+    url: process.env.FRONTEND_URL,
+    host: process.env.FRONTEND_DOMAIN,
+    port: process.env.FRONTEND_PORT,
+    https: process.env.FRONTEND_USE_HTTPS === "true"
+  },
+  backendApp: {
+    url: process.env.BACKEND_URL,
+    host: process.env.BACKEND_DOMAIN,
+    port: process.env.BACKEND_PORT,
+    https: process.env.BACKEND_USE_HTTPS === "true"
+  },
+  discovery: {
+    sources: [
+      process.env.MAIN_ADDRESS,
+      process.env.PAYOUT_CONTRACT_ADDRESS,
+      process.env.SECURITY_AUTH_REGISTRIES_ADDRESS_1,
     ],
-    database: {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      name: process.env.DB_NAME,
-      user: process.env.DB_USER,
-    },
-    frontendApp: {
-      url: process.env.FRONTEND_URL,
-      host: process.env.FRONTEND_DOMAIN,
-      port: process.env.FRONTEND_PORT,
-      https: process.env.FRONTEND_USE_HTTPS === "true"
-    },
-    backendApp: {
-      url: process.env.BACKEND_URL,
-      host: process.env.BACKEND_DOMAIN,
-      port: process.env.BACKEND_PORT,
-      https: process.env.BACKEND_USE_HTTPS === "true"
-    },
-    discovery: {
-      sources: [
-        process.env.MAIN_ADDRESS,
-        process.env.PAYOUT_CONTRACT_ADDRESS,
-        process.env.SECURITY_AUTH_REGISTRIES_ADDRESS_1,
-      ],
-    }
-  });
-});
+  }
+})
+jest.mock("../../config/dapp", () => mockDappConfigLoaderCall);
 
 // #############################
 // config/assets.ts
 // #############################
-jest.mock("../../config/assets", () => {
-  return () => ({
-    assets: {
-      base: {
-        mosaicId: "39E0C49FA322A459",
-        namespaceId: "9D8930CDBB417337",
-        divisibility: 6,
-        symbol: "DHP"
-      },
-      earn: {
-        mosaicId: process.env.ASSETS_EARN_IDENTIFIER,
-        divisibility: parseInt(process.env.ASSETS_EARN_DIVISIBILITY),
-        symbol: process.env.ASSETS_EARN_SYMBOL
-      }
+export const mockAssetsConfigLoaderCall = jest.fn().mockReturnValue({
+  assets: {
+    base: {
+      mosaicId: "39E0C49FA322A459",
+      namespaceId: "9D8930CDBB417337",
+      divisibility: 6,
+      symbol: "DHP"
     },
-    boosters: {
-      referral: {
-        boost5: {
-          mosaicId: process.env.ASSETS_BOOST5_IDENTIFIER,
-          divisibility: parseInt(process.env.ASSETS_BOOST5_DIVISIBILITY),
-          symbol: process.env.ASSETS_BOOST5_SYMBOL
-        },
-        boost10: {
-          mosaicId: process.env.ASSETS_BOOST10_IDENTIFIER,
-          divisibility: parseInt(process.env.ASSETS_BOOST10_DIVISIBILITY),
-          symbol: process.env.ASSETS_BOOST10_SYMBOL
-        },
-        boost15: {
-          mosaicId: process.env.ASSETS_BOOST15_IDENTIFIER,
-          divisibility: parseInt(process.env.ASSETS_BOOST15_DIVISIBILITY),
-          symbol: process.env.ASSETS_BOOST15_SYMBOL
-        },
+    earn: {
+      mosaicId: process.env.ASSETS_EARN_IDENTIFIER,
+      divisibility: parseInt(process.env.ASSETS_EARN_DIVISIBILITY),
+      symbol: process.env.ASSETS_EARN_SYMBOL
+    }
+  },
+  boosters: {
+    referral: {
+      boost5: {
+        mosaicId: process.env.ASSETS_BOOST5_IDENTIFIER,
+        divisibility: parseInt(process.env.ASSETS_BOOST5_DIVISIBILITY),
+        symbol: process.env.ASSETS_BOOST5_SYMBOL
       },
-      progress: {
-        progress1: {
-          mosaicId: process.env.ASSETS_PROGRESS1_IDENTIFIER,
-          divisibility: parseInt(process.env.ASSETS_PROGRESS1_DIVISIBILITY),
-          symbol: process.env.ASSETS_PROGRESS1_SYMBOL
-        },
-      }
+      boost10: {
+        mosaicId: process.env.ASSETS_BOOST10_IDENTIFIER,
+        divisibility: parseInt(process.env.ASSETS_BOOST10_DIVISIBILITY),
+        symbol: process.env.ASSETS_BOOST10_SYMBOL
+      },
+      boost15: {
+        mosaicId: process.env.ASSETS_BOOST15_IDENTIFIER,
+        divisibility: parseInt(process.env.ASSETS_BOOST15_DIVISIBILITY),
+        symbol: process.env.ASSETS_BOOST15_SYMBOL
+      },
     },
-  });
+    progress: {
+      progress1: {
+        mosaicId: process.env.ASSETS_PROGRESS1_IDENTIFIER,
+        divisibility: parseInt(process.env.ASSETS_PROGRESS1_DIVISIBILITY),
+        symbol: process.env.ASSETS_PROGRESS1_SYMBOL
+      },
+    }
+  },
 });
+jest.mock("../../config/assets", () => mockAssetsConfigLoaderCall);
 
 // #############################
 // config/monitoring.ts
 // #############################
-jest.mock("../../config/monitoring", () => {
-  return () => ({
-    storage: [
-      { type: "console", level: "debug" },
-      { type: "filesystem", level: "info" },
-    ],
-    logLevels: {
-      error: 0,
-      warn: 1,
-      info: 2,
-      debug: 3,
-    },
-    logDirectoryPath: "./logs/",
-    logMaxFileSize: 1000,
-    enableAlerts: true,
-    alerts: {
-      type: ["warn", "error"],
-      transport: "mail",
-      recipient: "recipient@example.com",
-    },
-    enableReports: true,
-    reports: {
-      type: ["warn", "error"],
-      transport: "mail",
-      period: "W",
-      recipient: "recipient@example.com",
-    },
-  });
+export const mockMonitoringConfigLoaderCall = jest.fn().mockReturnValue({
+  storage: [
+    { type: "console", level: "debug" },
+    { type: "filesystem", level: "info" },
+  ],
+  logLevels: {
+    error: 0,
+    warn: 1,
+    info: 2,
+    debug: 3,
+  },
+  logDirectoryPath: "./logs/",
+  logMaxFileSize: 1000,
+  enableAlerts: true,
+  alerts: {
+    type: ["warn", "error"],
+    transport: "mail",
+    recipient: "recipient@example.com",
+  },
+  enableReports: true,
+  reports: {
+    type: ["warn", "error"],
+    transport: "mail",
+    period: "W",
+    recipient: "recipient@example.com",
+  },
 });
+jest.mock("../../config/monitoring", () => mockMonitoringConfigLoaderCall);
 
 // #############################
 // config/network.ts
 // #############################
-jest.mock("../../config/network", () => {
-  return () => ({
-    defaultNode: {
-      url: "http://dual-02.dhealth.cloud:3000",
-      publicKey: "613010BCE1FBF3CE1503DEF3003C76E451EA4DD9205FAD3530BFF7B1D78BC989"
-    },
-    apiNodes: [
-      { "url": "http://dual-01.dhealth.cloud:3000", "port": 3000 },
-      { "url": "http://dual-02.dhealth.cloud:3000", "port": 3000 },
-      { "url": "http://dual-03.dhealth.cloud:3000", "port": 3000 },
-      { "url": "http://api-01.dhealth.cloud:3000", "port": 3000 },
-      { "url": "http://api-02.dhealth.cloud:3000", "port": 3000 }
-    ],
-    networkApi: "http://peers.dhealth.cloud:7903",
-    network: {
-      namespaceName: "dhealth.dhp",
-      mosaicId: "39E0C49FA322A459",
-      namespaceId: "9D8930CDBB417337",
-      divisibility: 6,
-      networkIdentifier: 104,
-      epochAdjustment: 1616978397,
-      generationHash: "ED5761EA890A096C50D3F50B7C2F0CCB4B84AFC9EA870F381E84DDE36D04EF16"
-    }
-  });
+export const mockNetworkConfigLoaderCall = jest.fn().mockReturnValue({
+  defaultNode: {
+    url: "http://dual-02.dhealth.cloud:3000",
+    publicKey: "613010BCE1FBF3CE1503DEF3003C76E451EA4DD9205FAD3530BFF7B1D78BC989"
+  },
+  apiNodes: [
+    { "url": "http://dual-01.dhealth.cloud:3000", "port": 3000 },
+    { "url": "http://dual-02.dhealth.cloud:3000", "port": 3000 },
+    { "url": "http://dual-03.dhealth.cloud:3000", "port": 3000 },
+    { "url": "http://api-01.dhealth.cloud:3000", "port": 3000 },
+    { "url": "http://api-02.dhealth.cloud:3000", "port": 3000 }
+  ],
+  networkApi: "http://peers.dhealth.cloud:7903",
+  network: {
+    namespaceName: "dhealth.dhp",
+    mosaicId: "39E0C49FA322A459",
+    namespaceId: "9D8930CDBB417337",
+    divisibility: 6,
+    networkIdentifier: 104,
+    epochAdjustment: 1616978397,
+    generationHash: "ED5761EA890A096C50D3F50B7C2F0CCB4B84AFC9EA870F381E84DDE36D04EF16"
+  }
 });
+jest.mock("../../config/network", () => mockNetworkConfigLoaderCall);
 
 // #############################
 // config/oauth.ts
 // #############################
-jest.mock("../../config/oauth", () => {
-  return () => ({
-    providers: {
-      strava: {
-        client_id: process.env.STRAVA_CLIENT_ID,
-        client_secret: process.env.STRAVA_CLIENT_SECRET,
-        verify_token: process.env.STRAVA_VERIFY_TOKEN,
-        scope: "activity:read_all",
-        api_url: "https://www.strava.com/api/v3",
-        oauth_url: "https://www.strava.com/api/v3/oauth/authorize",
-        token_url: "https://www.strava.com/api/v3/oauth/token",
-        callback_url: `${process.env.FRONTEND_URL}/dashboard`,
-        subscribe_url: `${process.env.BACKEND_URL}/webhook/strava`,
-        webhook_url: `${process.env.BACKEND_URL}/webhook/strava`,
-      }
+export const mockOauthConfigLoaderCall = jest.fn().mockReturnValue({
+  providers: {
+    strava: {
+      client_id: process.env.STRAVA_CLIENT_ID,
+      client_secret: process.env.STRAVA_CLIENT_SECRET,
+      verify_token: process.env.STRAVA_VERIFY_TOKEN,
+      scope: "activity:read_all",
+      api_url: "https://www.strava.com/api/v3",
+      oauth_url: "https://www.strava.com/api/v3/oauth/authorize",
+      token_url: "https://www.strava.com/api/v3/oauth/token",
+      callback_url: `${process.env.FRONTEND_URL}/dashboard`,
+      subscribe_url: `${process.env.BACKEND_URL}/webhook/strava`,
+      webhook_url: `${process.env.BACKEND_URL}/webhook/strava`,
     }
-  });
+  }
 });
+jest.mock("../../config/oauth", () => mockOauthConfigLoaderCall);
 
 // #############################
 // config/payout.ts
 // #############################
-jest.mock("../../config/payout", () => {
-  return () => ({
-    globalDryRun: process.env.PAYOUT_GLOBAL_DRY_RUN === "true",
-    payouts: {
-      issuerPrivateKey: process.env.PAYOUT_ISSUER_PRIVATE_KEY,
-      signerPublicKey: process.env.PAYOUT_CONTRACT_PUBLIC_KEY,
-      enableBatches: false,
-      batchSize: 100,
-    }
-  });
+export const mockPayoutConfigLoaderCall = jest.fn().mockReturnValue({
+  globalDryRun: process.env.PAYOUT_GLOBAL_DRY_RUN === "true",
+  payouts: {
+    issuerPrivateKey: process.env.PAYOUT_ISSUER_PRIVATE_KEY,
+    signerPublicKey: process.env.PAYOUT_CONTRACT_PUBLIC_KEY,
+    enableBatches: false,
+    batchSize: 100,
+  }
 });
+jest.mock("../../config/payout", () => mockPayoutConfigLoaderCall);
 
 // #############################
 // config/processor.ts
 // #############################
-jest.mock("../../config/processor", () => {
-  return () => ({
-    contracts: [
-      "fakedapp:auth",
-      "fakedapp:earn",
-      "fakedapp:referral",
-      "fakedapp:welcome",
-    ],
-    operations: [
-      {
-        contract: "fakedapp:auth",
-        label: "Session|Sessions",
-        query: {
-          sourceAddress: "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY",
-          transactionMode: "incoming",
-        }
-      },
-      {
-        contract: "fakedapp:earn",
-        label: "Activity|Activities",
-        query: {
-          sourceAddress: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
-          transactionMode: "outgoing",
-        }
-      },
-      {
-        contract: "fakedapp:referral",
-        label: "Referral|Referrals",
-        query: {
-          sourceAddress: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
-          transactionMode: "outgoing",
-        }
-      },
-      {
-        contract: "fakedapp:welcome",
-        label: "Greeting|Greetings",
-        query: {
-          sourceAddress: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
-          transactionMode: "outgoing",
-        }
-      },
-    ],
-  });
+export const mockProcessorConfigLoaderCall = jest.fn().mockReturnValue({
+  contracts: [
+    "fakedapp:auth",
+    "fakedapp:earn",
+    "fakedapp:referral",
+    "fakedapp:welcome",
+  ],
+  operations: [
+    {
+      contract: "fakedapp:auth",
+      label: "Session|Sessions",
+      query: {
+        sourceAddress: "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY",
+        transactionMode: "incoming",
+      }
+    },
+    {
+      contract: "fakedapp:earn",
+      label: "Activity|Activities",
+      query: {
+        sourceAddress: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        transactionMode: "outgoing",
+      }
+    },
+    {
+      contract: "fakedapp:referral",
+      label: "Referral|Referrals",
+      query: {
+        sourceAddress: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        transactionMode: "outgoing",
+      }
+    },
+    {
+      contract: "fakedapp:welcome",
+      label: "Greeting|Greetings",
+      query: {
+        sourceAddress: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        transactionMode: "outgoing",
+      }
+    },
+  ],
 });
+jest.mock("../../config/processor", () => mockProcessorConfigLoaderCall);
 
 // #############################
 // config/security.ts
 // #############################
-jest.mock("../../config/security", () => {
-  return () => ({
-    auth: {
-      registries: [
-        process.env.SECURITY_AUTH_REGISTRIES_ADDRESS_1,
-      ],
-      secret: process.env.SECURITY_AUTH_TOKEN_SECRET,
-      challengeSize: 8,
-    },
-    cors: {
-      origin: process.env.FRONTEND_URL,
-    }
-  });
+export const mockSecurityConfigLoaderCall = jest.fn().mockReturnValue({
+  auth: {
+    registries: [
+      process.env.SECURITY_AUTH_REGISTRIES_ADDRESS_1,
+    ],
+    secret: process.env.SECURITY_AUTH_TOKEN_SECRET,
+    challengeSize: 8,
+  },
+  cors: {
+    origin: process.env.FRONTEND_URL,
+  }
 });
+jest.mock("../../config/security", () => mockSecurityConfigLoaderCall);
 
 // #############################
 // config/social.ts
 // #############################
-jest.mock("../../config/social", () => {
-  return () => ({
-    socialApps: {
-      "whatsapp": {
-        icon: "share/whatsapp.svg",
-        title: "WhatsApp",
-        shareUrl: `whatsapp://send?text=${process.env.FRONTEND_URL}/%REFERRAL_CODE%`,
-      },
-      "facebook": {
-        icon: "share/facebook.svg",
-        title: "Facebook",
-        appUrl: "https://www.facebook.com/ELEVATE",
-        shareUrl: `https://www.facebook.com/sharer/sharer.php?u=#${process.env.FRONTEND_URL}/%REFERRAL_CODE%`,
-      },
-      "twitter": {
-        icon: "share/twitter.svg",
-        title: "Twitter",
-        shareUrl: `http://twitter.com/share?text=Join me on Elevate&url=${process.env.FRONTEND_URL}/%REFERRAL_CODE%&hashtags=fitness,sports`,
-      },
-      "linkedin": {
-        icon: "share/linkedin.svg",
-        title: "LinkedIn",
-        shareUrl: `https://www.linkedin.com/sharing/share-offsite/?url=${process.env.FRONTEND_URL}/%REFERRAL_CODE%`,
-      },
-      "discord": {
-        icon: "share/discord.svg",
-        title: "Discord",
-        shareUrl: "",
-      },
-      "telegram": {
-        icon: "share/telegram.svg",
-        title: "Telegram",
-        shareUrl: `https://telegram.me/share/url?url=${process.env.FRONTEND_URL}/%REFERRAL_CODE%&text=Join me on Elevate`,
-      }
+export const mockSocialConfigLoaderCall = jest.fn().mockReturnValue({
+  socialApps: {
+    "whatsapp": {
+      icon: "share/whatsapp.svg",
+      title: "WhatsApp",
+      shareUrl: `whatsapp://send?text=${process.env.FRONTEND_URL}/%REFERRAL_CODE%`,
     },
-  });
+    "facebook": {
+      icon: "share/facebook.svg",
+      title: "Facebook",
+      appUrl: "https://www.facebook.com/ELEVATE",
+      shareUrl: `https://www.facebook.com/sharer/sharer.php?u=#${process.env.FRONTEND_URL}/%REFERRAL_CODE%`,
+    },
+    "twitter": {
+      icon: "share/twitter.svg",
+      title: "Twitter",
+      shareUrl: `http://twitter.com/share?text=Join me on Elevate&url=${process.env.FRONTEND_URL}/%REFERRAL_CODE%&hashtags=fitness,sports`,
+    },
+    "linkedin": {
+      icon: "share/linkedin.svg",
+      title: "LinkedIn",
+      shareUrl: `https://www.linkedin.com/sharing/share-offsite/?url=${process.env.FRONTEND_URL}/%REFERRAL_CODE%`,
+    },
+    "discord": {
+      icon: "share/discord.svg",
+      title: "Discord",
+      shareUrl: "",
+    },
+    "telegram": {
+      icon: "share/telegram.svg",
+      title: "Telegram",
+      shareUrl: `https://telegram.me/share/url?url=${process.env.FRONTEND_URL}/%REFERRAL_CODE%&text=Join me on Elevate`,
+    }
+  },
 });
+jest.mock("../../config/social", () => mockSocialConfigLoaderCall);
 
 // #############################
 // config/statistics.ts
 // #############################
-jest.mock("../../config/statistics", () => {
-  return () => ({
-    statistics: {
-      leaderboards: {
-        daily_score: {
-          type: "D",
-          collection: "activities",
-          fields: ["activityAssets.amount"],
-        },
-        weekly_score: {
-          type: "W",
-          collection: "activities",
-          fields: ["activityAssets.amount"],
-        },
-        monthly_score: {
-          type: "M",
-          collection: "activities",
-          fields: ["activityAssets.amount"],
-        },
-      }
+export const mockStatisticsConfigLoaderCall = jest.fn().mockReturnValue({
+  statistics: {
+    leaderboards: {
+      daily_score: {
+        type: "D",
+        collection: "activities",
+        fields: ["activityAssets.amount"],
+      },
+      weekly_score: {
+        type: "W",
+        collection: "activities",
+        fields: ["activityAssets.amount"],
+      },
+      monthly_score: {
+        type: "M",
+        collection: "activities",
+        fields: ["activityAssets.amount"],
+      },
     }
-  });
+  }
 });
+jest.mock("../../config/statistics", () => mockStatisticsConfigLoaderCall);
 
 // #############################
 // config/transport.ts
 // #############################
-jest.mock("../../config/transport", () => {
-  return () => ({
-    enableMailer: process.env.ENABLE_MAILER === "true",
-    mailer: {
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      user: process.env.SMTP_USER,
-      password: process.env.SMTP_PASSWORD,
-      from: process.env.SMTP_FROM,
-    },
-  });
+export const mockTransportConfigLoaderCall = jest.fn().mockReturnValue({
+  enableMailer: process.env.ENABLE_MAILER === "true",
+  mailer: {
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    user: process.env.SMTP_USER,
+    password: process.env.SMTP_PASSWORD,
+    from: process.env.SMTP_FROM,
+  },
 });
+jest.mock("../../config/transport", () => mockTransportConfigLoaderCall);

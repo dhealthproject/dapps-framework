@@ -93,10 +93,11 @@ class MockDiscoverAssets extends DiscoverAssets {
 // invalid transaction pages from database queries.
 const fakeCreateTransactionDocuments = (
   x: number = 20,
+  transactionMode?: string,
 ): TransactionDocument[] => {
   const output: TransactionDocument[] = [];
   for (let i = 0; i < x; i++) {
-    output.push(createTransactionDocument(`fakeHash${i+1}`));
+    output.push(createTransactionDocument(`fakeHash${i+1}`, transactionMode));
   }
   return output;
 }
@@ -393,7 +394,7 @@ describe("discovery/DiscoverAssets", () => {
       (service as any).lastPageNumber = 3;
       (service as any).usePageSize = 100;
       (service as any).transactionsService.find = jest.fn().mockReturnValue({
-        data: fakeCreateTransactionDocuments(100), // full page
+        data: fakeCreateTransactionDocuments(100, "outgoing"), // full page
         isLastPage: () => false,
       });
 
@@ -434,6 +435,7 @@ describe("discovery/DiscoverAssets", () => {
         transactionHash: "fake-hash",
         mosaicId: "fake-asset-id",
       } as AssetDocument);
+      (service as any).assetsService.exists.mockResolvedValue(true);
 
       // act
       await service.discover({

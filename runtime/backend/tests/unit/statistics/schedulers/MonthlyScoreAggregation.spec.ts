@@ -145,6 +145,21 @@ describe("statistics/MonthlyScoreAggregation", () => {
     });
   });
 
+  describe("runAsScheduler()", () => {
+    it("should call runScheduler()", async () => {
+      // prepare
+      const runSchedulerCall = jest
+        .spyOn(service, "runScheduler")
+        .mockResolvedValue();
+
+      // act
+      await service.runAsScheduler();
+
+      // assert
+      expect(runSchedulerCall).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("getNextPeriod()", () => {
     it("should return correct result", () => {
       // prepare
@@ -155,6 +170,19 @@ describe("statistics/MonthlyScoreAggregation", () => {
 
       // assert
       expect(result).toBe("202202");
+    });
+  });
+
+  describe("getPrevPeriod()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const date = new Date(Date.UTC(2022, 1, 7, 10, 10, 10, 10)); // 07/02/2022 at 10:10:10:010
+
+      // act
+      const result = (service as any).getPrevPeriod(date);
+
+      // assert
+      expect(result).toBe("202201");
     });
   });
 });

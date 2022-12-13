@@ -30,7 +30,7 @@ let validContractPayload = {
   contract: "elevate:auth",
   challenge: "test-challenge",
 };
-let createFromTransactionCall = jest.fn().mockReturnValue(factoryCreatedContract);
+let createFromTransactionCall = jest.fn();
 jest.mock("@dhealth/contracts", () => ({
   Factory: {
     createFromTransaction: createFromTransactionCall,
@@ -43,7 +43,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { HttpException, HttpStatus } from "@nestjs/common";
-import { Address, Order, TransactionType } from "@dhealth/sdk";
+import { Address, Order, Transaction, TransactionType } from "@dhealth/sdk";
 
 // internal dependencies
 import { MockModel } from "../../../mocks/global";
@@ -60,8 +60,9 @@ describe("common/AuthService", () => {
   let authService: AuthService;
   const httpUnauthorizedError = new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
 
+  let module: TestingModule;
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    module = await Test.createTestingModule({
       providers: [
         AuthService,
         NetworkService, // requirement from AuthService
@@ -87,6 +88,10 @@ describe("common/AuthService", () => {
     }).compile();
 
     authService = module.get<AuthService>(AuthService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("should be defined", () => {
@@ -379,11 +384,33 @@ describe("common/AuthService", () => {
       expect(accountSessionsServiceCreateAddressCall).toHaveBeenCalledTimes(1);
       expect(result).toStrictEqual(expectedResult);
     });
+
+    it("should return null if registry is not in registries list", () => {
+      // prepare
+      const configServiceGetCall = jest.fn().mockReturnValue(["test-registry1"]);
+      (authService as any).configService = {
+        get: configServiceGetCall,
+      }
+      const address = Address.createFromRawAddress("test-address");
+      const accountSessionsServiceCreateAddressCall = jest
+        .spyOn(AccountsService, "createAddress")
+        .mockReturnValue(address);
+      const expectedResult: object = null;
+
+      // act
+      const result = (authService as any).getTransactionQuery("test-registry2");
+
+      // assert
+      expect(configServiceGetCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceCreateAddressCall).toHaveBeenCalledTimes(0);
+      expect(result).toStrictEqual(expectedResult);
+    });
   });
 
   describe("findRecentChallenge()", () => {
     it("should return correct result", async () => {
       // prepare
+      createFromTransactionCall.mockReturnValue(factoryCreatedContract);
       const getTransactionQueryCall = jest
         .spyOn((authService as any), "getTransactionQuery")
         .mockReturnValue({});
@@ -421,24 +448,69 @@ describe("common/AuthService", () => {
       expect(result).toStrictEqual(mockValidTransferWithChallenge);
     });
 
+    it("should return undefined if registry is not defined", async () => {
+      // act
+      const result = await (authService as any).findRecentChallenge(
+        null,
+        "test-challenge",
+      );
+
+      // assert
+      expect(result).toBeUndefined();
+    });
+
+    it("should return undefined if cannot get transaction query from registry", async () => {
+      // prepare
+      const getTransactionQueryCall = jest
+        .spyOn((authService as any), "getTransactionQuery")
+        .mockReturnValue(null);
+
+      // act
+      const result = await (authService as any).findRecentChallenge(
+        "test-registry",
+        "test-challenge",
+      );
+
+      // assert
+      expect(getTransactionQueryCall).toHaveBeenNthCalledWith(1, "test-registry");
+      expect(result).toBeUndefined();
+    });
+
     it("should return undefined if contract signature is not 'elevate:auth'", async () => {
       // prepare
+      createFromTransactionCall.mockReturnValue({
+        signature: "elevate:referral",
+        inputs: {
+          challenge: "test-challenge",
+        },
+      });
+      const getTransactionQueryCall = jest
+        .spyOn((authService as any), "getTransactionQuery")
+        .mockReturnValue({});
       const transactionRepository = {
         search: jest.fn().mockReturnValue({
           toPromise: jest.fn().mockResolvedValue({})
         }),
       };
-      const getTransactionQueryCall = jest
-        .spyOn((authService as any), "getTransactionQuery")
-        .mockReturnValue([]);
+      const mockValidTransferWithChallenge = {
+        type: TransactionType.TRANSFER,
+        message: {
+          payload: JSON.stringify({
+            contract: "elevate:referral",
+            challenge: "test-challenge",
+          })
+        }
+      };
       const networkServiceDelegatePromisesCall = jest.fn().mockResolvedValue([
-        { data: [{}] },
+        {
+          data: [mockValidTransferWithChallenge], // <-- inject transfer with challenge
+        },
       ]);
       (authService as any).networkService = {
         transactionRepository,
         delegatePromises: networkServiceDelegatePromisesCall
       };
-      factoryCreatedContract.signature = "elevate:referral";
+      (authService as any).cookie = { name: "ELEVATE" };
 
       // act
       const result = await (authService as any).findRecentChallenge(
@@ -631,6 +703,43 @@ describe("common/AuthService", () => {
 
       // act
       const result = await authService.getAccessToken({} as AuthenticationPayload);
+
+      // assert
+      expect(accountSessionsServiceFindOneCall).toHaveBeenCalledTimes(1);
+      expect(jwtServicesVerifyCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceCreateOrUpdateCall).toHaveBeenCalledTimes(1);
+      expect(result).toStrictEqual({
+        accessToken: "test-accessToken",
+      });
+    });
+
+    it("should return correct result with referral code", async () => {
+      // prepare
+      const accountSessionsServiceFindOneCall = jest.fn().mockResolvedValue({
+        accessToken: "test-accessToken",
+        refreshTokenHash: "test-refreshToken",
+      });
+      const accountSessionsServiceCreateOrUpdateCall = jest.fn().mockResolvedValue({});
+      (authService as any).accountSessionsService = {
+        findOne: accountSessionsServiceFindOneCall,
+        createOrUpdate: accountSessionsServiceCreateOrUpdateCall,
+      };
+     const jwtServicesVerifyCall = jest.fn().mockReturnValue(true);
+      (authService as any).jwtService = {
+        verify: jwtServicesVerifyCall,
+      };
+      const accountsServiceFindOneCall = jest.fn().mockResolvedValue({ address: "test-referrerAddress" });
+      (authService as any).accountsService = {
+        findOne: accountsServiceFindOneCall,
+      };
+
+      // act
+      const result = await authService.getAccessToken(
+        {
+          address: "test-address",
+          referralCode: "test-referralCode",
+        } as AuthenticationPayload
+      );
 
       // assert
       expect(accountSessionsServiceFindOneCall).toHaveBeenCalledTimes(1);

@@ -145,14 +145,15 @@ export const createTransaction = (
 // integrations of database transactions and working with
 // database copies of assets and users.
 export const createTransactionDocument = (
-  hash: string = "fakeHash1"
+  hash: string = "fakeHash1",
+  transactionMode?: string,
 ): any => ({
   transactionHash: hash,
   sourceAddress: "fake-source",
   signerAddress: "fake-signer",
   signerPublicKey: "fake-signer-public-key",
   recipientAddress: "fake-recipient",
-  transactionMode: "fake-mode",
+  transactionMode: transactionMode,
   transactionType: "fake-type",
   creationBlock: 1,
   transactionAssets: [{

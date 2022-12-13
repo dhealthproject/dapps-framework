@@ -28,6 +28,7 @@ import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { AccountSessionDocument } from "../../../../src/common/models/AccountSessionSchema";
+import { AccessTokenDTO } from "../../../../src/common/models/AccessTokenDTO";
 import { MockModel } from "../../../mocks/global";
 
 describe("common/AuthController", () => {
@@ -105,11 +106,11 @@ describe("common/AuthController", () => {
           sub: "testSub",
           address: "testAddress",
         });
-      const tokens = {
-        accessToken: "testAccessToken",
-        refreshToken: "testRefreshToken",
-        expiresAt: 1
-      };
+      const tokens = new AccessTokenDTO();
+      tokens.accessToken = "testAccessToken";
+      tokens.refreshToken = "testRefreshToken";
+      tokens.expiresAt = 1;
+      
       const authServiceGetAccessTokenCall = jest
         .spyOn(authService, "getAccessToken")
         .mockResolvedValue(tokens);
