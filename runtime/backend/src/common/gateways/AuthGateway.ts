@@ -7,11 +7,20 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-
+// external dependencies
 import { SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
 import { BaseGateway } from "./BaseGateway";
 
-@WebSocketGateway()
+// internal dependencies
+import dappConfigLoader from "../../../config/dapp";
+
+const dappConfig = dappConfigLoader();
+@WebSocketGateway({
+  namespace: `${dappConfig.dappName}`,
+  cors: {
+    origin: process.env.FRONTEND_URL,
+  },
+})
 export class AuthGateway extends BaseGateway {
   @SubscribeMessage("auth.open")
   open(message: any) {
@@ -26,5 +35,16 @@ export class AuthGateway extends BaseGateway {
   @SubscribeMessage("auth.complete")
   complete() {
     console.log("AUTHGATEWAY: Complete");
+  }
+
+  handleConnection(
+    server: Server<typeof IncomingMessage, typeof ServerResponse>,
+    client: any,
+  ): void {
+    console.log("FRONTEND CLIENT CONNECTED");
+  }
+
+  afterInit(server: Server) {
+    console.log("AUTHGATEWAY INITIALIZED");
   }
 }

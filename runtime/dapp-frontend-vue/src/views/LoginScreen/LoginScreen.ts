@@ -25,6 +25,7 @@ import { QRCode, QRCodeGenerator } from "@dhealth/qr-library";
 import { Component } from "vue-property-decorator";
 import { mapGetters } from "vuex";
 import InlineSvg from "vue-inline-svg";
+import { io } from "socket.io-client";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
@@ -277,7 +278,7 @@ export default class LoginScreen extends MetaView {
     );
   }
 
-  public wsConnection: any;
+  public wsConnection: any = null;
 
   /**
    * This method returns payload necessary for mobile to open Signer App for an authentication
@@ -321,7 +322,14 @@ export default class LoginScreen extends MetaView {
   public async mounted() {
     this.qrConfig = this.createLoginQRCode();
 
-    this.wsConnection = new WebSocket("wss://localhost:80/ELEVATE");
+    this.wsConnection = io("http://localhost:7903/");
+
+    this.wsConnection.on("connect", () => {
+      console.log("Successfully connected to the echo websocket server...");
+    });
+
+    // this.wsConnection.send("auth.open", JSON.stringify({ val: "test" }));
+    this.wsConnection.emit("auth.open");
 
     try {
       // make sure referral code is saved

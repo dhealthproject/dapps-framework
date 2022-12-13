@@ -23,13 +23,13 @@ import dappConfigLoader from "../../../config/dapp";
 
 const dappConfig = dappConfigLoader();
 
-@WebSocketGateway(80, {
+@WebSocketGateway({
   namespace: `${dappConfig.dappName}`,
   cors: {
     origin: process.env.FRONTEND_URL,
   },
 })
-export class BaseGateway
+export abstract class BaseGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer()
