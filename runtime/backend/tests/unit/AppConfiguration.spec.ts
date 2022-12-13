@@ -456,6 +456,7 @@ describe("AppConfiguration", () => {
     });
 
     it("should throw error given any missing mandatory configuration fields", () => {
+
       const mandatoryFields: any = [
         { name: "dappName", value: undefined },
         { name: "dappPublicKey", value: undefined },
@@ -610,6 +611,7 @@ describe("AppConfiguration", () => {
     });
 
     it("should throw error given any missing mandatory configuration fields", () => {
+
       const mandatoryFields: any = [
         { name: "defaultNode", value: undefined },
         { name: "defaultNode", value: {

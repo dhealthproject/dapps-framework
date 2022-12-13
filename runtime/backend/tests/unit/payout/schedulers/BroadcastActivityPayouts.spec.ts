@@ -822,4 +822,33 @@ describe("payout/BroadcastActivityPayouts", () => {
       );
     });
   });
+
+  describe("runAsScheduler()", () => {
+    it("should call correct methods and run correctly", async () => {
+      // prepare
+      const loggerSetModuleCall = jest
+        .spyOn(logger, "setModule")
+        .mockReturnValue(logger);
+      const debugLogCall = jest
+        .spyOn((command as any), "debugLog")
+        .mockReturnValue(true);
+      const runCall = jest
+        .spyOn(command, "run")
+        .mockResolvedValue();
+
+      // act
+      await command.runAsScheduler();
+
+      // assert
+      expect(loggerSetModuleCall).toHaveBeenNthCalledWith(1, "payout/BroadcastActivityPayouts");
+      expect(debugLogCall).toHaveBeenNthCalledWith(1, `Starting payout broadcast for subjects type: activities`);
+      expect(runCall).toHaveBeenNthCalledWith(
+        1,
+        ["activities"], {
+          maxCount: 3, // <-- MAXIMUM 3 BROADCASTS per round
+          debug: true,
+        } as BroadcastActivityPayoutsCommandOptions
+      );
+    });
+  });
 });
