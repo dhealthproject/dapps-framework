@@ -46,6 +46,7 @@ jest.mock("@nestjs-modules/mailer", () => {
 });
 
 // external dependencies
+
 import { Account, Address, PublicAccount } from "@dhealth/sdk";
 
 // internal dependencies
@@ -611,7 +612,7 @@ describe("AppConfiguration", () => {
     });
 
     it("should throw error given any missing mandatory configuration fields", () => {
-
+      // prepare
       const mandatoryFields: any = [
         { name: "defaultNode", value: undefined },
         { name: "defaultNode", value: {
@@ -761,6 +762,7 @@ describe("AppConfiguration", () => {
     });
 
     it("should throw error given any missing mandatory configuration fields", () => {
+      // prepare
       const mandatoryFields: any = [
         { name: "auth", value: undefined },
         { name: "auth", value: {

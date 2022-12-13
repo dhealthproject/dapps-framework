@@ -764,4 +764,34 @@ describe("payout/PrepareActivityPayouts", () => {
       );
     });
   });
+
+  describe("runAsScheduler()", () => {
+    it("should call correct methods and run correctly", async () => {
+      // prepare
+      const loggerSetModuleCall = jest
+        .spyOn(logger, "setModule")
+        .mockReturnValue(logger);
+      const debugLogCall = jest
+        .spyOn((command as any), "debugLog")
+        .mockReturnValue(true);
+      const runCall = jest
+        .spyOn(command, "run")
+        .mockResolvedValue();
+
+      // act
+      await command.runAsScheduler();
+
+      // assert
+      expect(loggerSetModuleCall).toHaveBeenNthCalledWith(1, "payout/PrepareActivityPayouts");
+      expect(debugLogCall).toHaveBeenNthCalledWith(1, `Starting payout preparation for subjects type: activities`);
+      expect(debugLogCall).toHaveBeenNthCalledWith(2, `Total number of payouts prepared: "0"`);
+      expect(runCall).toHaveBeenNthCalledWith(
+        1,
+        ["activities"],
+        {
+          debug: true,
+        } as PayoutCommandOptions
+      );
+    });
+  });
 });
