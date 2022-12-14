@@ -108,6 +108,13 @@ export default class OnboardingScreen extends MetaView {
    * @access public
    */
   skipOnboarding() {
+    // analytics tracker
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore: Unreachable code error
+    window.analytics.track("Onboarding skipped", {
+      route: this.$route.name,
+      refCode: this.refCode,
+    });
     this.$router.push({ name: "legal.terms-and-conditions" });
   }
 

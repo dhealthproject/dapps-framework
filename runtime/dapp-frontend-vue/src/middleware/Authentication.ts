@@ -44,7 +44,7 @@ export const authenticationHandler = ({ next, router, $store }: any) => {
  * @param  {any} next
  * @returns {void}
  */
-export const guestHandler = ({ next, router, $store }: any) => {
+export const guestHandler = ({ to, next, router, $store }: any) => {
   // read authentication state from vuex store
   const isAuthenticated: boolean = $store.getters["auth/isAuthenticated"];
 
@@ -56,6 +56,15 @@ export const guestHandler = ({ next, router, $store }: any) => {
       replace: true,
     });
   }
+
+  // analytics tracker
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore: Unreachable code error
+  window.analytics.page(`Visited page: ${to.name}`, {
+    routeName: to.name,
+    routePath: to.path,
+    isAuthenticated: $store.getters["auth/isAuthenticated"],
+  });
 
   // Access unauthorized
   return next();
