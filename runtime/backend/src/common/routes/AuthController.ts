@@ -12,6 +12,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Post,
   Request as NestRequest,
   Res as NestResponse,
@@ -266,8 +268,8 @@ export class AuthController {
         return tokens;
       }
     } catch (e: any) {
-      // @todo Add error handling for HTTP exceptions
-      throw e;
+      if (e instanceof HttpException) throw e;
+      throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
     }
   }
 
@@ -340,8 +342,8 @@ export class AuthController {
 
       return tokens;
     } catch (e: any) {
-      // @todo Add error handling for HTTP exceptions
-      throw e;
+      if (e instanceof HttpException) throw e;
+      throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
     }
   }
 

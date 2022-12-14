@@ -688,7 +688,6 @@ export class AuthService {
 
     // we want to return the only transaction that
     // contains exactly the necessary challenge
-    // @todo the below check on "challenge" must also check the contract signature
     return transactions.find((t: TransferTransaction) => {
       try {
         // do we have a valid contract JSON payload?

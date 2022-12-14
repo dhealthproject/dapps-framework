@@ -37,6 +37,7 @@ import { WebHooksService } from "../services/WebHooksService";
 import { StravaWebHookEventRequest } from "../drivers/strava/StravaWebHookEventRequest";
 import { StravaWebHookSubscriptionRequest } from "../drivers/strava/StravaWebHookSubscriptionRequest";
 import { StravaWebHookSubscriptionResponse } from "../drivers/strava/StravaWebHookSubscriptionResponse";
+import { LogService } from "../../common/services/LogService";
 
 namespace HTTPResponses {
   // creates a variable that we include in a namespace
@@ -88,6 +89,7 @@ export class WebHooksController {
   constructor(
     private readonly oauthService: OAuthService,
     private readonly webhooksService: WebHooksService,
+    private readonly logger: LogService,
   ) {}
 
   /**
@@ -136,7 +138,11 @@ export class WebHooksController {
       // verifies that the `verify_token` from Strava is
       // the correct one as defined by the runtime configuration
       if (verify_token !== provider.verify_token) {
-        // @todo should log as "malicious" subscription attempt
+        this.logger.warn(
+          "There has been possibly a malicious subscription attempt.",
+          "WebHooksController.subscribe()",
+          { providerName, challenge, verify_token },
+        );
         throw new HttpException(`Unauthorized`, 401);
       }
 

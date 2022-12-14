@@ -62,6 +62,7 @@ describe("processor/WebHooksController", () => {
             setContext: jest.fn(),
             log: jest.fn(),
             debug: jest.fn(),
+            warn: jest.fn(),
             error: jest.fn(),
           },
         }, // requirement from WebHooksController

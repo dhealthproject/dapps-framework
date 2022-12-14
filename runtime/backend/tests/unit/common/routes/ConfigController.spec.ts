@@ -86,7 +86,7 @@ describe("common/ConfigController", () => {
       };
       const expectedResult: DappConfigDTO = new DappConfigDTO();
       expectedResult.dappName = dappConfig.dappName;
-      expectedResult.authRegistry = securityConfig.auth.registries[0];
+      expectedResult.authRegistry = securityConfig.auth.registries;
       expectedResult.earnAssetDivisibility = assetsConfig.assets.earn.divisibility;
       expectedResult.earnAssetIdentifier = assetsConfig.assets.earn.mosaicId;
 

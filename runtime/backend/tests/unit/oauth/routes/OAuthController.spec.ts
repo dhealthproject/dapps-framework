@@ -17,7 +17,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { getModelToken } from "@nestjs/mongoose";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-import { HttpException } from "@nestjs/common";
+import { HttpException, HttpStatus } from "@nestjs/common";
 
 // internal dependencies
 import { OAuthController } from "../../../../src/oauth/routes/OAuthController";
@@ -175,15 +175,38 @@ describe("common/OAuthController", () => {
       expect(result).toEqual(expectedResult);
     });
 
-    it("should throw same error if any error was caught", () => {
+    it("should throw the same http exception if any http exception was caught", () => {
       // prepare
       const authServiceGetAccountCall = jest
         .spyOn(authService, "getAccount")
         .mockResolvedValue({ address: "testAddress" } as AccountDocument);
-      const expectedError = new Error("testError");
+      const expectedError = new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
       const oauthServiceOauthCallbackCall = jest
         .spyOn(oauthService, "oauthCallback")
         .mockRejectedValue(expectedError);
+
+      // act
+      const result = (controller as any).callback(
+        jest.fn(),
+        "testProvider",
+        jest.fn(),
+      );
+
+      // assert
+      expect(result).rejects.toThrowError(expectedError);
+      expect(authServiceGetAccountCall).toHaveBeenCalledTimes(1);
+      expect(oauthServiceOauthCallbackCall).toHaveBeenCalledTimes(0);
+    });
+
+    it("should throw http exception if any error was caught", () => {
+      // prepare
+      const authServiceGetAccountCall = jest
+        .spyOn(authService, "getAccount")
+        .mockResolvedValue({ address: "testAddress" } as AccountDocument);
+      const expectedError = new HttpException("Bad Request", HttpStatus.BAD_REQUEST);
+      const oauthServiceOauthCallbackCall = jest
+        .spyOn(oauthService, "oauthCallback")
+        .mockRejectedValue(new Error());
 
       // act
       const result = (controller as any).callback(

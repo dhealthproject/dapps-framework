@@ -27,7 +27,6 @@ import { AccountSessionDTO } from "./AccountSessionDTO";
  * Note that this class uses the generic {@link Transferable} trait to
  * enable a `toDTO()` method on the model.
  *
- * @todo Timestamp fields should be **numbers** to avoid timezone issues.
  * @since v0.3.2
  */
 @Schema({

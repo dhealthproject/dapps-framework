@@ -318,7 +318,6 @@ export class WebHooksService {
     message: string,
     stack?: string,
   ): Promise<void> {
-    //@todo print error message in persistent log such that it can be investigated
     if (undefined === stack) {
       logger.error(message);
     } else logger.error(message, stack);

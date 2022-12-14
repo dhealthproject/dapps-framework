@@ -17,6 +17,7 @@ import {
   Req as NestRequest,
   HttpException,
   UseGuards,
+  HttpStatus,
 } from "@nestjs/common";
 import {
   ApiExtraModels,
@@ -140,7 +141,6 @@ export class OAuthController {
     const account: AccountDocument = await this.authService.getAccount(req);
 
     // read query parameters, `ref` is optional
-    // @todo OAuthAuthorizeRequest
     const { ref, dhealthAddress } = query;
 
     // verify dHealthAddress, must be same for authenticated account
@@ -201,8 +201,8 @@ export class OAuthController {
       // create a "success" status response
       return StatusDTO.create(200);
     } catch (e) {
-      // @todo Add error handling for HTTP exceptions
-      throw e;
+      if (e instanceof HttpException) throw e;
+      throw new HttpException("Bad Request", HttpStatus.BAD_REQUEST);
     }
   }
 

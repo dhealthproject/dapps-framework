@@ -17,6 +17,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { getModelToken } from "@nestjs/mongoose";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
+import { HttpException, HttpStatus } from "@nestjs/common";
 
 // internal dependencies
 import { AuthService } from "../../../../src/common/services/AuthService";
@@ -153,9 +154,28 @@ describe("common/AuthController", () => {
       expect(result).toBeUndefined();
     });
 
+    it("should throw Unauthorized exception if any error was caught", () => {
+      // prepare
+      const expectedError = new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+      const authServiceGetCookieCall = jest
+        .spyOn(authService, "getCookie")
+        .mockImplementation(() => {
+          throw new Error();
+        });
+
+      // act
+      const result = (controller as any).getAccessToken(
+        { challenge: "testChallenge" }
+      );
+
+      // assert
+      expect(authServiceGetCookieCall).toHaveBeenCalledTimes(1);
+      expect(result).rejects.toThrowError(expectedError);
+    });
+
     it("should throw same error if any error was caught", () => {
       // prepare
-      const expectedError = new Error("testError");
+      const expectedError = new HttpException("Bad Request", HttpStatus.BAD_REQUEST);
       const authServiceGetCookieCall = jest
         .spyOn(authService, "getCookie")
         .mockImplementation(() => {
@@ -213,13 +233,35 @@ describe("common/AuthController", () => {
       expect(result).toEqual(tokens);
     });
 
-    it("should throw same error if any error was caught", () => {
+    it("should throw Unauthorized exception if any error was caught", () => {
       // prepare
-      const expectedError = new Error("testError");
+      const expectedError = new HttpException("Bad Request", HttpStatus.BAD_REQUEST);
       const authServiceGetCookieCall = jest
         .spyOn(authService, "getCookie")
         .mockImplementation(() => {
           throw expectedError;
+        });
+      const responseCookieCall = jest.fn();
+
+      // act
+      const result = (controller as any).refreshTokens(
+        jest.fn(),
+        { cookie: responseCookieCall }
+      );
+
+      // assert
+      expect(authServiceGetCookieCall).toHaveBeenCalledTimes(1);
+      expect(responseCookieCall).toHaveBeenCalledTimes(0);
+      expect(result).rejects.toThrowError(expectedError);
+    });
+
+    it("should throw unauthorized http exception if any other error was caught", () => {
+      // prepare
+      const expectedError = new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);;
+      const authServiceGetCookieCall = jest
+        .spyOn(authService, "getCookie")
+        .mockImplementation(() => {
+          throw new Error();
         });
       const responseCookieCall = jest.fn();
 
