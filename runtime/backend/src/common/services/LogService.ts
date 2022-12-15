@@ -9,7 +9,6 @@
  */
 // external dependencies
 import {
-  Inject,
   Injectable,
   LoggerService,
   LogLevel,
@@ -26,15 +25,13 @@ import "winston-daily-rotate-file";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
-import { AppConfiguration } from "../../AppConfiguration";
 import { StorageOptions } from "../models/StorageOptions";
 import { DappConfig } from "../models/DappConfig";
 import { MonitoringConfig } from "../models/MonitoringConfig";
 import { AlertEvent } from "../events/AlertEvent";
 
 // configuration resources
-import dappConfigLoader from "../../../config/dapp";
-import monitoringConfigLoader from "../../../config/monitoring";
+import { AppConfiguration } from "../../AppConfiguration";
 
 /**
  * @class LogService
@@ -85,16 +82,6 @@ export class LogService implements LoggerService {
 
   /**
    * An instance of {@link DappConfig} that will be used
-   * to get necessary dapp information for this class.
-   *
-   * @access private
-   * @readonly
-   * @var {DappConfig}
-   */
-  private readonly dappConfig: DappConfig;
-
-  /**
-   * An instance of {@link DappConfig} that will be used
    * to get necessary monitoring information for this class.
    *
    * @access private
@@ -115,13 +102,13 @@ export class LogService implements LoggerService {
     @Optional() protected context?: string,
     @Optional() protected eventEmitter?: EventEmitter2,
   ) {
-    // @todo should use AppConfiguration
-    this.dappConfig = dappConfigLoader();
-    this.monitoringConfig = monitoringConfigLoader();
+    this.monitoringConfig = AppConfiguration.getConfig(
+      "monitoring",
+    ) as MonitoringConfig;
 
     // set context to avoid emptiness
     if (!this.context || !this.context.length) {
-      this.context = this.dappConfig.dappName;
+      this.context = AppConfiguration.dappName;
     }
 
     // create a winston logger instance
@@ -321,8 +308,8 @@ export class LogService implements LoggerService {
     const transports: winston.transport[] = [];
 
     // uses volume/global /logs folder
-    const logFile = `${this.dappConfig.dappName}.log`;
-    const errFile = `${this.dappConfig.dappName}-error.log`;
+    const logFile = `${AppConfiguration.dappName}.log`;
+    const errFile = `${AppConfiguration.dappName}-error.log`;
     const logPath = this.monitoringConfig.logDirectoryPath;
 
     // get storage options from config

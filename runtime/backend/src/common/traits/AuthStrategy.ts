@@ -14,20 +14,16 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import { Request } from "express";
 
 // internal dependencies
-import { AccountDocument, AccountQuery } from "../models/AccountSchema";
-import { AccountsService } from "../services/AccountsService";
 import { AuthenticationPayload } from "../services/AuthService";
-
-// configuration resources
-import dappConfigLoader from "../../../config/dapp";
-import securityConfigLoader from "../../../config/security";
 import {
   AccountSessionDocument,
   AccountSessionQuery,
 } from "../models/AccountSessionSchema";
 import { AccountSessionsService } from "../services/AccountSessionsService";
-const conf = dappConfigLoader();
-const auth = securityConfigLoader().auth;
+
+// configuration resources
+import { AppConfiguration } from "../../AppConfiguration";
+import { SecurityConfig } from "../models";
 
 /**
  * @class AuthStrategy
@@ -51,11 +47,11 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromExtractors([
         // do we have a refresh token in the request's *signed*
         // httpOnly cookies? (name: "dappName:Refresh")
-        (request: Request) => request?.signedCookies[conf.dappName] ?? null,
+        (request: Request) => request?.signedCookies[AppConfiguration.dappName] ?? null,
 
         // do we have a refresh token in the request's *unsigned*
         // httpOnly cookies? (name: "dappName:Refresh")
-        (request: Request) => request?.cookies[conf.dappName] ?? null,
+        (request: Request) => request?.cookies[AppConfiguration.dappName] ?? null,
 
         // enables `Authorization` header
         ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -63,7 +59,7 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
       // delegates the validation of expiry to Passport
       ignoreExpiration: false,
       // defines a symmetric secret key for signing tokens
-      secretOrKey: auth.secret,
+      secretOrKey: (AppConfiguration.getConfig("security") as SecurityConfig).auth.secret,
     });
   }
 

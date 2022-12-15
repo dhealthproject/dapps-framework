@@ -24,8 +24,8 @@ import {
 } from "../models/AccountSchema";
 
 // configuration resources
-import dappConfigLoader from "../../../config/dapp";
-import networkConfigLoader from "../../../config/network";
+import { DappConfig, NetworkConfig } from "../models";
+import { AppConfiguration } from "../../AppConfiguration";
 
 /**
  * @class AccountsService
@@ -218,7 +218,8 @@ export class AccountsService {
    */
   public static createAddress(publicKeyOrAddress: string): Address {
     // extracts the network type from configuration
-    const { networkIdentifier } = networkConfigLoader().network;
+    const { networkIdentifier } =
+      (AppConfiguration.getConfig("network") as NetworkConfig).network;
     const networkType = networkIdentifier as NetworkType;
 
     // if we have a public key (64 characters in hexadecimal format)
@@ -238,7 +239,9 @@ export class AccountsService {
 
     // source input is **not** a valid address, return fallback
     if (sourceAddress.length !== 39) {
-      return AccountsService.createAddress(dappConfigLoader().dappPublicKey);
+      return AccountsService.createAddress(
+        (AppConfiguration.getConfig("dapp") as DappConfig).dappPublicKey
+      );
     }
 
     // source input **is a valid address format**
