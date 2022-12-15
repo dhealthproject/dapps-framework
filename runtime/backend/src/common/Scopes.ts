@@ -16,6 +16,7 @@ import { NotifierModule } from "../notifier/NotifierModule";
 import { OAuthModule } from "../oauth/OAuthModule";
 import { AppConfiguration } from "../AppConfiguration";
 import { UsersModule } from "../users/UsersModule";
+import { AbstractAppModule } from "./modules/AbstractAppModule";
 
 /**
  * @label COMMON
@@ -47,10 +48,9 @@ import { UsersModule } from "../users/UsersModule";
  *
  * @var {[key: string]: KnownScopeModules}
  *
- * @todo define class `AbstractAppModule` and use in `DiscoveryModule`, `PayoutModule`, etc.
  * @since v0.1.0
  */
-export const Scopes: { [key: string]: any } = {
+export const Scopes: { [key: string]: AbstractAppModule } = {
   database: AppConfiguration.getDatabaseModule(),
   discovery: DiscoveryModule,
   payout: PayoutModule,

@@ -20,6 +20,7 @@ import { ScopeFactory } from "./common/ScopeFactory";
 import { DappConfig } from "./common/models/DappConfig";
 import { AppConfiguration } from "./AppConfiguration";
 import { LogService } from "./common/services/LogService";
+import { AbstractAppModule } from "./common/modules/AbstractAppModule";
 
 // configuration resources
 import dappConfigLoader from "../config/dapp";
@@ -42,7 +43,7 @@ import dappConfigLoader from "../config/dapp";
 @Module({
   imports: [AccountsModule, AuthModule, ChallengesModule],
 })
-export class AppModule {
+export class AppModule extends AbstractAppModule {
   /**
    * {@link LogService} instance for this class.
    *
@@ -67,9 +68,9 @@ export class AppModule {
    * @access public
    * @static
    * @param   {DappConfig}     configs   imported config
-   * @returns {DynamicModule} instance of this module
+   * @returns {AbstractAppModule} instance of this module
    */
-  public static register(configs: DappConfig): DynamicModule {
+  public static register(configs: DappConfig): AbstractAppModule {
     // print activation information of all scopes
     AppModule.logger.log(
       `Enabled scopes: ${JSON.stringify(configs.scopes, undefined, 2)}`,
@@ -82,7 +83,7 @@ export class AppModule {
       imports: modules,
       controllers: [AppController],
       providers: [AppService],
-    } as DynamicModule;
+    } as AbstractAppModule;
   }
 
   /**

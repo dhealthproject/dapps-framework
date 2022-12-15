@@ -18,6 +18,7 @@ import SMTPTransport from "nodemailer/lib/smtp-transport";
 
 // internal dependencies
 import { ConfigurationError } from "./common/errors/ConfigurationError";
+import { AppDatabaseModule } from "./common/modules/AppDatabaseModule";
 
 // configuration models
 // common scope
@@ -83,9 +84,9 @@ export class AppConfiguration {
    *
    * @access private
    * @static
-   * @var {MongooseModule}
+   * @var {AppDatabaseModule}
    */
-  private static DATABASE: MongooseModule;
+  private static DATABASE: AppDatabaseModule;
 
   /**
    * The dApp event emitter module using {@link EventEmitterModule} from nestjs.
@@ -339,7 +340,7 @@ export class AppConfiguration {
    * @static
    * @returns   {MongooseModule}    A `@nestjs/mongoose` MongooseModule object.
    */
-  public static getDatabaseModule(): MongooseModule {
+  public static getDatabaseModule(): AppDatabaseModule {
     // singleton instance for database
     if (undefined === AppConfiguration.DATABASE) {
       AppConfiguration.DATABASE = MongooseModule.forRoot(

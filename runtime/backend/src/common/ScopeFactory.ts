@@ -17,6 +17,7 @@ import { DappConfig } from "./models/DappConfig";
 import { Scopes } from "./Scopes";
 import { Schedulers } from "./Schedulers";
 import { AppConfiguration } from "../AppConfiguration";
+import { AbstractAppModule } from "./modules/AbstractAppModule";
 
 /**
  * @label COMMON
@@ -50,9 +51,9 @@ export class ScopeFactory {
    * processes: scoped modules and scheduler modules.
    *
    * @access private
-   * @var {DynamicModule[]}
+   * @var {AbstractAppModule[]}
    */
-  private baseImports: DynamicModule[] = [];
+  private baseImports: AbstractAppModule[] = [];
 
   /**
    * Constructs an imports factory around a {@link DappConfig} configuration
@@ -102,7 +103,7 @@ export class ScopeFactory {
   }
 
   /**
-   * Returns an array of nest `DynamicModule` that are enabled
+   * Returns an array of nest `AbstractAppModule` that are enabled
    * (opt-in) through the dApp configuration with the field
    * named `scopes` (config/dapp.json).
    * <br /><br />
@@ -114,9 +115,9 @@ export class ScopeFactory {
    * modules.
    *
    * @static
-   * @returns {DynamicModule[]}   A list of dynamic modules that are *enabled* as modules.
+   * @returns {AbstractAppModule[]}   A list of dynamic modules that are *enabled* as modules.
    */
-  public getModules(): DynamicModule[] {
+  public getModules(): AbstractAppModule[] {
     // reads *enabled* scopes (opt-in)
     const scopes: Scope[] = this.dappConfig.scopes;
 
@@ -129,7 +130,7 @@ export class ScopeFactory {
   }
 
   /**
-   * Returns an array of nest `DynamicModule` that are enabled
+   * Returns an array of nest `AbstractAppModule` that are enabled
    * (opt-in) through the dApp configuration with the field
    * named `scopes` (config/dapp.json). This method returns all
    * **cronjobs** (schedulers / commands) that must be registered
@@ -144,9 +145,9 @@ export class ScopeFactory {
    * modules.
    *
    * @static
-   * @returns {DynamicModule[]}   A list of dynamic modules that are *enabled* as schedulers.
+   * @returns {AbstractAppModule[]}   A list of dynamic modules that are *enabled* as schedulers.
    */
-  public getSchedulers(): DynamicModule[] {
+  public getSchedulers(): AbstractAppModule[] {
     // reads *enabled* scopes (opt-in)
     const scopes: Scope[] = this.dappConfig.scopes;
 

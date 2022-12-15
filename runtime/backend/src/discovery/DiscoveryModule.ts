@@ -11,6 +11,10 @@
 import { Module } from "@nestjs/common";
 
 // internal dependencies
+// common scope
+import { AbstractAppModule } from "../common/modules/AbstractAppModule";
+
+// discovery scope
 import { DiscoveryAccountsModule } from "./modules/DiscoveryAccountsModule";
 import { AssetsModule } from "./modules/AssetsModule";
 import { TransactionsModule } from "./modules/TransactionsModule";
@@ -49,4 +53,4 @@ import { BlocksModule } from "./modules/BlocksModule";
     BlocksModule,
   ],
 })
-export class DiscoveryModule {}
+export class DiscoveryModule extends AbstractAppModule {}

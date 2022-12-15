@@ -11,6 +11,10 @@
 import { Module } from "@nestjs/common";
 
 // internal dependencies
+// common scope
+import { AbstractAppModule } from "../common/modules/AbstractAppModule";
+
+// notifier scope
 import { EmailNotifierModule } from "./modules/EmailNotifierModule";
 import { NotifierFactoryModule } from "./modules/NotifierFactoryModule";
 import { AlertsModule } from "./modules/AlertsModule";
@@ -42,4 +46,4 @@ import { AlertsModule } from "./modules/AlertsModule";
     AlertsModule,
   ],
 })
-export class NotifierModule {}
+export class NotifierModule extends AbstractAppModule {}

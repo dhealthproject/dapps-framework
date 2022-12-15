@@ -11,6 +11,7 @@
 import { Module } from "@nestjs/common";
 
 // internal dependencies
+import { AbstractAppModule } from "../common/modules/AbstractAppModule";
 import { ActivitiesModule } from "./modules/ActivitiesModule";
 
 /**
@@ -36,4 +37,4 @@ import { ActivitiesModule } from "./modules/ActivitiesModule";
     ActivitiesModule,
   ],
 })
-export class UsersModule {}
+export class UsersModule extends AbstractAppModule {}

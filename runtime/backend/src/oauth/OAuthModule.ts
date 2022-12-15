@@ -13,6 +13,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 // internal dependencies
 // common scope
+import { AbstractAppModule } from "../common/modules/AbstractAppModule";
 import { AuthModule } from "../common/modules/AuthModule";
 import {
   AccountIntegration,
@@ -69,4 +70,4 @@ import { WebHooksModule } from "./modules";
   providers: [OAuthService],
   exports: [OAuthService],
 })
-export class OAuthModule {}
+export class OAuthModule extends AbstractAppModule {}

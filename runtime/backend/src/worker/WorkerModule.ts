@@ -16,6 +16,7 @@ import { ScopeFactory } from "../common/ScopeFactory";
 import { Schedulers } from "../common/Schedulers";
 import { LogService } from "../common/services/LogService";
 import { AppConfiguration } from "../AppConfiguration";
+import { AbstractAppModule } from "../common/modules/AbstractAppModule";
 
 /**
  * @label SCOPES
@@ -26,7 +27,7 @@ import { AppConfiguration } from "../AppConfiguration";
  * @since v0.1.0
  */
 @Module({})
-export class WorkerModule {
+export class WorkerModule extends AbstractAppModule {
   /**
    * {@link LogService} instance of this class.
    *
@@ -44,9 +45,9 @@ export class WorkerModule {
    *
    * @static
    * @param   {DappConfig}     configs   imported config
-   * @returns {DynamicModule} instance of this module
+   * @returns {AbstractAppModule} instance of this module
    */
-  static register(configs: DappConfig): DynamicModule {
+  static register(configs: DappConfig): AbstractAppModule {
     // filters out scopes that do not have schedulers registered
     // the `database` scope is ignored due to lack of schedulers
     const actualScopes = configs.scopes.filter(
@@ -64,7 +65,7 @@ export class WorkerModule {
     return {
       module: WorkerModule,
       imports: modules,
-    } as DynamicModule;
+    } as AbstractAppModule;
   }
 
   /**

@@ -12,6 +12,7 @@ import { Module } from "@nestjs/common";
 
 // internal dependencies
 // statistics scope
+import { AbstractAppModule } from "../common/modules/AbstractAppModule";
 import { StatisticsImplementationModule } from "./modules/StatisticsImplementationModule";
 
 /**
@@ -50,4 +51,4 @@ import { StatisticsImplementationModule } from "./modules/StatisticsImplementati
     StatisticsImplementationModule,
   ],
 })
-export class StatisticsModule {}
+export class StatisticsModule extends AbstractAppModule {}
