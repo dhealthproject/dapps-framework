@@ -218,8 +218,9 @@ export class AccountsService {
    */
   public static createAddress(publicKeyOrAddress: string): Address {
     // extracts the network type from configuration
-    const { networkIdentifier } =
-      (AppConfiguration.getConfig("network") as NetworkConfig).network;
+    const { networkIdentifier } = (
+      AppConfiguration.getConfig("network") as NetworkConfig
+    ).network;
     const networkType = networkIdentifier as NetworkType;
 
     // if we have a public key (64 characters in hexadecimal format)
@@ -240,7 +241,7 @@ export class AccountsService {
     // source input is **not** a valid address, return fallback
     if (sourceAddress.length !== 39) {
       return AccountsService.createAddress(
-        (AppConfiguration.getConfig("dapp") as DappConfig).dappPublicKey
+        (AppConfiguration.getConfig("dapp") as DappConfig).dappPublicKey,
       );
     }
 
