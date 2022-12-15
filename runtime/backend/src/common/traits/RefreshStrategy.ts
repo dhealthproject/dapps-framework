@@ -49,7 +49,8 @@ export class RefreshStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
         // do we have a refresh token in the request's *signed*
         // httpOnly cookies? (name: "dappName:Refresh")
         (request: Request) =>
-          request?.signedCookies[AppConfiguration.dappName + ":Refresh"] ?? null,
+          request?.signedCookies[AppConfiguration.dappName + ":Refresh"] ??
+          null,
 
         // do we have a refresh token in the request's *unsigned*
         // httpOnly cookies? (name: "dappName:Refresh")
@@ -60,7 +61,8 @@ export class RefreshStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       // defines a symmetric secret key for signing tokens
-      secretOrKey: (AppConfiguration.getConfig("security") as SecurityConfig).auth.secret,
+      secretOrKey: (AppConfiguration.getConfig("security") as SecurityConfig)
+        .auth.secret,
       // permits to access the cookie from validate method
       passReqToCallback: true,
     });

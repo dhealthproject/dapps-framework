@@ -8,12 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import {
-  Injectable,
-  LoggerService,
-  LogLevel,
-  Optional,
-} from "@nestjs/common";
+import { Injectable, LoggerService, LogLevel, Optional } from "@nestjs/common";
 import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
