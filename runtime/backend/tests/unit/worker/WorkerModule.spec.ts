@@ -8,7 +8,9 @@
  * @license     LGPL-3.0
  */
 // mock AppConfiguration
+import testMonitoringConfigLoader from "../../../config/monitoring";
 class MockAppConfiguration {
+  static getConfig = jest.fn().mockReturnValue(testMonitoringConfigLoader());
   static getMailerModule = jest.fn();
   static getEventEmitterModule = jest.fn();
   static getDatabaseModule = jest.fn();

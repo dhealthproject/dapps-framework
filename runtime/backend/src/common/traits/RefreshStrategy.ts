@@ -23,10 +23,8 @@ import {
 } from "../models/AccountSessionSchema";
 
 // configuration resources
-import dappConfigLoader from "../../../config/dapp";
-import securityConfigLoader from "../../../config/security";
-const conf = dappConfigLoader();
-const auth = securityConfigLoader().auth;
+import { AppConfiguration } from "../../AppConfiguration";
+import { SecurityConfig } from "../models";
 
 /**
  * @class RefreshStrategy
@@ -51,18 +49,18 @@ export class RefreshStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
         // do we have a refresh token in the request's *signed*
         // httpOnly cookies? (name: "dappName:Refresh")
         (request: Request) =>
-          request?.signedCookies[conf.dappName + ":Refresh"] ?? null,
+          request?.signedCookies[AppConfiguration.dappName + ":Refresh"] ?? null,
 
         // do we have a refresh token in the request's *unsigned*
         // httpOnly cookies? (name: "dappName:Refresh")
         (request: Request) =>
-          request?.cookies[conf.dappName + ":Refresh"] ?? null,
+          request?.cookies[AppConfiguration.dappName + ":Refresh"] ?? null,
 
         // do we have a refresh token in Authorization header?
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       // defines a symmetric secret key for signing tokens
-      secretOrKey: auth.secret,
+      secretOrKey: (AppConfiguration.getConfig("security") as SecurityConfig).auth.secret,
       // permits to access the cookie from validate method
       passReqToCallback: true,
     });
@@ -86,7 +84,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
     // extracts refresh token from *signed cookies*
     const refreshToken = AuthService.extractToken(
       request,
-      `${conf.dappName}:Refresh`,
+      `${AppConfiguration.dappName}:Refresh`,
     );
 
     // finds an `accounts` document using a SHA3-256

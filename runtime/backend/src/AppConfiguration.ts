@@ -299,6 +299,44 @@ export class AppConfiguration {
   }
 
   /**
+   * This static helper method returns the configuration section value
+   * based on the provided section name.
+   *
+   * @access public
+   * @static
+   * @param {string} section The config section name e.g. `"dapp"`, `"statistics"`.
+   * @returns {object}
+   */
+  public static getConfig(section: string): object {
+    switch (section) {
+      case "assets":
+        return assetsConfigLoader();
+      case "dapp":
+        return dappConfigLoader();
+      case "network":
+        return networkConfigLoader();
+      case "oauth":
+        return oauthConfigLoader();
+      case "payout":
+        return payoutConfigLoader();
+      case "processor":
+        return processorConfigLoader();
+      case "security":
+        return securityConfigLoader();
+      case "statistics":
+        return statisticsConfigLoader();
+      case "social":
+        return socialConfigLoader();
+      case "monitoring":
+        return monitoringConfigLoader();
+      case "transport":
+        return transportConfigLoader();
+      default:
+        throw new Error(`Cannot find relevant config for section: ${section}`);
+    }
+  }
+
+  /**
    * This static helper method returns all the configuration loaders. This
    * method *does not* interpret the content of configuration objects.
    * <br /><br />

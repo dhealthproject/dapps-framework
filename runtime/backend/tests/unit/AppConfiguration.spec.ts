@@ -293,6 +293,65 @@ describe("AppConfiguration", () => {
     })
   });
 
+  describe("static getConfig()", () => {
+    it("should return correct config section", () => {
+      // prepare
+      const configSections = [
+        "assets",
+        "dapp",
+        "network",
+        "oauth",
+        "payout",
+        "processor",
+        "security",
+        "statistics",
+        "social",
+        "monitoring",
+        "transport",
+      ];
+      const loaderCalls = [
+        mockAssetsConfigLoaderCall,
+        mockDappConfigLoaderCall,
+        mockNetworkConfigLoaderCall,
+        mockOauthConfigLoaderCall,
+        mockPayoutConfigLoaderCall,
+        mockProcessorConfigLoaderCall,
+        mockSecurityConfigLoaderCall,
+        mockStatisticsConfigLoaderCall,
+        mockSocialConfigLoaderCall,
+        mockMonitoringConfigLoaderCall,
+        mockTransportConfigLoaderCall,
+      ]
+      configSections.forEach((configSection: string, index: number) => {
+        // act
+        const result = AppConfiguration.getConfig(configSection);
+
+        // assert
+        expect(loaderCalls[index]).toHaveBeenCalledTimes(1); // first call was in constructor
+        expect(result).toBeDefined();
+      })
+    });
+
+    it("should throw error if section name is not defined/in list", () => {
+      // prepare
+      [
+        undefined,
+        null,
+        "",
+        true,
+        "some-non-existing-section"
+      ].forEach((configSection: any) => {
+        const expectedError = new Error(`Cannot find relevant config for section: ${configSection}`);
+
+        // act
+        const result = () => AppConfiguration.getConfig(configSection);
+
+        // assert
+        expect(result).toThrowError(expectedError);
+      });
+    });
+  });
+
   describe("getDatabaseModule()", () => {
     it("should create instance using mongoose module", () => {
       // act

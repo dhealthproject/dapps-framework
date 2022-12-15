@@ -30,7 +30,6 @@ import { NetworkService } from "./NetworkService";
 import { LogService } from "./LogService";
 import { AccountsService } from "./AccountsService";
 import { ChallengesService } from "./ChallengesService";
-import { AppConfiguration } from "../../AppConfiguration";
 import { AccountDocument, AccountQuery } from "../models/AccountSchema";
 import { AccessTokenDTO } from "../models/AccessTokenDTO";
 import {
@@ -42,11 +41,10 @@ import {
   AccountSessionQuery,
 } from "../models/AccountSessionSchema";
 import { AccountSessionsService } from "./AccountSessionsService";
+import { AccessTokenRequest } from "../requests/AccessTokenRequest";
 
 // configuration resources
-import dappConfigLoader from "../../../config/dapp";
-import { AccessTokenRequest } from "../requests/AccessTokenRequest";
-const conf = dappConfigLoader();
+import { AppConfiguration } from "../../AppConfiguration";
 
 /**
  * @interface CookiePayload
@@ -172,7 +170,7 @@ export class AuthService {
    */
   public static extractToken(
     request: Request,
-    cookieName: string = conf.dappName,
+    cookieName: string = AppConfiguration.dappName,
   ): string | null {
     // private local helper function to extract
     // a key from an object only if it is defined
@@ -274,7 +272,7 @@ export class AuthService {
    */
   public async getAccount(
     request: Request,
-    cookieName: string = conf.dappName,
+    cookieName: string = AppConfiguration.dappName,
   ): Promise<AccountDocument> {
     // read and decode access token
     const token: string = AuthService.extractToken(request, cookieName);
