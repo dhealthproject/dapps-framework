@@ -144,7 +144,7 @@ export class PayoutsController {
     );
 
     // wraps for transport
-    return new PaginatedResultDTO<PayoutDTO>(
+    return PaginatedResultDTO.create<PayoutDTO>(
       data.data.map((d: PayoutDocument) => Payout.fillDTO(d, new PayoutDTO())),
       data.pagination,
     );
@@ -198,7 +198,7 @@ export class PayoutsController {
     const data = await this.payoutsService.find(safeQuery);
 
     // wraps for transport using PayoutDTO
-    return new PaginatedResultDTO<PayoutDTO>(
+    return PaginatedResultDTO.create<PayoutDTO>(
       data.data.map((d: PayoutDocument) => Payout.fillDTO(d, new PayoutDTO())),
       data.pagination,
     );

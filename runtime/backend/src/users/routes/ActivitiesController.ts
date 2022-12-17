@@ -148,7 +148,7 @@ export class ActivitiesController {
     );
 
     // wraps for transport
-    return new PaginatedResultDTO<ActivityDTO>(
+    return PaginatedResultDTO.create<ActivityDTO>(
       data.data.map((d: ActivityDocument) =>
         Activity.fillDTO(d, new ActivityDTO()),
       ),
@@ -204,7 +204,7 @@ export class ActivitiesController {
     const data = await this.activitiesService.find(safeQuery);
 
     // wraps for transport using ActivityDTO
-    return new PaginatedResultDTO<ActivityDTO>(
+    return PaginatedResultDTO.create<ActivityDTO>(
       data.data.map((d: ActivityDocument) =>
         Activity.fillDTO(d, new ActivityDTO()),
       ),

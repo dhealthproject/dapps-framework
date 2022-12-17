@@ -114,7 +114,7 @@ export class TransactionsController {
     );
 
     // wraps for transport
-    return new PaginatedResultDTO<TransactionDTO>(
+    return PaginatedResultDTO.create<TransactionDTO>(
       data.data.map((d: TransactionDocument) =>
         Transaction.fillDTO(d, new TransactionDTO()),
       ),

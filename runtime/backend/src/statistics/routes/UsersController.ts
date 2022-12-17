@@ -135,7 +135,7 @@ export class UsersController {
     const data = await this.statisticsService.find(safeQuery);
 
     // wraps for transport using StatisticsDTO
-    return new PaginatedResultDTO<StatisticsDTO>(
+    return PaginatedResultDTO.create<StatisticsDTO>(
       data.data.map((d: StatisticsDocument) =>
         Statistics.fillDTO(d, new StatisticsDTO()),
       ),

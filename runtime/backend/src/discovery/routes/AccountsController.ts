@@ -117,7 +117,7 @@ export class AccountsController {
     );
 
     // wraps for transport
-    return new PaginatedResultDTO<AccountDTO>(
+    return PaginatedResultDTO.create<AccountDTO>(
       data.data.map((d: AccountDocument) =>
         Account.fillDTO(d, new AccountDTO()),
       ),
