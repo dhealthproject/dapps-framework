@@ -22,7 +22,6 @@ import { BaseDTO } from "./BaseDTO";
  * This class shall be used in **HTTP responses** to avoid any additional
  * data about accounts to be revealed.
  *
- * @todo The transaction timestamp in `firstTransactionAt` should probably be a **number** to avoid timezone issues.
  * @since v0.1.0
  */
 export class AccountDTO extends BaseDTO {

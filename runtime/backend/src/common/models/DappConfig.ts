@@ -51,7 +51,6 @@ export type AppConnectionPayload = {
  * This interface is mainly used **internally** to restrict the configuration
  * values provided to some modules or services and methods.
  *
- * @todo Allow for updated discovery sources configuration (must be backwards compatible).
  * @link DappConfig
  * @since v0.1.0
  */
