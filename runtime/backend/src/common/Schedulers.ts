@@ -103,10 +103,7 @@ export const Schedulers: { [key: string]: any[] } = {
     UserAggregationCommand,
     UserTopActivitiesCommand,
   ],
-  notifier: [
-    AlertsModule,
-    ReportNotifierCommand.register()
-  ],
+  notifier: [AlertsModule, ReportNotifierCommand.register()],
   oauth: [],
   users: [],
 };
