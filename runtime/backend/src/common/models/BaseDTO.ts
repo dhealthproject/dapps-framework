@@ -16,7 +16,6 @@
  * This class shall be used in **HTTP responses** to avoid any additional
  * data about accounts to be revealed.
  *
- * @todo Currently this is using a "to any"-cast trick that should be avoided.
  * @since v0.3.0
  */
 export class BaseDTO {
