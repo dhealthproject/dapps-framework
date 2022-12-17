@@ -7,6 +7,11 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+const sha3_256Call = jest.fn().mockReturnValue("hashed-content");
+jest.mock("js-sha3", () => ({
+  sha3_256: sha3_256Call
+}));
+
 // internal dependencies
 import { StateDTO } from "../../../../src/common/models/StateDTO";
 import { State, StateDocument } from "../../../../src/common/models/StateSchema";
@@ -31,7 +36,7 @@ describe("common/StateSchema", () => {
     it("should return correct instance", () => {
       // prepare
       const name = "test-name";
-      const data = { key: "value" };
+      const data: any = "hashed-content";
       const state = new State();
       (state as any).name = name;
       (state as any).data = data;
@@ -41,6 +46,7 @@ describe("common/StateSchema", () => {
       const result = State.fillDTO(state as StateDocument, new StateDTO());
 
       // assert
+      expect(sha3_256Call).toHaveBeenCalledTimes(1);
       expect(result).toEqual(expectedResult);
     });
   });

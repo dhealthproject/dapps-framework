@@ -10,6 +10,7 @@
 // external dependencies
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { sha3_256 } from "js-sha3";
 
 // internal dependencies
 import { Documentable } from "../concerns/Documentable";
@@ -134,7 +135,8 @@ export class State extends Transferable<StateDTO> {
    */
   public static fillDTO(doc: StateDocument, dto: StateDTO): StateDTO {
     dto.name = doc.name;
-    dto.data = doc.data;
+    // hash the actual state data in the dto to prevent its exposure to the client.
+    dto.data = sha3_256(JSON.stringify(doc.data));
     return dto;
   }
 }
