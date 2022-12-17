@@ -16,9 +16,6 @@ import { QueryModule } from "../modules/QueryModule";
 import { Log, LogSchema } from "../models/LogSchema";
 import { LogService } from "../services/LogService";
 
-// @todo decouple from notifier scope
-import { AlertsModule } from "../../notifier/modules/AlertsModule";
-
 /**
  * @class LogModule
  * @description The main definition for the Log module.
@@ -33,7 +30,6 @@ import { AlertsModule } from "../../notifier/modules/AlertsModule";
         schema: LogSchema,
       }, // requirement from LogModule
     ]),
-    AlertsModule,
     QueryModule, // requirement from LogService
   ],
   providers: [LogService],
