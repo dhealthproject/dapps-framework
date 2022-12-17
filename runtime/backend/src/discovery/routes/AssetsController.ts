@@ -144,7 +144,7 @@ export class AssetsController {
     );
 
     // wraps for transport
-    return new PaginatedResultDTO<AssetDTO>(
+    return PaginatedResultDTO.create<AssetDTO>(
       data.data.map((d: AssetDocument) => Asset.fillDTO(d, new AssetDTO())),
       data.pagination,
     );
@@ -198,7 +198,7 @@ export class AssetsController {
     const data = await this.assetsService.find(safeQuery);
 
     // wraps for transport using AssetDTO
-    return new PaginatedResultDTO<AssetDTO>(
+    return PaginatedResultDTO.create<AssetDTO>(
       data.data.map((d: AssetDocument) => Asset.fillDTO(d, new AssetDTO())),
       data.pagination,
     );
