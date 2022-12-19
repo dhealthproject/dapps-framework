@@ -8,23 +8,43 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
-import { BaseGateway } from "./BaseGateway";
+import {
+  SubscribeMessage,
+  WebSocketGateway,
+  MessageBody,
+  WebSocketServer,
+  OnGatewayConnection,
+  OnGatewayInit,
+  OnGatewayDisconnect,
+} from "@nestjs/websockets";
+import { IncomingMessage, ServerResponse } from "http";
+import { Server } from "https";
 
 // internal dependencies
+import { BaseGateway } from "./BaseGateway";
 import dappConfigLoader from "../../../config/dapp";
 
 const dappConfig = dappConfigLoader();
-@WebSocketGateway({
+@WebSocketGateway(80, {
   namespace: `${dappConfig.dappName}`,
   cors: {
     origin: process.env.FRONTEND_URL,
   },
 })
-export class AuthGateway extends BaseGateway {
+export class AuthGateway
+  extends BaseGateway
+  implements 
+    OnGatewayConnection,
+    OnGatewayInit,
+    OnGatewayDisconnect
+{
+  @WebSocketServer()
+  protected server: Server;
+
   @SubscribeMessage("auth.open")
-  open(message: any) {
+  handleEvent(@MessageBody() message: any) {
     console.log("AUTHGATEWAY: Connection open");
+    return { msg: "You're connected" };
   }
 
   @SubscribeMessage("auth.close")
@@ -40,8 +60,12 @@ export class AuthGateway extends BaseGateway {
   handleConnection(
     server: Server<typeof IncomingMessage, typeof ServerResponse>,
     client: any,
-  ): void {
+  ) {
     console.log("FRONTEND CLIENT CONNECTED");
+  }
+
+  handleDisconnect(client: any) {
+    console.log("BASEGATEWAY: Client disconnected");
   }
 
   afterInit(server: Server) {

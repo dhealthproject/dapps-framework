@@ -15,6 +15,8 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
+  SubscribeMessage,
+  MessageBody,
 } from "@nestjs/websockets";
 import { Server } from "https";
 
@@ -32,14 +34,15 @@ const dappConfig = dappConfigLoader();
 export abstract class BaseGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  @WebSocketServer()
-  protected server: Server;
+  // @WebSocketServer()
+  // protected server: Server;
 
   protected clients: string[];
 
   handleConnection(server: Server, client: any) {
     console.log("BASEGATEWAY: Client connected");
     this.clients.push(client.challenge);
+    console.log({ clients: this.clients });
   }
 
   handleDisconnect(client: any) {

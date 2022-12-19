@@ -50,7 +50,6 @@ const auth = securityConfigLoader().auth;
  */
 @Module({
   imports: [
-    AuthGateway,
     NetworkModule,
     QueryModule,
     AccountsModule,
