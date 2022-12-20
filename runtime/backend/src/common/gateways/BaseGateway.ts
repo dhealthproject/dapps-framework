@@ -15,8 +15,6 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
-  SubscribeMessage,
-  MessageBody,
 } from "@nestjs/websockets";
 import { Server } from "https";
 
@@ -25,8 +23,8 @@ import dappConfigLoader from "../../../config/dapp";
 
 const dappConfig = dappConfigLoader();
 
-@WebSocketGateway({
-  namespace: `${dappConfig.dappName}`,
+@WebSocketGateway(80, {
+  path: `${dappConfig.dappName}`,
   cors: {
     origin: process.env.FRONTEND_URL,
   },
@@ -34,25 +32,29 @@ const dappConfig = dappConfigLoader();
 export abstract class BaseGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  // @WebSocketServer()
-  // protected server: Server;
+  constructor() {
+    this.clients = [];
+  }
+
+  @WebSocketServer()
+  protected server: Server;
 
   protected clients: string[];
 
-  handleConnection(server: Server, client: any) {
+  handleConnection(server: any) {
     console.log("BASEGATEWAY: Client connected");
-    this.clients.push(client.challenge);
+    this.clients.push(server.client.id);
     console.log({ clients: this.clients });
   }
 
-  handleDisconnect(client: any) {
+  handleDisconnect(server: any) {
     console.log("BASEGATEWAY: Client disconnected");
-    this.clients = this.clients.filter((clientId) => clientId !== client);
+    this.clients = this.clients.filter(
+      (clientId) => clientId !== server.client.id,
+    );
   }
 
   afterInit(server: Server) {
-    console.log({ server });
-
     console.log("GATEWAY INITIALIZED");
   }
 }

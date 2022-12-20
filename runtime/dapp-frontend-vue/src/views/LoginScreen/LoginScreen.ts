@@ -322,16 +322,16 @@ export default class LoginScreen extends MetaView {
   public async mounted() {
     this.qrConfig = this.createLoginQRCode();
 
-    this.wsConnection = io("http://localhost:80/ELEVATE");
+    this.wsConnection = new WebSocket("ws://localhost:80/ELEVATE");
 
-    this.wsConnection.on("connect", () => {
-      console.log("Successfully connected to the echo websocket server...");
-    });
+    // this.wsConnection.on("connect", () => {
+    //   console.log("Successfully connected to the echo websocket server...");
+    // });
 
-    // this.wsConnection.send("auth.open", JSON.stringify({ val: "test" }));
-    this.wsConnection.emit("auth.open", { data: "test msg" }, (res: any) => {
-      console.log({ res });
-    });
+    // // this.wsConnection.send("auth.open", JSON.stringify({ val: "test" }));
+    // this.wsConnection.emit("auth.open", { data: "test msg" }, (res: any) => {
+    //   console.log({ res });
+    // });
 
     try {
       // make sure referral code is saved

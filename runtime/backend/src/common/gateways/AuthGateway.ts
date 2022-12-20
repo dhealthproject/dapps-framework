@@ -12,13 +12,10 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   MessageBody,
-  WebSocketServer,
   OnGatewayConnection,
   OnGatewayInit,
   OnGatewayDisconnect,
 } from "@nestjs/websockets";
-import { IncomingMessage, ServerResponse } from "http";
-import { Server } from "https";
 
 // internal dependencies
 import { BaseGateway } from "./BaseGateway";
@@ -38,9 +35,6 @@ export class AuthGateway
     OnGatewayInit,
     OnGatewayDisconnect
 {
-  @WebSocketServer()
-  protected server: Server;
-
   @SubscribeMessage("auth.open")
   handleEvent(@MessageBody() message: any) {
     console.log("AUTHGATEWAY: Connection open");
@@ -55,20 +49,5 @@ export class AuthGateway
   @SubscribeMessage("auth.complete")
   complete() {
     console.log("AUTHGATEWAY: Complete");
-  }
-
-  handleConnection(
-    server: Server<typeof IncomingMessage, typeof ServerResponse>,
-    client: any,
-  ) {
-    console.log("FRONTEND CLIENT CONNECTED");
-  }
-
-  handleDisconnect(client: any) {
-    console.log("BASEGATEWAY: Client disconnected");
-  }
-
-  afterInit(server: Server) {
-    console.log("AUTHGATEWAY INITIALIZED");
   }
 }

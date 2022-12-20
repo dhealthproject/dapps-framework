@@ -17,6 +17,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import helmet from "helmet";
 import childProcess from "child_process";
 import cookieParser from "cookie-parser";
+import { WsAdapter } from "@nestjs/platform-ws";
 
 // internal dependencies
 import { AppModule } from "./AppModule";
@@ -104,6 +105,9 @@ async function bootstrap(): Promise<void> {
   // enable throttle and *secured* cookie parser
   app.use(helmet());
   app.use(cookieParser(securityConfig.auth.secret));
+
+  // use ws as the default socket platform
+  app.useWebSocketAdapter(new WsAdapter(app));
 
   // start the worker
   logger.debug(`Starting the worker process...`);
