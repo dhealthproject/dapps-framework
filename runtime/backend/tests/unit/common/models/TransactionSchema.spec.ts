@@ -9,7 +9,7 @@
  */
 // external dependencies
 import { TransactionDTO } from "@/discovery/models/TransactionDTO";
-import { TransactionMapping } from "@dhealth/sdk";
+import { Convert, TransactionMapping, Transaction as SdkTransaction } from "@dhealth/sdk";
 
 // internal dependencies
 import { Transaction, TransactionDocument } from "../../../../src/common/models/TransactionSchema";
@@ -51,13 +51,22 @@ describe("common/TransactionSchema", () => {
       // prepare
       let createFromPayloadCall = jest
         .spyOn(TransactionMapping, "createFromPayload")
-        .mockReturnValue({} as any);
+        .mockReturnValue({} as SdkTransaction);
       const transaction = new Transaction();
+      (transaction as any).encodedBody = "ABC";
+      const convertNumberToUint8ArrayCall = jest
+        .spyOn(Convert, "numberToUint8Array")
+        .mockReturnValue(new Uint8Array());
+      const convertHexToUint8Call = jest
+        .spyOn(Convert, "hexToUint8")
+        .mockReturnValue(new Uint8Array());
 
       // act
       const result = transaction.toSDK();
 
       // assert
+      expect(convertNumberToUint8ArrayCall).toHaveBeenCalledTimes(8);
+      expect(convertHexToUint8Call).toHaveBeenCalledTimes(2);
       expect(createFromPayloadCall).toHaveBeenCalledTimes(1);
       expect(result).toStrictEqual({});
     });

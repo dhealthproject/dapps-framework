@@ -13,7 +13,6 @@ import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
 import {
-  Address,
   AggregateTransactionInfo,
   Order,
   Page,
@@ -33,7 +32,7 @@ import { NetworkService } from "../../../common/services/NetworkService";
 import { DiscoveryCommand, DiscoveryCommandOptions } from "../DiscoveryCommand";
 import { AssetsService } from "../../../discovery/services/AssetsService";
 import { TransactionsService } from "../../../discovery/services/TransactionsService";
-import { getTransactionType } from "../../../discovery/models/TransactionTypes";
+import { TransactionTypes } from "../../../discovery/models/TransactionTypes";
 import {
   Transaction,
   TransactionDocument,
@@ -716,7 +715,7 @@ export class DiscoverTransactions extends DiscoveryCommand {
    * @returns {string}
    */
   protected extractTransactionType(transaction: SdkTransaction): string {
-    return getTransactionType(transaction.type);
+    return TransactionTypes.getTransactionType(transaction.type);
   }
 
   /**
@@ -745,19 +744,16 @@ export class DiscoverTransactions extends DiscoveryCommand {
     // serializes transaction to get hexadecimal payload
     const payload: string = transaction.serialize();
 
-    // @todo Move to the following implementation as this will
-    // @todo permit to save more than 100bytes of space for each
-    // @todo contract operation.
-    // @todo Note that this implementation would require also
-    // @todo a *transaction parser* that re-build transactions
+    // This will permit to save 128 bytes of space for each
+    // contract operation.
+    // Note that this implementation requires also
+    // a *transaction parser* that re-build transactions
     // following transaction header applies here:
-    // size | r1 | sig | pub | r2 | ver | net | type
-    //   4b | 4b | 64b | 32b | 4b |  1b |  1b |   2b
-    // --> we are dropping 112 bytes as the header
+    // size | r1 | sig | pub | r2 | ver | net | type | fee | dl
+    //   4b | 4b | 64b | 32b | 4b |  1b |  1b |   2b |  8b | 8b
+    // --> we are dropping 128 bytes (256 hex characters) as the header
     // and we return only the remaining body after
-    //return payload.substring(112);
-
-    return payload;
+    return payload.substring(256);
   }
 
   /**

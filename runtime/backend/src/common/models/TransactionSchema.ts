@@ -9,8 +9,11 @@
  */
 // external dependencies
 import {
+  Convert,
+  NetworkType,
   Transaction as SdkTransaction,
   TransactionMapping,
+  TransactionType,
 } from "@dhealth/sdk";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Model } from "mongoose";
@@ -324,8 +327,37 @@ export class Transaction extends Transferable<TransactionDTO> {
    * @returns {SdkTransaction}  The `SdkTransaction` object with payload set.
    */
   public toSDK(): SdkTransaction {
-    //XXX this assumes "encodedBody" contains the *full* payload.
-    return TransactionMapping.createFromPayload(this.encodedBody, false); // false for `isEmbedded`
+    const sizeBytes = Convert.numberToUint8Array(
+      (this.encodedBody.length + 256) / 2,
+      4,
+    );
+    const verifiableEntityHeader_Reserved4Bytes = Convert.numberToUint8Array(
+      0,
+      4,
+    );
+    const signatureBytes = Convert.hexToUint8(this.signature);
+    const signerPublicKeyBytes = Convert.hexToUint8(this.signerPublicKey);
+    const entityBody_Reserved4Bytes = Convert.numberToUint8Array(0, 4);
+    const versionBytes = Convert.numberToUint8Array(0, 1);
+    const networkBytes = Convert.numberToUint8Array(NetworkType.MAIN_NET, 1);
+    const typeBytes = Convert.numberToUint8Array(TransactionType.TRANSFER, 2);
+    const feeBytes = Convert.numberToUint8Array(0, 8);
+    const deadlineBytes = Convert.numberToUint8Array(0, 8);
+    const headersUint8Array = [
+      ...sizeBytes,
+      ...verifiableEntityHeader_Reserved4Bytes,
+      ...signatureBytes,
+      ...signerPublicKeyBytes,
+      ...entityBody_Reserved4Bytes,
+      ...versionBytes,
+      ...networkBytes,
+      ...typeBytes,
+      ...feeBytes,
+      ...deadlineBytes,
+    ];
+    const fullEncodedBody =
+      Convert.uint8ToHex(headersUint8Array) + this.encodedBody;
+    return TransactionMapping.createFromPayload(fullEncodedBody, false); // false for `isEmbedded`
   }
 
   /**
