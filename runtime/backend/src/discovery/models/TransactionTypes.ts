@@ -11,18 +11,28 @@
 import { TransactionType } from "@dhealth/sdk";
 
 /**
- * @class TransactionDTO
- * @description
+ * @class TransactionTypes
+ * @description A helper class that handle and process {@link TransactionType}.
  *
- * @todo Add relevant helper function documentation
  * @todo Use the `@dhealth/contracts` abstraction and include in TransactionDTO if necessary.
  * @since v0.2.0
  */
-export const getTransactionType = (type: TransactionType): string => {
-  switch (type) {
-    case TransactionType.TRANSFER:
-      return "transfer";
-    default:
-      return "custom";
+export class TransactionTypes {
+  /**
+   * A helper method that returns a string representation
+   * of a {@link TransactionType}.
+   *
+   * @access public
+   * @static
+   * @param {TransactionType} type The transaction type to get a string representation of.
+   * @returns {string}
+   */
+  public static getTransactionType(type: TransactionType): string {
+    switch (type) {
+      case TransactionType.TRANSFER:
+        return "transfer";
+      default:
+        return "custom";
+    }
   }
-};
+}

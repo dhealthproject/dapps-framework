@@ -11,13 +11,13 @@
 import { TransactionType } from "@dhealth/sdk";
 
 // internal dependencies
-import { getTransactionType } from "../../../../src/discovery/models/TransactionTypes";
+import { TransactionTypes } from "../../../../src/discovery/models/TransactionTypes";
 
-describe("discovery/TransactionType", () => {
+describe("discovery/TransactionTypes", () => {
   describe("getTransactionType()", () => {
     it("should return transaction type: transfer", () => {
       // act
-      const result = getTransactionType(TransactionType.TRANSFER);
+      const result = TransactionTypes.getTransactionType(TransactionType.TRANSFER);
 
       // assert
       expect(result).toBe("transfer");
@@ -25,7 +25,7 @@ describe("discovery/TransactionType", () => {
 
     it("should return transaction type: custom", () => {
       // act
-      const result = getTransactionType(TransactionType.RESERVED);
+      const result = TransactionTypes.getTransactionType(TransactionType.RESERVED);
 
       // assert
       expect(result).toBe("custom");
