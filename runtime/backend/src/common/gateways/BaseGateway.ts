@@ -15,16 +15,19 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
+  MessageBody,
 } from "@nestjs/websockets";
 import { Server } from "https";
+import { JwtService } from "@nestjs/jwt";
 
 // internal dependencies
 import dappConfigLoader from "../../../config/dapp";
+import { AuthService } from "../services";
 
 const dappConfig = dappConfigLoader();
 
 @WebSocketGateway(80, {
-  path: `${dappConfig.dappName}`,
+  path: "/ws",
   cors: {
     origin: process.env.FRONTEND_URL,
   },
@@ -32,7 +35,7 @@ const dappConfig = dappConfigLoader();
 export abstract class BaseGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor() {
+  constructor(private readonly authService: AuthService) {
     this.clients = [];
   }
 
@@ -41,20 +44,36 @@ export abstract class BaseGateway
 
   protected clients: string[];
 
-  handleConnection(server: any) {
-    console.log("BASEGATEWAY: Client connected");
-    this.clients.push(server.client.id);
-    console.log({ clients: this.clients });
+  handleConnection(ws: any, req: any) {
+    // const challenge = this.getChallengeFromUrl(client);
+    // this.clients.push(challenge);
+    console.log("client connected", this.authService.getCookie());
+    const str = req.headers.cookie.split("=")[1];
+    console.log("DECODED ???????????", decodeURIComponent(str.split(".")[1]));
+
+    ws.cookie = req.headers.cookie;
+
+    // console.log("cookie: ", req.headers);
   }
 
-  handleDisconnect(server: any) {
+  handleDisconnect(ws: any) {
+    // const challenge = this.getChallengeFromUrl(client);
     console.log("BASEGATEWAY: Client disconnected");
-    this.clients = this.clients.filter(
-      (clientId) => clientId !== server.client.id,
-    );
+    console.log("disconnect: ", ws.cookie);
+
+    // this.clients = this.clients.filter(
+    //   (clientId) => clientId !== server.client.id,
+    // );
   }
 
   afterInit(server: Server) {
     console.log("GATEWAY INITIALIZED");
+  }
+
+  protected getChallengeFromUrl(client: any) {
+    const { url } = client;
+    const challenge = url.split("=")[1];
+
+    return challenge;
   }
 }

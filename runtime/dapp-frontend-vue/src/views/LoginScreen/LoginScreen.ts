@@ -25,7 +25,7 @@ import { QRCode, QRCodeGenerator } from "@dhealth/qr-library";
 import { Component } from "vue-property-decorator";
 import { mapGetters } from "vuex";
 import InlineSvg from "vue-inline-svg";
-import { io } from "socket.io-client";
+import ws from "ws";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
@@ -64,7 +64,6 @@ export interface TutorialStepItem {
   id: string;
   text: string;
 }
-
 /**
  * @label PAGES
  * @class LoginScreen
@@ -322,13 +321,12 @@ export default class LoginScreen extends MetaView {
   public async mounted() {
     this.qrConfig = this.createLoginQRCode();
 
-    this.wsConnection = new WebSocket("ws://localhost:80/ELEVATE");
+    this.wsConnection = new WebSocket("ws://localhost:80/ws");
 
-    // this.wsConnection.on("connect", () => {
-    //   console.log("Successfully connected to the echo websocket server...");
-    // });
+    this.wsConnection.onopen = function () {
+      console.log("Successfully connected to the echo websocket server...");
+    };
 
-    // // this.wsConnection.send("auth.open", JSON.stringify({ val: "test" }));
     // this.wsConnection.emit("auth.open", { data: "test msg" }, (res: any) => {
     //   console.log({ res });
     // });
@@ -385,6 +383,8 @@ export default class LoginScreen extends MetaView {
     if (this.globalIntervalTimer) {
       clearTimeout(this.globalIntervalTimer);
     }
+
+    this.wsConnection.close(120, this.authChallenge);
   }
 
   /**

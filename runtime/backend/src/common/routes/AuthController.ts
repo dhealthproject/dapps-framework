@@ -151,6 +151,12 @@ export class AuthController {
   ) {}
 
   /**
+   * This property stores authentication challenge
+   * generated when created in getAuthCode()
+   * **/
+  protected challenge: string;
+
+  /**
    * This method generates an *authentication cookie* depending
    * on the runtime configuration (dApp), i.e. the cookie will
    * include a [sub-]*domain name* and a name that are used to
@@ -182,9 +188,22 @@ export class AuthController {
   })
   @ApiExtraModels(AuthChallengeDTO)
   @ApiOkResponse(HTTPResponses.AuthChallengeResponseSchema)
-  protected async getAuthCode(): Promise<AuthChallengeDTO> {
+  protected async getAuthCode(
+    @NestResponse({ passthrough: true }) response: Response,
+  ): Promise<AuthChallengeDTO> {
     // generates a *random* authentication challenge
     const authChallenge = this.authService.getChallenge();
+
+    // generates cookie configuration (depends on dApp)
+    const authCookie = this.authService.getCookie();
+
+    // set auth challenge.
+    // @link https://www.npmjs.com/package/cookie
+    response.cookie("challenge", authChallenge, {
+      httpOnly: true,
+      domain: authCookie.domain,
+      signed: true,
+    });
 
     // serves the authentication challenge
     return { challenge: authChallenge } as AuthChallengeDTO;

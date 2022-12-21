@@ -188,7 +188,7 @@ export default class App extends MetaView {
    * @returns void
    * @access public
    */
-  beforeDestoyed() {
+  beforeDestroy() {
     this.$root.$off("modal", this.showModal);
     this.$root.$off("modal-close", this.hideModal);
   }
