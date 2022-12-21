@@ -39,27 +39,55 @@ export abstract class BaseGateway
     this.clients = [];
   }
 
+  public validationInterval: any = null;
+
   @WebSocketServer()
-  protected server: Server;
+  protected server: any;
 
   protected clients: string[];
 
-  handleConnection(ws: any, req: any) {
+  async handleConnection(ws: any, req: any) {
     // const challenge = this.getChallengeFromUrl(client);
     // this.clients.push(challenge);
-    console.log("client connected", this.authService.getCookie());
-    const str = req.headers.cookie.split("=")[1];
-    console.log("DECODED ???????????", decodeURIComponent(str.split(".")[1]));
+    const cookies = req.headers.cookie.split(";");
+    const challenge = cookies.find((cookie: string) =>
+      cookie.trim().includes("challenge"),
+    );
 
-    ws.cookie = req.headers.cookie;
+    this.clients.push(challenge.split("=")[1]);
+    ws.challenge = challenge;
+
+    ws.emit("received_challenge", { challenge });
+
+    console.log("client connected", this.clients);
+    this.performValidation(challenge.split("=")[1], ws);
 
     // console.log("cookie: ", req.headers);
+  }
+
+  performValidation(challenge: string, client: any) {
+    this.validationInterval = setInterval(async () => {
+      try {
+        const isValid = await this.authService.validateChallenge(challenge);
+        console.log({ address: isValid.address });
+
+        if (isValid.address) {
+          client.send("allowed_authentication");
+          clearInterval(this.validationInterval);
+        }
+      } catch (err) {
+        console.log({ isValid: false });
+      }
+    }, 10000);
   }
 
   handleDisconnect(ws: any) {
     // const challenge = this.getChallengeFromUrl(client);
     console.log("BASEGATEWAY: Client disconnected");
-    console.log("disconnect: ", ws.cookie);
+    const str = ws.challenge.split("=")[1];
+    this.clients = this.clients.filter((c) => c !== str);
+    console.log("disconnect: ", this.clients);
+    clearInterval(this.validationInterval);
 
     // this.clients = this.clients.filter(
     //   (clientId) => clientId !== server.client.id,

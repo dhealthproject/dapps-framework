@@ -25,7 +25,6 @@ import { QRCode, QRCodeGenerator } from "@dhealth/qr-library";
 import { Component } from "vue-property-decorator";
 import { mapGetters } from "vuex";
 import InlineSvg from "vue-inline-svg";
-import ws from "ws";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
@@ -327,6 +326,13 @@ export default class LoginScreen extends MetaView {
       console.log("Successfully connected to the echo websocket server...");
     };
 
+    const handler = this.fetchToken;
+    this.wsConnection.onmessage = function (evt: any) {
+      if (evt.data === "allowed_authentication") {
+        handler();
+      }
+    };
+
     // this.wsConnection.emit("auth.open", { data: "test msg" }, (res: any) => {
     //   console.log({ res });
     // });
@@ -384,7 +390,7 @@ export default class LoginScreen extends MetaView {
       clearTimeout(this.globalIntervalTimer);
     }
 
-    this.wsConnection.close(120, this.authChallenge);
+    this.wsConnection.close();
   }
 
   /**
@@ -430,7 +436,7 @@ export default class LoginScreen extends MetaView {
     // we use an interval here because the backend API only returns
     // a HTTP200-Success response when the challenge has been found
     // inside a transfer transaction on dHealth Network
-    this.createAccessTokenLoop(15 * 1000);
+    // this.createAccessTokenLoop(15 * 1000);
 
     // this interval is used to *clear memory* in the browser and to
     // avoid that requesting access tokens continues *forever* at the
@@ -438,9 +444,9 @@ export default class LoginScreen extends MetaView {
     // tokens, we assume that the user may need more time to perform
     // authentication and will only request access tokens every minute
     // starting from here.
-    this.globalIntervalTimer = setTimeout(() => {
-      this.createAccessTokenLoop(60 * 1000);
-    }, 5 * 60 * 1000);
+    // this.globalIntervalTimer = setTimeout(() => {
+    //   this.createAccessTokenLoop(60 * 1000);
+    // }, 5 * 60 * 1000);
 
     // after 30 minutes of idle screen without being able to request
     // a valid access token, we stop requesting for them completely.
@@ -464,38 +470,36 @@ export default class LoginScreen extends MetaView {
    * @param   {number}    milliseconds    The number of milliseconds between each execution of the access token loop.
    * @returns {void}
    */
-  protected createAccessTokenLoop(milliseconds: number = 15 * 1000): void {
-    this.interval = setInterval(async () => {
-      try {
-        // try authenticating the user and requesting an access token
-        // this will only succeed provided that the end-user attached
-        // the authentication challenge in a transfer transaction
-        const response: AccessTokenDTO | null = await this.$store.dispatch(
-          "auth/fetchAccessToken"
-        );
+  protected async fetchToken(): Promise<void> {
+    try {
+      // try authenticating the user and requesting an access token
+      // this will only succeed provided that the end-user attached
+      // the authentication challenge in a transfer transaction
+      const response: AccessTokenDTO | null = await this.$store.dispatch(
+        "auth/fetchAccessToken"
+      );
 
-        // if we could not fetch an access token, bail out
-        if (null === response) {
-          throw new Error("Unauthorized");
-        }
-
-        // store the access token inside a browser cookie such that
-        // it gets attached to future requests to the backend API
-        //AuthService.setAccessToken(response.accessToken, response.refreshToken);
-
-        // no need to further try authentication, done here.
-        if (undefined !== this.interval) {
-          clearInterval(this.interval);
-        }
-
-        // redirects to a protected area and marks successful log-in
-        this.$router.push({ name: "app.dashboard" });
-      } catch (e) {
-        // because dHealth Network data storage is asynchronous, the
-        // backend API returns a HTTP401-Unauthorized *until* it can
-        // find the authentication challenge inside a transaction.
-        return;
+      // if we could not fetch an access token, bail out
+      if (null === response) {
+        throw new Error("Unauthorized");
       }
-    }, milliseconds);
+
+      // store the access token inside a browser cookie such that
+      // it gets attached to future requests to the backend API
+      //AuthService.setAccessToken(response.accessToken, response.refreshToken);
+
+      // no need to further try authentication, done here.
+      if (undefined !== this.interval) {
+        clearInterval(this.interval);
+      }
+
+      // redirects to a protected area and marks successful log-in
+      this.$router.push({ name: "app.dashboard" });
+    } catch (e) {
+      // because dHealth Network data storage is asynchronous, the
+      // backend API returns a HTTP401-Unauthorized *until* it can
+      // find the authentication challenge inside a transaction.
+      console.log(e);
+    }
   }
 }
