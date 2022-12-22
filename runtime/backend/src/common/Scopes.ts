@@ -41,13 +41,12 @@ import { AbstractAppModule } from "./modules/AbstractAppModule";
  * | `oauth` | {@link OAuthModule} | A oauth scope that consists in enabling OAuth data providers (e.g. Strava) and web hooks capabilities. |
  * | `users` | {@link UsersModule} | A user scope that consists in defining specific user profile information such as Activities data for Strava. |
  * <br /><br />
- * A `scheduler` scope is also included with {@link SchedulerModule} but
+ * A `scheduler` scope is also included with {@link WorkerModule} but
  * this one executes in a *parallel* process and thereby should not be
  * imported here.
  * <br /<br />
  *
- * @var {[key: string]: KnownScopeModules}
- *
+ * @var {[key: string]: AbstractAppModule}
  * @since v0.1.0
  */
 export const Scopes: { [key: string]: AbstractAppModule } = {
