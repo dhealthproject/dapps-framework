@@ -66,6 +66,7 @@
     "@types/lodash": "^4.14.189",
     "@types/mocha": "^8.2.1",
     "@types/sinon": "^10.0.12",
+    "@types/vue-select": "^3.16.2",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
@@ -101,6 +102,7 @@
     "vue-class-component": "^7.2.3",
     "vue-cli-plugin-tailwind": "^3.0.0",
     "vue-segment-analytics": "^0.5.4",
+    "vue-select": "^3.20.2",
     "vue-template-compiler": "^2.1.8",
     "webpack": "^5.73.0"
   },

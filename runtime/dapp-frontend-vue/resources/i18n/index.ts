@@ -13,6 +13,7 @@ import commonTranslations from "./en/Common.json";
 import loginTranslations from "./en/LoginScreen.json";
 import dashboardTranslations from "./en/Dashboard.json";
 import settingsTranslations from "./en/Settings.json";
+import activitiesTranslations from "./en/Activities.json";
 
 // bundle all .JSON together
 export default {
@@ -22,4 +23,5 @@ export default {
   ...loginTranslations,
   ...dashboardTranslations,
   ...settingsTranslations,
+  ...activitiesTranslations,
 };

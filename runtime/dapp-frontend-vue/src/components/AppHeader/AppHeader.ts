@@ -125,6 +125,11 @@ export default class AppHeader extends MetaView {
         icon: "icons/refer-earn.svg",
       },
       {
+        text: this.$t("common.activities"),
+        action: () => this.$router.push({ name: "app.activities" }),
+        icon: "icons/refer-earn.svg",
+      },
+      {
         text: this.$t("common.disconnect_wallet"),
         action: () => this.disconnectWallet(),
         icon: "icons/logout.svg",

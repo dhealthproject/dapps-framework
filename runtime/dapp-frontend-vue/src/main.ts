@@ -12,6 +12,8 @@ import Vue from "vue";
 import VueMeta from "vue-meta";
 import VueRouter from "vue-router";
 import Vuex from "vuex";
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 
 // segment analytics vue npm package
 // https://www.npmjs.com/package/vue-segment-analytics
@@ -36,6 +38,9 @@ import "@dhealth/components/dist/@dhealth/components.css";
 
 // importing @dhealth/components
 Vue.use(internalComponentsInstaller);
+
+// importing vSelect component
+Vue.component("v-select", vSelect);
 
 // importing Vue plugins
 Vue.use(VueMeta, { keyName: "metaInfo" });

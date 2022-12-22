@@ -100,6 +100,15 @@ export const createRouter = ($store: any): VueRouter => {
         ],
       },
       {
+        path: "/activities",
+        name: "app.activities",
+        meta: {
+          layout: "app/default",
+          middleware: [auth],
+        },
+        component: () => import("./views/Activities/Activities.vue"),
+      },
+      {
         path: "/dashboard",
         name: "app.dashboard",
         meta: {

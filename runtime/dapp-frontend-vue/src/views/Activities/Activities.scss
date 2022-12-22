@@ -1,0 +1,131 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Vue Frontend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+
+ @import "../../vars.scss";
+
+ .dapp-screen-activities {
+    text-align: left;
+
+    &__main-title {
+        color: $black;
+        font-weight: 700;
+        font-size: 20px;
+        line-height: 150%;
+        letter-spacing: -0.03em;
+        margin-bottom: 35px;
+    }
+
+    &__filters {
+        margin-bottom: 36px;
+        
+        > div {
+            width: 100%;
+            display: inline-block;
+        }
+
+        .type {
+            max-width: 148px;
+            margin-right: 83px;
+        }
+
+        .date {
+            max-width: 411px;
+        }
+    }
+
+    .balance {
+        margin-bottom: 31px;
+        letter-spacing: -0.03em;
+
+        &__row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        &__bridge {
+            img {
+                margin-inline-end: 4px;
+                display: inline-block;
+            }
+
+            .link {
+                display: inline-block;
+                color: $accent-yellow;
+                text-decoration: underline;
+                font-weight: 600;
+                font-size: 14px;
+                line-height: 120%;
+            }
+        }
+
+        &__title {
+            color: $black;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 150%;
+            margin-bottom: 8px;
+        }
+
+        &__amount {
+            font-weight: 700;
+            font-size: 30px;
+            line-height: 140%;
+            color: $button-text-dark;
+            display: inline-block;
+            margin-inline-end: 44px;
+
+            &__dhp {
+                color: $black;
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 150%;
+            }
+        }
+    }
+
+    .activities-table {
+        background-color: $white;
+        box-shadow: 3px 3px 0px $button-text-dark;
+        padding: 15px 30px;
+        border: 1px solid $black;
+        border-radius: 16px;
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+
+            &.titles {
+                padding-bottom: 53px;
+
+                .item {
+                    margin-bottom: 0;
+                }
+            }
+
+            img {
+                display: inline-block;
+                margin-inline-end: 18px;
+            }
+        }
+
+        .item {
+            text-align: center;
+            color: $black;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 150%;
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: 16.333%;
+            margin-bottom: 40px;
+        }
+    }
+ }
