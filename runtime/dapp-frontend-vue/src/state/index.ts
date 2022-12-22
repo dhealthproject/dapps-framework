@@ -14,3 +14,4 @@ export * from "./store/AuthModule";
 export * from "./store/LeaderboardModule";
 export * from "./store/OAuthModule";
 export * from "./store/StatisticsModule";
+export * from "./store/ActivitiesModule";
