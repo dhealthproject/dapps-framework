@@ -402,7 +402,7 @@ describe("common/AuthService", () => {
 
       // assert
       expect(configServiceGetCall).toHaveBeenCalledTimes(1);
-      expect(accountSessionsServiceCreateAddressCall).toHaveBeenCalledTimes(1);
+      expect(accountSessionsServiceCreateAddressCall).toHaveBeenCalledTimes(0); // not!
       expect(result).toStrictEqual(expectedResult);
     });
   });
