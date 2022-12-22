@@ -33,35 +33,24 @@ import { SignerService } from "../../../../src/payout/services/SignerService";
 import { MathService } from "../../../../src/payout/services/MathService";
 import { PrepareActivityPayouts } from "../../../../src/payout/schedulers/ActivityPayouts/PrepareActivityPayouts";
 
-const dE_2 = 100; // elevate factor with div=2
-const dE_3 = 1000; // elevate factor with div=3
-const dE_6 = 1000000; // elevate factor with div=6
 const mockActivityRewardWalkFormulaFirst = Math.round(Math.floor(
-  ((((2+5)/(4/60))*(3+5+(1/1000))/dE_2)*1.2*100) * 100 // <-- 2 zeros (L172)
+  ((2/4)*1.2) * 100 // <-- 2 zeros (L172)
 ));
 
 const mockActivityRewardWalkFormulaSecond = Math.round(Math.floor(
-  ((((4+1)/(2/60))*(3+1+(5/1000))/dE_2)*1.2*100) * 100 // <-- 2 zeros (L172)
+  ((4/2)*1.2) * 100 // <-- 2 zeros (L172)
 ));
 
 const mockActivityRewardWalkFormulaThird = Math.round(Math.floor(
-  ((((8+5)/(6/60))*(0.8+5+(9/1000))/dE_2)*1.2*100) * 100 // <-- 2 zeros (L172)
-));
-
-const mockActivityRewardWalkFormulaFirstAdjusted = Math.round(Math.floor(
-  ((((2+5)/(4/60))*(0.8+5+(1/1000))/dE_2)*1.2*100) * 100 // <-- 2 zeros (L172)
+  ((8/6)*1.2) * 100 // <-- 2 zeros (L172)
 ));
 
 const mockActivityRewardWalkFormulaFirstDiv3 = Math.round(Math.floor(
-  ((((2+5)/(4/60))*(3+5+(1/1000))/dE_3)*1.2*100) * 1000 // <-- 3 zeros
+  ((2/4)*1.2) * 1000 // <-- 3 zeros
 ));
 
 const mockActivityRewardWalkFormulaFirstDiv6 = Math.round(Math.floor(
-  ((((2+5)/(4/60))*(3+5+(1/1000))/dE_6)*1.2*100) * 1000000 // <-- 6 zeros
-));
-
-const mockActivityRewardWalkFormulaSecondAdjusted = Math.round(Math.floor(
-  ((((4+1)/(2/60))*(0.8+1+(5/1000))/dE_2)*1.2*100) * 100 // <-- 2 zeros (L172)
+  ((2/4)*1.2) * 1000000 // <-- 6 zeros
 ));
 
 const activityMocks = [
@@ -422,29 +411,6 @@ describe("payout/PrepareActivityPayouts", () => {
       expect(result1).toBe(0);
       expect(result2).toBe(0);
     });
-
-    it("should use adjustment given zero elevation", () => {
-      // act
-      const result1 = (command as any).getAssetAmount({
-        ...activityMocks[0],
-        activityData: {
-          ...activityMocks[0].activityData,
-          elevation: 0, // <-- forces call of MathService.skewNormal
-        }
-      });
-      const result2 = (command as any).getAssetAmount({
-        ...activityMocks[1],
-        activityData: {
-          ...activityMocks[1].activityData,
-          elevation: 0, // <-- forces call of MathService.skewNormal
-        }
-      });
-
-      // assert
-      expect(mathSkewNormalMock).toHaveBeenCalledTimes(2);
-      expect(result1).toBe(mockActivityRewardWalkFormulaFirstAdjusted);
-      expect(result2).toBe(mockActivityRewardWalkFormulaSecondAdjusted);
-    });
   });
 
   describe("updatePayoutSubject()", () => {
@@ -629,40 +595,6 @@ describe("payout/PrepareActivityPayouts", () => {
         {
           payoutState: PayoutState.Prepared,
           payoutAssets: expectedAssets2,
-          signedBytes: mockSignedPayload,
-          transactionHash: mockTransactionHash,
-        },
-      );
-    });
-
-    it("should use skew-normal adjustment given 0-elevation", async () => {
-      // prepare
-      (command as any).fetchSubjects = fetchSubjectsActualMock; // <-- non-empty
-      (command as any).mathService = {
-        skewNormal: jest.fn().mockReturnValue(0.8), // <-- force fake
-      };
-      const mockActivityRewardAdjusted = mockActivityRewardWalkFormulaThird;
-      const expectedAdjustedAssets = [
-        { amount: mockActivityRewardAdjusted, mosaicId: "fake-identifier" },
-      ];
-
-      // act
-      await command.execute({
-        dryRun: true,
-        debug: true,
-      });
-
-      // assert
-      expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(3); // 3 payouts
-      expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(3,
-        new PayoutQuery({
-          subjectSlug: activityMocks[2].slug,
-          subjectCollection: "activities",
-          userAddress: activityMocks[2].address,
-        } as PayoutDocument),
-        {
-          payoutState: PayoutState.Prepared,
-          payoutAssets: expectedAdjustedAssets,
           signedBytes: mockSignedPayload,
           transactionHash: mockTransactionHash,
         },
