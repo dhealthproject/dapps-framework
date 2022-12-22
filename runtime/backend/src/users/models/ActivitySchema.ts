@@ -233,6 +233,56 @@ export class Activity extends Transferable<ActivityDTO> {
   public readonly updatedAt?: Date;
 
   /**
+   * Activity type field.
+   * Gets populated once user completes an activity.
+   * <br /><br />
+   * This field is **required** and *not indexed*.
+   *
+   * @example `"swim"`
+   * @access public
+   * @var {string}
+   */
+  @Prop({ default: "" })
+  public sport: string;
+
+  /**
+   * This property represents time that user spent
+   * on completing activity.
+   * <br /><br />
+   * This field is **required** and *not indexed*.
+   *
+   * @example `"swim"`
+   * @access public
+   * @var {string}
+   */
+  @Prop({ default: 0 })
+  public elapsedTime: number;
+
+  /**
+   * This field represents distance user completed during an activity.
+   * <br /><br />
+   * This field is **required** and *not indexed*.
+   *
+   * @example `"swim"`
+   * @access public
+   * @var {string}
+   */
+  @Prop({ default: 0 })
+  public distance: number;
+
+  /**
+   * This property represents an elevation gain
+   * <br /><br />
+   * This field is **required** and *not indexed*.
+   *
+   * @example `"swim"`
+   * @access public
+   * @var {string}
+   */
+  @Prop({ default: 0 })
+  public elevationGain: number;
+
+  /**
    * This method implements a specialized query format to query items
    * individually, as documents, in the collection: `account_integrations`.
    *
@@ -267,6 +317,10 @@ export class Activity extends Transferable<ActivityDTO> {
   public static fillDTO(doc: ActivityDocument, dto: ActivityDTO): ActivityDTO {
     dto.address = doc.address;
     dto.slug = doc.slug;
+    dto.distance = doc.distance;
+    dto.sport = doc.sport;
+    dto.elevationGain = doc.elevationGain;
+    dto.elapsedTime = doc.elapsedTime;
     return dto;
   }
 }

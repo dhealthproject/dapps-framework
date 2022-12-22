@@ -72,4 +72,71 @@ export class ActivityDTO extends BaseDTO {
       "The OAuth provider name. This is usually the name of the platform of which an account has completed an activity.",
   })
   public provider: string;
+
+  /**
+   * Activity type field.
+   * Gets populated once user completes an activity.
+   * <br /><br />
+   * This field is **not required** and *not indexed*.
+   *
+   * @example `"swim"`
+   * @access public
+   * @var {string}
+   */
+  @ApiProperty({
+    type: "string",
+    example: "swim",
+    description:
+      "Sport type, gets defined by provider when user completes an activity",
+  })
+  public sport: string;
+
+  /**
+   * This property represents time that user spent
+   * on completing activity.
+   * <br /><br />
+   * This field is **not required** and *not indexed*.
+   *
+   * @example `"swim"`
+   * @access public
+   * @var {string}
+   */
+  @ApiProperty({
+    type: "number",
+    example: "234",
+    description: "Time that user spent on completing activity",
+  })
+  public elapsedTime: number;
+
+  /**
+   * This field represents distance user completed during an activity.
+   * <br /><br />
+   * This field is **not required** and *not indexed*.
+   *
+   * @example `"swim"`
+   * @access public
+   * @var {string}
+   */
+  @ApiProperty({
+    type: "number",
+    example: "100",
+    description: "Distance completed by user per activity",
+  })
+  public distance: number;
+
+  /**
+   * This property represents an elevation gain
+   * <br /><br />
+   * This field is **not required** and *not indexed*.
+   *
+   * @example `"swim"`
+   * @access public
+   * @var {string}
+   */
+  @ApiProperty({
+    type: "number",
+    example: "10",
+    description: "Elevation gain received per activity",
+  })
+  public elevationGain: number;
 }
