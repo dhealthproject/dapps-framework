@@ -13,6 +13,12 @@ import VueMeta from "vue-meta";
 import VueRouter from "vue-router";
 import Vuex from "vuex";
 
+// segment analytics vue npm package
+// https://www.npmjs.com/package/vue-segment-analytics
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import VueSegmentAnalytics from "vue-segment-analytics";
+
 // internal dependencies
 import "./registerServiceWorker";
 import internalComponentsInstaller from "@dhealth/components";
@@ -66,6 +72,15 @@ Vue.directive("click-outside", {
     document.body.removeEventListener("click", el.clickOutsideEvent);
   },
 });
+
+// importing Vue segment analytics plugin
+// VUE_APP_SEGMENT_WRITE_KEY value can be found in your segment account
+if (process.env.VUE_APP_SEGMENT_WRITE_KEY) {
+  const segmentApiKey = process.env.VUE_APP_SEGMENT_WRITE_KEY;
+  Vue.use(VueSegmentAnalytics, {
+    id: segmentApiKey,
+  });
+}
 
 /**
  * This helper creates a `vue` instance using a `vuex` store

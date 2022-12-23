@@ -100,6 +100,7 @@
     "utf-8-validate": "^5.0.9",
     "vue-class-component": "^7.2.3",
     "vue-cli-plugin-tailwind": "^3.0.0",
+    "vue-segment-analytics": "^0.5.4",
     "vue-template-compiler": "^2.1.8",
     "webpack": "^5.73.0"
   },
