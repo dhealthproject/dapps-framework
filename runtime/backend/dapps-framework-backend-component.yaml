@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: dapps-framework-backend-component
+  # This is an extra long description
+  description: The dapps framework backend component is the main component for dapp apis.
+  links:
+    - url: https://github.com/dhealthproject/dapps-framework/tree/main/runtime/backend
+      title: GitHub Repo
+      icon: github
+spec:
+  type: service
+  lifecycle: experimental
+  owner: dHealth devs
+  providesApis:
+    - elevate-api
