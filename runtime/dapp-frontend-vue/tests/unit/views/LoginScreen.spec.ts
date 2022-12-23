@@ -68,8 +68,12 @@ describe("LoginScreen -->", () => {
   });
 
   it("should display display button on mobile", () => {
-    expect(widget.find(".login-mobile").text()).to.be.equal(
-      "Sign with Signer App"
+    expect(widget.find(".login-mobile").exists()).to.be.true;
+  });
+
+  it("should generate correct href for mobile login button", () => {
+    expect(widget.find(".login-mobile").attributes()["href"]).to.be.equal(
+      `dhealth://sign?payload=${widget.vm.qrConfig?.toJSON()}`
     );
   });
 
