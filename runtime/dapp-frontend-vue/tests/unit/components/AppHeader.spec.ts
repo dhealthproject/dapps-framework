@@ -33,6 +33,7 @@ const componentOptions = {
     getImageUrl,
     formatAmount,
     $route: { params: {} },
+    $t: jest.fn(),
   },
 };
 
