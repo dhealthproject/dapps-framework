@@ -12,6 +12,8 @@ import { Module } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
 import { MongooseModule } from "@nestjs/mongoose";
+import { SchedulerRegistry } from "@nestjs/schedule";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { AccountSessionsModule } from "./AccountSessionsModule";
@@ -22,6 +24,7 @@ import { LogModule } from "../modules/LogModule";
 import { AuthService } from "../services/AuthService";
 import { AuthStrategy } from "../traits/AuthStrategy";
 import { AuthController } from "../routes/AuthController";
+import { ValidateChallengeScheduler } from "../schedulers/ValidateChallengeScheduler";
 import {
   AuthChallenge,
   AuthChallengeSchema,
@@ -76,6 +79,9 @@ const auth = securityConfigLoader().auth;
     RefreshStrategy,
     CipherService,
     AuthGateway,
+    ValidateChallengeScheduler,
+    SchedulerRegistry,
+    // EventEmitter2,
   ],
   exports: [AuthService, CipherService],
 })

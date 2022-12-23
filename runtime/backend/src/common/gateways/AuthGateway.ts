@@ -16,8 +16,10 @@ import {
   OnGatewayInit,
   OnGatewayDisconnect,
 } from "@nestjs/websockets";
+import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 
 // internal dependencies
+import { ValidateChallengeScheduler } from "../schedulers/ValidateChallengeScheduler";
 import { BaseGateway } from "./BaseGateway";
 import dappConfigLoader from "../../../config/dapp";
 
@@ -35,9 +37,21 @@ export class AuthGateway
     OnGatewayInit,
     OnGatewayDisconnect
 {
-  @SubscribeMessage("auth.open")
-  handleEvent(@MessageBody() message: any) {
-    console.log("AUTHGATEWAY: Connection open");
+  constructor(
+    private readonly validateChallengeScheduler: ValidateChallengeScheduler,
+    protected readonly emitter: EventEmitter2,
+  ) {
+    super(emitter);
+  }
+
+  @OnEvent("auth.open")
+  handleEvent(payload: any) {
+    console.log("AUTHGATEWAY: Connection open", { payload });
+    // this.validateChallengeScheduler.addCronJob(
+    //   "*/10 * * * * *", // 10 sec
+    //   payload.challenge,
+    // );
+    console.log({ payload });
     return { msg: "You're connected" };
   }
 

@@ -20,10 +20,11 @@ import {
 import { Server } from "https";
 import cookie from "cookie";
 import cookieParser from "cookie-parser";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import dappConfigLoader from "../../../config/dapp";
-import { AuthService } from "../services";
+import { LogService } from "../services";
 
 const dappConfig = dappConfigLoader();
 
@@ -36,11 +37,12 @@ const dappConfig = dappConfigLoader();
 export abstract class BaseGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(private readonly authService: AuthService) {
+  constructor(protected readonly emitter: EventEmitter2) {
     this.clients = [];
+    this.logger = new LogService(`${dappConfig.dappName}/gateway`);
   }
 
-  public validationInterval: any = null;
+  protected logger: LogService;
 
   @WebSocketServer()
   protected server: any;
@@ -48,71 +50,32 @@ export abstract class BaseGateway
   protected clients: string[];
 
   async handleConnection(ws: any, req: any) {
-    // const challenge = this.getChallengeFromUrl(client);
-    // this.clients.push(challenge);
-    console.log(req.headers.cookie);
-
-    const cookies = req.headers.cookie.split(";");
-    const challenge = cookies.find((cookie: string) =>
-      cookie.trim().includes("challenge"),
-    );
-
+    // parse challenge from cookie
     const c: any = cookie.parse(req.headers.cookie);
     const decoded = cookieParser.signedCookie(
       decodeURIComponent(c.challenge),
       process.env.SECURITY_AUTH_TOKEN_SECRET,
-    );
+    ) as string;
 
-    console.log({ decoded });
+    // add cookie to ws object
+    ws.challenge = decoded;
+    // push challenge to client list
+    this.clients.push(decoded);
 
-    this.clients.push(challenge.split("=")[1]);
-    ws.challenge = challenge;
+    // trigger auth.open event with challenge passed
+    this.emitter.emit("auth.open", { challenge: decoded });
 
-    ws.emit("received_challenge", { challenge });
-
-    console.log("client connected", this.clients);
-    this.performValidation(challenge.split("=")[1], ws);
-
-    // console.log("cookie: ", req.headers);
-  }
-
-  performValidation(challenge: string, client: any) {
-    this.validationInterval = setInterval(async () => {
-      try {
-        const isValid = await this.authService.validateChallenge(challenge);
-        console.log({ address: isValid.address });
-
-        if (isValid.address) {
-          client.send("allowed_authentication");
-          clearInterval(this.validationInterval);
-        }
-      } catch (err) {
-        console.log({ isValid: false });
-      }
-    }, 10000);
+    this.logger.log("client connected", this.clients);
   }
 
   handleDisconnect(ws: any) {
-    // const challenge = this.getChallengeFromUrl(client);
-    console.log("BASEGATEWAY: Client disconnected");
-    const str = ws.challenge.split("=")[1];
+    const str = ws.challenge;
     this.clients = this.clients.filter((c) => c !== str);
-    console.log("disconnect: ", this.clients);
-    clearInterval(this.validationInterval);
 
-    // this.clients = this.clients.filter(
-    //   (clientId) => clientId !== server.client.id,
-    // );
+    this.logger.log("Client disconnected", this.clients);
   }
 
   afterInit(server: Server) {
-    console.log("GATEWAY INITIALIZED");
-  }
-
-  protected getChallengeFromUrl(client: any) {
-    const { url } = client;
-    const challenge = url.split("=")[1];
-
-    return challenge;
+    this.logger.log("Gateway initialized");
   }
 }

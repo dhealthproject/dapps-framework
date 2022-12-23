@@ -10,6 +10,7 @@
 // internal dependencies
 // common scope
 import { AppConfiguration } from "../AppConfiguration";
+import { ValidateChallengeScheduler } from "./schedulers/ValidateChallengeScheduler";
 
 // discovery scope
 import { DiscoveryAccountsModule } from "../discovery/modules/DiscoveryAccountsModule";
@@ -71,6 +72,7 @@ import { ReportNotifierCommand } from "../notifier/schedulers/ReportNotifier/Rep
  * @since v0.1.0
  */
 export const Schedulers: { [key: string]: any[] } = {
+  common: [ValidateChallengeScheduler],
   database: [AppConfiguration.getDatabaseModule()],
   discovery: [
     DiscoveryAccountsModule,
