@@ -18,7 +18,8 @@ import {
   MessageBody,
 } from "@nestjs/websockets";
 import { Server } from "https";
-import { JwtService } from "@nestjs/jwt";
+import cookie from "cookie";
+import cookieParser from "cookie-parser";
 
 // internal dependencies
 import dappConfigLoader from "../../../config/dapp";
@@ -49,10 +50,20 @@ export abstract class BaseGateway
   async handleConnection(ws: any, req: any) {
     // const challenge = this.getChallengeFromUrl(client);
     // this.clients.push(challenge);
+    console.log(req.headers.cookie);
+
     const cookies = req.headers.cookie.split(";");
     const challenge = cookies.find((cookie: string) =>
       cookie.trim().includes("challenge"),
     );
+
+    const c: any = cookie.parse(req.headers.cookie);
+    const decoded = cookieParser.signedCookie(
+      decodeURIComponent(c.challenge),
+      process.env.SECURITY_AUTH_TOKEN_SECRET,
+    );
+
+    console.log({ decoded });
 
     this.clients.push(challenge.split("=")[1]);
     ws.challenge = challenge;

@@ -202,7 +202,7 @@ export class AuthController {
     response.cookie("challenge", authChallenge, {
       httpOnly: true,
       domain: authCookie.domain,
-      signed: false,
+      signed: true,
     });
 
     // serves the authentication challenge
