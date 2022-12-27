@@ -92,7 +92,6 @@ export interface DiscoverTransactionsCommandOptions
  * scheduler. Contains source code for the execution logic of a
  * command with name: `discovery:DiscoverTransactions`.
  *
- * @todo Should use `BigInt` in {@link extractTransactionBlock} because `height.compact()` is not protected for number overflow.
  * @since v0.2.0
  */
 @Injectable()
@@ -332,10 +331,9 @@ export class DiscoverTransactions extends DiscoveryCommand {
 
     // executes the actual command logic (this will call discover())
     // additionally, updates state.data.lastUsedAccount
-    // @todo remove debug flag for staging/production releases
     await this.run(["both"], {
       source,
-      debug: false,
+      debug: process.env.NODE_ENV === "development",
     } as DiscoveryCommandOptions);
   }
 
@@ -736,7 +734,6 @@ export class DiscoverTransactions extends DiscoveryCommand {
    * The transaction header can always be re-created using the other fields
    * present in the {@link Transaction} document.
    *
-   * @todo Move to a bytes-optimized storage format for payloads (only message is necessary)
    * @param {Transaction} transaction
    * @returns {string}
    */
