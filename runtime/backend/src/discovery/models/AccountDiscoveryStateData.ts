@@ -25,6 +25,18 @@ import type { StateData } from "../../common/models/StateData";
  */
 export class AccountDiscoveryStateData implements StateData {
   /**
+   * Contains the *address* of the last account that was used
+   * in the *transaction* discovery. This is used in the case
+   * of runtime configuration that contains **more than one**
+   * discovery source and permits to track multiple accounts
+   * sequentially.
+   *
+   * @access public
+   * @var {string}
+   */
+  public lastUsedAccount: string;
+
+  /**
    * Contains the last page number that was used in the
    * transactions database query. Since accounts are all
    * discovery from transactions, we only need to read a
