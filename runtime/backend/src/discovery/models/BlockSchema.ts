@@ -27,7 +27,6 @@ import { BlockDTO } from "./BlockDTO";
  * Note that this class uses the generic {@link Transferable} trait to
  * enable a `toDTO()` method on the model.
  *
- * @todo The {@link Asset} model does not need fields to be **public**.
  * @todo Timestamp fields should be **numbers** to avoid timezone issues.
  * @since v0.3.2
  */
