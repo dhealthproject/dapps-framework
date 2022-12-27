@@ -328,7 +328,7 @@ export default class LoginScreen extends MetaView {
 
     const handler = this.fetchToken;
     this.wsConnection.onmessage = function (evt: any) {
-      if (evt.data === "allowed_authentication") {
+      if (evt.data === "auth.open") {
         handler();
       }
     };

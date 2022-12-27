@@ -45,7 +45,7 @@ export abstract class BaseGateway
   protected logger: LogService;
 
   @WebSocketServer()
-  protected server: any;
+  server: any;
 
   protected clients: string[];
 
@@ -64,6 +64,7 @@ export abstract class BaseGateway
 
     // trigger auth.open event with challenge passed
     this.emitter.emit("auth.open", { challenge: decoded });
+    ws.emit("connection_test", { msg: "its a test" });
 
     this.logger.log("client connected", this.clients);
   }

@@ -42,6 +42,7 @@ import {
   AccountSessionQuery,
 } from "../models/AccountSessionSchema";
 import { AccountSessionsService } from "./AccountSessionsService";
+import { AuthGateway } from "../gateways/AuthGateway";
 
 // configuration resources
 import dappConfigLoader from "../../../config/dapp";
@@ -218,6 +219,7 @@ export class AuthService {
     private readonly accountSessionsService: AccountSessionsService,
     private readonly challengesService: ChallengesService,
     private jwtService: JwtService,
+    protected readonly authGateWay: AuthGateway,
   ) {
     const name = this.configService.get<string>("dappName");
     const domain = this.configService.get<string>("frontendApp.host");
@@ -359,6 +361,8 @@ export class AuthService {
         usedAt: new Date().valueOf(),
       },
     );
+
+    this.authGateWay.server.emit("auth.complete");
 
     // returns the authorized user details
     return authorizedUser;

@@ -19,19 +19,15 @@ export class ValidateChallengeScheduler {
   constructor(
     private readonly schedulerRegistry: SchedulerRegistry,
     protected readonly authService: AuthService,
-  ) {}
-
-  protected job: CronJob;
-
-  public addCronJob(cronExpression: string, challenge: string) {
+  ) {
     this.job = new CronJob(
-      cronExpression, // cronTime
-      this.validate.bind(this, challenge), // onTick
+      this.cronExpression, // cronTime
+      this.validate.bind(this), // onTick
       undefined, // empty onComplete
       false, // "startNow" (done with L183)
       undefined, // timeZone
       undefined, // empty resolves to default context
-      true, // "runOnInit"
+      false, // "runOnInit"
     );
 
     // add cron to nest scheduler registry
@@ -39,17 +35,43 @@ export class ValidateChallengeScheduler {
       `statistics:cronjobs:leaderboards:D`,
       this.job,
     );
-
-    this.job.start();
-
-    console.log("VALIDATION SCHEDULER IS UP AND RUNNING!!!!!!!!!!!!!!!!!!!!!!");
   }
 
-  protected validate(challenge: string) {
-    this.authService.validateChallenge(challenge);
+  protected cronExpression = "*/10 * * * * *"; // each 10 seconds
+
+  protected job: CronJob;
+
+  protected challenge: string;
+
+  protected stopCronJobTimeout: any;
+
+  protected stopTimeoutAmount = 1800000;
+
+  protected async validate() {
+    try {
+      const payload = await this.authService.validateChallenge(this.challenge);
+      // after challenge validated successfully - stop running cron
+      this.stopCronJob();
+      console.log({ payload });
+    } catch (err) {
+      console.log("Error validate()", err);
+    }
   }
 
   protected stopCronJob() {
     this.job.stop();
+    this.challenge = "";
+    clearTimeout(this.stopCronJobTimeout);
+  }
+
+  public startCronJob(challenge: string) {
+    this.challenge = challenge;
+
+    this.job.start();
+
+    // stop cronjob in case if challenge wasn't validated during 30 minutes
+    this.stopCronJobTimeout = setTimeout(() => {
+      this.stopCronJob();
+    }, this.stopTimeoutAmount);
   }
 }

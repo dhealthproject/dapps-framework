@@ -8,34 +8,17 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import {
-  SubscribeMessage,
-  WebSocketGateway,
-  MessageBody,
-  OnGatewayConnection,
-  OnGatewayInit,
-  OnGatewayDisconnect,
-} from "@nestjs/websockets";
+import { Injectable } from "@nestjs/common";
+import { SubscribeMessage } from "@nestjs/websockets";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { ValidateChallengeScheduler } from "../schedulers/ValidateChallengeScheduler";
 import { BaseGateway } from "./BaseGateway";
-import dappConfigLoader from "../../../config/dapp";
 
-const dappConfig = dappConfigLoader();
-@WebSocketGateway(80, {
-  namespace: `${dappConfig.dappName}`,
-  cors: {
-    origin: process.env.FRONTEND_URL,
-  },
-})
+@Injectable()
 export class AuthGateway
   extends BaseGateway
-  implements 
-    OnGatewayConnection,
-    OnGatewayInit,
-    OnGatewayDisconnect
 {
   constructor(
     private readonly validateChallengeScheduler: ValidateChallengeScheduler,
@@ -46,12 +29,7 @@ export class AuthGateway
 
   @OnEvent("auth.open")
   handleEvent(payload: any) {
-    console.log("AUTHGATEWAY: Connection open", { payload });
-    // this.validateChallengeScheduler.addCronJob(
-    //   "*/10 * * * * *", // 10 sec
-    //   payload.challenge,
-    // );
-    console.log({ payload });
+    this.validateChallengeScheduler.startCronJob(payload.challenge);
     return { msg: "You're connected" };
   }
 
