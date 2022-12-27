@@ -193,21 +193,23 @@ describe("discovery/DiscoverAccounts", () => {
         .mockReturnValue({
           address: { plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY" }
         } as any);
+      jest
+        .spyOn((service as any), "getNextSource")
+        .mockResolvedValue("test-source");
 
       // act
       await service.runAsScheduler();
 
       // assert
-      expect(configServiceGetCall).toHaveBeenCalledTimes(2);
-      expect(configServiceGetCall).toHaveBeenCalledWith("dappPublicKey");
-      expect(configServiceGetCall).toHaveBeenCalledWith("network.networkIdentifier");
+      expect(configServiceGetCall).toHaveBeenCalledTimes(1);
+      expect(configServiceGetCall).toHaveBeenCalledWith("discovery.sources");
       expect((service as any).lastExecutedAt).toBe(1643673600000);
       expect(superRun).toHaveBeenNthCalledWith(
         1,
         [],
         {
-          source: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
-          debug: false,
+          source: "test-source",
+          debug: true,
         }
       );
     });
@@ -258,8 +260,10 @@ describe("discovery/DiscoverAccounts", () => {
       // prepare
       const transactionsServiceFindCall = jest.spyOn(transactionsService, "find").mockResolvedValueOnce({
         data: fakeCreateTransactionDocuments(100), // full page ONCE
+        isLastPage: () => false,
       } as PaginatedResultDTO<TransactionDocument>).mockResolvedValueOnce({
         data: [], // empty page
+        isLastPage: () => true,
       } as PaginatedResultDTO<TransactionDocument>);
 
       // act
@@ -294,8 +298,10 @@ describe("discovery/DiscoverAccounts", () => {
       // prepare
       const transactionsServiceFindCall = jest.spyOn(transactionsService, "find").mockResolvedValueOnce({
         data: fakeCreateTransactionDocuments(100), // full page ONCE
+        isLastPage: () => false,
       } as PaginatedResultDTO<TransactionDocument>).mockResolvedValueOnce({
         data: fakeCreateTransactionDocuments(20), // not full
+        isLastPage: () => false,
       } as PaginatedResultDTO<TransactionDocument>);
 
       // act
@@ -330,6 +336,7 @@ describe("discovery/DiscoverAccounts", () => {
       // prepare
       const transactionsServiceFindCall = jest.spyOn(transactionsService, "find").mockResolvedValueOnce({
         data: fakeCreateTransactionDocuments(100), // full page
+        isLastPage: () => false,
       } as PaginatedResultDTO<TransactionDocument>);
 
       // act
@@ -405,6 +412,7 @@ describe("discovery/DiscoverAccounts", () => {
       .spyOn(transactionsService, "find")
         .mockResolvedValue({
           data: fakeCreateTransactionDocuments(3), // page is not full
+          isLastPage: () => false,
         } as PaginatedResultDTO<TransactionDocument>);
 
       // act
@@ -517,7 +525,8 @@ describe("discovery/DiscoverAccounts", () => {
         .fn()
         .mockResolvedValue({
           data: fakeCreateTransactionDocuments(3), // page is not full
-        });
+          isLastPage: () => false,
+        } as PaginatedResultDTO<TransactionDocument>);
       (service as any).transactionsService.find = transactionsServiceFindCall;
 
       // act
