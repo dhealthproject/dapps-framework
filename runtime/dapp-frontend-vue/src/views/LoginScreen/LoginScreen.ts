@@ -276,6 +276,14 @@ export default class LoginScreen extends MetaView {
     );
   }
 
+  /**
+   * This property contains
+   * client side websocket connection
+   * which is getting initialized on mounted() hook.
+   *
+   * @access public
+   * @returns {any}
+   */
   public wsConnection: any = null;
 
   /**
@@ -328,14 +336,10 @@ export default class LoginScreen extends MetaView {
 
     const handler = this.fetchToken;
     this.wsConnection.onmessage = function (evt: any) {
-      if (evt.data === "auth.open") {
+      if (evt.data === "auth.complete") {
         handler();
       }
     };
-
-    // this.wsConnection.emit("auth.open", { data: "test msg" }, (res: any) => {
-    //   console.log({ res });
-    // });
 
     try {
       // make sure referral code is saved
@@ -390,6 +394,7 @@ export default class LoginScreen extends MetaView {
       clearTimeout(this.globalIntervalTimer);
     }
 
+    // close connection when route left
     this.wsConnection.close();
   }
 
