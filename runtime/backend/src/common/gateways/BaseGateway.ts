@@ -56,7 +56,6 @@ export abstract class BaseGateway
    * @access public
    * @param   {EventEmitter2}      emitter     Emitting events once connections/updates appear.
    * @param   {Array}              clients     Store connected client challenges.
-   * @param   {LogService}         logger      Log important data to console or files based on configuration.
    */
   constructor(protected readonly emitter: EventEmitter2) {
     this.clients = [];
