@@ -53,7 +53,7 @@ export class AuthGateway extends BaseGateway {
    * @returns {void}  Emits "auth.open" event which triggers validating of the received challenge
    */
   @OnEvent("auth.open")
-  handleEvent(payload: any) {
+  handleAuthOpen(payload: any) {
     this.validateChallengeScheduler.startCronJob(payload.challenge);
   }
 

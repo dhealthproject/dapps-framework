@@ -67,6 +67,7 @@ const conf = dappConfigLoader();
  *   name: "ELEVATE",
  *   domain: "elevate.dhealth.com",
  *   secret: "AuthSecretUsedToSignCookies",
+ *   challenge: "fakeChallenge"
  * } as CookiePayload;
  * ```
  *
@@ -76,6 +77,7 @@ export interface CookiePayload {
   name: string;
   domain: string;
   secret?: string;
+  challenge?: string;
 }
 
 /**
@@ -223,9 +225,10 @@ export class AuthService {
     const name = this.configService.get<string>("dappName");
     const domain = this.configService.get<string>("frontendApp.host");
     const secret = this.configService.get<string>("auth.secret");
+    const challenge = this.configService.get<string>("challenge");
 
     // configures cookie(s) creation
-    this.cookie = { name, domain, secret } as CookiePayload;
+    this.cookie = { name, domain, secret, challenge } as CookiePayload;
     this.challengeSize = this.configService.get<number>("auth.challengeSize");
     this.authSecret = secret;
   }

@@ -161,6 +161,11 @@ jest.mock("../../../src/users/UsersModule", () => {
 });
 
 // schedulers
+const ValidateChallengeSchedulerMock: any = jest.fn();
+jest.mock("../../../src/common/schedulers/ValidateChallengeScheduler", () => {
+  return { ValidateChallengeScheduler: ValidateChallengeSchedulerMock };
+});
+
 const DiscoverAccountsCommandMock: any = jest.fn();
 jest.mock(
   "../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand",
@@ -205,7 +210,9 @@ const LeaderboardsAggregationCommandMock: any = jest.fn();
 jest.mock(
   "../../../src/statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand",
   () => {
-    return { LeaderboardsAggregationCommand: LeaderboardsAggregationCommandMock };
+    return {
+      LeaderboardsAggregationCommand: LeaderboardsAggregationCommandMock,
+    };
   },
 );
 
@@ -230,7 +237,7 @@ jest.mock(
   "../../../src/payout/schedulers/ActivityPayouts/ActivityPayoutsCommand",
   () => {
     return { ActivityPayoutsCommand: ActivityPayoutsCommandMock };
-  }
+  },
 );
 
 const ReportNotifierCommandMock: any = { register: jest.fn() };
@@ -250,14 +257,14 @@ const mockDappConfig: DappConfig = {
     url: "test-url",
     host: "test-host",
     port: "test-port",
-    https: false
+    https: false,
   },
   backendApp: {
     url: "test-url",
     host: "test-host",
     port: "test-port",
-    https: false
-  }
+    https: false,
+  },
 };
 
 // internal dependencies

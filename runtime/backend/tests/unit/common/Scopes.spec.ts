@@ -155,6 +155,11 @@ jest.mock("../../../src/users/UsersModule", () => {
 });
 
 // schedulers
+const ValidateChallengeSchedulerMock: any = jest.fn();
+jest.mock("../../../src/common/schedulers/ValidateChallengeScheduler", () => {
+  return { ValidateChallengeScheduler: ValidateChallengeSchedulerMock };
+});
+
 const DiscoverAccountsCommandMock: any = jest.fn();
 jest.mock(
   "../../../src/discovery/schedulers/DiscoverAccounts/DiscoverAccountsCommand",
@@ -199,7 +204,9 @@ const LeaderboardsAggregationCommandMock: any = jest.fn();
 jest.mock(
   "../../../src/statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand",
   () => {
-    return { LeaderboardsAggregationCommand: LeaderboardsAggregationCommandMock };
+    return {
+      LeaderboardsAggregationCommand: LeaderboardsAggregationCommandMock,
+    };
   },
 );
 
@@ -224,7 +231,7 @@ jest.mock(
   "../../../src/payout/schedulers/ActivityPayouts/ActivityPayoutsCommand",
   () => {
     return { ActivityPayoutsCommand: ActivityPayoutsCommandMock };
-  }
+  },
 );
 
 const ReportNotifierCommandMock: any = { register: jest.fn() };
@@ -251,8 +258,7 @@ class MockFactory extends ScopeFactory {
 }
 
 describe("common/Scopes", () => {
-  let dappConfig: any,
-      actualModules: any[];
+  let dappConfig: any, actualModules: any[];
   beforeEach(() => {
     // prepare for all (includes database scope)
     dappConfig = {
@@ -260,13 +266,20 @@ describe("common/Scopes", () => {
       dappPublicKey: "FakePublicKeyOfAdApp",
       authAuthority: "NonExistingAuthority",
       scopes: ["database"],
-      database: { host: "fake-host", port: 1234, name: "fake-db-name", user: "fake-user" },
+      database: {
+        host: "fake-host",
+        port: 1234,
+        name: "fake-db-name",
+        user: "fake-user",
+      },
     };
   });
 
   it("should use environment variables from mocks", () => {
     // assert
-    expect(process.env.ANOTHER_DB_NAME_THROUGH_ENV).toEqual("this-exists-only-in-mock");
+    expect(process.env.ANOTHER_DB_NAME_THROUGH_ENV).toEqual(
+      "this-exists-only-in-mock",
+    );
   });
 
   it("should include database scope in enabled modules", () => {

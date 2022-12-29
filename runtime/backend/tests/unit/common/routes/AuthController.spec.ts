@@ -82,9 +82,12 @@ describe("common/AuthController", () => {
         .spyOn(authService, "getChallenge")
         .mockReturnValue(challenge);
       const expectedResult = { challenge };
+      const responseCookieCall = jest.fn();
 
       // act
-      const result = await (controller as any).getAuthCode();
+      const result = await (controller as any).getAuthCode({
+        cookie: responseCookieCall,
+      });
 
       // assert
       expect(authServiceGetChallengeCall).toHaveBeenCalledTimes(1);
@@ -107,11 +110,12 @@ describe("common/AuthController", () => {
           sub: "testSub",
           address: "testAddress",
         });
-      const tokens = new AccessTokenDTO();
-      tokens.accessToken = "testAccessToken";
-      tokens.refreshToken = "testRefreshToken";
-      tokens.expiresAt = 1;
-      
+
+      const tokens = {
+        accessToken: "testAccessToken",
+        refreshToken: "testRefreshToken",
+        expiresAt: 1,
+      } as AccessTokenDTO;
       const authServiceGetAccessTokenCall = jest
         .spyOn(authService, "getAccessToken")
         .mockResolvedValue(tokens);
@@ -120,7 +124,7 @@ describe("common/AuthController", () => {
       // act
       const result = await (controller as any).getAccessToken(
         { challenge: "testChallenge" },
-        { cookie: responseCookieCall }
+        { cookie: responseCookieCall },
       );
 
       // assert
@@ -144,9 +148,9 @@ describe("common/AuthController", () => {
         .mockResolvedValue(null);
 
       // act
-      const result = await (controller as any).getAccessToken(
-        { challenge: "testChallenge" }
-      );
+      const result = await (controller as any).getAccessToken({
+        challenge: "testChallenge",
+      });
 
       // assert
       expect(authServiceGetCookieCall).toHaveBeenCalledTimes(1);
@@ -183,9 +187,9 @@ describe("common/AuthController", () => {
         });
 
       // act
-      const result = (controller as any).getAccessToken(
-        { challenge: "testChallenge" }
-      );
+      const result = (controller as any).getAccessToken({
+        challenge: "testChallenge",
+      });
 
       // assert
       expect(authServiceGetCookieCall).toHaveBeenCalledTimes(1);
@@ -197,11 +201,11 @@ describe("common/AuthController", () => {
     it("should return correct result", async () => {
       // prepare
       const authServiceGetCookieCall = jest
-      .spyOn(authService, "getCookie")
-      .mockReturnValue({
-        name: "testCookie",
-        domain: "testDomain",
-      });
+        .spyOn(authService, "getCookie")
+        .mockReturnValue({
+          name: "testCookie",
+          domain: "testDomain",
+        });
       const authServiceExtractTokenCall = jest
         .spyOn(AuthService, "extractToken")
         .mockReturnValue("testToken");
@@ -219,10 +223,9 @@ describe("common/AuthController", () => {
       const responseCookieCall = jest.fn();
 
       // act
-      const result = await (controller as any).refreshTokens(
-        jest.fn(),
-        { cookie: responseCookieCall }
-      );
+      const result = await (controller as any).refreshTokens(jest.fn(), {
+        cookie: responseCookieCall,
+      });
 
       // assert
       expect(authServiceGetCookieCall).toHaveBeenCalledTimes(1);
@@ -244,10 +247,9 @@ describe("common/AuthController", () => {
       const responseCookieCall = jest.fn();
 
       // act
-      const result = (controller as any).refreshTokens(
-        jest.fn(),
-        { cookie: responseCookieCall }
-      );
+      const result = (controller as any).refreshTokens(jest.fn(), {
+        cookie: responseCookieCall,
+      });
 
       // assert
       expect(authServiceGetCookieCall).toHaveBeenCalledTimes(1);
@@ -277,16 +279,16 @@ describe("common/AuthController", () => {
       expect(result).rejects.toThrowError(expectedError);
     });
   });
-  
+
   describe("logout()", () => {
     it("should return correct result", async () => {
       // prepare
       const authServiceGetCookieCall = jest
-      .spyOn(authService, "getCookie")
-      .mockReturnValue({
-        name: "testCookie",
-        domain: "testDomain",
-      });
+        .spyOn(authService, "getCookie")
+        .mockReturnValue({
+          name: "testCookie",
+          domain: "testDomain",
+        });
       const responseCookieCall = jest.fn();
       const expectedResult = {
         code: 200,
@@ -294,9 +296,9 @@ describe("common/AuthController", () => {
       };
 
       // act
-      const result = await (controller as any).logout(
-        { cookie: responseCookieCall }
-      );
+      const result = await (controller as any).logout({
+        cookie: responseCookieCall,
+      });
 
       // assert
       expect(authServiceGetCookieCall).toHaveBeenCalledTimes(1);
