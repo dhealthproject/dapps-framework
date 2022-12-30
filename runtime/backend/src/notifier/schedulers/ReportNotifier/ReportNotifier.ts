@@ -295,8 +295,15 @@ export abstract class ReportNotifier extends NotifierCommand {
     this.notifier.sendInternal({
       to: this.reportsConfig.recipient,
       subject: `[${dappName}] LOGS REPORT for dApp (${dappUrl}) from ${dateStart} to ${dateEnd}`,
-      text: `The production logs for ${dappName} (${dappUrl}) from ${dateStart} to ${dateEnd} can be found as an attachment to this email.`,
-      html: `The production logs for ${dappName} (${dappUrl}) from <b>${dateStart}</b> to <b>${dateEnd}</b> can be found as an attachment to this email.`,
+      template: "ReportEmailTemplate", // The `.pug` or `.hbs` extension is appended automatically.
+      context: {
+        // Data to be sent to template engine.
+        alertLevel: "WARNING",
+        dappName,
+        dappUrl,
+        dateStart,
+        dateEnd,
+      },
       attachments: [
         {
           // binary buffer as an attachment
