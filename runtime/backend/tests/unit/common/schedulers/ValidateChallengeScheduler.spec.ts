@@ -8,6 +8,16 @@
  * @license     LGPL-3.0
  */
 
+const jobStartCall = jest.fn();
+const jobStopCall = jest.fn();
+jest.mock("cron", () => {
+  return {
+    CronJob: jest.fn().mockImplementation(() => {
+      return { start: jobStartCall, stop: jobStopCall };
+    }),
+  };
+});
+
 // external dependencies
 import { TestingModule, Test } from "@nestjs/testing";
 import { SchedulerRegistry } from "@nestjs/schedule";
@@ -17,7 +27,10 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { getModelToken } from "@nestjs/mongoose";
 
 // internal dependencies
-import { AuthService } from "../../../../src/common/services/AuthService";
+import {
+  AuthService,
+  AuthenticationPayload,
+} from "../../../../src/common/services/AuthService";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
@@ -27,6 +40,7 @@ import { ValidateChallengeScheduler } from "../../../../src/common/schedulers/Va
 
 describe("common/ValidateChallengeScheduler", () => {
   let validateChallengeScheduler: ValidateChallengeScheduler;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -59,6 +73,7 @@ describe("common/ValidateChallengeScheduler", () => {
     validateChallengeScheduler = module.get<ValidateChallengeScheduler>(
       ValidateChallengeScheduler,
     );
+    authService = module.get<AuthService>(AuthService);
   });
 
   it("should be defined", () => {
@@ -145,7 +160,6 @@ describe("common/ValidateChallengeScheduler", () => {
     });
 
     it("should clear stopTimeout", () => {
-      const clearTimeout = jest.fn();
       (validateChallengeScheduler as any).startCronJob();
       (validateChallengeScheduler as any).stopCronJob();
 
@@ -156,31 +170,54 @@ describe("common/ValidateChallengeScheduler", () => {
   });
 
   describe("validate()", () => {
-    it("should call validateChallenge", () => {
-      const mockedValidate = jest.fn();
+    it("should call validateChallenge", async () => {
+      const mockedValidate = jest
+        .spyOn(authService, "validateChallenge")
+        .mockResolvedValue({} as AuthenticationPayload);
 
-      (validateChallengeScheduler as any).authService = {
-        validateChallenge: mockedValidate,
-      };
-
-      (validateChallengeScheduler as any).validate();
+      await (validateChallengeScheduler as any).validate();
 
       expect(mockedValidate).toBeCalled();
     });
 
-    it("should log error if challenge invalid", () => {
+    it("should log error if challenge invalid", async () => {
       (validateChallengeScheduler as any).challenge = "invalidChallenge";
+      jest
+        .spyOn(authService, "validateChallenge")
+        .mockRejectedValue(new Error("error"));
+      const mockedFn = jest.fn();
+      (validateChallengeScheduler as any).logger = {
+        error: mockedFn,
+      };
 
-      expect((validateChallengeScheduler as any).validate()).toThrowError();
+      const result = (validateChallengeScheduler as any).validate();
+
+      expect(result).rejects.toThrow();
     });
 
-    // it("should stop cronJob", () => {
-    //   const mockedFn = jest.fn();
-    //   (validateChallengeScheduler as any).stopCronJob = mockedFn;
+    it("should stop cronJob", () => {
+      const mockedFn = jest.fn();
+      (validateChallengeScheduler as any).stopCronJob = mockedFn;
+      jest.spyOn(authService, "validateChallenge").mockResolvedValue(null);
 
-    //   (validateChallengeScheduler as any).validate();
+      (validateChallengeScheduler as any).validate();
 
-    //   expect(mockedFn).toBeCalled();
-    // });
+      expect(jobStopCall).toBeCalled();
+    });
+
+    it("should emit event", async () => {
+      const mockedFn = jest.fn();
+      jest
+        .spyOn(authService, "validateChallenge")
+        .mockResolvedValue({} as AuthenticationPayload);
+
+      (validateChallengeScheduler as any).emitter = {
+        emit: mockedFn,
+      };
+
+      await (validateChallengeScheduler as any).validate();
+
+      expect(mockedFn).toBeCalled();
+    });
   });
 });

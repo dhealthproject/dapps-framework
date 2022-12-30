@@ -149,7 +149,7 @@ export class ValidateChallengeScheduler {
     } catch (err) {
       // if challenge isn't on chain - print info to the console
       this.logger.error("failed to validate challenge", err);
-      throw err;
+      // throw err;
     }
   }
 
