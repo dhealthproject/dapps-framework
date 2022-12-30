@@ -14,6 +14,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
+import { getModelToken } from "@nestjs/mongoose";
 
 // internal dependencies
 import { ValidateChallengeScheduler } from "../../../../src/common/schedulers/ValidateChallengeScheduler";
@@ -24,7 +25,6 @@ import { AccountsService } from "../../../../src/common/services/AccountsService
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { MockModel } from "../../../mocks/global";
-import { getModelToken } from "@nestjs/mongoose";
 
 describe("common/AuthGateway", () => {
   let authGateway: AuthGateway;
