@@ -344,8 +344,14 @@ describe("notifier/ReportNotifier", () => {
         {
           to: "recipient@example.com",
           subject: `[test-dapp-name] LOGS REPORT for dApp (test-url) from ${dateStart} to ${dateEnd}`,
-          text: `The production logs for test-dapp-name (test-url) from ${dateStart} to ${dateEnd} can be found as an attachment to this email.`,
-          html: `The production logs for test-dapp-name (test-url) from <b>${dateStart}</b> to <b>${dateEnd}</b> can be found as an attachment to this email.`,
+          context: {
+            alertLevel: "WARNING",
+            dappName: "test-dapp-name",
+            dappUrl: "test-url",
+            dateEnd: "2022-02-01",
+            dateStart: "2022-02-01",
+          },
+          template: "ReportEmailTemplate",
           attachments: [
             {
               // binary buffer as an attachment
