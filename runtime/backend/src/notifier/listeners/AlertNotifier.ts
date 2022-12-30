@@ -19,7 +19,6 @@ import { NotifierFactory } from "../concerns/NotifierFactory";
 import { AlertsConfig } from "../../common/models/MonitoringConfig";
 import { Notifier } from "../models/Notifier";
 import { NotifierType } from "../models/NotifierType";
-import { DappHelper } from "../../common/concerns/DappHelper";
 import { LogService } from "../../common/services/LogService";
 
 /**
@@ -71,12 +70,10 @@ export class AlertNotifier {
    *
    * @param {ConfigService}   configService
    * @param {NotifierFactory} notifierFactory
-   * @param {DappHelper}      dappHelper
    */
   constructor(
     private readonly configService: ConfigService,
     private readonly notifierFactory: NotifierFactory,
-    private readonly dappHelper: DappHelper,
   ) {
     // get config
     this.alertsConfig = this.configService.get<AlertsConfig>("alerts");
