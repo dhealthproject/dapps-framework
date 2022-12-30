@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Alert Notifier: {{alertLevel}}</title>
+    <style>
+      tr, td {
+        border: 1px solid #dddddd;
+      }
+    </style>
+  </head>
+  <body>
+    <p>{{alertLevel}} on dApp {{dappUrl}} at <b>{{dateFormat}}</b></p>
+    <br /><br />
+      <table>
+        {{#each details}}
+          <tr>
+            <td>{{@key}}</td>
+            <td>{{this}}</td>
+          </tr>
+        {{/each}}
+      </table>
+  </body>
+</html>

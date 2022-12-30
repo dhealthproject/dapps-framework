@@ -105,12 +105,14 @@ export class AlertNotifier {
       await this.notifier.sendInternal({
         to: this.alertsConfig.recipient,
         subject: `[${dappName}] WARNING on dApp (${dappUrl}) at ${dateFormat}`,
-        text: `WARNING on dApp (${dappUrl}) at ${dateFormat} ${this.dappHelper.createDetailsTableHTML(
-          [{ timestamp, level, loggerContext, message, context }],
-        )}`,
-        html: `WARNING on dApp (${dappUrl}) at <b>${dateFormat}</b><br /><br /> ${this.dappHelper.createDetailsTableHTML(
-          [{ timestamp, level, loggerContext, message, context }],
-        )}`, // HTML body content
+        template: "AlertEmailTemplate", // The `.pug` or `.hbs` extension is appended automatically.
+        context: {
+          // Data to be sent to template engine.
+          alertLevel: "WARNING",
+          dappUrl,
+          dateFormat,
+          details: { timestamp, level, loggerContext, message, context },
+        },
       });
     }
   }
@@ -134,12 +136,14 @@ export class AlertNotifier {
       await this.notifier.sendInternal({
         to: this.alertsConfig.recipient,
         subject: `[${dappName}] ERROR on dApp (${dappUrl}) at ${dateFormat}`,
-        text: `ERROR on dApp (${dappUrl}) at ${dateFormat} ${this.dappHelper.createDetailsTableHTML(
-          [{ timestamp, level, loggerContext, message, trace, context }],
-        )}`,
-        html: `ERROR on dApp (${dappUrl}) at <b>${dateFormat}</b><br /><br /> ${this.dappHelper.createDetailsTableHTML(
-          [{ timestamp, level, loggerContext, message, trace, context }],
-        )}`, // HTML body content
+        template: "AlertEmailTemplate", // The `.pug` or `.hbs` extension is appended automatically.
+        context: {
+          // Data to be sent to template engine.
+          alertLevel: "ERROR",
+          dappUrl,
+          dateFormat,
+          details: { timestamp, level, loggerContext, message, trace, context },
+        },
       });
     }
   }
