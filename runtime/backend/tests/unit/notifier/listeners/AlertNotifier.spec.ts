@@ -38,7 +38,6 @@ describe("notifier/AlertNotifier", () => {
       providers: [
         AlertNotifier,
         EventEmitter2, // requirement from AlertNotifier
-        DappHelper, // requirement from AlertNotifier
         NotifierFactory, // requirement from AlertNotifier
         EmailNotifier, // requirement from AlertNotifier
         NetworkService, // requirement from DappHelper
@@ -71,7 +70,6 @@ describe("notifier/AlertNotifier", () => {
     service = module.get<AlertNotifier>(AlertNotifier);
     configService = module.get<ConfigService>(ConfigService);
     notifierFactory = module.get<NotifierFactory>(NotifierFactory);
-    dappHelper = module.get<DappHelper>(DappHelper);
   });
 
   it("should be defined", () => {
@@ -91,9 +89,6 @@ describe("notifier/AlertNotifier", () => {
       const notifierSendInternalCall = jest
         .spyOn(notifier, "sendInternal")
         .mockResolvedValue();
-      const dappHelperCreateDetailsTableHTMLCall = jest
-        .spyOn(dappHelper, "createDetailsTableHTML")
-        .mockReturnValue("test-html-content");
       const alertEvent: AlertEvent = AlertEvent.create(
         new Date(),
         "warn",
@@ -108,7 +103,6 @@ describe("notifier/AlertNotifier", () => {
 
       // assert
       expect(configServiceGetCall).toHaveBeenCalledTimes(0);
-      expect(dappHelperCreateDetailsTableHTMLCall).toHaveBeenCalledTimes(0);
       expect(notifierSendInternalCall).toHaveBeenCalledTimes(0);
     });
 
