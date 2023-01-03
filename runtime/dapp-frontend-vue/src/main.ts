@@ -61,9 +61,13 @@ Vue.directive("click-outside", {
   bind: function (el: any, binding, vnode: any) {
     el.clickOutsideEvent = function (event: any) {
       // here I check that click was outside the el and his children
-      if (!(el == event.target || el.contains(event.target))) {
+      if (
+        !(el == event.target || el.contains(event.target)) &&
+        binding !== undefined &&
+        binding.expression !== undefined
+      ) {
         // and if it did, call method provided in attribute value
-        vnode.context[binding.expression!](event);
+        vnode.context[binding.expression](event);
       }
     };
     document.body.addEventListener("click", el.clickOutsideEvent);
@@ -75,7 +79,7 @@ Vue.directive("click-outside", {
 
 // importing Vue segment analytics plugin
 // VUE_APP_SEGMENT_WRITE_KEY value can be found in your segment account
-if (process.env.VUE_APP_SEGMENT_WRITE_KEY) {
+if (undefined !== process.env.VUE_APP_SEGMENT_WRITE_KEY) {
   const segmentApiKey = process.env.VUE_APP_SEGMENT_WRITE_KEY;
   Vue.use(VueSegmentAnalytics, {
     id: segmentApiKey,

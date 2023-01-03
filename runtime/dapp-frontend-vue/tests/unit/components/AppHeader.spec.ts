@@ -17,6 +17,7 @@ import AppHeader from "@/components/AppHeader/AppHeader.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
+localVue.directive("click-outside", jest.fn());
 
 const getImageUrl = () => "../../../src/assets";
 
@@ -33,7 +34,7 @@ const componentOptions = {
     getImageUrl,
     formatAmount,
     $route: { params: {} },
-    $t: jest.fn(),
+    $t: jest.fn()
   },
 };
 

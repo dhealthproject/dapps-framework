@@ -17,6 +17,7 @@ import Dropdown from "@/components/Dropdown/Dropdown.vue";
 
 // creates local vue instance for tests
 const localVue = createLocalVue();
+localVue.directive("click-outside", jest.fn());
 
 const componentOptions = {
   localVue,
