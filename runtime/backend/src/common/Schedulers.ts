@@ -34,7 +34,7 @@ import { BroadcastActivityPayouts } from "../payout/schedulers/ActivityPayouts/B
 // statistics scope
 import { LeaderboardsAggregationCommand } from "../statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand";
 import { UserAggregationCommand } from "../statistics/schedulers/UserAggregation/UserAggregationCommand";
-import UserTopActivitiesCommand from "../statistics/schedulers/UserTopActivities/UserTopActivitiesCommand";
+import { UserTopActivitiesCommand } from "../statistics/schedulers/UserTopActivities/UserTopActivitiesCommand";
 
 // notifier scope
 import { ReportNotifierCommand } from "../notifier/schedulers/ReportNotifier/ReportNotifierCommand";
@@ -63,6 +63,7 @@ import { ReportNotifierCommand } from "../notifier/schedulers/ReportNotifier/Rep
  * | `payout`| {@link BroadcastActivityPayouts} | A payout command that broadcasts activity reward transactions to dHealth Network. |
  * | `statistics` | {@link LeaderboardAggregation} | A statistics command that aggregates and sorts user rewards for activities and creates leaderboards. |
  * | `statistics`| {@link UserAggregation} | A statistics command that aggregates and sorts user rewards for activities and creates user statistics. |
+ * | `statistics`| {@link UserTopActivities} | A statistics command that aggregates and sorts user's top activities and updates user statistics entries. |
  * | `notifier`  | {@link ReportNotifierCommand} | A notifier command that aggregates and sorts persisted warn/error logs and periodically creates and send reports. |
  * <br /><br />
  *
@@ -80,7 +81,6 @@ export const Schedulers: { [key: string]: any[] } = {
     DiscoverAssetsCommand,
     DiscoverTransactionsCommand,
     DiscoverBlocksCommand,
-    UserTopActivitiesCommand,
   ],
   payout: [PayoutsModule, ActivityPayoutsCommand],
   processor: [OperationsModule, ProcessOperationsCommand],
@@ -88,6 +88,7 @@ export const Schedulers: { [key: string]: any[] } = {
     BlocksModule,
     LeaderboardsAggregationCommand,
     UserAggregationCommand,
+    UserTopActivitiesCommand,
   ],
   notifier: [ReportNotifierCommand.register()],
   oauth: [],

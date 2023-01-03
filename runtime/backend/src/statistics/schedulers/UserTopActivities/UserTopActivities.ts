@@ -31,7 +31,7 @@ import {
   Activity,
   ActivityDocument,
   ActivityModel,
-} from "../../../processor/models/ActivitySchema";
+} from "../../../users/models/ActivitySchema";
 import {
   StatisticsDocument,
   StatisticsQuery,
@@ -88,7 +88,7 @@ export class UserTopActivities extends StatisticsCommand {
    * @returns {string}
    */
   protected get signature(): string {
-    return `UserTopActivitiesAggregation`;
+    return `UserTopActivities`;
   }
 
   public async aggregate(options?: StatisticsCommandOptions): Promise<void> {
@@ -114,7 +114,7 @@ export class UserTopActivities extends StatisticsCommand {
     const period = this.getNextPeriod(new Date());
 
     for (const result of results) {
-      const address = result._id; // L278 set userAddress as _id
+      const address = result._id.address; // L227 adds address to _id
 
       // find one and create new (if not exists) or update (if exists)
       await this.statisticsService.createOrUpdate(
@@ -125,9 +125,8 @@ export class UserTopActivities extends StatisticsCommand {
         } as StatisticsDocument),
         {
           periodFormat,
-          amount: result.totalAssetsAmount,
           data: {
-            topActivities: result.sport,
+            topActivities: result._id.sportType,
           },
         },
       );
@@ -217,7 +216,26 @@ export class UserTopActivities extends StatisticsCommand {
    * @access private
    */
   private async createAggregationQuery(): Promise<PipelineStage[]> {
-    return [{ $group: { _id: "$activityData.sport", count: { $sum: 1 } } }];
+    return [
+      {
+        $match: { address: { $exists: true } },
+      },
+      {
+        $group: {
+          _id: {
+            address: "$address",
+            sportType: "$activityData.sport",
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        // sort by count DESC
+        $sort: {
+          count: -1,
+        },
+      },
+    ];
   }
 
   /**

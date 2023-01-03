@@ -7,32 +7,30 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-
+// external dependencies
 import { Module } from "@nestjs/common";
 import { ScheduleModule } from "@nestjs/schedule";
 import { MongooseModule } from "@nestjs/mongoose";
 
-import { UserTopActivities } from "./UserTopActivities";
+// common scope
 import { LogModule } from "../../../common/modules/LogModule";
 import { StateModule } from "../../../common/modules/StateModule";
-import { StatisticsModule } from "../../modules/StatisticsModule";
 import { QueryModule } from "../../../common/modules/QueryModule";
 
-// processor scope
-import {
-  Activity,
-  ActivitySchema,
-} from "../../../processor/models/ActivitySchema";
+// users scope
+import { Activity, ActivitySchema } from "../../../users/models/ActivitySchema";
 
 // statistics scope
 import { Statistics, StatisticsSchema } from "../../models/StatisticsSchema";
+import { StatisticsImplementationModule } from "../../modules/StatisticsImplementationModule";
+import { UserTopActivities } from "./UserTopActivities";
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
     LogModule,
     StateModule,
-    StatisticsModule,
+    StatisticsImplementationModule,
     MongooseModule.forFeature([
       { name: Statistics.name, schema: StatisticsSchema },
       { name: Activity.name, schema: ActivitySchema },
@@ -42,4 +40,4 @@ import { Statistics, StatisticsSchema } from "../../models/StatisticsSchema";
   providers: [UserTopActivities],
   exports: [UserTopActivities],
 })
-export default class {}
+export class UserTopActivitiesCommand {}

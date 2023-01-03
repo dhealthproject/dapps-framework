@@ -211,6 +211,14 @@ jest.mock(
   },
 );
 
+const UserTopActivitiesCommandMock: any = jest.fn();
+jest.mock(
+  "../../../src/statistics/schedulers/UserTopActivities/UserTopActivitiesCommand",
+  () => {
+    return { UserTopActivitiesCommand: UserTopActivitiesCommandMock };
+  },
+);
+
 const ActivityPayoutsCommandMock: any = jest.fn();
 jest.mock(
   "../../../src/payout/schedulers/ActivityPayouts/ActivityPayoutsCommand",
