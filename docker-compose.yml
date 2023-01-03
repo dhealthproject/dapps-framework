@@ -26,7 +26,7 @@ services:
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
     env_file:
-      - '${NODE_ENV}.env'
+      - 'env/${NODE_ENV}.env'
     command: npm run start:${NODE_ENV}
     volumes:
       - ./runtime/backend/logs:/logs
