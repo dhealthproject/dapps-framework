@@ -18,11 +18,6 @@ import { ConfigService } from "@nestjs/config";
 // internal dependencies
 import { AccessTokenRequest } from "../requests/AccessTokenRequest";
 import { AccountsService } from "../services/AccountsService";
-import {
-  Account,
-  AccountDocument,
-  AccountQuery,
-} from "../models/AccountSchema";
 import { AuthService } from "../services/AuthService";
 import { LogService } from "../services/LogService";
 import { OnAuthCompleted } from "../events/OnAuthCompleted";

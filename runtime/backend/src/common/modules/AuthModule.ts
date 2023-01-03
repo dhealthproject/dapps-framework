@@ -23,6 +23,7 @@ import { QueryModule } from "../modules/QueryModule";
 import { LogModule } from "../modules/LogModule";
 import { AuthService } from "../services/AuthService";
 import { AuthStrategy } from "../traits/AuthStrategy";
+import { RefreshStrategy } from "../traits/RefreshStrategy";
 import { AuthController } from "../routes/AuthController";
 import { ValidateChallengeScheduler } from "../schedulers/ValidateChallengeScheduler";
 import {
@@ -41,7 +42,6 @@ import { AuthGateway } from "../gateways/AuthGateway";
 
 // configuration resources
 import securityConfigLoader from "../../../config/security";
-import { RefreshStrategy } from "../traits";
 const auth = securityConfigLoader().auth;
 
 /**
@@ -82,6 +82,7 @@ const auth = securityConfigLoader().auth;
     AuthGateway,
     ValidateChallengeScheduler,
     SchedulerRegistry,
+    RefreshStrategy,
   ],
   exports: [AuthService, CipherService],
 })

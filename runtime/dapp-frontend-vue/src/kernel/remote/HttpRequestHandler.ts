@@ -13,6 +13,39 @@ import axios, { AxiosResponse } from "axios";
 // internal dependencies
 import { RequestHandler } from "./RequestHandler";
 
+// refresh flag allows to avoid infinite loop
+// in case /refresh fails with 401 unauthorized
+let refresh = false;
+// set interceptor that will call /refresh in case of status === 401
+axios.interceptors.response.use(
+  (req) => {
+    return req;
+  },
+  async (err) => {
+    const originalConfig = err.config;
+
+    if (
+      originalConfig.url !== `${process.env.VUE_APP_BACKEND_URL}/auth/token` &&
+      err.response
+    ) {
+      if (err.response.status === 401 && !refresh) {
+        refresh = true;
+
+        try {
+          await axios.get(`${process.env.VUE_APP_BACKEND_URL}/auth/refresh`, {
+            withCredentials: true,
+          });
+        } catch (err) {
+          console.log("Refresh interceptor: ", err);
+        }
+      }
+    }
+
+    refresh = false;
+    return err;
+  }
+);
+
 /**
  * @class HttpRequestHandler
  * @description This class implements a handler for API calls
