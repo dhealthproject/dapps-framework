@@ -311,12 +311,8 @@ export class AuthService {
    * @throws  {HttpException}           Given challenge could not be found in recent transactions.
    */
   public async validateChallenge(
-    {
-      challenge,
-      sub,
-      registry,
-    }: AccessTokenRequest,
-    enableStorage: boolean = true,
+    { challenge, sub, registry }: AccessTokenRequest,
+    enableStorage = true,
   ): Promise<AuthenticationPayload> {
     // does not permit multiple usage of challenges
     const challengeUsed: boolean = await this.challengesService.exists(
