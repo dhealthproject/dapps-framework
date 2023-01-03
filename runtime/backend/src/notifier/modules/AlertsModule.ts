@@ -13,10 +13,10 @@ import { Module } from "@nestjs/common";
 
 // internal dependencies
 import { AppConfiguration } from "../../AppConfiguration";
-import { HelpersModule } from "../../common/modules/HelpersModule";
 import { EmailNotifierModule } from "./EmailNotifierModule";
 import { NotifierFactoryModule } from "./NotifierFactoryModule";
 import { AlertNotifier } from "../listeners/AlertNotifier";
+import { StateModule } from "../../common/modules/StateModule";
 
 /**
  * @label NOTIFIER
@@ -28,7 +28,7 @@ import { AlertNotifier } from "../listeners/AlertNotifier";
 @Module({
   imports: [
     AppConfiguration.getEventEmitterModule(), // requirement from AlertNotifier
-    HelpersModule, // requirement from AlertNotifier
+    StateModule, // requirement from AlertNotifier
     NotifierFactoryModule, // requirement from AlertNotifier
     EmailNotifierModule, // requirement from NotifierFactory
   ],

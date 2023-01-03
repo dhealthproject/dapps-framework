@@ -12,20 +12,25 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { MailerService } from "@nestjs-modules/mailer";
 import { EventEmitter2 } from "@nestjs/event-emitter";
+import { getModelToken } from "@nestjs/mongoose";
 
 // internal dependencies
 import { AlertNotifier } from "../../../../src/notifier/listeners/AlertNotifier";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { NotifierFactory } from "../../../../src/notifier/concerns/NotifierFactory";
-import { DappHelper } from "../../../../src/common/concerns/DappHelper";
 import { EmailNotifier } from "../../../../src/notifier/services/EmailNotifier";
 import { AlertEvent } from "../../../../src/common/events/AlertEvent";
+import { StateService } from "../../../../src/common/services/StateService";
+import { MockModel } from "../../../mocks/global";
+import { QueryService } from "../../../../src/common/services/QueryService";
+import { LogService } from "../../../../src/common/services/LogService";
+import { StateDocument, StateQuery } from "../../../../src/common/models/StateSchema";
 
 describe("notifier/AlertNotifier", () => {
   let service: AlertNotifier;
   let configService: ConfigService;
   let notifierFactory: NotifierFactory;
-  let dappHelper: DappHelper;
+  let stateService: StateService;
   let notifier = { sendInternal: () => Promise.resolve()};
 
   let mockDate: Date;
@@ -42,6 +47,9 @@ describe("notifier/AlertNotifier", () => {
         EmailNotifier, // requirement from AlertNotifier
         NetworkService, // requirement from DappHelper
         MailerService, // requirement from EmailNotifier
+        StateService, // requirement from AlertNotifier
+        QueryService, // requirement from AlertNotifier
+        LogService,
         {
           provide: NotifierFactory,
           useValue: {
@@ -64,11 +72,17 @@ describe("notifier/AlertNotifier", () => {
             sendMail: jest.fn().mockResolvedValue(true),
           },
         }, // overwrite of MailerService
+        {
+          provide: getModelToken("State"),
+          useValue: MockModel,
+        }, // requirement from AlertNotifier
       ],
     }).compile();
 
     service = module.get<AlertNotifier>(AlertNotifier);
     configService = module.get<ConfigService>(ConfigService);
+    stateService = module.get<StateService>(StateService);
+
     notifierFactory = module.get<NotifierFactory>(NotifierFactory);
   });
 
@@ -97,13 +111,22 @@ describe("notifier/AlertNotifier", () => {
         null,
         "test-context"
       );
+      const getLastAlertEventCall = jest
+        .spyOn((service as any), "getLastAlertEvent")
+        .mockResolvedValue({});
+      const saveLastAlertEventCall = jest
+        .spyOn((service as any), "saveLastAlertEvent")
+        .mockResolvedValue(true);
 
       // act
       await (service as any).handleLogWarnEvent(alertEvent);
 
       // assert
+      expect(getLastAlertEventCall).toHaveBeenCalledTimes(1);
       expect(configServiceGetCall).toHaveBeenCalledTimes(0);
       expect(notifierSendInternalCall).toHaveBeenCalledTimes(0);
+
+      expect(saveLastAlertEventCall).toHaveBeenCalledTimes(0);
     });
 
     it("should run correctly if alertsConfig type includes 'warn' level", async () => {
@@ -128,11 +151,18 @@ describe("notifier/AlertNotifier", () => {
         message: "test-message",
         context: "test-context",
       };
+      const getLastAlertEventCall = jest
+        .spyOn((service as any), "getLastAlertEvent")
+        .mockResolvedValue({});
+      const saveLastAlertEventCall = jest
+        .spyOn((service as any), "saveLastAlertEvent")
+        .mockResolvedValue(true);
 
       // act
       await (service as any).handleLogWarnEvent(alertEvent);
 
       // assert
+      expect(getLastAlertEventCall).toHaveBeenCalledTimes(1);
       expect(configServiceGetCall).toHaveBeenNthCalledWith(1, "dappName");
       expect(notifierSendInternalCall).toHaveBeenNthCalledWith(1, {
         to: "recipient@example.com",
@@ -151,6 +181,41 @@ describe("notifier/AlertNotifier", () => {
         },
         template: "AlertEmailTemplate",
       });
+
+      expect(saveLastAlertEventCall).toHaveBeenNthCalledWith(1, alertEvent);
+    });
+
+    it("should return if event is the same with last notified event", async () => {
+      // prepare
+      jest.clearAllMocks();
+      const configServiceGetCall = jest
+        .spyOn(configService, "get")
+      const notifierSendInternalCall = jest
+        .spyOn(notifier, "sendInternal")
+      const alertEvent: AlertEvent = {
+        timestamp: new Date(),
+        level: "warn",
+        loggerContext: "test-logger-context",
+        message: "test-message",
+        trace: "test-trace",
+        context: "test-context",
+      } as AlertEvent;
+      const getLastAlertEventCall = jest
+        .spyOn((service as any), "getLastAlertEvent")
+        .mockResolvedValue(alertEvent);
+      const saveLastAlertEventCall = jest
+        .spyOn((service as any), "saveLastAlertEvent")
+        .mockResolvedValue(true);
+
+      // act
+      await (service as any).handleLogWarnEvent(alertEvent);
+
+      // assert
+      expect(getLastAlertEventCall).toHaveBeenCalledTimes(1);
+      expect(configServiceGetCall).toHaveBeenCalledTimes(0);
+      expect(notifierSendInternalCall).toHaveBeenCalledTimes(0);
+
+      expect(saveLastAlertEventCall).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -175,13 +240,22 @@ describe("notifier/AlertNotifier", () => {
         "test-trace",
         "test-context"
       );
+      const getLastAlertEventCall = jest
+        .spyOn((service as any), "getLastAlertEvent")
+        .mockResolvedValue({});
+      const saveLastAlertEventCall = jest
+        .spyOn((service as any), "saveLastAlertEvent")
+        .mockResolvedValue(true);
 
       // act
       await (service as any).handleLogErrorEvent(alertEvent);
 
       // assert
+      expect(getLastAlertEventCall).toHaveBeenCalledTimes(1);
       expect(configServiceGetCall).toHaveBeenCalledTimes(0);
       expect(notifierSendInternalCall).toHaveBeenCalledTimes(0);
+
+      expect(saveLastAlertEventCall).toHaveBeenCalledTimes(0);
     });
 
     it("should run correctly if alertsConfig type includes 'error' level", async () => {
@@ -206,11 +280,18 @@ describe("notifier/AlertNotifier", () => {
         trace: "test-trace",
         context: "test-context",
       } as AlertEvent;
+      const getLastAlertEventCall = jest
+        .spyOn((service as any), "getLastAlertEvent")
+        .mockResolvedValue({});
+      const saveLastAlertEventCall = jest
+        .spyOn((service as any), "saveLastAlertEvent")
+        .mockResolvedValue(true);
 
       // act
       await (service as any).handleLogErrorEvent(alertEvent);
 
       // assert
+      expect(getLastAlertEventCall).toHaveBeenCalledTimes(1);
       expect(configServiceGetCall).toHaveBeenNthCalledWith(1, "dappName");
       expect(notifierSendInternalCall).toHaveBeenNthCalledWith(1, {
         to: "recipient@example.com",
@@ -230,6 +311,111 @@ describe("notifier/AlertNotifier", () => {
         },
         template: "AlertEmailTemplate",
       });
+
+      expect(saveLastAlertEventCall).toHaveBeenNthCalledWith(1, alertEvent);
+    });
+
+    it("should return if event is the same with last notified event", async () => {
+      // prepare
+      jest.clearAllMocks();
+      const configServiceGetCall = jest
+        .spyOn(configService, "get")
+      const notifierSendInternalCall = jest
+        .spyOn(notifier, "sendInternal")
+      const alertEvent: AlertEvent = {
+        timestamp: new Date(),
+        level: "error",
+        loggerContext: "test-logger-context",
+        message: "test-message",
+        trace: "test-trace",
+        context: "test-context",
+      } as AlertEvent;
+      const getLastAlertEventCall = jest
+        .spyOn((service as any), "getLastAlertEvent")
+        .mockResolvedValue(alertEvent);
+      const saveLastAlertEventCall = jest
+        .spyOn((service as any), "saveLastAlertEvent")
+        .mockResolvedValue(true);
+
+      // act
+      await (service as any).handleLogErrorEvent(alertEvent);
+
+      // assert
+      expect(getLastAlertEventCall).toHaveBeenCalledTimes(1);
+      expect(configServiceGetCall).toHaveBeenCalledTimes(0);
+      expect(notifierSendInternalCall).toHaveBeenCalledTimes(0);
+
+      expect(saveLastAlertEventCall).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe("getLastAlertEvent()", () => {
+    it("should return correct result", async () => {
+      // prepare
+      const alertEvent: AlertEvent = {
+        timestamp: new Date(),
+        level: "error",
+        loggerContext: "test-logger-context",
+        message: "test-message",
+        trace: "test-trace",
+        context: "test-context",
+      } as AlertEvent;
+      const stateData: Record<string, object>[] = [
+        undefined,
+        null,
+        { data: null },
+        { data: { lastAlertEvent: null } },
+        { data: { lastAlertEvent: alertEvent } },
+      ];
+      const expectedResults = [
+        undefined,
+        undefined,
+        undefined,
+        null,
+        alertEvent,
+      ];
+      for (let i = 0; i < stateData.length; i++) {
+        const stateServiceFindOneCall = jest
+          .spyOn(stateService, "findOne")
+          .mockResolvedValue(stateData[i] as any);
+
+        // act
+        const result = await (service as any).getLastAlertEvent();
+
+        // assert
+        expect(stateServiceFindOneCall).toHaveBeenNthCalledWith(
+          1,
+          new StateQuery({ name: AlertNotifier.name } as StateDocument)
+        )
+        expect(result).toEqual(expectedResults[i]);
+      }
+    });
+  });
+
+  describe("saveLastAlertEvent()", () => {
+    it("should run correctly & call updateOne()", async () => {
+      // prepare
+      const alertEvent: AlertEvent = {
+        timestamp: new Date(),
+        level: "error",
+        loggerContext: "test-logger-context",
+        message: "test-message",
+        trace: "test-trace",
+        context: "test-context",
+      } as AlertEvent;
+      const stateServiceUpdateOneCall = jest
+        .spyOn(stateService, "updateOne")
+        .mockResolvedValue({} as StateDocument);
+
+      // act
+      await (service as any).saveLastAlertEvent(alertEvent);
+
+      // assert
+      expect(stateServiceUpdateOneCall).toHaveBeenNthCalledWith(
+        1,
+        new StateQuery({ name: AlertNotifier.name } as StateDocument),
+        { lastAlertEvent: alertEvent }
+      );
     });
   });
 });

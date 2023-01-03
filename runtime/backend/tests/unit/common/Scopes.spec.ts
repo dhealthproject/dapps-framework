@@ -127,6 +127,11 @@ jest.mock("../../../src/statistics/modules/StatisticsImplementationModule", () =
 });
 
 // notifier scope
+const AlertsModuleMock: any = jest.fn();
+jest.mock("../../../src/notifier/modules/AlertsModule", () => {
+  return { AlertsModule: AlertsModuleMock };
+});
+
 const NotifierModuleMock: any = jest.fn();
 jest.mock("../../../src/notifier/NotifierModule", () => {
   return { NotifierModule: NotifierModuleMock };

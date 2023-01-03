@@ -20,6 +20,9 @@ import { AlertsConfig } from "../../common/models/MonitoringConfig";
 import { Notifier } from "../models/Notifier";
 import { NotifierType } from "../models/NotifierType";
 import { LogService } from "../../common/services/LogService";
+import { StateService } from "../../common/services/StateService";
+import { StateDocument, StateQuery } from "../../common/models/StateSchema";
+import { AlertNotifierStateData } from "../models/AlertNotifierStateData";
 
 /**
  * @class AlertNotifier
@@ -39,9 +42,6 @@ import { LogService } from "../../common/services/LogService";
  * | `event.log.warn`     | The event in which a warning log occured in the application. |
  * | `event.log.error`    | The event in which an error log occured in the application. |
  *
- * @todo this class must verify when latest alerts was/were raised
- * @todo it should not send emails every 30 seconds given an error
- * @todo alerts can be differentiated using context and message
  * @since v0.5.0
  */
 @Injectable()
@@ -70,10 +70,12 @@ export class AlertNotifier {
    *
    * @param {ConfigService}   configService
    * @param {NotifierFactory} notifierFactory
+   * @param {StateService} stateService
    */
   constructor(
     private readonly configService: ConfigService,
     private readonly notifierFactory: NotifierFactory,
+    private readonly stateService: StateService,
   ) {
     // get config
     this.alertsConfig = this.configService.get<AlertsConfig>("alerts");
@@ -93,11 +95,24 @@ export class AlertNotifier {
    */
   @OnEvent("notifier.alerts.warn", { async: true })
   protected async handleLogWarnEvent(event: AlertEvent): Promise<void> {
+    const logger = new LogService("testing");
+    logger.debug(`CAUGHT warn`);
+    // get state data and compare last sent event to this event
+    const lastAlertEvent = await this.getLastAlertEvent();
+    // if they are equal return
+    if (
+      lastAlertEvent &&
+      event.loggerContext === lastAlertEvent.loggerContext &&
+      event.message.toString() === lastAlertEvent.message
+    ) {
+      console.log("logger: ", logger);
+      logger.debug(`Warning alert is the same with last alert`);
+      return;
+    }
     // handle and process "AlertEvent" event
     if (this.alertsConfig.type.includes("warn")) {
       const dappName = this.configService.get<string>("dappName");
       const dappUrl = this.configService.get<string>("frontendApp.url");
-      const { timestamp, level, loggerContext, message, context } = event;
       const dateFormat = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
       await this.notifier.sendInternal({
         to: this.alertsConfig.recipient,
@@ -108,9 +123,10 @@ export class AlertNotifier {
           alertLevel: "WARNING",
           dappUrl,
           dateFormat,
-          details: { timestamp, level, loggerContext, message, context },
+          details: event,
         },
       });
+      await this.saveLastAlertEvent(event);
     }
   }
 
@@ -123,12 +139,23 @@ export class AlertNotifier {
    */
   @OnEvent("notifier.alerts.error", { async: true })
   protected async handleLogErrorEvent(event: AlertEvent): Promise<void> {
+    const logger = new LogService("testing");
+    logger.debug(`CAUGHT error`);
+    // get state data and compare last sent event to this event
+    const lastAlertEvent = await this.getLastAlertEvent();
+    // if they are equal return
+    if (
+      lastAlertEvent &&
+      event.loggerContext === lastAlertEvent.loggerContext &&
+      event.message.toString() === lastAlertEvent.message
+    ) {
+      logger.debug(`Error alert is the same with last alert`);
+      return;
+    }
     // handle and process "AlertEvent" event
     if (this.alertsConfig.type.includes("error")) {
       const dappName = this.configService.get<string>("dappName");
       const dappUrl = this.configService.get<string>("frontendApp.url");
-      const { timestamp, level, loggerContext, message, trace, context } =
-        event;
       const dateFormat = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
       await this.notifier.sendInternal({
         to: this.alertsConfig.recipient,
@@ -139,9 +166,25 @@ export class AlertNotifier {
           alertLevel: "ERROR",
           dappUrl,
           dateFormat,
-          details: { timestamp, level, loggerContext, message, trace, context },
+          details: event,
         },
       });
+      await this.saveLastAlertEvent(event);
     }
+  }
+
+  private async getLastAlertEvent() {
+    const state = await this.stateService.findOne(
+      new StateQuery({ name: AlertNotifier.name } as StateDocument),
+    );
+    return (state?.data as AlertNotifierStateData)?.lastAlertEvent;
+  }
+
+  private async saveLastAlertEvent(alertEvent: AlertEvent) {
+    alertEvent.message = alertEvent.message.toString();
+    return await this.stateService.updateOne(
+      new StateQuery({ name: AlertNotifier.name } as StateDocument),
+      { lastAlertEvent: alertEvent },
+    );
   }
 }
