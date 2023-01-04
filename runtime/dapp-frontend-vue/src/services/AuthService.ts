@@ -90,6 +90,7 @@ export class AuthService extends BackendService {
    */
   public async login(
     challenge: string,
+    registry: string,
     refCode: string | undefined = undefined
   ): Promise<AccessTokenDTO> {
     // request an access token for authenticated users
@@ -98,7 +99,7 @@ export class AuthService extends BackendService {
     const response = await this.handler.call(
       this.getUrl("auth/token"),
       "POST",
-      { challenge, referralCode: refCode },
+      { challenge, registry, referralCode: refCode },
       { withCredentials: true, credentials: "include" }
       // no-headers
     );
