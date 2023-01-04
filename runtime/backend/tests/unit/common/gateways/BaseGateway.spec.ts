@@ -24,6 +24,7 @@ import { LogService } from "../../../../src/common/services/LogService";
 import { BaseGateway } from "../../../../src/common/gateways/BaseGateway";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
+import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { QueryService } from "../../../../src/common/services/QueryService";
 import { MockModel } from "../../../mocks/global";
@@ -45,6 +46,7 @@ describe("common/BaseGateway", () => {
         ConfigService,
         NetworkService,
         AccountsService,
+        AccountSessionsService,
         ChallengesService,
         QueryService,
         JwtService,
@@ -56,6 +58,10 @@ describe("common/BaseGateway", () => {
           provide: getModelToken("AuthChallenge"),
           useValue: MockModel,
         },
+        {
+          provide: getModelToken("AccountSession"),
+          useValue: MockModel,
+        }, // requirement from AuthService
       ],
     }).compile();
 

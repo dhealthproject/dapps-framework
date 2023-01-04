@@ -569,7 +569,7 @@ describe("common/AuthService", () => {
 
       // act
       const validateChallenge = () => (authService as any).validateChallenge({
-        challlenge: "test-challenge",
+        challenge: "test-challenge",
         sub: "test-sub",
       });
 

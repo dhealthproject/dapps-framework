@@ -31,6 +31,7 @@ import {
   AuthService,
   AuthenticationPayload,
 } from "../../../../src/common/services/AuthService";
+import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
@@ -41,6 +42,12 @@ import { ValidateChallengeScheduler } from "../../../../src/common/schedulers/Va
 describe("common/ValidateChallengeScheduler", () => {
   let validateChallengeScheduler: ValidateChallengeScheduler;
   let authService: AuthService;
+  let logger = {
+    setContext: jest.fn(),
+    log: jest.fn(),
+    debug: jest.fn(),
+    error: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -52,6 +59,7 @@ describe("common/ValidateChallengeScheduler", () => {
         ConfigService,
         NetworkService,
         AccountsService,
+        AccountSessionsService,
         ChallengesService,
         QueryService,
         JwtService,
@@ -74,6 +82,8 @@ describe("common/ValidateChallengeScheduler", () => {
       ValidateChallengeScheduler,
     );
     authService = module.get<AuthService>(AuthService);
+
+    (validateChallengeScheduler as any).logger = logger;
   });
 
   it("should be defined", () => {
@@ -142,26 +152,26 @@ describe("common/ValidateChallengeScheduler", () => {
   });
 
   describe("stopCronJob()", () => {
-    it("should stop cronjob", () => {
+    it("should stop cronjob", async () => {
       const mockFn = jest.fn();
       (validateChallengeScheduler as any).job = {
         stop: mockFn,
       };
 
-      (validateChallengeScheduler as any).stopCronJob();
+      await (validateChallengeScheduler as any).stopCronJob();
 
       expect(mockFn).toBeCalledTimes(1);
     });
 
-    it("should reset challenge string", () => {
-      (validateChallengeScheduler as any).stopCronJob();
+    it("should reset challenge string", async () => {
+      await (validateChallengeScheduler as any).stopCronJob();
 
       expect((validateChallengeScheduler as any).challenge).toBe("");
     });
 
-    it("should clear stopTimeout", () => {
-      (validateChallengeScheduler as any).startCronJob();
-      (validateChallengeScheduler as any).stopCronJob();
+    it("should clear stopTimeout", async () => {
+      await (validateChallengeScheduler as any).startCronJob();
+      await (validateChallengeScheduler as any).stopCronJob();
 
       expect((validateChallengeScheduler as any).stopCronJobTimeout).not.toBe(
         undefined,
@@ -182,25 +192,25 @@ describe("common/ValidateChallengeScheduler", () => {
 
     it("should log error if challenge invalid", async () => {
       (validateChallengeScheduler as any).challenge = "invalidChallenge";
-      jest
-        .spyOn(authService, "validateChallenge")
-        .mockRejectedValue(new Error("error"));
-      const mockedFn = jest.fn();
-      (validateChallengeScheduler as any).logger = {
-        error: mockedFn,
+      (validateChallengeScheduler as any).authService = {
+        validateChallenge: jest.fn().mockImplementation(
+          () => { throw new Error("An error occured") }, // <-- force-throw
+        ),
       };
 
-      const result = (validateChallengeScheduler as any).validate();
+      // act
+      await (validateChallengeScheduler as any).validate();
 
-      expect(result).rejects.toThrow();
+      // assert
+      expect(logger.error).toHaveBeenCalled();
     });
 
-    it("should stop cronJob", () => {
+    it("should stop cronJob", async () => {
       const mockedFn = jest.fn();
       (validateChallengeScheduler as any).stopCronJob = mockedFn;
       jest.spyOn(authService, "validateChallenge").mockResolvedValue(null);
 
-      (validateChallengeScheduler as any).validate();
+      await (validateChallengeScheduler as any).validate();
 
       expect(jobStopCall).toBeCalled();
     });

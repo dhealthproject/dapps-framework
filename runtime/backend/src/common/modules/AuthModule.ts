@@ -81,7 +81,6 @@ const auth = securityConfigLoader().auth;
     AuthGateway,
     ValidateChallengeScheduler,
     SchedulerRegistry,
-    // EventEmitter2,
   ],
   exports: [AuthService, CipherService],
 })

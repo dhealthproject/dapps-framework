@@ -15,8 +15,9 @@ import { SchedulerRegistry } from "@nestjs/schedule";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
-import { AuthService } from "../services";
-import { LogService } from "../services";
+import { AccessTokenRequest } from "../requests/AccessTokenRequest";
+import { AuthService } from "../services/AuthService";
+import { LogService } from "../services/LogService";
 import dappConfigLoader from "../../../config/dapp";
 
 const dappConfig = dappConfigLoader();
@@ -34,42 +35,6 @@ const dappConfig = dappConfigLoader();
  */
 @Injectable()
 export class ValidateChallengeScheduler {
-  /**
-   * Construct an instance of the scheduler.
-   *
-   * @access public
-   * @param   {SchedulerRegistry}      schedulerRegistry     Add scheduler to Nest.js schedulers registry.
-   * @param   {AuthService}            authService     Contains .validateChallenge method.
-   * @param   {EventEmitter2}          emitter      Emitting of successfully validated challenge to proper handler.
-   */
-  constructor(
-    private readonly schedulerRegistry: SchedulerRegistry,
-    protected readonly authService: AuthService,
-    protected readonly emitter: EventEmitter2,
-  ) {
-    // initialize cronJob with provided params
-    this.job = new CronJob(
-      this.cronExpression, // cronTime
-      this.validate.bind(this), // onTick
-      undefined, // empty onComplete
-      false, // "startNow" (done with L183)
-      undefined, // timeZone
-      undefined, // empty resolves to default context
-      false, // "runOnInit"
-    );
-
-    // add cron to nest scheduler registry
-    this.schedulerRegistry.addCronJob(
-      `statistics:cronjobs:leaderboards:D`,
-      this.job,
-    );
-
-    // initialize logger
-    this.logger = new LogService(
-      `${dappConfig.dappName}/ValidateChallengeScheduler`,
-    );
-  }
-
   /**
    * This property permits to log information to the console or in files
    * depending on the configuration. This logger instance can be accessed
@@ -127,6 +92,42 @@ export class ValidateChallengeScheduler {
   protected stopTimeoutAmount = 1800000;
 
   /**
+   * Construct an instance of the scheduler.
+   *
+   * @access public
+   * @param   {SchedulerRegistry}      schedulerRegistry     Add scheduler to Nest.js schedulers registry.
+   * @param   {AuthService}            authService     Contains .validateChallenge method.
+   * @param   {EventEmitter2}          emitter      Emitting of successfully validated challenge to proper handler.
+   */
+  constructor(
+    private readonly schedulerRegistry: SchedulerRegistry,
+    protected readonly authService: AuthService,
+    protected readonly emitter: EventEmitter2,
+  ) {
+    // initialize cronJob with provided params
+    this.job = new CronJob(
+      this.cronExpression, // cronTime
+      this.validate.bind(this), // onTick
+      undefined, // empty onComplete
+      false, // "startNow" (done with L183)
+      undefined, // timeZone
+      undefined, // empty resolves to default context
+      false, // "runOnInit"
+    );
+
+    // add cron to nest scheduler registry
+    this.schedulerRegistry.addCronJob(
+      `common:cronjobs:validate-challenge`,
+      this.job,
+    );
+
+    // initialize logger
+    this.logger = new LogService(
+      `${dappConfig.dappName}/ValidateChallengeScheduler`,
+    );
+  }
+
+  /**
    * This method implements validation process
    * which runs by scheduler each period of time.
    *
@@ -136,7 +137,7 @@ export class ValidateChallengeScheduler {
   protected async validate() {
     try {
       const payload = await this.authService.validateChallenge(
-        this.challenge,
+        { challenge: this.challenge } as AccessTokenRequest,
         false,
       );
 
