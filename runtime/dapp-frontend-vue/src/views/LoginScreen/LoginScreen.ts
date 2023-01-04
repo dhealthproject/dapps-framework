@@ -328,7 +328,7 @@ export default class LoginScreen extends MetaView {
   public async mounted() {
     this.qrConfig = this.createLoginQRCode();
 
-    this.wsConnection = new WebSocket("ws://localhost:80/ws");
+    this.wsConnection = new WebSocket(`ws://${process.env.BACKEND_DOMAIN}:${process.env.BACKEND_PORT}/ws`);
 
     this.wsConnection.onopen = function () {
       console.log("Successfully connected to the echo websocket server...");
