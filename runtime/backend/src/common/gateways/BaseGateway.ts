@@ -40,7 +40,7 @@ const dappConfig = dappConfigLoader();
  *
  * @since v0.2.0
  */
-@WebSocketGateway(80, {
+@WebSocketGateway({
   path: "/ws",
   cors: {
     origin: process.env.FRONTEND_URL,
