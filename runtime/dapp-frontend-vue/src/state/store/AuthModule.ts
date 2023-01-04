@@ -164,12 +164,14 @@ export const AuthModule = {
         const handler = new AuthService();
         const authChallenge: string = context.getters["getChallenge"];
         const refCode: string = context.getters["getRefCode"];
+        const registry: string = context.getters["getAuthRegistry"];
 
         // try authenticating the user and requesting an access token
         // this will only succeed provided that the end-user attached
         // the authentication challenge in a transfer transaction
         const response: AccessTokenDTO = await handler.login(
           authChallenge,
+          registry,
           refCode ? refCode : undefined
         );
 

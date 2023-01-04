@@ -13,6 +13,7 @@ import { Injectable } from "@nestjs/common";
 import { CronJob } from "cron";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { EventEmitter2 } from "@nestjs/event-emitter";
+import { ConfigService } from "@nestjs/config";
 
 // internal dependencies
 import { AccessTokenRequest } from "../requests/AccessTokenRequest";
@@ -91,6 +92,8 @@ export class ValidateChallengeScheduler {
    */
   protected stopTimeoutAmount = 1800000;
 
+  public authRegistries: string[];
+
   /**
    * Construct an instance of the scheduler.
    *
@@ -103,6 +106,7 @@ export class ValidateChallengeScheduler {
     private readonly schedulerRegistry: SchedulerRegistry,
     protected readonly authService: AuthService,
     protected readonly emitter: EventEmitter2,
+    protected readonly configService: ConfigService,
   ) {
     // initialize cronJob with provided params
     this.job = new CronJob(
@@ -125,6 +129,8 @@ export class ValidateChallengeScheduler {
     this.logger = new LogService(
       `${dappConfig.dappName}/ValidateChallengeScheduler`,
     );
+
+    this.authRegistries = this.configService.get<string[]>("auth.registries");
   }
 
   /**
@@ -137,7 +143,10 @@ export class ValidateChallengeScheduler {
   protected async validate() {
     try {
       const payload = await this.authService.validateChallenge(
-        { challenge: this.challenge } as AccessTokenRequest,
+        {
+          challenge: this.challenge,
+          registry: this.authRegistries[0],
+        } as AccessTokenRequest,
         false,
       );
 

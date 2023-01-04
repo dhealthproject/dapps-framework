@@ -42,6 +42,7 @@ import { ValidateChallengeScheduler } from "../../../../src/common/schedulers/Va
 describe("common/ValidateChallengeScheduler", () => {
   let validateChallengeScheduler: ValidateChallengeScheduler;
   let authService: AuthService;
+  let configService: ConfigService;
   let logger = {
     setContext: jest.fn(),
     log: jest.fn(),
@@ -82,6 +83,7 @@ describe("common/ValidateChallengeScheduler", () => {
       ValidateChallengeScheduler,
     );
     authService = module.get<AuthService>(AuthService);
+    configService = module.get<ConfigService>(ConfigService);
 
     (validateChallengeScheduler as any).logger = logger;
   });
@@ -107,6 +109,7 @@ describe("common/ValidateChallengeScheduler", () => {
         (validateChallengeScheduler as any).schedulerRegistry,
         {} as AuthService,
         {} as EventEmitter2,
+        configService,
       );
 
       expect(mockedFn).toBeCalledTimes(1);
@@ -185,6 +188,8 @@ describe("common/ValidateChallengeScheduler", () => {
         .spyOn(authService, "validateChallenge")
         .mockResolvedValue({} as AuthenticationPayload);
 
+      (validateChallengeScheduler as any).authRegistries = ["fakeRegistry"];
+
       await (validateChallengeScheduler as any).validate();
 
       expect(mockedValidate).toBeCalled();
@@ -194,7 +199,9 @@ describe("common/ValidateChallengeScheduler", () => {
       (validateChallengeScheduler as any).challenge = "invalidChallenge";
       (validateChallengeScheduler as any).authService = {
         validateChallenge: jest.fn().mockImplementation(
-          () => { throw new Error("An error occured") }, // <-- force-throw
+          () => {
+            throw new Error("An error occured");
+          }, // <-- force-throw
         ),
       };
 
@@ -224,6 +231,8 @@ describe("common/ValidateChallengeScheduler", () => {
       (validateChallengeScheduler as any).emitter = {
         emit: mockedFn,
       };
+
+      (validateChallengeScheduler as any).authRegistries = ["fakeRegistry"];
 
       await (validateChallengeScheduler as any).validate();
 
