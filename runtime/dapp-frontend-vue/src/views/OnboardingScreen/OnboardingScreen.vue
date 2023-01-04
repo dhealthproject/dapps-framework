@@ -27,7 +27,7 @@
               backgroundImage: `url(${getImageUrl(currentItem.image)})`,
             }"
           />
-          <div class="hero__overlay" />
+          <!-- <div class="hero__overlay" /> -->
         </div>
       </template>
       <template v-slot:right>
