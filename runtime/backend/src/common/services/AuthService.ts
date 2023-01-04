@@ -42,7 +42,6 @@ import {
   AccountSessionQuery,
 } from "../models/AccountSessionSchema";
 import { AccountSessionsService } from "./AccountSessionsService";
-import { AuthGateway } from "../gateways/AuthGateway";
 
 // configuration resources
 import dappConfigLoader from "../../../config/dapp";
