@@ -92,7 +92,14 @@ export class ValidateChallengeScheduler {
    */
   protected stopTimeoutAmount = 1800000;
 
-  public authRegistries: string[];
+  /**
+   * The list of active authentication registries as configured
+   * in the backend runtime.
+   *
+   * @access protected
+   * @var {string[]}
+   */
+  protected authRegistries: string[];
 
   /**
    * Construct an instance of the scheduler.
