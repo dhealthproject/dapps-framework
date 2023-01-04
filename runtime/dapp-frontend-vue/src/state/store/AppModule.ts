@@ -192,7 +192,7 @@ export const AppModule = {
         try {
           const response = await handler.getConfig();
           context.commit("setConfig", response);
-          context.commit("auth/setAuthRegistry", response.authRegistry, {
+          context.commit("auth/setAuthRegistry", response.authRegistry[0], {
             root: true,
           });
           return response;

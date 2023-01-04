@@ -11,7 +11,7 @@
 import { register } from "register-service-worker";
 
 if (process.env.NODE_ENV === "production") {
-  register(`${process.env.BASE_URL}service-worker.js`, {
+  register(`${process.env.VUE_APP_FRONTEND_URL}/service-worker.js`, {
     ready() {
       console.log(
         "[INFO] dHealth dApp is being served from cache by a service worker.\n" +
