@@ -6,7 +6,7 @@
             "title": "Burn calories with your activity and Earn crypto.",
             "text": "Integrate your fitness apps & wearables to start earning crypto.",
             "button": "Get Started",
-            "image": "login-slides/slide-1.jpg",
+            "image": "Sport-to-Token.svg",
             "mobileGradient":
               "linear-gradient(180deg, #000000 -5.38%, rgba(44, 63, 81, 0) 27.55%, #395E81 66.26%, #1F94A4 100%);"
           },
@@ -15,7 +15,7 @@
             "title": "Participate in virtual challenges, globally.",
             "text": "Join  Challenges and Events to earn tokens with others around the world.",
             "button": "Next",
-            "image": "login-slides/slide-2.jpg",
+            "image": "Global-Challenges.svg",
             "mobileGradient":
               "linear-gradient(180deg, #000000 -5.38%, rgba(44, 63, 81, 0) 27.55%, #5D3981 63.28%, #391FA4 100%)"
           },
@@ -24,7 +24,7 @@
             "title": "Earn NFT Rewards depending on how well you perform.",
             "text": "Earn unique NFT Medals & Sportscards that unlock special virtual events",
             "button": "Connect your Wallet",
-            "image": "login-slides/slide-2.jpg",
+            "image": "NFT-Awards.svg",
             "mobileGradient":
               "linear-gradient(180deg, #000000 -5.38%, rgba(44, 63, 81, 0) 27.55%, #398149 63.28%, #81A41F 100%)"
           }
