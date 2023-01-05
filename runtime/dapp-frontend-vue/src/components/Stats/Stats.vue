@@ -18,10 +18,7 @@
         <span class="light" v-html="fourDigitsAmount[1]" />
       </p>
       <div class="amount-small">
-        <span
-          v-if="userStatistics && totalEarned"
-          v-html="`${totalEarned.toFixed(1)} $FIT earned`"
-        /><InfoTip
+        <span v-html="`${totalEarned.toFixed(1)} $FIT earned`" /><InfoTip
           :title="$t('dashboard.stats_tooltip_earned_title')"
           :text="$t('dashboard.stats_tooltip_earned_text')"
         />
@@ -36,7 +33,9 @@
         />
       </div>
       <div class="activities-list text-right">
-        <TopActivities :items="topActivities" />
+        <TopActivities
+          :items="topActivities.length ? topActivities : ['Ride', 'Swim']"
+        />
         <span
           class="dapp-stats__other__label"
           v-html="$t('dashboard.stats_top_activities')"

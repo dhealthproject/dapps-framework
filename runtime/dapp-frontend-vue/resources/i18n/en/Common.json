@@ -19,6 +19,7 @@
         "terms_of_service": "Terms of Service",
         "dropdown_refer_earn": "Refer and Earn",
         "disconnect_wallet": "Disconnect wallet",
-        "activities": "Activities"
+        "activities": "Activities",
+        "amount_earned": "$FIT earned"
     }
 }
