@@ -10,6 +10,9 @@
 // external dependencies
 import { ApiProperty } from "@nestjs/swagger";
 
+// internal dependencies
+import { BasicWebHookEventRequest } from "../BasicWebHookEventRequest";
+
 /**
  * @label STRAVA
  * @class StravaWebHookEventRequest
@@ -26,7 +29,7 @@ import { ApiProperty } from "@nestjs/swagger";
  *
  * @since v0.3.2
  */
-export class StravaWebHookEventRequest {
+export class StravaWebHookEventRequest extends BasicWebHookEventRequest {
   /**
    * The type of object that serves as a subject in the event. This
    * consists of a string that always contains one of: 'athlete' or
@@ -125,4 +128,8 @@ export class StravaWebHookEventRequest {
       "The time of the event being served. This consists of a UTC timestamp at which the activity or athlete was created or updated.",
   })
   public event_time: number;
+
+  public get remoteIdentifier(): string {
+    return this.owner_id;
+  }
 }

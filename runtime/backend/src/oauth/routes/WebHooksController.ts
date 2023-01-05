@@ -31,13 +31,10 @@ import { Response } from "express";
 // internal dependencies
 import { OAuthService } from "../services/OAuthService";
 import { WebHooksService } from "../services/WebHooksService";
-
-// @todo this needs another abstraction layer to permit multi-providers
-// @todo should instead be moved in OAuthService and use available drivers
-import { StravaWebHookEventRequest } from "../drivers/strava/StravaWebHookEventRequest";
-import { StravaWebHookSubscriptionRequest } from "../drivers/strava/StravaWebHookSubscriptionRequest";
-import { StravaWebHookSubscriptionResponse } from "../drivers/strava/StravaWebHookSubscriptionResponse";
 import { LogService } from "../../common/services/LogService";
+import { BasicWebHookEventRequest } from "../drivers/BasicWebHookEventRequest";
+import { BasicWebHookSubscriptionRequest } from "../drivers/BasicWebHookSubscriptionResponse";
+import { StravaWebHookEventRequest } from "../drivers";
 
 namespace HTTPResponses {
   // creates a variable that we include in a namespace
@@ -45,7 +42,7 @@ namespace HTTPResponses {
   // maps to the HTTP response of GET `/webhook/:provider`
   export const WebhookGetResponseSchema = {
     schema: {
-      type: getSchemaPath(StravaWebHookSubscriptionResponse),
+      type: getSchemaPath(BasicWebHookSubscriptionRequest),
     },
   };
 
@@ -105,7 +102,7 @@ export class WebHooksController {
    * @async
    * @param   {Response}                    response      An `express` response object that will be used to attach the challenge when verification succeeds.
    * @param   {string}                      providerName  A third-party data provider name, e.g. `"strava"`.
-   * @param   {StravaWebHookSubscriptionRequest}  query         A webhook subscription request query. This consists of a platform-dependent fields list (see Strava).
+   * @param   {BasicWebHookEventRequest}    query         A webhook subscription request query. This consists of a platform-dependent fields list (see Strava).
    * @returns Promise<Response>   An `express` response object that contains the verification challenge as attached in the request.
    * @throws  {HttpException}     Given an *invalid* verification token or no verification token is present.
    */
@@ -116,8 +113,8 @@ export class WebHooksController {
       "This endpoint is called by third-party data providers to initially create webhook subscriptions for remote accounts.",
   })
   @ApiExtraModels(
-    StravaWebHookSubscriptionRequest,
-    StravaWebHookSubscriptionResponse,
+    BasicWebHookEventRequest,
+    BasicWebHookSubscriptionRequest,
   )
   @ApiOkResponse(HTTPResponses.WebhookGetResponseSchema)
   protected async subscribe(
@@ -175,7 +172,7 @@ export class WebHooksController {
   protected async event(
     @NestResponse() response: Response,
     @Param("provider") providerName: string,
-    @Body() data: StravaWebHookEventRequest,
+    @Body() data: BasicWebHookEventRequest,
   ) {
     // shortcuts to messages that are responded
     const IGNORE_MESSAGE = "EVENT_IGNORED";
@@ -190,7 +187,7 @@ export class WebHooksController {
       const integration =
         await this.oauthService.getIntegrationByRemoteIdentifier(
           providerName,
-          data.owner_id,
+          data.remoteIdentifier,
         );
 
       // ignore this event given no integration or client_id
@@ -204,7 +201,7 @@ export class WebHooksController {
       await this.webhooksService.eventHandler(
         providerName,
         integration.address,
-        data,
+        data as StravaWebHookEventRequest,
       );
 
       // responds with status 200 and success message

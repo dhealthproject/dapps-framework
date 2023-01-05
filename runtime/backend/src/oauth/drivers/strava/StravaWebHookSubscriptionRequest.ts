@@ -12,6 +12,7 @@ import { ApiProperty } from "@nestjs/swagger";
 
 // internal dependencies
 import { StravaWebHookSubscriptionFields } from "./StravaWebHookSubscriptionFields";
+import { BasicWebHookSubscriptionRequest } from "../BasicWebHookSubscriptionResponse";
 
 /**
  * @label STRAVA
@@ -28,7 +29,7 @@ import { StravaWebHookSubscriptionFields } from "./StravaWebHookSubscriptionFiel
  *
  * @since v0.3.2
  */
-export class StravaWebHookSubscriptionRequest {
+export class StravaWebHookSubscriptionRequest extends BasicWebHookSubscriptionRequest {
   /**
    * The webhook subscription validation object. This field consists of
    * several fields that are Strava-specific and may be different with
@@ -44,4 +45,8 @@ export class StravaWebHookSubscriptionRequest {
       "The webhook subscription validation object. This field consists of several fields that are Strava-specific and may be different with other data providers.",
   })
   public hub: StravaWebHookSubscriptionFields;
+
+  public get subscriptionValidationObject(): object {
+    return this.hub;
+  }
 }
