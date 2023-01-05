@@ -8,7 +8,7 @@
             "button": "Get Started",
             "image": "Sport-to-Token.svg",
             "mobileGradient":
-              "linear-gradient(180deg, #000000 -5.38%, rgba(44, 63, 81, 0) 27.55%, #395E81 66.26%, #1F94A4 100%);"
+              "linear-gradient(rgb(0, 0, 0) -5.38%, rgba(44, 63, 81, 0) 27.55%, rgb(57, 94, 129) 66.26%, rgb(4 48 54) 100%);"
           },
           {
             "id": "screen_2",
@@ -17,7 +17,7 @@
             "button": "Next",
             "image": "Global-Challenges.svg",
             "mobileGradient":
-              "linear-gradient(180deg, #000000 -5.38%, rgba(44, 63, 81, 0) 27.55%, #5D3981 63.28%, #391FA4 100%)"
+              "linear-gradient(rgb(0, 0, 0) -5.38%, rgba(44, 63, 81, 0) 27.55%, rgb(93, 57, 129) 63.28%, rgb(15 4 59) 100%);"
           },
           {
             "id": "screen_3",
@@ -26,7 +26,7 @@
             "button": "Connect your Wallet",
             "image": "NFT-Awards.svg",
             "mobileGradient":
-              "linear-gradient(180deg, #000000 -5.38%, rgba(44, 63, 81, 0) 27.55%, #398149 63.28%, #81A41F 100%)"
+              "linear-gradient(rgb(0, 0, 0) -5.38%, rgba(44, 63, 81, 0) 27.55%, rgb(57, 129, 73) 63.28%, rgb(53 69 6) 100%);"
           }
         ],
         "modal": {
