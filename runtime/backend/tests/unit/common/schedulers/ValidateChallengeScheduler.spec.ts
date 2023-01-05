@@ -195,7 +195,7 @@ describe("common/ValidateChallengeScheduler", () => {
       expect(mockedValidate).toBeCalled();
     });
 
-    it("should log error if challenge invalid", async () => {
+    it("should continue validating given an invalid challenge", async () => {
       (validateChallengeScheduler as any).challenge = "invalidChallenge";
       (validateChallengeScheduler as any).authService = {
         validateChallenge: jest.fn().mockImplementation(
@@ -204,39 +204,46 @@ describe("common/ValidateChallengeScheduler", () => {
           }, // <-- force-throw
         ),
       };
+      const stopCronJobMock = jest.fn();
+      (validateChallengeScheduler as any).stopCronJob = stopCronJobMock;
 
       // act
       await (validateChallengeScheduler as any).validate();
 
       // assert
-      expect(logger.error).toHaveBeenCalled();
+      expect(stopCronJobMock).not.toHaveBeenCalled(); // not!
     });
 
-    it("should stop cronJob", async () => {
-      const mockedFn = jest.fn();
-      (validateChallengeScheduler as any).stopCronJob = mockedFn;
+    it("should continue validating given empty authentication payload ", async () => {
+      const stopCronJobMock = jest.fn();
+      (validateChallengeScheduler as any).stopCronJob = stopCronJobMock;
       jest.spyOn(authService, "validateChallenge").mockResolvedValue(null);
 
       await (validateChallengeScheduler as any).validate();
 
-      expect(jobStopCall).toBeCalled();
+      // assert
+      expect(stopCronJobMock).not.toHaveBeenCalled(); // not!
     });
 
-    it("should emit event", async () => {
-      const mockedFn = jest.fn();
+    it("should stop cronjob and emit event given successful authentication", async () => {
+      // prepare
+      const stopCronJobMock = jest.fn();
+      const emitMock = jest.fn();
+      (validateChallengeScheduler as any).stopCronJob = stopCronJobMock;
+      (validateChallengeScheduler as any).emitter = {
+        emit: emitMock,
+      };
+      (validateChallengeScheduler as any).authRegistries = ["fakeRegistry"];
       jest
         .spyOn(authService, "validateChallenge")
         .mockResolvedValue({} as AuthenticationPayload);
 
-      (validateChallengeScheduler as any).emitter = {
-        emit: mockedFn,
-      };
-
-      (validateChallengeScheduler as any).authRegistries = ["fakeRegistry"];
-
+      // act
       await (validateChallengeScheduler as any).validate();
 
-      expect(mockedFn).toBeCalled();
+      // assert
+      expect(stopCronJobMock).toHaveBeenCalled();
+      expect(emitMock).toHaveBeenCalled();
     });
   });
 });

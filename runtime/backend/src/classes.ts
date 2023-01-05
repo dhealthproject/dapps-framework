@@ -25,6 +25,7 @@ export * from "./common/concerns";
 export * from "./common/drivers";
 export * from "./common/errors";
 export * from "./common/events";
+export * from "./common/gateways";
 export * from "./common/models";
 export * from "./common/requests";
 export * from "./common/routes";

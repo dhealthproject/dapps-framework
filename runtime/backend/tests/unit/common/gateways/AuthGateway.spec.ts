@@ -77,7 +77,7 @@ describe("common/AuthGateway", () => {
     });
   });
 
-  describe("handleAuthOpen()", () => {
+  describe("onAuthOpened()", () => {
     it("should start validation of challenge", () => {
       const validateMethodMock = jest.fn();
 
@@ -85,38 +85,43 @@ describe("common/AuthGateway", () => {
         startCronJob: validateMethodMock,
       };
 
-      authGateway.handleAuthOpen({ challenge: "fakeChallenge" });
+      authGateway.onAuthOpened({ challenge: "fakeChallenge" });
 
       expect(validateMethodMock).toBeCalledTimes(1);
     });
   });
 
-  describe("complete()", () => {
+  describe("onAuthCompleted()", () => {
     it("should send complete message to client and log message", () => {
-      const mockedMethod = jest.fn();
-
-      (authGateway as any).ws = {
-        send: mockedMethod,
+      // prepare
+      const sendMock = jest.fn();
+      (authGateway as any).clients = {
+        "fakeChallenge": {
+          send: sendMock,
+        },
       };
-      (authGateway as any).logger = {
-        log: mockedMethod,
-      };
 
-      authGateway.complete();
-      expect(mockedMethod).toBeCalledTimes(2);
+      // act
+      authGateway.onAuthCompleted({ challenge: "fakeChallenge" });
+
+      // assert
+      expect(sendMock).toBeCalledTimes(1);
     });
   });
 
-  describe("close", () => {
-    it("should log message on close", () => {
-      const mockedMethod = jest.fn();
-
-      (authGateway as any).logger = {
-        log: mockedMethod,
+  describe("onAuthClosed", () => {
+    it("should delete client socket instance", () => {
+      // prepare
+      (authGateway as any).clients = {
+        "fakeChallenge": {}
       };
 
-      authGateway.close();
-      expect(mockedMethod).toBeCalledTimes(1);
+      // act
+      authGateway.onAuthClosed({ challenge: "fakeChallenge" });
+      const clients = (authGateway as any).clients;
+
+      // assert
+      expect("fakeChallenge" in clients).toBe(false);
     });
   });
 });

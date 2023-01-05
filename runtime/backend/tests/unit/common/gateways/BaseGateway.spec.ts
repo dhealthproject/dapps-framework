@@ -14,6 +14,7 @@ import { TestingModule, Test } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { getModelToken } from "@nestjs/mongoose";
+import { Socket } from "dgram";
 
 // internal dependencies
 import {
@@ -130,7 +131,7 @@ describe("common/BaseGateway", () => {
 
     it("should push value to clients", () => {
       testGateway.handleConnection({}, request);
-      expect((testGateway as any).clients).toHaveLength(1);
+      expect(Object.keys((testGateway as any).clients)).toHaveLength(1);
     });
   });
 
@@ -140,23 +141,27 @@ describe("common/BaseGateway", () => {
     };
 
     it("should remove correct challenge from clients", () => {
-      (testGateway as any).clients = ["fakeChallengeHello"];
+      (testGateway as any).clients = {
+        "fakeChallengeHello": {},
+        "fakeChallenge": {}, // <-- will not be removed
+      };
       testGateway.handleDisconnect(mockedWsWithChallenge);
 
-      expect((testGateway as any).clients).toHaveLength(0);
+      expect(Object.keys((testGateway as any).clients)).toHaveLength(1);
+      expect("fakeChallenge" in (testGateway as any).clients).toBe(true);
     });
   });
 
   describe("afterInit", () => {
     it("should log info after gateway initialized", () => {
-      const mockedLog = jest.fn();
+      const debugMock = jest.fn();
       (testGateway as any).logger = {
-        log: mockedLog,
+        debug: debugMock,
       };
 
       testGateway.afterInit({} as any);
 
-      expect(mockedLog).toBeCalledTimes(1);
+      expect(debugMock).toBeCalledTimes(1);
     });
   });
 });

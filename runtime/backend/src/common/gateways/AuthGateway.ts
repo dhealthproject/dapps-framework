@@ -13,20 +13,24 @@ import { SubscribeMessage } from "@nestjs/websockets";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 
 // internal dependencies
+import { OnAuthClosed } from "../events/OnAuthClosed";
+import { OnAuthCompleted } from "../events/OnAuthCompleted";
+import { OnAuthOpened } from "../events/OnAuthOpened";
 import { ValidateChallengeScheduler } from "../schedulers/ValidateChallengeScheduler";
 import { BaseGateway } from "./BaseGateway";
 
 /**
  * @label COMMON
  * @class AuthGateway
- * @description This class extends baseGateway. It's
- * responsible for handling authentication requests,
- * running validation scheduler, permitting to frontend to call get /token.
+ * @description This class extends baseGateway and is responsible for
+ * handling authentication requests, running challenge validation and
+ * finally allowing the frontend to call the `/auth/token` endpoint.
  * <br /><br />
- * This class can be used by adding different
- * @SubscribeMessage handlers.
+ * This class defines multiple communication flows:
+ * - `server to server` using the event emitter (OnEvent)
+ * - `client to server` using websocket channel *messages* (SubscribeMessage)
  *
- * @since v0.2.0
+ * @since v0.6.0
  */
 @Injectable()
 export class AuthGateway extends BaseGateway {
@@ -45,6 +49,19 @@ export class AuthGateway extends BaseGateway {
   }
 
   /**
+   * This method handles auth.close event triggered by client.
+   *
+   * @returns {void}
+   */
+  @SubscribeMessage("auth.close")
+  public onAuthClosed(payload: OnAuthClosed) {
+    if (payload.challenge in this.clients) {
+      // client has disconnected, remove from storage
+      delete this.clients[payload.challenge];
+    }
+  }
+
+  /**
    * This method handles starting of challenge validation.
    * Gets trigged by "auth.open" emit from handleConnection().
    * Calls .startCronJob from validateChallengeScheduler.
@@ -53,18 +70,8 @@ export class AuthGateway extends BaseGateway {
    * @returns {void}  Emits "auth.open" event which triggers validating of the received challenge
    */
   @OnEvent("auth.open")
-  handleAuthOpen(payload: any) {
+  public onAuthOpened(payload: OnAuthOpened) {
     this.validateChallengeScheduler.startCronJob(payload.challenge);
-  }
-
-  /**
-   * This method handles auth.close event triggered by client.
-   *
-   * @returns {void}
-   */
-  @SubscribeMessage("auth.close")
-  close() {
-    this.logger.log("AUTHGATEWAY: Client disconnected");
   }
 
   /**
@@ -75,8 +82,10 @@ export class AuthGateway extends BaseGateway {
    * @returns {void}  Emits "auth.complete" event which informs client that token may be queried.
    */
   @OnEvent("auth.complete")
-  complete() {
-    this.ws.send("auth.complete");
-    this.logger.log("AUTHGATEWAY: Complete");
+  public onAuthCompleted(payload: OnAuthCompleted) {
+    if (payload.challenge in this.clients) {
+      // sends completion
+      this.clients[payload.challenge].send("auth.complete");
+    }
   }
 }

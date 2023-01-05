@@ -19,8 +19,10 @@ import { ConfigService } from "@nestjs/config";
 import { AccessTokenRequest } from "../requests/AccessTokenRequest";
 import { AuthService } from "../services/AuthService";
 import { LogService } from "../services/LogService";
-import dappConfigLoader from "../../../config/dapp";
+import { OnAuthCompleted } from "../events/OnAuthCompleted";
 
+// configuration resources
+import dappConfigLoader from "../../../config/dapp";
 const dappConfig = dappConfigLoader();
 
 /**
@@ -137,6 +139,7 @@ export class ValidateChallengeScheduler {
       `${dappConfig.dappName}/ValidateChallengeScheduler`,
     );
 
+    // prepare challenge validation
     this.authRegistries = this.configService.get<string[]>("auth.registries");
   }
 
@@ -144,29 +147,35 @@ export class ValidateChallengeScheduler {
    * This method implements validation process
    * which runs by scheduler each period of time.
    *
+   * @access protected
+   * @async
    * @param   {any}  payload       Contains challenge string
-   * @returns {void}  Emits "auth.open" event which triggers validating of the received challenge
+   * @returns {Promise<void>}
+   * @emits   {@link OnAuthCompleted}     Given a successful challenge validation.
    */
   protected async validate() {
     try {
-      const payload = await this.authService.validateChallenge(
-        {
-          challenge: this.challenge,
-          registry: this.authRegistries[0],
-        } as AccessTokenRequest,
-        false,
-      );
+      // - validates challenge's presence in database
+      // - validates challenge's presence on-chain in a transfer
+      // - updates the challenge database entry if necessary
+      const payload = await this.authService.validateChallenge({
+        challenge: this.challenge,
+        registry: this.authRegistries[0],
+      } as AccessTokenRequest);
 
       if (null !== payload) {
-        // after challenge validated successfully - stop running cron
+        // stop running cronjob and emit completion event
         this.stopCronJob();
-        this.emitter.emit("auth.complete");
-        this.logger.log("successfully validated challenge", this.challenge);
+
+        // internal event emission
+        this.emitter.emit(
+          "auth.complete",
+          OnAuthCompleted.create(this.challenge),
+        );
       }
     } catch (err) {
-      // if challenge isn't on chain - print info to the console
-      this.logger.error("failed to validate challenge", err);
-      // throw err;
+      // if challenge isn't on chain, ignore and come back later
+      return;
     }
   }
 
@@ -174,6 +183,7 @@ export class ValidateChallengeScheduler {
    * This method stops scheduler cronJob,
    * clears timeout as scheduler has been stopped.
    *
+   * @access protected
    * @returns {void}  Stops cronJob, clears challenge, clears timeout.
    */
   protected stopCronJob() {
@@ -186,15 +196,22 @@ export class ValidateChallengeScheduler {
    * This method starts scheduler cronJob,
    * sets received challenge and sets cronJob timeout.
    *
+   * @access protected
    * @returns {void}  Starts cronJob, sets challenge, sets timeout.
    */
   public startCronJob(challenge: string) {
+    // prepare and start the internal cronjob
     this.challenge = challenge;
-
     this.job.start();
 
-    // stop cronjob in case if challenge wasn't validated during 30 minutes
+    // after 30 minutes, stop validating challenge
     this.stopCronJobTimeout = setTimeout(() => {
+      // warn about aborting challenge validation
+      this.logger.warn(
+        `Challenge validation for "${this.challenge}" failed and aborted.`,
+      );
+
+      // stops running the cronjob
       this.stopCronJob();
     }, this.stopTimeoutAmount);
   }

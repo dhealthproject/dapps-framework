@@ -20,14 +20,26 @@ import { Server } from "https";
 import cookie from "cookie";
 import cookieParser from "cookie-parser";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { Socket } from "dgram";
 import { HttpException, HttpStatus } from "@nestjs/common";
+import { Request } from "express";
 
 // internal dependencies
-import dappConfigLoader from "../../../config/dapp";
-import { LogService } from "../services";
+import { LogService } from "../services/LogService";
+import { OnAuthOpened } from "../events/OnAuthOpened";
 
+// configuration resources
+import dappConfigLoader from "../../../config/dapp";
 const dappConfig = dappConfigLoader();
+
+/**
+ * @type WebsocketConsumerMap
+ * @description Contains a labelled map of connected websocket clients. The
+ * value always contains a *connected* `Socket` instance that is used to
+ * interact with UDP datagram sockets.
+ *
+ * @since v0.6.0
+ */
+export type WebsocketConsumerMap = { [id: string]: any };
 
 /**
  * @label COMMON
@@ -49,19 +61,6 @@ const dappConfig = dappConfigLoader();
 export abstract class BaseGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  /**
-   * Construct an instance of the base gateway,
-   * initialize clients, logger and emitter properties.
-   *
-   * @access public
-   * @param   {EventEmitter2}      emitter     Emitting events once connections/updates appear.
-   * @param   {Array}              clients     Store connected client challenges.
-   */
-  constructor(protected readonly emitter: EventEmitter2) {
-    this.clients = [];
-    this.logger = new LogService(`${dappConfig.dappName}/gateway`);
-  }
-
   /**
    * This property permits to log information to the console or in files
    * depending on the configuration. This logger instance can be accessed
@@ -87,31 +86,54 @@ export abstract class BaseGateway
    * clients by storing their challenges. Challenge gets removed from list once client disconnects.
    *
    * @access protected
-   * @var {string[]}
+   * @var {WebsocketConsumerMap}
    */
-  protected clients: string[];
+  protected clients: WebsocketConsumerMap;
 
   /**
-   * This property stores socket instance which
-   * is getting assigned in it on connection. Used for sending messages/emitting events from child classes.
+   * Contains the full websocket connection URL (including path).
    *
    * @access protected
-   * @var {Socket}
+   * @var {string}
    */
-  protected ws: Socket;
+  protected websocketUrl: string;
+
+  /**
+   * Construct an instance of the base gateway,
+   * initialize clients, logger and emitter properties.
+   *
+   * @access public
+   * @param   {EventEmitter2}      emitter     Emitting events once connections/updates appear.
+   * @param   {Array}              clients     Store connected client challenges.
+   */
+  public constructor(protected readonly emitter: EventEmitter2) {
+    this.clients = {};
+    this.logger = new LogService(`${dappConfig.dappName}/worker`);
+
+    // build URL from configuration
+    const scheme = dappConfig.backendApp.https ? `wss` : `ws`;
+    const wsHost = dappConfig.backendApp.host;
+    const wsPort = dappConfig.backendApp.port;
+
+    // note that for HTTPS enabled backend runtimes,
+    // the websocket connection works with `wss://`
+    this.websocketUrl = `${scheme}://${wsHost}:${wsPort}`;
+  }
 
   /**
    * This method handles connection via websocket with the client.
-   * It also extracts challenge cookie from request, decodes it and stores in clients list.
    * <br /><br />
-   * In case of a *successful* challenge decoding "auth.open" event will be fired.
+   * Additionally, this method will *emit* the event `auth.open` given the
+   * presence of an *authentication challenge* in the *signed request cookies*.
    *
-   * @param   {any}  ws       Websocket connection param, holds server and client info.
-   * @param   {any}  req      Request param which allows to access cookies
-   * @returns {Promise<void>}  Emits "auth.open" event which triggers validating of the received challenge
-   * @throws  {HttpException}  Challenge wasn't attached to request cookies
+   * @access public
+   * @param   {any}  ws        UDP datagrap socket used to connect.
+   * @param   {Request}  req      HTTP Request forwarded to enable reading signed client cookies.
+   * @returns {Promise<void>}
+   * @emits   {@link OnAuthOpened}     Given the presence of a challenge in signed cookies of the *request*.
+   * @throws  {HttpException}  Given a missing or invalid challenge in the signer cookies of the *request*.
    */
-  async handleConnection(ws: any, req: any) {
+  public async handleConnection(ws: any, req: Request) {
     // parse challenge from cookie
     const c: any = cookie.parse(req.headers.cookie);
     const decoded = cookieParser.signedCookie(
@@ -120,21 +142,17 @@ export abstract class BaseGateway
     ) as string;
 
     // if challenge couldn't be parsed or parsed incorrectly - throw an error
-    if (!decoded)
+    if (!decoded) {
       throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+    }
 
-    // store ws connection to allow send messages to the client in child classes
-    this.ws = ws;
-
-    // add cookie to ws object
+    // add cookie to ws object and push challenge to client list
+    // the challenge is used as a "websocket client identifier"
     ws.challenge = decoded;
-    // push challenge to client list
-    this.clients.push(decoded);
+    this.clients[decoded] = ws;
 
-    // trigger auth.open event with challenge passed
-    this.emitter.emit("auth.open", { challenge: decoded });
-
-    this.logger.log("client connected", this.clients);
+    // internal event emission
+    this.emitter.emit("auth.open", OnAuthOpened.create(decoded));
   }
 
   /**
@@ -145,23 +163,37 @@ export abstract class BaseGateway
    * parameter **has been found** in a recent transfer transaction's message,
    * a document will be *insert* in the collection `authChallenges`.
    *
+   * @access public
    * @param   {any}  ws       Websocket connection param, holds server and client info.
    * @returns {void}          Removes client challenge from list
    */
-  handleDisconnect(ws: any) {
-    const str = ws.challenge;
-    this.clients = this.clients.filter((c) => c !== str);
+  public handleDisconnect(ws: any) {
+    // do we have a challenge?
+    if (!("challenge" in ws) || !ws.challenge.length) {
+      return;
+    }
 
-    this.logger.log("Client disconnected", this.clients);
+    // is it a connected client?
+    if (!(ws.challenge in this.clients)) {
+      return;
+    }
+
+    // client is now disconnected
+    delete this.clients[ws.challenge];
   }
 
   /**
    * This method handles gateway initialize hook.
    *
+   * @access public
    * @param   {Server}  server       Websocket connection param, holds server and client info.
    * @returns {void}                 Removes client challenge from list
    */
-  afterInit(server: Server) {
-    this.logger.log("Gateway initialized");
+  public afterInit(server: Server) {
+    // log about websocket availability
+    const countConn = server.connections;
+    this.logger.debug(
+      `Accepting websocket clients on: ${this.websocketUrl} (${countConn})`,
+    );
   }
 }

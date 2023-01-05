@@ -8,11 +8,7 @@
  * @license     LGPL-3.0
  */
 // generics / interfaces
-export * from "./BaseEvent";
-export * from "./BaseEventListener";
+export * from "./BaseGateway";
 
-// custom events
-export * from "./AlertEvent";
-export * from "./OnAuthClosed";
-export * from "./OnAuthCompleted";
-export * from "./OnAuthOpened";
+// custom gateways
+export * from "./AuthGateway";

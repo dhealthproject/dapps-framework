@@ -305,14 +305,14 @@ export class AuthService {
    * a document will be *insert* in the collection `authChallenges`.
    *
    * @param   {AccessTokenRequest}  param0          An authentication challenge, as created with {@link getChallenge}.
-   * @param   {boolean}             enableStorage   Flag that defines if challenge should be stored in database for the case when need to check validity of challenge. Defaults to true.
    * @returns {Promise<AuthenticationPayload>}  An authenticated account session described with {@link AuthenticationPayload}.
    * @throws  {HttpException}           Given challenge could not be found in recent transactions.
    */
-  public async validateChallenge(
-    { challenge, sub, registry }: AccessTokenRequest,
-    enableStorage = true,
-  ): Promise<AuthenticationPayload> {
+  public async validateChallenge({
+    challenge,
+    sub,
+    registry,
+  }: AccessTokenRequest): Promise<AuthenticationPayload> {
     // does not permit multiple usage of challenges
     const challengeUsed: boolean = await this.challengesService.exists(
       new AuthChallengeQuery({
@@ -351,21 +351,17 @@ export class AuthService {
     const logger = new LogService(AppConfiguration.dappName);
     logger.log(`Authorizing log-in challenge for "${authorizedUser.address}"`);
 
-    if (enableStorage === true) {
-      // stores a validated authentication challenge
-      // in the database collection `authChallenges`
-      await this.challengesService.createOrUpdate(
-        new AuthChallengeQuery({
-          challenge: challenge,
-        } as AuthChallengeDocument),
-        {
-          usedBy: authorizedAddr.plain(),
-          usedAt: new Date().valueOf(),
-        },
-      );
-    }
-
-    // this.authGateWay.server.emit("auth.complete");
+    // stores a validated authentication challenge
+    // in the database collection `authChallenges`
+    await this.challengesService.createOrUpdate(
+      new AuthChallengeQuery({
+        challenge: challenge,
+      } as AuthChallengeDocument),
+      {
+        usedBy: authorizedAddr.plain(),
+        usedAt: new Date().valueOf(),
+      },
+    );
 
     // returns the authorized user details
     return authorizedUser;
