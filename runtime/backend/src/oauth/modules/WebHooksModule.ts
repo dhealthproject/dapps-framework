@@ -31,6 +31,8 @@ import { AppConfiguration } from "../../AppConfiguration";
 import { WebHooksController } from "../routes/WebHooksController";
 import { WebHooksService } from "../services/WebHooksService";
 import { OAuthService } from "../services";
+import { EventHandlerStrategyFactory } from "../drivers/EventHandlerStrategyFactory";
+import { EventHandlerModule } from "./EventHandlerModule";
 
 /**
  * @label OAUTH
@@ -46,16 +48,12 @@ import { OAuthService } from "../services";
         name: AccountIntegration.name,
         schema: AccountIntegrationSchema,
       }, // requirement from OAuthService
-      {
-        name: Activity.name,
-        schema: ActivitySchema,
-      }, // requirement from ActivitiesModule
     ]),
-    AppConfiguration.getEventEmitterModule(), // requirement from WebHooksService
     AuthModule, // requirement from WebHooksService
     ActivitiesModule, // requirement from WebHooksService
     QueryModule, // requirement from WebHooksService
     LogModule, // requirement from WebHooksService
+    EventHandlerModule, // requirement from WebHooksService
   ],
   controllers: [WebHooksController],
   providers: [WebHooksService, OAuthService],

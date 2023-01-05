@@ -9,21 +9,15 @@
  */
 // external dependencies
 import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
-import moment from "moment";
 
 // internal dependencies
 import { OAuthService } from "./OAuthService";
 import { OAuthEntityType } from "../drivers/OAuthEntity";
-import { StravaWebHookEventRequest } from "../drivers/strava/StravaWebHookEventRequest";
-import { QueryService } from "../../common/services/QueryService";
 import { LogService } from "../../common/services/LogService";
 import { AppConfiguration } from "../../AppConfiguration";
 import {
-  Activity,
   ActivityDocument,
-  ActivityModel,
   ActivityQuery,
 } from "../../users/models/ActivitySchema";
 import { ActivityDataDocument } from "../../users/models/ActivityDataSchema";
@@ -33,6 +27,8 @@ import { ActivitiesService } from "../../users/services/ActivitiesService";
 // emitted events
 import { OnActivityCreated } from "../events/OnActivityCreated";
 import { OnActivityDownloaded } from "../events/OnActivityDownloaded";
+import { EventHandlerStrategyFactory } from "../drivers/EventHandlerStrategyFactory";
+import { BasicWebHookEventRequest } from "../drivers/BasicWebHookEventRequest";
 
 /**
  * @class WebHooksService
@@ -51,25 +47,18 @@ import { OnActivityDownloaded } from "../events/OnActivityDownloaded";
 export class WebHooksService {
   /**
    * Constructs an instance of this service.
-   *
    * @access public
    * @constructor
-   * @param {ActivityModel} model
-   * @param {QueryService<ActivityDocument, ActivityModel>} queryService
    * @param {OAuthService} oauthService
    * @param {ActivitiesService} activitiesService
    * @param {EventEmitter2} eventEmitter
+   * @param {EventHandlerStrategyFactory} eventHandlerStrategyFactory
    */
   public constructor(
-    @InjectModel(Activity.name)
-    private readonly model: ActivityModel,
-    private readonly queryService: QueryService<
-      ActivityDocument,
-      ActivityModel
-    >,
     protected readonly oauthService: OAuthService,
     protected readonly activitiesService: ActivitiesService,
     private readonly eventEmitter: EventEmitter2,
+    private readonly eventHandlerStrategyFactory: EventHandlerStrategyFactory,
   ) {}
 
   /**
@@ -85,99 +74,18 @@ export class WebHooksService {
    * @async
    * @param     {string}                      providerName  The OAuth provider name. This is the name of the third-party data provider, e.g. "strava".
    * @param     {string}                      userAddress   The dHealth Address of the account that belongs to the activity owner.
-   * @param     {StravaWebHookEventRequest}   data          The activity's **headers**. Importantly, Strava does not share full activity details here.
+   * @param     {BasicWebHookEventRequest}    data          The activity's **headers**. Importantly, Strava does not share full activity details here.
    * @returns   {Promise<ActivityDocument>}   The created document that was added to `activities`.
-   * @throws    {Error}                       Given invalid event payload, incompatible event payload or given any other error occurs while processing.
-   * @emits     {@link OnActivityCreated}     Given a successful activity creation (processing success).
    */
   public async eventHandler(
     providerName: string,
     userAddress: string,
-    data: StravaWebHookEventRequest,
+    data: BasicWebHookEventRequest,
   ): Promise<ActivityDocument> {
-    // destructure obligatory fields for validation
-    const { object_type, object_id, aspect_type, owner_id, event_time } = data;
-
-    // make sure we have all obligatory fields
-    if (!object_type || !object_id || !aspect_type || !owner_id) {
-      throw new Error(`Invalid webhook event payload.`);
-    }
-
-    // ignore event if it is not compatible
-    if (object_type !== "activity" || aspect_type !== "create") {
-      throw new Error(`Incompatible webhook event payload.`);
-    }
-
-    // ignore event if it already exists
-    if (
-      await this.activitiesService.exists(
-        new ActivityQuery({
-          remoteIdentifier: object_id,
-        } as ActivityDocument),
-      )
-    ) {
-      throw new Error(`This activity has been discovered before.`);
-    }
-
-    // ------
-    // Step 0: The webhook handler is **tried**
-    try {
-      // a Typescript `Date` is fundamentally specified as the number of
-      // *milliseconds* that have elapsed since the starting epoch.
-      const eventTime = new Date(event_time * 1000);
-      const eventDate = moment(eventTime).format("YYYYMMDD");
-
-      // count the activities of this athlete up to this one *today*
-      const countToday: number = await this.queryService.count(
-        new ActivityQuery({
-          address: userAddress,
-          dateSlug: eventDate,
-        } as ActivityDocument),
-        this.model,
-      );
-
-      // index uses date-only, index, object id and athlete id (x per day).
-      // e.g. "20220910-1-123456-94380856"
-      const activityIdx = countToday + 1;
-      const activitySlug = [eventDate, activityIdx, object_id, owner_id].join(
-        "-",
-      );
-
-      // creates a new document in `activities` that contains
-      // only the *activity headers*. Activity details will be
-      // discovered at a later point in time using schedulers.
-      const activity = await this.queryService.createOrUpdate(
-        new ActivityQuery({
-          address: userAddress,
-          slug: activitySlug,
-        } as ActivityDocument),
-        this.model,
-        {
-          remoteIdentifier: object_id,
-          dateSlug: eventDate,
-          createdAt: eventTime,
-          provider: providerName.toLowerCase(),
-        },
-        {},
-      );
-
-      // internal event emission
-      this.eventEmitter.emit(
-        "oauth.activity.created",
-        OnActivityCreated.create(activitySlug),
-      );
-
-      // print INFO for created activities
-      const logger = new LogService(AppConfiguration.dappName);
-      logger.log(`Saved incoming event from data provider "${providerName}"`);
-
-      // returns the created `ActivityDocument`
-      return activity;
-    } catch (err: any) {
-      throw new Error(
-        `An error occurred while handling event ${object_id}: ${err}`,
-      );
-    }
+    const activityDocument = await this.eventHandlerStrategyFactory
+      .create(providerName)
+      .eventHandler(providerName, userAddress, data);
+    return activityDocument;
   }
 
   /**
