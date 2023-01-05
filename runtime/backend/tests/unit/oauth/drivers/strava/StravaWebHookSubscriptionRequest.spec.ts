@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // internal dependencies
-import { StravaWebHookSubscriptionRequest } from "../../../../../src/oauth/drivers/strava";
+import { StravaWebHookSubscriptionFields, StravaWebHookSubscriptionRequest } from "../../../../../src/oauth/drivers/strava";
 
 describe("common/StravaWebHookEventRequest", () => {
   it("should be defined", () => {
@@ -17,5 +17,20 @@ describe("common/StravaWebHookEventRequest", () => {
 
     // assert
     expect(instance).toBeDefined();
+  });
+
+  describe("get subscriptionValidationObject()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const instance = new StravaWebHookSubscriptionRequest();
+      instance.hub = new StravaWebHookSubscriptionFields();
+      const expectedResult = instance.hub;
+
+      // act
+      const result  = instance.subscriptionValidationObject;
+
+      // assert
+      expect(result).toBe(expectedResult);
+    });
   });
 });

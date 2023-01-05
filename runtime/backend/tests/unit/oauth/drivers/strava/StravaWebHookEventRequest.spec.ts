@@ -18,4 +18,19 @@ describe("common/StravaWebHookEventRequest", () => {
     // assert
     expect(instance).toBeDefined();
   });
+
+  describe("get remoteIdentifier()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const instance = new StravaWebHookEventRequest();
+      instance.owner_id = "test-owner_id";
+      const expectedResult = instance.owner_id;
+
+      // act
+      const result  = instance.remoteIdentifier;
+
+      // assert
+      expect(result).toBe(expectedResult);
+    });
+  });
 });

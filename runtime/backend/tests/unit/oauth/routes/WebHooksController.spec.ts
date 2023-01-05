@@ -25,6 +25,8 @@ import { WebHooksService } from "../../../../src/oauth/services/WebHooksService"
 import { ActivitiesService } from "../../../../src/users/services/ActivitiesService";
 import { ActivityDocument } from "../../../../src/users/models/ActivitySchema";
 import { LogService } from "../../../../src/common/services/LogService";
+import { EventHandlerStrategyFactory } from "../../../../src/oauth/drivers/EventHandlerStrategyFactory";
+import { StravaEventHandlerStrategy } from "../../../../src/oauth/drivers/strava/StravaEventHandlerStrategy";
 
 // tested module
 import { WebHooksController } from "../../../../src/oauth/routes/WebHooksController";
@@ -66,6 +68,8 @@ describe("processor/WebHooksController", () => {
             error: jest.fn(),
           },
         }, // requirement from WebHooksController
+        EventHandlerStrategyFactory,
+        StravaEventHandlerStrategy,
       ]
     }).compile();
 
