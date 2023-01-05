@@ -105,7 +105,6 @@ export class AlertNotifier {
       event.loggerContext === lastAlertEvent.loggerContext &&
       event.message.toString() === lastAlertEvent.message
     ) {
-      console.log("logger: ", logger);
       logger.debug(`Warning alert is the same with last alert`);
       return;
     }
