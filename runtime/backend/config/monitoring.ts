@@ -46,6 +46,13 @@ export default () => ({
   /**
    * A storage option field. This specifies logging transport options
    * that are enabled and to be applied.
+   * <br /><br />
+   * The `level` field in each storage row is used as a *minimum* log
+   * message level with following order:
+   * ```
+   * debug < info < warn < error
+   * ```
+   * i.e. specifying `info`, effectively disables `debug` messages.
    *
    * @example `[{type: "console", level: "debug"}]`
    * @var {Transport[]}

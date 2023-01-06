@@ -254,7 +254,7 @@ export class AuthController {
       // - make sure it wasn't used before (no multiple usage)
       // - make sure it is present in a recent transaction on-chain
       const payload: AuthenticationPayload =
-        await this.authService.validateChallenge(body);
+        await this.authService.validateChallenge(body, true); // mark as used
 
       if (null !== payload) {
         // fetches or generates currently active accessToken, note that a

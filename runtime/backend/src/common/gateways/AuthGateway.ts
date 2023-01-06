@@ -55,9 +55,17 @@ export class AuthGateway extends BaseGateway {
    */
   @SubscribeMessage("auth.close")
   public onAuthClosed(payload: OnAuthClosed) {
-    if (payload.challenge in this.clients) {
+    if (this.options.debug === true) {
+      this.logger.debug(
+        `Received event "auth.close" with challenge "${payload.challenge}"`,
+      );
+    }
+
+    // extract challenge from payload
+    const { challenge } = payload;
+    if (challenge in this.clients) {
       // client has disconnected, remove from storage
-      delete this.clients[payload.challenge];
+      delete this.clients[challenge];
     }
   }
 
@@ -69,9 +77,17 @@ export class AuthGateway extends BaseGateway {
    * @param   {any}  payload       Contains challenge string
    * @returns {void}  Emits "auth.open" event which triggers validating of the received challenge
    */
-  @OnEvent("auth.open")
-  public onAuthOpened(payload: OnAuthOpened) {
-    this.validateChallengeScheduler.startCronJob(payload.challenge);
+  @OnEvent("auth.open", { async: true })
+  public async onAuthOpened(payload: OnAuthOpened) {
+    if (this.options.debug === true) {
+      this.logger.debug(
+        `Received event "auth.open" with challenge "${payload.challenge}"`,
+      );
+    }
+
+    // extract challenge from payload
+    const { challenge } = payload;
+    this.validateChallengeScheduler.startCronJob(challenge);
   }
 
   /**
@@ -81,11 +97,19 @@ export class AuthGateway extends BaseGateway {
    *
    * @returns {void}  Emits "auth.complete" event which informs client that token may be queried.
    */
-  @OnEvent("auth.complete")
-  public onAuthCompleted(payload: OnAuthCompleted) {
-    if (payload.challenge in this.clients) {
+  @OnEvent("auth.complete", { async: true })
+  public async onAuthCompleted(payload: OnAuthCompleted) {
+    if (this.options.debug === true) {
+      this.logger.debug(
+        `Received event "auth.complete" with challenge "${payload.challenge}"`,
+      );
+    }
+
+    // extract challenge from payload
+    const { challenge } = payload;
+    if (challenge in this.clients) {
       // sends completion
-      this.clients[payload.challenge].send("auth.complete");
+      this.clients[challenge].send("auth.complete");
     }
   }
 }

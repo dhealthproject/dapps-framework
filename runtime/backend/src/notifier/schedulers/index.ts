@@ -13,3 +13,6 @@ export * from "./NotifierCommand";
 // exported schedulers
 export * from "./ReportNotifier/ReportNotifierCommand";
 export * from "./ReportNotifier/ReportNotifier";
+export * from "./ReportNotifier/DailyReportNotifier";
+export * from "./ReportNotifier/MonthlyReportNotifier";
+export * from "./ReportNotifier/WeeklyReportNotifier";

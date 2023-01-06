@@ -57,6 +57,18 @@ export default () => ({
   dappPublicKey: process.env.MAIN_PUBLIC_KEY,
 
   /**
+   * A boolean flag that determines whether *debug* mode must be
+   * enable *globally* or not.
+   * <br /><br />
+   * Note that by enabling debug mode *globally*, logs will need
+   * much more RAM during runtime.
+   *
+   * @example `true`
+   * @var {boolean}
+   */
+  debugMode: process.env.ENABLE_DEBUG === "true",
+
+  /**
    * An array of {@link Scope:COMMON} that represents the enabled
    * scopes for the runtime. Each scope may execute several
    * modules, services and schedulers.
@@ -122,8 +134,9 @@ export default () => ({
   backendApp: {
     url: process.env.BACKEND_URL,
     host: process.env.BACKEND_DOMAIN,
-    port: process.env.BACKEND_PORT,
-    https: process.env.BACKEND_USE_HTTPS === "true"
+    port: process.env.BACKEND_INTERNAL_PORT,
+    https: process.env.BACKEND_USE_HTTPS === "true",
+    wsPort: process.env.BACKEND_EXTERNAL_PORT
   },
 
   /**

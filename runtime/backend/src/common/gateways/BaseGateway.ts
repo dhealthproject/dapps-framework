@@ -53,6 +53,7 @@ export type WebsocketConsumerMap = { [id: string]: any };
  * @since v0.2.0
  */
 @WebSocketGateway({
+  // note: empty port runs the websocket server on same port as HTTP
   path: "/ws",
   cors: {
     origin: process.env.FRONTEND_URL,
@@ -79,7 +80,7 @@ export abstract class BaseGateway
    * @var {Server}
    */
   @WebSocketServer()
-  server: Server;
+  protected server: Server;
 
   /**
    * This property implements list of currently connected
@@ -99,6 +100,15 @@ export abstract class BaseGateway
   protected websocketUrl: string;
 
   /**
+   *
+   */
+  protected options: {
+    debug: boolean;
+  } = {
+    debug: dappConfig.debugMode === true,
+  };
+
+  /**
    * Construct an instance of the base gateway,
    * initialize clients, logger and emitter properties.
    *
@@ -108,16 +118,16 @@ export abstract class BaseGateway
    */
   public constructor(protected readonly emitter: EventEmitter2) {
     this.clients = {};
-    this.logger = new LogService(`${dappConfig.dappName}/worker`);
+    this.logger = new LogService(`${dappConfig.dappName}`);
 
     // build URL from configuration
     const scheme = dappConfig.backendApp.https ? `wss` : `ws`;
     const wsHost = dappConfig.backendApp.host;
-    const wsPort = dappConfig.backendApp.port;
+    const wsPort = dappConfig.backendApp.wsPort;
 
     // note that for HTTPS enabled backend runtimes,
     // the websocket connection works with `wss://`
-    this.websocketUrl = `${scheme}://${wsHost}:${wsPort}`;
+    this.websocketUrl = `${scheme}://${wsHost}:${wsPort}/ws`;
   }
 
   /**
@@ -136,23 +146,29 @@ export abstract class BaseGateway
   public async handleConnection(ws: any, req: Request) {
     // parse challenge from cookie
     const c: any = cookie.parse(req.headers.cookie);
-    const decoded = cookieParser.signedCookie(
+    const challenge = cookieParser.signedCookie(
       decodeURIComponent(c.challenge),
       process.env.SECURITY_AUTH_TOKEN_SECRET,
     ) as string;
 
     // if challenge couldn't be parsed or parsed incorrectly - throw an error
-    if (!decoded) {
+    if (!challenge) {
       throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
     }
 
     // add cookie to ws object and push challenge to client list
     // the challenge is used as a "websocket client identifier"
-    ws.challenge = decoded;
-    this.clients[decoded] = ws;
+    ws.challenge = challenge;
+    this.clients[challenge] = ws;
 
     // internal event emission
-    this.emitter.emit("auth.open", OnAuthOpened.create(decoded));
+    this.emitter.emit("auth.open", OnAuthOpened.create(challenge));
+
+    if (this.options.debug === true) {
+      this.logger.debug(
+        `New websocket client connected with challenge "${challenge}"`,
+      );
+    }
   }
 
   /**
@@ -191,9 +207,12 @@ export abstract class BaseGateway
    */
   public afterInit(server: Server) {
     // log about websocket availability
-    const countConn = server.connections;
     this.logger.debug(
-      `Accepting websocket clients on: ${this.websocketUrl} (${countConn})`,
+      `Now listening for websocket connections on ${this.websocketUrl}`,
     );
+
+    if (server.connections !== undefined) {
+      this.logger.debug(`${server.connections} websocket clients connected`);
+    }
   }
 }

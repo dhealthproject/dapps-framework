@@ -79,6 +79,18 @@ export interface DappConfig {
   dappPublicKey: string;
 
   /**
+   * A boolean flag that determines whether *debug* mode must be
+   * enable *globally* or not.
+   * <br /><br />
+   * Note that by enabling debug mode *globally*, logs will need
+   * much more RAM during runtime.
+   *
+   * @example `true`
+   * @var {boolean}
+   */
+  debugMode: boolean;
+
+  /**
    * An array of {@link Scope} that represents the enabled
    * scopes for the runtime. Each scope may execute several
    * modules, services and schedulers.

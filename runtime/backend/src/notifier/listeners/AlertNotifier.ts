@@ -85,9 +85,6 @@ export class AlertNotifier {
     this.notifier = this.notifierFactory.getNotifier(
       this.alertsConfig.transport as NotifierType,
     );
-
-    const logger = new LogService("testing");
-    logger.debug(`Config: ${JSON.stringify(this.alertsConfig, undefined, 2)}`);
   }
 
   /**
@@ -99,8 +96,6 @@ export class AlertNotifier {
    */
   @OnEvent("notifier.alerts.warn", { async: true })
   protected async handleLogWarnEvent(event: AlertEvent): Promise<void> {
-    const logger = new LogService("testing");
-    logger.debug(`CAUGHT warn`);
     // handle and process "AlertEvent" event
     if (this.alertsConfig.type.includes("warn")) {
       const dappName = this.configService.get<string>("dappName");
@@ -129,8 +124,6 @@ export class AlertNotifier {
    */
   @OnEvent("notifier.alerts.error", { async: true })
   protected async handleLogErrorEvent(event: AlertEvent): Promise<void> {
-    const logger = new LogService("testing");
-    logger.debug(`CAUGHT error`);
     // handle and process "AlertEvent" event
     if (this.alertsConfig.type.includes("error")) {
       const dappName = this.configService.get<string>("dappName");

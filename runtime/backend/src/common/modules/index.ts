@@ -8,7 +8,10 @@
  * @license     LGPL-3.0
  */
 // modules index
+export * from "./AbstractAppModule";
+export * from "./AccountSessionsModule";
 export * from "./AccountsModule";
+export * from "./AppDatabaseModule";
 export * from "./AuthModule";
 export * from "./ChallengesModule";
 export * from "./HelpersModule";

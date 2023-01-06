@@ -8,6 +8,7 @@
  * @license     LGPL-3.0
  */
 // services index
+export * from "./AccountSessionsService";
 export * from "./AccountsService";
 export * from "./AuthService";
 export * from "./ChallengesService";

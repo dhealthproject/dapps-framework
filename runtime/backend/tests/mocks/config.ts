@@ -30,7 +30,8 @@ process.env.DB_PORT = "1234";
 process.env.DB_NAME = "fake-db-name";
 process.env.BACKEND_URL="http://fake.example.com:4321";
 process.env.BACKEND_DOMAIN="fake.example.com";
-process.env.BACKEND_PORT="4321";
+process.env.BACKEND_INTERNAL_PORT="4321";
+process.env.BACKEND_EXTERNAL_PORT="4321";
 process.env.BACKEND_USE_HTTPS="false";
 process.env.FRONTEND_URL="http://fake.example.com";
 process.env.FRONTEND_DOMAIN="fake.example.com";
@@ -80,6 +81,7 @@ process.env.FROM="Fake Mailer <mailer@dhealth.foundation>";
 export const mockDappConfigLoaderCall = jest.fn().mockReturnValue({
   dappName: "FAKEDAPP",
   dappPublicKey: process.env.MAIN_PUBLIC_KEY,
+  debugMode: true,
   scopes: [
     "database",
     "discovery",
@@ -105,8 +107,9 @@ export const mockDappConfigLoaderCall = jest.fn().mockReturnValue({
   backendApp: {
     url: process.env.BACKEND_URL,
     host: process.env.BACKEND_DOMAIN,
-    port: process.env.BACKEND_PORT,
-    https: process.env.BACKEND_USE_HTTPS === "true"
+    port: process.env.BACKEND_INTERNAL_PORT,
+    https: process.env.BACKEND_USE_HTTPS === "true",
+    wsPort: process.env.BACKEND_EXTERNAL_PORT,
   },
   discovery: {
     sources: [

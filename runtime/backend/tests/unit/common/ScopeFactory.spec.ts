@@ -251,6 +251,7 @@ jest.mock(
 const mockDappConfig: DappConfig = {
   dappName: "test-dappName",
   dappPublicKey: "test-dappPublicKey",
+  debugMode: true,
   scopes: [],
   database: undefined,
   frontendApp: {
@@ -311,6 +312,7 @@ describe("common/ScopeFactory", () => {
       const baseConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
+        debugMode: true,
         database: {
           host: "fake",
           port: "1",
@@ -348,6 +350,7 @@ describe("common/ScopeFactory", () => {
       const configDto: DappConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
+        debugMode: true,
         scopes: ["discovery", "payout", "processor", "statistics", "notifier", "oauth", "users"],
         database: {
           host: "fake",
@@ -390,6 +393,7 @@ describe("common/ScopeFactory", () => {
       const configDto: DappConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
+        debugMode: true,
         scopes: ["discovery", "processor"],
         database: {
           host: "fake",
@@ -427,6 +431,7 @@ describe("common/ScopeFactory", () => {
       const configDto: DappConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
+        debugMode: true,
         scopes: ["database"],
         database: {
           host: "fake",
@@ -462,6 +467,7 @@ describe("common/ScopeFactory", () => {
       const baseConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
+        debugMode: true,
         database: {
           host: "fake",
           port: "1",
@@ -513,6 +519,7 @@ describe("common/ScopeFactory", () => {
       const configDto: DappConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
+        debugMode: true,
         scopes: ["discovery"],
         database: {
           host: "fake",
@@ -557,6 +564,7 @@ describe("common/ScopeFactory", () => {
       const configDto: DappConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
+        debugMode: true,
         scopes: [],
         database: {
           host: "fake",
@@ -590,6 +598,7 @@ describe("common/ScopeFactory", () => {
       const configDto: DappConfig = {
         dappName: "Fake dApp",
         dappPublicKey: "FakePublicKeyOfAdApp",
+        debugMode: true,
         scopes: ["processor"],
         database: {
           host: "fake",

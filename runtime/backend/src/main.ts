@@ -116,7 +116,7 @@ async function bootstrap(): Promise<void> {
   // start the app
   logger.debug(`Now listening for requests on port ${appPort}`);
   await app.listen(appPort);
-  logger.log(`Accepting requests on: ${await app.getUrl()}`);
+  logger.log(`Accepting external requests on: ${appUrl}`);
 }
 
 /**

@@ -13,9 +13,9 @@ import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
 import { MongooseModule } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
+import { AppConfiguration } from "../../AppConfiguration";
 import { AccountSessionsModule } from "./AccountSessionsModule";
 import { ChallengesModule } from "../modules/ChallengesModule";
 import { NetworkModule } from "../modules/NetworkModule";
@@ -71,6 +71,7 @@ const auth = securityConfigLoader().auth;
       { name: Account.name, schema: AccountSchema },
       { name: AccountIntegration.name, schema: AccountIntegrationSchema },
     ]),
+    AppConfiguration.getEventEmitterModule(), // requirement from AuthGateway
   ],
   controllers: [AuthController, SocialController],
   providers: [

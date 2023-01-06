@@ -305,14 +305,14 @@ export class AuthService {
    * a document will be *insert* in the collection `authChallenges`.
    *
    * @param   {AccessTokenRequest}  param0          An authentication challenge, as created with {@link getChallenge}.
+   * @param   {boolean}             markAsUsed      A boolean flag that determine whether the challenge should be marked as used.
    * @returns {Promise<AuthenticationPayload>}  An authenticated account session described with {@link AuthenticationPayload}.
    * @throws  {HttpException}           Given challenge could not be found in recent transactions.
    */
-  public async validateChallenge({
-    challenge,
-    sub,
-    registry,
-  }: AccessTokenRequest): Promise<AuthenticationPayload> {
+  public async validateChallenge(
+    { challenge, sub, registry }: AccessTokenRequest,
+    markAsUsed = true,
+  ): Promise<AuthenticationPayload> {
     // does not permit multiple usage of challenges
     const challengeUsed: boolean = await this.challengesService.exists(
       new AuthChallengeQuery({
@@ -351,17 +351,22 @@ export class AuthService {
     const logger = new LogService(AppConfiguration.dappName);
     logger.log(`Authorizing log-in challenge for "${authorizedUser.address}"`);
 
-    // stores a validated authentication challenge
-    // in the database collection `authChallenges`
-    await this.challengesService.createOrUpdate(
-      new AuthChallengeQuery({
-        challenge: challenge,
-      } as AuthChallengeDocument),
-      {
-        usedBy: authorizedAddr.plain(),
-        usedAt: new Date().valueOf(),
-      },
-    );
+    // marking the challenge as used only happens when using
+    // HTTP, not through the websocket channels because these
+    // only need to verify the presence of the challenge on-chain
+    if (markAsUsed === true) {
+      // stores a validated authentication challenge
+      // in the database collection `authChallenges`
+      await this.challengesService.createOrUpdate(
+        new AuthChallengeQuery({
+          challenge: challenge,
+        } as AuthChallengeDocument),
+        {
+          usedBy: authorizedAddr.plain(),
+          usedAt: new Date().valueOf(),
+        },
+      );
+    }
 
     // returns the authorized user details
     return authorizedUser;

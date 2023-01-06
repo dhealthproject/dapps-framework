@@ -264,6 +264,7 @@ describe("common/Scopes", () => {
     dappConfig = {
       dappName: "Fake dApp",
       dappPublicKey: "FakePublicKeyOfAdApp",
+      debugMode: true,
       authAuthority: "NonExistingAuthority",
       scopes: ["database"],
       database: {

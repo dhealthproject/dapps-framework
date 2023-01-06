@@ -158,20 +158,23 @@ export class ValidateChallengeScheduler {
       // - validates challenge's presence in database
       // - validates challenge's presence on-chain in a transfer
       // - updates the challenge database entry if necessary
-      const payload = await this.authService.validateChallenge({
-        challenge: this.challenge,
-        registry: this.authRegistries[0],
-      } as AccessTokenRequest);
+      const payload = await this.authService.validateChallenge(
+        {
+          challenge: this.challenge,
+          registry: this.authRegistries[0],
+        } as AccessTokenRequest,
+        false,
+      ); // do not mark as used
 
       if (null !== payload) {
-        // stop running cronjob and emit completion event
-        this.stopCronJob();
-
         // internal event emission
         this.emitter.emit(
           "auth.complete",
           OnAuthCompleted.create(this.challenge),
         );
+
+        // stop running cronjob and emit completion event
+        this.stopCronJob();
       }
     } catch (err) {
       // if challenge isn't on chain, ignore and come back later
