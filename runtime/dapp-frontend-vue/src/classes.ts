@@ -17,7 +17,6 @@ export * from "@/services";
 export * from "@/plugins";
 export * from "@/middleware";
 export * from "@/models";
-export * from "@/plugins";
 export * from "@/state";
 
 // components / views

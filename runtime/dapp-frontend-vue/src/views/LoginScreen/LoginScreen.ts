@@ -157,14 +157,6 @@ export default class LoginScreen extends MetaView {
   public isAuthenticated!: boolean;
 
   /**
-   * Whether the QRCode has been fully prepared and loaded or not.
-   *
-   * @access protected
-   * @var {boolean}
-   */
-  protected hasLoaded = false;
-
-  /**
    * This property is used to store a pointer to the interval
    * that executes the `/auth/token` request in the background.
    *
@@ -202,17 +194,6 @@ export default class LoginScreen extends MetaView {
    */
   protected get tutorialItems(): TutorialStepItem[] {
     return this.$t("login_screen.steps");
-  }
-
-  /**
-   * This *computed* property is used internally to determine
-   * whether the component should in "loading"-state or not.
-   *
-   * @access protected
-   * @returns {boolean}
-   */
-  protected get isLoading(): boolean {
-    return !this.hasLoaded;
   }
 
   /**
@@ -277,14 +258,13 @@ export default class LoginScreen extends MetaView {
   }
 
   /**
-   * This property contains
-   * client side websocket connection
-   * which is getting initialized on mounted() hook.
+   * This property contains client side websocket connection
+   * which is initialized in the `mounted()` hook.
    *
    * @access public
-   * @returns {any}
+   * @returns {WebSocket | undefined}
    */
-  public wsConnection: any = null;
+  public wsConnection: WebSocket | undefined;
 
   /**
    * This method returns payload necessary for mobile to open Signer App for an authentication
@@ -327,37 +307,11 @@ export default class LoginScreen extends MetaView {
    */
   public async mounted() {
     this.qrConfig = this.createLoginQRCode();
+    this.connectWebsocket();
 
-    this.wsConnection = new WebSocket(
-      `ws://${process.env.VUE_APP_BACKEND_DOMAIN}/ws`
-    );
-
-    this.wsConnection.onopen = function () {
-      console.log("Successfully connected to the echo websocket server...");
-    };
-
-    const handler = this.fetchToken;
-    this.wsConnection.onmessage = function (evt: any) {
-      if (evt.data === "auth.complete") {
-        handler();
-      }
-    };
-
-    try {
-      // make sure referral code is saved
-      if (this.$route.params.refCode) {
-        await this.$store.commit("auth/setRefCode", this.$route.params.refCode);
-      }
-
-      // now start requesting for an access token and refresh token
-      // this backend API call will only succeed after the end-user
-      // successfully attached the challenge inside a transaction.
-      this.fetchAccessToken();
-    } catch (err) {
-      // @todo error handling here, stop loading state and display error
-      console.error(err);
-    } finally {
-      this.hasLoaded = true;
+    // make sure referral code is saved
+    if (this.$route.params.refCode) {
+      await this.$store.commit("auth/setRefCode", this.$route.params.refCode);
     }
 
     this.modalTimer = setTimeout(() => {
@@ -388,16 +342,56 @@ export default class LoginScreen extends MetaView {
       clearTimeout(this.modalTimer);
     }
 
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
-
     if (this.globalIntervalTimer) {
       clearTimeout(this.globalIntervalTimer);
     }
 
-    // close connection when route left
-    this.wsConnection.close();
+    if (this.wsConnection) {
+      this.wsConnection.close();
+    }
+  }
+
+  /**
+   * This helper method connects the frontend client to the
+   * backend runtime *websocket server* for authentication.
+   * <br /><br />
+   * Note that the protocol `wss://` is used in case of secure
+   * backend runtime access (HTTPS).
+   *
+   * @access protected
+   * @returns {WebSocket}
+   */
+  protected connectWebsocket(): WebSocket {
+    // internal configuration object
+    const config = {
+      https: process.env.VUE_APP_BACKEND_USE_HTTPS === "true",
+      host: process.env.VUE_APP_BACKEND_HOST, // contains port
+      path: "/ws",
+    };
+    const scheme = config.https ? "wss" : "ws";
+
+    // note that HTTPS automatically uses WSS
+    const websocketUrl = `${scheme}://${config.host}${config.path}`;
+    console.log(`Now connecting to websocket with: ${websocketUrl}`);
+
+    // open websocket channel
+    this.wsConnection = new WebSocket(websocketUrl);
+
+    // configures connection handler
+    this.wsConnection.onopen = function () {
+      console.log("Successfully connected to the websocket server...");
+    };
+
+    // configures channel messages
+    const handler = this.fetchAccessToken;
+    this.wsConnection.onmessage = async function (evt: any) {
+      console.log("Websocket event caught: ", evt.data);
+      if (evt.data === "auth.complete") {
+        await handler();
+      }
+    };
+
+    return this.wsConnection;
   }
 
   /**
@@ -426,47 +420,6 @@ export default class LoginScreen extends MetaView {
   }
 
   /**
-   * This helper method runs the actual *authentication process* in
-   * that it requests a valid *accessToken* from the backend API.
-   * <br /><br />
-   * After receiving an access token (and possibly a refresh token),
-   * we store the access token in a *cookie* and redirect the user
-   * to the protected area (`/dashboard`).
-   * <br /><br />
-   * Note that before calling this method, the {@link authChallenge}
-   * property must be populated with a valid authentication challenge.
-   *
-   * @access protected
-   * @returns {void}
-   */
-  protected fetchAccessToken(): void {
-    // we use an interval here because the backend API only returns
-    // a HTTP200-Success response when the challenge has been found
-    // inside a transfer transaction on dHealth Network
-    // this.createAccessTokenLoop(15 * 1000);
-
-    // this interval is used to *clear memory* in the browser and to
-    // avoid that requesting access tokens continues *forever* at the
-    // same pace (every 15 seconds). after 5 minutes of requesting access
-    // tokens, we assume that the user may need more time to perform
-    // authentication and will only request access tokens every minute
-    // starting from here.
-    // this.globalIntervalTimer = setTimeout(() => {
-    //   this.createAccessTokenLoop(60 * 1000);
-    // }, 5 * 60 * 1000);
-
-    // after 30 minutes of idle screen without being able to request
-    // a valid access token, we stop requesting for them completely.
-    setTimeout(() => {
-      if (undefined !== this.interval) {
-        clearInterval(this.interval);
-      }
-
-      // @todo may want to refresh?
-    }, 30 * 60 * 1000);
-  }
-
-  /**
    * This method creates an interval to query access tokens
    * from the backend API.
    * <br /><br />
@@ -477,7 +430,7 @@ export default class LoginScreen extends MetaView {
    * @param   {number}    milliseconds    The number of milliseconds between each execution of the access token loop.
    * @returns {void}
    */
-  protected async fetchToken(): Promise<void> {
+  protected async fetchAccessToken(): Promise<void> {
     try {
       // try authenticating the user and requesting an access token
       // this will only succeed provided that the end-user attached
@@ -489,15 +442,6 @@ export default class LoginScreen extends MetaView {
       // if we could not fetch an access token, bail out
       if (null === response) {
         throw new Error("Unauthorized");
-      }
-
-      // store the access token inside a browser cookie such that
-      // it gets attached to future requests to the backend API
-      //AuthService.setAccessToken(response.accessToken, response.refreshToken);
-
-      // no need to further try authentication, done here.
-      if (undefined !== this.interval) {
-        clearInterval(this.interval);
       }
 
       // redirects to a protected area and marks successful log-in

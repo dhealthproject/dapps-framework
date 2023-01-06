@@ -12,50 +12,56 @@ import { DappButton } from "@dhealth/components";
 
 // internal dependencies
 import AppHeader from "./AppHeader/AppHeader.vue";
-import Footer from "./Footer/Footer.vue";
-import Loader from "./Loader/Loader.vue";
-import ElevateLogo from "./ElevateLogo/ElevateLogo.vue";
-import DividedScreen from "./DividedScreen/DividedScreen.vue";
 import Card from "./Card/Card.vue";
+import DappSelect from "./DappSelect/DappSelect.vue";
 import DirectionTriangle from "./DirectionTriangle/DirectionTriangle.vue";
-import Tabs from "./Tabs/Tabs.vue";
+import DividedScreen from "./DividedScreen/DividedScreen.vue";
+import Dropdown from "./Dropdown/Dropdown.vue";
+import ElevateLogo from "./ElevateLogo/ElevateLogo.vue";
+import Footer from "./Footer/Footer.vue";
 import GenericList from "./GenericList/GenericList.vue";
+import InfoTip from "./InfoTip/InfoTip.vue";
+import Leaderboard from "./Leaderboard/Leaderboard.vue";
+import LeaderboardRow from "./LeaderboardRow/LeaderboardRow.vue";
+import Loader from "./Loader/Loader.vue";
+import MobileNavigationButton from "./MobileNavigationButton/MobileNavigationButton.vue";
 import NavPanel from "./NavPanel/NavPanel.vue";
+import ProgressBar from "./ProgressBar/ProgressBar.vue";
+import ReferralInput from "./ReferralInput/ReferralInput.vue";
+import Stats from "./Stats/Stats.vue";
+import Tabs from "./Tabs/Tabs.vue";
+import Toast from "./Toast/Toast.vue";
+import TopActivities from "./TopActivities/TopActivities.vue";
 import UiButton from "./UiButton/UiButton.vue";
 import UiPopup from "./UiPopup/UiPopup.vue";
-import Toast from "./Toast/Toast.vue";
-import Dropdown from "./Dropdown/Dropdown.vue";
 import UserBalance from "./UserBalance/UserBalance.vue";
-import ProgressBar from "./ProgressBar/ProgressBar.vue";
-import Stats from "./Stats/Stats.vue";
-import TopActivities from "./TopActivities/TopActivities.vue";
-import InfoTip from "./InfoTip/InfoTip.vue";
-import ReferralInput from "./ReferralInput/ReferralInput.vue";
-import DappSelect from "./DappSelect/DappSelect.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
   AppHeader,
-  Footer,
-  Loader,
-  ElevateLogo,
-  DividedScreen,
   Card,
+  DappSelect,
   DirectionTriangle,
-  Tabs,
+  DividedScreen,
+  Dropdown,
+  ElevateLogo,
+  Footer,
   GenericList,
+  InfoTip,
+  Leaderboard,
+  LeaderboardRow,
+  Loader,
+  MobileNavigationButton,
   NavPanel,
+  ProgressBar,
+  ReferralInput,
+  Stats,
+  Tabs,
+  Toast,
+  TopActivities,
   UiButton,
   UiPopup,
-  Toast,
-  Dropdown,
   UserBalance,
-  ProgressBar,
-  Stats,
-  TopActivities,
-  InfoTip,
-  ReferralInput,
-  DappSelect,
 };
 
 // scoped export of library-level components

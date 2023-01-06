@@ -48,6 +48,7 @@ describe("LoginScreen -->", () => {
   let widget: any;
 
   beforeEach(() => {
+    (console as any).log = jest.fn();
     widget = mount(LoginScreen as any, componentOptions);
   });
 

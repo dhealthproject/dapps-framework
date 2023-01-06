@@ -7,6 +7,7 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-export * from "./imageUrl";
 export * from "./formatAddress";
+export * from "./formatAmount";
 export * from "./i18n";
+export * from "./imageUrl";

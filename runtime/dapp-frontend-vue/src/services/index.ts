@@ -7,7 +7,10 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+export * from "./ActivityService";
+export * from "./AuthService";
 export * from "./BackendService";
+export * from "./ConfigService";
 export * from "./AuthService";
 export * from "./IntegrationsService";
 export * from "./LeaderboardService";
