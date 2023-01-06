@@ -44,6 +44,10 @@
     img {
       width: auto;
       margin-bottom: 20px;
+
+      &.invite-icon {
+        width: 166px;
+      }
     }
 
     h2 {
