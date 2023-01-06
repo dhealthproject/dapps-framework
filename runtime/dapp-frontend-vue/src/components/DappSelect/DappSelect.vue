@@ -26,6 +26,7 @@
           :placeholder="placeholder"
           :input-id="inputId"
           :clearable="false"
+          @input="onInput"
         >
           <template #open-indicator="{ attributes }">
             <span v-bind="attributes">

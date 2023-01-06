@@ -98,9 +98,16 @@
     border: 1px solid $black;
     border-radius: 16px;
 
+    @include devices(tablet) {
+      overflow-x: scroll;
+    }
+
     .row {
       display: flex;
       justify-content: space-between;
+      @include devices(tablet) {
+        width: 1000px;
+      }
 
       &.titles {
         padding-bottom: 53px;

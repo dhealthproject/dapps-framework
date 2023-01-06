@@ -9,6 +9,7 @@
  */
 // external dependencies
 import { ActionContext } from "vuex";
+import moment from "moment";
 
 // internal dependencies
 import { RootState } from "./Store";
@@ -93,7 +94,13 @@ export const ActivitiesModule = {
         const service = new ActivitiesService();
         const items = await service.getActivities(address);
 
-        context.commit("setActivities", items);
+        const mappedItems = items.map((item) => ({
+          ...item,
+          elapsedTime: moment(item.elapsedTime).format("HH:mm:ss"),
+          avgPace: (item.elapsedTime / item.distance).toFixed(2),
+        }));
+
+        context.commit("setActivities", mappedItems);
       } catch (err) {
         console.log("fetchActivities", err);
       }

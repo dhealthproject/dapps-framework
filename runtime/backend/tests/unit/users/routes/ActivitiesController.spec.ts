@@ -10,7 +10,7 @@
 
 // external dependencies
 import { getModelToken } from "@nestjs/mongoose";
-import { Test, TestingModule } from "@nestjs/testing";;
+import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 
@@ -35,7 +35,7 @@ describe("users/ActivitiesController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ActivitiesController],
-      providers: [ 
+      providers: [
         AuthService, // requirement from ActivitiesService
         NetworkService, // requirement from AuthService
         AccountsService, // requirement from AuthService
@@ -61,7 +61,7 @@ describe("users/ActivitiesController", () => {
           provide: getModelToken("Activity"),
           useValue: MockModel,
         }, // requirement from ActivitiesService
-      ]
+      ],
     }).compile();
 
     controller = module.get<ActivitiesController>(ActivitiesController);
@@ -83,7 +83,7 @@ describe("users/ActivitiesController", () => {
           pagination: {
             pageNumber: 1,
             pageSize: 100,
-            total: 1
+            total: 1,
           },
           isLastPage: () => true,
         });
@@ -92,13 +92,13 @@ describe("users/ActivitiesController", () => {
         pagination: {
           pageNumber: 1,
           pageSize: 100,
-          total: 1
+          total: 1,
         },
       };
 
       // act
       const result = await (controller as any).find({
-        pageNumber: 1
+        pageNumber: 1,
       });
 
       // assert
@@ -120,7 +120,7 @@ describe("users/ActivitiesController", () => {
           pagination: {
             pageNumber: 1,
             pageSize: 100,
-            total: 1
+            total: 1,
           },
           isLastPage: () => true,
         });
@@ -129,7 +129,7 @@ describe("users/ActivitiesController", () => {
         pagination: {
           pageNumber: 1,
           pageSize: 100,
-          total: 1
+          total: 1,
         },
       };
 
@@ -137,8 +137,8 @@ describe("users/ActivitiesController", () => {
       const result = await (controller as any).findByUser(
         {},
         {
-          pageNumber: 1
-        }
+          pageNumber: 1,
+        },
       );
 
       // assert

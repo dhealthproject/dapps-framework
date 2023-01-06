@@ -88,8 +88,8 @@ namespace HTTPResponses {
  *
  * @since v0.3.2
  */
-@ApiTags("Activities")
-@Controller("activities")
+@ApiTags("Payouts")
+@Controller("payouts")
 export class PayoutsController {
   /**
    * Constructs an instance of this controller.

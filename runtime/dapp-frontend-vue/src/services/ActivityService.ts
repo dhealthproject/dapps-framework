@@ -51,6 +51,6 @@ export class ActivitiesService extends BackendService {
     );
 
     // responds with a singular configuration object
-    return response.data as ActivityEntryDTO[];
+    return response.data.data as ActivityEntryDTO[];
   }
 }

@@ -41,9 +41,10 @@
       <div class="dapp-screen-activities__filters">
         <DappSelect
           :placeholder="'Type'"
-          class="type"
           :items="mockedSportTypes"
           :icon="'gift-icon.svg'"
+          @input="handleInput"
+          class="type"
         />
         <!-- <DappSelect class="date" :items="mockedSportTypes" /> -->
       </div>
@@ -59,23 +60,36 @@
         </div>
         <div
           class="row"
-          v-for="(item, index) in mockedItems"
-          :key="index + item.activityType + item.distance"
+          v-for="(item, index) in activityItems"
+          :key="index + item.distance"
         >
-          <div
+          <div class="item">
+            <img
+              v-if="item.sport"
+              :src="getImageUrl(`activities-icons/${item.sport}.svg`)"
+              :alt="item.sport"
+            />
+            {{ item.sport }}
+          </div>
+          <div class="item" v-html="item.elapsedTime" />
+          <div class="item" v-html="item.distance" />
+          <div class="item" v-html="item.elevationGain" />
+          <div class="item" v-html="item.avgPace" />
+          <div class="item" v-html="0" />
+          <!-- <div
             class="item"
             v-for="(key, index) in Object.keys(item).filter(
-              (keyItem) => keyItem !== 'type'
+              (keyItem) => keyItem !== 'type' && keyItem !== 'address'
             )"
             :key="key + index"
           >
             <img
-              v-if="key === 'activityType'"
+              v-if="key === 'sport'"
               :src="getImageUrl(`activities-icons/${item[key]}.svg`)"
               :alt="item[key]"
             />
             {{ item[key] }}
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

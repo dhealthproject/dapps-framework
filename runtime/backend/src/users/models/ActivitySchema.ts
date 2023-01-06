@@ -317,10 +317,13 @@ export class Activity extends Transferable<ActivityDTO> {
   public static fillDTO(doc: ActivityDocument, dto: ActivityDTO): ActivityDTO {
     dto.address = doc.address;
     dto.slug = doc.slug;
-    dto.distance = doc.distance;
-    dto.sport = doc.sport;
-    dto.elevationGain = doc.elevationGain;
-    dto.elapsedTime = doc.elapsedTime;
+    if (doc.activityData) {
+      dto.distance = doc.activityData.distance;
+      dto.sport = doc.activityData.sport;
+      dto.elevationGain = doc.activityData.elevation;
+      dto.elapsedTime = doc.activityData.elapsedTime;
+      dto.provider = doc.provider;
+    }
     return dto;
   }
 }

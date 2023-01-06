@@ -34,4 +34,5 @@ export interface ActivityEntryDTO {
   elapsedTime: number;
   distance: number;
   elevationGain: number;
+  sport: string;
 }

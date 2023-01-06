@@ -9,7 +9,10 @@
  */
 // internal dependencies
 import { ActivityDTO } from "../../../../src/users/models/ActivityDTO";
-import { Activity, ActivityDocument } from "../../../../src/users/models/ActivitySchema";
+import {
+  Activity,
+  ActivityDocument,
+} from "../../../../src/users/models/ActivitySchema";
 
 describe("users/ActivitySchema", () => {
   describe("toQuery()", () => {
@@ -55,7 +58,10 @@ describe("users/ActivitySchema", () => {
       const expectedResult = { address, slug };
 
       // act
-      const result = Activity.fillDTO(activity as ActivityDocument, new ActivityDTO());
+      const result = Activity.fillDTO(
+        activity as ActivityDocument,
+        new ActivityDTO(),
+      );
 
       // assert
       expect(result).toEqual(expectedResult);

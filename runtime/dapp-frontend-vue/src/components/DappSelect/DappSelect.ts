@@ -32,4 +32,11 @@ export default class DappSelect extends MetaView {
   @Prop({ default: "" }) placeholder?: string;
 
   @Prop({ default: "" }) icon?: string;
+
+  public val = "";
+
+  protected onInput(evt: any) {
+    this.val = evt.value;
+    this.$emit("input", evt.value);
+  }
 }

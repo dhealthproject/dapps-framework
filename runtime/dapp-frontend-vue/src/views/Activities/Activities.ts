@@ -47,6 +47,26 @@ export default class Activities extends MetaView {
   public currentUserAddress?: string;
 
   /**
+   * This property represents current selected filter.
+   *
+   * @access public
+   * @async
+   */
+  public sportFilter = "";
+
+  /**
+   * This method sets current filter value
+   *
+   * @access protected
+   * @param {string}
+   * @returns void
+   * @async
+   */
+  protected handleInput(val: string) {
+    this.sportFilter = val;
+  }
+
+  /**
    * This property represents mocked and formatted user balance
    *
    * @access public
@@ -54,7 +74,7 @@ export default class Activities extends MetaView {
    */
   public get balance() {
     // temporary use hardcoded value
-    return `${this.formatAmount(31392355)} $FIT`;
+    return `${this.formatAmount(0)} $FIT`;
   }
 
   /**
@@ -64,7 +84,7 @@ export default class Activities extends MetaView {
    * @returns {string}
    */
   public get dhpAmount() {
-    return `≈${this.formatAmount(31392355)} DHP`;
+    return `≈${this.formatAmount(0)} DHP`;
   }
 
   /**
@@ -82,56 +102,32 @@ export default class Activities extends MetaView {
    *
    * @access public
    */
-  public get mockedItems() {
-    if (this.getActivities?.length) {
-      return this.getActivities;
-    } else {
-      return [
-        {
-          type: "activity",
-          activityType: "Ride",
-          time: "01:47:41",
-          distance: 16.64,
-          gain: 74,
-          pace: 6.28,
-          fit: 0.15,
-        },
-        {
-          type: "activity",
-          activityType: "Swim",
-          time: "00:20:41",
-          distance: 5.14,
-          gain: 20,
-          pace: 1.28,
-          fit: 0.015,
-        },
-        {
-          type: "activity",
-          activityType: "Walk",
-          time: "03:05:20",
-          distance: 52.14,
-          gain: 8,
-          pace: 30.28,
-          fit: 20.02,
-        },
-      ];
-    }
+  public get activityItems() {
+    return this.sportFilter
+      ? this.getActivities?.filter(
+          (item) => item?.sport.toLowerCase() === this.sportFilter
+        )
+      : this.getActivities;
   }
 
   public get mockedSportTypes() {
     return [
       {
+        label: "All",
+        value: "",
+      },
+      {
         label: "Walk",
         value: "walk",
       },
       {
-        label: "Ride",
-        value: "ride",
+        label: "Run",
+        value: "run",
       },
-      {
-        label: "Swim",
-        value: "swim",
-      },
+      // {
+      //   label: "Swim",
+      //   value: "swim",
+      // },
     ];
   }
 
