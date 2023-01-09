@@ -13,20 +13,20 @@ import { Db } from "mongodb";
 import mongoose from "mongoose";
 /**
  * @label DATABASE
- * @class AddActivityPayoutFields
+ * @class AddMockedActivities
  * @description This migration consists in one or more database
  * schema and/or data updates. The following tasks are run:
- * - Update the `activities` collection by creating new fields
- * including: `payoutState` and `queuePosition`.
+ * - Add mocked activity with hardcoded
+ * data to fill `activities` collection
+ * with data. Without posting activity in Strava.
  *
- * @since v0.4.1
+ * @since v0.6.0
  */
-export class Test implements MigrationInterface {
+export class AddMockedActivities implements MigrationInterface {
   async up(db: Db): Promise<any> {
     // uses collection `activities`
     const collection = db.collection("activities");
-    // update many `activities` documents such that
-    // - the `payoutState` field contains 0 (Not_Started)
+    // insert one `activity` document
     await collection.insertOne({
       _id: new mongoose.Types.ObjectId("63529c31904bb2acae61d82a"),
       address: "NBZTCWH3FCWBEPX2MR2GLDHHIVBKWGQWDEP6C7Q",
