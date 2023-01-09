@@ -117,7 +117,7 @@ export class AppController {
    * @returns Promise<AccountDTO>       An authenticated user's profile information ("account" information).
    */
   @UseGuards(AuthGuard)
-  @Get("me")
+  @Get("profile")
   @ApiOperation({
     summary: "Get an authenticated user's profile details",
     description:
