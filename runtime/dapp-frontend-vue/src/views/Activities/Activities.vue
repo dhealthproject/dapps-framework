@@ -75,7 +75,14 @@
           <div class="item" v-html="item.distance" />
           <div class="item" v-html="item.elevationGain" />
           <div class="item" v-html="item.avgPace" />
-          <div class="item" v-html="item.assets.length ? item.assets[0] : 0" />
+          <div
+            class="item"
+            v-html="
+              item.assets[0] && item.assets[0].amount
+                ? item.assets[0].amount
+                : 0
+            "
+          />
         </div>
       </div>
     </div>
