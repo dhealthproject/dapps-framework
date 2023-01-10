@@ -20,6 +20,7 @@
         "dropdown_refer_earn": "Refer and Earn",
         "disconnect_wallet": "Disconnect wallet",
         "activities": "Activities",
-        "amount_earned": "$ACTIV earned"
+        "amount_earned": "$ACTIV earned",
+        "no_activities": "You don't have any activities currently."
     }
 }

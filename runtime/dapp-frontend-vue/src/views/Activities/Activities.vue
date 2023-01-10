@@ -58,31 +58,36 @@
             {{ activityTitle }}
           </div>
         </div>
-        <div
-          class="row"
-          v-for="(item, index) in activityItems"
-          :key="index + item.distance"
-        >
-          <div class="item">
-            <img
-              v-if="item.sport"
-              :src="getImageUrl(`activities-icons/${item.sport}.svg`)"
-              :alt="item.sport"
-            />
-            {{ item.sport }}
-          </div>
-          <div class="item" v-html="item.elapsedTime" />
-          <div class="item" v-html="item.distance" />
-          <div class="item" v-html="item.elevationGain" />
-          <div class="item" v-html="item.avgPace" />
+        <div v-if="activityItems?.length" class="table-values">
           <div
-            class="item"
-            v-html="
-              item.assets[0] && item.assets[0].amount
-                ? item.assets[0].amount
-                : 0
-            "
-          />
+            class="row"
+            v-for="(item, index) in activityItems"
+            :key="index + item.distance"
+          >
+            <div class="item">
+              <img
+                v-if="item.sport"
+                :src="getImageUrl(`activities-icons/${item.sport}.svg`)"
+                :alt="item.sport"
+              />
+              {{ item.sport }}
+            </div>
+            <div class="item" v-html="item.elapsedTime" />
+            <div class="item" v-html="item.distance" />
+            <div class="item" v-html="item.elevationGain" />
+            <div class="item" v-html="item.avgPace" />
+            <div
+              class="item"
+              v-html="
+                item.assets[0] && item.assets[0].amount
+                  ? item.assets[0].amount
+                  : 0
+              "
+            />
+          </div>
+        </div>
+        <div v-else class="flex items-center justify-center">
+          <h2 class="py-3" v-html="$t('common.no_activities')" />
         </div>
       </div>
     </div>
