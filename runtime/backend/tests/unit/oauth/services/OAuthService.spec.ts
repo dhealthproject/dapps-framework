@@ -31,7 +31,7 @@ import { QueryService } from "../../../../src/common/services/QueryService";
 import { AuthService } from "../../../../src/common/services/AuthService";
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { OAuthService } from "../../../../src/oauth/services/OAuthService";
-import { AccountSessionDocument } from "../../../../src/common/models/AccountSessionSchema";
+import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
 import { OAuthCallbackRequest } from "../../../../src/oauth/requests/OAuthCallbackRequest";
 import {
@@ -355,7 +355,7 @@ describe("common/OAuthService", () => {
     it("should use correct database query parameters", async () => {
       // act
       await oauthService.getIntegrations(
-        { address: "fake-address" } as AccountSessionDocument,
+        { address: "fake-address" } as AccountDocument,
       );
 
       // assert
@@ -368,7 +368,7 @@ describe("common/OAuthService", () => {
     it("should accept any address in string format", async () => {
       // act
       await oauthService.getIntegrations(
-        { address: "another-fake-address" } as AccountSessionDocument,
+        { address: "another-fake-address" } as AccountDocument,
       );
 
       // assert
@@ -391,7 +391,7 @@ describe("common/OAuthService", () => {
 
       // act
       const result = await oauthService.getIntegrations(
-        { address: "fake-address" } as AccountSessionDocument,
+        { address: "fake-address" } as AccountDocument,
       );
 
       // assert
@@ -566,7 +566,7 @@ describe("common/OAuthService", () => {
       try {
         await oauthService.oauthCallback(
           "strava",
-          { address: "fake-address" } as AccountSessionDocument,
+          { address: "fake-address" } as AccountDocument,
           validCallbackRequest,
         );
       } catch(e: any) {
@@ -583,7 +583,7 @@ describe("common/OAuthService", () => {
       // act
       await oauthService.oauthCallback(
         "fake-provider",
-        { address: "fake-address" } as AccountSessionDocument,
+        { address: "fake-address" } as AccountDocument,
         validCallbackRequest,
       );
 
@@ -598,7 +598,7 @@ describe("common/OAuthService", () => {
       // act
       await oauthService.oauthCallback(
         "fake-provider",
-        { address: "fake-address" } as AccountSessionDocument,
+        { address: "fake-address" } as AccountDocument,
         validCallbackRequest,
       );
 
@@ -621,7 +621,7 @@ describe("common/OAuthService", () => {
       // act
       await oauthService.oauthCallback(
         "fake-provider",
-        { address: "fake-address" } as AccountSessionDocument,
+        { address: "fake-address" } as AccountDocument,
         validCallbackRequest,
       );
 

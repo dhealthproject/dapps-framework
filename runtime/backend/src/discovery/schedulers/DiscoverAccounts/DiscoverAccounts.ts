@@ -347,7 +347,7 @@ export class DiscoverAccounts extends DiscoveryCommand {
       }
 
       // store the discovered address in `accounts`
-      const referralCode = this.getUserReferralCode();
+      const referralCode = AccountsService.getRandomReferralCode();
       await this.model.create({
         address: this.discoveredAddresses[i],
         referralCode,
@@ -364,16 +364,5 @@ export class DiscoverAccounts extends DiscoveryCommand {
     // this discovery method.
 
     // no-return (void)
-  }
-
-  /**
-   * This private helper generates a random referral code for new
-   * users that are created with this scheduler.
-   *
-   * @access private
-   * @returns {string}
-   */
-  private getUserReferralCode(): string {
-    return `JOINFIT-${Math.random().toString(36).slice(-8)}`;
   }
 }

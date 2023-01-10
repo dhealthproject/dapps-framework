@@ -254,7 +254,7 @@ export class UserAggregation extends StatisticsCommand {
     // document and attach the data in its `data` field
     for (const result of results) {
       // create a new user statistics document
-      const address = result._id; // L278 set userAddress as _id
+      const address = result._id; // see createAggregationQuery
 
       // find one and create new (if not exists) or update (if exists)
       await this.statisticsService.createOrUpdate(

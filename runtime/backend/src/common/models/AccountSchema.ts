@@ -166,6 +166,20 @@ export class Account extends Transferable<AccountDTO> {
   public readonly updatedAt?: Date;
 
   /**
+   * This dynamic property permits to use the `accounts` documents as a
+   * source for *payouts* as is required in the {@link Subjectable} concern.
+   * <br /><br />
+   * Note that the **slug is always the account address** because account
+   * addresses are already unique.
+   *
+   * @access public
+   * @returns {string}
+   */
+  public get slug(): string {
+    return this.address;
+  }
+
+  /**
    * This method implements a specialized query format to query items
    * individually, as documents, in the collection: `accounts`.
    *

@@ -15,6 +15,7 @@ import { Address, NetworkType, PublicAccount } from "@dhealth/sdk";
 // internal dependencies
 import { PaginatedResultDTO } from "../models/PaginatedResultDTO";
 import { QueryService } from "../services/QueryService";
+import { AuthenticationPayload } from "./AuthService";
 import {
   Account,
   AccountDocument,
@@ -139,6 +140,57 @@ export class AccountsService {
   }
 
   /**
+   * This method creates an `accounts` document for the authentication
+   * process. It is used internally to make sure an account always exists
+   * after an authentication challenge was successfully validated on-chain.
+   * <br /><br />
+   * Note that this method must be used *only* when the authentication payload
+   * has been validated and created, i.e. in {@link AuthService.validateChallenge}.
+   *
+   * @access public
+   * @async
+   * @param   {AuthenticationPayload}   payload         The *authorized* authentication payload.
+   * @returns {Promise<AccountDocument>}  The corresponding `accounts` document.
+   */
+  public async getOrCreateForAuth(
+    payload: AuthenticationPayload,
+  ): Promise<AccountDocument> {
+    // shortcut
+    const accountQuery = new AccountQuery({
+      address: payload.address,
+    } as AccountDocument);
+
+    // retrieve existence information
+    const accountExists: boolean = await this.exists(accountQuery);
+
+    if (accountExists === true) {
+      // fetch if already exists
+      return await this.findOne(accountQuery);
+    }
+
+    // determine the referrer account if any
+    let referredBy: string | undefined = undefined;
+    if (payload.referralCode && payload.referralCode.length) {
+      const referrer = await this.findOne(
+        new AccountQuery({
+          referralCode: payload.referralCode,
+        } as AccountDocument),
+      );
+
+      referredBy = referrer.address;
+    }
+
+    // create a random referral code
+    const referralCode = AccountsService.getRandomReferralCode();
+
+    // store the authenticated address in `accounts`
+    return await this.createOrUpdate(accountQuery, {
+      referralCode,
+      referredBy,
+    });
+  }
+
+  /**
    * Method to update a batch of accounts.
    *
    * @async
@@ -191,5 +243,17 @@ export class AccountsService {
 
     // source input **is a valid address format**
     return Address.createFromRawAddress(sourceAddress);
+  }
+
+  /**
+   * This public helper generates a random referral code for new
+   * users and can be used when creating new `accounts` documents.
+   *
+   * @static
+   * @access public
+   * @returns {string}
+   */
+  public static getRandomReferralCode(): string {
+    return `JOINFIT-${Math.random().toString(36).slice(-8)}`;
   }
 }

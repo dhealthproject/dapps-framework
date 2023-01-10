@@ -161,7 +161,7 @@ export const createTransactionDocument = (
     amount: 1,
     transactionHash: "testTransactionHash",
   }],
-
+  transactionMessage: "fakeMessage",
 });
 
 // Mocks a **model** class for nestjs internal

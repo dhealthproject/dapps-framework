@@ -39,8 +39,9 @@ process.env.FRONTEND_PORT="80";
 process.env.FRONTEND_USE_HTTPS="false";
 process.env.SECURITY_AUTH_TOKEN_SECRET="fake-auth-token";
 process.env.SECURITY_AUTH_REGISTRIES_ADDRESS_1="NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY";
-process.env.MAIN_PUBLIC_KEY="71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE"; // NDAPPH6
 process.env.MAIN_ADDRESS="NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY";
+process.env.MAIN_PUBLIC_KEY="71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE"; // NDAPPH6
+process.env.MAIN_PRIVATE_KEY="71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE"; // incorrect
 process.env.PAYOUT_GLOBAL_DRY_RUN="true";
 process.env.PAYOUT_CONTRACT_ADDRESS="NCNQMX5JEENRMIGNFJC3UGHDUO3HAYQZK7ZIJUA";
 process.env.PAYOUT_CONTRACT_PUBLIC_KEY="5CDA593C442F4DD827C1C7B15CE83FF8892D769F2DB130EBEB1D7DB080333C4D";
@@ -363,6 +364,11 @@ export const mockSocialConfigLoaderCall = jest.fn().mockReturnValue({
       shareUrl: `https://telegram.me/share/url?url=${process.env.FRONTEND_URL}/%REFERRAL_CODE%&text=Join me on Elevate`,
     }
   },
+  referral: {
+    "boost5": { minReferred: 10 },
+    "boost10": { minReferred: 50 },
+    "boost15": { minReferred: 100 },
+  }
 });
 jest.mock("../../config/social", () => mockSocialConfigLoaderCall);
 

@@ -17,6 +17,12 @@ import { ConfigService } from "@nestjs/config";
 
 // internal dependencies
 import { AccessTokenRequest } from "../requests/AccessTokenRequest";
+import { AccountsService } from "../services/AccountsService";
+import {
+  Account,
+  AccountDocument,
+  AccountQuery,
+} from "../models/AccountSchema";
 import { AuthService } from "../services/AuthService";
 import { LogService } from "../services/LogService";
 import { OnAuthCompleted } from "../events/OnAuthCompleted";
@@ -109,11 +115,14 @@ export class ValidateChallengeScheduler {
    * @access public
    * @param   {SchedulerRegistry}      schedulerRegistry     Add scheduler to Nest.js schedulers registry.
    * @param   {AuthService}            authService     Contains .validateChallenge method.
+   * @param   {AccountsService}        accountsService     Used to read accounts from database.
    * @param   {EventEmitter2}          emitter      Emitting of successfully validated challenge to proper handler.
+   * @param   {ConfigService}          configService     The nestjs `ConsigService` instance.
    */
   constructor(
     private readonly schedulerRegistry: SchedulerRegistry,
     protected readonly authService: AuthService,
+    protected readonly accountsService: AccountsService,
     protected readonly emitter: EventEmitter2,
     protected readonly configService: ConfigService,
   ) {
@@ -167,7 +176,11 @@ export class ValidateChallengeScheduler {
       ); // do not mark as used
 
       if (null !== payload) {
+        // in case the account does not exist yet, create now
+        await this.accountsService.getOrCreateForAuth(payload);
+
         // internal event emission
+        // XXX onAuthCompleted should receive a AuthenticationPayload
         this.emitter.emit(
           "auth.complete",
           OnAuthCompleted.create(this.challenge),

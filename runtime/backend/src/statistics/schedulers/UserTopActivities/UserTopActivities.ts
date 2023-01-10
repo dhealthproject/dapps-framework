@@ -114,7 +114,7 @@ export class UserTopActivities extends StatisticsCommand {
     const period = this.getNextPeriod(new Date());
 
     for (const result of results) {
-      const address = result._id.address; // L227 adds address to _id
+      const address = result._id.address; // see createAggregationQuery
 
       // find one and create new (if not exists) or update (if exists)
       await this.statisticsService.createOrUpdate(

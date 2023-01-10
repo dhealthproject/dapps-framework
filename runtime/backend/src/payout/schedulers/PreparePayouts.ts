@@ -218,7 +218,21 @@ export abstract class PreparePayouts<
    * @access protected
    * @returns {number}
    */
-  protected abstract getAssetAmount(subject: TDocument): number;
+  protected abstract getAssetAmount(
+    subject: TDocument,
+    multiplier: number,
+  ): number;
+
+  /**
+   * This method must return a multiplier that is applied to
+   * payout amounts. This is used internally to add boosters
+   * when users have referred a specific number of accounts.
+   *
+   * @abstract
+   * @access protected
+   * @returns {Promise<number>}
+   */
+  protected abstract getMultiplier(subjectAddress: string): Promise<number>;
 
   /**
    * This method implements the processor logic for this command
@@ -270,8 +284,9 @@ export abstract class PreparePayouts<
       };
 
       // read subject related fields
+      const multiplier: number = await this.getMultiplier(subject.address);
       const mosaicId: string = this.getAssetIdentifier();
-      const theAmount: number = this.getAssetAmount(subject);
+      const theAmount: number = this.getAssetAmount(subject, multiplier);
 
       // CAUTION: this disables manual activity rewards and makes
       // sure that `activities` documents with `activityData.isManual`

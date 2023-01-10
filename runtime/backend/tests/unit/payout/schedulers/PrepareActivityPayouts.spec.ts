@@ -40,8 +40,16 @@ const mockActivityRewardWalkFormulaFirst = Math.round(Math.floor(
   ((2/4)*1.2) * 100 // <-- 2 zeros (L172)
 ));
 
+const mockActivityRewardWalkFormulaFirstMultiplied123 = Math.round(Math.floor(
+  (((2/4)*1.2)*1.23) * 100 // <-- 2 zeros (L172)
+));
+
 const mockActivityRewardWalkFormulaSecond = Math.round(Math.floor(
   ((4/2)*1.2) * 100 // <-- 2 zeros (L172)
+));
+
+const mockActivityRewardWalkFormulaSecondMultiplied456 = Math.round(Math.floor(
+  (((4/2)*1.2)*4.56) * 100 // <-- 2 zeros (L172)
 ));
 
 const mockActivityRewardWalkFormulaThird = Math.round(Math.floor(
@@ -458,6 +466,115 @@ describe("payout/PrepareActivityPayouts", () => {
       expect(result1).toBe(0);
       expect(result2).toBe(0);
     });
+
+    it("should use correct multiplier and apply to amount", () => {
+      // prepare
+      const walkFormula = mockActivityRewardWalkFormulaFirstMultiplied123;
+      const otherFormula = mockActivityRewardWalkFormulaSecondMultiplied456;
+
+      // act
+      const result1 = (command as any).getAssetAmount(activityMocks[0], 1.23);
+      const result2 = (command as any).getAssetAmount(activityMocks[1], 4.56);
+
+      // assert
+      expect(result1).toBe(walkFormula);
+      expect(result2).toBe(otherFormula);
+    });
+
+    it("should default to multiplier 1 given none", () => {
+      // prepare
+      const walkFormula = mockActivityRewardWalkFormulaFirst; // <-- not multiplied
+      const otherFormula = mockActivityRewardWalkFormulaSecond; // <-- not multiplied
+
+      // act
+      const result1 = (command as any).getAssetAmount(activityMocks[0]);
+      const result2 = (command as any).getAssetAmount(activityMocks[1]);
+
+      // assert
+      expect(result1).toBe(walkFormula);
+      expect(result2).toBe(otherFormula);
+    });
+
+    it("should use absolute value for multiplier to disallow negative", () => {
+      // prepare
+      const walkFormula = mockActivityRewardWalkFormulaFirstMultiplied123;
+      const otherFormula = mockActivityRewardWalkFormulaSecond; // <-- not multiplied
+
+      // act
+      const result1 = (command as any).getAssetAmount(activityMocks[0], -1.23); // <-- negative
+      const result2 = (command as any).getAssetAmount(activityMocks[1], -1); // <-- negative
+
+      // assert
+      expect(result1).toBe(walkFormula);
+      expect(result2).toBe(otherFormula);
+    });
+  });
+
+  describe("getMultiplier()", () => {
+    let aggregateMock = jest.fn().mockReturnValue([
+      { count: 2 },
+    ])
+    beforeEach(() => {
+      (command as any).earnAsset = {
+        mosaicId: "fake-identifier",
+        divisibility: 2,
+      };
+
+      (command as any).queryService = {
+        aggregate: aggregateMock,
+      };
+
+      (command as any).boosterParameters = {
+        "boost5": { minReferred: 10 },
+        "boost10": { minReferred: 50 },
+        "boost15": { minReferred: 100 },
+      };
+
+      aggregateMock.mockClear();
+    });
+
+    it("should use query service to execute aggregate query", async () => {
+      // act
+      await (command as any).getMultiplier("fake-subject-address");
+
+      // assert
+      expect(aggregateMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("should use correct boost percentage given referrals", async () => {
+      // prepare
+      const fakeReferralCounts = [
+        { count: 3, expectedPc: 1 },
+        { count: 5, expectedPc: 1 },
+        { count: 7, expectedPc: 1 },
+        { count: 10, expectedPc: 1.05 },
+        { count: 49, expectedPc: 1.05},
+        { count: 50, expectedPc: 1.10 },
+        { count: 57, expectedPc: 1.10 },
+        { count: 99, expectedPc: 1.10 },
+        { count: 100, expectedPc: 1.15 },
+        { count: 150, expectedPc: 1.15 },
+        { count: -1, expectedPc: 1 },
+        { count: 0, expectedPc: 1 },
+      ];
+
+      fakeReferralCounts.map(
+        async (obj) => {
+          // prepare each round
+          (command as any).queryService = {
+            aggregate: jest.fn().mockReturnValue([
+              { count: obj.count }, // <-- at [0].count
+            ]),
+          };
+
+          // act
+          const result = await (command as any).getMultiplier("fake-subject-address");
+
+          // assert
+          expect(result).toBe(obj.expectedPc);
+        }
+      )
+    });
   });
 
   describe("updatePayoutSubject()", () => {
@@ -534,6 +651,7 @@ describe("payout/PrepareActivityPayouts", () => {
         getSignerPublicKey: signerGetSignerPublicKeyMock,
         signTransaction: signerSignTransactionMock,
       };
+      (command as any).getMultiplier = jest.fn().mockReturnValue(1);
 
       fetchSubjectsEmptyMock.mockClear();
       fetchSubjectsNonEmptyMock.mockClear();

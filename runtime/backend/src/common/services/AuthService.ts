@@ -22,8 +22,8 @@ import {
   TransactionType,
   TransferTransaction,
 } from "@dhealth/sdk";
-import { Auth, Contract, Factory } from "@dhealth/contracts";
 import { Request } from "express";
+import { Auth, AuthParameters, Contract, Factory } from "@dhealth/contracts";
 
 // internal dependencies
 import { NetworkService } from "./NetworkService";
@@ -313,6 +313,9 @@ export class AuthService {
     { challenge, sub, registry }: AccessTokenRequest,
     markAsUsed = true,
   ): Promise<AuthenticationPayload> {
+    // prepare
+    const logger = new LogService(AppConfiguration.dappName);
+
     // does not permit multiple usage of challenges
     const challengeUsed: boolean = await this.challengesService.exists(
       new AuthChallengeQuery({
@@ -333,9 +336,39 @@ export class AuthService {
       challenge,
     );
 
+    // responds with error if the `Auth` contract could **not** be found
+    // 401: Unauthorized
+    if (
+      undefined === transaction ||
+      undefined === transaction.message ||
+      undefined === transaction.message.payload ||
+      !transaction.message.payload.length
+    ) {
+      throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+    }
+
+    // parse the Auth contract operation
+    const contract: Contract = Factory.createFromJSON(
+      transaction.message.payload,
+    );
+
+    // only the `elevate:auth` contract should be accepted here
+    // also verifies the dappIdentifier and its position (begin)
+    const signature = contract.signature.toLowerCase();
+    const dappName = this.cookie.name.toLowerCase();
+    if (
+      null === signature.match(/\:auth$/) ||
+      0 !== signature.indexOf(dappName)
+    ) {
+      throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+    }
+
+    // also read the contract parameters to find potential refCode
+    const params: AuthParameters = contract.inputs as AuthParameters;
+
     // responds with error if the `challenge` could **not** be found
     // 401: Unauthorized
-    if (undefined === transaction) {
+    if (undefined === transaction || undefined === params) {
       throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
     }
 
@@ -347,14 +380,18 @@ export class AuthService {
       address: authorizedAddr.plain(),
     };
 
-    // print INFO log for authorized log-in attempts
-    const logger = new LogService(AppConfiguration.dappName);
-    logger.log(`Authorizing log-in challenge for "${authorizedUser.address}"`);
+    // forward referral code if necessary
+    if ("refCode" in params && params.refCode.length) {
+      authorizedUser.referralCode = params.refCode;
+    }
 
     // marking the challenge as used only happens when using
     // HTTP, not through the websocket channels because these
     // only need to verify the presence of the challenge on-chain
     if (markAsUsed === true) {
+      // print INFO log for authorized log-in attempts
+      logger.log(`Validating log-in operation for "${authorizedUser.address}"`);
+
       // stores a validated authentication challenge
       // in the database collection `authChallenges`
       await this.challengesService.createOrUpdate(
@@ -366,6 +403,17 @@ export class AuthService {
           usedAt: new Date().valueOf(),
         },
       );
+    }
+    // websocket event "auth.complete" does not mark the challenge as "used"
+    // but rather informs the frontend that it is able to fetch an access token
+    else {
+      // print INFO log for authorized log-in attempts
+      logger.log(
+        `Found on-chain authentication challenge for "${authorizedUser.address}"`,
+      );
+
+      // create the `accounts` document to enable log-in capacity
+      await this.accountsService.getOrCreateForAuth(authorizedUser);
     }
 
     // returns the authorized user details

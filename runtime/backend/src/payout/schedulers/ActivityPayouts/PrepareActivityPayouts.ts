@@ -18,6 +18,7 @@ import { Cron } from "@nestjs/schedule";
 import { LogService } from "../../../common/services/LogService";
 import { QueryService } from "../../../common/services/QueryService";
 import { StateService } from "../../../common/services/StateService";
+import { ReferralBoosterParameters } from "../../../common/models/SocialConfig";
 
 // users scope
 import {
@@ -75,6 +76,11 @@ export class PrepareActivityPayouts extends PreparePayouts<
   ActivityModel
 > {
   /**
+   *
+   */
+  protected boosterParameters: ReferralBoosterParameters;
+
+  /**
    * Constructs and prepares an instance of this scheduler.
    *
    * @param {ConfigService}   configService
@@ -107,6 +113,11 @@ export class PrepareActivityPayouts extends PreparePayouts<
       payoutsService,
       signerService,
       logService,
+    );
+
+    // reads referral level configuration
+    this.boosterParameters = this.configService.get<ReferralBoosterParameters>(
+      "referral"
     );
   }
 
@@ -259,19 +270,14 @@ export class PrepareActivityPayouts extends PreparePayouts<
    * - *Ride*:    `(D / T) x 0.8`
    * - *Swim*:    `((D*10) / T) x 1.7`
    * - *Others*:  `(D / T) x 1.6`
-   * <br /><br />
-   * Note that in the case of an *elevation* gain that is `0`,
-   * we use the Health2Earn v0 *skew-normal* distribution to
-   * generate a random number that will deviate between `0.5`
-   * and `1.5`. This is necessary to avoid zeroing out factor
-   * two of the formula.
    *
    * @todo document formula in developer documentations
    * @access protected
    * @param   {ActivityDocument}  subject   The payout *subject* (activity) of which `activityData` is used.
+   * @param   {number}  multiplier   The amount multiplier (in case of "boosters"). Defaults to `1`.
    * @returns {number}    An amount that is computed and depends on the *intensity* of an activity.
    */
-  protected getAssetAmount(subject: ActivityDocument): number {
+  protected getAssetAmount(subject: ActivityDocument, multiplier = 1): number {
     // extracts fields used for computing the reward amount
     const {
       distance: D, // in-formula, distance is `D`
@@ -312,8 +318,61 @@ export class PrepareActivityPayouts extends PreparePayouts<
     }
 
     // make sure to work only with *integers* (always absolute amounts)
+    // this also applies the multiplier to the amount
     const divisibility: number = parseInt("" + this.earnAsset.divisibility);
-    return Math.round(Math.floor(amount * Math.pow(10, divisibility)));
+    return Math.round(
+      Math.floor(amount * Math.abs(multiplier) * Math.pow(10, divisibility)),
+    );
+  }
+
+  /**
+   * This method must return a multiplier that is applied to
+   * payout amounts. This is used internally to add boosters
+   * when users have referred a specific number of accounts.
+   *
+   * @abstract
+   * @access protected
+   * @returns {number} Booster payouts always return an amount (and multiplier) of `1`.
+   */
+  protected async getMultiplier(subjectAddress: string): Promise<number> {
+    // count referrals done by `subjectAddress`
+    const results = await this.queryService.aggregate(
+      [
+        {
+          $match: { referredBy: subjectAddress },
+        },
+        {
+          $group: { count: { $sum: 1 } },
+        },
+      ],
+      this.model,
+    );
+
+    // reads the number of referrals done by this account
+    const referrals: number = results[0].count ?? 0;
+
+    // reads per-level total of referrals necessary
+    const refsBoost5 = this.boosterParameters["boost5"].minReferred;
+    const refsBoost10 = this.boosterParameters["boost10"].minReferred;
+    const refsBoost15 = this.boosterParameters["boost15"].minReferred;
+
+    // determines the different steps of referrals
+    if (referrals >= refsBoost5 && referrals < refsBoost10) {
+      // account referred 10 <= x < 50 other accounts
+      // account is awarded 5% of boost
+      return 1.05;
+    } else if (referrals >= refsBoost10 && referrals < refsBoost15) {
+      // account referred 50 <= x < 100 other accounts
+      // account is awarded 10% of boost
+      return 1.1;
+    } else if (referrals >= refsBoost15) {
+      // account referred x >= 100 other accounts
+      // account is awarded 15% of boost
+      return 1.15;
+    }
+
+    // by default the multiplier must be `1`
+    return 1;
   }
 
   /**

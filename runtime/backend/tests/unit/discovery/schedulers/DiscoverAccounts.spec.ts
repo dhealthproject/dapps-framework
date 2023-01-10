@@ -26,6 +26,9 @@ jest.mock("@dhealth/sdk", () => ({
     },
     type: "fake",
     recipientAddress: "anotherFake",
+    message: {
+      payload: "fake-payload"
+    }
   },
   PublicAccount: {
     createFromPublicKey: (pk: string, n: number) => ({ address: { plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY" } }),
@@ -526,24 +529,6 @@ describe("discovery/DiscoverAccounts", () => {
       // assert
       expect(accountsServiceExistsCall).toHaveBeenCalledTimes(1); // addresses are unique
       expect(createCall).toHaveBeenCalledTimes(0);
-    });
-  });
-
-  describe("getUserReferralCode()", () => {
-    it("should return correct result", () => {
-      // prepare
-      const expectedRandomNumber = Number(0.0007);
-      const mathRandomCall = jest
-        .spyOn(global.Math, "random")
-        .mockReturnValue(expectedRandomNumber);
-      const expectedResult = `JOINFIT-bmv7w2zo`;
-
-      // act
-      const result = (service as any).getUserReferralCode();
-
-      // assert
-      expect(mathRandomCall).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(expectedResult);
     });
   });
 });

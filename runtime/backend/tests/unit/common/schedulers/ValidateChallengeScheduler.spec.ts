@@ -31,6 +31,7 @@ import {
   AuthService,
   AuthenticationPayload,
 } from "../../../../src/common/services/AuthService";
+import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
 import { NetworkService } from "../../../../src/common/services/NetworkService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
@@ -57,9 +58,9 @@ describe("common/ValidateChallengeScheduler", () => {
         SchedulerRegistry,
         EventEmitter2,
         AuthService,
+        AccountsService,
         ConfigService,
         NetworkService,
-        AccountsService,
         AccountSessionsService,
         ChallengesService,
         QueryService,
@@ -108,6 +109,7 @@ describe("common/ValidateChallengeScheduler", () => {
       new ValidateChallengeScheduler(
         (validateChallengeScheduler as any).schedulerRegistry,
         {} as AuthService,
+        {} as AccountsService,
         {} as EventEmitter2,
         configService,
       );
@@ -229,11 +231,15 @@ describe("common/ValidateChallengeScheduler", () => {
       // prepare
       const stopCronJobMock = jest.fn();
       const emitMock = jest.fn();
+      const getOrCreateForAuthMock = jest.fn().mockResolvedValue({} as AccountDocument);
       (validateChallengeScheduler as any).stopCronJob = stopCronJobMock;
       (validateChallengeScheduler as any).emitter = {
         emit: emitMock,
       };
       (validateChallengeScheduler as any).authRegistries = ["fakeRegistry"];
+      (validateChallengeScheduler as any).accountsService = {
+        getOrCreateForAuth: getOrCreateForAuthMock,
+      };
       jest
         .spyOn(authService, "validateChallenge")
         .mockResolvedValue({} as AuthenticationPayload);
@@ -242,8 +248,9 @@ describe("common/ValidateChallengeScheduler", () => {
       await (validateChallengeScheduler as any).validate();
 
       // assert
-      expect(stopCronJobMock).toHaveBeenCalled();
+      expect(getOrCreateForAuthMock).toHaveBeenCalled();
       expect(emitMock).toHaveBeenCalled();
+      expect(stopCronJobMock).toHaveBeenCalled();
     });
   });
 });

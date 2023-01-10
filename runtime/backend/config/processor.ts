@@ -84,7 +84,7 @@ export default () => ({
       contract: "elevate:auth",
       label: "Session|Sessions",
       query: {
-        sourceAddress: "NBLT42KCICXZE2Q7Q4SWW3GWWE3XWPH3KUBBOEY",
+        sourceAddress: process.env.SECURITY_AUTH_REGISTRIES_ADDRESS_1,
         transactionMode: "incoming",
       }
     },
@@ -92,7 +92,7 @@ export default () => ({
       contract: "elevate:earn",
       label: "Activity|Activities",
       query: {
-        sourceAddress: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        sourceAddress: process.env.PAYOUT_CONTRACT_ADDRESS,
         transactionMode: "outgoing",
       }
     },
@@ -100,7 +100,7 @@ export default () => ({
       contract: "elevate:referral",
       label: "Referral|Referrals",
       query: {
-        sourceAddress: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        sourceAddress: process.env.MAIN_ADDRESS,
         transactionMode: "outgoing",
       }
     },
@@ -108,7 +108,7 @@ export default () => ({
       contract: "elevate:welcome",
       label: "Greeting|Greetings",
       query: {
-        sourceAddress: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        sourceAddress: process.env.MAIN_ADDRESS,
         transactionMode: "outgoing",
       }
     },

@@ -31,9 +31,18 @@ let validContractPayload = {
   challenge: "test-challenge",
 };
 let createFromTransactionCall = jest.fn();
+let createFromJSONCall = jest.fn().mockReturnValue({
+  signature: "fake-dapp:auth",
+  inputs: {
+    dappIdentifier: "fake-dapp",
+    challenge: "12345678",
+    refCode: "123456ab",
+  }
+});
 jest.mock("@dhealth/contracts", () => ({
   Factory: {
     createFromTransaction: createFromTransactionCall,
+    createFromJSON: createFromJSONCall,
   }
 }));
 
@@ -561,10 +570,10 @@ describe("common/AuthService", () => {
   });
 
   describe("validateChallenge()", () => {
-    it("should responds with error if the challenge was used before", () => {
+    it("should respond with error if the challenge was used before", () => {
       // prepare
       (authService as any).challengesService = {
-        exists: jest.fn().mockResolvedValue(true),
+        exists: jest.fn().mockResolvedValue(true), // <-- force already exist
       };
 
       // act
@@ -577,17 +586,29 @@ describe("common/AuthService", () => {
       expect(validateChallenge).rejects.toEqual(httpUnauthorizedError);
     });
 
-    it("should responds with error if the challenge could not be found", () => {
+    it("should respond with error if the transaction is incompatible", () => {
       // prepare
       (authService as any).challengesService = {
         exists: jest.fn().mockResolvedValue(false),
       };
       (authService as any).findRecentChallenge =
-        jest.fn().mockResolvedValue(undefined);
+        jest.fn().mockResolvedValue({
+          signer: {
+            address: {
+              plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+            },
+          },
+          transactionInfo: {
+            hash: "fakeHash1",
+          },
+          message: {
+            payload: undefined, // <-- invalid JSON
+          }
+        });
 
       // act
       const validateChallenge = () => (authService as any).validateChallenge({
-        challlenge: "test-challenge",
+        challenge: "test-challenge",
         sub: "test-sub",
       });
 
@@ -595,8 +616,30 @@ describe("common/AuthService", () => {
       expect(validateChallenge).rejects.toEqual(httpUnauthorizedError);
     });
 
-    it("should responds with correct result", async () => {
+    it("should respond with error if the challenge could not be found", () => {
       // prepare
+      (authService as any).challengesService = {
+        exists: jest.fn().mockResolvedValue(false),
+      };
+      (authService as any).findRecentChallenge =
+        jest.fn().mockResolvedValue(undefined); // <-- force not found
+
+      // act
+      const validateChallenge = () => (authService as any).validateChallenge({
+        challenge: "test-challenge",
+        sub: "test-sub",
+      });
+
+      // assert
+      expect(validateChallenge).rejects.toEqual(httpUnauthorizedError);
+    });
+
+    it("should respond with error given incorrect contract", () => {
+      // prepare
+      (authService as any).cookie = {
+        name: "wrong-dapp", // <-- force incorrect dappIdentifier
+        domain: "fake-dapp-host"
+      };
       (authService as any).challengesService = {
         exists: jest.fn().mockResolvedValue(false),
         createOrUpdate: jest.fn().mockResolvedValue({}),
@@ -611,19 +654,113 @@ describe("common/AuthService", () => {
           transactionInfo: {
             hash: "fakeHash1",
           },
+          // transaction must non-empty message
+          message: {
+            payload: "nonEmptyPayload",
+          }
         });
-      const expectedResult = {
-        sub: "test-sub",
-        address: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
-      };
 
       // act
-      const result = await (authService as any).validateChallenge({
-        challlenge: "test-challenge",
+      const validateChallenge = () => (authService as any).validateChallenge({
+        challenge: "test-challenge",
         sub: "test-sub",
       });
 
       // assert
+      expect(validateChallenge).rejects.toEqual(httpUnauthorizedError);
+    });
+
+    it("should respond with correct result given valid payload", async () => {
+      // prepare
+      (authService as any).cookie = {
+        name: "fake-dapp",
+        domain: "fake-dapp-host"
+      };
+      (authService as any).challengesService = {
+        exists: jest.fn().mockResolvedValue(false),
+        createOrUpdate: jest.fn().mockResolvedValue({}),
+      };
+      (authService as any).findRecentChallenge =
+        jest.fn().mockResolvedValue({
+          signer: {
+            address: {
+              plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+            },
+          },
+          transactionInfo: {
+            hash: "fakeHash1",
+          },
+          // transaction must contain correct JSON
+          message: {
+            payload: JSON.stringify({
+              contract: "elevate:auth",
+              version: 1,
+              challenge: "fakeChallenge",
+            }),
+          }
+        });
+      const expectedResult = {
+        sub: "test-sub",
+        address: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        referralCode: "123456ab",
+      };
+
+      // act
+      const result = await (authService as any).validateChallenge({
+        challenge: "test-challenge",
+        sub: "test-sub",
+      });
+
+      // assert
+      expect(createFromJSONCall).toHaveBeenCalled();
+      expect(result).toStrictEqual(expectedResult);
+    });
+
+    it("should forward referral code given present in payload", async () => {
+      // prepare
+      (authService as any).cookie = {
+        name: "fake-dapp",
+        domain: "fake-dapp-host"
+      };
+      (authService as any).challengesService = {
+        exists: jest.fn().mockResolvedValue(false),
+        createOrUpdate: jest.fn().mockResolvedValue({}),
+      };
+      (authService as any).findRecentChallenge =
+        jest.fn().mockResolvedValue({
+          signer: {
+            address: {
+              plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+            },
+          },
+          transactionInfo: {
+            hash: "fakeHash1",
+          },
+          // transaction must contain correct JSON
+          message: {
+            payload: JSON.stringify({
+              contract: "fake-dapp:auth",
+              version: 1,
+              challenge: "fakeChallenge",
+              refCode: "123456ab",
+            }),
+          }
+        });
+      const expectedResult = {
+        sub: "test-sub",
+        address: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        referralCode: "123456ab",
+      };
+
+      // act
+      const result = await (authService as any).validateChallenge({
+        challenge: "test-challenge",
+        sub: "test-sub",
+        referralCode: "123456ab",
+      });
+
+      // assert
+      expect(createFromJSONCall).toHaveBeenCalled();
       expect(result).toStrictEqual(expectedResult);
     });
   });
