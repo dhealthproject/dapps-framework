@@ -87,6 +87,7 @@ export interface TutorialStepItem {
       isAuthenticated: "auth/isAuthenticated",
       authChallenge: "auth/getChallenge",
       authRegistry: "auth/getAuthRegistry",
+      refCode: "auth/getRefCode",
     }),
     tutorialItems: () => ({}),
   },
@@ -157,6 +158,18 @@ export default class LoginScreen extends MetaView {
   public isAuthenticated!: boolean;
 
   /**
+   * This property contains the value as set in the store under
+   * `auth/userRefCode`.
+   * <br /><br />
+   * The *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {string}
+   */
+  public refCode!: string;
+
+  /**
    * This property is used to store a pointer to the interval
    * that executes the `/auth/token` request in the background.
    *
@@ -213,6 +226,11 @@ export default class LoginScreen extends MetaView {
       dappIdentifier: "elevate",
       challenge: this.authChallenge,
     };
+
+    // add referral code if not empty
+    if (this.refCode && this.refCode.length) {
+      authParameters.refCode = this.refCode;
+    }
 
     // when we have a challenge, we can create the QR Code.
     return new AuthContract(authParameters).toJSON();
