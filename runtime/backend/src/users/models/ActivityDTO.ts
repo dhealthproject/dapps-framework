@@ -139,4 +139,20 @@ export class ActivityDTO extends BaseDTO {
     description: "Elevation gain received per activity",
   })
   public elevationGain: number;
+
+  /**
+   * This property represents an amount of received assets
+   * <br /><br />
+   * This field is **not required** and *not indexed*.
+   *
+   * @example `"swim"`
+   * @access public
+   * @var {string}
+   */
+  @ApiProperty({
+    type: "number",
+    example: "15",
+    description: "Amount of tokens received per activity",
+  })
+  public assets: number | any;
 }

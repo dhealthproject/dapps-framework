@@ -18,6 +18,9 @@ import { Documentable } from "../../common/concerns/Documentable";
 import { Transferable } from "../../common/concerns/Transferable";
 import { Queryable, QueryParameters } from "../../common/concerns/Queryable";
 
+// common/models
+import { AssetsConfig } from "../../common/models/AssetsConfig";
+
 // users scope
 import { ActivityDTO } from "./ActivityDTO";
 import { ActivityData, ActivityDataSchema } from "./ActivityDataSchema";
@@ -25,6 +28,11 @@ import { ProcessingState } from "./ProcessingStatusDTO";
 
 // payout scope
 import { PayoutState } from "../../payout/models/PayoutStatusDTO";
+
+// config
+import assetsConfigLoader from "../../../config/assets";
+
+const assetsConfig: AssetsConfig = assetsConfigLoader();
 
 /**
  * @class Activity
@@ -318,6 +326,9 @@ export class Activity extends Transferable<ActivityDTO> {
     dto.address = doc.address;
     dto.slug = doc.slug;
     if (doc.activityData) {
+      dto.assets = doc.activityAssets.filter(
+        (a) => a.mosaicId === assetsConfig.assets.earn.mosaicId,
+      );
       dto.distance = doc.activityData.distance;
       dto.sport = doc.activityData.sport;
       dto.elevationGain = doc.activityData.elevation;
