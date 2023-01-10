@@ -75,21 +75,7 @@
           <div class="item" v-html="item.distance" />
           <div class="item" v-html="item.elevationGain" />
           <div class="item" v-html="item.avgPace" />
-          <div class="item" v-html="0" />
-          <!-- <div
-            class="item"
-            v-for="(key, index) in Object.keys(item).filter(
-              (keyItem) => keyItem !== 'type' && keyItem !== 'address'
-            )"
-            :key="key + index"
-          >
-            <img
-              v-if="key === 'sport'"
-              :src="getImageUrl(`activities-icons/${item[key]}.svg`)"
-              :alt="item[key]"
-            />
-            {{ item[key] }}
-          </div> -->
+          <div class="item" v-html="item.assets.length ? item.assets[0] : 0" />
         </div>
       </div>
     </div>

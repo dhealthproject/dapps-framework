@@ -35,4 +35,6 @@ export interface ActivityEntryDTO {
   distance: number;
   elevationGain: number;
   sport: string;
+  avgPace: number;
+  assets: any[];
 }
