@@ -277,6 +277,12 @@ export class Earn extends Contract {
       date: this.inputs.date,
     };
 
+    // add asset and amount if available
+    if (this.inputs.asset && this.inputs.amount) {
+      fields.asset = this.inputs.asset;
+      fields.amount = this.inputs.amount;
+    }
+
     return fields;
   }
 
