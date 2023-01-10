@@ -291,7 +291,9 @@ export default class LoginScreen extends MetaView {
    * @returns {string}
    */
   protected get mobileHref(): string {
-    return `dhealth://sign?payload=${this.qrConfig?.toJSON()}`;
+    return `dhealth://sign?payload=${encodeURIComponent(
+      this.qrConfig?.toJSON() as string
+    )}`;
   }
 
   /**
