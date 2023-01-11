@@ -83,7 +83,7 @@ describe("discovery/TransactionsService", () => {
   });
 
   describe("find()", () => {
-    it("should use QueryService.find() method with correct query", async () => {
+    it("should use QueryService.findWithTotal() method with correct query", async () => {
       // prepare
       const expectedResult = new PaginatedResultDTO(
         [{} as TransactionDocument],
@@ -94,7 +94,7 @@ describe("discovery/TransactionsService", () => {
         },
       );
       const findMock = jest
-        .spyOn(queriesService, "find")
+        .spyOn(queriesService, "findWithTotal")
         .mockResolvedValue(expectedResult);
 
       // act

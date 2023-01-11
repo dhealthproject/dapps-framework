@@ -153,7 +153,7 @@ export class QueryService<
    * @param   {TModel}  model     The model *class instance* used for resulting documents.
    * @returns {Promise<PaginatedResultDTO<TDocument>>} The matching documents after execution of the query.
    */
-  public async find(
+  public async findWithTotal(
     query: Queryable<TDocument>,
     model: TModel,
     ops: MongoQueryOperations = undefined,
@@ -189,6 +189,46 @@ export class QueryService<
       pageNumber: queryCursor.page + 1,
       pageSize: queryCursor.limit,
       total: metadata.length > 0 ? metadata[0].total : 0,
+    };
+
+    // returns wrapped entity page
+    return PaginatedResultDTO.create<TDocument>(data, pagination);
+  }
+
+  /**
+   * Create a generic *search query* that is compatible with Mongo. The
+   * returned {@link PaginatedResultDto} contains a `data` field and a
+   * `pagination` field to permit multiple queries to be sequenced.
+   * <br /><br />
+   * This method also *executes* the search query using the Mongo service
+   * connected to handle {@param model}.
+   *
+   * @access public
+   * @async
+   * @param   {Queryable<TDocument>}         query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {TModel}  model     The model *class instance* used for resulting documents.
+   * @returns {Promise<PaginatedResultDTO<TDocument>>} The matching documents after execution of the query.
+   */
+  public async find(
+    query: Queryable<TDocument>,
+    model: TModel,
+  ): Promise<PaginatedResultDTO<TDocument>> {
+    // wrap pagination+query to be mongo-compatible
+    const { queryCursor, searchQuery } = this.getQueryConfig(query);
+
+    // execute Mongo query
+    // @todo this *aggregate* query should be moved to a new method `findWithTotal`.
+    // @todo fallback to `mongoose` Model.find method instead for performance.
+    const data = await model
+      .find(
+        searchQuery as FilterQuery<TDocument>
+      )
+      .exec();
+
+    // build pagination details for PaginatedResultDTO
+    const pagination = {
+      pageNumber: queryCursor.page + 1,
+      pageSize: queryCursor.limit,
     };
 
     // returns wrapped entity page

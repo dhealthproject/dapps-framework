@@ -21,5 +21,5 @@ export interface Countable {
    *
    * @var {number}
    */
-  total: number;
+  total?: number;
 }

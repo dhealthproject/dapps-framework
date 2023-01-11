@@ -230,14 +230,14 @@ describe("payout/BroadcastActivityPayouts", () => {
     it("should forward to query service with correct query", async () => {
       // prepare
       (command as any).payoutsService = payoutsService; // L113
-      const modelAggregateMock = jest.fn().mockReturnValue({
+      const modelFindMock = jest.fn().mockReturnValue({
         exec: jest.fn().mockReturnValue([{
           data: [],
           metadata: []
         }]),
       });
       (payoutsService as any).model = {
-        aggregate: modelAggregateMock,
+        find: modelFindMock,
       };
       const queryFindMock = jest.spyOn(queryService, "find");
 
@@ -259,27 +259,11 @@ describe("payout/BroadcastActivityPayouts", () => {
           order: "asc",
         },
       ), (payoutsService as any).model);
-      expect(modelAggregateMock).toHaveBeenCalledTimes(1);
-      expect(modelAggregateMock).toHaveBeenCalledWith([
-        {
-          $match: {
-            payoutState: {
-              $in: [PayoutState.Prepared, PayoutState.Prepared]
-            },
-            subjectCollection: "activities",
-          },
-        },
-        {
-          $facet: {
-            data: [
-              { $skip: 0 },
-              { $limit: useManualLimit },
-              { $sort: { createdAt: 1 } },
-            ],
-            metadata: [{ $count: "total" }],
-          },
-        },
-      ]);
+      expect(modelFindMock).toHaveBeenCalledTimes(1);
+      expect(modelFindMock).toHaveBeenCalledWith({
+        payoutState: { $in: [1, 1] },
+        subjectCollection: "activities"
+      });
     });
   });
 

@@ -93,7 +93,7 @@ export class TransactionsService {
   async find(
     query: TransactionQuery,
   ): Promise<PaginatedResultDTO<TransactionDocument>> {
-    return await this.queriesService.find(query, this.model);
+    return await this.queriesService.findWithTotal(query, this.model);
   }
 
   /**

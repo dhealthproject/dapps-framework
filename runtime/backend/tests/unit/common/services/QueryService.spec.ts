@@ -210,14 +210,14 @@ describe("common/QueryService", () => {
     });
   });
 
-  describe("find()", () => {
+  describe("findWithTotal()", () => {
     beforeEach(() => {
       aggregateFn = baseAggregateFn;
       aggregateFn.mockClear();
     });
 
     it("should call aggregate() from model", async () => {
-      await service.find(new AccountQuery({ id: "non-existing" } as AccountDocument), testModel);
+      await service.findWithTotal(new AccountQuery({ id: "non-existing" } as AccountDocument), testModel);
       expect(aggregateFn).toHaveBeenCalled();
     });
 
@@ -230,7 +230,7 @@ describe("common/QueryService", () => {
           total: 1,
         },
       );
-      const result = await service.find(
+      const result = await service.findWithTotal(
         new AccountQuery({ id: "non-existing" } as AccountDocument),
         testModel,
       );
@@ -246,7 +246,7 @@ describe("common/QueryService", () => {
           total: 1,
         },
       );
-      const result = await service.find(
+      const result = await service.findWithTotal(
         new AccountQuery({ id: "non-existing" } as AccountDocument),
         testModel,
       );
@@ -272,7 +272,7 @@ describe("common/QueryService", () => {
       aggregateFn = emptyAggregateFn;
 
       // act
-      const result = await service.find(
+      const result = await service.findWithTotal(
         new AccountQuery({ id: "non-existing" } as AccountDocument),
         testModel,
       );
@@ -282,7 +282,7 @@ describe("common/QueryService", () => {
     });
 
     it("should have correct sort: address", async () => {
-      await service.find(
+      await service.findWithTotal(
         new AccountQuery(
           { id: "non-existing" } as AccountDocument,
           { sort: "address" } as QueryParameters,
@@ -301,7 +301,7 @@ describe("common/QueryService", () => {
     });
 
     it("should have correct order: asc", async () => {
-      await service.find(new AccountQuery({ id: "non-existing" } as AccountDocument), testModel);
+      await service.findWithTotal(new AccountQuery({ id: "non-existing" } as AccountDocument), testModel);
       expect(aggregateFn).toHaveBeenCalledWith([
         { $match: { id: "non-existing" } },
         {
@@ -314,7 +314,7 @@ describe("common/QueryService", () => {
     });
 
     it("should have correct order: desc", async () => {
-      await service.find(
+      await service.findWithTotal(
         new AccountQuery(
           { id: "non-existing" } as AccountDocument,
           { order: "desc" } as QueryParameters,
@@ -333,7 +333,7 @@ describe("common/QueryService", () => {
     });
 
     it("should permit overwrite of pageNumber and pageSize", async () => {
-      await service.find(
+      await service.findWithTotal(
         new AccountQuery(
           { id: "non-existing" } as AccountDocument,
           { pageNumber: 2, pageSize: 17 } as QueryParameters,
@@ -353,7 +353,7 @@ describe("common/QueryService", () => {
 
     it("should add operations to query", async () => {
       // act
-      await service.find(
+      await service.findWithTotal(
         new AccountQuery(
           { id: "non-existing" } as AccountDocument,
           { pageNumber: 2, pageSize: 17 } as QueryParameters,
