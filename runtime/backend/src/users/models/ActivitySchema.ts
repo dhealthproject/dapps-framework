@@ -29,11 +29,6 @@ import { ProcessingState } from "./ProcessingStatusDTO";
 // payout scope
 import { PayoutState } from "../../payout/models/PayoutStatusDTO";
 
-// config
-import assetsConfigLoader from "../../../config/assets";
-
-const assetsConfig: AssetsConfig = assetsConfigLoader();
-
 /**
  * @class Activity
  * @description This class defines the **exact** fields that are
@@ -326,9 +321,7 @@ export class Activity extends Transferable<ActivityDTO> {
     dto.address = doc.address;
     dto.slug = doc.slug;
     if (doc.activityData) {
-      dto.assets = doc.activityAssets.filter(
-        (a) => a.mosaicId === assetsConfig.assets.earn.mosaicId,
-      );
+      dto.assets = doc.activityAssets;
       dto.distance = doc.activityData.distance;
       dto.sport = doc.activityData.sport;
       dto.elevationGain = doc.activityData.elevation;

@@ -256,6 +256,17 @@ export class UserAggregation extends StatisticsCommand {
       // create a new user statistics document
       const address = result._id; // see createAggregationQuery
 
+      // if we already have a statistics document for this period
+      // we must fetch it from database to get all field values
+      const document = await this.statisticsService.findOne(
+        new StatisticsQuery({
+          address,
+          period,
+          periodFormat,
+          type: this.TYPE,
+        } as StatisticsDocument),
+      );
+
       // find one and create new (if not exists) or update (if exists)
       await this.statisticsService.createOrUpdate(
         new StatisticsQuery({
@@ -269,6 +280,8 @@ export class UserAggregation extends StatisticsCommand {
           data: {
             totalEarned: result.totalAssetsAmount,
             totalPracticedMinutes: Math.ceil(result.totalSecondsPracticed / 60),
+            // merge with previous entry if available (topActivities)
+            ...(document ? document.data : {}),
           },
         },
       );

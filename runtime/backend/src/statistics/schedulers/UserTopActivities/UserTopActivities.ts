@@ -116,6 +116,17 @@ export class UserTopActivities extends StatisticsCommand {
     for (const result of results) {
       const address = result._id.address; // see createAggregationQuery
 
+      // if we already have a statistics document for this period
+      // we must fetch it from database to get all field values
+      const document = await this.statisticsService.findOne(
+        new StatisticsQuery({
+          address,
+          period,
+          periodFormat,
+          type: this.TYPE,
+        } as StatisticsDocument),
+      );
+
       // find one and create new (if not exists) or update (if exists)
       await this.statisticsService.createOrUpdate(
         new StatisticsQuery({
@@ -126,6 +137,8 @@ export class UserTopActivities extends StatisticsCommand {
         {
           periodFormat,
           data: {
+            // merge with previous entry if available
+            ...(document ? document.data : {}),
             topActivities: result._id.sportType,
           },
         },
