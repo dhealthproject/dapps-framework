@@ -154,6 +154,16 @@ export default class LegalDisclaimer extends MetaView {
     };
   }
 
+  get legalData() {
+    const currentKey = this.$route.name?.split(".")[1];
+    const currentLegalItem = this.$t(`legal.${currentKey}`);
+    if (currentKey && currentLegalItem) {
+      return currentLegalItem;
+    }
+
+    return this.$t("legal.terms-and-conditions");
+  }
+
   /**
    * This computed returns configuration according to current legal page
    *
