@@ -176,8 +176,6 @@ export class QueryService<
     }
 
     // execute Mongo query
-    // @todo this *aggregate* query should be moved to a new method `findWithTotal`.
-    // @todo fallback to `mongoose` Model.find method instead for performance.
     const [{ data, metadata }] = await model
       .aggregate(
         [...aggregateQuery] as any, // any for mongoose' `PipelineStage`
@@ -217,8 +215,6 @@ export class QueryService<
     const { queryCursor, searchQuery } = this.getQueryConfig(query);
 
     // execute Mongo query
-    // @todo this *aggregate* query should be moved to a new method `findWithTotal`.
-    // @todo fallback to `mongoose` Model.find method instead for performance.
     const data = await model
       .find(
         searchQuery as FilterQuery<TDocument>
