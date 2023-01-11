@@ -107,7 +107,7 @@ export default class Leaderboard extends MetaView {
       },
       {
         title: this.$t("common.all_time"),
-        value: "D",
+        value: "Y",
       },
     ];
   }

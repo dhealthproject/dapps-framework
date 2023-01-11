@@ -42,8 +42,8 @@ const $store = new Vuex.Store({
         { minReferred: 10 },
         { minReferred: 50 },
         { minReferred: 100 },
-      ]
-    })
+      ],
+    }),
   },
   actions: {
     initialize: jest.fn(),

@@ -138,7 +138,7 @@ describe("LeaderBoardRow -->", () => {
     expect(
       widget.find(".dapp-leaderboard-item__amount span").text()
     ).to.be.equal(
-      `$${widget.vm.formatAmount(widget.props("data").amount, 2)} ACTIV`
+      `${widget.vm.formatAmount(widget.props("data").amount, 2)} $ACTIV`
     );
   });
 });
