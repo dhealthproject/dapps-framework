@@ -11,7 +11,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { ConfigService } from "@nestjs/config";
-import { Cron } from "@nestjs/schedule";
 
 // internal dependencies
 // common scope
@@ -19,16 +18,17 @@ import { LogService } from "../../../common/services/LogService";
 import { NetworkService } from "../../../common/services/NetworkService";
 import { StateService } from "../../../common/services/StateService";
 import { QueryService } from "../../../common/services/QueryService";
+import {
+  Account,
+  AccountDocument,
+  AccountModel,
+} from "../../../common/models/AccountSchema";
+import { AssetParameters } from "../../../common/models/AssetsConfig";
 
 // discovery scope
 import { AssetsService } from "../../../discovery/services/AssetsService";
 
 // users scope
-import {
-  Activity,
-  ActivityDocument,
-  ActivityModel,
-} from "../../../users/models/ActivitySchema";
 import { ActivitiesService } from "../../../users/services/ActivitiesService";
 
 // payout scope
@@ -43,7 +43,7 @@ import { PayoutsService } from "../../services/PayoutsService";
 import { SignerService } from "../../services/SignerService";
 
 /**
- * @interface BroadcastActivityPayoutsCommandOptions
+ * @interface BroadcastBoosterPayoutsCommandOptions
  * @description This interface defines **arguments** that can be
  * passed to this **processor** command that is implemented in the
  * backend runtime.
@@ -57,15 +57,15 @@ import { SignerService } from "../../services/SignerService";
  * @see PayoutCommandOptions
  * @since v0.4.0
  */
-export type BroadcastActivityPayoutsCommandOptions =
+export type BroadcastBoosterPayoutsCommandOptions =
   BroadcastPayoutsCommandOptions;
 
 /**
  * @label PAYOUT
- * @class BroadcastActivityPayouts
+ * @class BroadcastBoosterPayouts
  * @description The implementation for the payout *preparation*
  * scheduler. Contains source code for the execution logic of a
- * command with name: `processor:BroadcastActivityPayouts`.
+ * command with name: `processor:BroadcastBoosterPayouts`.
  * <br /><br />
  * Notably, this command *fetches activities* that have not been
  * the subject of payouts yet and then *creates transactions* and
@@ -74,30 +74,30 @@ export type BroadcastActivityPayoutsCommandOptions =
  * @since v0.4.0
  */
 @Injectable()
-export class BroadcastActivityPayouts extends BroadcastPayouts<
-  ActivityDocument,
-  ActivityModel
+export abstract class BroadcastBoosterPayouts extends BroadcastPayouts<
+  AccountDocument,
+  AccountModel
 > {
   /**
    * Constructs and prepares an instance of this scheduler.
    *
    * @param {ConfigService}   configService
    * @param {StateService}    stateService
-   * @param {QueryService<ActivityDocument, ActivityModel>}    queryService
+   * @param {QueryService<AccountDocument, AccountModel>}    queryService
    * @param {PayoutsService}  payoutsService
    * @param {SignerService}   signerService
    * @param {NetworkService}  networkService
    * @param {ActivitiesService}  activitiesService
    * @param {LogService}      logService
    * @param {AssetsService}      assetsService
-   * @param {ActivityModel}   model
+   * @param {AccountModel}   model
    */
   constructor(
     protected readonly configService: ConfigService,
     protected readonly stateService: StateService,
     protected readonly queryService: QueryService<
-      ActivityDocument,
-      ActivityModel
+      AccountDocument,
+      AccountModel
     >,
     protected readonly payoutsService: PayoutsService,
     protected readonly signerService: SignerService,
@@ -105,8 +105,8 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
     protected readonly activitiesService: ActivitiesService,
     protected readonly logService: LogService,
     protected readonly assetsService: AssetsService,
-    @InjectModel(Activity.name)
-    protected readonly model: ActivityModel,
+    @InjectModel(Account.name)
+    protected readonly model: AccountModel,
   ) {
     // required super call
     super(
@@ -123,22 +123,49 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
   }
 
   /**
-   * This method must return a *command name*. Note that
-   * it should use only characters of: A-Za-z0-9:-_.
+   * Memory store for the *booster asset configuration* object. This
+   * object defines which assets are *discoverable* on dHealth Network
+   * and used to *tokenize a particular booster operation*.
    * <br /><br />
-   * e.g. "scope:name"
-   * <br /><br />
-   * This property is required through the extension of
-   * {@link PayoutCommand}.
+   * This asset configuration is referred to as a **booster asset**
+   * used in a specific dApp.
    *
-   * @see PayoutCommand
+   * @access protected
+   * @abstract
+   * @var {AssetParameters}
+   */
+  protected abstract get boosterAsset(): AssetParameters;
+
+  /**
+   * Abstract method forwarded from {@link PayoutCommand}. This field
+   * is used to improve logging and discovery of schedulers execution.
+   *
    * @see BaseCommand
    * @access protected
+   * @abstract
    * @returns {string}
    */
-  protected get command(): string {
-    return `BroadcastActivityPayouts`;
-  }
+  protected abstract get command(): string;
+
+  /**
+   * This method is the **entry point** of this scheduler. It must be
+   * implemented in child classes and must be decorated with a `Cron`
+   * `Cron` decorator.
+   * <br /><br />
+   * Child classes are responsible for the registration of schedulers
+   * and therefor the `Cron()` decorator is not used in this abstract
+   * method definition, instead you should use the `Cron()` decorator
+   * in the method implementation of child classes.
+   *
+   * @see BaseCommand
+   * @access public
+   * @abstract
+   * @async
+   * @param   {string[]}            passedParams
+   * @param   {BaseCommandOptions}  options
+   * @returns {Promise<void>}
+   */
+  public abstract runAsScheduler(): Promise<void>;
 
   /**
    * This method must return a *command signature* that
@@ -169,7 +196,7 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
    * @returns {string}
    */
   protected get collection(): string {
-    return "activities";
+    return "accounts";
   }
 
   /**
@@ -218,41 +245,5 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
 
     // return 1 page's documents
     return page.data;
-  }
-
-  /**
-   * This method is the **entry point** of this scheduler. Due to
-   * the usage of the `Cron` decorator, and the implementation
-   * the nest backend runtime is able to discover this when the
-   * `processor` scope is enabled.
-   * <br /><br />
-   * This method is necessary to make sure this command is run
-   * with the correct `--signer` option.
-   * <br /><br />
-   * This scheduler is registered to run **every minute** at the
-   * **fifth second**.
-   *
-   * @see BaseCommand
-   * @access public
-   * @async
-   * @param   {string[]}            passedParams
-   * @param   {BaseCommandOptions}  options
-   * @returns {Promise<void>}
-   */
-  @Cron("5 */1 * * * *", { name: "payout:cronjobs:broadcast" })
-  public async runAsScheduler(): Promise<void> {
-    // prepares execution logger
-    this.logger.setModule(`${this.scope}/${this.command}`);
-
-    // display starting moment information also in non-debug mode
-    this.debugLog(
-      `Starting payout broadcast for subjects type: ${this.collection}`,
-    );
-
-    // executes the actual command logic (this will call execute())
-    await this.run([this.collection], {
-      maxCount: 3, // <-- MAXIMUM 3 BROADCASTS per round
-      debug: true,
-    } as BroadcastActivityPayoutsCommandOptions);
   }
 }

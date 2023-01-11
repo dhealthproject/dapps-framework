@@ -76,7 +76,14 @@ export class PrepareActivityPayouts extends PreparePayouts<
   ActivityModel
 > {
   /**
+   * A configuration object that determines the total number of referrals
+   * that are necessary to be assigned the corresponding booster.
+   * <br /><br />
+   * Note that the keys of this configuration object should contain the
+   * *booster asset's identifier* as defined inside `config/assets.ts`.
    *
+   * @link SocialConfig
+   * @var {ReferralBoosterParameters}
    */
   protected boosterParameters: ReferralBoosterParameters;
 
@@ -116,9 +123,8 @@ export class PrepareActivityPayouts extends PreparePayouts<
     );
 
     // reads referral level configuration
-    this.boosterParameters = this.configService.get<ReferralBoosterParameters>(
-      "referral"
-    );
+    this.boosterParameters =
+      this.configService.get<ReferralBoosterParameters>("referral");
   }
 
   /**
@@ -169,6 +175,18 @@ export class PrepareActivityPayouts extends PreparePayouts<
    */
   protected get collection(): string {
     return "activities";
+  }
+
+  /**
+   * This method determines whether the `payoutState` and `activityAssets`
+   * fields must be set on the payout subject document, or not.
+   *
+   * @abstract
+   * @access protected
+   * @returns {boolean}
+   */
+  protected get shouldSetSubjectPayoutState(): boolean {
+    return true; // activity payouts require subject update
   }
 
   /**

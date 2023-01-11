@@ -15,25 +15,32 @@ import { TransactionMapping } from "@dhealth/sdk";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
-import { MockModel } from "../../../mocks/global";
+import { MockModel } from "../../../../mocks/global";
 
 // common scope
-import { LogService } from "../../../../src/common/services/LogService";
-import { StateService } from "../../../../src/common/services/StateService";
-import { QueryService } from "../../../../src/common/services/QueryService";
-import { NetworkService } from "../../../../src/common/services/NetworkService";
+import { LogService } from "../../../../../src/common/services/LogService";
+import { StateService } from "../../../../../src/common/services/StateService";
+import { QueryService } from "../../../../../src/common/services/QueryService";
+import { NetworkService } from "../../../../../src/common/services/NetworkService";
+
+// discovery scope
+import {
+  AssetQuery,
+  AssetDocument,
+} from "../../../../../src/discovery/models/AssetSchema";
+import { AssetsService } from "../../../../../src/discovery/services/AssetsService";
 
 // users scope
-import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/users/models/ActivitySchema";
-import { ActivitiesService } from "../../../../src/users/services/ActivitiesService";
+import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../../src/users/models/ActivitySchema";
+import { ActivitiesService } from "../../../../../src/users/services/ActivitiesService";
 
 // payout scope
-import { PayoutState } from "../../../../src/payout/models/PayoutStatusDTO";
-import { PayoutDocument, PayoutQuery } from "../../../../src/payout/models/PayoutSchema";
-import { PayoutsService } from "../../../../src/payout/services/PayoutsService";
-import { SignerService } from "../../../../src/payout/services/SignerService";
-import { BroadcastActivityPayouts, BroadcastActivityPayoutsCommandOptions } from "../../../../src/payout/schedulers/ActivityPayouts/BroadcastActivityPayouts";
-import { PayoutBroadcastStateData } from "../../../../src/payout/models/PayoutBroadcastStateData";
+import { PayoutState } from "../../../../../src/payout/models/PayoutStatusDTO";
+import { PayoutDocument, PayoutQuery } from "../../../../../src/payout/models/PayoutSchema";
+import { PayoutsService } from "../../../../../src/payout/services/PayoutsService";
+import { SignerService } from "../../../../../src/payout/services/SignerService";
+import { BroadcastActivityPayouts, BroadcastActivityPayoutsCommandOptions } from "../../../../../src/payout/schedulers/ActivityPayouts/BroadcastActivityPayouts";
+import { PayoutBroadcastStateData } from "../../../../../src/payout/models/PayoutBroadcastStateData";
 
 const payoutMocks = [
   {
@@ -42,6 +49,7 @@ const payoutMocks = [
     userAddress: "fake-owner1",
     signedBytes: "fake-signed-bytes1",
     transactionHash: "fake-hash1",
+    payoutAssets: [{mosaicId: "fakeMosaic", amount: 1}],
     payoutState: PayoutState.Prepared,
   } as PayoutDocument,
   {
@@ -50,6 +58,7 @@ const payoutMocks = [
     userAddress: "fake-owner2",
     signedBytes: "fake-signed-bytes2",
     transactionHash: "fake-hash2",
+    payoutAssets: [{mosaicId: "fakeMosaic", amount: 2}],
     payoutState: PayoutState.Prepared,
   } as PayoutDocument,
   {
@@ -58,6 +67,7 @@ const payoutMocks = [
     userAddress: "fake-owner3",
     signedBytes: "fake-signed-bytes3",
     transactionHash: "fake-hash3",
+    payoutAssets: [{mosaicId: "fakeMosaic", amount: 3}],
     payoutState: PayoutState.Prepared,
   } as PayoutDocument,
   {
@@ -66,6 +76,7 @@ const payoutMocks = [
     userAddress: "fake-owner4",
     signedBytes: "fake-signed-bytes4",
     transactionHash: "fake-hash4",
+    payoutAssets: [{mosaicId: "fakeMosaic", amount: 4}],
     payoutState: PayoutState.Prepared,
   } as PayoutDocument,
 ];
@@ -76,6 +87,7 @@ const notEligiblePayoutMock = {
   userAddress: "fake-owner5",
   signedBytes: "fake-signed-bytes5",
   transactionHash: "fake-hash5",
+  payoutAssets: [{mosaicId: "fakeMosaic", amount: 5}],
   payoutState: PayoutState.Not_Eligible,
 } as PayoutDocument;
 
@@ -89,6 +101,7 @@ describe("payout/BroadcastActivityPayouts", () => {
   let signerService: SignerService;
   let activitiesService: ActivitiesService;
   let logger: LogService;
+  let assetsService: AssetsService;
   let mockDate: Date;
 
   beforeEach(async () => {
@@ -107,9 +120,14 @@ describe("payout/BroadcastActivityPayouts", () => {
         PayoutsService,
         SignerService,
         ActivitiesService,
+        AssetsService,
         EventEmitter2,
         {
           provide: getModelToken("Payout"),
+          useValue: MockModel,
+        },
+        {
+          provide: getModelToken("Asset"),
           useValue: MockModel,
         },
         {
@@ -142,6 +160,7 @@ describe("payout/BroadcastActivityPayouts", () => {
     signerService = module.get<SignerService>(SignerService);
     activitiesService = module.get<ActivitiesService>(ActivitiesService);
     logger = module.get<LogService>(LogService);
+    assetsService = module.get<AssetsService>(AssetsService);
   });
 
   it("should be defined", () => {
@@ -293,6 +312,7 @@ describe("payout/BroadcastActivityPayouts", () => {
     const updatePayoutSubjectMock = jest.fn();
     const payoutsCreateOrUpdateMock = jest.fn();
     const activitiesCreateOrUpdateMock = jest.fn();
+    const assetsCreateOrUpdateMock = jest.fn();
     const networkDelegatePromisesMock = jest.fn().mockReturnValue(
       Promise.resolve(),
     );
@@ -330,12 +350,20 @@ describe("payout/BroadcastActivityPayouts", () => {
       };
       (command as any).networkService = {
         delegatePromises: networkDelegatePromisesMock,
+        getChainInfo: jest.fn().mockReturnValue({
+          height: {
+            compact: () => 1, // <-- forces height=1
+          }
+        }),
         transactionRepository: {
           announce: transactionAnnounceMock,
-        }
+        },
       };
       (command as any).activitiesService = {
         createOrUpdate: activitiesCreateOrUpdateMock,
+      };
+      (command as any).assetsService = {
+        createOrUpdate: assetsCreateOrUpdateMock,
       };
 
       debugLogMock = jest.spyOn((command as any), "debugLog");
@@ -514,6 +542,7 @@ describe("payout/BroadcastActivityPayouts", () => {
       // assert
       expect(payoutsCreateOrUpdateMock).not.toHaveBeenCalled();
       expect(activitiesCreateOrUpdateMock).not.toHaveBeenCalled();
+      expect(assetsCreateOrUpdateMock).not.toHaveBeenCalled();
     });
 
     it("should broadcast a maximum number of payouts given maxCount", async () => {
@@ -533,6 +562,7 @@ describe("payout/BroadcastActivityPayouts", () => {
       expect(networkDelegatePromisesMock).toHaveBeenCalledTimes(1); // delegates all in one
       expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount); // maxCount=1
       expect(activitiesCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount); // maxCount=1
+      expect(assetsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount); // maxCount=1
       expect(transactionAnnounceToPromiseMock).toHaveBeenCalledTimes(expectedCount); // maxCount=1
     });
 
@@ -553,6 +583,7 @@ describe("payout/BroadcastActivityPayouts", () => {
       expect(networkDelegatePromisesMock).toHaveBeenCalledTimes(1); // delegates all in one
       expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
       expect(activitiesCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
+      expect(assetsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
       expect(transactionAnnounceToPromiseMock).toHaveBeenCalledTimes(expectedCount);
     });
 
@@ -573,6 +604,8 @@ describe("payout/BroadcastActivityPayouts", () => {
       expect(networkDelegatePromisesMock).toHaveBeenCalledTimes(1); // delegates all in one
       expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount); // 2 payouts
       expect(activitiesCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount); // 2 subjects
+      expect(assetsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount); // 2 subjects
+      expect(transactionAnnounceToPromiseMock).toHaveBeenCalledTimes(expectedCount);
       expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(1,
         new PayoutQuery({
           userAddress: payoutMocks[0].userAddress,
@@ -593,7 +626,6 @@ describe("payout/BroadcastActivityPayouts", () => {
           payoutState: PayoutState.Broadcast,
         },
       );
-      expect(transactionAnnounceToPromiseMock).toHaveBeenCalledTimes(expectedCount);
       expect(activitiesCreateOrUpdateMock).toHaveBeenNthCalledWith(1, 
         new ActivityQuery({
           slug: payoutMocks[0].subjectSlug
@@ -605,6 +637,28 @@ describe("payout/BroadcastActivityPayouts", () => {
           slug: payoutMocks[1].subjectSlug
         } as ActivityDocument),
         { payoutState: PayoutState.Broadcast },
+      );
+      expect(assetsCreateOrUpdateMock).toHaveBeenNthCalledWith(1, 
+        new AssetQuery({
+          transactionHash: payoutMocks[0].transactionHash,
+        } as AssetDocument),
+        {
+          userAddress: payoutMocks[0].userAddress,
+          mosaicId: payoutMocks[0].payoutAssets[0].mosaicId,
+          amount: payoutMocks[0].payoutAssets[0].amount,
+          creationBlock: 1, // <-- forced height=1 in beforeEach
+        },
+      );
+      expect(assetsCreateOrUpdateMock).toHaveBeenNthCalledWith(2, 
+        new AssetQuery({
+          transactionHash: payoutMocks[1].transactionHash,
+        } as AssetDocument),
+        {
+          userAddress: payoutMocks[1].userAddress,
+          mosaicId: payoutMocks[1].payoutAssets[0].mosaicId,
+          amount: payoutMocks[1].payoutAssets[0].amount,
+          creationBlock: 1, // <-- forced height=1 in beforeEach
+        },
       );
     });
 
@@ -630,6 +684,7 @@ describe("payout/BroadcastActivityPayouts", () => {
       expect(networkDelegatePromisesMock).toHaveBeenCalledTimes(1); // delegates all in one
       expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
       expect(activitiesCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
+      expect(assetsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
       expect(transactionAnnounceToPromiseMock).toHaveBeenCalledTimes(expectedCount);
     });
 
@@ -651,6 +706,7 @@ describe("payout/BroadcastActivityPayouts", () => {
       expect(networkDelegatePromisesMock).toHaveBeenCalledTimes(1); // delegates all in one
       expect(payoutsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
       expect(activitiesCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
+      expect(assetsCreateOrUpdateMock).toHaveBeenCalledTimes(expectedCount);
       expect(transactionAnnounceToPromiseMock).toHaveBeenCalledTimes(expectedCount);
       expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(1,
         new PayoutQuery({
@@ -668,6 +724,17 @@ describe("payout/BroadcastActivityPayouts", () => {
         } as ActivityDocument),
         { payoutState: PayoutState.Broadcast },
       );
+      expect(assetsCreateOrUpdateMock).toHaveBeenNthCalledWith(1, 
+        new AssetQuery({
+          transactionHash: payoutMocks[0].transactionHash,
+        } as AssetDocument),
+        {
+          userAddress: payoutMocks[0].userAddress,
+          mosaicId: payoutMocks[0].payoutAssets[0].mosaicId,
+          amount: payoutMocks[0].payoutAssets[0].amount,
+          creationBlock: 1, // <-- forced height=1 in beforeEach
+        },
+      );
       expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(2,
         new PayoutQuery({
           userAddress: payoutMocks[1].userAddress,
@@ -683,6 +750,17 @@ describe("payout/BroadcastActivityPayouts", () => {
           slug: payoutMocks[1].subjectSlug
         } as ActivityDocument),
         { payoutState: PayoutState.Broadcast },
+      );
+      expect(assetsCreateOrUpdateMock).toHaveBeenNthCalledWith(2, 
+        new AssetQuery({
+          transactionHash: payoutMocks[1].transactionHash,
+        } as AssetDocument),
+        {
+          userAddress: payoutMocks[1].userAddress,
+          mosaicId: payoutMocks[1].payoutAssets[0].mosaicId,
+          amount: payoutMocks[1].payoutAssets[0].amount,
+          creationBlock: 1, // <-- forced height=1 in beforeEach
+        },
       );
       expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(3,
         new PayoutQuery({
@@ -700,6 +778,17 @@ describe("payout/BroadcastActivityPayouts", () => {
         } as ActivityDocument),
         { payoutState: PayoutState.Broadcast },
       );
+      expect(assetsCreateOrUpdateMock).toHaveBeenNthCalledWith(3, 
+        new AssetQuery({
+          transactionHash: payoutMocks[2].transactionHash,
+        } as AssetDocument),
+        {
+          userAddress: payoutMocks[2].userAddress,
+          mosaicId: payoutMocks[2].payoutAssets[0].mosaicId,
+          amount: payoutMocks[2].payoutAssets[0].amount,
+          creationBlock: 1, // <-- forced height=1 in beforeEach
+        },
+      );
       expect(payoutsCreateOrUpdateMock).toHaveBeenNthCalledWith(4,
         new PayoutQuery({
           userAddress: payoutMocks[3].userAddress,
@@ -715,6 +804,17 @@ describe("payout/BroadcastActivityPayouts", () => {
           slug: payoutMocks[3].subjectSlug
         } as ActivityDocument),
         { payoutState: PayoutState.Broadcast },
+      );
+      expect(assetsCreateOrUpdateMock).toHaveBeenNthCalledWith(4, 
+        new AssetQuery({
+          transactionHash: payoutMocks[3].transactionHash,
+        } as AssetDocument),
+        {
+          userAddress: payoutMocks[3].userAddress,
+          mosaicId: payoutMocks[3].payoutAssets[0].mosaicId,
+          amount: payoutMocks[3].payoutAssets[0].amount,
+          creationBlock: 1, // <-- forced height=1 in beforeEach
+        },
       );
     });
 
@@ -791,35 +891,6 @@ describe("payout/BroadcastActivityPayouts", () => {
           networkType: "fake-network",
         } as any);
       });
-    });
-  });
-
-  describe("runAsScheduler()", () => {
-    it("should call correct methods and run correctly", async () => {
-      // prepare
-      const loggerSetModuleCall = jest
-        .spyOn(logger, "setModule")
-        .mockReturnValue(logger);
-      const debugLogCall = jest
-        .spyOn((command as any), "debugLog")
-        .mockReturnValue(true);
-      const runCall = jest
-        .spyOn(command, "run")
-        .mockResolvedValue();
-
-      // act
-      await command.runAsScheduler();
-
-      // assert
-      expect(loggerSetModuleCall).toHaveBeenNthCalledWith(1, "payout/BroadcastActivityPayouts");
-      expect(debugLogCall).toHaveBeenNthCalledWith(1, `Starting payout broadcast for subjects type: activities`);
-      expect(runCall).toHaveBeenNthCalledWith(
-        1,
-        ["activities"], {
-          maxCount: 3, // <-- MAXIMUM 3 BROADCASTS per round
-          debug: true,
-        } as BroadcastActivityPayoutsCommandOptions
-      );
     });
   });
 

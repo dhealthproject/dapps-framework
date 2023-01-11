@@ -15,35 +15,34 @@ import { Cron } from "@nestjs/schedule";
 
 // internal dependencies
 // common scope
-import { LogService } from "../../../common/services/LogService";
-import { NetworkService } from "../../../common/services/NetworkService";
-import { StateService } from "../../../common/services/StateService";
-import { QueryService } from "../../../common/services/QueryService";
+import { LogService } from "../../../../common/services/LogService";
+import { NetworkService } from "../../../../common/services/NetworkService";
+import { StateService } from "../../../../common/services/StateService";
+import { QueryService } from "../../../../common/services/QueryService";
+import {
+  Account,
+  AccountDocument,
+  AccountModel,
+} from "../../../../common/models/AccountSchema";
+import { AssetParameters } from "../../../../common/models/AssetsConfig";
 
 // discovery scope
-import { AssetsService } from "../../../discovery/services/AssetsService";
+import { AssetsService } from "../../../../discovery/services/AssetsService";
 
 // users scope
-import {
-  Activity,
-  ActivityDocument,
-  ActivityModel,
-} from "../../../users/models/ActivitySchema";
-import { ActivitiesService } from "../../../users/services/ActivitiesService";
+import { ActivitiesService } from "../../../../users/services/ActivitiesService";
 
 // payout scope
 import {
-  BroadcastPayouts,
-  BroadcastPayoutsCommandOptions,
-} from "../BroadcastPayouts";
-import { PayoutCommand } from "../PayoutCommand";
-import { PayoutDocument, PayoutQuery } from "../../models/PayoutSchema";
-import { PayoutState } from "../../models/PayoutStatusDTO";
-import { PayoutsService } from "../../services/PayoutsService";
-import { SignerService } from "../../services/SignerService";
+  BroadcastBoosterPayouts,
+  BroadcastBoosterPayoutsCommandOptions,
+} from "../BroadcastBoosterPayouts";
+import { PayoutCommand } from "../../PayoutCommand";
+import { PayoutsService } from "../../../services/PayoutsService";
+import { SignerService } from "../../../services/SignerService";
 
 /**
- * @interface BroadcastActivityPayoutsCommandOptions
+ * @interface BroadcastBoost10PayoutsCommandOptions
  * @description This interface defines **arguments** that can be
  * passed to this **processor** command that is implemented in the
  * backend runtime.
@@ -57,15 +56,15 @@ import { SignerService } from "../../services/SignerService";
  * @see PayoutCommandOptions
  * @since v0.4.0
  */
-export type BroadcastActivityPayoutsCommandOptions =
-  BroadcastPayoutsCommandOptions;
+export type BroadcastBoost10PayoutsCommandOptions =
+  BroadcastBoosterPayoutsCommandOptions;
 
 /**
  * @label PAYOUT
- * @class BroadcastActivityPayouts
+ * @class BroadcastBoost10Payouts
  * @description The implementation for the payout *preparation*
  * scheduler. Contains source code for the execution logic of a
- * command with name: `processor:BroadcastActivityPayouts`.
+ * command with name: `processor:BroadcastBoost10Payouts`.
  * <br /><br />
  * Notably, this command *fetches activities* that have not been
  * the subject of payouts yet and then *creates transactions* and
@@ -74,30 +73,27 @@ export type BroadcastActivityPayoutsCommandOptions =
  * @since v0.4.0
  */
 @Injectable()
-export class BroadcastActivityPayouts extends BroadcastPayouts<
-  ActivityDocument,
-  ActivityModel
-> {
+export class BroadcastBoost10Payouts extends BroadcastBoosterPayouts {
   /**
    * Constructs and prepares an instance of this scheduler.
    *
    * @param {ConfigService}   configService
    * @param {StateService}    stateService
-   * @param {QueryService<ActivityDocument, ActivityModel>}    queryService
+   * @param {QueryService<AccountDocument, AccountModel>}    queryService
    * @param {PayoutsService}  payoutsService
    * @param {SignerService}   signerService
    * @param {NetworkService}  networkService
    * @param {ActivitiesService}  activitiesService
    * @param {LogService}      logService
    * @param {AssetsService}      assetsService
-   * @param {ActivityModel}   model
+   * @param {AccountModel}   model
    */
   constructor(
     protected readonly configService: ConfigService,
     protected readonly stateService: StateService,
     protected readonly queryService: QueryService<
-      ActivityDocument,
-      ActivityModel
+      AccountDocument,
+      AccountModel
     >,
     protected readonly payoutsService: PayoutsService,
     protected readonly signerService: SignerService,
@@ -105,8 +101,8 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
     protected readonly activitiesService: ActivitiesService,
     protected readonly logService: LogService,
     protected readonly assetsService: AssetsService,
-    @InjectModel(Activity.name)
-    protected readonly model: ActivityModel,
+    @InjectModel(Account.name)
+    protected readonly model: AccountModel,
   ) {
     // required super call
     super(
@@ -119,7 +115,23 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
       activitiesService,
       logService,
       assetsService,
+      model,
     );
+  }
+
+  /**
+   * Memory store for the *booster asset configuration* object. This
+   * object defines which assets are *discoverable* on dHealth Network
+   * and used to *tokenize a particular booster operation*.
+   * <br /><br />
+   * This asset configuration is referred to as a **booster asset**
+   * used in a specific dApp.
+   *
+   * @access protected
+   * @var {AssetParameters}
+   */
+  protected get boosterAsset(): AssetParameters {
+    return this.configService.get<AssetParameters>("boosters.referral.boost10");
   }
 
   /**
@@ -137,87 +149,7 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
    * @returns {string}
    */
   protected get command(): string {
-    return `BroadcastActivityPayouts`;
-  }
-
-  /**
-   * This method must return a *command signature* that
-   * contains hints on the command name and its required
-   * and optional arguments.
-   * <br /><br />
-   * e.g. "command <argument> [--option value]"
-   * <br /><br />
-   * This property is required through the extension of
-   * {@link PayoutCommand}.
-   *
-   * @see PayoutCommand
-   * @see BaseCommand
-   * @access protected
-   * @returns {string}
-   */
-  protected get signature(): string {
-    return `${this.command}`;
-  }
-
-  /**
-   * This method must return a *database collection* which
-   * is used to *discover subjects* for this preparation.
-   * <br /><br />
-   * e.g. "activities"
-   *
-   * @access protected
-   * @returns {string}
-   */
-  protected get collection(): string {
-    return "activities";
-  }
-
-  /**
-   * This method must return a total count of subjects.
-   *
-   * @abstract
-   * @access protected
-   * @returns {Promise<number>}
-   */
-  protected async countSubjects(): Promise<number> {
-    // executes a `count()` query on the `payouts` collection
-    return await this.payoutsService.count(
-      new PayoutQuery({
-        payoutState: PayoutState.Prepared,
-        subjectCollection: this.collection,
-      } as PayoutDocument),
-    );
-  }
-
-  /**
-   * This method must return an *array of subjects*. Note that
-   * subjects *will be the subject of a payout execution*.
-   *
-   * @access protected
-   * @async
-   * @param   {number}    count     The count of subjects to retrieve.
-   * @returns {Promise<PayoutDocument[]>}
-   */
-  protected async fetchSubjects(count: number): Promise<PayoutDocument[]> {
-    // queries *one page* of 10 `payouts` documents for which
-    // the *processing state* is currently `Prepared`.
-    const page = await this.payoutsService.find(
-      new PayoutQuery(
-        {
-          payoutState: PayoutState.Prepared,
-          subjectCollection: this.collection,
-        } as PayoutDocument,
-        {
-          pageNumber: 1,
-          pageSize: count,
-          sort: "createdAt",
-          order: "asc",
-        },
-      ),
-    );
-
-    // return 1 page's documents
-    return page.data;
+    return `BroadcastBoost10Payouts`;
   }
 
   /**
@@ -245,14 +177,12 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
     this.logger.setModule(`${this.scope}/${this.command}`);
 
     // display starting moment information also in non-debug mode
-    this.debugLog(
-      `Starting payout broadcast for subjects type: ${this.collection}`,
-    );
+    this.debugLog(`Starting payout broadcast for booster type: boost10`);
 
     // executes the actual command logic (this will call execute())
     await this.run([this.collection], {
       maxCount: 3, // <-- MAXIMUM 3 BROADCASTS per round
       debug: true,
-    } as BroadcastActivityPayoutsCommandOptions);
+    } as BroadcastBoost10PayoutsCommandOptions);
   }
 }

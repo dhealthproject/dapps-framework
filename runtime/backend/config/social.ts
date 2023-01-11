@@ -65,4 +65,30 @@ export default () => ({
       shareUrl: `https://telegram.me/share/url?url=${process.env.FRONTEND_URL}/%REFERRAL_CODE%&text=Join me on Elevate`,
     }
   },
+
+  /**
+   * A configuration object that determines the total number of referrals
+   * that are necessary to be assigned the corresponding booster.
+   * <br /><br />
+   * Note that the keys of this configuration object should contain the
+   * *booster asset's identifier* as defined inside `config/assets.ts`.
+   * <br /><br />
+   * @example Example referral steps configuration object
+   * ```json
+   * {
+   *   referral: {
+   *     "boost5": { minReferred: 5 },
+   *     "boost10": { minReferred: 10 },
+   *     ...
+   *   }
+   * }
+   * ```
+   *
+   * @var {ReferralBoosterParameters}
+   */
+  referral: {
+    "boost5": { minReferred: 10 },
+    "boost10": { minReferred: 50 },
+    "boost15": { minReferred: 100 },
+  }
 });

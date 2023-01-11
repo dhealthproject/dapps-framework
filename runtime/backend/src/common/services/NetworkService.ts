@@ -10,6 +10,7 @@
 // external dependencies
 import {
   BlockRepository,
+  ChainInfo,
   ChainRepository,
   Currency,
   MosaicId,
@@ -273,6 +274,24 @@ export class NetworkService {
       supplyMutable: false,
       restrictable: false,
     });
+  }
+
+  /**
+   * This helper method forwards the execution of a promise
+   * to call the endpoint `/chain/info` on a node.
+   *
+   * @access public
+   * @async
+   * @returns {Promise<ChainInfo>}
+   */
+  public async getChainInfo(): Promise<ChainInfo> {
+    // calls the /chain/info endpoint
+    const responses = await this.delegatePromises([
+      this.chainRepository.getChainInfo().toPromise(),
+    ]);
+
+    // returns first result set
+    return responses.shift();
   }
 
   /**

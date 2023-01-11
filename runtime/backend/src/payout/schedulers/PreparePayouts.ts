@@ -178,6 +178,16 @@ export abstract class PreparePayouts<
   protected abstract get collection(): string;
 
   /**
+   * This method determines whether the `payoutState` and `activityAssets`
+   * fields must be set on the payout subject document, or not.
+   *
+   * @abstract
+   * @access protected
+   * @returns {boolean}
+   */
+  protected abstract get shouldSetSubjectPayoutState(): boolean;
+
+  /**
    * This method must return an *array of subjects*. Note that
    * subjects *will be the subject of a payout execution*.
    *
@@ -299,10 +309,12 @@ export abstract class PreparePayouts<
           { payoutState: PayoutState.Not_Eligible },
         );
 
-        // update `activities` state to `Not_Eligible`
-        await this.updatePayoutSubject(subject, {
-          payoutState: PayoutState.Not_Eligible,
-        });
+        // update `activities` state to `Not_Eligible` if necessary
+        if (true === this.shouldSetSubjectPayoutState) {
+          await this.updatePayoutSubject(subject, {
+            payoutState: PayoutState.Not_Eligible,
+          });
+        }
 
         // continue to next payout
         continue;
@@ -353,10 +365,12 @@ export abstract class PreparePayouts<
       // Note that the implementation of `updatePayoutSubject()` is delegated
       // to child classes such that we can implement different payout
       // strategies more easily, e.g. using profiles, etc.
-      await this.updatePayoutSubject(subject, {
-        payoutState: PayoutState.Prepared,
-        activityAssets: [{ mosaicId, amount: theAmount }],
-      });
+      if (true === this.shouldSetSubjectPayoutState) {
+        await this.updatePayoutSubject(subject, {
+          payoutState: PayoutState.Prepared,
+          activityAssets: [{ mosaicId, amount: theAmount }],
+        });
+      }
 
       nCreated++;
     }

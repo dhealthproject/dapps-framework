@@ -24,6 +24,10 @@ import { NetworkService } from "../../common/services/NetworkService";
 import { QueryService } from "../../common/services/QueryService";
 import { StateService } from "../../common/services/StateService";
 
+// discovery scope
+import { AssetQuery, AssetDocument } from "../../discovery/models/AssetSchema";
+import { AssetsService } from "../../discovery/services/AssetsService";
+
 // users scope
 import { ActivitiesService } from "../../users/services/ActivitiesService";
 import {
@@ -152,6 +156,8 @@ export abstract class BroadcastPayouts<
    * @param {SignerService}   signerService
    * @param {NetworkService}  networkService
    * @param {ActivitiesService}  activitiesService
+   * @param {LogService}      logService
+   * @param {AssetsService}      assetsService
    */
   constructor(
     protected readonly configService: ConfigService,
@@ -162,6 +168,7 @@ export abstract class BroadcastPayouts<
     protected readonly networkService: NetworkService,
     protected readonly activitiesService: ActivitiesService,
     protected readonly logService: LogService,
+    protected readonly assetsService: AssetsService,
   ) {
     // required super call
     super(logService, stateService);
@@ -354,6 +361,8 @@ export abstract class BroadcastPayouts<
       );
 
       // CAUTION: dry-run mode disables this block
+      // get chain information and announce transactions
+      const chainInfo = await this.networkService.getChainInfo();
       const repository = this.networkService.transactionRepository;
       await this.networkService.delegatePromises(
         broadcastTransactions.map((t) => repository.announce(t).toPromise()),
@@ -394,6 +403,19 @@ export abstract class BroadcastPayouts<
           } as ActivityDocument),
           {
             payoutState: PayoutState.Broadcast,
+          },
+        );
+
+        // adds "assets" documents
+        await this.assetsService.createOrUpdate(
+          new AssetQuery({
+            transactionHash: payout.transactionHash,
+          } as AssetDocument),
+          {
+            userAddress: payout.userAddress,
+            mosaicId: payout.payoutAssets[0].mosaicId,
+            amount: payout.payoutAssets[0].amount,
+            creationBlock: chainInfo.height.compact(),
           },
         );
       }

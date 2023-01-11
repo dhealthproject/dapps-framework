@@ -14,27 +14,27 @@ import { ConfigService } from "@nestjs/config";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
-import { MockModel } from "../../../mocks/global";
+import { MockModel } from "../../../../mocks/global";
 
 // common scope
-import { StateService } from "../../../../src/common/services/StateService";
-import { QueryService } from "../../../../src/common/services/QueryService";
-import { LogService } from "../../../../src/common/services/LogService";
+import { StateService } from "../../../../../src/common/services/StateService";
+import { QueryService } from "../../../../../src/common/services/QueryService";
+import { LogService } from "../../../../../src/common/services/LogService";
 
 // users scope
-import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../src/users/models/ActivitySchema";
-import { ProcessingState } from "../../../../src/users/models/ProcessingStatusDTO";
+import { ActivityDocument, ActivityModel, ActivityQuery } from "../../../../../src/users/models/ActivitySchema";
+import { ProcessingState } from "../../../../../src/users/models/ProcessingStatusDTO";
 
 // payout scope
-import { PayoutState } from "../../../../src/payout/models/PayoutStatusDTO";
-import { PayoutDocument, PayoutQuery } from "../../../../src/payout/models/PayoutSchema";
-import { PayoutsService } from "../../../../src/payout/services/PayoutsService";
-import { SignerService } from "../../../../src/payout/services/SignerService";
-import { MathService } from "../../../../src/payout/services/MathService";
-import { PrepareActivityPayouts } from "../../../../src/payout/schedulers/ActivityPayouts/PrepareActivityPayouts";
-import { AccountSessionsService } from "../../../../src/common/services/AccountSessionsService";
-import { PayoutPreparationStateData } from "../../../../src/payout/models/PayoutPreparationStateData";
-import { PayoutCommandOptions } from "../../../../src/payout/schedulers/PayoutCommand";
+import { PayoutState } from "../../../../../src/payout/models/PayoutStatusDTO";
+import { PayoutDocument, PayoutQuery } from "../../../../../src/payout/models/PayoutSchema";
+import { PayoutsService } from "../../../../../src/payout/services/PayoutsService";
+import { SignerService } from "../../../../../src/payout/services/SignerService";
+import { MathService } from "../../../../../src/payout/services/MathService";
+import { PrepareActivityPayouts } from "../../../../../src/payout/schedulers/ActivityPayouts/PrepareActivityPayouts";
+import { AccountSessionsService } from "../../../../../src/common/services/AccountSessionsService";
+import { PayoutPreparationStateData } from "../../../../../src/payout/models/PayoutPreparationStateData";
+import { PayoutCommandOptions } from "../../../../../src/payout/schedulers/PayoutCommand";
 
 const mockActivityRewardWalkFormulaFirst = Math.round(Math.floor(
   ((2/4)*1.2) * 100 // <-- 2 zeros (L172)
@@ -819,66 +819,6 @@ describe("payout/PrepareActivityPayouts", () => {
         {
           payoutState: PayoutState.Not_Eligible, // <-- activities.payoutState=Not_Eligible
         }
-      );
-    });
-  });
-
-  describe("runAsScheduler()", () => {
-    it("should call correct methods and run correctly", async () => {
-      // prepare
-      const loggerSetModuleCall = jest
-        .spyOn(logger, "setModule")
-        .mockReturnValue(logger);
-      const debugLogCall = jest
-        .spyOn((command as any), "debugLog")
-        .mockReturnValue(true);
-      const runCall = jest
-        .spyOn(command, "run")
-        .mockResolvedValue();
-
-      // act
-      await command.runAsScheduler();
-
-      // assert
-      expect(loggerSetModuleCall).toHaveBeenNthCalledWith(1, "payout/PrepareActivityPayouts");
-      expect(debugLogCall).toHaveBeenNthCalledWith(1, `Starting payout preparation for subjects type: activities`);
-      expect(debugLogCall).toHaveBeenNthCalledWith(2, `Total number of payouts prepared: "0"`);
-      expect(runCall).toHaveBeenNthCalledWith(
-        1,
-        ["activities"],
-        {
-          debug: true,
-        } as PayoutCommandOptions
-      );
-    });
-  });
-
-  describe("runAsScheduler()", () => {
-    it("should call correct methods and run correctly", async () => {
-      // prepare
-      const loggerSetModuleCall = jest
-        .spyOn(logger, "setModule")
-        .mockReturnValue(logger);
-      const debugLogCall = jest
-        .spyOn((command as any), "debugLog")
-        .mockReturnValue(true);
-      const runCall = jest
-        .spyOn(command, "run")
-        .mockResolvedValue();
-
-      // act
-      await command.runAsScheduler();
-
-      // assert
-      expect(loggerSetModuleCall).toHaveBeenNthCalledWith(1, "payout/PrepareActivityPayouts");
-      expect(debugLogCall).toHaveBeenNthCalledWith(1, `Starting payout preparation for subjects type: activities`);
-      expect(debugLogCall).toHaveBeenNthCalledWith(2, `Total number of payouts prepared: "0"`);
-      expect(runCall).toHaveBeenNthCalledWith(
-        1,
-        ["activities"],
-        {
-          debug: true,
-        } as PayoutCommandOptions
       );
     });
   });

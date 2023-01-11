@@ -15,6 +15,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { AuthModule } from "../../common/modules/AuthModule";
 import { QueryModule } from "../../common/modules/QueryModule";
 import { StateModule } from "../../common/modules/StateModule";
+import { Asset, AssetSchema } from "../../discovery/models/AssetSchema";
 import { Payout, PayoutSchema } from "../models/PayoutSchema";
 import { PayoutsController } from "../routes/PayoutsController";
 import { SignerService } from "../services/SignerService";
@@ -36,6 +37,10 @@ import { MathService } from "../services/MathService";
       {
         name: Payout.name,
         schema: PayoutSchema,
+      },
+      {
+        name: Asset.name,
+        schema: AssetSchema,
       },
     ]), // requirement from PayoutsService
     AuthModule, // requirement from PayoutsController

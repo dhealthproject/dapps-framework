@@ -23,6 +23,20 @@ export type SocialPlatformsMap = {
 };
 
 /**
+ * A configuration object that defines the total number of referrals
+ * necessary to unlock the corresponding *booster asset*.
+ * <br /><br />
+ * Note that the keys of this configuration object should contain the
+ * *booster asset's identifier* as defined inside `config/assets.ts`.
+ *
+ * @link ReferralBoosterParameters
+ * @since v0.6.0
+ */
+export type ReferralBoosterParameters = {
+  [key: string]: { minReferred: number };
+};
+
+/**
  * @label COMMON
  * @interface SocialConfig
  * @description The dApp social networks share configuration. This
@@ -51,4 +65,28 @@ export interface SocialConfig {
    * @var {SocialPlatformsMap}
    */
   socialApps: SocialPlatformsMap;
+
+  /**
+   * A configuration object that determines the total number of referrals
+   * that are necessary to be assigned the corresponding booster.
+   * <br /><br />
+   * Note that the keys of this configuration object should contain the
+   * *booster asset's identifier* as defined inside `config/assets.ts`.
+   * <br /><br />
+   * @example Example referral steps configuration object
+   * ```json
+   * {
+   *   referral: {
+   *     "boost5": { minReferred: 5 },
+   *     "boost10": { minReferred: 10 },
+   *     ...
+   *   }
+   * }
+   * ```
+   *
+   * @link ReferralBoosterParameters
+   * @access public
+   * @var {ReferralBoosterParameters}
+   */
+  referral: ReferralBoosterParameters;
 }
