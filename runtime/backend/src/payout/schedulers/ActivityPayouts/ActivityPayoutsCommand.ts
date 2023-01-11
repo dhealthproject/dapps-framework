@@ -19,6 +19,10 @@ import { StateModule } from "../../../common/modules/StateModule";
 import { QueryModule } from "../../../common/modules/QueryModule";
 import { LogModule } from "../../../common/modules/LogModule";
 
+// discovery scope
+import { Asset, AssetSchema } from "../../../discovery/models/AssetSchema";
+import { AssetsModule } from "../../../discovery/modules/AssetsModule";
+
 // users scope
 import { Activity, ActivitySchema } from "../../../users/models/ActivitySchema";
 import { ActivitiesModule } from "../../../users/modules/ActivitiesModule";
@@ -42,9 +46,11 @@ import { BroadcastActivityPayouts } from "./BroadcastActivityPayouts";
     QueryModule,
     PayoutsModule,
     ActivitiesModule,
+    AssetsModule,
     LogModule,
     MongooseModule.forFeature([
       { name: Activity.name, schema: ActivitySchema },
+      { name: Asset.name, schema: AssetSchema },
     ]),
   ],
   providers: [PrepareActivityPayouts, BroadcastActivityPayouts],

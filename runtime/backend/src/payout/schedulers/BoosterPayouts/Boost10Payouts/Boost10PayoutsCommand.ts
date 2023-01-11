@@ -23,6 +23,10 @@ import {
   AccountSchema,
 } from "../../../../common/models/AccountSchema";
 
+// discovery scope
+import { Asset, AssetSchema } from "../../../../discovery/models/AssetSchema";
+import { AssetsModule } from "../../../../discovery/modules/AssetsModule";
+
 // users scope
 import { ActivitiesModule } from "../../../../users/modules/ActivitiesModule";
 
@@ -45,8 +49,12 @@ import { BroadcastBoost10Payouts } from "./BroadcastBoost10Payouts";
     QueryModule,
     PayoutsModule,
     ActivitiesModule,
+    AssetsModule,
     LogModule,
-    MongooseModule.forFeature([{ name: Account.name, schema: AccountSchema }]),
+    MongooseModule.forFeature([
+      { name: Account.name, schema: AccountSchema },
+      { name: Asset.name, schema: AssetSchema },
+    ]),
   ],
   providers: [PrepareBoost10Payouts, BroadcastBoost10Payouts],
   exports: [PrepareBoost10Payouts, BroadcastBoost10Payouts],
