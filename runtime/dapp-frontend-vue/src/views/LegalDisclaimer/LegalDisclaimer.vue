@@ -22,7 +22,7 @@
       <template v-slot:nav-center>
         <h2
           class="dapp-screen-legal-disclaimer__title"
-          v-html="currentData.title"
+          v-html="legalData.title"
         />
       </template>
     </NavPanel>
@@ -39,7 +39,7 @@
         <template v-slot:nav-center>
           <h2
             class="dapp-screen-legal-disclaimer__title"
-            v-html="currentData.title"
+            v-html="legalData.title"
           />
         </template>
       </NavPanel>
@@ -47,16 +47,16 @@
         <div class="dapp-screen-legal-disclaimer__confirm__checkbox">
           <p
             class="dapp-screen-legal-disclaimer__text"
-            v-html="currentData.text"
+            v-html="legalData.main_text"
           />
           <div class="consent-wrapper flex items-center justify-center">
             <input v-model="legalAccepted" type="checkbox" id="accept" />
-            <label for="accept" v-html="currentData.consent" />
+            <label for="accept" v-html="legalData.consent" />
           </div>
         </div>
       </div>
       <UiButton :disabled="!legalAccepted" :to="{ name: 'app.login' }">{{
-        currentData.button
+        legalData.button
       }}</UiButton>
     </div>
   </div>

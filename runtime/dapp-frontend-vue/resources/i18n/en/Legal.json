@@ -2,7 +2,9 @@
     "legal": {
         "terms-and-conditions": {
             "title": "WEBSITE TERMS AND CONDITIONS",
-            "main_text": "Welcome to elevate.dhealth.com (hereinafter referred to as the “Website”, “We,” “Us,” or “Our”), owned and operated by dHealth Foundation (hereinafter referred to as “the Foundation”) with its registered office located at Dammstrasse 16, 6300 Zug Switzerland. The Website is offered to You conditioned on Your acceptance without modification of the Terms, Conditions, and notices contained herein (the \"Terms\"). "
+            "main_text": "Welcome to elevate.dhealth.com (hereinafter referred to as the “Website”, “We,” “Us,” or “Our”), owned and operated by dHealth Foundation (hereinafter referred to as “the Foundation”) with its registered office located at Dammstrasse 16, 6300 Zug Switzerland. The Website is offered to You conditioned on Your acceptance without modification of the Terms, Conditions, and notices contained herein (the \"Terms\"). ",
+            "consent": "I agree to the Terms and Conditions",
+            "button": "Accept Terms and Conditions"
         }
     }
 }
