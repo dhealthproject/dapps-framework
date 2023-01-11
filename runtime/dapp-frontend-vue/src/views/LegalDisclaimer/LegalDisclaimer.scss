@@ -47,6 +47,10 @@
       line-height: 130%;
       padding: 0 25px;
     }
+
+    @include devices(tablet) {
+      margin-bottom: 15px;
+    }
   }
 
   &__confirm {
@@ -57,12 +61,20 @@
     &__checkbox {
       padding-bottom: 40px;
 
+      .consent-wrapper {
+        padding: 0 20px;
+      }
+
       label {
         display: inline-block;
         padding-left: 14px;
         font-size: 16px;
         font-weight: 500;
         color: #0a0433;
+
+        @include devices(tablet) {
+          font-size: 14px;
+        }
       }
     }
   }

@@ -49,8 +49,10 @@
             class="dapp-screen-legal-disclaimer__text"
             v-html="currentData.text"
           />
-          <input v-model="legalAccepted" type="checkbox" id="accept" />
-          <label for="accept" v-html="currentData.consent" />
+          <div class="consent-wrapper flex items-center justify-center">
+            <input v-model="legalAccepted" type="checkbox" id="accept" />
+            <label for="accept" v-html="currentData.consent" />
+          </div>
         </div>
       </div>
       <UiButton :disabled="!legalAccepted" :to="{ name: 'app.login' }">{{
