@@ -21,6 +21,7 @@
     "disconnect_wallet": "Disconnect wallet",
     "activities": "Activities",
     "amount_earned": "$ACTIV earned",
+    "currency_name": "$ACTIV",
     "no_activities": "You don't have any activities currently."
   }
 }

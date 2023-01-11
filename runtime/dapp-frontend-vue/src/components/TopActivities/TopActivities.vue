@@ -12,7 +12,15 @@
 
 <template>
   <ul v-if="items && items.length" class="dapp-activities">
-    <li v-for="(activity, index) in fetchedItems" :key="activity + index">
+    <li
+      :class="{ sticked: sticked }"
+      :style="{
+        'z-index': sticked && index > 0 ? index : 0,
+        right: `${6 * index}px`,
+      }"
+      v-for="(activity, index) in fetchedItems"
+      :key="activity + index"
+    >
       <inline-svg
         :src="getImageUrl(`activities-icons/${activity}.svg`)"
         :alt="activity"

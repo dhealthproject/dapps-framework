@@ -31,6 +31,7 @@
       font-family: "Dotrice";
       font-size: 72px;
       line-height: 100%;
+      text-align: left;
 
       @include devices(laptop) {
         font-size: 54px;
@@ -50,7 +51,6 @@
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      max-width: 263px;
       margin: 8px auto 0 auto;
 
       span {

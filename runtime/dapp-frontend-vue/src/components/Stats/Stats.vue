@@ -34,7 +34,7 @@
         />
       </div>
       <div class="activities-list text-right">
-        <TopActivities :items="topActivities" />
+        <TopActivities :items="topActivities" :sticked="true" />
         <span
           class="dapp-stats__other__label"
           v-html="$t('dashboard.stats_top_activities')"

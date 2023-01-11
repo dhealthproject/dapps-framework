@@ -49,6 +49,16 @@ export default class TopActivities extends MetaView {
   public items!: string[];
 
   /**
+   * Defines positioning of icons
+   *
+   * @access public
+   * @readonly
+   * @var {boolean}
+   */
+  @Prop({ default: false })
+  public readonly sticked?: boolean;
+
+  /**
    * This property contains the user statistics and maps to a store
    * getter named `statistics/getUserStatistics`.
    * <br /><br />

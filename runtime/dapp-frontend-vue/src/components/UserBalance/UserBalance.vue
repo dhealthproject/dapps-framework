@@ -18,7 +18,7 @@
       :width="16"
       class="dapp-logo__image"
     />
-    {{ userBalance }} $ACTIV
+    {{ userBalance }} {{ $t("common.currency_name") }}
   </div>
 </template>
 

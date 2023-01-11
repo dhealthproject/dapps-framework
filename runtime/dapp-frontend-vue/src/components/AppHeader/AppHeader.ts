@@ -120,13 +120,13 @@ export default class AppHeader extends MetaView {
   get dropDownItems() {
     return [
       {
-        text: this.$t("common.dropdown_refer_earn"),
-        action: () => this.$router.push({ name: "app.dashboard" }),
-        icon: "icons/refer-earn.svg",
-      },
-      {
         text: this.$t("common.activities"),
         action: () => this.$router.push({ name: "app.activities" }),
+        icon: "icons/Activity-icon-header.svg",
+      },
+      {
+        text: this.$t("common.dropdown_refer_earn"),
+        action: () => this.$router.push({ name: "app.dashboard" }),
         icon: "icons/refer-earn.svg",
       },
       {

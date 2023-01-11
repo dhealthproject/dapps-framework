@@ -34,7 +34,7 @@ const componentOptions = {
             direction: "up",
           },
           {
-            title: "$FIT earned",
+            title: "$ACTIV earned",
             amount: 560,
             direction: "down",
           },
@@ -70,7 +70,7 @@ const componentOptions = {
             direction: "down",
           },
           {
-            title: "$FIT earned",
+            title: "$ACTIV earned",
             amount: 350,
             direction: "down",
           },

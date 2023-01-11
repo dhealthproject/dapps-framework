@@ -16,6 +16,11 @@
     display: inline-block;
     margin-inline-end: 12px;
 
+    &.sticked {
+      position: relative;
+      margin-inline-end: 0;
+    }
+
     @include devices(tablet) {
       margin-inline-end: 4px;
     }
