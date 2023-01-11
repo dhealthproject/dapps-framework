@@ -10,20 +10,84 @@
 
 // external dependencies
 import { Component, Prop } from "vue-property-decorator";
+import InlineSvg from "vue-inline-svg";
+import { mapGetters } from "vuex";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
+import {
+  UserDataAggregateDTO,
+  UserStatisticsDTO,
+} from "@/models/UserStatisticsDTO";
 
 // style resource
 import "./TopActivities.scss";
 
-@Component({})
+@Component({
+  components: {
+    InlineSvg,
+  },
+  computed: {
+    ...mapGetters({
+      userStatistics: "statistics/getUserStatistics",
+    }),
+  },
+})
 export default class TopActivities extends MetaView {
   /**
-   * Top activities list
+   * This component property permits to overwrite the items that
+   * must be displayed using `:items="[]"`.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
    *
-   * @access readonly
-   * @var {items}
+   * @access public
+   * @var {string[]}
    */
-  @Prop({ default: () => [], required: true }) readonly items?: string[];
+  @Prop({ default: () => [] })
+  public items!: string[];
+
+  /**
+   * This property contains the user statistics and maps to a store
+   * getter named `statistics/getUserStatistics`.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {UserStatisticsDTO}
+   */
+  public userStatistics!: UserStatisticsDTO;
+
+  /**
+   * @todo missing method documentation
+   */
+  public get statisticsData(): UserDataAggregateDTO | undefined {
+    if (!this.userStatistics || !this.userStatistics.data) {
+      return undefined;
+    }
+
+    return this.userStatistics.data;
+  }
+
+  /**
+   * @todo missing method documentation
+   */
+  public get fetchedItems(): string[] {
+    if (this.items && this.items.length) {
+      return this.items;
+    }
+
+    if (undefined === this.statisticsData) {
+      return ["Ride", "Swim"];
+    }
+
+    const topActivities = this.statisticsData.topActivities
+      ? this.statisticsData.topActivities
+      : ["Ride", "Swim"];
+
+    return topActivities;
+  }
 }

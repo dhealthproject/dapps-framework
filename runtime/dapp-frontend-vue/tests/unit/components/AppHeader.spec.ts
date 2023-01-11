@@ -11,6 +11,7 @@
 // external dependencies
 import { expect } from "chai";
 import { mount, createLocalVue } from "@vue/test-utils";
+import Vuex from "vuex";
 
 // components page being tested
 import AppHeader from "@/components/AppHeader/AppHeader.vue";
@@ -18,6 +19,32 @@ import AppHeader from "@/components/AppHeader/AppHeader.vue";
 // creates local vue instance for tests
 const localVue = createLocalVue();
 localVue.directive("click-outside", jest.fn());
+localVue.use(Vuex);
+const $store = new Vuex.Store({
+  state: {},
+  getters: {
+    "statistics/getUserStatistics": jest.fn().mockReturnValue({
+      address: "NATZJETZTZCGGRBUYVQRBEUFN5LEGDRSTNF2GYA",
+      type: "user",
+      period: "2022-46",
+      periodFormat: "W",
+      position: 2,
+      amount: 1.23,
+      data: {
+        totalEarned: 1.23,
+        totalPracticedMinutes: 456,
+        topActivities: "Ride",
+      },
+    }),
+    "auth/getCurrentUserAddress": jest
+      .fn()
+      .mockReturnValue("NATZJETZTZCGGRBUYVQRBEUFN5LEGDRSTNF2GYA"),
+  },
+  actions: {
+    initialize: jest.fn(),
+    "statistics/fetchStatistics": jest.fn(),
+  },
+});
 
 const getImageUrl = () => "../../../src/assets";
 
@@ -35,6 +62,7 @@ const componentOptions = {
     formatAmount,
     $route: { params: {} },
     $t: jest.fn(),
+    $store,
   },
 };
 

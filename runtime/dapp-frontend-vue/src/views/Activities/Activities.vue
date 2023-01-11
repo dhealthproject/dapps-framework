@@ -22,7 +22,7 @@
         <div class="balance__row">
           <div class="balance__amounts">
             <span class="balance__amount" v-html="balance" />
-            <span class="balance__amount__dhp" v-html="dhpAmount" />
+            <!--<span class="balance__amount__dhp" v-html="dhpAmount" />-->
           </div>
           <div class="balance__bridge">
             <a
@@ -41,12 +41,12 @@
       <div class="dapp-screen-activities__filters">
         <DappSelect
           :placeholder="'Type'"
-          :items="mockedSportTypes"
+          :items="sportTypes"
           :icon="'gift-icon.svg'"
           @input="handleInput"
           class="type"
         />
-        <!-- <DappSelect class="date" :items="mockedSportTypes" /> -->
+        <!-- <DappSelect class="date" :items="sportTypes" /> -->
       </div>
       <div class="activities-table">
         <div class="titles row">
@@ -80,7 +80,7 @@
               class="item"
               v-html="
                 item.assets[0] && item.assets[0].amount
-                  ? item.assets[0].amount
+                  ? formatAmount(item.assets[0].amount)
                   : 0
               "
             />

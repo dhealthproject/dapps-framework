@@ -38,7 +38,10 @@ export class StatisticsService extends BackendService {
     address: string
   ): Promise<UserStatisticsDTO[]> {
     // configure statistics request
-    const params = [`period=${moment(new Date()).format("YYYYMMDD")}`];
+    const params = [
+      `period=${moment(new Date()).format("YYYYMMDD")}`,
+      `periodFormat=D`,
+    ];
 
     // execute request
     const response = await this.handler.call(

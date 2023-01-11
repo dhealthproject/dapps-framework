@@ -22,7 +22,6 @@ export const authenticationHandler = ({ next, router, $store }: any) => {
   // routes using this middleware should redirect
   // to /login given unauthenticated guest users.
   if (!isAuthenticated) {
-    console.log("coming here");
     // Unauthorized: redirect to log-in
     // @todo add referrer_url parameter to redirect after log-in.
     return router.push({

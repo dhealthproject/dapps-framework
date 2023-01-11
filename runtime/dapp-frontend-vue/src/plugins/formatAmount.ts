@@ -28,9 +28,13 @@ export default {
       amount: number,
       divisibility: number | undefined = undefined
     ) {
+      // determine the divisibility from config
       const config = this.$store.getters["app/getConfig"];
       const defaultDigits = config.earnAssetDivisibility;
-      return amount / Math.pow(10, divisibility ?? defaultDigits);
+
+      // assumes that `amount` is passed as an absolute value
+      const divided = amount / Math.pow(10, divisibility ?? defaultDigits);
+      return divided;
     };
   },
 };

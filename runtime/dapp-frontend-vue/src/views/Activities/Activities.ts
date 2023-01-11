@@ -15,6 +15,7 @@ import { mapGetters } from "vuex";
 import { MetaView } from "@/views/MetaView";
 import DappSelect from "@/components/DappSelect/DappSelect.vue";
 import { ActivityEntryDTO } from "@/models/ActivityDTO";
+import { UserStatisticsDTO } from "@/models/UserStatisticsDTO";
 
 @Component({
   components: {
@@ -22,8 +23,9 @@ import { ActivityEntryDTO } from "@/models/ActivityDTO";
   },
   computed: {
     ...mapGetters({
-      getActivities: "activities/getActivityItems",
       currentUserAddress: "auth/getCurrentUserAddress",
+      getActivities: "activities/getActivityItems",
+      userStatistics: "statistics/getUserStatistics",
     }),
   },
 })
@@ -44,7 +46,20 @@ export default class Activities extends MetaView {
    * @async
    * @returns {ActivityEntryDTO[]}
    */
-  public currentUserAddress?: string;
+  public currentUserAddress!: string;
+
+  /**
+   * This property contains the user statistics and maps to a store
+   * getter named `statistics/getUserStatistics`.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {UserStatisticsDTO}
+   */
+  public userStatistics!: UserStatisticsDTO;
 
   /**
    * This property represents current selected filter.
@@ -74,7 +89,8 @@ export default class Activities extends MetaView {
    */
   public get balance() {
     // temporary use hardcoded value
-    return `${this.formatAmount(0)} $FIT`;
+    const balance = this.userStatistics.amount ?? 0;
+    return `${this.formatAmount(balance)} $ACTIV`;
   }
 
   /**
@@ -110,7 +126,7 @@ export default class Activities extends MetaView {
       : this.getActivities;
   }
 
-  public get mockedSportTypes() {
+  public get sportTypes() {
     return [
       {
         label: "All",
@@ -124,10 +140,14 @@ export default class Activities extends MetaView {
         label: "Run",
         value: "run",
       },
-      // {
-      //   label: "Swim",
-      //   value: "swim",
-      // },
+      {
+        label: "Ride",
+        value: "ride",
+      },
+      {
+        label: "Swim",
+        value: "swim",
+      },
     ];
   }
 

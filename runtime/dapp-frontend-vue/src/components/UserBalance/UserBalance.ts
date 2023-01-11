@@ -9,11 +9,13 @@
  */
 
 // external dependencies
-import { Component, Prop } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 import InlineSvg from "vue-inline-svg";
+import { mapGetters } from "vuex";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
+import { UserStatisticsDTO } from "@/models/UserStatisticsDTO";
 
 // style resource
 import "./UserBalance.scss";
@@ -22,12 +24,34 @@ import "./UserBalance.scss";
   components: {
     InlineSvg,
   },
+  computed: {
+    ...mapGetters({
+      userStatistics: "statistics/getUserStatistics",
+    }),
+  },
 })
 export default class UserBalance extends MetaView {
   /**
-   * This property defines amount of balance that will be outputed
+   * This property contains the user statistics and maps to a store
+   * getter named `statistics/getUserStatistics`.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
    *
-   * @var {number}
+   * @access public
+   * @var {UserStatisticsDTO}
    */
-  @Prop({ default: 0 }) userBalance?: number;
+  public userStatistics!: UserStatisticsDTO;
+
+  /**
+   * @todo missing method documentation
+   */
+  public get userBalance(): number {
+    if (undefined === this.userStatistics) {
+      return 0;
+    }
+
+    return this.formatAmount(this.userStatistics.amount ?? 0);
+  }
 }

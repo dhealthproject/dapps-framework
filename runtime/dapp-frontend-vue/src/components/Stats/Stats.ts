@@ -104,7 +104,9 @@ export default class Stats extends MetaView {
       return 0;
     }
 
-    return this.statisticsData.totalEarned ?? 0;
+    return this.formatAmount(
+      this.statisticsData.totalEarned ?? this.userStatistics.amount ?? 0
+    );
   }
 
   /**
@@ -116,17 +118,6 @@ export default class Stats extends MetaView {
     }
 
     return this.statisticsData.totalPracticedMinutes ?? 0;
-  }
-
-  /**
-   * @todo missing method documentation
-   */
-  public get topActivities(): string[] {
-    if (!this.hasRequested || undefined === this.statisticsData) {
-      return [];
-    }
-
-    return this.statisticsData.topActivities ?? [];
   }
 
   /**
@@ -155,14 +146,9 @@ export default class Stats extends MetaView {
    * @todo missing method documentation
    */
   public get fourDigitsAmount() {
-    const stringedAmount = `${(
-      Math.round(this.totalEarned * 100) / 100
-    ).toFixed(4)}`;
-
-    const firstDigit = `${(Math.round(this.totalEarned * 100) / 100).toFixed(
-      2
-    )}`;
-    const secondDigit = stringedAmount.slice(-2);
+    const withFourDecs = `${this.totalEarned.toFixed(4)}`;
+    const firstDigit = withFourDecs.slice(0, -4);
+    const secondDigit = withFourDecs.slice(-4);
 
     return [firstDigit, secondDigit];
   }

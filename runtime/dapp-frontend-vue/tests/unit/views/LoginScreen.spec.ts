@@ -39,6 +39,7 @@ const componentOptions = {
         "auth/isAuthenticated": true,
         "auth/getChallenge": "rwrwer",
         "auth/getAuthRegistry": "fake-registry",
+        "auth/getRefCode": undefined,
       },
     },
   },

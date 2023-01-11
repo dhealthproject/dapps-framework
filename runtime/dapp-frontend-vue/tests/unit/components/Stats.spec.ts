@@ -53,6 +53,7 @@ const componentOptions = {
   mocks: {
     getImageUrl,
     formatAddress: jest.fn(() => "NATZJE...2GY"),
+    formatAmount: jest.fn((a) => a),
     $route: { params: {} },
     $t: jest.fn(),
     $store,
@@ -71,11 +72,11 @@ describe("Stats -->", () => {
   });
 
   it("should display first digit earned $FIT properly", () => {
-    expect(widget.vm.fourDigitsAmount[0]).to.be.equal("1.23");
+    expect(widget.vm.fourDigitsAmount[0]).to.be.equal("1.");
   });
 
   it("should display second digit earned $FIT properly", () => {
-    expect(widget.vm.fourDigitsAmount[1]).to.be.equal("00");
+    expect(widget.vm.fourDigitsAmount[1]).to.be.equal("2300");
   });
 
   it("should display practiced minutes", () => {

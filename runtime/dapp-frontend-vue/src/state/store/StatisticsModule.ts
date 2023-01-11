@@ -148,13 +148,14 @@ export const StatisticsModule = {
         return undefined;
       }
 
-      const latest: UserStatisticsDTO = statistics[0];
-      context.commit("setPeriod", latest.period);
-      context.commit("setPeriodFormat", latest.periodFormat);
-      context.commit("setPosition", latest.position);
-      context.commit("setAmount", latest.amount);
-      context.commit("setData", { ...latest.data } as UserDataAggregateDTO);
-      return latest;
+      context.commit("setPeriod", statistics[0].period);
+      context.commit("setPeriodFormat", statistics[0].periodFormat);
+      context.commit("setPosition", statistics[0].position);
+      context.commit("setAmount", statistics[0].amount);
+      context.commit("setData", {
+        ...statistics[0].data,
+      } as UserDataAggregateDTO);
+      return statistics[0];
     },
   },
 };

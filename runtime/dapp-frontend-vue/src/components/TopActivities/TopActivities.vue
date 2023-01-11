@@ -12,10 +12,11 @@
 
 <template>
   <ul v-if="items && items.length" class="dapp-activities">
-    <li v-for="(activity, index) in items" :key="activity + index">
-      <img
+    <li v-for="(activity, index) in fetchedItems" :key="activity + index">
+      <inline-svg
         :src="getImageUrl(`activities-icons/${activity}.svg`)"
         :alt="activity"
+        :title="`Activity type: ` + activity"
       />
     </li>
   </ul>
