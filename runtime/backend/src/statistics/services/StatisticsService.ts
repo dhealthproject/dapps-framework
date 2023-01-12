@@ -32,11 +32,12 @@ export class StatisticsService {
   /**
    * The constructor of the service.
    *
+   * @access public
    * @constructor
    * @param {StatisticsModel} model
    * @param {QueryService} queriesService
    */
-  constructor(
+  public constructor(
     @InjectModel(Statistics.name) private readonly model: StatisticsModel,
     private readonly queryService: QueryService<
       StatisticsDocument,
@@ -52,10 +53,12 @@ export class StatisticsService {
    * to execute. It is preferred to use pro-active statistics with
    * collections that contain one document with a counter.
    *
+   * @access public
+   * @async
    * @param   {StatisticsQuery}  query
    * @returns {Promise<number>}   The number of matching transactions.
    */
-  async count(query: StatisticsQuery): Promise<number> {
+  public async count(query: StatisticsQuery): Promise<number> {
     return await this.queryService.count(query, this.model);
   }
 
@@ -67,10 +70,12 @@ export class StatisticsService {
    * properties of the returned document are *reduced* to
    * only the `"_id"` field.
    *
+   * @access public
+   * @async
    * @param   {StatisticsQuery}  query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @returns {Promise<boolean>}  Whether a document exists which validates the passed query.
    */
-  async exists(query: StatisticsQuery): Promise<boolean> {
+  public async exists(query: StatisticsQuery): Promise<boolean> {
     // executes a *lean* mongoose findOne query
     const document: StatisticsDocument = await this.queryService.findOne(
       query,
@@ -86,11 +91,12 @@ export class StatisticsService {
    * Method to query `statistics` based on query and return as paginated
    * results.
    *
+   * @access public
    * @async
    * @param   {StatisticsQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @returns {Promise<PaginatedResultDTO<StatisticsDocument>>}
    */
-  async find(
+  public async find(
     query: StatisticsQuery,
   ): Promise<PaginatedResultDTO<StatisticsDocument>> {
     return await this.queryService.find(query, this.model);
@@ -106,8 +112,47 @@ export class StatisticsService {
    * @param   {StatisticsQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @returns {Promise<StatisticsDocument>}  The resulting `transactions` document.
    */
-  async findOne(query: StatisticsQuery): Promise<StatisticsDocument> {
+  public async findOne(query: StatisticsQuery): Promise<StatisticsDocument> {
     return await this.queryService.findOne(query, this.model);
+  }
+
+  /**
+   * Method to query `statistics` documents based on the `query`and return
+   * the results in a paginated set. Note that this method *fills* the set
+   * with the most recent leaderboards entries given no entries match the
+   * provided statistics query.
+   *
+   * @access public
+   * @async
+   * @param   {StatisticsQuery}            query     The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @returns {Promise<PaginatedResultDTO<StatisticsDocument>>}
+   */
+  public async findOrFill(
+    query: StatisticsQuery,
+  ): Promise<PaginatedResultDTO<StatisticsDocument>> {
+    // first query using the parameter
+    const paginatedResult = await this.queryService.find(query, this.model);
+
+    // given results, done here
+    if (paginatedResult.data && paginatedResult.data.length) {
+      return paginatedResult;
+    }
+
+    // query most recent leaderboard entries
+    return await this.queryService.find(
+      new StatisticsQuery(
+        {
+          type: "leaderboard",
+        } as StatisticsDocument,
+        {
+          pageSize: 3,
+          pageNumber: 1,
+          sort: "position",
+          order: "asc",
+        },
+      ),
+      this.model,
+    );
   }
 
   /**
@@ -115,13 +160,14 @@ export class StatisticsService {
    * `statistics` collection.
    * <br /><br />
    *
+   * @access public
    * @async
    * @param   {StatisticsQuery}          query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
    * @param   {StatisticsDocument}           data    The fields or data that has to be updated (will be added to `$set: {}`).
    * @param   {Record<string, any>}   ops    The operations that must be run additionally (e.g. `$inc: {}`) (optional).
    * @returns {Promise<StatisticsDocument>}  The *updated* `transactions` document.
    */
-  async createOrUpdate(
+  public async createOrUpdate(
     query: StatisticsQuery,
     data: StatisticsModel,
     ops: Record<string, any> = {},
@@ -133,11 +179,12 @@ export class StatisticsService {
    * This method *creates* or *updates* many documents in the
    * `statistics` collection.
    *
+   * @access public
    * @async
    * @param   {StatisticsModel[]} documents
    * @returns {Promise<number>}
    */
-  async updateBatch(documents: StatisticsModel[]): Promise<number> {
+  public async updateBatch(documents: StatisticsModel[]): Promise<number> {
     return await this.queryService.updateBatch(this.model, documents);
   }
 }

@@ -33,6 +33,15 @@ jest.mock("../../../../config/security", () => {
     }
   });
 });
+jest.mock("../../../../config/social", () => {
+  return () => ({
+    referral: {
+      "boost5": { minReferred: 10 },
+      "boost10": { minReferred: 50 },
+      "boost15": { minReferred: 100 },
+    }
+  });
+});
 
 // external dependencies
 import { Test, TestingModule } from "@nestjs/testing";
@@ -44,22 +53,26 @@ import { DappConfigDTO } from "../../../../src/common/models/DappConfigDTO";
 import { AssetsConfig } from "../../../../src/common/models/AssetsConfig";
 import { DappConfig } from "../../../../src/common/models/DappConfig";
 import { SecurityConfig } from "../../../../src/common/models/SecurityConfig";
+import { SocialConfig } from "../../../../src/common/models/SocialConfig";
 
 // configuration resources
 import dappConfigLoader from "../../../../config/dapp";
 import assetsConfigLoader from "../../../../config/assets";
 import securityConfigLoader from "../../../../config/security";
+import socialConfigLoader from "../../../../config/social";
 
 describe("common/ConfigController", () => {
   let controller: ConfigController,
       assetsConfig: AssetsConfig,
       dappConfig: DappConfig,
-      securityConfig: SecurityConfig;
+      securityConfig: SecurityConfig,
+      socialConfig: SocialConfig;
 
   beforeEach(async () => {
     dappConfig = dappConfigLoader();
     assetsConfig = assetsConfigLoader();
     securityConfig = securityConfigLoader();
+    socialConfig = socialConfigLoader();
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ConfigController],
@@ -82,13 +95,19 @@ describe("common/ConfigController", () => {
         get: jest.fn()
           .mockReturnValueOnce(dappConfig.dappName)
           .mockReturnValueOnce(assetsConfig.assets.earn)
-          .mockReturnValueOnce(securityConfig.auth.registries),
+          .mockReturnValueOnce(securityConfig.auth.registries)
+          .mockReturnValueOnce(socialConfig.referral),
       };
       const expectedResult: DappConfigDTO = new DappConfigDTO();
       expectedResult.dappName = dappConfig.dappName;
       expectedResult.authRegistry = securityConfig.auth.registries;
       expectedResult.earnAssetDivisibility = assetsConfig.assets.earn.divisibility;
       expectedResult.earnAssetIdentifier = assetsConfig.assets.earn.mosaicId;
+      expectedResult.referralLevels = [
+        { minReferred: socialConfig.referral["boost5"].minReferred },
+        { minReferred: socialConfig.referral["boost10"].minReferred },
+        { minReferred: socialConfig.referral["boost15"].minReferred },
+      ];
 
       // act
       const result = await controller.find();

@@ -94,14 +94,14 @@ export class MonthlyScoreAggregation extends LeaderboardAggregation {
    * This method is necessary to make sure this command is run
    * with the correct `--collection` option.
    * <br /><br />
-   * This cron method **runs every 3 days (up to 12 times per month)**.
+   * This cron method **runs every 8 hours (3x30 times a month)**.
    *
    * @see BaseCommand
    * @access public
    * @async
    * @returns {Promise<void>}
    */
-  @Cron("0 0 0 */3 * *", { name: `statistics/LeaderboardAggregation/M` })
+  @Cron("0 0 */8 * * *", { name: `statistics/LeaderboardAggregation/M` })
   public async runAsScheduler(): Promise<void> {
     this.runScheduler();
   }

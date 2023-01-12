@@ -94,14 +94,14 @@ export class WeeklyScoreAggregation extends LeaderboardAggregation {
    * This method is necessary to make sure this command is run
    * with the correct `--collection` option.
    * <br /><br />
-   * This cron method runs **every day (7 times per week)**.
+   * This cron method runs **every 4 hours (6x7 times per week)**.
    *
    * @see BaseCommand
    * @access public
    * @async
    * @returns {Promise<void>}
    */
-  @Cron("0 0 0 */1 * *", { name: `statistics/LeaderboardAggregation/W` })
+  @Cron("0 0 */4 * * *", { name: `statistics/LeaderboardAggregation/W` })
   public async runAsScheduler(): Promise<void> {
     this.runScheduler();
   }

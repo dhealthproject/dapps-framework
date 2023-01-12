@@ -20,7 +20,8 @@ import {
 
 // internal dependencies
 import { DappConfigDTO } from "../models/DappConfigDTO";
-import { AssetParameters } from "../models";
+import { AssetParameters } from "../models/AssetsConfig";
+import { ReferralBoosterParameters } from "../models/SocialConfig";
 
 namespace HTTPResponses {
   // creates a variable that we include in a namespace
@@ -87,6 +88,8 @@ export class ConfigController {
     const dappName = this.configService.get<string>("dappName");
     const asset = this.configService.get<AssetParameters>("assets.earn");
     const authRegistry = this.configService.get<string[]>("auth.registries");
+    const referralConf =
+      this.configService.get<ReferralBoosterParameters>("referral");
 
     // transform to DTO
     return {
@@ -94,6 +97,11 @@ export class ConfigController {
       authRegistry: authRegistry,
       earnAssetDivisibility: asset.divisibility,
       earnAssetIdentifier: asset.mosaicId,
+      referralLevels: [
+        { minReferred: referralConf["boost5"].minReferred },
+        { minReferred: referralConf["boost10"].minReferred },
+        { minReferred: referralConf["boost15"].minReferred },
+      ],
     } as DappConfigDTO;
   }
 }

@@ -97,8 +97,8 @@ describe('statistics/LeaderboardsController', () => {
         [{ address: "fakeAddress" } as StatisticsDTO],
         { pageNumber: 1, pageSize: 20, total: 1 },
       );
-      const serviceFindMock = jest
-        .spyOn(statisticsService, "find")
+      const serviceFindOrFillMock = jest
+        .spyOn(statisticsService, "findOrFill")
         .mockResolvedValue(expectToFetchDocuments);
 
       // act
@@ -107,8 +107,8 @@ describe('statistics/LeaderboardsController', () => {
       );
 
       // assert
-      expect(serviceFindMock).toBeCalledTimes(1);
-      expect(serviceFindMock).toBeCalledWith(
+      expect(serviceFindOrFillMock).toBeCalledTimes(1);
+      expect(serviceFindOrFillMock).toBeCalledWith(
         new StatisticsQuery({ address: "fakeAddress", type: "leaderboard" } as StatisticsDocument),
       );
       expect(result).toEqual(expectToMapToDTOs);

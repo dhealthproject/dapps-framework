@@ -113,8 +113,18 @@ export class UserTopActivities extends StatisticsCommand {
     const periodFormat = this.periodFormat;
     const period = this.getNextPeriod(new Date());
 
-    for (const result of results) {
-      const address = result._id.address; // see createAggregationQuery
+    // get unique accounts list
+    const accounts = results
+      .map((r) => r._id.address)
+      .filter(
+        (v, i, a) => a.indexOf(v) === i, // unique
+      );
+
+    // for each account, update their statistics entry
+    for (const address of accounts) {
+      // aggregate the top activities of this account
+      const entries = results.filter((r) => r._id.address === address);
+      const topActivities: string[] = entries.map((e) => e._id.sportType);
 
       // if we already have a statistics document for this period
       // we must fetch it from database to get all field values
@@ -139,7 +149,7 @@ export class UserTopActivities extends StatisticsCommand {
           data: {
             // merge with previous entry if available
             ...(document ? document.data : {}),
-            topActivities: result._id.sportType,
+            topActivities,
           },
         },
       );

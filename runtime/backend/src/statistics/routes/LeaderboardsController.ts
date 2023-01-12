@@ -135,8 +135,8 @@ export class LeaderboardsController {
     // this permits to skip the `document[]`
     const { pageNumber, pageSize, sort, order, ...rest } = query;
 
-    // reads from database
-    const data = await this.statisticsService.find(
+    // reads from database (or fills if empty)
+    const data = await this.statisticsService.findOrFill(
       new StatisticsQuery(
         {
           ...rest,

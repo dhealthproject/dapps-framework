@@ -94,14 +94,14 @@ export class DailyScoreAggregation extends LeaderboardAggregation {
    * This method is necessary to make sure this command is run
    * with the correct `--collection` option.
    * <br /><br />
-   * This cron method runs **every 3 hours (8 times per day)**.
+   * This cron method runs **every 1 hour (24 times per day)**.
    *
    * @see BaseCommand
    * @access public
    * @async
    * @returns {Promise<void>}
    */
-  @Cron("0 0 */3 * * *", { name: `statistics/LeaderboardAggregation/D` })
+  @Cron("0 0 */1 * * *", { name: `statistics/LeaderboardAggregation/D` })
   public async runAsScheduler(): Promise<void> {
     this.runScheduler();
   }

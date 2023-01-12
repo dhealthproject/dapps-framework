@@ -107,4 +107,15 @@ export class DappConfigDTO extends BaseDTO {
     description: "The URL used to *share content* on said social platform.",
   })
   public earnAssetIdentifier: string;
+
+  /**
+   * The referral level unlock values.
+   * <br /><br />
+   * Note that by changing this value, it will affect the unlock
+   * process.
+   *
+   * @access public
+   * @var {{minReferred: number}[]}
+   */
+  public referralLevels: { minReferred: number }[];
 }
