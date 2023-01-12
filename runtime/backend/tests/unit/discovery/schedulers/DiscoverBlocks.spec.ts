@@ -156,7 +156,7 @@ describe("discovery/DiscoverBlocks", () => {
         1,
         [],
         {
-          debug: true,
+          debug: false,
         }
       );
     });

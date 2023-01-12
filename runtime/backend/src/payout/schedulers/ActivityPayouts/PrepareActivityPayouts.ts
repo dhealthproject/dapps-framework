@@ -433,7 +433,7 @@ export class PrepareActivityPayouts extends PreparePayouts<
 
     // executes the actual command logic (this will call execute())
     await this.run([this.collection], {
-      debug: true,
+      debug: false,
     } as PayoutCommandOptions);
   }
 }

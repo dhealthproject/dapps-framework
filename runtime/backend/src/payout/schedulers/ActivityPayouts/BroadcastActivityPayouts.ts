@@ -252,7 +252,7 @@ export class BroadcastActivityPayouts extends BroadcastPayouts<
     // executes the actual command logic (this will call execute())
     await this.run([this.collection], {
       maxCount: 3, // <-- MAXIMUM 3 BROADCASTS per round
-      debug: true,
+      debug: false,
     } as BroadcastActivityPayoutsCommandOptions);
   }
 }

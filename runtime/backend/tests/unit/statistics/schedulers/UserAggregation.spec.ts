@@ -139,8 +139,7 @@ describe("statistics/UserAggregation", () => {
         1,
         [ "user" ],
         {
-          debug: true,
-          quiet: false,
+          debug: false,
         }
       )
     })

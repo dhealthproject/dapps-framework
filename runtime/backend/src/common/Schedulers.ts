@@ -29,8 +29,13 @@ import { ProcessOperationsCommand } from "../processor/schedulers/ProcessOperati
 // payout scope
 import { PayoutsModule } from "../payout/modules/PayoutsModule";
 import { ActivityPayoutsCommand } from "../payout/schedulers/ActivityPayouts/ActivityPayoutsCommand";
+import { BoosterPayoutsCommand } from "../payout/schedulers/BoosterPayouts/BoosterPayoutsCommand";
 import { PrepareActivityPayouts } from "../payout/schedulers/ActivityPayouts/PrepareActivityPayouts";
+import { PrepareBoost5Payouts } from "../payout/schedulers/BoosterPayouts/PrepareBoost5Payouts";
+import { PrepareBoost10Payouts } from "../payout/schedulers/BoosterPayouts/PrepareBoost10Payouts";
+import { PrepareBoost15Payouts } from "../payout/schedulers/BoosterPayouts/PrepareBoost15Payouts";
 import { BroadcastActivityPayouts } from "../payout/schedulers/ActivityPayouts/BroadcastActivityPayouts";
+import { BroadcastBoosterPayouts } from "../payout/schedulers/BoosterPayouts/BroadcastBoosterPayouts";
 
 // statistics scope
 import { LeaderboardsAggregationCommand } from "../statistics/schedulers/LeaderboardAggregation/LeaderboardsAggregationCommand";
@@ -59,9 +64,14 @@ import { ReportNotifierCommand } from "../notifier/schedulers/ReportNotifier/Rep
  * | `discovery` | {@link DiscoverTransactions} | A discovery command that retrieves transactions information from the network. |
  * | `discovery` | {@link DiscoverAccounts} | A discovery command that retrieves accounts information from the database using discovered transactions. |
  * | `discovery` | {@link DiscoverAssets} | A discovery command that retrieves assets information from the database using discovered transactions. |
+ * | `discovery` | {@link DiscoverBlocks} | A discovery command that retrieves blocks information from the network using discovered transactions. |
  * | `processor` | {@link ProcessOperations} | A processor command that interprets discovered transactions and maps them to dApp operations. |
  * | `payout`| {@link PrepareActivityPayouts} | A payout command that prepares activity reward transactions and signs them such that they can be broadcast to dHealth Network. |
+ * | `payout`| {@link PrepareBoost5Payouts} | A payout command that prepares booster reward (BOOST 5%) transactions and signs them such that they can be broadcast to dHealth Network. |
+ * | `payout`| {@link PrepareBoost10Payouts} | A payout command that prepares booster reward (BOOST 10%) transactions and signs them such that they can be broadcast to dHealth Network. |
+ * | `payout`| {@link PrepareBoost15Payouts} | A payout command that prepares booster reward  (BOOST 15%) transactions and signs them such that they can be broadcast to dHealth Network. |
  * | `payout`| {@link BroadcastActivityPayouts} | A payout command that broadcasts activity reward transactions to dHealth Network. |
+ * | `payout`| {@link BroadcastBoosterPayouts} | A payout command that broadcasts booster rewards (BOOST 5%, 10%, 15%) transactions to dHealth Network. |
  * | `statistics` | {@link LeaderboardAggregation} | A statistics command that aggregates and sorts user rewards for activities and creates leaderboards. |
  * | `statistics`| {@link UserAggregation} | A statistics command that aggregates and sorts user rewards for activities and creates user statistics. |
  * | `statistics`| {@link UserTopActivities} | A statistics command that aggregates and sorts user's top activities and updates user statistics entries. |
@@ -84,7 +94,7 @@ export const Schedulers: { [key: string]: any[] } = {
     DiscoverTransactionsCommand,
     DiscoverBlocksCommand,
   ],
-  payout: [PayoutsModule, ActivityPayoutsCommand],
+  payout: [PayoutsModule, ActivityPayoutsCommand, BoosterPayoutsCommand],
   processor: [OperationsModule, ProcessOperationsCommand],
   statistics: [
     BlocksModule,

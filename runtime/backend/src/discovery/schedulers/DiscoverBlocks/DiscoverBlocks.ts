@@ -209,7 +209,7 @@ export class DiscoverBlocks extends DiscoveryCommand {
 
     // executes the actual command logic (this will call discover())
     await super.run([], {
-      debug: true,
+      debug: false,
     } as DiscoveryCommandOptions);
   }
 

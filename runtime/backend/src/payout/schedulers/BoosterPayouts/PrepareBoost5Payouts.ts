@@ -15,28 +15,28 @@ import { Cron } from "@nestjs/schedule";
 
 // internal dependencies
 // common scope
-import { LogService } from "../../../../common/services/LogService";
-import { QueryService } from "../../../../common/services/QueryService";
-import { StateService } from "../../../../common/services/StateService";
+import { LogService } from "../../../common/services/LogService";
+import { QueryService } from "../../../common/services/QueryService";
+import { StateService } from "../../../common/services/StateService";
 import {
   Account,
   AccountDocument,
   AccountModel,
-} from "../../../../common/models/AccountSchema";
-import { AssetParameters } from "../../../../common/models/AssetsConfig";
+} from "../../../common/models/AccountSchema";
+import { AssetParameters } from "../../../common/models/AssetsConfig";
 
 // discovery scope
-import { AssetsService } from "../../../../discovery/services/AssetsService";
+import { AssetsService } from "../../../discovery/services/AssetsService";
 
 // payout scope
-import { PayoutsService } from "../../../services/PayoutsService";
-import { SignerService } from "../../../services/SignerService";
-import { MathService } from "../../../services/MathService";
-import { PayoutCommand, PayoutCommandOptions } from "../../PayoutCommand";
+import { PayoutsService } from "../../services/PayoutsService";
+import { SignerService } from "../../services/SignerService";
+import { MathService } from "../../services/MathService";
+import { PayoutCommand, PayoutCommandOptions } from "../PayoutCommand";
 import {
   PrepareBoosterPayouts,
   PrepareBoosterPayoutsCommandOptions,
-} from "../PrepareBoosterPayouts";
+} from "./PrepareBoosterPayouts";
 
 /**
  * @interface PrepareBoost5PayoutsCommandOptions
@@ -162,7 +162,7 @@ export class PrepareBoost5Payouts extends PrepareBoosterPayouts {
    * This method is necessary to make sure this command is run
    * with the correct `--signer` option.
    * <br /><br />
-   * This scheduler is registered to run **every 30 seconds**.
+   * This scheduler is registered to run **every 5 minutes**.
    *
    * @see BaseCommand
    * @access public
@@ -171,7 +171,7 @@ export class PrepareBoost5Payouts extends PrepareBoosterPayouts {
    * @param   {BaseCommandOptions}  options
    * @returns {Promise<void>}
    */
-  @Cron("*/30 * * * * *", { name: "payout:cronjobs:prepare" })
+  @Cron("0 */5 * * * *", { name: "payout:cronjobs:boost5:prepare" })
   public async runAsScheduler(): Promise<void> {
     // prepares execution logger
     this.logger.setModule(`${this.scope}/${this.command}`);

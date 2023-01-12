@@ -35,7 +35,7 @@ import { AccountSessionsService } from "../../../../../src/common/services/Accou
 import { PayoutPreparationStateData } from "../../../../../src/payout/models/PayoutPreparationStateData";
 import { PayoutCommandOptions } from "../../../../../src/payout/schedulers/PayoutCommand";
 
-import { PrepareBoost5Payouts } from "../../../../../src/payout/schedulers/BoosterPayouts/Boost5Payouts/PrepareBoost5Payouts";
+import { PrepareBoost5Payouts } from "../../../../../src/payout/schedulers/BoosterPayouts/PrepareBoost5Payouts";
 
 let accountMocks: AccountDocument[] = [
   {

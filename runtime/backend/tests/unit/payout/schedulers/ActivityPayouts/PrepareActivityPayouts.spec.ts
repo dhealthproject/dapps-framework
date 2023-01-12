@@ -847,7 +847,7 @@ describe("payout/PrepareActivityPayouts", () => {
         1,
         ["activities"],
         {
-          debug: true,
+          debug: false,
         } as PayoutCommandOptions
       );
     });

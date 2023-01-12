@@ -9,40 +9,37 @@
  */
 // external dependencies
 import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
 import { ConfigService } from "@nestjs/config";
+import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
 
 // internal dependencies
 // common scope
-import { LogService } from "../../../../common/services/LogService";
-import { NetworkService } from "../../../../common/services/NetworkService";
-import { StateService } from "../../../../common/services/StateService";
-import { QueryService } from "../../../../common/services/QueryService";
+import { LogService } from "../../../common/services/LogService";
+import { QueryService } from "../../../common/services/QueryService";
+import { StateService } from "../../../common/services/StateService";
 import {
   Account,
   AccountDocument,
   AccountModel,
-} from "../../../../common/models/AccountSchema";
-import { AssetParameters } from "../../../../common/models/AssetsConfig";
+} from "../../../common/models/AccountSchema";
+import { AssetParameters } from "../../../common/models/AssetsConfig";
 
 // discovery scope
-import { AssetsService } from "../../../../discovery/services/AssetsService";
-
-// users scope
-import { ActivitiesService } from "../../../../users/services/ActivitiesService";
+import { AssetsService } from "../../../discovery/services/AssetsService";
 
 // payout scope
+import { PayoutsService } from "../../services/PayoutsService";
+import { SignerService } from "../../services/SignerService";
+import { MathService } from "../../services/MathService";
+import { PayoutCommand, PayoutCommandOptions } from "../PayoutCommand";
 import {
-  BroadcastBoosterPayouts,
-  BroadcastBoosterPayoutsCommandOptions,
-} from "../BroadcastBoosterPayouts";
-import { PayoutCommand } from "../../PayoutCommand";
-import { PayoutsService } from "../../../services/PayoutsService";
-import { SignerService } from "../../../services/SignerService";
+  PrepareBoosterPayouts,
+  PrepareBoosterPayoutsCommandOptions,
+} from "./PrepareBoosterPayouts";
 
 /**
- * @interface BroadcastBoost10PayoutsCommandOptions
+ * @interface PrepareBoost15PayoutsCommandOptions
  * @description This interface defines **arguments** that can be
  * passed to this **processor** command that is implemented in the
  * backend runtime.
@@ -56,24 +53,24 @@ import { SignerService } from "../../../services/SignerService";
  * @see PayoutCommandOptions
  * @since v0.4.0
  */
-export type BroadcastBoost10PayoutsCommandOptions =
-  BroadcastBoosterPayoutsCommandOptions;
+export type PrepareBoost15PayoutsCommandOptions =
+  PrepareBoosterPayoutsCommandOptions;
 
 /**
  * @label PAYOUT
- * @class BroadcastBoost10Payouts
+ * @class PrepareBoost15Payouts
  * @description The implementation for the payout *preparation*
  * scheduler. Contains source code for the execution logic of a
- * command with name: `processor:BroadcastBoost10Payouts`.
+ * command with name: `processor:PrepareBoost15Payouts`.
  * <br /><br />
- * Notably, this command *fetches activities* that have not been
+ * Notably, this command *fetches accounts* that have not been
  * the subject of payouts yet and then *creates transactions* and
  * *signs transactions*.
  *
  * @since v0.4.0
  */
 @Injectable()
-export class BroadcastBoost10Payouts extends BroadcastBoosterPayouts {
+export class PrepareBoost15Payouts extends PrepareBoosterPayouts {
   /**
    * Constructs and prepares an instance of this scheduler.
    *
@@ -82,10 +79,9 @@ export class BroadcastBoost10Payouts extends BroadcastBoosterPayouts {
    * @param {QueryService<AccountDocument, AccountModel>}    queryService
    * @param {PayoutsService}  payoutsService
    * @param {SignerService}   signerService
-   * @param {NetworkService}  networkService
-   * @param {ActivitiesService}  activitiesService
    * @param {LogService}      logService
    * @param {AssetsService}      assetsService
+   * @param {MathService}     mathService
    * @param {AccountModel}   model
    */
   constructor(
@@ -97,10 +93,9 @@ export class BroadcastBoost10Payouts extends BroadcastBoosterPayouts {
     >,
     protected readonly payoutsService: PayoutsService,
     protected readonly signerService: SignerService,
-    protected readonly networkService: NetworkService,
-    protected readonly activitiesService: ActivitiesService,
     protected readonly logService: LogService,
     protected readonly assetsService: AssetsService,
+    protected readonly mathService: MathService,
     @InjectModel(Account.name)
     protected readonly model: AccountModel,
   ) {
@@ -111,27 +106,15 @@ export class BroadcastBoost10Payouts extends BroadcastBoosterPayouts {
       queryService,
       payoutsService,
       signerService,
-      networkService,
-      activitiesService,
       logService,
       assetsService,
+      mathService,
       model,
     );
-  }
 
-  /**
-   * Memory store for the *booster asset configuration* object. This
-   * object defines which assets are *discoverable* on dHealth Network
-   * and used to *tokenize a particular booster operation*.
-   * <br /><br />
-   * This asset configuration is referred to as a **booster asset**
-   * used in a specific dApp.
-   *
-   * @access protected
-   * @var {AssetParameters}
-   */
-  protected get boosterAsset(): AssetParameters {
-    return this.configService.get<AssetParameters>("boosters.referral.boost10");
+    this.boosterAsset = this.configService.get<AssetParameters>(
+      "boosters.referral.boost15",
+    );
   }
 
   /**
@@ -149,7 +132,25 @@ export class BroadcastBoost10Payouts extends BroadcastBoosterPayouts {
    * @returns {string}
    */
   protected get command(): string {
-    return `BroadcastBoost10Payouts`;
+    return `PrepareBoost15Payouts`;
+  }
+
+  /**
+   * Memory story for the *minimum count of referrals* that were
+   * confirmed for a user.
+   * <br /><br />
+   * The referral progress bars fills 5 steps for each level. There
+   * is a maximum of 3 levels.
+   * <br /><br />
+   * This referral progress badge can be obtained by referring a total
+   * of `100` other accounts.
+   *
+   * @access protected
+   * @abstract
+   * @returns {number}
+   */
+  protected get minReferred(): number {
+    return 100;
   }
 
   /**
@@ -161,8 +162,7 @@ export class BroadcastBoost10Payouts extends BroadcastBoosterPayouts {
    * This method is necessary to make sure this command is run
    * with the correct `--signer` option.
    * <br /><br />
-   * This scheduler is registered to run **every minute** at the
-   * **fifth second**.
+   * This scheduler is registered to run **every 5 minutes**.
    *
    * @see BaseCommand
    * @access public
@@ -171,18 +171,22 @@ export class BroadcastBoost10Payouts extends BroadcastBoosterPayouts {
    * @param   {BaseCommandOptions}  options
    * @returns {Promise<void>}
    */
-  @Cron("5 */1 * * * *", { name: "payout:cronjobs:broadcast" })
+  @Cron("0 */5 * * * *", { name: "payout:cronjobs:boost15:prepare" })
   public async runAsScheduler(): Promise<void> {
     // prepares execution logger
     this.logger.setModule(`${this.scope}/${this.command}`);
 
     // display starting moment information also in non-debug mode
-    this.debugLog(`Starting payout broadcast for booster type: boost10`);
+    this.debugLog(`Starting payout preparation for booster type: boost15`);
+
+    // display debug information about total number of transactions
+    this.debugLog(
+      `Total number of boost15 payouts prepared: "${this.totalNumberPrepared}"`,
+    );
 
     // executes the actual command logic (this will call execute())
     await this.run([this.collection], {
-      maxCount: 3, // <-- MAXIMUM 3 BROADCASTS per round
-      debug: true,
-    } as BroadcastBoost10PayoutsCommandOptions);
+      debug: false,
+    } as PayoutCommandOptions);
   }
 }

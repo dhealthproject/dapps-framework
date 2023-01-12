@@ -195,8 +195,7 @@ describe("statistics/LeaderboardAggregation", () => {
         1,
         [ "D" ],
         {
-          debug: true,
-          quiet: false,
+          debug: false,
         }
       )
     })

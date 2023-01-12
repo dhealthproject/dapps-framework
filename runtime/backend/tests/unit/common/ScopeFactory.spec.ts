@@ -240,6 +240,14 @@ jest.mock(
   },
 );
 
+const BoosterPayoutsCommandMock: any = jest.fn();
+jest.mock(
+  "../../../src/payout/schedulers/BoosterPayouts/BoosterPayoutsCommand",
+  () => {
+    return { BoosterPayoutsCommand: BoosterPayoutsCommandMock };
+  },
+);
+
 const ReportNotifierCommandMock: any = { register: jest.fn() };
 jest.mock(
   "../../../src/notifier/schedulers/ReportNotifier/ReportNotifierCommand",

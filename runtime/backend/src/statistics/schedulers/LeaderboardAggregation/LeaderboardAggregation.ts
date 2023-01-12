@@ -211,8 +211,7 @@ export abstract class LeaderboardAggregation extends StatisticsCommand {
 
     // executes the actual command logic (this will call aggregate())
     await this.run([this.periodFormat], {
-      debug: true,
-      quiet: false,
+      debug: false,
     });
   }
 

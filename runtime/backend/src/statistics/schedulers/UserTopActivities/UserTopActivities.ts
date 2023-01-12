@@ -188,8 +188,7 @@ export class UserTopActivities extends StatisticsCommand {
 
     // executes the actual command logic (this will call aggregate())
     await this.run([this.TYPE], {
-      debug: true,
-      quiet: false,
+      debug: false,
     });
   }
 

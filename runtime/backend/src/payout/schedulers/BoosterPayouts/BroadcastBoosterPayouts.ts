@@ -11,6 +11,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { ConfigService } from "@nestjs/config";
+import { Cron } from "@nestjs/schedule";
 
 // internal dependencies
 // common scope
@@ -74,7 +75,7 @@ export type BroadcastBoosterPayoutsCommandOptions =
  * @since v0.4.0
  */
 @Injectable()
-export abstract class BroadcastBoosterPayouts extends BroadcastPayouts<
+export class BroadcastBoosterPayouts extends BroadcastPayouts<
   AccountDocument,
   AccountModel
 > {
@@ -121,51 +122,6 @@ export abstract class BroadcastBoosterPayouts extends BroadcastPayouts<
       assetsService,
     );
   }
-
-  /**
-   * Memory store for the *booster asset configuration* object. This
-   * object defines which assets are *discoverable* on dHealth Network
-   * and used to *tokenize a particular booster operation*.
-   * <br /><br />
-   * This asset configuration is referred to as a **booster asset**
-   * used in a specific dApp.
-   *
-   * @access protected
-   * @abstract
-   * @var {AssetParameters}
-   */
-  protected abstract get boosterAsset(): AssetParameters;
-
-  /**
-   * Abstract method forwarded from {@link PayoutCommand}. This field
-   * is used to improve logging and discovery of schedulers execution.
-   *
-   * @see BaseCommand
-   * @access protected
-   * @abstract
-   * @returns {string}
-   */
-  protected abstract get command(): string;
-
-  /**
-   * This method is the **entry point** of this scheduler. It must be
-   * implemented in child classes and must be decorated with a `Cron`
-   * `Cron` decorator.
-   * <br /><br />
-   * Child classes are responsible for the registration of schedulers
-   * and therefor the `Cron()` decorator is not used in this abstract
-   * method definition, instead you should use the `Cron()` decorator
-   * in the method implementation of child classes.
-   *
-   * @see BaseCommand
-   * @access public
-   * @abstract
-   * @async
-   * @param   {string[]}            passedParams
-   * @param   {BaseCommandOptions}  options
-   * @returns {Promise<void>}
-   */
-  public abstract runAsScheduler(): Promise<void>;
 
   /**
    * This method must return a *command signature* that
@@ -245,5 +201,57 @@ export abstract class BroadcastBoosterPayouts extends BroadcastPayouts<
 
     // return 1 page's documents
     return page.data;
+  }
+
+  /**
+   * This method must return a *command name*. Note that
+   * it should use only characters of: A-Za-z0-9:-_.
+   * <br /><br />
+   * e.g. "scope:name"
+   * <br /><br />
+   * This property is required through the extension of
+   * {@link PayoutCommand}.
+   *
+   * @see PayoutCommand
+   * @see BaseCommand
+   * @access protected
+   * @returns {string}
+   */
+  protected get command(): string {
+    return `BroadcastBoosterPayouts`;
+  }
+
+  /**
+   * This method is the **entry point** of this scheduler. Due to
+   * the usage of the `Cron` decorator, and the implementation
+   * the nest backend runtime is able to discover this when the
+   * `processor` scope is enabled.
+   * <br /><br />
+   * This method is necessary to make sure this command is run
+   * with the correct `--signer` option.
+   * <br /><br />
+   * This scheduler is registered to run **every 5 minutes** at the
+   * **tenth second**.
+   *
+   * @see BaseCommand
+   * @access public
+   * @async
+   * @param   {string[]}            passedParams
+   * @param   {BaseCommandOptions}  options
+   * @returns {Promise<void>}
+   */
+  @Cron("10 */5 * * * *", { name: "payout:cronjobs:boost5:broadcast" })
+  public async runAsScheduler(): Promise<void> {
+    // prepares execution logger
+    this.logger.setModule(`${this.scope}/${this.command}`);
+
+    // display starting moment information also in non-debug mode
+    this.debugLog(`Starting payout broadcast for boosters`);
+
+    // executes the actual command logic (this will call execute())
+    await this.run([this.collection], {
+      maxCount: 3, // <-- MAXIMUM 3 BROADCASTS per round
+      debug: true,
+    } as BroadcastBoosterPayoutsCommandOptions);
   }
 }

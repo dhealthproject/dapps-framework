@@ -216,7 +216,7 @@ export class DiscoverAssets extends DiscoveryCommand {
     // executes the actual command logic (this will call discover())
     await super.run([], {
       source,
-      debug: true,
+      debug: false,
     } as DiscoveryCommandOptions);
   }
 

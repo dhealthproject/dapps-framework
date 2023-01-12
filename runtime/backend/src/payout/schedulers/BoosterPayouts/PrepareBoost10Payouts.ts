@@ -15,31 +15,31 @@ import { Cron } from "@nestjs/schedule";
 
 // internal dependencies
 // common scope
-import { LogService } from "../../../../common/services/LogService";
-import { QueryService } from "../../../../common/services/QueryService";
-import { StateService } from "../../../../common/services/StateService";
+import { LogService } from "../../../common/services/LogService";
+import { QueryService } from "../../../common/services/QueryService";
+import { StateService } from "../../../common/services/StateService";
 import {
   Account,
   AccountDocument,
   AccountModel,
-} from "../../../../common/models/AccountSchema";
-import { AssetParameters } from "../../../../common/models/AssetsConfig";
+} from "../../../common/models/AccountSchema";
+import { AssetParameters } from "../../../common/models/AssetsConfig";
 
 // discovery scope
-import { AssetsService } from "../../../../discovery/services/AssetsService";
+import { AssetsService } from "../../../discovery/services/AssetsService";
 
 // payout scope
-import { PayoutsService } from "../../../services/PayoutsService";
-import { SignerService } from "../../../services/SignerService";
-import { MathService } from "../../../services/MathService";
-import { PayoutCommand, PayoutCommandOptions } from "../../PayoutCommand";
+import { PayoutsService } from "../../services/PayoutsService";
+import { SignerService } from "../../services/SignerService";
+import { MathService } from "../../services/MathService";
+import { PayoutCommand, PayoutCommandOptions } from "../PayoutCommand";
 import {
   PrepareBoosterPayouts,
   PrepareBoosterPayoutsCommandOptions,
-} from "../PrepareBoosterPayouts";
+} from "./PrepareBoosterPayouts";
 
 /**
- * @interface PrepareBoost15PayoutsCommandOptions
+ * @interface PrepareBoost10PayoutsCommandOptions
  * @description This interface defines **arguments** that can be
  * passed to this **processor** command that is implemented in the
  * backend runtime.
@@ -53,15 +53,15 @@ import {
  * @see PayoutCommandOptions
  * @since v0.4.0
  */
-export type PrepareBoost15PayoutsCommandOptions =
+export type PrepareBoost10PayoutsCommandOptions =
   PrepareBoosterPayoutsCommandOptions;
 
 /**
  * @label PAYOUT
- * @class PrepareBoost15Payouts
+ * @class PrepareBoost10Payouts
  * @description The implementation for the payout *preparation*
  * scheduler. Contains source code for the execution logic of a
- * command with name: `processor:PrepareBoost15Payouts`.
+ * command with name: `processor:PrepareBoost10Payouts`.
  * <br /><br />
  * Notably, this command *fetches accounts* that have not been
  * the subject of payouts yet and then *creates transactions* and
@@ -70,7 +70,7 @@ export type PrepareBoost15PayoutsCommandOptions =
  * @since v0.4.0
  */
 @Injectable()
-export class PrepareBoost15Payouts extends PrepareBoosterPayouts {
+export class PrepareBoost10Payouts extends PrepareBoosterPayouts {
   /**
    * Constructs and prepares an instance of this scheduler.
    *
@@ -113,7 +113,7 @@ export class PrepareBoost15Payouts extends PrepareBoosterPayouts {
     );
 
     this.boosterAsset = this.configService.get<AssetParameters>(
-      "boosters.referral.boost15",
+      "boosters.referral.boost10",
     );
   }
 
@@ -132,7 +132,7 @@ export class PrepareBoost15Payouts extends PrepareBoosterPayouts {
    * @returns {string}
    */
   protected get command(): string {
-    return `PrepareBoost15Payouts`;
+    return `PrepareBoost10Payouts`;
   }
 
   /**
@@ -143,14 +143,14 @@ export class PrepareBoost15Payouts extends PrepareBoosterPayouts {
    * is a maximum of 3 levels.
    * <br /><br />
    * This referral progress badge can be obtained by referring a total
-   * of `100` other accounts.
+   * of `50` other accounts.
    *
    * @access protected
    * @abstract
    * @returns {number}
    */
   protected get minReferred(): number {
-    return 100;
+    return 50;
   }
 
   /**
@@ -162,7 +162,7 @@ export class PrepareBoost15Payouts extends PrepareBoosterPayouts {
    * This method is necessary to make sure this command is run
    * with the correct `--signer` option.
    * <br /><br />
-   * This scheduler is registered to run **every 30 seconds**.
+   * This scheduler is registered to run **every 5 minutes**.
    *
    * @see BaseCommand
    * @access public
@@ -171,22 +171,22 @@ export class PrepareBoost15Payouts extends PrepareBoosterPayouts {
    * @param   {BaseCommandOptions}  options
    * @returns {Promise<void>}
    */
-  @Cron("*/30 * * * * *", { name: "payout:cronjobs:prepare" })
+  @Cron("0 */5 * * * *", { name: "payout:cronjobs:boost10:prepare" })
   public async runAsScheduler(): Promise<void> {
     // prepares execution logger
     this.logger.setModule(`${this.scope}/${this.command}`);
 
     // display starting moment information also in non-debug mode
-    this.debugLog(`Starting payout preparation for booster type: boost15`);
+    this.debugLog(`Starting payout preparation for booster type: boost10`);
 
     // display debug information about total number of transactions
     this.debugLog(
-      `Total number of boost15 payouts prepared: "${this.totalNumberPrepared}"`,
+      `Total number of boost10 payouts prepared: "${this.totalNumberPrepared}"`,
     );
 
     // executes the actual command logic (this will call execute())
     await this.run([this.collection], {
-      debug: true,
+      debug: false,
     } as PayoutCommandOptions);
   }
 }
