@@ -85,7 +85,9 @@ describe("common/OAuthController", () => {
       // prepare
       const authServiceGetAccountCall = jest
         .spyOn(authService, "getAccount")
-        .mockResolvedValue({ address: "testDHealthAddress" } as AccountDocument);
+        .mockResolvedValue({
+          address: "testDHealthAddress",
+        } as AccountDocument);
       const oauthServiceGetAuthorizeURLCall = jest
         .spyOn(oauthService, "getAuthorizeURL")
         .mockReturnValue("http://test.url");
@@ -93,9 +95,9 @@ describe("common/OAuthController", () => {
         .spyOn(oauthService, "updateIntegration")
         .mockResolvedValue({} as AccountIntegrationDocument);
       const responseRedirectCall = jest.fn();
-      const statusCall = jest.fn().mockReturnValue(
-        { redirect: responseRedirectCall }
-      );
+      const statusCall = jest
+        .fn()
+        .mockReturnValue({ redirect: responseRedirectCall });
 
       // act
       await (controller as any).authorize(
@@ -125,9 +127,9 @@ describe("common/OAuthController", () => {
         .spyOn(oauthService, "updateIntegration")
         .mockResolvedValue({} as AccountIntegrationDocument);
       const responseRedirectCall = jest.fn();
-      const statusCall = jest.fn().mockReturnValue(
-        { redirect: responseRedirectCall }
-      );
+      const statusCall = jest
+        .fn()
+        .mockReturnValue({ redirect: responseRedirectCall });
       const ecpectedError = new HttpException(`Forbidden`, 403);
 
       // act
@@ -177,10 +179,16 @@ describe("common/OAuthController", () => {
 
     it("should throw the same http exception if any http exception was caught", () => {
       // prepare
+      (controller as any).oauthService = {
+        deleteIntegration: jest.fn(),
+      };
       const authServiceGetAccountCall = jest
         .spyOn(authService, "getAccount")
         .mockResolvedValue({ address: "testAddress" } as AccountDocument);
-      const expectedError = new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+      const expectedError = new HttpException(
+        "Unauthorized",
+        HttpStatus.UNAUTHORIZED,
+      );
       const oauthServiceOauthCallbackCall = jest
         .spyOn(oauthService, "oauthCallback")
         .mockRejectedValue(expectedError);
@@ -200,10 +208,16 @@ describe("common/OAuthController", () => {
 
     it("should throw http exception if any error was caught", () => {
       // prepare
+      (controller as any).oauthService = {
+        deleteIntegration: jest.fn(),
+      };
       const authServiceGetAccountCall = jest
         .spyOn(authService, "getAccount")
         .mockResolvedValue({ address: "testAddress" } as AccountDocument);
-      const expectedError = new HttpException("Bad Request", HttpStatus.BAD_REQUEST);
+      const expectedError = new HttpException(
+        "Bad Request",
+        HttpStatus.BAD_REQUEST,
+      );
       const oauthServiceOauthCallbackCall = jest
         .spyOn(oauthService, "oauthCallback")
         .mockRejectedValue(new Error());
@@ -237,9 +251,7 @@ describe("common/OAuthController", () => {
       };
       (controller as any).oauthService = {
         getIntegrations: jest.fn().mockReturnValue({
-          data: [
-            { name: "strava" }
-          ],
+          data: [{ name: "strava" }],
         }),
       };
 
@@ -274,9 +286,7 @@ describe("common/OAuthController", () => {
       };
       (controller as any).oauthService = {
         getIntegrations: jest.fn().mockReturnValue({
-          data: [
-            { name: "strava" }
-          ],
+          data: [{ name: "strava" }],
         }),
       };
 

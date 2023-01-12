@@ -453,6 +453,20 @@ export class OAuthService {
     return integration;
   }
 
+  public async deleteIntegration(providerName: string, address: string) {
+    try {
+      await this.queryService.deleteOne(
+        new AccountIntegrationQuery({
+          address,
+          name: providerName,
+        } as AccountIntegrationDocument),
+        this.model,
+      );
+    } catch (e) {
+      throw e;
+    }
+  }
+
   /**
    * Method to find {@link AccountIntegrationDocument} from the
    * database by querying with fields of an {@link AccountDocument}.
