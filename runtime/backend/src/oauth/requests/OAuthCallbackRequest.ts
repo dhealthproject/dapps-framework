@@ -99,4 +99,21 @@ export class OAuthCallbackRequest {
       "The authorization state as attached by Strava in their callback request. This should be forwarded from the frontend to the backend as to *verify* the authenticity of the callback request.",
   })
   public state?: string;
+
+  /**
+   * The referral code in the context of users invitations. This
+   * code is typically attached to another end-user whom is then
+   * considered the *referrer*.
+   * <br /><br />
+   * This field is optional in `/oauth/:provider` requests.
+   *
+   * @access public
+   * @var {string}
+   */
+  @ApiProperty({
+    example: "ELEVATE2022",
+    description:
+      "The referral code in the context of users invitations. This code is typically attached to another end-user whom is considered the referrer.",
+  })
+  public ref?: string;
 }

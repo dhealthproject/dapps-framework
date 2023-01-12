@@ -155,14 +155,6 @@ export class OAuthController {
       ref,
     );
 
-    // stores a copy of the created OAuth authorization
-    await this.oauthService.updateIntegration(
-      provider,
-      account.address,
-      // the following will be hashed
-      { authorizeUrl: authorize_url },
-    );
-
     // redirect the browser to the remote authorization URL
     return response.status(301).redirect(authorize_url);
   }
@@ -194,7 +186,26 @@ export class OAuthController {
     // read and decode access token, then find account in database
     const account: AccountDocument = await this.authService.getAccount(req);
 
+    // read query parameters, `ref` is optional
+    const { ref } = query;
+    console.log({ query });
+
     try {
+      // build a *remote* authorization URL ("Strava OAuth URL")
+      const authorize_url = this.oauthService.getAuthorizeURL(
+        provider,
+        account.address,
+        ref,
+      );
+
+      // stores a copy of the created OAuth authorization
+      await this.oauthService.updateIntegration(
+        provider,
+        account.address,
+        // the following will be hashed
+        { authorizeUrl: authorize_url },
+      );
+
       // requests an access token from the OAuth provider
       await this.oauthService.oauthCallback(provider, account, query);
 

@@ -347,21 +347,28 @@ export default class Dashboard extends MetaView {
       await this.$store.dispatch("auth/fetchProfile");
     }
 
+    // extracts "callback" parameters for when the user comes back
+    // from the authorization process on the third-party platform
+    const { state, code, scope, error } = this.$route.query;
+
+    // handles "denial" of user authorization on the third-party platform
+    if (scope !== "read,activity:read_all" && "scope" in this.$route.query) {
+      this.displayErrorMessage(`Please select all checkboxes`);
+      await this.$router.replace({ name: "app.dashboard" });
+    }
+
     // handles "denial" of user authorization on the third-party platform
     if (this.$route.query && "error" in this.$route.query) {
       this.displayErrorMessage(
         `Please click "authorize" on the Strava authorization`
       );
+      await this.$router.replace({ name: "app.dashboard" });
     }
-
-    // extracts "callback" parameters for when the user comes back
-    // from the authorization process on the third-party platform
-    const { state, code, scope } = this.$route.query;
 
     // if we come back to dashboard FROM the OAuth Authorization,
     // then we can now *query an access token* from the data provider
     // a redirection will happen after retrieval of the access token.
-    if (state && code && scope) {
+    if (state && code && scope && scope === "read,activity:read_all") {
       this.$root.$emit("toast", {
         title: "Great job!",
         description: "We've integrated your account",
@@ -369,8 +376,10 @@ export default class Dashboard extends MetaView {
         icon: "icons/like-icon.svg",
         dismissTimeout: 7000,
       });
-      this.$store.commit("oauth/setParameters", { code, state, scope });
+
+      this.$store.commit("oauth/setParameters", { code, state, scope, error });
       await this.oauthCallbackRedirect();
+      this.$store.dispatch("auth/fetchProfile");
       await this.$router.replace({ name: "app.dashboard" });
     }
 
