@@ -360,7 +360,12 @@ export class PrepareActivityPayouts extends PreparePayouts<
           $match: { referredBy: subjectAddress },
         },
         {
-          $group: { count: { $sum: 1 } },
+          $group: {
+            _id: {
+              referredBy: "$referredBy",
+            },
+            count: { $sum: 1 },
+          },
         },
       ],
       this.model,

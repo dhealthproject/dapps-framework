@@ -269,7 +269,6 @@ export abstract class PrepareBoosterPayouts extends PreparePayouts<
       {
         $match: {
           referredBy: { $exists: true },
-          count: this.minReferred,
         },
       },
       {
@@ -292,6 +291,14 @@ export abstract class PrepareBoosterPayouts extends PreparePayouts<
     const output: AccountDocument[] = [];
     for (const referrer of results) {
       const address = referrer._id.referredBy;
+      const cntRefs = referrer.count;
+
+      // boosters are unlocked at specific total
+      // number of referrals
+      if (null === address || cntRefs !== this.minReferred) {
+        continue;
+      }
+
       const account = await this.queryService.findOne(
         new AccountQuery({ address } as AccountDocument),
         this.model,
@@ -306,7 +313,7 @@ export abstract class PrepareBoosterPayouts extends PreparePayouts<
     }
 
     // return `accounts` document that have referred
-    // 5, 10 or 15 other accounts
+    // 10, 50 or 100 other accounts
     return output.slice(0, 10);
   }
 

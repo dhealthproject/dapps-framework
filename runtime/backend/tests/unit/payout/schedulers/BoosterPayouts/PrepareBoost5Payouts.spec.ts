@@ -25,9 +25,6 @@ import { AccountDocument, AccountModel, AccountQuery } from "../../../../../src/
 // discovery scope
 import { AssetsService } from "../../../../../src/discovery/services/AssetsService";
 
-// users scope
-import { ProcessingState } from "../../../../../src/users/models/ProcessingStatusDTO";
-
 // payout scope
 import { PayoutState } from "../../../../../src/payout/models/PayoutStatusDTO";
 import { PayoutDocument, PayoutQuery } from "../../../../../src/payout/models/PayoutSchema";
@@ -218,7 +215,6 @@ describe("payout/PrepareBoost5Payouts", () => {
         {
           $match: {
             referredBy: { $exists: true },
-            count: 10, // boost5 needs 10 referrals
           },
         },
         {
