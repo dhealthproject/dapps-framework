@@ -3,6 +3,62 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.6.0][0.6.0] - 12-Jan-2022
+
+#### Added
+
+- [@dhealthdapps/frontend] fix: update translation markup, fix unused type
+- [@dhealthdapps/frontend] feat(api): add referral code forwarding for LoginScreen
+- [@dhealthdapps/frontend] fix(screens): add dynamic values to transactions page
+- [@dhealthdapps/frontend] fix: replace  for , frontend improvements
+- [@dhealthdapps/frontend] fix(screens): update fetch access token params for login screen
+- [@dhealthdapps/frontend] fix: update websocket environment and add BACKEND_DOMAIN variable
+- [@dhealthdapps/frontend] fix: update websocket connection url
+- [@dhealthdapps/frontend] feat(test): improve base gateway tests, add auth gateway tests
+- [@dhealthdapps/frontend] feat(test): add basegateway tests
+- [@dhealthdapps/frontend] feat(widgets): trying to enable connection with backend
+- [@dhealthdapps/frontend] feat(state): add activity module, add activity service, set up fetching activities on the frontend
+- [@dhealthdapps/frontend] feat(screens): add activities screen, add select component
+- [@dhealthdapps/frontend] fix(tests): update click-outside directive and add mock
+- [@dhealthdapps/frontend] feat(widgets): remove script tag from index
+- [@dhealthdapps/frontend] fix(widgets): fix segment configuration, add test analytics events
+- [@dhealthdapps/frontend] feat(widgets): add basic segment snippet
+
+#### Changed
+
+- [@dhealthdapps/frontend] refactor: update websocket implementation
+- [@dhealthdapps/frontend] feat(widgets): remove script tag from index
+- [@dhealthdapps/frontend] fix: update websocket environment and add BACKEND_DOMAIN variable
+- [@dhealthdapps/frontend] feat(api): add referral code forwarding for LoginScreen
+
+#### Fixed
+
+- [@dhealthdapps/frontend] fix(screens): restore terms and conditions, privacy policy screens
+- [@dhealthdapps/frontend] fix(screens): add latest text for terms and conditions
+- [@dhealthdapps/frontend] fix(screens): add displaying values on legal template from json
+- [@dhealthdapps/frontend] fix(screens): add legal json for related screens
+- [@dhealthdapps/frontend] fix(widgets):  fix query param for leader board widget
+- [@dhealthdapps/frontend] fix(screens): update styles for stats component, update icons for dropdown, change fit to activ names
+- [@dhealthdapps/frontend] fix(screens): fix of checkbox position on legal pages
+- [@dhealthdapps/frontend] fix(kernel): add translation parameters, fix translation markup, add referral unlock info
+- [@dhealthdapps/frontend] fix(screens): add use of statistics store for ACTIV balanceand top activities
+- [@dhealthdapps/frontend] fix(screens): add fallback message for an empty data
+- [@dhealthdapps/frontend] fix(screens): add correct pointer to amount value
+- [@dhealthdapps/frontend] fix(screens): add dynamic value for assets in transactions history page
+- [@dhealthdapps/frontend] fix(screens): remove gradient on desktop, update gradient for mobile
+- [@dhealthdapps/frontend] fix(screens): remove gradient overlay from desktop onboarding screens
+- [@dhealthdapps/frontend] fix(screens): update of onboarding images
+- [@dhealthdapps/frontend] fix(widgets): remove setInterval from the frontend
+- [@dhealthdapps/frontend] fix(widgets): fix socket url
+- [@dhealthdapps/frontend] fix(widgets): lint fix, test error fix
+- [@dhealthdapps/frontend] fix(widgets): fix of referral widget text, fix of header margin on settings page
+- [@dhealthdapps/frontend] fix(widgets): referral input placeholders fix
+- [@dhealthdapps/frontend] fix(widgets): dropdown styles and logic update
+- [@dhealthdapps/frontend] fix(screens): lint fixes, add test for the computed
+- [@dhealthdapps/frontend] fix(widgets): add strava urls for dashboard screen
+- [@dhealthdapps/frontend] fix(widgets): add appstore/playmarket urls for login screen
+- [@dhealthdapps/frontend] fix(widgets): display login button on mobile, update padding for stats
+
 ## [0.5.5][0.5.5] - 24-Nov-2022
 
 #### Added
@@ -194,6 +250,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] feat(theme): adds tailwindcss@3.0.x and moves assets to resources/
 
 
+[0.6.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.5.5..v0.6.0
 [0.5.5]: https://github.com/dhealthproject/dapps-framework/compare/v0.4.0..v0.5.5
 [0.4.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.4.0
 [0.3.1]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.3.1

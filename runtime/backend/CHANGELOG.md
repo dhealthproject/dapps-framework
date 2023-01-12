@@ -3,6 +3,95 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.6.0][0.6.0] - 12-Jan-2022
+
+#### Added
+
+- [@dhealthdapps/backend] feat(widgets): implementation of working socket, add comments, add logger
+- [@dhealthdapps/backend] feat(routes): add challenge validation and scheduler configuration
+- [@dhealthdapps/backend] feat(routes): update of validationScheduler
+- [@dhealthdapps/backend] fix(routes): fix cookie encoding
+- [@dhealthdapps/backend] feat(widgets): added challenge cookie
+- [@dhealthdapps/backend] fix(routes): replaced socket io with ws
+- [@dhealthdapps/backend] fix(schedulers): update scheduler,  add test
+- [@dhealthdapps/backend] feat(schedulers): add user top activities cron
+- [@dhealthdapps/backend] docs: fix link to WorkerModule, add link to AbstractAppModule
+- [@dhealthdapps/backend] test: add new unit tests for dapps-backend
+- [@dhealthdapps/backend] test: add new unit tests for dapps-backend
+- [@dhealthdapps/backend] test(common): update tests for authentication collection switch from accounts to account-sessions
+- [@dhealthdapps/backend] test: add new unit tests for dapps-backend
+- [@dhealthdapps/backend] test(discovery): modify/add unit tests for updates of DiscoverBlock scheduler
+- [@dhealthdapps/backend] refactor(discovery): update DiscoverBlock scheduler to query blocks that exist in processed transactions only
+- [@dhealthdapps/backend] test(common): update tests for authentication collection switch from accounts to account-sessions
+- [@dhealthdapps/backend] feat(common): create AccountSessionsSchema, AccountSessionDTO & update auth to store information in account-sessions
+- [@dhealthdapps/backend] feat: update formula
+- [@dhealthdapps/backend] test: fix failed unit tests
+- [@dhealthdapps/backend] config: make users scope obligatory when needed
+- [@dhealthdapps/backend] tests: update AppConfiguration test to include oauth scope
+- [@dhealthdapps/backend] tests(api): add tests for AppConfiguration.checkApplicationScopes
+- [@dhealthdapps/backend] tests(config): add environment configuration and tests for AppConfiguration
+- [@dhealthdapps/backend] fix(api): update UserAggregation to aggregate correct array of array field
+- [@dhealthdapps/backend] tests(api): add unit tests for broadcasting process
+
+#### Changed
+
+- [@dhealthdapps/backend] fix(routes): add assets field to response in activities route
+- [@dhealthdapps/backend] fix(api): add AssetsModule dependencies
+- [@dhealthdapps/backend] feat(scopes): add booster payouts implementation and referral configuration
+- [@dhealthdapps/backend] feat(api): add multiplier logic and update configuration, fix referral code
+- [@dhealthdapps/backend] fix(database): rename migration class name, update comments
+- [@dhealthdapps/backend] fix(database): create migration for activity
+- [@dhealthdapps/backend] refactor: change /me route name to /profile in AppController.ts
+- [@dhealthdapps/backend] refactor(api): update authentication websockets, add internal/external port configuration
+- [@dhealthdapps/backend] refactor(api): update websocket gateways and refactor event emission
+- [@dhealthdapps/backend] docs: update docs for authRegistries property
+- [@dhealthdapps/backend] fix(schedulers): validate challenge fix
+- [@dhealthdapps/backend] fix(widgets): fix ws connection error
+- [@dhealthdapps/backend] feat(routes): add gateways
+- [@dhealthdapps/backend] feat(routes): add ws route for backend
+- [@dhealthdapps/backend] refactor: define class AbstractAppModule and use in other modules
+- [@dhealthdapps/backend] refactor: extract oauth and webhook from common & processor scope to oauth scope
+- [@dhealthdapps/backend] refactor: fix @todo tasks in auth & oauth
+- [@dhealthdapps/backend] refactor: extract oauth and webhook from common & processor scope to oauth scope
+- [@dhealthdapps/backend] refactor(notifier): add cron expression directly to the main scheduler method of notifier schedulers
+- [@dhealthdapps/backend] refactor: remove all mappings for events label
+- [@dhealthdapps/backend] refactor: remove all mappings for config label
+- [@dhealthdapps/backend] refactor: remove all mappings for worker label
+- [@dhealthdapps/backend] refactor: remove all label mappings for users scope
+- [@dhealthdapps/backend] refactor: remove all label mappings for statistics scope
+- [@dhealthdapps/backend] refactor: remove all label mappings for processor scope
+- [@dhealthdapps/backend] refactor: remove all label mappings for payout scope
+- [@dhealthdapps/backend] refactor: remove all label mappings for oauth scope
+- [@dhealthdapps/backend] refactor: remove all label mappings for notifier scope
+- [@dhealthdapps/backend] refactor: remove all label mappings for discovery scope
+- [@dhealthdapps/backend] refactor: remove all label mappings for common scope
+- [@dhealthdapps/backend] refactor: rename StatisticsModule in modules folder of statistics scope to StatisticsImplementationModule
+- [@dhealthdapps/backend] refactor: rename ActivityDataDTO in oauth scope to StravaActivityDataDTO
+- [@dhealthdapps/backend] refactor: rename AccountsModule in discovery scope to DiscoveryAccountsModule
+- [@dhealthdapps/backend] refactor: enable multi-environments
+- [@dhealthdapps/backend] refactor(common): remove related @todo task
+- [@dhealthdapps/backend] refactor(common): allow multiple registries in authentication
+- [@dhealthdapps/backend] refactor(notifier): add cron expression directly to the main scheduler method of notifier schedulers
+- [@dhealthdapps/backend] refactor(statistics): add cron expression directly to the main scheduler method of statistics schedulers
+- [@dhealthdapps/backend] refactor: extract activities from processor scope to users scope
+- [@dhealthdapps/backend] refactor(oauth): update event names from processor.activity.* to oauth.activity.*
+- [@dhealthdapps/backend] refactor: extract oauth and webhook from common & processor scope to oauth scope
+
+#### Fixed
+
+- [@dhealthdapps/backend] fix(api): update leaderboard with fill if empty, add referralLevels config, fix top activities
+- [@dhealthdapps/backend] fix(api): update user statistics to merge with previous, fix activity schema assets filter
+- [@dhealthdapps/backend] fix(screens): add encode uri component for mobile button
+- [@dhealthdapps/backend] fix: update environment configuration and fix scheduler logs
+- [@dhealthdapps/backend] refactor(common): remove port in BaseGateway
+- [@dhealthdapps/backend] fix(tests): update validate-challenge scheduler tests
+- [@dhealthdapps/backend] fix: linter issues
+- [@dhealthdapps/backend] feat(widgets): fix of tests for validate challenge scheduler
+- [@dhealthdapps/backend] fix(test): add validate challenge scheduler tests
+- [@dhealthdapps/backend] fix(api): update top activities scheduler
+- [@dhealthdapps/backend] fix(tests): update execution counter
+- [@dhealthdapps/backend] fix(routes): modified activity dto
+
 ## [0.5.5][0.5.5] - 24-Nov-2022
 
 #### Added
@@ -236,6 +325,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: add implementation for schedulers enabled through scopes and more refactor (types)
 
 
+[0.6.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.5.5..v0.6.0
 [0.5.5]: https://github.com/dhealthproject/dapps-framework/compare/v0.4.0..v0.5.5
 [0.4.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.4.0
 [0.3.1]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.3.1
