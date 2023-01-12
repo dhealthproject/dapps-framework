@@ -20,12 +20,6 @@ import UiButton from "@/components/UiButton/UiButton.vue";
 // style resource
 import "./LegalDisclaimer.scss";
 
-interface PageData {
-  "terms-of-service": object;
-  "privacy-policy": object;
-  "terms-and-conditions": object;
-}
-
 /*
  * @class LegalDisclaimer
  * @description This class implements a Vue component to display
