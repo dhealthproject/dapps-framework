@@ -34,7 +34,7 @@
         />
       </div>
       <div class="activities-list text-right">
-        <TopActivities />
+        <TopActivities :items="topActivities" />
         <span
           class="dapp-stats__other__label"
           v-html="$t('dashboard.stats_top_activities')"
@@ -52,7 +52,12 @@
       <div class="referred">
         <span class="amount" v-html="totalReferral" />
         <span class="get-more"
-          >{{ $t("dashboard.stats_get_more") }}
+          >{{
+            $t("dashboard.stats_get_more", {
+              missing: remainingReferralsToNextLevel,
+              next: nextLevelPercentage,
+            })
+          }}
           <InfoTip
             :title="$t('dashboard.stats_tooltip_referral_title')"
             :text="$t('dashboard.stats_tooltip_referral_text')"

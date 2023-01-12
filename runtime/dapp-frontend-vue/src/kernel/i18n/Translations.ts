@@ -126,8 +126,12 @@ export class Translations {
    */
   public $t(
     translationKey: string,
+    parameters: any = {},
     customLanguage?: string | undefined
   ): string {
+    // shortcut
+    let translated: string = translationKey;
+
     // determines which dataset must be used
     const language =
       !!customLanguage && customLanguage in this.data
@@ -146,7 +150,7 @@ export class Translations {
       (nestedTranslations !== undefined && nestedTranslations !== null)
     ) {
       // returns translated
-      return translations[translationKey]
+      translated = translations[translationKey]
         ? translations[translationKey]
         : get(translations, translationKey);
     }
@@ -158,14 +162,23 @@ export class Translations {
       fallbackI18n[translationKey] !== undefined
     ) {
       // returns translated using fallback
-      return fallbackI18n[translationKey];
+      translated = fallbackI18n[translationKey];
+    } else {
+      // warn about missing translation and returns *untranslated*
+      console.warn(
+        `[@dhealthdapps/frontend][i18n] Caution: Cannot find translation for key "${translationKey}" in language "${language}".`
+      );
+      return translationKey;
     }
 
-    // warn about missing translation and returs *untranslated*
-    console.warn(
-      `[@dhealthdapps/frontend][i18n] Caution: Cannot find translation for key "${translationKey}" in language "${language}".`
-    );
-    return translationKey;
+    // map parameter values (transform)
+    const params = Object.keys(parameters);
+    for (const param of params) {
+      translated = translated.replace(`:${param}`, parameters[param]);
+    }
+
+    // return updated translation
+    return translated;
   }
 
   /**
@@ -175,8 +188,12 @@ export class Translations {
    * @access public
    * @returns {string}
    */
-  public translate(k: string, l: string | undefined): string {
-    return this.$t(k, l);
+  public translate(
+    translationKey: string,
+    parameters: any = {},
+    customLanguage?: string | undefined
+  ): string {
+    return this.$t(translationKey, parameters, customLanguage);
   }
 
   /**
@@ -186,7 +203,11 @@ export class Translations {
    * @access public
    * @returns {string}
    */
-  public call(k: string, l: string | undefined): string {
-    return this.$t(k, l);
+  public call(
+    translationKey: string,
+    parameters: any = {},
+    customLanguage?: string | undefined
+  ): string {
+    return this.$t(translationKey, parameters, customLanguage);
   }
 }

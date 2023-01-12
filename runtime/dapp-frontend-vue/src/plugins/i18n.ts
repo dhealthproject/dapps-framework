@@ -15,8 +15,16 @@
  */
 export default {
   install(Vue: any) {
-    Vue.prototype.$t = function (jsonPath: string) {
-      return this.$store.getters["app/i18n"].$t(jsonPath);
+    Vue.prototype.$t = function (
+      translationKey: string,
+      parameters: any = {},
+      customLanguage?: string | undefined
+    ) {
+      return this.$store.getters["app/i18n"].$t(
+        translationKey,
+        parameters,
+        customLanguage
+      );
     };
   },
 };

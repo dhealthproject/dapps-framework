@@ -37,6 +37,13 @@ const $store = new Vuex.Store({
     "auth/getCurrentUserAddress": jest
       .fn()
       .mockReturnValue("NATZJETZTZCGGRBUYVQRBEUFN5LEGDRSTNF2GYA"),
+    "app/getConfig": jest.fn().mockReturnValue({
+      referralLevels: [
+        { minReferred: 10 },
+        { minReferred: 50 },
+        { minReferred: 100 },
+      ]
+    })
   },
   actions: {
     initialize: jest.fn(),

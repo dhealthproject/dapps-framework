@@ -29,6 +29,7 @@
  * @param   {string}    authRegistry      Contains the address of dHealth Account used as a registry for authentication.
  * @param   {number}    earnAssetDivisibility      Contains amount of symbols that will be displayed after formatting.
  * @param   {string}    earnAssetIdentifier          Contains mosaic id of token.
+ * @param   {{ minReferred: number }[]}    referralLevels          Contains the referral levels configuration.
  *
  * @since v0.5.0
  */
@@ -38,4 +39,5 @@ export interface ConfigDTO {
   authRegistry: string;
   earnAssetDivisibility: number;
   earnAssetIdentifier: string;
+  referralLevels: { minReferred: number }[];
 }

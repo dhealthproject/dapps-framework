@@ -19,6 +19,7 @@ import {
   UserDataAggregateDTO,
   UserStatisticsDTO,
 } from "@/models/UserStatisticsDTO";
+import { ConfigDTO } from "@/models/ConfigDTO";
 
 // child components
 import TopActivities from "../TopActivities/TopActivities.vue";
@@ -39,6 +40,7 @@ import "./Stats.scss";
     ...mapGetters({
       currentUserAddress: "auth/getCurrentUserAddress",
       userStatistics: "statistics/getUserStatistics",
+      appConfig: "app/getConfig",
     }),
   },
 })
@@ -69,6 +71,19 @@ export default class Stats extends MetaView {
    * @var {UserStatisticsDTO}
    */
   public userStatistics!: UserStatisticsDTO;
+
+  /**
+   * This property contains the app configuration. The configuration
+   * field `referralLevels` is used in translation parameters.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {ConfigDTO}
+   */
+  public appConfig!: ConfigDTO;
 
   /**
    * @todo missing property documentation
@@ -135,11 +150,54 @@ export default class Stats extends MetaView {
    * @todo missing method documentation
    */
   public get levelReferral(): number {
-    if (!this.hasRequested || undefined === this.statisticsData) {
+    if (
+      !this.hasRequested ||
+      undefined === this.appConfig ||
+      !this.appConfig.referralLevels ||
+      !this.appConfig.referralLevels.length
+    ) {
       return 0;
     }
 
-    return this.statisticsData.levelReferral ?? 0;
+    const referralLevels = this.appConfig.referralLevels;
+    for (let i = referralLevels.length - 1; i >= 0; i--) {
+      const level = referralLevels[i];
+      if (this.totalReferral >= level.minReferred) {
+        return i;
+      }
+    }
+
+    return 0;
+  }
+
+  public get remainingReferralsToNextLevel(): number {
+    if (!this.hasRequested || undefined === this.statisticsData) {
+      return 10;
+    }
+
+    const currentLevel = this.levelReferral;
+    const level = this.appConfig.referralLevels[currentLevel];
+    return level.minReferred - this.totalReferral;
+  }
+
+  public get nextLevelPercentage(): number {
+    if (this.levelReferral === 0) {
+      return 5;
+    } else if (this.levelReferral === 1) {
+      return 10;
+    } else if (this.levelReferral === 2) {
+      return 15;
+    }
+
+    return 5;
+  }
+
+  public get topActivities(): string[] {
+    if (!this.hasRequested || undefined === this.statisticsData) {
+      return ["Ride", "Swim"];
+    }
+
+    return this.statisticsData.topActivities ?? ["Ride", "Swim"];
   }
 
   /**

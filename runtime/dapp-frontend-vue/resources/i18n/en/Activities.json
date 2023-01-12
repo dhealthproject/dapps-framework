@@ -1,15 +1,15 @@
 {
-    "activities": {
-        "title": "Transaction History",
-        "balance": "Current Balance",
-        "bridge": "Bridge",
-        "table_titles": [
-            "Sport Type",
-            "Time",
-            "Distance",
-            "Elevation Gain",
-            "Avg Pace",
-            "$ACTIV"
-        ]
-    }
+  "activities": {
+    "title": "Transaction History",
+    "balance": "Current Balance",
+    "bridge": "Bridge",
+    "table_titles": [
+      "Sport Type",
+      "Time",
+      "Distance",
+      "Elevation Gain",
+      "Avg Pace",
+      "$ACTIV"
+    ]
+  }
 }
