@@ -190,7 +190,6 @@ export class DiscoverAssets extends DiscoveryCommand {
    * <br /><br />
    * This scheduler is registered to run **every 2 minutes**.
    *
-   * @todo This discovery should use a specific **discovery** config field instead of dappPublicKey
    * @see BaseCommand
    * @access public
    * @async

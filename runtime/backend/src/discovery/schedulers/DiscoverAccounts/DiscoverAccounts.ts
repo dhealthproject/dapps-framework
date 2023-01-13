@@ -12,7 +12,6 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
-import { PublicAccount, NetworkType } from "@dhealth/sdk";
 
 // internal dependencies
 import { QueryParameters } from "../../../common/concerns/Queryable";
@@ -41,9 +40,6 @@ import { LogService } from "../../../common/services/LogService";
  * scheduler. Contains source code for the execution logic of a
  * command with name: `discovery:DiscoverAccounts`.
  *
- * @todo This discovery should use a specific **discovery**
- * @todo config field instead of dappPublicKey
- * @todo (similar to getNextSource in DiscoverTransactions)
  * @since v0.1.0
  */
 @Injectable()
@@ -86,6 +82,15 @@ export class DiscoverAccounts extends DiscoveryCommand {
   private usePageSize = 100;
 
   /**
+   * Memory store for the last account being read. This is used
+   * in {@link getStateData} to update the latest execution state.
+   *
+   * @access private
+   * @var {string}
+   */
+  private lastUsedAccount: string;
+
+  /**
    * The constructor of this class.
    * Params will be automatically injected upon called.
    *
@@ -112,6 +117,7 @@ export class DiscoverAccounts extends DiscoveryCommand {
     // sets default state data
     this.lastPageNumber = 1;
     this.lastExecutedAt = new Date().valueOf();
+    this.lastUsedAccount = "";
   }
 
   /**
@@ -165,6 +171,7 @@ export class DiscoverAccounts extends DiscoveryCommand {
    */
   protected getStateData(): AccountDiscoveryStateData {
     return {
+      lastUsedAccount: this.lastUsedAccount,
       lastPageNumber: this.lastPageNumber,
       lastExecutedAt: this.lastExecutedAt,
     } as AccountDiscoveryStateData;
@@ -191,25 +198,23 @@ export class DiscoverAccounts extends DiscoveryCommand {
    */
   @Cron("0 */2 * * * *", { name: "discovery:cronjobs:accounts" })
   public async runAsScheduler(): Promise<void> {
-    // accounts discovery cronjob always read the dApp's main account
-    const dappPubKey = this.configService.get<string>("dappPublicKey");
-    const networkType = this.configService.get<NetworkType>(
-      "network.networkIdentifier",
-    );
+    // CAUTION:
+    // accounts discovery cronjob uses discovery sources
+    const sources = this.configService.get<string[]>("discovery.sources");
 
-    // creates the discovery source public account
-    const publicAcct = PublicAccount.createFromPublicKey(
-      dappPubKey,
-      networkType,
-    );
+    // iterate through all configured discovery sources and
+    // fetch assets from db. Accounts will first be read for
+    // sources that are *not yet synchronized*.
+    const source: string = await this.getNextSource(sources);
+    this.lastUsedAccount = source;
 
     // keep track of last execution
     this.lastExecutedAt = new Date().valueOf();
 
     // executes the actual command logic (this will call discover())
     await super.run([], {
-      source: publicAcct.address.plain(),
-      debug: false,
+      source,
+      debug: true,
     } as DiscoveryCommandOptions);
   }
 
@@ -245,17 +250,20 @@ export class DiscoverAccounts extends DiscoveryCommand {
       this.lastPageNumber = this.state.data.lastPageNumber ?? 1;
     }
 
-    // check for the total number of transactions
-    const transactionsState = await this.stateService.findOne(
-      new StateQuery({
-        name: "discovery:DiscoverTransactions",
-      } as StateDocument),
-    );
+    // per-source synchronization: "discovery:DiscoverTransactions:%SOURCE%"
+    const stateIdentifier = `${this.stateIdentifier}:${options.source}`;
+    const stateQuerySrc = new StateQuery({
+      name: stateIdentifier,
+    } as StateDocument);
+
+    // fetch **per-source** synchronization state once
+    // Caution: do not confuse with `this.state`, this one
+    // is internal and synchronizes **per each source**.
+    const state = await this.stateService.findOne(stateQuerySrc);
 
     const countTransactions =
-      !!transactionsState &&
-      "totalNumberOfTransactions" in transactionsState.data
-        ? transactionsState.data.totalNumberOfTransactions
+      !!state && "totalNumberOfTransactions" in state.data
+        ? state.data.totalNumberOfTransactions
         : 0;
 
     // if we reached the end of transactions, we want
@@ -278,6 +286,7 @@ export class DiscoverAccounts extends DiscoveryCommand {
 
     // (1) each round queries a page of 100 transactions *from the database*
     // and discovers addresses that are involved in said transactions
+    let isSynchronized: boolean;
     for (
       let i = this.lastPageNumber, max = this.lastPageNumber + 10;
       i < max;
@@ -300,6 +309,9 @@ export class DiscoverAccounts extends DiscoveryCommand {
       if (!transactions.data.length) {
         break;
       }
+
+      // determines the current source's synchronization state
+      isSynchronized = transactions.isLastPage();
 
       // proceeds to extracting accounts from transactions
       this.discoveredAddresses = this.discoveredAddresses
@@ -358,10 +370,14 @@ export class DiscoverAccounts extends DiscoveryCommand {
       this.debugLog(`Skipped ${nSkipped} account(s) that already exist`);
     }
 
-    // a per-command state update is *not* necessary here because
-    // the `BaseCommand` class' `run` method automatically updates
-    // the per-command state with updated values *after* executing
-    // this discovery method.
+    // (4) update per-source state `lastPageNumber`
+    await this.stateService.updateOne(
+      stateQuerySrc, // /!\ per-source
+      {
+        lastPageNumber: this.lastPageNumber,
+        sync: isSynchronized,
+      },
+    );
 
     // no-return (void)
   }
