@@ -193,11 +193,11 @@ export class MockModel {
       exec: () => jest.fn(),
     };
   }
-  deleteOne() {
-    return {
-      exec: () => jest.fn(),
-    };
-  }
+  // deleteOne() {
+  //   return {
+  //     exec: () => jest.fn(),
+  //   };
+  // }
   static findOneAndUpdate() {
     return {
       exec: () => jest.fn(),

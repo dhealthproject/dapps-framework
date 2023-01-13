@@ -11,7 +11,7 @@
 // calls to actual SHA3/Keccak algorithms.
 const sha3_256_call = jest.fn().mockReturnValue("fakeHash");
 jest.mock("js-sha3", () => ({
-  sha3_256: sha3_256_call
+  sha3_256: sha3_256_call,
 }));
 
 // external dependencies
@@ -135,17 +135,17 @@ describe("common/OAuthService", () => {
       (oauthService as any).getEncryptionSeed(
         {
           address: "fake-address",
-          authorizationHash: "fake-authorization"
+          authorizationHash: "fake-authorization",
         } as AccountIntegrationDocument,
         "other-identifier",
       );
 
       expect(sha3_256_call).toHaveBeenCalledTimes(1);
       expect(sha3_256_call).toHaveBeenCalledWith(
-        "test-secret-" + 
-        "fake-address" +
-        "other-identifier" +
-        "fake-authorization"
+        "test-secret-" +
+          "fake-address" +
+          "other-identifier" +
+          "fake-authorization",
       );
     });
   });
@@ -159,8 +159,8 @@ describe("common/OAuthService", () => {
           client_secret: "fake-secret-3",
           oauth_url: "fake-oauth-url-3",
           callback_url: "fake-callback-url-3",
-          scope: "fake-scope"
-        })
+          scope: "fake-scope",
+        }),
       };
       const expected =
         "fake-oauth-url-3" + // L32
@@ -188,8 +188,8 @@ describe("common/OAuthService", () => {
           client_secret: "fake-secret-3",
           oauth_url: "fake-oauth-url-3",
           callback_url: "fake-callback-url-3",
-          scope: "fake-scope"
-        })
+          scope: "fake-scope",
+        }),
       };
       const expected =
         "fake-oauth-url-3" + // L32
@@ -199,10 +199,7 @@ describe("common/OAuthService", () => {
         "&scope=fake-scope";
 
       // act
-      const actual = oauthService.getAuthorizeURL(
-        "basic",
-        "fake-address",
-      );
+      const actual = oauthService.getAuthorizeURL("basic", "fake-address");
 
       // assert
       expect(actual).toBe(expected);
@@ -218,13 +215,14 @@ describe("common/OAuthService", () => {
           client_secret: "fake-secret-2",
           oauth_url: "http://example.com/oauth",
           callback_url: callbackUrl,
-          scope: "fake-scope"
-        })
+          scope: "fake-scope",
+        }),
       };
       const expected =
         "http://example.com/oauth" + // L26
         "?client_id=fake-id-2" +
-        "&redirect_uri=" + encodedUrl +
+        "&redirect_uri=" +
+        encodedUrl +
         "&state=fake-address:fake-referral" +
         "&scope=fake-scope";
 
@@ -242,21 +240,23 @@ describe("common/OAuthService", () => {
     it("should use Strava OAuth Driver given config", () => {
       // prepare
       const callbackUrl = "http://localhost:8080/oauth/strava/link";
-      const encodedUrl = "http%3A%2F%2Flocalhost%3A8080%2Foauth%2Fstrava%2Flink";
+      const encodedUrl =
+        "http%3A%2F%2Flocalhost%3A8080%2Foauth%2Fstrava%2Flink";
       (oauthService as any).configService = {
         get: jest.fn().mockReturnValue({
           client_id: "123456",
           client_secret: "VerySecretMessage",
           oauth_url: "https://www.strava.com/oauth/authorize",
           callback_url: callbackUrl,
-          scope: "activity:read_all"
-        })
+          scope: "activity:read_all",
+        }),
       };
 
       const expected =
         "https://www.strava.com/oauth/authorize" + // L20
         "?client_id=123456" +
-        "&redirect_uri=" + encodedUrl +
+        "&redirect_uri=" +
+        encodedUrl +
         "&state=fake-address:fake-referral" +
         // strava-only fields
         "&response_type=code" +
@@ -282,7 +282,7 @@ describe("common/OAuthService", () => {
       // getIntegration uses `queryService.findOne` so we mock
       // it here as this must be tested in QueryService tests.
       (oauthService as any).queryService = {
-        findOne: findOneMock
+        findOne: findOneMock,
       };
 
       findOneMock.mockClear();
@@ -290,43 +290,43 @@ describe("common/OAuthService", () => {
 
     it("should use correct database query parameters", () => {
       // act
-      oauthService.getIntegration(
-        "strava",
-        "fake-address",
-      );
+      oauthService.getIntegration("strava", "fake-address");
 
       // assert
       expect(findOneMock).toHaveBeenCalledTimes(1);
-      expect(findOneMock).toHaveBeenCalledWith(new AccountIntegrationQuery({
-        name: "strava",
-        address: "fake-address",
-      } as AccountIntegrationDocument), (oauthService as any).model);
+      expect(findOneMock).toHaveBeenCalledWith(
+        new AccountIntegrationQuery({
+          name: "strava",
+          address: "fake-address",
+        } as AccountIntegrationDocument),
+        (oauthService as any).model,
+      );
     });
 
     it("should accept any provider name & remote identifier in string format", () => {
       // act
-      oauthService.getIntegration(
-        "other",
-        "fake-address",
-      );
+      oauthService.getIntegration("other", "fake-address");
 
       // assert
       expect(findOneMock).toHaveBeenCalledTimes(1);
-      expect(findOneMock).toHaveBeenCalledWith(new AccountIntegrationQuery({
-        name: "other",
-        address: "fake-address",
-      } as AccountIntegrationDocument), (oauthService as any).model);
+      expect(findOneMock).toHaveBeenCalledWith(
+        new AccountIntegrationQuery({
+          name: "other",
+          address: "fake-address",
+        } as AccountIntegrationDocument),
+        (oauthService as any).model,
+      );
     });
 
     it("should return query result given document exists", async () => {
       // prepare
       const expectedResult = {
         address: "fake-address",
-        name: "strava"
+        name: "strava",
       } as AccountIntegrationDocument;
       const customFindOneMock = jest.fn().mockReturnValue(expectedResult);
       (oauthService as any).queryService = {
-        findOne: customFindOneMock
+        findOne: customFindOneMock,
       };
 
       // act
@@ -347,7 +347,7 @@ describe("common/OAuthService", () => {
       // getIntegrations uses `queryService.find` so we mock
       // it here as this must be tested in QueryService tests.
       (oauthService as any).queryService = {
-        find: findMock
+        find: findMock,
       };
 
       findMock.mockClear();
@@ -355,45 +355,53 @@ describe("common/OAuthService", () => {
 
     it("should use correct database query parameters", async () => {
       // act
-      await oauthService.getIntegrations(
-        { address: "fake-address" } as AccountDocument,
-      );
+      await oauthService.getIntegrations({
+        address: "fake-address",
+      } as AccountDocument);
 
       // assert
       expect(findMock).toHaveBeenCalledTimes(1);
-      expect(findMock).toHaveBeenCalledWith(new AccountIntegrationQuery({
-        address: "fake-address",
-      } as AccountIntegrationDocument), (oauthService as any).model);
+      expect(findMock).toHaveBeenCalledWith(
+        new AccountIntegrationQuery({
+          address: "fake-address",
+        } as AccountIntegrationDocument),
+        (oauthService as any).model,
+      );
     });
 
     it("should accept any address in string format", async () => {
       // act
-      await oauthService.getIntegrations(
-        { address: "another-fake-address" } as AccountDocument,
-      );
+      await oauthService.getIntegrations({
+        address: "another-fake-address",
+      } as AccountDocument);
 
       // assert
       expect(findMock).toHaveBeenCalledTimes(1);
-      expect(findMock).toHaveBeenCalledWith(new AccountIntegrationQuery({
-        address: "another-fake-address",
-      } as AccountIntegrationDocument), (oauthService as any).model);
+      expect(findMock).toHaveBeenCalledWith(
+        new AccountIntegrationQuery({
+          address: "another-fake-address",
+        } as AccountIntegrationDocument),
+        (oauthService as any).model,
+      );
     });
 
     it("should return query result given document(s) exist", async () => {
       // prepare
-      const expectedResult = new PaginatedResultDTO([{
-        address: "fake-address",
-        name: "strava"
-      } as AccountIntegrationDocument]);
+      const expectedResult = new PaginatedResultDTO([
+        {
+          address: "fake-address",
+          name: "strava",
+        } as AccountIntegrationDocument,
+      ]);
       const customFindMock = jest.fn().mockReturnValue(expectedResult);
       (oauthService as any).queryService = {
-        find: customFindMock
+        find: customFindMock,
       };
 
       // act
-      const result = await oauthService.getIntegrations(
-        { address: "fake-address" } as AccountDocument,
-      );
+      const result = await oauthService.getIntegrations({
+        address: "fake-address",
+      } as AccountDocument);
 
       // assert
       expect(customFindMock).toHaveBeenCalledTimes(1);
@@ -407,7 +415,7 @@ describe("common/OAuthService", () => {
       // updateIntegration uses `queryService.createOrUpdate` so we mock
       // it here as this must be tested in QueryService tests.
       (oauthService as any).queryService = {
-        createOrUpdate: createOrUpdateMock
+        createOrUpdate: createOrUpdateMock,
       };
 
       createOrUpdateMock.mockClear();
@@ -415,64 +423,58 @@ describe("common/OAuthService", () => {
 
     it("should use correct database parameters", async () => {
       // act
-      await oauthService.updateIntegration(
-        "strava",
-        "fake-address",
-        { testing: "fields" }
-      );
+      await oauthService.updateIntegration("strava", "fake-address", {
+        testing: "fields",
+      });
 
       // assert
       expect(createOrUpdateMock).toHaveBeenCalledTimes(1);
       expect(createOrUpdateMock).toHaveBeenCalledWith(
         new AccountIntegrationQuery({
           address: "fake-address",
-          name: "strava"
+          name: "strava",
         } as AccountIntegrationDocument), // correct query
         (oauthService as any).model, // correct model
-        { testing: "fields"}, // correct data
-        {} // empty operations
+        { testing: "fields" }, // correct data
+        {}, // empty operations
       );
     });
 
     it("should accept any provider name in string format", async () => {
       // act
-      await oauthService.updateIntegration(
-        "other",
-        "fake-address",
-        { testing: "fields" }
-      );
+      await oauthService.updateIntegration("other", "fake-address", {
+        testing: "fields",
+      });
 
       // assert
       expect(createOrUpdateMock).toHaveBeenCalledTimes(1);
       expect(createOrUpdateMock).toHaveBeenCalledWith(
         new AccountIntegrationQuery({
           address: "fake-address",
-          name: "other" // <--- modified
+          name: "other", // <--- modified
         } as AccountIntegrationDocument), // correct query
         (oauthService as any).model, // correct model
-        { testing: "fields"}, // correct data
-        {} // empty operations
+        { testing: "fields" }, // correct data
+        {}, // empty operations
       );
     });
 
     it("should accept any address in string format", async () => {
       // act
-      await oauthService.updateIntegration(
-        "other",
-        "another-fake-address",
-        { testing: "fields" }
-      );
+      await oauthService.updateIntegration("other", "another-fake-address", {
+        testing: "fields",
+      });
 
       // assert
       expect(createOrUpdateMock).toHaveBeenCalledTimes(1);
       expect(createOrUpdateMock).toHaveBeenCalledWith(
         new AccountIntegrationQuery({
           address: "another-fake-address",
-          name: "other" // <--- modified
+          name: "other", // <--- modified
         } as AccountIntegrationDocument), // correct query
         (oauthService as any).model, // correct model
-        { testing: "fields"}, // correct data
-        {} // empty operations
+        { testing: "fields" }, // correct data
+        {}, // empty operations
       );
     });
 
@@ -480,16 +482,21 @@ describe("common/OAuthService", () => {
       // prepare
       const providerName: string = "test-provider-name";
       const data: Record<string, any> = { authorizeUrl: "test-url" };
-      const expectedResult = { address: "fake-address" } as AccountIntegrationDocument;
+      const expectedResult = {
+        address: "fake-address",
+      } as AccountIntegrationDocument;
       const queryServiceCreateOrUpdateCall = jest
-        .fn().mockResolvedValue(expectedResult);
+        .fn()
+        .mockResolvedValue(expectedResult);
       (oauthService as any).queryService = {
         createOrUpdate: queryServiceCreateOrUpdateCall,
       };
 
       // act
       const result = await (oauthService as any).updateIntegration(
-        providerName, "fake-address", data
+        providerName,
+        "fake-address",
+        data,
       );
 
       // assert
@@ -516,28 +523,28 @@ describe("common/OAuthService", () => {
 
   describe("oauthCallback()", () => {
     const theAuthorization = {
-            address: "fake-address",
-            name: "fake-provider",
-            remoteIdentifier: "fake-identifier",
-            authorizationHash: "fake-authhash",
-          } as AccountIntegrationDocument,
-          getIntegrationMock = jest.fn().mockReturnValue(theAuthorization),
-          getProviderMock = jest.fn(),
-          getAccessTokenMock = jest.fn().mockReturnValue({
-            remoteIdentifier: "fake-identifier",
-            accessToken: "fake-access-token",
-            refreshToken: "fake-refresh-token"
-          }),
-          driverFactoryMock = jest.fn().mockReturnValue({
-            getAccessToken: getAccessTokenMock
-          }),
-          getEncryptionSeedMock = jest.fn().mockReturnValue(
-            "fake-insecure-encryption-seed"
-          ),
-          updateIntegrationMock = jest.fn(),
-          validCallbackRequest = new OAuthCallbackRequest();
+        address: "fake-address",
+        name: "fake-provider",
+        remoteIdentifier: "fake-identifier",
+        authorizationHash: "fake-authhash",
+      } as AccountIntegrationDocument,
+      getIntegrationMock = jest.fn().mockReturnValue(theAuthorization),
+      getProviderMock = jest.fn(),
+      getAccessTokenMock = jest.fn().mockReturnValue({
+        remoteIdentifier: "fake-identifier",
+        accessToken: "fake-access-token",
+        refreshToken: "fake-refresh-token",
+      }),
+      driverFactoryMock = jest.fn().mockReturnValue({
+        getAccessToken: getAccessTokenMock,
+      }),
+      getEncryptionSeedMock = jest
+        .fn()
+        .mockReturnValue("fake-insecure-encryption-seed"),
+      updateIntegrationMock = jest.fn(),
+      validCallbackRequest = new OAuthCallbackRequest();
     validCallbackRequest.identifier = "fake-identifier";
-    validCallbackRequest.scope = "fake-scope";
+    validCallbackRequest.scope = "read,activity:read_all";
     validCallbackRequest.code = "fake-code";
     validCallbackRequest.state = "fake-state";
     beforeEach(() => {
@@ -570,7 +577,7 @@ describe("common/OAuthService", () => {
           { address: "fake-address" } as AccountDocument,
           validCallbackRequest,
         );
-      } catch(e: any) {
+      } catch (e: any) {
         // assert
         expect(e instanceof HttpException).toBe(true);
         expect("status" in e).toBe(true);
@@ -592,7 +599,10 @@ describe("common/OAuthService", () => {
       expect(getProviderMock).toHaveBeenCalledTimes(1);
       expect(driverFactoryMock).toHaveBeenCalledTimes(1);
       expect(getProviderMock).toHaveBeenCalledWith("fake-provider");
-      expect(driverFactoryMock).toHaveBeenCalledWith("fake-provider", undefined);
+      expect(driverFactoryMock).toHaveBeenCalledWith(
+        "fake-provider",
+        undefined,
+      );
     });
 
     it("should create encryption seed from integration", async () => {
@@ -605,7 +615,10 @@ describe("common/OAuthService", () => {
 
       // assert
       expect(getEncryptionSeedMock).toHaveBeenCalledTimes(1);
-      expect(getEncryptionSeedMock).toHaveBeenCalledWith(theAuthorization, "fake-identifier");
+      expect(getEncryptionSeedMock).toHaveBeenCalledWith(
+        theAuthorization,
+        "fake-identifier",
+      );
     });
 
     it("should update integration entry with encrypted tokens", async () => {
@@ -617,7 +630,7 @@ describe("common/OAuthService", () => {
       const encryptMock = jest.fn().mockReturnValue("fake-encrypted-payload");
       (oauthService as any).cipher = {
         encrypt: encryptMock,
-      }
+      };
 
       // act
       await oauthService.oauthCallback(
@@ -632,7 +645,7 @@ describe("common/OAuthService", () => {
       expect(updateIntegrationMock).toHaveBeenCalledWith(
         "fake-provider",
         "fake-address",
-        expectedAccessTokenDTO
+        expectedAccessTokenDTO,
       );
     });
   });
@@ -649,20 +662,18 @@ describe("common/OAuthService", () => {
       getProviderMock = jest.fn(),
       updateAccessTokenMock = jest.fn().mockReturnValue({
         accessToken: "fake-updated-access-token",
-        refreshToken: "fake-updated-refresh-token"
+        refreshToken: "fake-updated-refresh-token",
       }),
       driverFactoryMock = jest.fn().mockReturnValue({
-        updateAccessToken: updateAccessTokenMock
+        updateAccessToken: updateAccessTokenMock,
       }),
-      getEncryptionSeedMock = jest.fn().mockReturnValue(
-        "fake-insecure-encryption-seed"
-      ),
-      cipherDecryptMock = jest.fn().mockReturnValue(
-        "fake-decrypted-refresh-token",
-      ),
-      cipherEncryptMock = jest.fn().mockReturnValue(
-        "fake-encrypted-token",
-      ),
+      getEncryptionSeedMock = jest
+        .fn()
+        .mockReturnValue("fake-insecure-encryption-seed"),
+      cipherDecryptMock = jest
+        .fn()
+        .mockReturnValue("fake-decrypted-refresh-token"),
+      cipherEncryptMock = jest.fn().mockReturnValue("fake-encrypted-token"),
       updateIntegrationMock = jest.fn();
     beforeEach(() => {
       // following methods are necessary for the `refreshAccessToken()`
@@ -697,11 +708,8 @@ describe("common/OAuthService", () => {
 
       // act
       try {
-        await oauthService.refreshAccessToken(
-          "strava",
-          nullAuthorizationMock,
-        );
-      } catch(e: any) {
+        await oauthService.refreshAccessToken("strava", nullAuthorizationMock);
+      } catch (e: any) {
         // assert
         expect(e instanceof HttpException).toBe(true);
         expect("status" in e).toBe(true);
@@ -713,22 +721,19 @@ describe("common/OAuthService", () => {
 
     it("should create encryption seed from integration", async () => {
       // act
-      await oauthService.refreshAccessToken(
-        "fake-provider",
-        theAuthorization,
-      );
+      await oauthService.refreshAccessToken("fake-provider", theAuthorization);
 
       // assert
       expect(getEncryptionSeedMock).toHaveBeenCalledTimes(1);
-      expect(getEncryptionSeedMock).toHaveBeenCalledWith(theAuthorization, "fake-identifier");
+      expect(getEncryptionSeedMock).toHaveBeenCalledWith(
+        theAuthorization,
+        "fake-identifier",
+      );
     });
 
     it("should decrypt refresh token from integration document", async () => {
       // act
-      await oauthService.refreshAccessToken(
-        "fake-provider",
-        theAuthorization,
-      );
+      await oauthService.refreshAccessToken("fake-provider", theAuthorization);
 
       // assert
       expect(cipherDecryptMock).toHaveBeenCalledTimes(1);
@@ -740,31 +745,28 @@ describe("common/OAuthService", () => {
 
     it("should use correct provider to load OAuth driver", async () => {
       // act
-      await oauthService.refreshAccessToken(
-        "fake-provider",
-        theAuthorization,
-      );
+      await oauthService.refreshAccessToken("fake-provider", theAuthorization);
 
       // assert
       expect(getProviderMock).toHaveBeenCalledTimes(1);
       expect(driverFactoryMock).toHaveBeenCalledTimes(1);
       expect(getProviderMock).toHaveBeenCalledWith("fake-provider");
-      expect(driverFactoryMock).toHaveBeenCalledWith("fake-provider", undefined);
+      expect(driverFactoryMock).toHaveBeenCalledWith(
+        "fake-provider",
+        undefined,
+      );
     });
 
     it("should use correct refresh token for updateAccessToken call", async () => {
       // act
-      await oauthService.refreshAccessToken(
-        "fake-provider",
-        theAuthorization,
-      );
+      await oauthService.refreshAccessToken("fake-provider", theAuthorization);
 
       // assert
       expect(getEncryptionSeedMock).toHaveBeenCalledTimes(1);
       expect(cipherDecryptMock).toHaveBeenCalledTimes(1);
       expect(updateAccessTokenMock).toHaveBeenCalledTimes(1);
       expect(updateAccessTokenMock).toHaveBeenCalledWith(
-        "fake-decrypted-refresh-token"
+        "fake-decrypted-refresh-token",
       );
     });
 
@@ -775,15 +777,12 @@ describe("common/OAuthService", () => {
           refreshToken: "new-refresh-token",
         }),
         fakeDriverFactoryMock = jest.fn().mockReturnValue({
-          updateAccessToken: fakeResultUpdateAccessTokenMock
+          updateAccessToken: fakeResultUpdateAccessTokenMock,
         });
       (oauthService as any).driverFactory = fakeDriverFactoryMock;
 
       // act
-      await oauthService.refreshAccessToken(
-        "fake-provider",
-        theAuthorization,
-      );
+      await oauthService.refreshAccessToken("fake-provider", theAuthorization);
 
       // assert
       expect(cipherEncryptMock).toHaveBeenCalledTimes(2);
@@ -820,12 +819,12 @@ describe("common/OAuthService", () => {
       driverFactoryMock = jest.fn().mockReturnValue({
         executeRequest: executeRequestMock,
       }),
-      getEncryptionSeedMock = jest.fn().mockReturnValue(
-        "fake-insecure-encryption-seed"
-      ),
-      cipherDecryptMock = jest.fn().mockReturnValue(
-        "fake-decrypted-access-token",
-      );
+      getEncryptionSeedMock = jest
+        .fn()
+        .mockReturnValue("fake-insecure-encryption-seed"),
+      cipherDecryptMock = jest
+        .fn()
+        .mockReturnValue("fake-decrypted-access-token");
     beforeEach(() => {
       // following methods are necessary for the `refreshAccessToken()`
       // method and are therefor *mocked* here. These must be tested
@@ -861,7 +860,7 @@ describe("common/OAuthService", () => {
           "/custom/api/endpoint",
           nullAuthorizationMock,
         );
-      } catch(e: any) {
+      } catch (e: any) {
         // assert
         expect(e instanceof HttpException).toBe(true);
         expect("status" in e).toBe(true);
@@ -873,13 +872,10 @@ describe("common/OAuthService", () => {
 
     it("should refresh access token given expired token", async () => {
       // act
-      await oauthService.callProviderAPI(
-        "/custom/api/endpoint",
-        {
-          ...theAuthorization,
-          expiresAt: Date.UTC(2021, 1, 1).valueOf(),
-        } as AccountIntegrationDocument,
-      );
+      await oauthService.callProviderAPI("/custom/api/endpoint", {
+        ...theAuthorization,
+        expiresAt: Date.UTC(2021, 1, 1).valueOf(),
+      } as AccountIntegrationDocument);
 
       // assert
       expect(refreshAccessTokenMock).toHaveBeenCalledTimes(1);
@@ -911,7 +907,10 @@ describe("common/OAuthService", () => {
       expect(getProviderMock).toHaveBeenCalledTimes(1);
       expect(driverFactoryMock).toHaveBeenCalledTimes(1);
       expect(getProviderMock).toHaveBeenCalledWith("fake-provider");
-      expect(driverFactoryMock).toHaveBeenCalledWith("fake-provider", undefined);
+      expect(driverFactoryMock).toHaveBeenCalledWith(
+        "fake-provider",
+        undefined,
+      );
     });
 
     it("should use correct access token for executeRequest call", async () => {
@@ -930,7 +929,9 @@ describe("common/OAuthService", () => {
         "/custom/api/endpoint",
         "GET",
         // no-body, no-options, no-headers
-        undefined, undefined, undefined,
+        undefined,
+        undefined,
+        undefined,
       );
     });
 
@@ -965,12 +966,12 @@ describe("common/OAuthService", () => {
 
   describe("extractProviderEntity()", () => {
     let getProviderMock = jest.fn(),
-        getEntityDefinitionMock = jest.fn().mockReturnValue({
-          fake: "entity",
-        }),
-        driverFactoryMock = jest.fn().mockReturnValue({
-          getEntityDefinition: getEntityDefinitionMock
-        });
+      getEntityDefinitionMock = jest.fn().mockReturnValue({
+        fake: "entity",
+      }),
+      driverFactoryMock = jest.fn().mockReturnValue({
+        getEntityDefinition: getEntityDefinitionMock,
+      });
     beforeEach(() => {
       // following methods are necessary for the `extractProviderEntity()`
       // method and are therefor *mocked* here. These must be tested
@@ -989,11 +990,7 @@ describe("common/OAuthService", () => {
       const expectedType = OAuthEntityType.Custom;
 
       // act
-      oauthService.extractProviderEntity(
-        "basic",
-        expectedData,
-        expectedType,
-      );
+      oauthService.extractProviderEntity("basic", expectedData, expectedType);
 
       // assert
       expect(getProviderMock).toHaveBeenCalledTimes(1);
@@ -1009,10 +1006,7 @@ describe("common/OAuthService", () => {
       const expectedData = { simple: "data" };
 
       // act
-      oauthService.extractProviderEntity(
-        "basic",
-        expectedData,
-      );
+      oauthService.extractProviderEntity("basic", expectedData);
 
       // assert
       expect(getProviderMock).toHaveBeenCalledTimes(1);
@@ -1031,7 +1025,7 @@ describe("common/OAuthService", () => {
       const remoteIdentifierParamValue = "test-remoteIdentifier";
       const findOneMock = jest.fn();
       (oauthService as any).queryService = {
-        findOne: findOneMock
+        findOne: findOneMock,
       };
 
       // act
@@ -1048,7 +1042,7 @@ describe("common/OAuthService", () => {
           remoteIdentifier: remoteIdentifierParamValue,
         } as AccountIntegrationDocument),
         MockModel,
-      )
+      );
     });
   });
 });

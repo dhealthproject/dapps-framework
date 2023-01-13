@@ -195,19 +195,16 @@ export class OAuthController {
     const account: AccountDocument = await this.authService.getAccount(req);
 
     try {
-      // if scope not contains read_all - throw an exception
-      if (query.scope !== "read,activity:read_all") {
-        throw new HttpException("Bad Request", HttpStatus.BAD_REQUEST);
-      }
-
       // requests an access token from the OAuth provider
       await this.oauthService.oauthCallback(provider, account, query);
 
       // create a "success" status response
       return StatusDTO.create(200);
     } catch (e) {
-      this.oauthService.deleteIntegration(provider, account.address);
-      if (e instanceof HttpException) throw e;
+      if (e instanceof HttpException) {
+        this.oauthService.deleteIntegration(provider, account.address);
+        throw e;
+      }
       throw new HttpException("Bad Request", HttpStatus.BAD_REQUEST);
     }
   }

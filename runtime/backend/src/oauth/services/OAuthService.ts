@@ -62,6 +62,12 @@ export class OAuthService {
     >,
     private readonly cipher: CipherService,
   ) {}
+  /**
+   * This property represents valid scope
+   * received from provider.
+   *
+   */
+  expectedScope = "read,activity:read_all";
 
   /**
    * This method determines and creates an OAuth driver
@@ -201,6 +207,10 @@ export class OAuthService {
     );
     if (!integration || !("address" in integration)) {
       throw new HttpException(`Forbidden`, 403);
+    }
+    // if scope not contains read_all - throw an exception
+    if (request && request.scope !== this.expectedScope) {
+      throw new HttpException(`Unauthorized`, 401);
     }
 
     // reads OAuth provider from configuration
