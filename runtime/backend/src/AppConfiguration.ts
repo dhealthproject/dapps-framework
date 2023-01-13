@@ -15,6 +15,7 @@ import { DynamicModule } from "@nestjs/common";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { Account, Address, PublicAccount } from "@dhealth/sdk";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
+import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 
 // internal dependencies
 import { ConfigurationError } from "./common/errors/ConfigurationError";
@@ -468,6 +469,13 @@ export class AppConfiguration {
             } as SMTPTransport.Options,
             defaults: {
               from: mailConfig.from,
+            },
+            template: {
+              dir: __dirname + "/notifier/templates/",
+              adapter: new HandlebarsAdapter(), // or new PugAdapter()
+              options: {
+                strict: true,
+              },
             },
           };
         },

@@ -38,10 +38,8 @@ describe("notifier/AlertNotifier", () => {
       providers: [
         AlertNotifier,
         EventEmitter2, // requirement from AlertNotifier
-        DappHelper, // requirement from AlertNotifier
         NotifierFactory, // requirement from AlertNotifier
         EmailNotifier, // requirement from AlertNotifier
-        ConfigService, // requirement from DappHelper
         NetworkService, // requirement from DappHelper
         MailerService, // requirement from EmailNotifier
         {
@@ -72,7 +70,6 @@ describe("notifier/AlertNotifier", () => {
     service = module.get<AlertNotifier>(AlertNotifier);
     configService = module.get<ConfigService>(ConfigService);
     notifierFactory = module.get<NotifierFactory>(NotifierFactory);
-    dappHelper = module.get<DappHelper>(DappHelper);
   });
 
   it("should be defined", () => {
@@ -92,9 +89,6 @@ describe("notifier/AlertNotifier", () => {
       const notifierSendInternalCall = jest
         .spyOn(notifier, "sendInternal")
         .mockResolvedValue();
-      const dappHelperCreateDetailsTableHTMLCall = jest
-        .spyOn(dappHelper, "createDetailsTableHTML")
-        .mockReturnValue("test-html-content");
       const alertEvent: AlertEvent = AlertEvent.create(
         new Date(),
         "warn",
@@ -109,7 +103,6 @@ describe("notifier/AlertNotifier", () => {
 
       // assert
       expect(configServiceGetCall).toHaveBeenCalledTimes(0);
-      expect(dappHelperCreateDetailsTableHTMLCall).toHaveBeenCalledTimes(0);
       expect(notifierSendInternalCall).toHaveBeenCalledTimes(0);
     });
 
@@ -118,16 +111,16 @@ describe("notifier/AlertNotifier", () => {
       jest.clearAllMocks();
       (service as any).alertsConfig = {
         type: ["warn"],
+        transport: "mail",
+        recipient: "recipient@example.com",
       };
       const configServiceGetCall = jest
         .spyOn(configService, "get")
-        .mockReturnValue("test-name");
+        .mockReturnValueOnce("test-dapp-name")
+        .mockReturnValueOnce("test-url");
       const notifierSendInternalCall = jest
         .spyOn(notifier, "sendInternal")
         .mockResolvedValue();
-      const dappHelperCreateDetailsTableHTMLCall = jest
-        .spyOn(dappHelper, "createDetailsTableHTML")
-        .mockReturnValue("test-html-content");
       const alertEvent: AlertEvent = {
         timestamp: new Date(),
         level: "warn",
@@ -141,8 +134,23 @@ describe("notifier/AlertNotifier", () => {
 
       // assert
       expect(configServiceGetCall).toHaveBeenNthCalledWith(1, "dappName");
-      expect(dappHelperCreateDetailsTableHTMLCall).toHaveBeenNthCalledWith(1, [alertEvent]);
-      expect(notifierSendInternalCall).toHaveBeenCalledTimes(1);
+      expect(notifierSendInternalCall).toHaveBeenNthCalledWith(1, {
+        to: "recipient@example.com",
+        subject: "[test-dapp-name] WARNING on dApp (test-url) at 1212-02-01 12:00:00",
+        context: {
+          alertLevel: "WARNING",
+          dappUrl: "test-url",
+          dateFormat: "1212-02-01 12:00:00",
+          details: {
+            context: "test-context",
+            level: "warn",
+            loggerContext: "test-logger-context",
+            message: "test-message",
+            timestamp: new Date(),
+          },
+        },
+        template: "AlertEmailTemplate",
+      });
     });
   });
 
@@ -159,9 +167,6 @@ describe("notifier/AlertNotifier", () => {
       const notifierSendInternalCall = jest
         .spyOn(notifier, "sendInternal")
         .mockResolvedValue();
-      const dappHelperCreateDetailsTableHTMLCall = jest
-        .spyOn(dappHelper, "createDetailsTableHTML")
-        .mockReturnValue("test-html-content");
       const alertEvent: AlertEvent = AlertEvent.create(
         new Date(),
         "error",
@@ -176,7 +181,6 @@ describe("notifier/AlertNotifier", () => {
 
       // assert
       expect(configServiceGetCall).toHaveBeenCalledTimes(0);
-      expect(dappHelperCreateDetailsTableHTMLCall).toHaveBeenCalledTimes(0);
       expect(notifierSendInternalCall).toHaveBeenCalledTimes(0);
     });
 
@@ -185,6 +189,8 @@ describe("notifier/AlertNotifier", () => {
       jest.clearAllMocks();
       (service as any).alertsConfig = {
         type: ["error"],
+        transport: "mail",
+        recipient: "recipient@example.com",
       };
       const configServiceGetCall = jest
         .spyOn(configService, "get")
@@ -192,9 +198,6 @@ describe("notifier/AlertNotifier", () => {
       const notifierSendInternalCall = jest
         .spyOn(notifier, "sendInternal")
         .mockResolvedValue();
-      const dappHelperCreateDetailsTableHTMLCall = jest
-        .spyOn(dappHelper, "createDetailsTableHTML")
-        .mockReturnValue("test-html-content");
       const alertEvent: AlertEvent = {
         timestamp: new Date(),
         level: "error",
@@ -209,8 +212,24 @@ describe("notifier/AlertNotifier", () => {
 
       // assert
       expect(configServiceGetCall).toHaveBeenNthCalledWith(1, "dappName");
-      expect(dappHelperCreateDetailsTableHTMLCall).toHaveBeenNthCalledWith(1, [alertEvent]);
-      expect(notifierSendInternalCall).toHaveBeenCalledTimes(1);
+      expect(notifierSendInternalCall).toHaveBeenNthCalledWith(1, {
+        to: "recipient@example.com",
+        subject: "[test-name] ERROR on dApp (test-name) at 1212-02-01 12:00:00",
+        context: {
+          alertLevel: "ERROR",
+          dappUrl: "test-name",
+          dateFormat: "1212-02-01 12:00:00",
+          details: {
+            context: "test-context",
+            level: "error",
+            loggerContext: "test-logger-context",
+            message: "test-message",
+            timestamp: new Date(),
+            trace: "test-trace",
+          },
+        },
+        template: "AlertEmailTemplate",
+      });
     });
   });
 });
