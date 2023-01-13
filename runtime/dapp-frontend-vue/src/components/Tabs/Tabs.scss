@@ -52,6 +52,10 @@
           font-size: 14px;
         }
 
+        @include devices(mobile) {
+          padding: 0 3px;
+        }
+
         &.active {
           background-color: $white;
           font-weight: 700;

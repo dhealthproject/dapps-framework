@@ -62,7 +62,7 @@
                 <router-link :to="link.path" v-html="link.text" />
               </li>
             </ul>
-            <UiButton :accent="true">
+            <UiButton :accent="true" @click="shareModal">
               <img :src="getImageUrl('icons/chain-icon.svg')" alt="Refer" />
               {{ $t("common.refer_friend") }}
             </UiButton>
