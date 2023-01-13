@@ -164,16 +164,15 @@ export const OAuthModule = {
     /**
      *
      */
-    deauthorize(context: OAuthModuleContext, provider: string): void {
-      // reads current state of "integrations"
-      const integrations = context.state.integrations;
-
-      // removes the integration and mutates
-      if (integrations.length && integrations.includes(provider)) {
-        context.commit(
-          "setIntegrations",
-          integrations.filter((i) => i !== provider)
-        );
+    async revoke(context: OAuthModuleContext, provider: string): Promise<void> {
+      const service = new IntegrationsService();
+      try {
+        // strava is the only provider currently
+        await service.revoke(provider);
+        await context.dispatch("auth/fetchProfile", "", { root: true });
+      } catch (e) {
+        console.log("oauth/revoke", e);
+        throw e;
       }
     },
   },

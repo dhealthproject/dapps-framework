@@ -24,8 +24,13 @@
         v-for="(integration, index) in getIntegrations"
         :key="integration + index"
         class="setting"
-        @click="removeIntegration(integration.id)"
       >
+        <inline-svg
+          :src="getImageUrl('icons/close-icon.svg')"
+          :width="24"
+          class="remove-integration"
+          @click="removeIntegration(integration)"
+        />
         <div class="container text-left">
           <div class="text-left flex flex-row justify-between items-center">
             <div class="content flex flex-row items-center">

@@ -24,12 +24,8 @@
 
   @include devices(laptop) {
     max-width: 147px;
-    font-size: 16px;
-    background-color: #fff;
-  }
-
-  @include devices(mobile) {
     font-size: 15px;
+    background-color: #fff;
   }
 
   svg {

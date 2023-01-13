@@ -58,4 +58,22 @@ export class IntegrationsService extends BackendService {
       {} // no-headers
     );
   }
+
+  /**
+   *
+   * @param params
+   * @returns
+   */
+  public async revoke(provider: string) {
+    return await this.handler.call(
+      this.getUrl(`oauth/${provider}/revoke`),
+      "DELETE",
+      undefined, // no-body
+      {
+        withCredentials: true,
+        credentials: "include",
+      },
+      {} // no-headers
+    );
+  }
 }
