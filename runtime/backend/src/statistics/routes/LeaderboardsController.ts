@@ -147,7 +147,7 @@ export class LeaderboardsController {
     );
 
     // wraps for transport
-    return new PaginatedResultDTO<StatisticsDTO>(
+    return PaginatedResultDTO.create<StatisticsDTO>(
       data.data.map((d: StatisticsDocument) => {
         return Statistics.fillDTO(d, new StatisticsDTO());
       }),

@@ -192,12 +192,7 @@ export class QueryService<
     };
 
     // returns wrapped entity page
-    // @todo move to static factory
-    const result: PaginatedResultDTO<TDocument> =
-      new PaginatedResultDTO<TDocument>();
-    result.data = data;
-    result.pagination = pagination;
-    return result;
+    return PaginatedResultDTO.create<TDocument>(data, pagination);
   }
 
   /**
@@ -410,12 +405,7 @@ export class QueryService<
       T4thDocument;
 
     // returns wrapped entity page
-    // @todo move to static factory
-    const result: PaginatedResultDTO<TResultDocument> =
-      new PaginatedResultDTO<TResultDocument>();
-    result.data = data;
-    result.pagination = pagination;
-    return result;
+    return PaginatedResultDTO.create<TResultDocument>(data, pagination);
   }
 
   /**

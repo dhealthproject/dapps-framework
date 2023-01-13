@@ -114,7 +114,7 @@ export class OperationsController {
     );
 
     // wraps for transport
-    return new PaginatedResultDTO<OperationDTO>(
+    return PaginatedResultDTO.create<OperationDTO>(
       data.data.map((d: OperationDocument) =>
         Operation.fillDTO(d, new OperationDTO()),
       ),

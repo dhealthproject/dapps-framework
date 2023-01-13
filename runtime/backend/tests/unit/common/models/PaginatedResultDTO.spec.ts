@@ -31,6 +31,22 @@ describe("common/PaginatedResultDTO", () => {
       expect(paginatedResultDto.pagination.pageNumber).toEqual(1);
     });
 
+    it("should create with default data value", () => {
+      // prepare
+      const pagination = {
+        pageNumber: -1,
+        pageSize: -1,
+        total: 1,
+      };
+
+      // act
+      const paginatedResultDto = new PaginatedResultDTO(undefined, pagination);
+
+      // assert
+      expect(paginatedResultDto.data).toEqual([]);
+      expect(paginatedResultDto.pagination.pageNumber).toEqual(1);
+    });
+
     it("should create with default pagination values", () => {
       // prepare
       const data = ["data1", "data2"];

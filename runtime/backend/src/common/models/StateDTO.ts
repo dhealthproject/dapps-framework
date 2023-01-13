@@ -11,7 +11,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 // internal dependencies
-import { StateData } from "./StateData";
 import { BaseDTO } from "./BaseDTO";
 
 /**
@@ -47,22 +46,19 @@ export class StateDTO extends BaseDTO {
   public name: string;
 
   /**
-   * Contains the actual state cache data. This field is usually
-   * populated or updated within a service class.
+   * Contains the actual state cache data's hash.
    * <br /><br />
-   * This field can hold **any** type of information as it extends
-   * the `Record<string, any>` type to permit greater flexibility
-   * around state cache entries.
+   * The content is hashed with SHA3-256 to prevent revealing actual
+   * state data to the client.
    *
-   * @todo We probably don't want this data to be as public, instead should be the "cache hash".
    * @access public
    * @var {string}
    */
   @ApiProperty({
-    type: Object,
-    example: { stateKey1: 1, stateKey2: "value2", stateKey3: true },
+    type: "string",
+    example: "",
     description:
-      "Contains the actual state cache data. This field is usually populated or updated within a service class.",
+      "Contains the actual state cache data's hash. The content is hashed with SHA3-256 to prevent revealing actual state data to the client.",
   })
-  public data: StateData;
+  public data: string;
 }

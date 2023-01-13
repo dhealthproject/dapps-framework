@@ -98,4 +98,21 @@ export class PaginatedResultDTO<TData> {
       (this.pagination.total ?? 0)
     );
   }
+
+  /**
+   * Method to dynamically create and return an instance of this class
+   * with the provided data type, data content and pagination content.
+   *
+   * @access public
+   * @static
+   * @param {TData[]} data The results returned by the query in an array of template type `TData`.
+   * @param {Pageable & Countable} pagination The pagination object, contains properties such as `pageSize`, `pageNumber` and `total`.
+   * @returns {PaginatedResultDTO<TData>}
+   */
+  public static create<TData>(
+    data: TData[],
+    pagination: Pageable & Countable,
+  ): PaginatedResultDTO<TData> {
+    return new PaginatedResultDTO<TData>(data, pagination);
+  }
 }

@@ -43,6 +43,7 @@ import { UserAggregationCommand } from "../statistics/schedulers/UserAggregation
 import { UserTopActivitiesCommand } from "../statistics/schedulers/UserTopActivities/UserTopActivitiesCommand";
 
 // notifier scope
+import { AlertsModule } from "../notifier/modules/AlertsModule";
 import { ReportNotifierCommand } from "../notifier/schedulers/ReportNotifier/ReportNotifierCommand";
 
 /**
@@ -102,7 +103,7 @@ export const Schedulers: { [key: string]: any[] } = {
     UserAggregationCommand,
     UserTopActivitiesCommand,
   ],
-  notifier: [ReportNotifierCommand.register()],
+  notifier: [AlertsModule, ReportNotifierCommand.register()],
   oauth: [],
   users: [],
 };
