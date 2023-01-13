@@ -194,9 +194,11 @@ describe("common/OAuthController", () => {
         .mockRejectedValue(expectedError);
 
       // act
-      const result = (controller as any).callback(jest.fn(), "testProvider", {
-        scope: "read,activity:read_all",
-      });
+      const result = (controller as any).callback(
+        jest.fn(),
+        "testProvider",
+        jest.fn(),
+      );
 
       // assert
       expect(result).rejects.toThrowError(expectedError);

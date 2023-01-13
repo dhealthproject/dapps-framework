@@ -230,7 +230,6 @@ export class OAuthController {
   protected async revoke(
     @NestRequest() req: Request,
     @Param("provider") provider: string,
-    @Query() query: OAuthCallbackRequest,
   ) {
     // read and decode access token, then find account in database
     const account: AccountDocument = await this.authService.getAccount(req);

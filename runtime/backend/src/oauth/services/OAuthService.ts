@@ -210,7 +210,7 @@ export class OAuthService {
     }
     // if scope not contains read_all - throw an exception
     if (request && request.scope !== this.expectedScope) {
-      throw new HttpException(`Unauthorized`, 401);
+      throw new HttpException(`Forbidden`, 403);
     }
 
     // reads OAuth provider from configuration
