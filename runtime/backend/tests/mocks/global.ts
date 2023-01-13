@@ -201,6 +201,16 @@ export class MockModel {
       exec: () => this.data,
     };
   }
+  deleteOne(query: any) {
+    return {
+      exec: async () => jest.fn(),
+    };
+  }
+  static deleteOne(query: any) {
+    return {
+      exec: async () => jest.fn(),
+    };
+  }
   aggregate(param: any) {
     return jest
       .fn((param) => ({

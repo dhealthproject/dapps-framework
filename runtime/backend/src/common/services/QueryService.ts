@@ -322,7 +322,7 @@ export class QueryService<
     query: Queryable<TDocument>,
     model: TModel,
   ): Promise<DeleteResult> {
-    return await model.findOneAndRemove(query);
+    return await model.deleteOne(query).exec();
   }
 
   /**

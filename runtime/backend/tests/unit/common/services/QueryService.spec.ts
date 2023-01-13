@@ -137,6 +137,11 @@ describe("common/QueryService", () => {
     findOne = jest.fn();
     count = jest.fn();
     findOneAndUpdate = jest.fn();
+    deleteOne(query: any) {
+      return {
+        exec: async () => jest.fn(),
+      };
+    }
     collection = {
       initializeUnorderedBulkOp: jest.fn(),
     };
@@ -452,11 +457,11 @@ describe("common/QueryService", () => {
 
   describe("deleteOne", () => {
     it("should delete entry", async () => {
-      const mockDeleteCall = jest.fn();
-      const model = new MockModel();
+      const mockDeleteCall = jest.fn().mockReturnValue({ exec: async () => jest.fn() });
+      const model = new MockModel("a");
       (model as any).deleteOne = mockDeleteCall;
 
-      await service.deleteOne({} as any, {});
+      await service.deleteOne({ findOneAndRemove: jest.fn() } as any, model);
 
       expect(mockDeleteCall).toHaveBeenCalledTimes(1);
     });
