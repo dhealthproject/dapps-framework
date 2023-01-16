@@ -55,7 +55,7 @@
           </div>
         </div>
       </div>
-      <UiButton :disabled="!legalAccepted" :to="{ name: 'app.login' }">{{
+      <UiButton :disabled="!legalAccepted" @click="handleAccept">{{
         legalData.button
       }}</UiButton>
     </div>

@@ -45,6 +45,14 @@ export default class LegalDisclaimer extends MetaView {
    */
   legalAccepted = false;
 
+  /**
+   * This computed returns
+   * current configuration of the legal page
+   * configuration is getting according to route name
+   *
+   * @access public
+   * @returns {any}
+   */
   get legalData() {
     const currentKey = this.$route.name?.split(".")[1];
     const currentLegalItem = this.$t(`legal.${currentKey}`);
@@ -53,5 +61,24 @@ export default class LegalDisclaimer extends MetaView {
     }
 
     return this.$t("legal.terms-and-conditions");
+  }
+
+  /**
+   * This method handles submitting
+   * of accepted documents.
+   *
+   * @access public
+   * @returns {void}
+   */
+  public handleAccept() {
+    // temporary storing of accepted Terms and Conditions in localStorage
+    // @todo discuss the way of storing accepted Terms and Conditions
+    const currentKey = this.$route.name?.split(".")[1];
+    localStorage.setItem(
+      `${currentKey}_accepted`,
+      JSON.stringify(this.legalAccepted)
+    );
+
+    this.$router.push({ name: "app.login" });
   }
 }

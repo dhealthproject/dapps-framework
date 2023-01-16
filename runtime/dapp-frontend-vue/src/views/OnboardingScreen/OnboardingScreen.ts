@@ -115,7 +115,13 @@ export default class OnboardingScreen extends MetaView {
       route: this.$route.name,
       refCode: this.refCode,
     });
-    this.$router.push({ name: "legal.terms-and-conditions" });
+    const termsAccepted = !!JSON.parse(
+      localStorage.getItem("terms-and-conditions_accepted") as string
+    );
+
+    termsAccepted
+      ? this.$router.push({ name: "app.login" })
+      : this.$router.push({ name: "legal.terms-and-conditions" });
   }
 
   /**
