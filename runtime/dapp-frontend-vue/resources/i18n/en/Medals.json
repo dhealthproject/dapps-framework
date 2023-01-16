@@ -1,0 +1,15 @@
+{
+    "medals": {
+        "badge_title": "My Badge",
+        "badge_description": "Keep recording your exercise efforts",
+        "medal_condition": "Condition:",
+        "medal_activities": "Eligible Activities:",
+        "medal_board": " Medal Board",
+        "referrals_title": "Referral",
+        "referrals_description": "Invite your friends to join and earn more medal!",
+        "distance_title": "Distance",
+        "distance_description": "Start workout and reach the target distance!",
+        "month_title": "Breast Cancer Month",
+        "month_description": "workout during the Breast Cancer Month to get special medals!"
+    }
+}

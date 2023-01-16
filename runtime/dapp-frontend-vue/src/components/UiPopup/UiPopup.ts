@@ -25,7 +25,7 @@ export interface ModalConfig {
   keepOnBgClick?: boolean;
   overlayColor?: string;
   modalBg?: string;
-  type: "form" | "notification" | "share";
+  type: "form" | "notification" | "share" | "medal";
   title?: string;
   width: number;
   fields?: any[];
@@ -33,6 +33,9 @@ export interface ModalConfig {
   description?: string;
   illustration?: string;
   shareNetworks?: SocialPlatformDTO[];
+  condition?: string;
+  activities?: string;
+  medal?: string;
 }
 
 // styles source

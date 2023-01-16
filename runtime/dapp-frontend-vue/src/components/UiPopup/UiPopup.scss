@@ -164,5 +164,48 @@
         }
       }
     }
+
+    &__medal {
+      padding: 190px 56px 66px 56px;
+      border-radius: 41px;
+      position: relative;
+      border: 2px solid $black;
+
+      .medal-image {
+        position: absolute;
+        top: -18%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 235px;
+        height: auto;
+      }
+
+      .medal-details {
+        background-color: $stats-teal-light;
+        padding: 23px 52px;
+        border-radius: 20px;
+
+        .details-item {
+          margin-bottom: 21px;
+
+          .title {
+            font-weight: 700;
+            font-size: 35.7795px;
+            line-height: 140%;
+          }
+
+          .value {
+            font-weight: 400;
+            font-size: 30.6681px;
+            line-height: 130%;
+            padding: 0 52px;
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
   }
 }
