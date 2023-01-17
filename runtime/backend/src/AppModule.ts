@@ -21,6 +21,7 @@ import { DappConfig } from "./common/models/DappConfig";
 import { AppConfiguration } from "./AppConfiguration";
 import { LogService } from "./common/services/LogService";
 import { AbstractAppModule } from "./common/modules/AbstractAppModule";
+import { HelpersModule } from "./common/modules/HelpersModule";
 
 // configuration resources
 import dappConfigLoader from "../config/dapp";
@@ -41,7 +42,7 @@ import dappConfigLoader from "../config/dapp";
  * @since v0.1.0
  */
 @Module({
-  imports: [AccountsModule, AuthModule, ChallengesModule],
+  imports: [AccountsModule, AuthModule, ChallengesModule, HelpersModule],
 })
 export class AppModule extends AbstractAppModule {
   /**
