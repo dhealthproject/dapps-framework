@@ -372,7 +372,8 @@ export class PrepareActivityPayouts extends PreparePayouts<
     );
 
     // reads the number of referrals done by this account
-    const referrals: number = results[0].count ?? 0;
+    const referrals: number =
+      results && results.length ? results[0].count ?? 0 : 0;
 
     // reads per-level total of referrals necessary
     const refsBoost5 = this.boosterParameters["boost5"].minReferred;
