@@ -291,7 +291,16 @@ export default class LoginScreen extends MetaView {
    * @returns {string}
    */
   protected get mobileHref(): string {
-    return `dhealth://sign?payload=${encodeURIComponent(
+    // prefix is different based on whether the signer app is published
+    // through *app stores* or not (Testflight / Expo), once the signer
+    // app is in *production* mode, the correct URL can always be used
+    const urlPrefix =
+      process.env.VUE_APP_SIGNER_ENV === "production"
+        ? `dhealth://sign`
+        : `dhealth://--/sign`;
+
+    // encoding QR JSON in URL format
+    return `${urlPrefix}?payload=${encodeURIComponent(
       this.qrConfig?.toJSON() as string
     )}`;
   }

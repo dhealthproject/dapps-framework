@@ -73,10 +73,30 @@ describe("LoginScreen -->", () => {
     expect(widget.find(".login-mobile").exists()).to.be.true;
   });
 
-  it("should generate correct href for mobile login button", () => {
-    expect(widget.find(".login-mobile").attributes()["href"]).to.be.equal(
-      `dhealth://sign?payload=${widget.vm.qrConfig?.toJSON()}`
-    );
+  it("should generate correct production href for mobile login button", () => {
+    // prepare
+    process.env.VUE_APP_SIGNER_ENV = "production";
+    const expectedUrl = `dhealth://sign?payload=${widget.vm.qrConfig?.toJSON()}`;
+
+    // act
+    const widget2 = mount(LoginScreen as any, componentOptions);
+    const actual = widget2.find(".login-mobile").attributes()["href"];
+
+    // act+assert
+    expect(actual).to.be.equal(expectedUrl);
+  });
+
+  it("should generate correct development href for mobile login button", () => {
+    // prepare
+    process.env.VUE_APP_SIGNER_ENV = "development";
+    const expectedUrl = `dhealth://--/sign?payload=${widget.vm.qrConfig?.toJSON()}`;
+
+    // act
+    const widget2 = mount(LoginScreen as any, componentOptions);
+    const actual = widget2.find(".login-mobile").attributes()["href"];
+
+    // assert
+    expect(actual).to.be.equal(expectedUrl);
   });
 
   it("should display qr code", () => {
