@@ -215,11 +215,7 @@ export class QueryService<
     const { queryCursor, searchQuery } = this.getQueryConfig(query);
 
     // execute Mongo query
-    const data = await model
-      .find(
-        searchQuery as FilterQuery<TDocument>
-      )
-      .exec();
+    const data = await model.find(searchQuery as FilterQuery<TDocument>).exec();
 
     // build pagination details for PaginatedResultDTO
     const pagination = {

@@ -5,7 +5,12 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import moment from "moment";
 
 // internal dependencies
-import { Activity, ActivityDocument, ActivityModel, ActivityQuery } from "../../../users/models/ActivitySchema";
+import {
+  Activity,
+  ActivityDocument,
+  ActivityModel,
+  ActivityQuery,
+} from "../../../users/models/ActivitySchema";
 import { EventHandlerStrategy } from "../EventHandlerStrategy";
 import { StravaWebHookEventRequest } from "./StravaWebHookEventRequest";
 import { ActivitiesService } from "../../../users/services/ActivitiesService";
@@ -21,7 +26,10 @@ export class StravaEventHandlerStrategy implements EventHandlerStrategy {
     @InjectModel(Activity.name)
     private readonly model: ActivityModel,
     private readonly activitiesService: ActivitiesService,
-    private readonly queryService: QueryService<ActivityDocument, ActivityModel>,
+    private readonly queryService: QueryService<
+      ActivityDocument,
+      ActivityModel
+    >,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
@@ -46,10 +54,11 @@ export class StravaEventHandlerStrategy implements EventHandlerStrategy {
   async eventHandler(
     providerName: string,
     userAddress: string,
-    data: BasicWebHookEventRequest
+    data: BasicWebHookEventRequest,
   ): Promise<ActivityDocument> {
     // destructure obligatory fields for validation
-    const { object_type, object_id, aspect_type, owner_id, event_time } = data as StravaWebHookEventRequest;
+    const { object_type, object_id, aspect_type, owner_id, event_time } =
+      data as StravaWebHookEventRequest;
 
     // make sure we have all obligatory fields
     if (!object_type || !object_id || !aspect_type || !owner_id) {

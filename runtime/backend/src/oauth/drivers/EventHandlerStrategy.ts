@@ -1,4 +1,3 @@
-
 // internal dependencies
 import { ActivityDocument } from "../../users/models/ActivitySchema";
 import { BasicWebHookEventRequest } from "./BasicWebHookEventRequest";
@@ -8,5 +7,5 @@ export interface EventHandlerStrategy {
     providerName: string,
     userAddress: string,
     data: BasicWebHookEventRequest,
-  ): Promise<ActivityDocument>
+  ): Promise<ActivityDocument>;
 }

@@ -12,8 +12,9 @@ export class EventHandlerStrategyFactory {
   ) {}
 
   public create(providerName: string): EventHandlerStrategy {
-    switch(providerName) {
-      case "strava": return this.stravaEventHandlerStrategy;
+    switch (providerName) {
+      case "strava":
+        return this.stravaEventHandlerStrategy;
     }
   }
 }

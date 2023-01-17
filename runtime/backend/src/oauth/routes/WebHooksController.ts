@@ -112,10 +112,7 @@ export class WebHooksController {
     description:
       "This endpoint is called by third-party data providers to initially create webhook subscriptions for remote accounts.",
   })
-  @ApiExtraModels(
-    BasicWebHookEventRequest,
-    BasicWebHookSubscriptionRequest,
-  )
+  @ApiExtraModels(BasicWebHookEventRequest, BasicWebHookSubscriptionRequest)
   @ApiOkResponse(HTTPResponses.WebhookGetResponseSchema)
   protected async subscribe(
     @NestResponse() response: Response,
