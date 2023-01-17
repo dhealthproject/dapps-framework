@@ -22,6 +22,9 @@ import MobileNavigationButton from "../MobileNavigationButton/MobileNavigationBu
 import Dropdown from "../Dropdown/Dropdown.vue";
 import UserBalance from "../UserBalance/UserBalance.vue";
 import UiButton from "../UiButton/UiButton.vue";
+import Notifications from "../Notifications/Notifications.vue";
+
+import { Notification } from "../Notifications/Notifications";
 
 // style resource
 import "./AppHeader.scss";
@@ -40,6 +43,7 @@ export interface HeaderLink {
     Dropdown,
     UserBalance,
     UiButton,
+    Notifications,
   },
   computed: {
     ...mapGetters({
@@ -139,6 +143,15 @@ export default class AppHeader extends MetaView {
   }
 
   /**
+   * This computed defines *temporary* items
+   * for the notifications component.
+   * @todo remove once implement notifications on backend
+   *
+   * @access public
+   */
+  public tempNotifications: Notification[] | never[] = [];
+
+  /**
    * Watcher that sets overflowY hidden,
    * to prevent scrolling of body when mobile menu opened
    *
@@ -159,5 +172,53 @@ export default class AppHeader extends MetaView {
     if (newRoute !== oldRoute) {
       this.isMenuOpen = false;
     }
+  }
+
+  public handleNotificationView(notification: Notification) {
+    this.tempNotifications = this.tempNotifications.map(
+      (notificationItem: Notification) => ({
+        ...notificationItem,
+        viewed:
+          notification.id === notificationItem.id
+            ? false
+            : notificationItem.viewed,
+      })
+    );
+  }
+
+  public mounted() {
+    this.tempNotifications = [
+      {
+        createdAt: "2h",
+        title: "Congratulations!",
+        description: "You have completed 10KM!",
+        icon: "dhealth-notifications-icon.svg",
+        viewed: true,
+        id: 0,
+        medal: {
+          image: "medals/10.svg",
+          condition: "Finish your first 10KM in one go to get!",
+          received: true,
+          relatedActivities: "Running, Walking, Swimming, Cycling",
+        },
+      },
+      {
+        createdAt: "1d",
+        title: "Breast Cancer Month",
+        description:
+          "Get an energy boost with Breast Cancer Month special event!",
+        icon: "dhealth-notifications-icon.svg",
+        viewed: true,
+        id: 1,
+      },
+      {
+        createdAt: "1d",
+        title: "ELEVATE",
+        description: "Welcome to your Notification Inbox!",
+        icon: "dhealth-notifications-icon.svg",
+        viewed: false,
+        id: 3,
+      },
+    ];
   }
 }

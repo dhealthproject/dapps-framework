@@ -36,6 +36,7 @@ import UiButton from "./UiButton/UiButton.vue";
 import UiPopup from "./UiPopup/UiPopup.vue";
 import UserBalance from "./UserBalance/UserBalance.vue";
 import RewardsList from "./RewardsList/RewardsList.vue";
+import Notifications from "./Notifications/Notifications.vue";
 
 // scoped export of application-level components
 export const AppComponents = {
@@ -64,6 +65,7 @@ export const AppComponents = {
   UiPopup,
   UserBalance,
   RewardsList,
+  Notifications,
 };
 
 // scoped export of library-level components
