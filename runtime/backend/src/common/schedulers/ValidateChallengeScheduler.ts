@@ -7,7 +7,6 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
-
 // external dependencies
 import { Injectable } from "@nestjs/common";
 import { CronJob } from "cron";
@@ -27,7 +26,6 @@ import dappConfigLoader from "../../../config/dapp";
 const dappConfig = dappConfigLoader();
 
 /**
- * @label COMMON
  * @class ValidateChallengeScheduler
  * @description This class implements dynamic scheduler
  * which can be started dynamically based on

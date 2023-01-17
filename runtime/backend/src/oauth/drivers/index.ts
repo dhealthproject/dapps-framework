@@ -11,10 +11,16 @@
 export * from "./BasicRemoteDTO";
 export * from "./OAuthDriver";
 export * from "./OAuthEntity";
+export * from "./BasicOAuthDriver";
+export * from "./EventHandlerStrategy";
+export * from "./BasicWebHookEventRequest";
+export * from "./BasicWebHookSubscriptionResponse";
 
 // specialized driver implementations
-export * from "./BasicOAuthDriver";
 export * from "./StravaOAuthDriver";
 
 // specialized driver type definitions
 export * from "../../oauth/drivers/strava";
+
+// factories
+export * from "./EventHandlerStrategyFactory";

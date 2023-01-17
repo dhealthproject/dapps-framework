@@ -15,6 +15,7 @@ export * from "./StravaWebHookSubscriptionRequest";
 export * from "./StravaWebHookEventRequest";
 
 // responses
+export * from "./StravaEventHandlerStrategy";
 export * from "./StravaWebHookSubscriptionResponse";
 
 // entities
