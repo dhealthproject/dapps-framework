@@ -29,4 +29,19 @@ describe("common/AccountSchema", () => {
       expect(accountToQuery).toEqual({ address, referredBy, referralCode });
     });
   });
+
+  describe("get slug()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const address = "test-address";
+      const account: Account = new Account();
+      (account as any).address = address;
+
+      // act
+      const result = account.slug;
+
+      // assert
+      expect(result).toBe(address);
+    });
+  });
 });

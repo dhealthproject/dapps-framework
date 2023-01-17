@@ -52,10 +52,31 @@ describe("users/ActivitySchema", () => {
       // prepare
       const address = "test-address";
       const slug = "test-slug";
+      const activityData = {
+        key: "value",
+        distance: 1,
+        sport: "test-sport",
+        elevation: 1,
+        elapsedTime: 123,
+      };
+      const activityAssets = [{ asset: "test-activityAssets" }];
+      const provider = "test-provider";
       const activity: Activity = new Activity();
       (activity as any).address = address;
       (activity as any).slug = slug;
-      const expectedResult = { address, slug };
+      (activity as any).activityData = activityData;
+      (activity as any).activityAssets = activityAssets;
+      (activity as any).provider = provider;
+      const expectedResult = {
+        address,
+        slug,
+        assets: activityAssets,
+        distance: activityData.distance,
+        sport: activityData.sport,
+        elevationGain: activityData.elevation,
+        elapsedTime: activityData.elapsedTime,
+        provider,
+      };
 
       // act
       const result = Activity.fillDTO(

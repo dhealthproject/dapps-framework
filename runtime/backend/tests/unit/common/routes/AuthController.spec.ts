@@ -111,11 +111,15 @@ describe("common/AuthController", () => {
           address: "testAddress",
         });
 
+      const token = new AccessTokenDTO();
       const tokens = {
-        accessToken: "testAccessToken",
-        refreshToken: "testRefreshToken",
-        expiresAt: 1,
-      } as AccessTokenDTO;
+        ...token,
+        ...{
+          accessToken: "testAccessToken",
+          refreshToken: "testRefreshToken",
+          expiresAt: 1,
+        }          
+      };
       const authServiceGetAccessTokenCall = jest
         .spyOn(authService, "getAccessToken")
         .mockResolvedValue(tokens);

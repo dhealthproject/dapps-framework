@@ -61,6 +61,10 @@ describe("common/AuthGateway", () => {
     }).compile();
 
     authGateway = module.get<AuthGateway>(AuthGateway);
+    (authGateway as any).options.debug = true;
+    (authGateway as any).logger = {
+      debug: jest.fn(),
+    }
   });
 
   it("should be defined", () => {
@@ -88,6 +92,9 @@ describe("common/AuthGateway", () => {
       authGateway.onAuthOpened({ challenge: "fakeChallenge" });
 
       expect(validateMethodMock).toBeCalledTimes(1);
+      expect((authGateway as any).logger.debug).toHaveBeenNthCalledWith(
+        1, `Received event "auth.open" with challenge "fakeChallenge"`
+      );
     });
   });
 
@@ -106,6 +113,9 @@ describe("common/AuthGateway", () => {
 
       // assert
       expect(sendMock).toBeCalledTimes(1);
+      expect((authGateway as any).logger.debug).toHaveBeenNthCalledWith(
+        1, `Received event "auth.complete" with challenge "fakeChallenge"`
+      );
     });
   });
 
@@ -122,6 +132,9 @@ describe("common/AuthGateway", () => {
 
       // assert
       expect("fakeChallenge" in clients).toBe(false);
+      expect((authGateway as any).logger.debug).toHaveBeenNthCalledWith(
+        1, `Received event "auth.close" with challenge "fakeChallenge"`
+      );
     });
   });
 });

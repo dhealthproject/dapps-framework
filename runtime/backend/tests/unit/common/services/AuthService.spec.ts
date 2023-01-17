@@ -64,11 +64,15 @@ import { AuthenticationPayload, AuthService, CookiePayload } from "../../../../s
 import { ChallengesService } from "../../../../src/common/services/ChallengesService";
 import { Factory } from "@dhealth/contracts";
 import { AccountSessionDocument, AccountSessionQuery } from "../../../../src/common/models/AccountSessionSchema";
+import { LogService } from "../../../../src/common/services/LogService";
+import { AccountDocument } from "../../../../src/common/models/AccountSchema";
 
 describe("common/AuthService", () => {
   let authService: AuthService;
+  let accountsService: AccountsService;
   const httpUnauthorizedError = new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
 
+  const logCall = jest.fn();
   let module: TestingModule;
   beforeEach(async () => {
     module = await Test.createTestingModule({
@@ -97,6 +101,12 @@ describe("common/AuthService", () => {
     }).compile();
 
     authService = module.get<AuthService>(AuthService);
+    accountsService = module.get<AccountsService>(AccountsService);
+    createFromJSONCall().inputs = {
+      dappIdentifier: "fake-dapp",
+      challenge: "12345678",
+      refCode: "123456ab",
+    };
   });
 
   afterEach(() => {
@@ -618,20 +628,50 @@ describe("common/AuthService", () => {
 
     it("should respond with error if the challenge could not be found", () => {
       // prepare
+      (authService as any).cookie = {
+        name: "fake-dapp",
+        domain: "fake-dapp-host"
+      };
       (authService as any).challengesService = {
         exists: jest.fn().mockResolvedValue(false),
+        createOrUpdate: jest.fn().mockResolvedValue({}),
       };
       (authService as any).findRecentChallenge =
-        jest.fn().mockResolvedValue(undefined); // <-- force not found
+        jest.fn().mockResolvedValue({
+          signer: {
+            address: {
+              plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+            },
+          },
+          transactionInfo: {
+            hash: "fakeHash1",
+          },
+          // transaction must contain correct JSON
+          message: {
+            payload: JSON.stringify({
+              contract: "elevate:auth",
+              version: 1,
+              challenge: "fakeChallenge",
+            }),
+          }
+        });
+      Factory.createFromJSON(
+        JSON.stringify({
+          contract: "elevate:auth",
+          version: 1,
+          challenge: "fakeChallenge",
+        })
+      ).inputs = undefined;
 
       // act
-      const validateChallenge = () => (authService as any).validateChallenge({
+      const result = (authService as any).validateChallenge({
         challenge: "test-challenge",
         sub: "test-sub",
       });
 
       // assert
-      expect(validateChallenge).rejects.toEqual(httpUnauthorizedError);
+      expect(result).rejects.toThrow(httpUnauthorizedError);
+      expect(createFromJSONCall).toHaveBeenCalled();
     });
 
     it("should respond with error given incorrect contract", () => {
@@ -761,6 +801,55 @@ describe("common/AuthService", () => {
 
       // assert
       expect(createFromJSONCall).toHaveBeenCalled();
+      expect(result).toStrictEqual(expectedResult);
+    });
+
+    it("should create the `accounts` document for socket authentication", async () => {
+      // prepare
+      (authService as any).cookie = {
+        name: "fake-dapp",
+        domain: "fake-dapp-host"
+      };
+      (authService as any).challengesService = {
+        exists: jest.fn().mockResolvedValue(false),
+        createOrUpdate: jest.fn().mockResolvedValue({}),
+      };
+      (authService as any).findRecentChallenge =
+        jest.fn().mockResolvedValue({
+          signer: {
+            address: {
+              plain: () => "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+            },
+          },
+          transactionInfo: {
+            hash: "fakeHash1",
+          },
+          // transaction must contain correct JSON
+          message: {
+            payload: JSON.stringify({
+              contract: "elevate:auth",
+              version: 1,
+              challenge: "fakeChallenge",
+            }),
+          }
+        });
+      const accountsServiceGetOrCreateForAuthCall = jest
+        .spyOn(accountsService, "getOrCreateForAuth")
+        .mockResolvedValue({} as AccountDocument);
+      const expectedResult = {
+        address: "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY",
+        referralCode: "123456ab",
+        sub: "test-sub",
+      };
+
+      // act
+      const result = await (authService as any).validateChallenge({
+        challenge: "test-challenge",
+        sub: "test-sub",
+      }, false);
+
+      // assert
+      expect(accountsServiceGetOrCreateForAuthCall).toHaveBeenCalled();
       expect(result).toStrictEqual(expectedResult);
     });
   });

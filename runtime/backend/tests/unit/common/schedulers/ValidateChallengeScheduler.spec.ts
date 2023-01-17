@@ -49,6 +49,7 @@ describe("common/ValidateChallengeScheduler", () => {
     log: jest.fn(),
     debug: jest.fn(),
     error: jest.fn(),
+    warn: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -136,15 +137,16 @@ describe("common/ValidateChallengeScheduler", () => {
       expect(mockFn).toBeCalledTimes(1);
     });
 
-    it("should assign argument to challenge prop", () => {
-      validateChallengeScheduler.startCronJob("someFakeChallenge");
-
-      expect((validateChallengeScheduler as any).challenge).toBe(
-        "someFakeChallenge",
-      );
-    });
-
     it("should start stop timeout", () => {
+      // prepare
+      const setTimeOutCall = jest
+        .spyOn(global, 'setTimeout')
+        .mockImplementation((paramFn: Function) => {
+          paramFn();
+          return {} as any;
+        });
+
+      // act
       validateChallengeScheduler.startCronJob("someFakeChallenge");
 
       expect((validateChallengeScheduler as any).stopCronJobTimeout).not.toBe(
@@ -153,6 +155,7 @@ describe("common/ValidateChallengeScheduler", () => {
       expect((validateChallengeScheduler as any).stopCronJobTimeout).not.toBe(
         undefined,
       );
+      expect(setTimeOutCall).toHaveBeenCalledTimes(1);
     });
   });
 

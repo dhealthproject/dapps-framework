@@ -555,7 +555,7 @@ describe("payout/PrepareActivityPayouts", () => {
         { count: 100, expectedPc: 1.15 },
         { count: 150, expectedPc: 1.15 },
         { count: -1, expectedPc: 1 },
-        { count: 0, expectedPc: 1 },
+        { count: null, expectedPc: 1 },
       ];
 
       fakeReferralCounts.map(

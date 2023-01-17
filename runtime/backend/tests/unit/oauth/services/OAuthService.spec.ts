@@ -40,6 +40,7 @@ import {
 } from "../../../../src/common/models/AccountIntegrationSchema";
 import { OAuthEntityType } from "../../../../src/oauth/drivers/OAuthEntity";
 import { HttpMethod } from "../../../../src/common/drivers/HttpRequestHandler";
+import { AccessTokenDTO } from "../../../../src/common/models/AccessTokenDTO";
 
 describe("common/OAuthService", () => {
   let mockDate: Date;
@@ -609,7 +610,7 @@ describe("common/OAuthService", () => {
 
     it("should update integration entry with encrypted tokens", async () => {
       // prepare
-      const expectedAccessTokenDTO: any = {};
+      const expectedAccessTokenDTO: any = new AccessTokenDTO();
       expectedAccessTokenDTO.remoteIdentifier = "fake-identifier";
       expectedAccessTokenDTO.encAccessToken = "fake-encrypted-payload";
       expectedAccessTokenDTO.encRefreshToken = "fake-encrypted-payload";

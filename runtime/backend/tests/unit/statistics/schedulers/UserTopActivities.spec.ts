@@ -21,6 +21,7 @@ import { StatisticsDocument, StatisticsModel, StatisticsQuery } from "../../../.
 import { UserTopActivities } from "../../../../src/statistics/schedulers/UserTopActivities/UserTopActivities";
 import { StatisticsService } from "../../../../src/statistics/services/StatisticsService";
 import { LogService } from "../../../../src/common/services/LogService";
+import { StatisticsCommandOptions } from "../../../../src/statistics/schedulers/StatisticsCommand";
 
 describe("statistics/UserTopActivities", () => {
   let service: UserTopActivities;
@@ -87,6 +88,231 @@ describe("statistics/UserTopActivities", () => {
 
       // assert
       expect(result).toBe("UserTopActivities");
+    });
+  });
+
+  describe("get signature()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const expectedResult = "UserTopActivities";
+
+      // act
+      const result = (service as any).signature;
+
+      // assert
+      expect(result).toBe(expectedResult);
+    });
+  });
+
+  describe("aggregate()", () => {
+    it("should run correctly and return correct result", async () => {
+      // prepare
+      const createAggregationQueryCall = jest
+        .spyOn((service as any), "createAggregationQuery")
+        .mockResolvedValue({});
+      const queryServiceAggregateCall = jest
+        .spyOn(queryService, "aggregate")
+        .mockResolvedValue([
+          { _id: { address: "test-address", sportType: "test-sport" } }
+        ] as any);
+      const debugLogCall = jest
+        .spyOn((service as any), "debugLog");
+      const getNextPeriodCall = jest
+        .spyOn((service as any), "getNextPeriod")
+        .mockReturnValue("test-getNextPeriod");
+      const statisticsServiceFindOneCall = jest
+        .spyOn(statisticsService, "findOne")
+        .mockResolvedValue({} as StatisticsDocument);
+      const statisticsServiceCreateOrUpdateCall = jest
+        .spyOn(statisticsService, "createOrUpdate")
+        .mockResolvedValue({} as StatisticsDocument);
+
+      // act
+      await service.aggregate({ debug: true } as StatisticsCommandOptions);
+
+      // assert
+      expect(createAggregationQueryCall).toHaveBeenCalledTimes(1);
+      expect(queryServiceAggregateCall).toHaveBeenNthCalledWith(1, {}, MockModel);
+      expect(debugLogCall).toHaveBeenNthCalledWith(1, "Found 1 aggregation subjects");
+      expect(getNextPeriodCall).toHaveBeenNthCalledWith(1, new Date());
+      expect(statisticsServiceFindOneCall).toHaveBeenNthCalledWith(
+        1,
+        new StatisticsQuery({
+          address: "test-address",
+          period: "test-getNextPeriod",
+          periodFormat: "D",
+          type: "user",
+        } as StatisticsDocument)
+      );
+      expect(statisticsServiceCreateOrUpdateCall).toHaveBeenNthCalledWith(
+        1,
+        new StatisticsQuery({
+          address: "test-address",
+          period: "test-getNextPeriod",
+          type: "user",
+        } as StatisticsDocument),
+        {
+          periodFormat: "D",
+          data: {
+            // merge with previous entry if available
+            ...{},
+            topActivities: ["test-sport"],
+          },
+        },
+      )
+    });
+
+    it("should print message if no aggregation subject found", async () => {
+      // prepare
+      const createAggregationQueryCall = jest
+        .spyOn((service as any), "createAggregationQuery")
+        .mockResolvedValue({});
+      const queryServiceAggregateCall = jest
+        .spyOn(queryService, "aggregate")
+        .mockResolvedValue([] as any);
+      const debugLogCall = jest
+        .spyOn((service as any), "debugLog");
+      const getNextPeriodCall = jest
+        .spyOn((service as any), "getNextPeriod")
+        .mockReturnValue("test-getNextPeriod");
+      const statisticsServiceFindOneCall = jest
+        .spyOn(statisticsService, "findOne")
+        .mockResolvedValue({} as StatisticsDocument);
+      const statisticsServiceCreateOrUpdateCall = jest
+        .spyOn(statisticsService, "createOrUpdate")
+        .mockResolvedValue({} as StatisticsDocument);
+
+      // act
+      await service.aggregate({ debug: true } as StatisticsCommandOptions);
+
+      // assert
+      expect(createAggregationQueryCall).toHaveBeenCalledTimes(1);
+      expect(queryServiceAggregateCall).toHaveBeenNthCalledWith(1, {}, MockModel);
+      expect(debugLogCall).toHaveBeenNthCalledWith(1, "No aggregation subjects found");
+      expect(getNextPeriodCall).toHaveBeenNthCalledWith(1, new Date());
+      expect(statisticsServiceFindOneCall).toHaveBeenCalledTimes(0);
+      expect(statisticsServiceCreateOrUpdateCall).toHaveBeenCalledTimes(0);
+    });
+
+    it("should not merge with previous entry if it doesn't exist", async () => {
+      // prepare
+      const createAggregationQueryCall = jest
+        .spyOn((service as any), "createAggregationQuery")
+        .mockResolvedValue({});
+      const queryServiceAggregateCall = jest
+        .spyOn(queryService, "aggregate")
+        .mockResolvedValue([
+          { _id: { address: "test-address", sportType: "test-sport" } }
+        ] as any);
+      const debugLogCall = jest
+        .spyOn((service as any), "debugLog");
+      const getNextPeriodCall = jest
+        .spyOn((service as any), "getNextPeriod")
+        .mockReturnValue("test-getNextPeriod");
+      const statisticsServiceFindOneCall = jest
+        .spyOn(statisticsService, "findOne")
+        .mockResolvedValue(null);
+      const statisticsServiceCreateOrUpdateCall = jest
+        .spyOn(statisticsService, "createOrUpdate")
+        .mockResolvedValue({} as StatisticsDocument);
+
+      // act
+      await service.aggregate({ debug: true } as StatisticsCommandOptions);
+
+      // assert
+      expect(createAggregationQueryCall).toHaveBeenCalledTimes(1);
+      expect(queryServiceAggregateCall).toHaveBeenNthCalledWith(1, {}, MockModel);
+      expect(debugLogCall).toHaveBeenNthCalledWith(1, "Found 1 aggregation subjects");
+      expect(getNextPeriodCall).toHaveBeenNthCalledWith(1, new Date());
+      expect(statisticsServiceFindOneCall).toHaveBeenNthCalledWith(
+        1,
+        new StatisticsQuery({
+          address: "test-address",
+          period: "test-getNextPeriod",
+          periodFormat: "D",
+          type: "user",
+        } as StatisticsDocument)
+      );
+      expect(statisticsServiceCreateOrUpdateCall).toHaveBeenNthCalledWith(
+        1,
+        new StatisticsQuery({
+          address: "test-address",
+          period: "test-getNextPeriod",
+          type: "user",
+        } as StatisticsDocument),
+        {
+          periodFormat: "D",
+          data: {
+            // merge with previous entry if available
+            ...{},
+            topActivities: ["test-sport"],
+          },
+        },
+      )
+    });
+  });
+
+  describe("runAsScheduler()", () => {
+    it("should run correctly", async () => {
+      // prepare
+      const debugLogCall = jest
+        .spyOn((service as any), "debugLog");
+      const runCall = jest
+        .spyOn(service, "run")
+        .mockResolvedValue();
+
+      // act
+      await service.runAsScheduler();
+
+      // assert
+      expect(logger.setModule).toHaveBeenNthCalledWith(1, "statistics/UserTopActivities");
+      expect(debugLogCall).toHaveBeenNthCalledWith(1, `Starting user aggregation type: D`);
+      expect(runCall).toHaveBeenNthCalledWith(1, ["user"], { debug: false });
+    });
+  });
+
+  describe("createAggregationQuery()", () => {
+    it("should return correct result", async () => {
+      // prepare
+      const expectedResult = [
+        {
+          $match: { address: { $exists: true } },
+        },
+        {
+          $group: {
+            _id: {
+              address: "$address",
+              sportType: "$activityData.sport",
+            },
+            count: { $sum: 1 },
+          },
+        },
+        {
+          // sort by count DESC
+          $sort: {
+            count: -1,
+          },
+        },
+      ];
+
+      // act
+      const result = await (service as any).createAggregationQuery();
+
+      // assert
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe("getNextPeriod()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const expectedResult = "20220201";
+
+      // act
+      const result = (service as any).getNextPeriod(new Date());
+
+      // assert
+      expect(result).toBe(expectedResult);
     });
   });
 });

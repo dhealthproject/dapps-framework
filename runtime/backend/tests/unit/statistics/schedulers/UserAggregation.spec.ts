@@ -298,7 +298,7 @@ describe("statistics/UserAggregation", () => {
       await service.aggregate(
         {
           periodFormat: "D",
-          debug: true
+          debug: false,
         }
       );
 
@@ -336,6 +336,71 @@ describe("statistics/UserAggregation", () => {
           data: {
             totalEarned: aggregateMocks[1].totalAssetsAmount,
             totalPracticedMinutes: Math.ceil(aggregateMocks[1].totalSecondsPracticed/60),
+          },
+        },
+      );
+    });
+
+    it("should not merge with previous entry if it's not available", async () => {
+      // prepare
+      const aggregateMocks = [
+        {
+          _id: "test-address1",
+          totalAssetsAmount: 123,
+          totalSecondsPracticed: 456,
+        },
+      ];
+      const serviceCreateAggregationQueryCall = jest
+        .spyOn((service as any), "createAggregationQuery")
+        .mockReturnValue({});
+      const queryServiceAggregateCall = jest
+        .spyOn(queryService, "aggregate")
+        .mockResolvedValue(aggregateMocks as any);
+      const serviceGeneratePeriodCall = jest
+        .spyOn((service as any), "getNextPeriod")
+        .mockReturnValue("test-period-string");
+      const expectedDate = new Date();
+      const statisticsServiceFindOneCall = jest
+        .spyOn(statisticsService, "findOne")
+        .mockResolvedValue(null);
+
+      // act
+      await service.aggregate(
+        {
+          periodFormat: "D",
+          debug: false,
+        }
+      );
+
+      // assert
+      expect(serviceCreateAggregationQueryCall).toHaveBeenCalledTimes(1);
+      expect(queryServiceAggregateCall).toHaveBeenNthCalledWith(1, {}, MockModel);
+      expect(serviceGeneratePeriodCall).toHaveBeenNthCalledWith(1, expectedDate);
+      expect(statisticsServiceFindOneCall).toHaveBeenCalledTimes(1);
+      expect(statisticsServiceFindOneCall).toHaveBeenNthCalledWith(
+        1,
+        new StatisticsQuery({
+          type: "user",
+          period: "test-period-string",
+          periodFormat: "D",
+          address: aggregateMocks[0]._id, // <-- uses correct address
+        } as StatisticsDocument),
+      )
+      expect(statisticsCreateOrUpdateMock).toHaveBeenCalledTimes(1);
+      expect(statisticsCreateOrUpdateMock).toHaveBeenNthCalledWith(
+        1,
+        new StatisticsQuery({
+          type: "user",
+          period: "test-period-string",
+          address: aggregateMocks[0]._id, // <-- uses correct address
+        } as StatisticsDocument),
+        {
+          periodFormat: "D",
+          amount: aggregateMocks[0].totalAssetsAmount,
+          data: {
+            totalEarned: aggregateMocks[0].totalAssetsAmount,
+            totalPracticedMinutes: Math.ceil(aggregateMocks[0].totalSecondsPracticed/60),
+            ...{},
           },
         },
       );

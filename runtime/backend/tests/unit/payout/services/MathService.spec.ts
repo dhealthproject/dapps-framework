@@ -88,4 +88,36 @@ describe("payout/MathService", () => {
       });
     });
   });
+
+  describe("getRandomVariates()", () => {
+    it("should run correctly and return correct result", () => {
+      // prepare
+      const mathServiceRNG = jest
+        .spyOn((MathService as any), "RNG")
+        .mockReturnValue(1);
+      const mathLogCall = jest
+        .spyOn(Math, "log")
+        .mockReturnValue(1);
+      const mathSqrtCall = jest
+        .spyOn(Math, "sqrt")
+        .mockReturnValue(1);
+      const mathCosCall = jest
+        .spyOn(Math, "cos")
+        .mockReturnValue(1);
+      const mathSinCall = jest
+        .spyOn(Math, "sin")
+        .mockReturnValue(0);
+      
+      // act
+      const result = (mathService as any).getRandomVariates();
+
+      // assert
+      expect(result).toEqual([1, 0]);
+      expect(mathServiceRNG).toHaveBeenCalledTimes(2);
+      expect(mathSqrtCall).toHaveBeenNthCalledWith(1, -2.0 * 1);
+      expect(mathLogCall).toHaveBeenNthCalledWith(1, 1);
+      expect(mathCosCall).toHaveBeenNthCalledWith(1, 2.0 * Math.PI * 1);
+      expect(mathSinCall).toHaveBeenNthCalledWith(1, 2.0 * Math.PI * 1);
+    });
+  });
 });

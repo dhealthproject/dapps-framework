@@ -123,6 +123,56 @@ describe('statistics/StatisticsService', () => {
     });
   });
 
+  describe("findOrFill()", () => {
+    it("should return paginated result if it exists", async () => {
+      // prepare
+      const expectedResult = { data: [{}] } as PaginatedResultDTO<StatisticsDocument>;
+      const statisticsQuery = new StatisticsQuery();
+      const queryServiceFindCall = jest
+        .spyOn(queryService, "find")
+        .mockResolvedValue(expectedResult);
+      
+      // act
+      const result = await service.findOrFill(statisticsQuery);
+
+      // assert
+      expect(result).toEqual(expectedResult);
+      expect(queryServiceFindCall).toHaveBeenNthCalledWith(1, statisticsQuery, MockModel);
+    });
+
+    it("should return correct result if paginated result doesn't exist", async () => {
+      // prepare
+      const expectedResult = { data: [{}] } as PaginatedResultDTO<StatisticsDocument>;
+      const statisticsQuery = new StatisticsQuery();
+      const queryServiceFindCall = jest
+        .spyOn(queryService, "find")
+        .mockResolvedValueOnce({} as PaginatedResultDTO<StatisticsDocument>)
+        .mockResolvedValue(expectedResult);
+      
+      // act
+      const result = await service.findOrFill(statisticsQuery);
+
+      // assert
+      expect(result).toEqual(expectedResult);
+      expect(queryServiceFindCall).toHaveBeenNthCalledWith(1, statisticsQuery, MockModel);
+      expect(queryServiceFindCall).toHaveBeenNthCalledWith(
+        2,
+        new StatisticsQuery(
+          {
+            type: "leaderboard",
+          } as StatisticsDocument,
+          {
+            pageSize: 3,
+            pageNumber: 1,
+            sort: "position",
+            order: "asc",
+          },
+        ),
+        MockModel,
+      );
+    });
+  });
+
   describe("createOrUpdate()", () => {
     it("should call createOrUpdate() from queryService", async () => {
       // prepare

@@ -190,6 +190,30 @@ describe("common/NetworkService", () => {
     });
   });
 
+  describe("getChainInfo()", () => {
+    it("should call delegatePromises() and return first result set", async () => {
+      // prepare
+      const chainRepositoryGetChainInfoCall = jest.fn()
+        .mockReturnValue({ toPromise: jest.fn() } as any);
+      service.chainRepository = {
+        getChainInfo: chainRepositoryGetChainInfoCall,
+      };
+      const delegatePromisesCall = jest
+        .spyOn(service, "delegatePromises")
+        .mockResolvedValue({
+          shift: () => ({})
+        } as any);
+
+      // act
+      const result = await service.getChainInfo();
+
+      // assert
+      expect(chainRepositoryGetChainInfoCall).toHaveBeenCalledTimes(1);
+      expect(delegatePromisesCall).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({});
+    });
+  });
+
   describe("getNextAvailableNode()", () => {
     it("return node if node is healthy", async () => {
       // prepare

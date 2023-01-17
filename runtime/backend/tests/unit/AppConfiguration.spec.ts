@@ -39,14 +39,21 @@ jest.mock("@nestjs/event-emitter", () => {
 });
 
 // force-mock the mailer module `forRootAsync` call
-const mailerForRootAsyncCall = jest.fn(() => MailerModuleMock);
+const configService = {
+  get: jest.fn().mockReturnValue({
+    mailConfig: mockTransportConfigLoaderCall().mailer,
+  }),
+}
+const mailerForRootAsyncCall: any = jest.fn((params: any) => {
+  params.useFactory(configService);
+  return MailerModuleMock
+});
 const MailerModuleMock: any = { forRootAsync: mailerForRootAsyncCall };
 jest.mock("@nestjs-modules/mailer", () => {
   return { MailerModule: MailerModuleMock };
 });
 
 // external dependencies
-
 import { Account, Address, PublicAccount } from "@dhealth/sdk";
 
 // internal dependencies
@@ -109,6 +116,10 @@ describe("AppConfiguration", () => {
     (AppConfiguration as any).DATABASE = undefined;
     (AppConfiguration as any).EVENT_EMITTER = undefined;
     (AppConfiguration as any).MAILER = undefined;
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("should be defined", () => {
@@ -438,10 +449,11 @@ describe("AppConfiguration", () => {
       const mailer3 = AppConfiguration.getMailerModule();
 
       // assert
-      expect(mailer1).toBeDefined();
-      expect(mailer2).toBeDefined();
-      expect(mailer3).toBeDefined();
+      expect(mailer1).toBe(mailer2);
+      expect(mailer1).toBe(mailer3);
+      expect(mailer2).toBe(mailer3);
       expect(mailerForRootAsyncCall).toHaveBeenCalledTimes(1); // once!
+      expect(configService.get).toHaveBeenCalledTimes(1); // once!
     });
   });
 
@@ -905,14 +917,14 @@ describe("AppConfiguration", () => {
 
     it("should check the configuration of activated scopes", () => {
       // prepare
-      const mockCheckDiscoverySettings = jest.fn();
-      const mockCheckProcessorSettings = jest.fn();
-      const mockCheckPayoutSettings = jest.fn();
-      const mockCheckOAuthSettings = jest.fn();
-      (AppConfiguration as any).checkDiscoverySettings = mockCheckDiscoverySettings;
-      (AppConfiguration as any).checkProcessorSettings = mockCheckProcessorSettings;
-      (AppConfiguration as any).checkPayoutSettings = mockCheckPayoutSettings;
-      (AppConfiguration as any).checkOAuthSettings = mockCheckOAuthSettings;
+      const mockCheckDiscoverySettings = jest
+        .spyOn((AppConfiguration as any), "checkDiscoverySettings");
+      const mockCheckProcessorSettings = jest
+        .spyOn((AppConfiguration as any), "checkProcessorSettings");
+      const mockCheckPayoutSettings = jest
+        .spyOn((AppConfiguration as any), "checkPayoutSettings");
+      const mockCheckOAuthSettings = jest
+        .spyOn((AppConfiguration as any), "checkOAuthSettings");
 
       // act
       AppConfiguration.checkApplicationScopes(service);
@@ -930,14 +942,14 @@ describe("AppConfiguration", () => {
         ...(service as any).dapp,
         scopes: ["discovery", "database"], // payout + processor disabled
       }
-      const mockCheckDiscoverySettings = jest.fn();
-      const mockCheckProcessorSettings = jest.fn();
-      const mockCheckPayoutSettings = jest.fn();
-      const mockCheckOAuthSettings = jest.fn();
-      (AppConfiguration as any).checkDiscoverySettings = mockCheckDiscoverySettings;
-      (AppConfiguration as any).checkProcessorSettings = mockCheckProcessorSettings;
-      (AppConfiguration as any).checkPayoutSettings = mockCheckPayoutSettings;
-      (AppConfiguration as any).checkOAuthSettings = mockCheckOAuthSettings;
+      const mockCheckDiscoverySettings = jest
+        .spyOn((AppConfiguration as any), "checkDiscoverySettings");
+      const mockCheckProcessorSettings = jest
+        .spyOn((AppConfiguration as any), "checkProcessorSettings");
+      const mockCheckPayoutSettings = jest
+        .spyOn((AppConfiguration as any), "checkPayoutSettings");
+      const mockCheckOAuthSettings = jest
+        .spyOn((AppConfiguration as any), "checkOAuthSettings");
 
       // act
       AppConfiguration.checkApplicationScopes(service);
@@ -956,6 +968,240 @@ describe("AppConfiguration", () => {
 
       // assert
       expect(actual).toBe(true); // <-- mocked config is valid
+    });
+  });
+
+  describe("checkDiscoverySettings()", () => {
+    it("should run correcty and return true", () => {
+      // prepare
+      PublicAccount.createFromPublicKey = jest.fn().mockReturnValue(true);
+
+      // act
+      const result = (AppConfiguration as any).checkDiscoverySettings({
+        dapp: {
+          dappPublicKey: "test-dappPublicKey",
+          discovery: { sources: ["0123456789012345678901234567890123456789012345678901234567890123"] }
+        },
+        network: { network: { networkIdentifier: "test-networkIdentifier" } },
+      });
+
+      // assert
+      expect(result).toBe(true);
+      expect(PublicAccount.createFromPublicKey).toHaveBeenNthCalledWith(
+        1,
+        "test-dappPublicKey",
+        "test-networkIdentifier",
+      );
+      expect(PublicAccount.createFromPublicKey).toHaveBeenNthCalledWith(
+        2,
+        "0123456789012345678901234567890123456789012345678901234567890123",
+        "test-networkIdentifier",
+      );
+    });
+
+    it("should throw ConfigurationError if error was caught while creating account from public key", () => {
+      // prepare
+      const expectedError = new ConfigurationError(
+        `The configuration field "dappPublicKey" must contain ` +
+        `a valid 32-bytes public key in hexadecimal format.`
+      );
+      PublicAccount.createFromPublicKey = jest.fn(() => { throw new Error("error") });
+
+      // act
+      const result = () => (AppConfiguration as any).checkDiscoverySettings({
+        dapp: {
+          dappPublicKey: "test-dappPublicKey",
+          discovery: { sources: ["test-source"] }
+        },
+        network: { network: { networkIdentifier: "test-networkIdentifier" } },
+      });
+
+      // assert
+      expect(result).toThrow(expectedError);
+      expect(PublicAccount.createFromPublicKey).toHaveBeenNthCalledWith(
+        1,
+        "test-dappPublicKey",
+        "test-networkIdentifier",
+      );
+    });
+
+    it("should throw ConfigurationError if error was caught while creating address from raw value", () => {
+      // prepare
+      const expectedError = new ConfigurationError(
+        `The configuration field "discovery.sources" must contain ` +
+          `an array of valid 32-bytes public keys in hexadecimal format ` +
+          `or valid addresses that are compatible with dHealth Network.`,
+      );
+      PublicAccount.createFromPublicKey = jest.fn().mockReturnValue(true);
+      Address.createFromRawAddress = jest.fn(() => { throw new Error("error") });
+
+      // act
+      const result = () => (AppConfiguration as any).checkDiscoverySettings({
+        dapp: {
+          dappPublicKey: "test-dappPublicKey",
+          discovery: { sources: ["test-source"] }
+        },
+        network: { network: { networkIdentifier: "test-networkIdentifier" } },
+      });
+
+      // assert
+      expect(result).toThrow(expectedError);
+      expect(PublicAccount.createFromPublicKey).toHaveBeenNthCalledWith(
+        1,
+        "test-dappPublicKey",
+        "test-networkIdentifier",
+      );
+      expect(Address.createFromRawAddress).toHaveBeenNthCalledWith(
+        1,
+        "test-source",
+      )
+    });
+  });
+
+  describe("checkPayoutSettings()", () => {
+    beforeEach(() => {
+      service = new AppConfiguration();
+    });
+
+    it("should throw ConfigurationError if payouts information is empty or invalid", () => {
+      // prepare
+      [undefined, {}, {issuerPrivateKey: ""}].forEach((payouts: any) => {
+        (service as any).payout.payouts = payouts;
+        const expectedError = new ConfigurationError(
+          `The configuration field "payouts.issuerPrivateKey" cannot be empty.`,
+        );
+
+        // act
+        const result = () => (AppConfiguration as any).checkPayoutSettings(service);
+
+        // assert
+        expect(result).toThrow(expectedError);
+      });
+    });
+
+    it("should throw ConfigurationError if error was caught while creating account from private key", () => {
+      // prepare
+      (service as any).payout.payouts = {
+        issuerPrivateKey: "test-issuerPrivateKey",
+      };
+      const expectedError = new ConfigurationError(
+        `The configuration field "payouts.issuerPrivateKey" must ` +
+          `contain a valid 32-bytes private key in hexadecimal format.`,
+      );
+      Account.createFromPrivateKey = jest.fn(() => { throw new Error("error") });
+
+      // // act
+      const result = () => (AppConfiguration as any).checkPayoutSettings(service);
+
+      // // assert
+      expect(result).toThrow(expectedError);
+      expect(Account.createFromPrivateKey).toHaveBeenNthCalledWith(
+        1,
+        "test-issuerPrivateKey",
+        104,
+      );
+    });
+  });
+
+  describe("checkProcessorSettings()", () => {
+    beforeEach(() => {
+      service = new AppConfiguration();
+    });
+
+    it("shoud run correctly and return true", () => {
+      // prepare
+      (service as any).processor.contracts = ["test-contract"];
+      (service as any).processor.operations = ["test-operation"];
+
+      // act
+      const result = (AppConfiguration as any).checkProcessorSettings(service);
+
+      // assert
+      expect(result).toBe(true);
+    });
+
+    it("should throw ConfigurationError if contracts is undefined/empty", () => {
+      // prepare
+      [undefined, []].forEach((contracts: any) => {
+        (service as any).processor.contracts = contracts;
+        const expectedError = new ConfigurationError(
+          `The configuration field "contracts" must be a non-empty array.`,
+        );
+
+        // act
+        const result = () => (AppConfiguration as any).checkProcessorSettings(service);
+
+        // assert
+        expect(result).toThrow(expectedError);
+      });
+    });
+
+    it("should throw ConfigurationError if operations is undefined/empty", () => {
+      // prepare
+      [undefined, []].forEach((operations: any) => {
+        (service as any).processor.contracts = ["test-contract"];
+        (service as any).processor.operations = operations;
+        const expectedError = new ConfigurationError(
+          `The configuration field "operations" must be a non-empty array.`,
+        );
+
+        // act
+        const result = () => (AppConfiguration as any).checkProcessorSettings(service);
+
+        // assert
+        expect(result).toThrow(expectedError);
+      });
+    });
+  });
+
+  describe("checkOAuthSettings()", () => {
+    beforeEach(() => {
+      service = new AppConfiguration();
+    });
+
+    it("should throw ConfigurationError if providers is undefined", () => {
+      // prepare
+      (service as any).oauth.providers = undefined;
+      const expectedError = new ConfigurationError(
+        `The configuration field "providers" cannot be empty.`,
+      );
+
+      // act
+      const result = () => (AppConfiguration as any).checkOAuthSettings(service);
+
+      // assert
+      expect(result).toThrow(expectedError);
+    });
+
+    it("should throw ConfigurationError if strava is undefined or is not in providers", () => {
+      // prepare
+      [ {}, { strava: undefined }].forEach((providers) => {
+        (service as any).oauth.providers = providers;
+        const expectedError = new ConfigurationError(
+          `The configuration field "providers.strava" cannot be empty.`,
+        );
+  
+        // act
+        const result = () => (AppConfiguration as any).checkOAuthSettings(service);
+  
+        // assert
+        expect(result).toThrow(expectedError);  
+      });
+    });
+
+    it("should throw ConfigurationError if scopes don't include users", () => {
+      // prepare
+      (service as any).oauth.providers = { strava: "test-strava" };
+      (service as any).dapp.scopes = ["test-scope"];
+      const expectedError = new ConfigurationError(
+        `The application scope "users" cannot be disabled.`,
+      );
+
+      // act
+      const result = () => (AppConfiguration as any).checkOAuthSettings(service);
+
+      // assert
+      expect(result).toThrow(expectedError);  
     });
   });
 });

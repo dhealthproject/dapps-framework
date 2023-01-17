@@ -17,6 +17,7 @@ import { QueryService } from "../../../../src/common/services/QueryService";
 import { AccountsService } from "../../../../src/common/services/AccountsService";
 import { AccountDocument, AccountModel, AccountQuery } from "../../../../src/common/models/AccountSchema";
 import { PaginatedResultDTO } from "../../../../src/common/models/PaginatedResultDTO";
+import { AuthenticationPayload } from "../../../../src/common/services/AuthService";
 
 describe("common/AccountsService", () => {
   let service: AccountsService;
@@ -145,6 +146,77 @@ describe("common/AccountsService", () => {
         MockModel,
         data,
         {},
+      );
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe("getOrCreateForAuth()", () => {
+    it("should call findOne() with address and return result if account exists in db", async () => {
+      // prepare
+      const expectedAccountQuery = new AccountQuery({
+        address: "test-address",
+      } as AccountDocument);
+      const expectedResult = {};
+      const existsCall = jest
+        .spyOn(service, "exists")
+        .mockResolvedValue(true);
+      const findOneCall = jest
+        .spyOn(service, "findOne")
+        .mockResolvedValue(expectedResult as AccountDocument);
+
+      // act
+      const result = await service.getOrCreateForAuth({
+        address: "test-address",
+      } as AuthenticationPayload);
+
+      // assert
+      expect(existsCall).toHaveBeenNthCalledWith(1, expectedAccountQuery);
+      expect(findOneCall).toHaveBeenNthCalledWith(1, expectedAccountQuery);
+      expect(result).toEqual(expectedResult);
+    });
+
+    it("should call findOne() with referrerCode if referralCode exists in payload", async () => {
+      // prepare
+      const payload = {
+        address: "test-address",
+        referralCode: "test-referralCode",
+      } as AuthenticationPayload;
+      const expectedAccountQuery = new AccountQuery({
+        address: "test-address",
+      } as AccountDocument);
+      const expectedReferrerAccountQuery = new AccountQuery({
+        referralCode: "test-referralCode",
+      } as AccountDocument);
+      const expectedReferrerResult = { address: "test-address" };
+      const expectedResult = { address: "test-addressResult" };
+      const existsCall = jest
+        .spyOn(service, "exists")
+        .mockResolvedValue(false);
+      const findOneCall = jest
+        .spyOn(service, "findOne")
+        .mockResolvedValue(expectedReferrerResult as AccountDocument);
+      const getRandomReferralCodeCall = jest
+        .spyOn(AccountsService, "getRandomReferralCode")
+        .mockReturnValue("test-randomReferralCode");
+      const createOrUpdateCall = jest
+        .spyOn(service, "createOrUpdate")
+        .mockResolvedValue(expectedResult as AccountDocument);
+
+      // act
+      const result = await service.getOrCreateForAuth(payload);
+
+      // assert
+      expect(existsCall).toHaveBeenNthCalledWith(1, expectedAccountQuery);
+      expect(findOneCall).toHaveBeenNthCalledWith(1, expectedReferrerAccountQuery);
+      expect(getRandomReferralCodeCall).toHaveBeenCalledTimes(1);
+      expect(createOrUpdateCall).toHaveBeenNthCalledWith(
+        1,
+        expectedAccountQuery,
+        {
+          referralCode: "test-randomReferralCode",
+          referredBy: expectedReferrerResult.address,
+        }
       );
       expect(result).toEqual(expectedResult);
     });

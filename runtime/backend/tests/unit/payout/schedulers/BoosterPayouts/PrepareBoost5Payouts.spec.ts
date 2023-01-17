@@ -175,6 +175,19 @@ describe("payout/PrepareBoost5Payouts", () => {
     });
   });
 
+  describe("get minReferred()", () => {
+    it("should return correct result", () => {
+      // prepare
+      const expectedResult = 10;
+
+      // act
+      const result = (command as any).minReferred;
+
+      // assert
+      expect(result).toBe(expectedResult);
+    });
+  });
+
   describe("get signature()", () => {
     it("should return correct result", () => {
       // act
