@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.6.2][0.6.2] - 17-Jan-2022
+
+#### Added
+
+- [@dhealthdapps/frontend] fix(screens): add storage for accepted docs
+- [@dhealthdapps/frontend] feat(state): add refresh interceptor for active sessions
+- [@dhealthdapps/frontend] deps: add signer environment variable
+
 ## [0.6.0][0.6.0] - 12-Jan-2022
 
 #### Added
@@ -250,6 +258,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/frontend] feat(theme): adds tailwindcss@3.0.x and moves assets to resources/
 
 
+[0.6.2]: https://github.com/dhealthproject/dapps-framework/compare/v0.6.0..v0.6.2
 [0.6.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.5.5..v0.6.0
 [0.5.5]: https://github.com/dhealthproject/dapps-framework/compare/v0.4.0..v0.5.5
 [0.4.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.4.0
