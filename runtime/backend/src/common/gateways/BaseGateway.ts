@@ -194,6 +194,8 @@ export abstract class BaseGateway
       return;
     }
 
+    this.logger.debug(`Removed connection with challenge "${ws.challenge}"`);
+
     // client is now disconnected
     delete this.clients[ws.challenge];
   }

@@ -198,6 +198,24 @@ export default class LoginScreen extends MetaView {
   protected modalTimer?: ReturnType<typeof setTimeout>;
 
   /**
+   * This property is used to store a pointer to the timeout
+   * that calls /fetchAccessToken endpoint
+   *
+   * @access public
+   * @var {modalTimer}
+   */
+  protected mobileFetchTimer?: ReturnType<typeof setInterval>;
+
+  /**
+   * This property is used to store a pointer to the timeout
+   * that calls /fetchAccessToken endpoint
+   *
+   * @access public
+   * @var {modalTimer}
+   */
+  protected mobileClearFetch?: ReturnType<typeof setTimeout>;
+
+  /**
    * This *computed* property is used internally to configure
    * the *tutorial* steps that are displayed on the right
    * of the screen (Steps to use a QRCode).
@@ -336,7 +354,15 @@ export default class LoginScreen extends MetaView {
    */
   public async mounted() {
     this.qrConfig = this.createLoginQRCode();
-    this.connectWebsocket();
+    if (this.getMobileOS === "Other") {
+      this.connectWebsocket();
+    } else {
+      this.mobileFetchTimer = setInterval(this.fetchAccessToken, 5000);
+      // if transaction wasn't signed during 30m - clear interval
+      this.mobileClearFetch = setTimeout(() => {
+        clearInterval(this.mobileFetchTimer);
+      }, 30 * 60 * 1000);
+    }
 
     // make sure referral code is saved
     if (this.$route.params.refCode) {
@@ -369,6 +395,14 @@ export default class LoginScreen extends MetaView {
 
     if (this.modalTimer) {
       clearTimeout(this.modalTimer);
+    }
+
+    if (this.mobileFetchTimer) {
+      clearInterval(this.mobileFetchTimer);
+    }
+
+    if (this.mobileClearFetch) {
+      clearTimeout(this.mobileClearFetch);
     }
 
     if (this.globalIntervalTimer) {
