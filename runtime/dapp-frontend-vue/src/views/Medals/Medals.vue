@@ -18,25 +18,7 @@
         :description="$t('medals.badge_description')"
         :medals="tempMedals"
       />
-      <h2 class="boards-title" v-html="$t('medals.medal_board')" />
-      <!-- Computed tempReferralMedals used temporarily -->
-      <RewardsList
-        :title="$t('medals.referrals_title')"
-        :description="$t('medals.referrals_description')"
-        :medals="tempReferralMedals"
-      />
-      <!-- Computed tempReferralMedals used temporarily -->
-      <RewardsList
-        :title="$t('medals.distance_title')"
-        :description="$t('medals.distance_description')"
-        :medals="tempReferralMedals"
-      />
-      <!-- Computed tempReferralMedals used temporarily -->
-      <RewardsList
-        :title="$t('medals.month_title')"
-        :description="$t('medals.month_description')"
-        :medals="tempReferralMedals"
-      />
+      <!-- <h2 class="boards-title" v-html="$t('medals.medal_board')" /> -->
     </div>
   </div>
 </template>
