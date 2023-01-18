@@ -3,6 +3,43 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.6.2][0.6.2] - 17-Jan-2022
+
+#### Added
+
+- [@dhealthdapps/frontend] fix(screens): add storage for accepted docs
+- [@dhealthdapps/frontend] feat(state): add refresh interceptor for active sessions
+- [@dhealthdapps/frontend] deps: add signer environment variable
+- [@dhealthdapps/backend] test: update & add unit tests
+- [@dhealthdapps/backend] feat(notifier): persist alert event to db to prevent same content notifications repeatedly
+- [@dhealthdapps/backend] feat(notifier): add & use templates for alert & report email notifications
+- [@dhealthdapps/backend] test: update unit tests
+
+#### Changed
+
+- [@dhealthdapps/backend] refactor(common): remove related todo tasks
+- [@dhealthdapps/backend] refactor(common): update find() to be findWithTotal() & create & use model.find() for find() in QueryService
+- [@dhealthdapps/backend] refactor(oauth): apply strategy pattern for event handler to allow different providers
+- [@dhealthdapps/backend] refactor(oauth): create basic webhook request classes and let strava classes extend them
+- [@dhealthdapps/backend] refactor(notifier): remove unnecessary log in AlertNotifier
+- [@dhealthdapps/backend] refactor(notifier): remove DappHelper dependency in AlertNotifier
+- [@dhealthdapps/backend] refactor(discovery): remove obsolete todo tasks
+- [@dhealthdapps/backend] refactor(discovery): update debug option value of discoverTransactions scheduler to be false if app is in staging/production environment
+- [@dhealthdapps/backend] refactor(discovery): update discoverAccounts scheduler to query from configurable sources instead of main app's public key
+- [@dhealthdapps/backend] refactor(common): remove transaction's serialized headers and reconstruct when decode
+- [@dhealthdapps/backend] refactor(common): decouple LogModule from notifier scope's dependency
+- [@dhealthdapps/backend] refactor(common): return state data's hash instead of the actual content in StateDTO
+- [@dhealthdapps/backend] refactor: add static factory method to PaginatedResultDTO
+- [@dhealthdapps/backend] refactor: implement getConfig() in AppConfiguration & update classes to use it instead of direct loader calls
+- [@dhealthdapps/backend] fix: update docs generation paths
+
+#### Fixed
+
+- [@dhealthdapps/backend] fix: linter issues
+- [@dhealthdapps/backend] test(oauth): create & fix tests for oauth scope
+- [@dhealthdapps/backend] test(notifier): update & fix failed unit tests
+- [@dhealthdapps/backend] fix(api): update multiplier computation in scheduler
+
 ## [0.6.0][0.6.0] - 12-Jan-2022
 
 #### Added
@@ -617,6 +654,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - [@dhealthdapps/backend] refactor: add implementation for schedulers enabled through scopes and more refactor (types)
 
 
+[0.6.2]: https://github.com/dhealthproject/dapps-framework/compare/v0.6.0..v0.6.2
 [0.6.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.5.5..v0.6.0
 [0.5.5]: https://github.com/dhealthproject/dapps-framework/compare/v0.4.0..v0.5.5
 [0.4.0]: https://github.com/dhealthproject/dapps-framework/compare/v0.3.0..v0.4.0
