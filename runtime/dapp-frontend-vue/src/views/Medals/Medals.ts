@@ -9,6 +9,7 @@
  */
 // external dependencies
 import { Component } from "vue-property-decorator";
+import { mapGetters } from "vuex";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
@@ -29,61 +30,26 @@ import "./Medals.scss";
   components: {
     RewardsList,
   },
+  computed: {
+    ...mapGetters({
+      currentUserAddress: "auth/getCurrentUserAddress",
+    }),
+  },
 })
 export default class Medals extends MetaView {
   /**
-   * This temporary computed returns hardcoded medals.
-   * @todo remove after backend will be developed
+   * This property contains the authenticated user's dHealth Account
+   * Address. This field is populated using the Vuex Store after a
+   * successful request to the backend API's `/me` endpoint.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
    *
-   * @access protected
-   * @returns MedalItem[]
+   * @access public
+   * @var {string}
    */
-  public get tempMedals(): MedalItem[] {
-    return [
-      {
-        image: "medals/10.svg",
-        condition: "Finish your first 10KM in one go to get!",
-        received: true,
-        relatedActivities: "Running, Walking, Swimming, Cycling",
-      },
-      {
-        image: "medals/50.svg",
-        condition: "Complete 50 kilometers to get.",
-        received: true,
-        relatedActivities: "Running, Walking, Swimming, Cycling",
-      },
-      {
-        image: "medals/100.svg",
-        condition: "Complete one more workout to get.",
-        received: true,
-        relatedActivities: "Running, Walking, Swimming, Cycling",
-      },
-      {
-        image: "medals/10.svg",
-        condition: "Finish your first 10KM in one go to get!",
-        received: true,
-        relatedActivities: "Running, Walking, Swimming, Cycling",
-      },
-      {
-        image: "medals/100.svg",
-        condition: "Complete one more workout to get.",
-        received: true,
-        relatedActivities: "Running, Walking, Swimming, Cycling",
-      },
-      {
-        image: "medals/10.svg",
-        condition: "Finish your first 10KM in one go to get!",
-        received: true,
-        relatedActivities: "Running, Walking, Swimming, Cycling",
-      },
-      {
-        image: "medals/50.svg",
-        condition: "Complete 50 kilometers to get.",
-        received: true,
-        relatedActivities: "Running, Walking, Swimming, Cycling",
-      },
-    ];
-  }
+  public currentUserAddress!: string;
 
   /**
    * This temporary computed returns hardcoded medals.
@@ -93,50 +59,61 @@ export default class Medals extends MetaView {
    * @access protected
    * @returns MedalItem[]
    */
-  public get tempReferralMedals(): MedalItem[] {
+  public get knownMedals(): MedalItem[] {
     return [
       {
         image: "medals/10.svg",
         condition: "Finish your first 10KM in one go to get!",
         received: true,
         relatedActivities: "Running, Walking, Swimming, Cycling",
+        assetId: process.env.VUE_APP_ASSETS_BOOST5_IDENTIFIER as string,
       },
       {
         image: "medals/50.svg",
         condition: "Complete 50 kilometers to get.",
         received: false,
         relatedActivities: "Running, Walking, Swimming, Cycling",
+        assetId: process.env.VUE_APP_ASSETS_BOOST10_IDENTIFIER as string,
       },
       {
         image: "medals/10.svg",
         condition: "Finish your first 10KM in one go to get!",
         received: false,
         relatedActivities: "Running, Walking, Swimming, Cycling",
+        assetId: process.env.VUE_APP_ASSETS_BOOST15_IDENTIFIER as string,
       },
       {
         image: "medals/100.svg",
         condition: "Complete one more workout to get.",
         received: false,
         relatedActivities: "Running, Walking, Swimming, Cycling",
+        assetId: "fakeIdToShowNotReceivedMedals1",
       },
       {
         image: "medals/50.svg",
         condition: "Complete 50 kilometers to get.",
         received: false,
         relatedActivities: "Running, Walking, Swimming, Cycling",
+        assetId: "fakeIdToShowNotReceivedMedals2",
       },
       {
         image: "medals/100.svg",
         condition: "Complete one more workout to get.",
         received: false,
         relatedActivities: "Running, Walking, Swimming, Cycling",
+        assetId: "fakeIdToShowNotReceivedMedals3",
       },
       {
         image: "medals/10.svg",
         condition: "Finish your first 10KM in one go to get!",
         received: false,
         relatedActivities: "Running, Walking, Swimming, Cycling",
+        assetId: "fakeIdToShowNotReceivedMedals4",
       },
     ];
+  }
+
+  public async mounted() {
+    await this.$store.dispatch("assets/fetchRewards", this.currentUserAddress);
   }
 }

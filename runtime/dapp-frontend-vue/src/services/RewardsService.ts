@@ -47,7 +47,6 @@ export class RewardsService extends BackendService {
       this.getUrl(`assets/${address}`),
       "GET",
       undefined, // no-body
-      undefined,
       { withCredentials: true, credentials: "include" } // no-headers
     );
 

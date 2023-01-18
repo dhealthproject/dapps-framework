@@ -200,6 +200,7 @@ export default class AppHeader extends MetaView {
           condition: "Finish your first 10KM in one go to get!",
           received: true,
           relatedActivities: "Running, Walking, Swimming, Cycling",
+          assetId: process.env.VUE_APP_ASSETS_BOOST5_IDENTIFIER as string,
         },
       },
       {

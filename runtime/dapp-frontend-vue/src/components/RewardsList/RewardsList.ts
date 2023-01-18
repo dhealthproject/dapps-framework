@@ -23,6 +23,7 @@ export interface MedalItem {
   condition: string;
   relatedActivities?: string;
   received: boolean;
+  assetId: string;
 }
 
 /*

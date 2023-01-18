@@ -15,7 +15,8 @@ import { ActionContext } from "vuex";
 // internal dependencies
 import { RootState } from "./Store";
 import { AwaitLock } from "../AwaitLock";
-import { AssetEntry, AssetDTO } from "@/models/AssetDTO";
+import { RewardsService } from "../../services/RewardsService";
+import { AssetEntry } from "@/models/AssetDTO";
 
 // creates an "async"-lock for state of pending initialization
 // this will be kept *locally* to this store module implementation
@@ -23,7 +24,7 @@ const Lock = AwaitLock.create();
 
 export interface AssetsModuleState {
   initialized: boolean;
-  userMedals: AssetEntry[];
+  userAssets: AssetEntry[];
 }
 
 /**
@@ -38,23 +39,12 @@ export const AssetsModule = {
   namespaced: true,
   state: (): AssetsModuleState => ({
     initialized: false,
-    userMedals: [],
+    userAssets: [],
   }),
 
   getters: {
-    // isLoading: (state: OAuthModuleState): boolean => !state.initialized,
-    //     getUserStatistics: (
-    //       state: StatisticsModuleState
-    //     ): UserStatisticsDTO | undefined =>
-    //       ({
-    //         period: state.period,
-    //         periodFormat: state.periodFormat,
-    //         position: state.position,
-    //         amount: state.amount,
-    //         data: {
-    //           ...state.data,
-    //         },
-    //       } as UserStatisticsDTO),
+    isLoading: (state: AssetsModuleState): boolean => !state.initialized,
+    getAssets: (state: AssetsModuleState): AssetEntry[] => state.userAssets,
   },
 
   mutations: {
@@ -63,31 +53,28 @@ export const AssetsModule = {
      */
     setInitialized: (state: AssetsModuleState, payload: boolean): boolean =>
       (state.initialized = payload),
+
+    setAssets: (state: AssetsModuleState, payload: AssetEntry[]) =>
+      (state.userAssets = payload),
   },
 
   actions: {
     /**
      *
      */
-    // async fetchStatistics(
-    //   context: StatisticsModuleContext,
-    //   address: string
-    // ): Promise<UserStatisticsDTO | undefined> {
-    //   const service = new StatisticsService();
-    //   const statistics: UserStatisticsDTO[] = await service.getUserStatistics(
-    //     address
-    //   );
-    //   if (!statistics || !statistics.length) {
-    //     return undefined;
-    //   }
-    //   context.commit("setPeriod", statistics[0].period);
-    //   context.commit("setPeriodFormat", statistics[0].periodFormat);
-    //   context.commit("setPosition", statistics[0].position);
-    //   context.commit("setAmount", statistics[0].amount);
-    //   context.commit("setData", {
-    //     ...statistics[0].data,
-    //   } as UserDataAggregateDTO);
-    //   return statistics[0];
-    // },
+    async fetchRewards(
+      context: AssetsModuleContext,
+      address: string
+    ): Promise<AssetEntry[] | undefined> {
+      const service = new RewardsService();
+      const response = await service.getAssetsByAddress(address);
+      const assets = response.data;
+
+      console.log({ response });
+
+      context.commit("setAssets", assets);
+
+      return assets;
+    },
   },
 };
