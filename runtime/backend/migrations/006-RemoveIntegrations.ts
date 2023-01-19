@@ -25,7 +25,7 @@ export class RemoveIntegrations implements MigrationInterface {
     const collection = db.collection("accountintegrations");
 
     await collection.deleteMany({
-      createdAt: { $lt: new Date("2023-01-18T00:00:58.539+00:00") },
+      createdAt: { $lt: new Date(2023, 0, 18) },
     });
   }
 
@@ -39,8 +39,8 @@ export class RemoveIntegrations implements MigrationInterface {
       name: "strava",
       __v: 0,
       authorizationHash: "fakeHashShouldNotWork",
-      createdAt: "2023-01-13T16:57:40.289+00:00",
-      updatedAt: "2023-01-13T16:57:44.747+00:00",
+      createdAt: new Date(2023, 0, 13),
+      updatedAt: new Date(2023, 0, 13),
       encAccessToken: "fakeTokenShouldNotWork",
       encRefreshToken: "fakeTokenShouldNotWork2",
       expiresAt: 1673647946000,
