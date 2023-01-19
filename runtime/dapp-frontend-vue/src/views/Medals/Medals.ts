@@ -15,6 +15,7 @@ import { mapGetters } from "vuex";
 import { MetaView } from "@/views/MetaView";
 import RewardsList from "@/components/RewardsList/RewardsList.vue";
 import { MedalItem } from "@/components/RewardsList/RewardsList";
+import { AssetEntry } from "@/models/AssetDTO";
 
 // style resource
 import "./Medals.scss";
@@ -33,6 +34,7 @@ import "./Medals.scss";
   computed: {
     ...mapGetters({
       currentUserAddress: "auth/getCurrentUserAddress",
+      availableAssets: "assets/getAssets",
     }),
   },
 })
@@ -52,9 +54,21 @@ export default class Medals extends MetaView {
   public currentUserAddress!: string;
 
   /**
-   * This temporary computed returns hardcoded medals.
-   * This copy includes disabled(not received) medals.
-   * @todo remove after backend will be developed
+   * This property represents vuex getter
+   * for the assets, available for user.
+   * <br /><br />
+   * It's value received from
+   * GET /assets/:address endpoint.
+   *
+   * @access public
+   * @var {AssetEntry[]}
+   */
+  public availableAssets!: AssetEntry[];
+
+  /**
+   * This computed represents all available
+   * medals for the user, initially marked as
+   * *not received*
    *
    * @access protected
    * @returns MedalItem[]
@@ -63,21 +77,21 @@ export default class Medals extends MetaView {
     return [
       {
         image: "medals/10.svg",
-        condition: "Finish your first 10KM in one go to get!",
-        received: true,
+        condition: "Invite 5 users to receive medal!",
+        received: false,
         relatedActivities: "Running, Walking, Swimming, Cycling",
         assetId: process.env.VUE_APP_ASSETS_BOOST5_IDENTIFIER as string,
       },
       {
         image: "medals/50.svg",
-        condition: "Complete 50 kilometers to get.",
+        condition: "Invite 10 users.",
         received: false,
         relatedActivities: "Running, Walking, Swimming, Cycling",
         assetId: process.env.VUE_APP_ASSETS_BOOST10_IDENTIFIER as string,
       },
       {
         image: "medals/10.svg",
-        condition: "Finish your first 10KM in one go to get!",
+        condition: "Invite 15 users",
         received: false,
         relatedActivities: "Running, Walking, Swimming, Cycling",
         assetId: process.env.VUE_APP_ASSETS_BOOST15_IDENTIFIER as string,
@@ -111,6 +125,22 @@ export default class Medals extends MetaView {
         assetId: "fakeIdToShowNotReceivedMedals4",
       },
     ];
+  }
+
+  /**
+   * This computed returns medals with
+   * *received* value based on available assets.
+   *
+   * @access protected
+   * @returns MedalItem[]
+   */
+  public get validatedMedals(): MedalItem[] {
+    return this.knownMedals.map((medal: MedalItem) => ({
+      ...medal,
+      received: !!this.availableAssets.find(
+        (asset: AssetEntry) => asset.assetId === medal.assetId
+      ),
+    }));
   }
 
   public async mounted() {

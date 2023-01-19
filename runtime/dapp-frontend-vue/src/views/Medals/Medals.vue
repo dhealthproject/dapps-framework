@@ -16,7 +16,7 @@
       <RewardsList
         :title="$t('medals.badge_title')"
         :description="$t('medals.badge_description')"
-        :medals="knownMedals"
+        :medals="validatedMedals"
       />
       <!-- <h2 class="boards-title" v-html="$t('medals.medal_board')" /> -->
     </div>
