@@ -25,7 +25,8 @@ let rootFolderPath =
     : `${__dirname}/../../..`; // runtime/backend/config
 
 // environment configuration
-const envFilePath = `${rootFolderPath}/.env`;
+const envFilePath = `${rootFolderPath}/env/${(process.env.NODE_ENV =
+  "development")}.env`;
 if (!fs.existsSync(envFilePath)) {
   throw new Error(
     `An error occurred configuring the database migrations. ` +
