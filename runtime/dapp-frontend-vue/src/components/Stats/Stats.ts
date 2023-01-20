@@ -86,18 +86,31 @@ export default class Stats extends MetaView {
   public appConfig!: ConfigDTO;
 
   /**
-   * @todo missing property documentation
-   * @todo this could also be a Prop assigned by parent
+   * Property that indicates the number of referral steps that this
+   * component displays.
+   * Defaulted to 5.
+   *
+   * @access protected
+   * @var {number}
    */
   protected numReferralSteps: number = 5;
 
   /**
+   * Property to indicate whether statistics data has already
+   * been requested.
+   * Defaulted to false.
    *
+   * @access private
+   * @var {boolean}
    */
   private hasRequested: boolean = false;
 
   /**
-   * @todo missing method documentation
+   * Getter method to return this component's statistics data.
+   * Returns undefined if statistics data doesn't exist.
+   *
+   * @access public
+   * @returns {UserDataAggregateDTO | undefined}
    */
   public get statisticsData(): UserDataAggregateDTO | undefined {
     if (
@@ -112,7 +125,10 @@ export default class Stats extends MetaView {
   }
 
   /**
-   * @todo missing method documentation
+   * Getter method to return the total amount earned by this user.
+   *
+   * @access public
+   * @returns {number}
    */
   public get totalEarned(): number {
     if (!this.hasRequested || undefined === this.statisticsData) {
@@ -125,7 +141,11 @@ export default class Stats extends MetaView {
   }
 
   /**
-   * @todo missing method documentation
+   * Getter method to return the total practice (exercise) minutes
+   * of this user.
+   *
+   * @access public
+   * @returns {number}
    */
   public get totalPracticedMinutes(): number {
     if (!this.hasRequested || undefined === this.statisticsData) {
@@ -136,7 +156,11 @@ export default class Stats extends MetaView {
   }
 
   /**
-   * @todo missing method documentation
+   * Getter method to return the total number of refferals
+   * the user made.
+   *
+   * @access public
+   * @returns {number}
    */
   public get totalReferral(): number {
     if (!this.hasRequested || undefined === this.statisticsData) {
@@ -147,7 +171,11 @@ export default class Stats extends MetaView {
   }
 
   /**
-   * @todo missing method documentation
+   * Getter method to return the current level of referrals
+   * the user has.
+   *
+   * @access public
+   * @returns {number}
    */
   public get levelReferral(): number {
     if (
@@ -170,6 +198,13 @@ export default class Stats extends MetaView {
     return 0;
   }
 
+  /**
+   * Getter method to return the remaining refferals the user
+   * need to make the next referral level.
+   *
+   * @access public
+   * @returns {number}
+   */
   public get remainingReferralsToNextLevel(): number {
     if (!this.hasRequested || undefined === this.statisticsData) {
       return 10;
@@ -180,6 +215,12 @@ export default class Stats extends MetaView {
     return level.minReferred - this.totalReferral;
   }
 
+  /**
+   * Getter method to return the percentage of the next level.
+   *
+   * @access public
+   * @returns {number}
+   */
   public get nextLevelPercentage(): number {
     if (this.levelReferral === 0) {
       return 5;
@@ -192,6 +233,13 @@ export default class Stats extends MetaView {
     return 5;
   }
 
+  /**
+   * Getter method to return the top activities that the user
+   * has participated in.
+   *
+   * @access public
+   * @returns {string[]}
+   */
   public get topActivities(): string[] {
     if (!this.hasRequested || undefined === this.statisticsData) {
       return ["Ride", "Swim"];
@@ -201,9 +249,14 @@ export default class Stats extends MetaView {
   }
 
   /**
-   * @todo missing method documentation
+   * Getter method to return the total earned amount in a four
+   * digits format amount. The result is an array of 2 strings,
+   * indicating the whole amount, and the fractional part.
+   *
+   * @access public
+   * @returns {[string, string]}
    */
-  public get fourDigitsAmount() {
+  public get fourDigitsAmount(): [string, string] {
     const withFourDecs = `${this.totalEarned.toFixed(4)}`;
     const firstDigit = withFourDecs.slice(0, -4);
     const secondDigit = withFourDecs.slice(-4);
@@ -212,9 +265,13 @@ export default class Stats extends MetaView {
   }
 
   /**
-   * @todo missing method documentation
+   * Method to handle `mounted` event of this component.
+   *
+   * @access public
+   * @async
+   * @returns {Promise<void>}
    */
-  public async mounted() {
+  public async mounted(): Promise<void> {
     if (undefined !== this.currentUserAddress) {
       await this.$store.dispatch(
         "statistics/fetchStatistics",

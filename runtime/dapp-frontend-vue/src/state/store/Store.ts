@@ -20,14 +20,37 @@ import { StatisticsModule } from "./StatisticsModule";
 import { ActivitiesModule } from "./ActivitiesModule";
 
 /**
- * @todo missing interface documentation
+ * @interface RootState
+ * @description This interface defines the *state* for the store.
+ * <br /><br />
+ * Following *inputs* apply to the {@link RootState} interface:
+ * | Input | Type | Required? | Description |
+ * | --- | --- | --- | --- |
+ * | `initialized` | `boolean` | **Required** | Indicates whether this store has been initialized. |
+ *
+ * <br /><br />
+ * @example Using the `RootState` interface
+ * ```ts
+ * // creating authentication contract inputs
+ * const inputs = {
+ *   initialized: true,
+ * } as RootState;
+ * ```
+ * <br /><br />
+ *
+ * @since v0.6.3
  */
 export interface RootState {
   initialized: boolean;
 }
 
 /**
- * @todo missing interface documentation
+ * @type RootContext
+ * @description This type represents the context of this store.
+ * <br /><br />
+ * This type is to manage this store's states.
+ *
+ * @since v0.6.3
  */
 export type RootContext = ActionContext<any, RootState>;
 
@@ -36,10 +59,14 @@ export type RootContext = ActionContext<any, RootState>;
 const Lock = AwaitLock.create();
 
 /**
- * @todo missing function documentation
+ * @function createStore
+ * @description Function to create a new Vuex store.
+ * <br /><br />
+ * The returned instance contains all necessary details for
+ * the store, including state, getters, mutations and actions.
  *
- * @param Vue
- * @returns
+ * @returns {Vuex.Store<RootState>}
+ * @since v0.6.3
  */
 export const createStore = () => {
   return new Vuex.Store<RootState>({
@@ -51,6 +78,12 @@ export const createStore = () => {
      */
     strict: false,
 
+    /**
+     * Modules that this store contains.
+     *
+     * @access public
+     * @var {object}
+     */
     modules: {
       app: AppModule,
       auth: AuthModule,
@@ -59,22 +92,59 @@ export const createStore = () => {
       statistics: StatisticsModule,
       activities: ActivitiesModule,
     },
+
+    /**
+     * Function to create a new state for this store.
+     *
+     * @access public
+     * @returns {RootState}
+     */
     state: (): RootState => ({
       initialized: false,
     }),
+
+    /**
+     * The getter functions of this store.
+     *
+     * @access public
+     * @var {object}
+     */
     getters: {},
 
+    /**
+     * The mutation functions of this module.
+     *
+     * @access public
+     * @var {object}
+     */
     mutations: {
       /**
+       * Mutation function to set the initialization status
+       * to this store's state.
        *
+       * @access public
+       * @param {RootState} state
+       * @param {boolean} payload
+       * @returns {boolean}
        */
       setInitialized: (state: RootState, payload: boolean): boolean =>
         (state.initialized = payload),
     },
 
+    /**
+     * The action methods of this store.
+     *
+     * @access public
+     * @var {object}
+     */
     actions: {
       /**
+       * Action method to initialize the module.
        *
+       * @access public
+       * @async
+       * @param {RootContext} context
+       * @returns {Promise<boolean>}
        */
       async initialize(context: RootContext): Promise<boolean> {
         const callback = async () => {

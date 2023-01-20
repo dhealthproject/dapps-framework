@@ -72,7 +72,10 @@ export default class TopActivities extends MetaView {
   public userStatistics!: UserStatisticsDTO;
 
   /**
-   * @todo missing method documentation
+   * Getter method to return this user's statistics data.
+   *
+   * @access public
+   * @returns {UserDataAggregateDTO | undefined}
    */
   public get statisticsData(): UserDataAggregateDTO | undefined {
     if (!this.userStatistics || !this.userStatistics.data) {
@@ -83,7 +86,11 @@ export default class TopActivities extends MetaView {
   }
 
   /**
-   * @todo missing method documentation
+   * Getter method to return all statistic entry items
+   * of the current statistics data.
+   *
+   * @access public
+   * @returns {string[]}
    */
   public get fetchedItems(): string[] {
     if (this.items && this.items.length) {

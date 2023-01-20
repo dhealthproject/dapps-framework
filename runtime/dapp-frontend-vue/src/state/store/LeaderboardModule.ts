@@ -22,7 +22,43 @@ import { LeaderboardService } from "../../services/LeaderboardService";
 const Lock = AwaitLock.create();
 
 /**
- * @todo missing interface documentation
+ * @interface LeaderboardModuleState
+ * @description This interface defines the *state* for the leaderboard module.
+ * <br /><br />
+ * Following *inputs* apply to the {@link LeaderboardModuleState} interface:
+ * | Input | Type | Required? | Description |
+ * | --- | --- | --- | --- |
+ * | `initialized` | `boolean` | **Required** | Indicates whether leaderboard has been initialized. |
+ * | `leaderboardItems` | `LeaderboardEntryDTO[]` | **Required** | The list of leaderboard items as defined in {@link LeaderboardEntryDTO}. |
+ * | `userLeaderboardEntry` | `LeaderboardEntryDTO` | **Required** | The specific leaderboard entry that represents user's entry (defined in {@link LeaderboardEntryDTO}). |
+ *
+ * <br /><br />
+ * @example Using the `LeaderboardModuleState` interface
+ * ```ts
+ * // creating authentication contract inputs
+ * const inputs = {
+ *   initialized: true,
+ *   leaderboardItems: [
+ *     {
+ *       address: "...",
+ *       period: "20221117",
+ *       periodFormat: "D",
+ *       position: 1,
+ *       amount: 0,
+ *     }
+ *   ],
+ *   userLeaderboardEntry: {
+ *     address: "...",
+ *     period: "20221117",
+ *     periodFormat: "D",
+ *     position: 1,
+ *     amount: 0,
+ *   },
+ * } as LeaderboardModuleState;
+ * ```
+ * <br /><br />
+ *
+ * @since v0.6.3
  */
 export interface LeaderboardModuleState {
   initialized: boolean;
@@ -31,7 +67,12 @@ export interface LeaderboardModuleState {
 }
 
 /**
- * @todo missing interface documentation
+ * @type LeaderboardContext
+ * @description This type represents the context of the leaderboard module.
+ * <br /><br />
+ * This type is to manage leaderboard module's states.
+ *
+ * @since v0.6.3
  */
 export type LeaderboardContext = ActionContext<
   LeaderboardModuleState,
@@ -39,32 +80,85 @@ export type LeaderboardContext = ActionContext<
 >;
 
 /**
- * @todo missing interface documentation
+ * @constant LeaderboardModule
+ * @description The leaderboard vuex module.
+ * <br /><br />
+ * This constant contains all necessary details for
+ * the leaderboard module, including state, getters,
+ * mutations and actions.
+ *
+ * @since v0.6.3
  */
 export const LeaderboardModule = {
-  // this store module is namespaced, meaning the
-  // module name must be included when calling a
-  // mutation, getter or action, i.e. "app/getName".
+  /**
+   * This store module is namespaced, meaning the
+   * module name must be included when calling a
+   * mutation, getter or action, i.e. "app/getName".
+   *
+   * @access public
+   * @var {boolean}
+   */
   namespaced: true,
+
+  /**
+   * Function to create a new state for this module.
+   *
+   * @access public
+   * @returns {LeaderboardModuleState}
+   */
   state: (): LeaderboardModuleState => ({
     initialized: false,
     leaderboardItems: [],
     userLeaderboardEntry: {} as LeaderboardEntryDTO,
   }),
 
+  /**
+   * The getter functions of this module.
+   *
+   * @access public
+   * @var {object}
+   */
   getters: {
+    /**
+     * Getter to return the list of leaderboard items
+     * from the module's current state.
+     *
+     * @access public
+     * @param {LeaderboardModuleState} state
+     * @returns {LeaderboardEntryDTO[]}
+     */
     getLeaderboardItems: (
       state: LeaderboardModuleState
     ): LeaderboardEntryDTO[] => state.leaderboardItems,
 
+    /**
+     * Getter to return the user's leaderboard entry
+     * from the module's current state.
+     *
+     * @access public
+     * @param {LeaderboardModuleState} state
+     * @returns {LeaderboardEntryDTO}
+     */
     getUserLeaderboardEntry: (
       state: LeaderboardModuleState
     ): LeaderboardEntryDTO => state.userLeaderboardEntry,
   },
 
+  /**
+   * The mutation functions of this module instance.
+   *
+   * @access public
+   * @var {object}
+   */
   mutations: {
     /**
+     * Mutation function to set the initialization status
+     * to current module state.
      *
+     * @access public
+     * @param {LeaderboardModuleState} state
+     * @param {boolean} payload
+     * @returns {boolean}
      */
     setInitialized: (
       state: LeaderboardModuleState,
@@ -72,7 +166,13 @@ export const LeaderboardModule = {
     ): boolean => (state.initialized = payload),
 
     /**
+     * Mutation function to set the list of items
+     * to current module state.
      *
+     * @access public
+     * @param {LeaderboardModuleState} state
+     * @param {LeaderboardEntryDTO[]} leaderboardItems
+     * @returns {LeaderboardEntryDTO[]}
      */
     setLeaderboardItems: (
       state: LeaderboardModuleState,
@@ -80,15 +180,27 @@ export const LeaderboardModule = {
     ): any[] => Vue.set(state, "leaderboardItems", leaderboardItems),
 
     /**
+     * Mutation function to insert a new leaderboard item
+     * into the current module state's list.
      *
+     * @access public
+     * @param {LeaderboardModuleState} state
+     * @param {LeaderboardEntryDTO} item
+     * @returns {number}
      */
     addLeaderboardItem: (
       state: LeaderboardModuleState,
       item: LeaderboardEntryDTO
-    ) => state.leaderboardItems.push(item),
+    ): number => state.leaderboardItems.push(item),
 
     /**
+     * Mutation function to set the user item
+     * to current module state.
      *
+     * @access public
+     * @param {LeaderboardModuleState} state
+     * @param {LeaderboardEntryDTO} leaderboardEntry
+     * @returns {LeaderboardEntryDTO}
      */
     setUserLeaderboardEntry: (
       state: LeaderboardModuleState,
@@ -97,9 +209,20 @@ export const LeaderboardModule = {
       Vue.set(state, "userLeaderboardEntry", leaderboardEntry),
   },
 
+  /**
+   * The action methods of this module.
+   *
+   * @access public
+   * @var {object}
+   */
   actions: {
     /**
+     * Action method to initialize the module.
      *
+     * @access public
+     * @async
+     * @param {LeaderboardContext} context
+     * @returns {Promise<boolean>}
      */
     async initialize(context: LeaderboardContext): Promise<boolean> {
       const callback = () => {
@@ -113,7 +236,13 @@ export const LeaderboardModule = {
     },
 
     /**
+     * Action method to fetch the latest leaderboard items
+     * and update the leaderboard module's current state.
      *
+     * @access public
+     * @async
+     * @param {LeaderboardContext} context
+     * @param {{ periodFormat: string}} payload
      */
     async fetchLeaderboard(
       context: LeaderboardContext,
@@ -132,7 +261,13 @@ export const LeaderboardModule = {
     },
 
     /**
+     * Action method to fetch the latest leaderboard user item
+     * and update the leaderboard module's current state.
      *
+     * @access public
+     * @async
+     * @param {LeaderboardContext} context
+     * @param {{ address: string; periodFormat: string }} payload
      */
     async fetchUserLeaderboardEntry(
       context: LeaderboardContext,
