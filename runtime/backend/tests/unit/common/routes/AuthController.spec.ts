@@ -67,7 +67,9 @@ describe("common/AuthController", () => {
 
     controller = module.get<AuthController>(AuthController);
     authService = module.get<AuthService>(AuthService);
-    accountSessionsService = module.get<AccountSessionsService>(AccountSessionsService);
+    accountSessionsService = module.get<AccountSessionsService>(
+      AccountSessionsService,
+    );
   });
 
   it("should be defined", () => {
@@ -118,7 +120,7 @@ describe("common/AuthController", () => {
           accessToken: "testAccessToken",
           refreshToken: "testRefreshToken",
           expiresAt: 1,
-        }          
+        },
       };
       const authServiceGetAccessTokenCall = jest
         .spyOn(authService, "getAccessToken")
@@ -129,6 +131,10 @@ describe("common/AuthController", () => {
       const result = await (controller as any).getAccessToken(
         { challenge: "testChallenge" },
         { cookie: responseCookieCall },
+        {
+          get: jest.fn().mockReturnValue("test_user_agent"),
+          socket: { remoteAddress: "testAddress" },
+        },
       );
 
       // assert
@@ -152,9 +158,16 @@ describe("common/AuthController", () => {
         .mockResolvedValue(null);
 
       // act
-      const result = await (controller as any).getAccessToken({
-        challenge: "testChallenge",
-      });
+      const result = await (controller as any).getAccessToken(
+        {
+          challenge: "testChallenge",
+        },
+        {},
+        {
+          get: jest.fn().mockReturnValue("test_user_agent"),
+          socket: { remoteAddress: "testAddress" },
+        },
+      );
 
       // assert
       expect(authServiceGetCookieCall).toHaveBeenCalledTimes(1);
@@ -164,7 +177,10 @@ describe("common/AuthController", () => {
 
     it("should throw Unauthorized exception if any error was caught", () => {
       // prepare
-      const expectedError = new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+      const expectedError = new HttpException(
+        "Unauthorized",
+        HttpStatus.UNAUTHORIZED,
+      );
       const authServiceGetCookieCall = jest
         .spyOn(authService, "getCookie")
         .mockImplementation(() => {
@@ -172,9 +188,9 @@ describe("common/AuthController", () => {
         });
 
       // act
-      const result = (controller as any).getAccessToken(
-        { challenge: "testChallenge" }
-      );
+      const result = (controller as any).getAccessToken({
+        challenge: "testChallenge",
+      });
 
       // assert
       expect(authServiceGetCookieCall).toHaveBeenCalledTimes(1);
@@ -183,7 +199,10 @@ describe("common/AuthController", () => {
 
     it("should throw same error if any error was caught", () => {
       // prepare
-      const expectedError = new HttpException("Bad Request", HttpStatus.BAD_REQUEST);
+      const expectedError = new HttpException(
+        "Bad Request",
+        HttpStatus.BAD_REQUEST,
+      );
       const authServiceGetCookieCall = jest
         .spyOn(authService, "getCookie")
         .mockImplementation(() => {
@@ -242,7 +261,10 @@ describe("common/AuthController", () => {
 
     it("should throw Unauthorized exception if any error was caught", () => {
       // prepare
-      const expectedError = new HttpException("Bad Request", HttpStatus.BAD_REQUEST);
+      const expectedError = new HttpException(
+        "Bad Request",
+        HttpStatus.BAD_REQUEST,
+      );
       const authServiceGetCookieCall = jest
         .spyOn(authService, "getCookie")
         .mockImplementation(() => {
@@ -263,7 +285,10 @@ describe("common/AuthController", () => {
 
     it("should throw unauthorized http exception if any other error was caught", () => {
       // prepare
-      const expectedError = new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);;
+      const expectedError = new HttpException(
+        "Unauthorized",
+        HttpStatus.UNAUTHORIZED,
+      );
       const authServiceGetCookieCall = jest
         .spyOn(authService, "getCookie")
         .mockImplementation(() => {
@@ -272,10 +297,9 @@ describe("common/AuthController", () => {
       const responseCookieCall = jest.fn();
 
       // act
-      const result = (controller as any).refreshTokens(
-        jest.fn(),
-        { cookie: responseCookieCall }
-      );
+      const result = (controller as any).refreshTokens(jest.fn(), {
+        cookie: responseCookieCall,
+      });
 
       // assert
       expect(authServiceGetCookieCall).toHaveBeenCalledTimes(1);
