@@ -15,6 +15,7 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  Req,
   Request as NestRequest,
   Res as NestResponse,
   UseGuards,
@@ -245,10 +246,16 @@ export class AuthController {
   protected async getAccessToken(
     @Body() body: AccessTokenRequest,
     @NestResponse({ passthrough: true }) response: Response,
+    @Req() req: any,
   ): Promise<AccessTokenDTO> {
     try {
       // generates cookie configuration (depends on dApp)
       const authCookie = this.authService.getCookie();
+
+      const ua = req.get("User-Agent");
+      const ip = req.socket.remoteAddress;
+
+      body.sub = sha3_256(`${ua}${ip}`);
 
       // validate the authentication challenge:
       // - make sure it wasn't used before (no multiple usage)
