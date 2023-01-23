@@ -235,6 +235,69 @@ describe("common/OAuthController", () => {
     });
   });
 
+  describe("revoke()", () => {
+    it("should call deleteIntegration on service instance", async () => {
+      const deleteIntegrationMock = jest
+        .spyOn(oauthService, "deleteIntegration")
+        .mockResolvedValue(true as any);
+
+      (controller as any).oauthService = {
+        deleteIntegration: deleteIntegrationMock,
+      };
+      await (controller as any).revoke({}, "strava");
+
+      expect(deleteIntegrationMock).toBeCalledTimes(1);
+    });
+
+    it("should throw http exception if any error was caught", async () => {
+      jest
+        .spyOn(oauthService, "deleteIntegration")
+        .mockResolvedValue(true as any);
+      const expectedError = new HttpException(
+        "Unauthorized",
+        HttpStatus.UNAUTHORIZED,
+      );
+      const oauthServiceOauthDeleteIntegrationCall = jest
+        .spyOn(oauthService, "deleteIntegration")
+        .mockRejectedValue(expectedError);
+
+      const authServiceGetAccountCall = jest
+        .spyOn(authService, "getAccount")
+        .mockResolvedValue({ address: "testAddress" } as AccountDocument);
+
+      const result = (controller as any).revoke({}, "strava");
+
+      // assert
+      expect(result).rejects.toThrowError(expectedError);
+      expect(authServiceGetAccountCall).toHaveBeenCalledTimes(1);
+      expect(oauthServiceOauthDeleteIntegrationCall).toHaveBeenCalledTimes(0);
+    });
+
+    it("should throw http exception if any error was caught", async () => {
+      jest
+        .spyOn(oauthService, "deleteIntegration")
+        .mockResolvedValue(true as any);
+      const expectedError = new HttpException(
+        "Bad Request",
+        HttpStatus.BAD_REQUEST,
+      );
+      const oauthServiceOauthDeleteIntegrationCall = jest
+        .spyOn(oauthService, "deleteIntegration")
+        .mockRejectedValue(new Error());
+
+      const authServiceGetAccountCall = jest
+        .spyOn(authService, "getAccount")
+        .mockResolvedValue({ address: "testAddress" } as AccountDocument);
+
+      const result = (controller as any).revoke({}, "strava");
+
+      // assert
+      expect(result).rejects.toThrowError(expectedError);
+      expect(authServiceGetAccountCall).toHaveBeenCalledTimes(1);
+      expect(oauthServiceOauthDeleteIntegrationCall).toHaveBeenCalledTimes(0);
+    });
+  });
+
   describe("getProfile()", () => {
     it("should call correct method and respond with DTO", async () => {
       // prepare

@@ -239,7 +239,10 @@ export class OAuthController {
         account.address,
       );
     } catch (e) {
-      throw e;
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException("Bad Request", HttpStatus.BAD_REQUEST);
     }
   }
 

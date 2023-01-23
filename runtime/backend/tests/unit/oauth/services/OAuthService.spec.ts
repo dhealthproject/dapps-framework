@@ -341,6 +341,31 @@ describe("common/OAuthService", () => {
     });
   });
 
+  describe("deleteIntegration", () => {
+    const deleteOneMock = jest.fn();
+    beforeEach(() => {
+      (oauthService as any).queryService = {
+        deleteOne: deleteOneMock,
+      };
+
+      deleteOneMock.mockClear();
+    });
+
+    it("should call deleteOne on query service entry", async () => {
+      // act
+      await oauthService.deleteIntegration("fakeProvider", "fakeAddress");
+
+      expect(deleteOneMock).toHaveBeenCalledTimes(1);
+      expect(deleteOneMock).toHaveBeenCalledWith(
+        new AccountIntegrationQuery({
+          address: "fakeAddress",
+          name: "fakeProvider",
+        } as AccountIntegrationDocument),
+        (oauthService as any).model,
+      );
+    });
+  });
+
   describe("getIntegrations()", () => {
     const findMock = jest.fn();
     beforeEach(() => {
