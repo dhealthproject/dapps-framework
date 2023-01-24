@@ -331,6 +331,7 @@ export default class LoginScreen extends MetaView {
    */
   public get getMobileOS() {
     const ua = navigator.userAgent;
+
     if (/android/i.test(ua)) {
       return "Android";
     } else if (
