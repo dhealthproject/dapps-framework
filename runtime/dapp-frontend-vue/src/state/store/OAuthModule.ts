@@ -114,15 +114,17 @@ export const OAuthModule = {
      */
     async fetchIntegrations(context: OAuthModuleContext): Promise<string[]> {
       // reads from localStorage
-      const fromStorage = localStorage.getItem("integrations");
-      if (null === fromStorage) {
-        return [];
-      }
+      // const fromStorage = localStorage.getItem("integrations");
+      // if (null === fromStorage) {
+      //   return [];
+      // }
 
-      // parse content and mutate state
-      const integrations = JSON.parse(fromStorage);
-      context.commit("setIntegrations", integrations);
-      return integrations;
+      // // parse content and mutate state
+      // const integrations = JSON.parse(fromStorage);
+
+      // temporary return empty array, while pending pr for integrations fix
+      context.commit("setIntegrations", []);
+      return [];
     },
 
     /**

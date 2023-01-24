@@ -155,7 +155,13 @@ export const AppModule = {
      */
     fetchLanguage(context: AppContext): string {
       // reads language from localStorage
-      const language = localStorage.getItem(Translations.storageKey) ?? "en";
+      let language;
+      try {
+        language = localStorage.getItem(Translations.storageKey) ?? "en";
+      } catch (err) {
+        console.log("error during reading localStorage, cookies not enabled");
+        language = "en";
+      }
       context.commit("setLanguage", language);
       context.commit("setTranslator", new Translations(language));
       return language;
