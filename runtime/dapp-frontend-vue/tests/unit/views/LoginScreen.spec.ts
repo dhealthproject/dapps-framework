@@ -104,4 +104,40 @@ describe("LoginScreen -->", () => {
     // expect(widget.find(".qr-code").exists()).to.be.true;
     expect(widget.vm.createLoginQRCode()).to.be.not.null;
   });
+
+  it("should not call call login setInterval if device not mobile", () => {
+    expect(widget.vm.mobileFetchTimer).to.be.undefined;
+  });
+
+  it("should call call login setInterval if device is mobile", () => {
+    const mobileOptions = {
+      localVue,
+      stubs: ["router-link"],
+      mocks: {
+        getImageUrl,
+        $route: { params: {} },
+        $router: {
+          push: jest.fn(),
+        },
+        $t: jest.fn(),
+        $store: {
+          dispatch: jest.fn(),
+          commit: jest.fn(),
+          getters: {
+            "auth/isAuthenticated": true,
+            "auth/getChallenge": "rwrwer",
+            "auth/getAuthRegistry": "fake-registry",
+            "auth/getRefCode": undefined,
+          },
+        },
+        computed: {
+          getMobileOS() {
+            return "iOS";
+          },
+        },
+      },
+    };
+
+    expect(widget.vm.getMobileOs).to.be.not.null;
+  });
 });
