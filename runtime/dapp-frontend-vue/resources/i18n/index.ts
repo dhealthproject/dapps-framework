@@ -15,6 +15,7 @@ import dashboardTranslations from "./en/Dashboard.json";
 import settingsTranslations from "./en/Settings.json";
 import activitiesTranslations from "./en/Activities.json";
 import legalTranslations from "./en/Legal.json";
+import medalsTranslations from "./en/Medals.json";
 
 // bundle all .JSON together
 export default {
@@ -26,4 +27,5 @@ export default {
   ...settingsTranslations,
   ...activitiesTranslations,
   ...legalTranslations,
+  ...medalsTranslations,
 };

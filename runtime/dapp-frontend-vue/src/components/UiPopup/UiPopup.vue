@@ -117,6 +117,37 @@
         :val="refCode"
       />
     </div>
+
+    <!-- Modal with type medal -->
+    <div
+      v-if="config && config.type === 'medal'"
+      class="dapp-ui-popup__modal dapp-ui-popup__modal__medal"
+      :style="`background: ${
+        config.modalBg ? config.modalBg : '#fff'
+      };max-width: ${config.width}px`"
+    >
+      <inline-svg
+        :src="getImageUrl('icons/close-icon.svg')"
+        :width="32"
+        class="dapp-ui-popup__modal__notification__close"
+        @click="$root.$emit('modal-close')"
+      />
+      <img
+        class="medal-image"
+        :src="getImageUrl(config.medal ? config.medal : '')"
+        :alt="config.condition"
+      />
+      <div class="medal-details">
+        <div class="details-item">
+          <p class="title" v-html="$t('medals.medal_condition')" />
+          <p class="value" v-html="config.condition" />
+        </div>
+        <div class="details-item">
+          <p class="title" v-html="$t('medals.medal_activities')" />
+          <p class="value" v-html="config.activities" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 

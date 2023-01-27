@@ -28,21 +28,21 @@
     text-align: center;
 
     .amount-big {
-      font-family: "Dotrice";
+      font-family: "Joystix Monospace";
       font-size: 72px;
       line-height: 100%;
       text-align: left;
 
       @include devices(laptop) {
-        font-size: 54px;
+        font-size: 46px;
       }
 
       .dark {
-        color: $button-text-dark;
+        color: $black;
       }
 
       .light {
-        color: $stats-teal-main;
+        color: $black;
       }
     }
 

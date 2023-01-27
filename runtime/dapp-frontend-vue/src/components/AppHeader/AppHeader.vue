@@ -121,6 +121,10 @@
       </nav>
       <div class="lg-max:hidden py-6">
         <div class="dapp-screen-header__account-actions">
+          <Notifications
+            :items="tempNotifications"
+            @notification-viewed="handleNotificationView"
+          />
           <Dropdown :items="dropDownItems" />
           <UserBalance />
         </div>
