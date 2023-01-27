@@ -15,6 +15,15 @@
   color: #2c3e50;
 }
 
+@font-face {
+  font-family: "Joystix Monospace";
+  src: url("fonts/JoystixMonospace.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  letter-spacing: -0.05em;
+}
+
 nav {
   padding: 30px;
 
