@@ -11,6 +11,9 @@
 import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 
+// internal dependencies
+import { UserNotificationDTO } from "../models/UserNotificationDTO";
+
 /**
  * @class UserNotifier
  * @description The main service of the UserNotifier module.
@@ -28,5 +31,5 @@ export class UserNotifier {
    * @returns {void}  Emits "auth.open" event which triggers validating of the received challenge
    */
   @OnEvent("notifier.users.notify", { async: true })
-  public async createNotification(notification: UserNotificationBody) {}
+  public async createNotification(notification: UserNotificationDTO) {}
 }

@@ -13,17 +13,6 @@ import { ApiProperty } from "@nestjs/swagger";
 // internal dependencies
 import { BaseDTO } from "../../common/models/BaseDTO";
 
-export interface UserNotificationBody {
-  address?: string; // if no address - notification is for everyone
-  subjectId?: string; // if no subjectId - notification is for general purposes, e.g. strava integrated notification, welcome notification
-  subjectType: "assets" | "activities" | "general";
-  title: string;
-  description: string;
-  shortDescription: string;
-  readAt?: string; // if no readAt - notification wasn't read
-  createdAt: string | number;
-}
-
 /**
  * @class UserNotificationDTO
  * @description A DTO class that consists of notification properties
