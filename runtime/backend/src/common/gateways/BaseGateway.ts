@@ -144,12 +144,20 @@ export abstract class BaseGateway
    * @throws  {HttpException}  Given a missing or invalid challenge in the signer cookies of the *request*.
    */
   public async handleConnection(ws: any, req: Request) {
+    let c;
+    let challenge;
     // parse challenge from cookie
-    const c: any = cookie.parse(req.headers.cookie);
-    const challenge = cookieParser.signedCookie(
-      decodeURIComponent(c.challenge),
-      process.env.SECURITY_AUTH_TOKEN_SECRET,
-    ) as string;
+    try {
+      c = cookie.parse(req.headers.cookie);
+      challenge = cookieParser.signedCookie(
+        decodeURIComponent(c.challenge),
+        process.env.SECURITY_AUTH_TOKEN_SECRET,
+      ) as string;
+    } catch (err) {
+      challenge = req.url.split("=")[1];
+
+      console.log("Error handleConnection()", err);
+    }
 
     // if challenge couldn't be parsed or parsed incorrectly - throw an error
     if (!challenge) {
