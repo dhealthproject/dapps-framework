@@ -13,6 +13,15 @@ import { OnEvent } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { UserNotificationDTO } from "../models/UserNotificationDTO";
+import { QueryService } from "../../common/services/QueryService";
+import {
+  UserNotificationModel,
+  UserNotificationQuery,
+  UserNotificationSchema,
+  UserNotificationDocument,
+  Notification,
+} from "../models";
+import { InjectModel } from "@nestjs/mongoose";
 
 /**
  * @class UserNotifier
@@ -23,6 +32,21 @@ import { UserNotificationDTO } from "../models/UserNotificationDTO";
 @Injectable()
 export class UserNotifier {
   /**
+   * The constructor of the service.
+   *
+   * @constructor
+   * @param {UserNotificationModel} model
+   * @param {QueriesService} queriesService
+   */
+  constructor(
+    @InjectModel(Notification.name)
+    private readonly model: UserNotificationModel,
+    private readonly queryService: QueryService<
+      UserNotificationDocument,
+      UserNotificationModel
+    >,
+  ) {}
+  /**
    * This method handles starting of challenge validation.
    * Gets trigged by "auth.open" emit from handleConnection().
    * Calls .startCronJob from validateChallengeScheduler.
@@ -31,5 +55,19 @@ export class UserNotifier {
    * @returns {void}  Emits "auth.open" event which triggers validating of the received challenge
    */
   @OnEvent("notifier.users.notify", { async: true })
-  public async createNotification(notification: UserNotificationDTO) {}
+  public async createNotification(notification: UserNotificationDTO) {
+    this.queryService.createOrUpdate(
+      new UserNotificationQuery({
+        address: notification.address,
+        subjectId: notification.subjectId,
+        subjectType: notification.subjectType,
+        title: notification.title,
+        description: notification.description,
+        shortDescription: notification.shortDescription,
+        readAt: notification.readAt,
+      } as UserNotificationDocument),
+      this.model,
+      {},
+    );
+  }
 }

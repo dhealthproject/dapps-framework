@@ -115,7 +115,7 @@ export class Notification implements Transferable<UserNotificationDTO> {
    * @var {string}
    */
   @Prop({ required: false })
-  public readonly readAt?: string | number;
+  public readonly readAt?: string;
 
   /**
    * Property which represents date when notification has been created.
@@ -125,7 +125,7 @@ export class Notification implements Transferable<UserNotificationDTO> {
    * @var {string}
    */
   @Prop({ required: true })
-  public readonly createdAt: string | number;
+  public readonly createdAt: string;
 
   public static fillDTO(
     doc: UserNotificationDocument,

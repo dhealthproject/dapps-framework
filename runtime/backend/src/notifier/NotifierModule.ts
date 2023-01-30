@@ -17,6 +17,7 @@ import { AbstractAppModule } from "../common/modules/AbstractAppModule";
 // notifier scope
 import { EmailNotifierModule } from "./modules/EmailNotifierModule";
 import { NotifierFactoryModule } from "./modules/NotifierFactoryModule";
+import { UserNotifierModule } from "./modules/UserNotifierModule";
 import { AlertsModule } from "./modules/AlertsModule";
 
 /**
@@ -44,6 +45,7 @@ import { AlertsModule } from "./modules/AlertsModule";
     EmailNotifierModule,
     NotifierFactoryModule,
     AlertsModule,
+    UserNotifierModule,
   ],
 })
 export class NotifierModule extends AbstractAppModule {}

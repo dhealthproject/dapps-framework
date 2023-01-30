@@ -9,6 +9,15 @@
  */
 // external dependencies
 import { Module } from "@nestjs/common";
+import { MongooseModule } from "@nestjs/mongoose";
+
+// internal dependencies
+import { UserNotifier } from "../services/UserNotifier";
+import {
+  Notification,
+  UserNotificationSchema,
+} from "../models/UserNotificationSchema";
+import { QueryModule } from "../../common/modules/QueryModule";
 
 /**
  * @label SCOPES
@@ -21,5 +30,14 @@ import { Module } from "@nestjs/common";
  *
  * @since v0.3.2
  */
-@Module({})
+@Module({
+  imports: [
+    QueryModule,
+    MongooseModule.forFeature([
+      { name: Notification.name, schema: UserNotificationSchema },
+    ]),
+  ],
+  providers: [UserNotifier],
+  exports: [UserNotifier],
+})
 export class UserNotifierModule {}
