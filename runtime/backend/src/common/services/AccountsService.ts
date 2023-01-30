@@ -22,6 +22,7 @@ import {
   AccountModel,
   AccountQuery,
 } from "../models/AccountSchema";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // configuration resources
 import { DappConfig, NetworkConfig } from "../models";
@@ -49,6 +50,7 @@ export class AccountsService {
       AccountDocument,
       AccountModel
     >,
+    private readonly emitter: EventEmitter2,
   ) {}
 
   /**
@@ -182,6 +184,16 @@ export class AccountsService {
 
     // create a random referral code
     const referralCode = AccountsService.getRandomReferralCode();
+
+    // create notification for newly created user
+    this.emitter.emit("notifier.users.notify", {
+      address: payload.address,
+      subjectType: "general",
+      title: "Welcome to Elevate!",
+      description:
+        "Welcome to Elevate! Please, integrate your account with provider.",
+      shortDescription: "Thanks for joining!",
+    });
 
     // store the authenticated address in `accounts`
     return await this.createOrUpdate(accountQuery, {

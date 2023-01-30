@@ -28,6 +28,7 @@ import {
   getSchemaPath,
 } from "@nestjs/swagger";
 import { Request, Response } from "express";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 // internal dependencies
 import { AuthGuard } from "../../common/traits/AuthGuard";
@@ -109,6 +110,7 @@ export class OAuthController {
   public constructor(
     private readonly oauthService: OAuthService,
     private readonly authService: AuthService,
+    private readonly emitter: EventEmitter2,
   ) {}
 
   /**
@@ -197,6 +199,15 @@ export class OAuthController {
     try {
       // requests an access token from the OAuth provider
       await this.oauthService.oauthCallback(provider, account, query);
+
+      // create notification for successful account integration
+      this.emitter.emit("notifier.users.notify", {
+        address: account.address,
+        subjectType: "general",
+        title: `Successfully ${provider}`,
+        description: `You successfully integrated ${provider}, you can now post an activities!`,
+        shortDescription: `You have now ${provider} integrated`,
+      });
 
       // create a "success" status response
       return StatusDTO.create(200);

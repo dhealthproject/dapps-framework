@@ -20,7 +20,7 @@ import {
   UserNotificationSchema,
   UserNotificationDocument,
   Notification,
-} from "../models";
+} from "../models/UserNotificationSchema";
 import { InjectModel } from "@nestjs/mongoose";
 
 /**
