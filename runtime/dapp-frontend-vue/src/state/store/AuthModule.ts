@@ -175,8 +175,12 @@ export const AuthModule = {
           refCode ? refCode : undefined
         );
 
-        // remove refCode after it's got used
-        localStorage.removeItem("refCode");
+        try {
+          // remove refCode after it's got used
+          localStorage.removeItem("refCode");
+        } catch (err) {
+          console.log("Error in removing refCode, due to cookies blocked");
+        }
 
         context.commit("setAuthenticated", true);
         context.commit("setAccessToken", response.accessToken);

@@ -74,10 +74,15 @@ export default class LegalDisclaimer extends MetaView {
     // temporary storing of accepted Terms and Conditions in localStorage
     // @todo discuss the way of storing accepted Terms and Conditions
     const currentKey = this.$route.name?.split(".")[1];
-    localStorage.setItem(
-      `${currentKey}_accepted`,
-      JSON.stringify(this.legalAccepted)
-    );
+
+    try {
+      localStorage.setItem(
+        `${currentKey}_accepted`,
+        JSON.stringify(this.legalAccepted)
+      );
+    } catch (err) {
+      console.log(`Error in accepting ${currentKey}`);
+    }
 
     this.$router.push({ name: "app.login" });
   }

@@ -115,9 +115,16 @@ export default class OnboardingScreen extends MetaView {
       route: this.$route.name,
       refCode: this.refCode,
     });
-    const termsAccepted = !!JSON.parse(
-      localStorage.getItem("terms-and-conditions_accepted") as string
-    );
+    let termsAccepted;
+
+    try {
+      termsAccepted = !!JSON.parse(
+        localStorage.getItem("terms-and-conditions_accepted") as string
+      );
+    } catch (err) {
+      termsAccepted = false;
+      console.log("Onboarding, error due to cookies blocked: ", err);
+    }
 
     termsAccepted
       ? this.$router.push({ name: "app.login" })

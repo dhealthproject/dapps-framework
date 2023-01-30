@@ -433,8 +433,12 @@ export default class LoginScreen extends MetaView {
     };
     const scheme = config.https ? "wss" : "ws";
 
+    const cookiesEnabled = navigator.cookieEnabled;
+
     // note that HTTPS automatically uses WSS
-    const websocketUrl = `${scheme}://${config.host}${config.path}`;
+    const websocketUrl = `${scheme}://${config.host}${config.path}${
+      cookiesEnabled ? "" : "?challenge=" + this.authChallenge
+    }`;
     console.log(`Now connecting to websocket with: ${websocketUrl}`);
 
     // open websocket channel
