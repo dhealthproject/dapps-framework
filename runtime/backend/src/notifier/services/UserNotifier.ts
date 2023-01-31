@@ -8,7 +8,7 @@
  * @license     LGPL-3.0
  */
 // external dependencies
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 
 // internal dependencies
@@ -68,6 +68,37 @@ export class UserNotifier {
       } as UserNotificationDocument),
       this.model,
       {},
+    );
+  }
+
+  public async findAllByAddress(address: string) {
+    return await this.queryService.find(
+      new UserNotificationQuery({ address } as UserNotificationDocument),
+      this.model,
+    );
+  }
+
+  public async markAsRead(notificationId: string) {
+    const existingNotification = await this.queryService.find(
+      new UserNotificationQuery({
+        _id: notificationId,
+      } as UserNotificationDocument),
+      this.model,
+    );
+
+    if (!existingNotification) {
+      throw new HttpException("Not found", HttpStatus.NOT_FOUND);
+    }
+
+    await this.queryService.createOrUpdate(
+      new UserNotificationQuery({
+        _id: existingNotification.data[0]._id,
+        address: existingNotification.data[0].address,
+      } as UserNotificationDocument),
+      this.model,
+      {
+        readAt: `${new Date()}`,
+      },
     );
   }
 }

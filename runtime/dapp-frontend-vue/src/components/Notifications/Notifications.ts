@@ -62,7 +62,7 @@ export default class Notifications extends MetaView {
    */
   public get unreadExist(): boolean {
     const unread = this.items?.filter(
-      (notification: Notification) => notification.viewed === true
+      (notification: any) => !notification.readAt
     );
     return !!unread && unread.length > 0;
   }

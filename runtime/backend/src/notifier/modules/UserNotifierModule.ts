@@ -18,6 +18,7 @@ import {
   UserNotificationSchema,
 } from "../models/UserNotificationSchema";
 import { QueryModule } from "../../common/modules/QueryModule";
+import { UserNotificationsController } from "../routes/UserNotificationsController";
 
 /**
  * @label SCOPES
@@ -37,6 +38,7 @@ import { QueryModule } from "../../common/modules/QueryModule";
       { name: Notification.name, schema: UserNotificationSchema },
     ]),
   ],
+  controllers: [UserNotificationsController],
   providers: [UserNotifier],
   exports: [UserNotifier],
 })

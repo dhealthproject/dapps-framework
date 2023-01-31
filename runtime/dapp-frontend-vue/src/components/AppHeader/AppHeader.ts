@@ -48,6 +48,8 @@ export interface HeaderLink {
   computed: {
     ...mapGetters({
       isAuthenticated: "auth/isAuthenticated",
+      notifications: "notifications/getNotifications",
+      currentUserAddress: "auth/getCurrentUserAddress",
     }),
   },
 })
@@ -68,6 +70,20 @@ export default class AppHeader extends MetaView {
    * @var {showIcons}
    */
   @Prop({ default: true }) protected showIcons?: boolean;
+
+  /**
+   * This property contains the authenticated user's dHealth Account
+   * Address. This field is populated using the Vuex Store after a
+   * successful request to the backend API's `/me` endpoint.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {string}
+   */
+  public currentUserAddress!: string;
 
   /**
    * @todo ask the user for confirmation
@@ -149,7 +165,7 @@ export default class AppHeader extends MetaView {
    *
    * @access public
    */
-  public tempNotifications: Notification[] | never[] = [];
+  public notifications?: any[];
 
   /**
    * Watcher that sets overflowY hidden,
@@ -174,52 +190,28 @@ export default class AppHeader extends MetaView {
     }
   }
 
-  public handleNotificationView(notification: Notification) {
-    this.tempNotifications = this.tempNotifications.map(
-      (notificationItem: Notification) => ({
-        ...notificationItem,
-        viewed:
-          notification.id === notificationItem.id
-            ? false
-            : notificationItem.viewed,
-      })
-    );
+  public handleNotificationView(notification: any) {
+    this.$root.$emit("modal", {
+      type: "in-app-notification",
+      overlayColor: "rgba(0, 0, 0, 0.2)",
+      width: 720,
+      modalBg: "#FFFFFF",
+      title: notification.title,
+      description: notification.description,
+    });
+
+    if (!notification.readAt) {
+      this.$store.dispatch("notifications/markNotificationAsRead", {
+        address: this.currentUserAddress,
+        id: notification._id,
+      });
+    }
   }
 
-  public mounted() {
-    this.tempNotifications = [
-      {
-        createdAt: "2h",
-        title: "Congratulations!",
-        description: "You have completed 10KM!",
-        icon: "dhealth-notifications-icon.svg",
-        viewed: true,
-        id: 0,
-        medal: {
-          image: "medals/10.svg",
-          condition: "Finish your first 10KM in one go to get!",
-          received: true,
-          relatedActivities: "Running, Walking, Swimming, Cycling",
-          assetId: process.env.VUE_APP_ASSETS_BOOST5_IDENTIFIER as string,
-        },
-      },
-      {
-        createdAt: "1d",
-        title: "Breast Cancer Month",
-        description:
-          "Get an energy boost with Breast Cancer Month special event!",
-        icon: "dhealth-notifications-icon.svg",
-        viewed: true,
-        id: 1,
-      },
-      {
-        createdAt: "1d",
-        title: "ELEVATE",
-        description: "Welcome to your Notification Inbox!",
-        icon: "dhealth-notifications-icon.svg",
-        viewed: false,
-        id: 3,
-      },
-    ];
-  }
+  // public mounted() {
+  //   this.notiifcationItems = this.notifications.map((notifcation: any) => ({
+  //     ...notifcation,
+  //     icon: "dhealth-notifications-icon.svg",
+  //   }));
+  // }
 }

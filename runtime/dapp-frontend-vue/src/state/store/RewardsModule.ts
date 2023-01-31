@@ -9,7 +9,6 @@
  */
 
 // external dependencies
-import Vue from "vue";
 import { ActionContext } from "vuex";
 
 // internal dependencies

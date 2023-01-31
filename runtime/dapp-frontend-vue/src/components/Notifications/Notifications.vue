@@ -35,19 +35,20 @@
             <div class="flex">
               <div class="icon-wrapper">
                 <img
+                  v-if="notification.icon"
                   :src="getImageUrl(notification.icon)"
                   :alt="notification.title"
                 />
               </div>
               <div>
                 <h3 v-html="notification.title" />
-                <p v-html="notification.description" />
+                <p v-html="notification.shortDescription" />
               </div>
             </div>
           </div>
           <div class="state">
             <p class="time" v-html="notification.createdAt" />
-            <div v-if="notification.viewed" class="unread-circle" />
+            <div v-if="!notification.readAt" class="unread-circle" />
           </div>
         </div>
       </div>

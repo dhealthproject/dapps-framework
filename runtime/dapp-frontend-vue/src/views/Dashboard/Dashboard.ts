@@ -341,6 +341,10 @@ export default class Dashboard extends MetaView {
    * @returns {Promise<void>}
    */
   protected async mounted(): Promise<void> {
+    await this.$store.dispatch(
+      "notifications/fetchNotifications",
+      this.currentUserAddress
+    );
     // in case we came here from log-in screen, we may
     // not have a profile in the Vuex Store yet, fill now.
     if (!this.currentUserAddress) {

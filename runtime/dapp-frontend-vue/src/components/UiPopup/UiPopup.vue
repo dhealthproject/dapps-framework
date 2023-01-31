@@ -148,6 +148,28 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal with type notification -->
+    <div
+      v-if="config && config.type === 'in-app-notification'"
+      class="dapp-ui-popup__modal dapp-ui-popup__modal__notification"
+      :style="`background: ${
+        config.modalBg ? config.modalBg : '#fff'
+      };max-width: ${config.width}px`"
+    >
+      <inline-svg
+        :src="getImageUrl('icons/close-icon.svg')"
+        :width="32"
+        class="dapp-ui-popup__modal__notification__close"
+        @click="$root.$emit('modal-close')"
+      />
+      <div class="medal-details">
+        <div class="details-item">
+          <p class="title" v-html="config.title" />
+          <span class="value fw1-m" v-html="config.description" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 

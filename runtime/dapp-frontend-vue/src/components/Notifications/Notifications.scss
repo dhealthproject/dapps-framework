@@ -27,6 +27,8 @@
         border: 1px solid $black;
         border-radius: 8px;
         text-align: left;
+        max-height: 238px;
+        overflow-y: scroll;
 
         .notification-item {
             padding-bottom: 11px;

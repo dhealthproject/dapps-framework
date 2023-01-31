@@ -25,7 +25,7 @@ export interface ModalConfig {
   keepOnBgClick?: boolean;
   overlayColor?: string;
   modalBg?: string;
-  type: "form" | "notification" | "share" | "medal";
+  type: "form" | "notification" | "share" | "medal" | "in-app-notification";
   title?: string;
   width: number;
   fields?: any[];
