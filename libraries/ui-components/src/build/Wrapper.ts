@@ -22,6 +22,15 @@ import {
   convertAttributeValue,
 } from "./Utils";
 
+/**
+ * Function that returns a web component that wraps a Vue component.
+ *
+ * @access public
+ * @param {typeof _Vue} Vue
+ * @param {Component | AsyncComponent} Component
+ * @param {HTMLStyleElement} styleElement
+ * @returns {HTMLElement}
+ */
 export const webComponentWrapper = (
   Vue: typeof _Vue,
   Component: Component | AsyncComponent,
@@ -33,7 +42,14 @@ export const webComponentWrapper = (
   let camelizedPropsList: string[];
   let camelizedPropsMap: Record<string, any>;
 
-  function initialize(Component: any) {
+  /**
+   * Function to initialize this web component.
+   *
+   * @access public
+   * @param {any} Component
+   * @returns {void}
+   */
+  function initialize(Component: any): void {
     if (isInitialized) return;
 
     const options =
@@ -105,7 +121,16 @@ export const webComponentWrapper = (
     isInitialized = true;
   }
 
-  function syncAttribute(el: CustomElement, key: string) {
+  /**
+   * Function to synchronize attribute between the custom element
+   * and the wrapped element.
+   *
+   * @access public
+   * @param {CustomElement} el
+   * @param {string} key
+   * @returns {void}
+   */
+  function syncAttribute(el: CustomElement, key: string): void {
     const camelized = camelize(key);
     const value = el.hasAttribute(key) ? el.getAttribute(key) : undefined;
     if (!value) return;
@@ -116,6 +141,13 @@ export const webComponentWrapper = (
     );
   }
 
+  /**
+   * @class CustomElement
+   * @description Defines a custom element that is a web element
+   * that represents a Vue component.
+   *
+   * @since v0.2.2
+   */
   class CustomElement extends HTMLElement {
     public _wrapper: Record<string, any>;
     constructor() {
@@ -175,11 +207,23 @@ export const webComponentWrapper = (
       });
     }
 
-    get vueComponent() {
+    /**
+     * Getter method that returns this element's wrapped Vue component.
+     *
+     * @access public
+     * @returns {object}
+     */
+    get vueComponent(): object {
       return this._wrapper.$refs.inner;
     }
 
-    connectedCallback() {
+    /**
+     * Method that performs callback when underlying component is connected.
+     *
+     * @access public
+     * @returns {void}
+     */
+    connectedCallback(): void {
       const wrapper = this._wrapper;
       if (!wrapper._isMounted) {
         // initialize attributes
@@ -219,7 +263,13 @@ export const webComponentWrapper = (
       }
     }
 
-    disconnectedCallback() {
+    /**
+     * Method that performs callback when underlying component is disconnected.
+     *
+     * @access public
+     * @returns {void}
+     */
+    disconnectedCallback(): void {
       callHooks(this.vueComponent, "deactivated");
     }
   }

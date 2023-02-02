@@ -57,7 +57,7 @@ import SignatureIcon from "@/assets/img/signature.png";
 })
 export default class DappTransactionGraphic extends DappGraphicComponent {
   /**
-   * The {@link Transaction} instance to be displayed.
+   * The required {@link Transaction} instance to be displayed.
    *
    * @access protected
    * @var {Transaction}
