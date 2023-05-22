@@ -538,8 +538,7 @@ export class AuthService {
         undefined !== referrer &&
         undefined !== referrer.address &&
         payload.address !== referrer.address &&
-        (accountSession === undefined ||
-          accountSession.referredBy === undefined)
+        (!accountSession || !accountSession.referredBy)
       ) {
         userData.referredBy = referrer.address;
       }
