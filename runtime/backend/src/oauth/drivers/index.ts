@@ -24,3 +24,6 @@ export * from "../../oauth/drivers/strava";
 
 // factories
 export * from "./EventHandlerStrategyFactory";
+
+// helpers
+export * from "./WebHookEventRequestHelper";
