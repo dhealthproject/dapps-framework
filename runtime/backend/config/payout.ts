@@ -100,13 +100,29 @@ export default () => ({
     signerPublicKey: process.env.PAYOUT_CONTRACT_PUBLIC_KEY,
 
     /**
-     * 
+     * Value indicating whether to proceed payouts in batches or not.
+     *
+     * @example `true`
+     * @var {boolean}
      */
     enableBatches: false,
 
     /**
-     * 
+     * Value indicating the payout batch size.
+     *
+     * @example `100`
+     * @var {number}
      */
     batchSize: 100,
-  }
+
+    /**
+     * The daily limit for each type of payouts.
+     *
+     * @example `{ activities: 100, boosters: 100 }`
+     * @var {PayoutsLimitDTO}
+     */
+    limit: {
+      activities: 1200,
+    }
+  },
 });

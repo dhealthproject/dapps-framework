@@ -154,6 +154,17 @@ export abstract class PrepareBoosterPayouts extends PreparePayouts<
   protected abstract get command(): string;
 
   /**
+   * This method get the daily limit for this payout.
+   *
+   * @access protected
+   * @returns {number}
+   */
+  protected get payoutLimit(): number {
+    const limit = this.configService.get<number>("payouts.limit.boosters");
+    return limit ? limit : -1;
+  }
+
+  /**
    * This method is the **entry point** of this scheduler. It must be
    * implemented in child classes and must be decorated with a `Cron`
    * `Cron` decorator.
@@ -377,5 +388,18 @@ export abstract class PrepareBoosterPayouts extends PreparePayouts<
    */
   protected async getMultiplier(subjectAddress: string): Promise<number> {
     return Promise.resolve(1); // no multiplier applies for boosters (always 1)
+  }
+
+  /**
+   * This method returns an asset amount of which the user
+   * has been rewarded today.
+   *
+   * @access protected
+   * @async
+   * @param {string} address The address which we will gather reward amount from.
+   * @returns {Promise<number>} The total reward amount which this account has received today.
+   */
+  protected async getEarnedAssetAmountToday(address: string): Promise<number> {
+    return Promise.resolve(0); // not applicable for boosters for now
   }
 }

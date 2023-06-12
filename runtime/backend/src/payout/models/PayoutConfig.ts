@@ -7,6 +7,9 @@
  * @author      dHealth Network <devs@dhealth.foundation>
  * @license     LGPL-3.0
  */
+// internal dependencies
+import { PayoutLimitDTO } from "./PayoutLimitDTO";
+
 /**
  * @label COMMON
  * @interface PayoutAccountsConfig
@@ -51,6 +54,33 @@ export interface PayoutAccountsConfig {
    * @var {string}
    */
   signerPublicKey: string;
+
+  /**
+   * Value indicating whether to proceed payouts in batches or not.
+   *
+   * @example `true`
+   * @access public
+   * @var {boolean}
+   */
+  enableBatches: boolean;
+
+  /**
+   * Value indicating the payout batch size.
+   *
+   * @example `100`
+   * @access public
+   * @var {number}
+   */
+  batchSize: number;
+
+  /**
+   * The daily limit for each type of payouts.
+   *
+   * @example `{ activities: 100, boosters: 100 }`
+   * @access public
+   * @var {PayoutsLimitDTO}
+   */
+  limit: PayoutLimitDTO;
 }
 
 /**

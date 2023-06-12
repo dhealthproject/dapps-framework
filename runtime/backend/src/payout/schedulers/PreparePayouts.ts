@@ -245,6 +245,27 @@ export abstract class PreparePayouts<
   protected abstract getMultiplier(subjectAddress: string): Promise<number>;
 
   /**
+   * This method returns an asset amount of which the user
+   * has been rewarded today.
+   *
+   * @abstract
+   * @access protected
+   * @returns {Promise<number>}
+   */
+  protected abstract getEarnedAssetAmountToday(
+    address: string,
+  ): Promise<number>;
+
+  /**
+   * This method get the daily limit for this payout.
+   *
+   * @abstract
+   * @access protected
+   * @returns {number}
+   */
+  protected abstract get payoutLimit(): number;
+
+  /**
    * This method implements the processor logic for this command
    * that will prepare relevant *subjects*' payout entities. Subjects
    * in this command are defined by the {@link PreparePayouts.collection}
@@ -296,7 +317,15 @@ export abstract class PreparePayouts<
       // read subject related fields
       const multiplier: number = await this.getMultiplier(subject.address);
       const mosaicId: string = this.getAssetIdentifier();
-      const theAmount: number = this.getAssetAmount(subject, multiplier);
+      let theAmount: number = this.getAssetAmount(subject, multiplier);
+      const totalEarnedToday: number = await this.getEarnedAssetAmountToday(subject.address);
+
+      // check maximum reward reached
+      // if yes we send the amount so that we reach the max
+      // quota only and no more.
+      if (this.payoutLimit >= 0 && totalEarnedToday + theAmount >= this.payoutLimit) {
+        theAmount = this.payoutLimit - totalEarnedToday;
+      }
 
       // CAUTION: this disables manual activity rewards and makes
       // sure that `activities` documents with `activityData.isManual`
