@@ -35,6 +35,7 @@ import { LogService } from "../../common/services/LogService";
 import { BasicWebHookEventRequest } from "../drivers/BasicWebHookEventRequest";
 import { BasicWebHookSubscriptionRequest } from "../drivers/BasicWebHookSubscriptionResponse";
 import { StravaWebHookEventRequest } from "../drivers";
+import { WebHookEventRequestHelper } from "../drivers/WebHookEventRequestHelper";
 
 namespace HTTPResponses {
   // creates a variable that we include in a namespace
@@ -179,12 +180,15 @@ export class WebHooksController {
       // first make sure we have a compatible provider
       const provider = this.oauthService.getProvider(providerName);
 
+      // get remoteIdentifier
+      const remoteIdentifier = WebHookEventRequestHelper.getRemoteIdentifier(data, providerName);
+
       // also make sure the forwarded activity is that
       // of a *known* end-user (athlete) in our database
       const integration =
         await this.oauthService.getIntegrationByRemoteIdentifier(
           providerName,
-          data.remoteIdentifier,
+          remoteIdentifier,
         );
 
       // ignore this event given no integration or client_id
