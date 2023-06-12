@@ -277,10 +277,10 @@ export class UserAggregation extends StatisticsCommand {
           periodFormat,
           amount: result.totalAssetsAmount,
           data: {
-            totalEarned: result.totalAssetsAmount,
-            totalPracticedMinutes: Math.ceil(result.totalSecondsPracticed / 60),
             // merge with previous entry if available (topActivities)
             ...(document ? document.data : {}),
+            totalEarned: result.totalAssetsAmount,
+            totalPracticedMinutes: Math.ceil(result.totalSecondsPracticed / 60),
           },
         },
       );
