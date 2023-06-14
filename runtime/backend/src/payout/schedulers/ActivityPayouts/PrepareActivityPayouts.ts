@@ -324,26 +324,19 @@ export class PrepareActivityPayouts extends PreparePayouts<
     let amount: number;
     if ("Walk" === subject.activityData.sport) {
       // WALKING
-      // (D / T) x 1.2
-      amount = (D / T) * 1.2;
+      amount = (T / 600) * 1;
     } else if ("Run" === subject.activityData.sport) {
       // RUNNING
-      // (D / T) x 1.5
-      amount = (D / T) * 1.5;
+      amount = (T / 600) * 1;
     } else if ("Ride" === subject.activityData.sport) {
       // RIDING
-      // (D / T) x 0.8
-      amount = (D / T) * 0.8;
+      amount = (T / 600) * 1;
     } else if ("Swim" === subject.activityData.sport) {
       // SWIMMING
-      // ((D*10) / T) x 1.7
-      // uses *dekameters* in distance
-      const dM = D * 10;
-      amount = (dM / T) * 1.7;
+      amount = (T / 600) * 1;
     } else {
       // OTHERS
-      // (D / T) x 1.6
-      amount = (D / T) * 1.6;
+      amount = (T / 600) * 1;
     }
 
     // make sure to work only with *integers* (always absolute amounts)
