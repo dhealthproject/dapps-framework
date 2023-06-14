@@ -12,6 +12,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron } from "@nestjs/schedule";
+import { PipelineStage } from "mongoose";
 
 // internal dependencies
 // common scope
@@ -181,12 +182,22 @@ export class PrepareActivityPayouts extends PreparePayouts<
    * This method determines whether the `payoutState` and `activityAssets`
    * fields must be set on the payout subject document, or not.
    *
-   * @abstract
    * @access protected
    * @returns {boolean}
    */
   protected get shouldSetSubjectPayoutState(): boolean {
     return true; // activity payouts require subject update
+  }
+
+  /**
+   * This method get the daily limit for this payout.
+   *
+   * @access protected
+   * @returns {number}
+   */
+  protected get payoutLimit(): number {
+    const limit = this.configService.get<number>("payouts.limit.activities");
+    return limit ? limit : -1;
   }
 
   /**
@@ -397,6 +408,70 @@ export class PrepareActivityPayouts extends PreparePayouts<
 
     // by default the multiplier must be `1`
     return 1;
+  }
+
+  /**
+   * This method returns an asset amount of which the user
+   * has been rewarded today.
+   *
+   * @access protected
+   * @async
+   * @param {string} address The address which we will gather reward amount from.
+   * @returns {Promise<number>}
+   */
+  protected async getEarnedAssetAmountToday(address: string): Promise<number> {
+    const dateSlug = this.getNextPeriod(new Date());
+    const aggregateQuery = this.createAggregationQuery(address, dateSlug);
+    const result = await this.queryService.aggregate(
+      aggregateQuery,
+      this.model,
+    );
+    return result.length ? result[0].totalAssetsAmount : 0;
+  }
+
+  /**
+   * Method to create aggregation query to calculate total reward amount
+   * from account's activities.
+   *
+   * @access private
+   * @param {string} address The address of the account that we query from.
+   * @param {string} dateSlug Date slug in format `yyyymmdd` (all in digits).
+   * @returns {PipelineStage[]}
+   */
+  private createAggregationQuery(
+    address: string,
+    dateSlug: string,
+  ): PipelineStage[] {
+    return [
+      {
+        $match: { address, dateSlug },
+      },
+      {
+        $group: {
+          _id: "address",
+          totalAssetsAmount: {
+            $sum: { $sum: "$activityAssets.amount" },
+          },
+        },
+      },
+    ];
+  }
+
+  /**
+   * Method to generate period string representation of today's search range.
+   * The result string is in format: `{year}{month}{day}`.
+   *
+   * @access protected
+   * @param {Date} dateNow The current {@link Date} instance that is passed from {@link LeaderboardAggregation}.
+   * @returns {string}
+   */
+  protected getNextPeriod(dateNow: Date): string {
+    // format: `{year}{month}{day}`
+    return (
+      `${dateNow.getUTCFullYear()}` +
+      `${("0" + (dateNow.getUTCMonth() + 1)).slice(-2)}` +
+      `${("0" + dateNow.getUTCDate()).slice(-2)}`
+    );
   }
 
   /**
