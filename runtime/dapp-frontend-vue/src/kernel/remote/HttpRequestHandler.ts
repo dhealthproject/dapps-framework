@@ -106,6 +106,13 @@ export class HttpRequestHandler implements RequestHandler {
         });
       }
 
+      if (method === "DELETE") {
+        return axios.delete(url, {
+          ...options,
+          headers,
+        });
+      }
+
       // GET requests are supported
       return axios.get(url, {
         ...options,

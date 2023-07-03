@@ -70,7 +70,7 @@
           </UiButton>
           <p class="add-strava">
             {{ $t("dashboard.cta_strava_download_strava") }}
-            &nbsp;<a
+            <a
               :href="
                 getMobileOS === 'iOS'
                   ? 'https://apps.apple.com/us/app/strava-run-ride-hike/id426826309'

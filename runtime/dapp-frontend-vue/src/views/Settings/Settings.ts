@@ -11,6 +11,7 @@
 // external dependencies
 import { Component } from "vue-property-decorator";
 import { mapGetters } from "vuex";
+import InlineSvg from "vue-inline-svg";
 
 // internal dependencies
 import { MetaView } from "@/views/MetaView";
@@ -21,6 +22,7 @@ import "./Settings.scss";
 @Component({
   components: {
     UiButton,
+    InlineSvg,
   },
   computed: {
     ...mapGetters({
@@ -75,7 +77,17 @@ export default class Settings extends MetaView {
    * @access protected
    * @returns {any}
    */
-  protected removeIntegration(provider: string) {
-    this.$store.dispatch("oauth/deauthorize", provider);
+  protected async removeIntegration(provider: string) {
+    try {
+      await this.$store.dispatch("oauth/revoke", provider);
+    } catch (e) {
+      this.$root.$emit("toast", {
+        title: "Error!",
+        description: `Request failed`,
+        state: "error",
+        icon: "icons/close-icon.svg",
+        dismissTimeout: 7000,
+      });
+    }
   }
 }

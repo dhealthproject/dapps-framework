@@ -18,6 +18,7 @@ import {
   HttpException,
   UseGuards,
   HttpStatus,
+  Delete,
 } from "@nestjs/common";
 import {
   ApiExtraModels,
@@ -201,7 +202,46 @@ export class OAuthController {
       // create a "success" status response
       return StatusDTO.create(200);
     } catch (e) {
-      if (e instanceof HttpException) throw e;
+      if (e instanceof HttpException) {
+        this.oauthService.deleteIntegration(provider, account.address);
+        throw e;
+      }
+      throw new HttpException("Bad Request", HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  /**
+   * Revoke existing integration with passed provider.
+   *
+   * @method DELETE
+   * @param req
+   * @param provider
+   * @param query
+   * @returns
+   */
+  @UseGuards(AuthGuard)
+  @Delete("oauth/:provider/revoke")
+  @ApiOperation({
+    summary: "Remove existing integration",
+    description: "Remove existing provider from integrations",
+  })
+  @ApiExtraModels(OAuthCallbackRequest, StatusDTO)
+  @ApiOkResponse(HTTPResponses.OAuthLinkResponseSchema)
+  protected async revoke(
+    @NestRequest() req: Request,
+    @Param("provider") provider: string,
+  ) {
+    // read and decode access token, then find account in database
+    const account: AccountDocument = await this.authService.getAccount(req);
+    try {
+      return await this.oauthService.deleteIntegration(
+        provider,
+        account.address,
+      );
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
       throw new HttpException("Bad Request", HttpStatus.BAD_REQUEST);
     }
   }

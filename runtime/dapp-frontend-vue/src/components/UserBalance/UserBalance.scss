@@ -20,10 +20,11 @@
   padding: 8px 26px;
   border-radius: 8px;
   background-color: $base-grey-balance;
+  font-weight: 700;
 
   @include devices(laptop) {
     max-width: 147px;
-    font-size: 16px;
+    font-size: 15px;
     background-color: #fff;
   }
 

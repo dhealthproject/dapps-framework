@@ -76,7 +76,7 @@ export const TestWinstonLogger = {
   error: jest.fn(),
   verbose: jest.fn(),
   setLogLevels: jest.fn(),
-}
+};
 jest.mock("nest-winston", () => ({
   utilities: {
     format: {
@@ -86,10 +86,10 @@ jest.mock("nest-winston", () => ({
   WinstonModule: { createLogger: jest.fn().mockReturnValue(TestWinstonLogger) },
 }));
 
-export class TestMongoDBTransport {};
-export class TestConsoleTransport {};
-export class TestDailyRotateFileTransport {};
-export class TestFileTransportErrors {};
+export class TestMongoDBTransport {}
+export class TestConsoleTransport {}
+export class TestDailyRotateFileTransport {}
+export class TestFileTransportErrors {}
 jest.mock("winston", () => ({
   format: {
     timestamp: jest.fn(),
@@ -102,18 +102,18 @@ jest.mock("winston", () => ({
     Console: TestConsoleTransport,
     DailyRotateFile: TestDailyRotateFileTransport,
     File: TestFileTransportErrors,
-  }
+  },
 }));
 
 // Mocks an unsigned transfer transaction with message
-export const mockUnsignedTransferTransaction = 
-    "C400000000000000000000000000000000000000000000000000000000000000"
-  + "0000000000000000000000000000000000000000000000000000000000000000"
-  + "0000000000000000000000000000000000000000000000000000000000000000"
-  + "000000000000000000000000016854410100000000000000545873E209000000"
-  + "68B09718CA4D1CF2A6E97CAE1AB192B1317E1EDB519349CC1400010000000000"
-  + "59A422A39FC4E03940420F0000000000007468697320697320746865206D6573"
-  + "73616765";
+export const mockUnsignedTransferTransaction =
+  "C400000000000000000000000000000000000000000000000000000000000000" +
+  "0000000000000000000000000000000000000000000000000000000000000000" +
+  "0000000000000000000000000000000000000000000000000000000000000000" +
+  "000000000000000000000000016854410100000000000000545873E209000000" +
+  "68B09718CA4D1CF2A6E97CAE1AB192B1317E1EDB519349CC1400010000000000" +
+  "59A422A39FC4E03940420F0000000000007468697320697320746865206D6573" +
+  "73616765";
 
 const mockMosaicId = "fake-mosaic-id";
 
@@ -126,7 +126,7 @@ export const createTransaction = (
 ): any => ({
   transactionInfo: { hash, height: { compact: jest.fn() } },
   signer: { address: { plain: jest.fn() } },
-  recipientAddress: { plain: jest.fn()},
+  recipientAddress: { plain: jest.fn() },
   type,
   serialize: jest.fn().mockReturnValue(mockUnsignedTransferTransaction),
   message: { payload: "fakePayload" },
@@ -137,8 +137,8 @@ export const createTransaction = (
         compact: jest.fn(),
         equals: jest.fn().mockReturnValue(false),
       },
-    }
-  ]
+    },
+  ],
 });
 
 // Mocks a **transaction document** factory for internal
@@ -156,11 +156,13 @@ export const createTransactionDocument = (
   transactionMode: transactionMode,
   transactionType: "fake-type",
   creationBlock: 1,
-  transactionAssets: [{
-    mosaicId: "testMosaicId",
-    amount: 1,
-    transactionHash: "testTransactionHash",
-  }],
+  transactionAssets: [
+    {
+      mosaicId: "testMosaicId",
+      amount: 1,
+      transactionHash: "testTransactionHash",
+    },
+  ],
   transactionMessage: "fakeMessage",
 });
 
@@ -191,6 +193,11 @@ export class MockModel {
       exec: () => jest.fn(),
     };
   }
+  // deleteOne() {
+  //   return {
+  //     exec: () => jest.fn(),
+  //   };
+  // }
   static findOneAndUpdate() {
     return {
       exec: () => jest.fn(),
@@ -199,6 +206,16 @@ export class MockModel {
   find() {
     return {
       exec: () => this.data,
+    };
+  }
+  deleteOne(query: any) {
+    return {
+      exec: async () => jest.fn(),
+    };
+  }
+  static deleteOne(query: any) {
+    return {
+      exec: async () => jest.fn(),
     };
   }
   aggregate(param: any) {
@@ -237,16 +254,17 @@ export class MockModel {
 export const httpQueryStringParser = (
   search: string,
   decode: boolean = true,
-): Record<string, string> => (search || '')
-  .replace(/^\?/g, '')
-  .split('&')
-  .reduce((acc, query) => {
-    const [key, value] = query.split('=');
-    if (key) {
-      acc[key] = decode ? decodeURIComponent(value) : value;
-    }
-    return acc;
-  }, {} as Record<string, string>);
+): Record<string, string> =>
+  (search || "")
+    .replace(/^\?/g, "")
+    .split("&")
+    .reduce((acc, query) => {
+      const [key, value] = query.split("=");
+      if (key) {
+        acc[key] = decode ? decodeURIComponent(value) : value;
+      }
+      return acc;
+    }, {} as Record<string, string>);
 
 // sets mocked environment variables
 process.env.DB_USER = "fake-user";
@@ -254,20 +272,21 @@ process.env.DB_PASS = "fake-pass";
 process.env.DB_HOST = "fake-host";
 process.env.DB_PORT = "1234";
 process.env.DB_NAME = "fake-db-name";
-process.env.BACKEND_URL="fake-backend-url";
-process.env.BACKEND_DOMAIN="fake-backend-host";
-process.env.BACKEND_INTERNAL_PORT="4321";
-process.env.BACKEND_EXTERNAL_PORT="4321";
-process.env.FRONTEND_URL="fake-frontend-url";
-process.env.FRONTEND_DOMAIN="fake-frontend-host";
-process.env.FRONTEND_PORT="9876";
-process.env.SECURITY_AUTH_TOKEN_SECRET="fake-auth-token";
+process.env.BACKEND_URL = "fake-backend-url";
+process.env.BACKEND_DOMAIN = "fake-backend-host";
+process.env.BACKEND_INTERNAL_PORT = "4321";
+process.env.BACKEND_EXTERNAL_PORT = "4321";
+process.env.FRONTEND_URL = "fake-frontend-url";
+process.env.FRONTEND_DOMAIN = "fake-frontend-host";
+process.env.FRONTEND_PORT = "9876";
+process.env.SECURITY_AUTH_TOKEN_SECRET = "fake-auth-token";
 process.env.LOGS_DIRECTORY_PATH = "/logs";
-process.env.SMTP_HOST="fake.smtp.server";
-process.env.SMTP_PORT="587";
-process.env.SMTP_USER="fakeMailerUser";
-process.env.SMTP_PASSWORD="fakePassword";
-process.env.FROM="Fake Mailer <mailer@dhealth.foundation>";
+process.env.SMTP_HOST = "fake.smtp.server";
+process.env.SMTP_PORT = "587";
+process.env.SMTP_USER = "fakeMailerUser";
+process.env.SMTP_PASSWORD = "fakePassword";
+process.env.FROM = "Fake Mailer <mailer@dhealth.foundation>";
 process.env.ANOTHER_DB_NAME_THROUGH_ENV = "this-exists-only-in-mock";
-process.env.MAIN_PUBLIC_KEY="71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE"
-process.env.MAIN_ADDRESS="NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY"
+process.env.MAIN_PUBLIC_KEY =
+  "71BC0DB348A25D163290C44EF863B031FD5251D4E3674DCE37D78FE6C5F8E0FE";
+process.env.MAIN_ADDRESS = "NDAPPH6ZGD4D6LBWFLGFZUT2KQ5OLBLU32K3HNY";

@@ -347,29 +347,34 @@ export default class Dashboard extends MetaView {
       await this.$store.dispatch("auth/fetchProfile");
     }
 
-    // handles "denial" of user authorization on the third-party platform
-    if (this.$route.query && "error" in this.$route.query) {
-      this.displayErrorMessage(
-        `Please click "authorize" on the Strava authorization`
-      );
-    }
-
     // extracts "callback" parameters for when the user comes back
     // from the authorization process on the third-party platform
-    const { state, code, scope } = this.$route.query;
+    const { state, code, scope, error } = this.$route.query;
 
     // if we come back to dashboard FROM the OAuth Authorization,
     // then we can now *query an access token* from the data provider
     // a redirection will happen after retrieval of the access token.
-    if (state && code && scope) {
-      this.$root.$emit("toast", {
-        title: "Great job!",
-        description: "We've integrated your account",
-        state: "success",
-        icon: "icons/like-icon.svg",
-        dismissTimeout: 7000,
-      });
-      this.$store.commit("oauth/setParameters", { code, state, scope });
+    if (state) {
+      // handles the case when selected not all checkboxes
+      if (scope && scope !== "read,activity:read_all") {
+        this.displayErrorMessage(`Please select all fields`);
+      } else if (error) {
+        // handles "denial" of user authorization on the third-party platform
+        this.displayErrorMessage(
+          `Please click "authorize" on the Strava authorization`
+        );
+      } else {
+        // if route query has valid data - display success message
+        this.$root.$emit("toast", {
+          title: "Great job!",
+          description: "We've integrated your account",
+          state: "success",
+          icon: "icons/like-icon.svg",
+          dismissTimeout: 7000,
+        });
+      }
+
+      this.$store.commit("oauth/setParameters", { code, state, scope, error });
       await this.oauthCallbackRedirect();
       await this.$router.replace({ name: "app.dashboard" });
     }
@@ -424,6 +429,8 @@ export default class Dashboard extends MetaView {
   protected async oauthCallbackRedirect(): Promise<void> {
     // redirects the user to backend /oauth/strava/callback
     await this.$store.dispatch("oauth/callback", this.currentUserAddress);
+    // after integrations related actions done - get updated profile
+    await this.$store.dispatch("auth/fetchProfile");
   }
 
   /**

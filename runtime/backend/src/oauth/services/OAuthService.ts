@@ -62,6 +62,12 @@ export class OAuthService {
     >,
     private readonly cipher: CipherService,
   ) {}
+  /**
+   * This property represents valid scope
+   * received from provider.
+   *
+   */
+  expectedScope = "read,activity:read_all";
 
   /**
    * This method determines and creates an OAuth driver
@@ -200,6 +206,10 @@ export class OAuthService {
       account.address,
     );
     if (!integration || !("address" in integration)) {
+      throw new HttpException(`Forbidden`, 403);
+    }
+    // if scope not contains read_all - throw an exception
+    if (request && request.scope !== this.expectedScope) {
       throw new HttpException(`Forbidden`, 403);
     }
 
@@ -451,6 +461,20 @@ export class OAuthService {
     );
 
     return integration;
+  }
+
+  public async deleteIntegration(providerName: string, address: string) {
+    try {
+      await this.queryService.deleteOne(
+        new AccountIntegrationQuery({
+          address,
+          name: providerName,
+        } as AccountIntegrationDocument),
+        this.model,
+      );
+    } catch (e) {
+      throw e;
+    }
   }
 
   /**

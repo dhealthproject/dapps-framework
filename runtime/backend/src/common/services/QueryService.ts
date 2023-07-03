@@ -10,6 +10,7 @@
 // external dependencies
 import { Injectable } from "@nestjs/common";
 import { Model, FilterQuery, PipelineStage, Aggregate } from "mongoose";
+import { DeleteResult } from "mongodb";
 
 // internal dependencies
 import { Documentable } from "../concerns/Documentable";
@@ -304,6 +305,24 @@ export class QueryService<
         returnOriginal: false,
       })
       .exec();
+  }
+
+  /**
+   * This method deletes *exactly one document* in a collection.
+   * Item to delete is defined by query.
+   * <br /><br />
+   *
+   * @access public
+   * @async
+   * @param   {Queryable<TDocument>}             query   The query configuration with `sort`, `order`, `pageNumber`, `pageSize`.
+   * @param   {TModel}      model   The model *class instance* used for the resulting document.
+   * @returns {Promise<TDocument>}
+   */
+  public async deleteOne(
+    query: Queryable<TDocument>,
+    model: TModel,
+  ): Promise<DeleteResult> {
+    return await model.deleteOne(query).exec();
   }
 
   /**

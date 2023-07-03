@@ -80,6 +80,16 @@ export default class AppHeader extends MetaView {
     this.isMenuOpen = false;
   }
 
+  shareModal() {
+    // display a custom modal popup
+    this.$root.$emit("modal", {
+      type: "share",
+      overlayColor: "rgba(0, 0, 0, .50)",
+      width: 518,
+      modalBg: "#FFFFFF",
+    });
+  }
+
   /**
    * This property contains the *authentication state* as it
    * is requested from the backend API. This property will be
