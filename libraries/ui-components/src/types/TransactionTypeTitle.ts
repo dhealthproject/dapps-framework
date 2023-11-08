@@ -23,10 +23,10 @@ export type TransactionTypeTitleObject = {
 
 /**
  * @const TransactionTypeTitle
- * @description This contant defines a default map of *transaction type title* as in
+ * @description This constant defines a default map of *transaction type title* as in
  * which title an element should display for a specific {@link TransactionType}.
  * <br /><br />
- * This constants serves internally and limit the values to only available {@link TransactionType} values.
+ * This constant serves internally and limit the values to only available {@link TransactionType} values.
  *
  * @since v0.1.0
  */
