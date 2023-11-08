@@ -138,9 +138,9 @@ export default class Leaderboard extends MetaView {
    * by the default shows 10 items, can be changed via itemsToShow prop
    *
    * @access public
-   * @returns {LeaderboardItem[]}
+   * @returns {LeaderboardEntryDTO[]}
    */
-  get splicedItems() {
+  get splicedItems(): LeaderboardEntryDTO[] {
     if (
       this.leaderboardItems &&
       this.itemsToShow < this.leaderboardItems.length
@@ -152,18 +152,27 @@ export default class Leaderboard extends MetaView {
   }
 
   /**
-   * @todo missing method documentation
+   * Method to handle onTabChange event.
+   *
+   * @access public
+   * @async
+   * @param {LeaderboardTab} data
+   * @returns {Promise<void>}
    */
-  async onTabChange(data: LeaderboardTab) {
+  async onTabChange(data: LeaderboardTab): Promise<void> {
     await this.$store.dispatch("leaderboard/fetchLeaderboard", {
       periodFormat: data.value,
     });
   }
 
   /**
-   * @todo missing method documentation
+   * Method to handle mounted event.
+   *
+   * @access public
+   * @async
+   * @returns {Promise<void>}
    */
-  public async mounted() {
+  public async mounted(): Promise<void> {
     await this.$store.dispatch("leaderboard/fetchLeaderboard", {
       periodFormat: this.leaderBoardTabs[0].value,
     });

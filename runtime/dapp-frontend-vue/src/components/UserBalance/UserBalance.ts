@@ -45,7 +45,12 @@ export default class UserBalance extends MetaView {
   public userStatistics!: UserStatisticsDTO;
 
   /**
-   * @todo missing method documentation
+   * This method checks whether user statistics contains an amount
+   * and returns the formatted result.
+   * Returns 0 if amount doesn't exists.
+   *
+   * @access public
+   * @returns {number}
    */
   public get userBalance(): number {
     if (undefined === this.userStatistics) {

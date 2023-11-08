@@ -427,9 +427,13 @@ export default class Dashboard extends MetaView {
   }
 
   /**
-   * @todo missing method documentation
+   * This component method is used to display a share popup modal that
+   * allows user to share the content tp social media.
+   *
+   * @access protected
+   * @returns {void}
    */
-  protected shareModal() {
+  protected shareModal(): void {
     // display a custom modal popup
     this.$root.$emit("modal", {
       type: "share",

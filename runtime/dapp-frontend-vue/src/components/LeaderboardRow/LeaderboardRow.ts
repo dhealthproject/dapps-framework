@@ -23,8 +23,11 @@ import { LeaderboardEntryDTO } from "@/models/LeaderboardDTO";
 import "./LeaderboardRow.scss";
 
 /**
- * @todo missing component documentation
- *
+ * @class LeaderboardRow
+ * @description This class implements a Vue component to display
+ * a leaderboard row, taking data from the provided {@link LeaderboardEntryDTO}
+ * instance.
+ * <br /><br />
  * @example Using the LeaderboardRow component
  * ```html
  * <LeaderboardRow :data="yourData">

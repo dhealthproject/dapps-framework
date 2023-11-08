@@ -13,7 +13,24 @@ import { HttpRequestHandler } from "@/kernel/remote/HttpRequestHandler";
 import { User } from "@/models/User";
 
 /**
- * @todo missing interface documentation
+ * @interface AccessTokenDTO
+ * @description This interface defines the fields that are returned
+ * by the backend runtime using the `/auth/token` endpoint.
+ * <br /><br />
+ * @example Using the `AccessTokenDTO` interface
+ * ```typescript
+ * const accessTokenDTO = {
+ *   accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3MDk4M2Q2OTJmNjQ4MTg1ZmViZTZkNmZhNjA3NjMwYWU2ODY0OWY3ZTZmYzQ1Yjk0NjgwMDk2YzA2ZTVmYWI3IiwiYWRkcmVzcyI6Ik5CUFFMRktGSkNHSEZTQTJMTlBIVFJaV0dBU0xRQVlXSFdSVlNKQSIsImlhdCI6MTY3NDIwNzgxNywiZXhwIjoxNjc0MjExNDE3fQ.eLn_v_4Ivw97uWQVltSg9NhJfHw9RcP_fmombr6cuQI",
+ *   refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3MDk4M2Q2OTJmNjQ4MTg1ZmViZTZkNmZhNjA3NjMwYWU2ODY0OWY3ZTZmYzQ1Yjk0NjgwMDk2YzA2ZTVmYWI3IiwiYWRkcmVzcyI6Ik5CUFFMRktGSkNHSEZTQTJMTlBIVFJaV0dBU0xRQVlXSFdSVlNKQSIsImlhdCI6MTY3NDIwNzgxNywiZXhwIjoxNzA1NzY1NDE3fQ.7FElWwuRGxJFpeCPDBgPpXefsdp7hkiEqTwYHv-EiuQ"
+ * }
+ * ```
+ * <br /><br />
+ * #### Properties
+ *
+ * @param   {string}    accessToken               Contains the access token from the authentication.
+ * @param   {string}    refreshToken              Contains the refresh token from the authentication.
+ *
+ * @since v0.5.0
  */
 export interface AccessTokenDTO {
   accessToken: string;

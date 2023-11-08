@@ -22,7 +22,39 @@ import { ActivitiesService } from "../../services/ActivityService";
 const Lock = AwaitLock.create();
 
 /**
- * @todo missing interface documentation
+ * @interface ActivitiesModuleState
+ * @description This interface defines the *state* for the activities module.
+ * <br /><br />
+ * Following *inputs* apply to the {@link ActivitiesModuleState} interface:
+ * | Input | Type | Required? | Description |
+ * | --- | --- | --- | --- |
+ * | `initialized` | `boolean` | **Required** | Indicates whether module state has been initialized. |
+ * | `activitiesItems` | `ActivityEntryDTO[]` | **Required** | The list of activity entry items as defined in {@link LeaderboardEntryDTO}. |
+ *
+ * <br /><br />
+ * @example Using the `ActivitiesModuleState` interface
+ * ```ts
+ * // creating authentication contract inputs
+ * const inputs = {
+ *   initialized: true,
+ *   activitiesItems: [
+ *     {
+ *       address: "NBZTCWH3FCWBEPX2MR2GLDHHIVBKWGQWDEP6C7Q",
+ *       slug: "20221021-5-7996869084-96231663",
+ *       provider: "strava";
+ *       elapsedTime: 3600,
+ *       distance: 9000,
+ *       elevationGain: 0,
+ *       sport: "Run",
+ *       avgPace: 2,
+ *       assets: [];
+ *     } as ActivityEntryDTO
+ *   ]
+ * } as ActivitiesModuleState;
+ * ```
+ * <br /><br />
+ *
+ * @since v0.6.3
  */
 export interface ActivitiesModuleState {
   initialized: boolean;
@@ -30,37 +62,92 @@ export interface ActivitiesModuleState {
 }
 
 /**
- * @todo missing interface documentation
+ * @type ActivitiesContext
+ * @description This type represents the context of the activities module.
+ * <br /><br />
+ * This type is to manage activities module's states.
+ *
+ * @since v0.6.3
  */
 export type ActivitiesContext = ActionContext<ActivitiesModuleState, RootState>;
 
 /**
- * @todo missing interface documentation
+ * @constant ActivitiesModule
+ * @description The activities vuex module.
+ * <br /><br />
+ * This constant contains all necessary details for
+ * the activities module, including state, getters,
+ * mutations and actions.
+ *
+ * @since v0.6.3
  */
 export const ActivitiesModule = {
-  // this store module is namespaced, meaning the
-  // module name must be included when calling a
-  // mutation, getter or action, i.e. "app/getName".
+  /**
+   * This store module is namespaced, meaning the
+   * module name must be included when calling a
+   * mutation, getter or action, i.e. "app/getName".
+   *
+   * @access public
+   * @var {boolean}
+   */
   namespaced: true,
+
+  /**
+   * Function to create a new state for this module.
+   *
+   * @access public
+   * @returns {ActivitiesModuleState}
+   */
   state: (): ActivitiesModuleState => ({
     initialized: false,
     activitiesItems: [],
   }),
 
+  /**
+   * The getter functions of this module.
+   *
+   * @access public
+   * @var {object}
+   */
   getters: {
+    /**
+     * Return the list of activity entry items as defined in {@link LeaderboardEntryDTO}.
+     *
+     * @access public
+     * @param {ActivitiesModuleState} state
+     * @returns {ActivityEntryDTO[]}
+     */
     getActivityItems: (state: ActivitiesModuleState): ActivityEntryDTO[] =>
       state.activitiesItems,
   },
 
+  /**
+   * The mutation functions of this module.
+   *
+   * @access public
+   * @var {object}
+   */
   mutations: {
     /**
+     * Mutation function to set the initialization status
+     * to current module state.
      *
+     * @access public
+     * @param {ActivitiesModuleState} state
+     * @param {boolean} payload
+     * @returns {boolean}
      */
     setInitialized: (state: ActivitiesModuleState, payload: boolean): boolean =>
       (state.initialized = payload),
 
     /**
+     * Mutation function to set the activities list
+     * to current app state.
      *
+     * @access public
+     * @param {ActivitiesModuleState} state
+     * @param {ActivityEntryDTO[]} payload
+     * @returns {ActivityEntryDTO[]}
      */
     setActivities: (
       state: ActivitiesModuleState,
@@ -68,9 +155,20 @@ export const ActivitiesModule = {
     ): ActivityEntryDTO[] => (state.activitiesItems = payload),
   },
 
+  /**
+   * The action methods of this module.
+   *
+   * @access public
+   * @var {object}
+   */
   actions: {
     /**
+     * Action method to initialize the module.
      *
+     * @access public
+     * @async
+     * @param {ActivitiesContext} context
+     * @returns {Promise<boolean>}
      */
     async initialize(context: ActivitiesContext): Promise<boolean> {
       const callback = () => {
@@ -84,7 +182,14 @@ export const ActivitiesModule = {
     },
 
     /**
+     * Action method to fetch the activities list and
+     * update the module's current state.
      *
+     * @access public
+     * @async
+     * @param {ActivitiesContext} context
+     * @param {string} address
+     * @returns {Promise<void>}
      */
     async fetchActivities(
       context: ActivitiesContext,
