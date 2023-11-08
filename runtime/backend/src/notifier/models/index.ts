@@ -14,3 +14,9 @@ export * from "./TransportConfig";
 export * from "./Notifier";
 export * from "./NotifierType";
 export * from "./ReportNotifierStateData";
+
+// schemas
+export * from "./UserNotificationSchema";
+
+// DTO
+export * from "./UserNotificationDTO";

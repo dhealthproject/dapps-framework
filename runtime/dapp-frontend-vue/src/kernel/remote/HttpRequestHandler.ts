@@ -106,6 +106,14 @@ export class HttpRequestHandler implements RequestHandler {
         });
       }
 
+      // POST requests are supported
+      if (method === "PUT") {
+        return axios.put(url, body, {
+          ...options,
+          headers,
+        });
+      }
+
       // GET requests are supported
       return axios.get(url, {
         ...options,

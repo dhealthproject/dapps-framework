@@ -1,0 +1,74 @@
+/**
+ * This file is part of dHealth dApps Framework shared under LGPL-3.0
+ * Copyright (C) 2022-present dHealth Network, All rights reserved.
+ *
+ * @package     dHealth dApps Framework
+ * @subpackage  Vue Frontend
+ * @author      dHealth Network <devs@dhealth.foundation>
+ * @license     LGPL-3.0
+ */
+
+ @import "../../vars.scss";
+
+ .dapp-notifications {
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 10px;
+    position: relative;
+
+    &__list {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 326px;
+        background-color: $base-grey-balance;
+        padding: 34px 25px 24px 25px;
+        box-shadow: 3px 3px 0px $black;
+        border: 1px solid $black;
+        border-radius: 8px;
+        text-align: left;
+        max-height: 238px;
+        overflow-y: scroll;
+
+        .notification-item {
+            padding-bottom: 11px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid $notifications-border-grey;
+
+            &:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+                margin-bottom: 0;
+            }
+
+            h3 {
+                font-size: 13px;
+                font-weight: 700;
+                font-size: 13px;
+                line-height: 130%;
+            }
+    
+            p {
+                font-weight: 400;
+                font-size: 11px;
+                line-height: 130%;
+            }
+    
+            .icon-wrapper {
+                flex: 1 0 44px;
+            }
+
+            .state {
+                text-align: center;
+
+                .unread-circle {
+                    width: 6px;
+                    height: 6px;
+                    display: inline-block;
+                    border-radius: 50%;
+                    background-color: $grey-system-dark;
+                }
+            }
+        }
+    }
+ }

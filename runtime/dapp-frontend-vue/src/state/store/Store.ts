@@ -18,6 +18,8 @@ import { OAuthModule } from "./OAuthModule";
 import { LeaderboardModule } from "./LeaderboardModule";
 import { StatisticsModule } from "./StatisticsModule";
 import { ActivitiesModule } from "./ActivitiesModule";
+import { AssetsModule } from "./RewardsModule";
+import { NotificationsModule } from "./NotificationsModule";
 
 /**
  * @todo missing interface documentation
@@ -58,6 +60,8 @@ export const createStore = () => {
       leaderboard: LeaderboardModule,
       statistics: StatisticsModule,
       activities: ActivitiesModule,
+      assets: AssetsModule,
+      notifications: NotificationsModule,
     },
     state: (): RootState => ({
       initialized: false,

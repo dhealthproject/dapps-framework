@@ -22,6 +22,9 @@ import MobileNavigationButton from "../MobileNavigationButton/MobileNavigationBu
 import Dropdown from "../Dropdown/Dropdown.vue";
 import UserBalance from "../UserBalance/UserBalance.vue";
 import UiButton from "../UiButton/UiButton.vue";
+import Notifications from "../Notifications/Notifications.vue";
+
+import { Notification } from "../Notifications/Notifications";
 
 // style resource
 import "./AppHeader.scss";
@@ -40,10 +43,13 @@ export interface HeaderLink {
     Dropdown,
     UserBalance,
     UiButton,
+    Notifications,
   },
   computed: {
     ...mapGetters({
       isAuthenticated: "auth/isAuthenticated",
+      notifications: "notifications/getNotifications",
+      currentUserAddress: "auth/getCurrentUserAddress",
     }),
   },
 })
@@ -64,6 +70,20 @@ export default class AppHeader extends MetaView {
    * @var {showIcons}
    */
   @Prop({ default: true }) protected showIcons?: boolean;
+
+  /**
+   * This property contains the authenticated user's dHealth Account
+   * Address. This field is populated using the Vuex Store after a
+   * successful request to the backend API's `/me` endpoint.
+   * <br /><br />
+   * The `!`-operator tells TypeScript that this value is required
+   * and the *public* access permits the Vuex Store to mutate this
+   * value when it is necessary.
+   *
+   * @access public
+   * @var {string}
+   */
+  public currentUserAddress!: string;
 
   /**
    * @todo ask the user for confirmation
@@ -139,6 +159,15 @@ export default class AppHeader extends MetaView {
   }
 
   /**
+   * This computed defines *temporary* items
+   * for the notifications component.
+   * @todo remove once implement notifications on backend
+   *
+   * @access public
+   */
+  public notifications?: any[];
+
+  /**
    * Watcher that sets overflowY hidden,
    * to prevent scrolling of body when mobile menu opened
    *
@@ -160,4 +189,29 @@ export default class AppHeader extends MetaView {
       this.isMenuOpen = false;
     }
   }
+
+  public handleNotificationView(notification: any) {
+    this.$root.$emit("modal", {
+      type: "in-app-notification",
+      overlayColor: "rgba(0, 0, 0, 0.2)",
+      width: 720,
+      modalBg: "#FFFFFF",
+      title: notification.title,
+      description: notification.description,
+    });
+
+    if (!notification.readAt) {
+      this.$store.dispatch("notifications/markNotificationAsRead", {
+        address: this.currentUserAddress,
+        id: notification._id,
+      });
+    }
+  }
+
+  // public mounted() {
+  //   this.notiifcationItems = this.notifications.map((notifcation: any) => ({
+  //     ...notifcation,
+  //     icon: "dhealth-notifications-icon.svg",
+  //   }));
+  // }
 }
